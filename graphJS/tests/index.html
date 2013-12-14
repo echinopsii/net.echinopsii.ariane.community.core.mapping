@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <link rel="stylesheet" href="js/primeui-0.9.6/themes/rocket/theme.css" />
+    <link rel="stylesheet" href="js/primeui-0.9.6/development/primeui-0.9.6.css" />
+    <style type="text/css" media="screen">
+        #mappyCanvas {
+            border: solid 3px #333;
+            background: #dddddd;
+            height: 885px;
+            max-height: 885px;
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+        }
+        input,
+        select,
+        textarea,
+        button,
+        .ui-widget,
+        .ui-widget input,
+        .ui-widget select,
+        .ui-widget textarea,
+        .ui-widget button,
+        .ui-widget-header,
+        .ui-widget-content,
+        .ui-widget-header .ui-widget-header,
+        .ui-widget-content .ui-widget-content {
+            font-family: Arial, "Trebuchet MS", Verdana, sans-serif;
+            font-size: 12px !important;
+        }
+    </style>
+    <script data-main="js/taitale.js" src="js/require/require.js"></script>
+    <title>Taitale Map</title>
+</head>
+<body>
+<div id="mainLayout">
+    <div id="mainTop">
+        <div id="mapViewSelectPanel">
+            <table border="0" cellpadding="5">
+                <tr>
+                    <td>
+                        <strong>Test</strong><br/>
+                        <select name="test" id="test">
+                            <option value="rvrdfr01">rvrd france 01</option>
+                            <option value="rvrdfr01moulticast">rvrd france 01 moulticast</option>
+                            <option value="rvrdww01">rvrd worlwide 01</option>
+                            <option value="rvrdww01moulticast">rvrd worlwide 01 moulticast</option>
+                            <option value="rvrdww02">rvrd worlwide 02</option>
+                            <option value="jms01">JMS 01</option>
+                        </select>
+                    </td>
+                    <td>
+                        <strong>Layer</strong><br/>
+                        <select name="layout" id="layout">
+                            <option value="Tree">Tree</option>
+                            <option value="Network">Network</option>
+                            <option value="Random">Random</option>
+                        </select>
+                    </td>
+                    <td>
+                        <strong>View</strong><br/>
+                        <select name="view" id="view">
+                            <option value="Infrastructure">Infrastructure</option>
+                            <option value="Component">Component</option>
+                            <option value="Application">Application</option>
+                        </select>
+                    </td>
+                    <td>
+                        <strong>Mode</strong><br/>
+                        <select name="mode" id="mode">
+                            <option value="Navigation">Navigation</option>
+                            <option value="Edition">Edition</option>
+                        </select>
+                    </td>
+                    <td>
+                        <strong>Notifications options</strong><br/>
+                        <input type="checkbox" name="notifyInfo" value="notifyInfo" id="notifyInfo"/>Notify infos
+                        <input type="checkbox" name="notifyWarn" value="notifyWarn" id="notifyWarn"/>Notify warnings
+                        <input type="checkbox" name="notifyErrs" value="notifyErrs" id="notifyErrs"/>Notify errors
+                    </td>
+                    <td>
+                        <strong>Reload map</strong><br/>
+                        <input type="submit" name="reload" value="reload" id="reload"/>
+                    </td>
+                </tr>
+            </table>
+            <div id="networkOptions">
+                <strong>Network layout options</strong><br/>
+                <input type="checkbox" name="displayDC"   value="displayDC"   id="displayDC"/>Display Datacenters
+                <input type="checkbox" name="displayArea" value="displayArea" id="displayArea"/>Display Areas
+                <input type="checkbox" name="displayLan"  value="displayLan"  id="displayLan"/>Display Lans
+            </div>
+            <div id="treeOptions">
+                <table border="0" cellpadding="5">
+                    <tr>
+                        <td>
+                            <strong>Root tree sorting</strong><br/>
+                            <select name="rootTreeSorting" id="rootTreeSorting">
+                                <option value="1">By maximum vertex linked</option>
+                                <option value="-1">By minimum vertex linked</option>
+                            </select>
+                        </td>
+                        <td>
+                            <strong>Sub trees sorting</strong><br/>
+                            <select name="subTreesSorting" id="subTreesSorting">
+                                <option value="1">By maximum vertex linked</option>
+                                <option value="-1">By minimum vertex linked</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="mainCenter">
+        <div id="mappyCanvas" oncontextmenu="return false;">
+            <div id="mapGrowl"/>
+        </div>
+    </div>
+</div>
+</body>
+</html>

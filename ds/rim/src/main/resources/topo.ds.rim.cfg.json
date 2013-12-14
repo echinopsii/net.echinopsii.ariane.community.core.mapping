@@ -1,0 +1,7 @@
+/**
+ * <http\://www.gnu.org/licenses/lgpl-3.0.html>.
+ */ 
+{
+	"bundleName"     : "com.spectral.cc.core.mapping.ds.blueprints",
+	"bundleCfgFile"  : "topo.ds.rim.blueprints.json"
+}

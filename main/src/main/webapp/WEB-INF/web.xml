@@ -1,0 +1,177 @@
+<?xml version="1.0"?>
+<web-app id="TopoWS" version="2.5"
+         xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+    <!-- REST SERVICES -->
+    <context-param>
+        <param-name>resteasy.resources</param-name>
+        <param-value>
+            com.spectral.cc.core.mapping.main.rest.ds.domain.RESTContainer,
+            com.spectral.cc.core.mapping.main.rest.ds.domain.RESTNode,
+            com.spectral.cc.core.mapping.main.rest.ds.domain.RESTGate,
+            com.spectral.cc.core.mapping.main.rest.ds.domain.RESTEndpoint,
+            com.spectral.cc.core.mapping.main.rest.ds.domain.RESTLink,
+            com.spectral.cc.core.mapping.main.rest.ds.domain.RESTTransport,
+            com.spectral.cc.core.mapping.main.rest.ds.service.RESTMap
+        </param-value>
+    </context-param>
+    <!-- this need same with resteasy servlet url-pattern -->
+    <context-param>
+        <param-name>resteasy.servlet.mapping.prefix</param-name>
+        <param-value>/rest</param-value>
+    </context-param>
+    <listener>
+        <listener-class>org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap</listener-class>
+    </listener>
+    <servlet>
+        <servlet-name>Mapping REST ws</servlet-name>
+        <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Mapping REST ws</servlet-name>
+        <url-pattern>/rest/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- SHIRO CONFIGURATION -->
+    <context-param>
+        <param-name>shiroEnvironmentClass</param-name>
+        <param-value>com.spectral.cc.core.portal.commons.tools.IniOSGIWebEnvironment</param-value>
+    </context-param>
+
+    <listener>
+        <listener-class>org.apache.shiro.web.env.EnvironmentLoaderListener</listener-class>
+    </listener>
+
+    <filter>
+        <filter-name>ShiroFilter</filter-name>
+        <filter-class>org.apache.shiro.web.servlet.ShiroFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>ShiroFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+        <dispatcher>ERROR</dispatcher>
+    </filter-mapping>
+
+    <!-- FACES SERVICES -->
+    <context-param>
+        <param-name>org.jboss.jbossfaces.WAR_BUNDLES_JSF_IMPL</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <!--
+    <context-param>
+        <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
+        <param-value>client</param-value>
+    </context-param>
+    -->
+    <!--
+    <context-param>
+        <param-name>javax.faces.FACELETS_LIBRARIES</param-name>
+        <param-value>/WEB-INF/cookbook.taglib.xml</param-value>
+    </context-param>
+    -->
+    <context-param>
+        <param-name>com.sun.faces.injectionProvider</param-name>
+        <param-value>com.sun.faces.vendor.WebContainerInjectionProvider</param-value>
+    </context-param>
+    <context-param>
+        <param-name>com.sun.faces.spi.AnnotationProvider</param-name>
+        <param-value>com.sun.faces.config.AnnotationScanner</param-value>
+    </context-param>
+    <context-param>
+        <param-name>javax.faces.PROJECT_STAGE</param-name>
+        <param-value>Production</param-value>
+    </context-param>
+    <context-param>
+        <param-name>javax.faces.FACELETS_REFRESH_PERIOD</param-name>
+        <param-value>2</param-value>
+    </context-param>
+    <context-param>
+        <param-name>javax.faces.FACELETS_RESOURCE_RESOLVER</param-name>
+        <param-value>com.spectral.cc.core.portal.commons.tools.FaceletsResourceResolver</param-value>
+    </context-param>
+    <context-param>
+        <param-name>com.sun.faces.resourceUpdateCheckPeriod</param-name>
+        <param-value>2</param-value>
+    </context-param>
+    <context-param>
+        <param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <context-param>
+        <param-name>javax.faces.VALIDATE_EMPTY_FIELDS</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <context-param>
+        <param-name>com.sun.faces.allowTextChildren</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <context-param>
+        <param-name>com.sun.faces.defaultResourceMaxAge</param-name>
+        <param-value>1209600000</param-value>
+    </context-param>
+    <context-param>
+        <param-name>com.sun.faces.enableMissingResourceLibraryDetection</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <context-param>
+        <param-name>primefaces.THEME</param-name>
+        <param-value>#{userProfileController.theme}</param-value>
+    </context-param>
+
+    <listener>
+        <listener-class>com.sun.faces.config.ConfigureListener</listener-class>
+    </listener>
+
+    <!-- Character Encoding Filter -->
+    <filter>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <filter-class>com.spectral.cc.core.portal.commons.tools.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <description>override any encodings from client</description>
+            <param-name>ignore</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <init-param>
+            <description>the encoding to use</description>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <url-pattern>*.jsf</url-pattern>
+    </filter-mapping>
+
+    <!-- PrimeFaces FileUpload Filter -->
+    <filter>
+        <filter-name>PrimeFaces FileUpload Filter</filter-name>
+        <filter-class>
+            org.primefaces.webapp.filter.FileUploadFilter
+        </filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>PrimeFaces FileUpload Filter</filter-name>
+        <servlet-name>Mapping Faces Servlet</servlet-name>
+    </filter-mapping>
+
+    <servlet>
+        <servlet-name>Mapping Faces Servlet</servlet-name>
+        <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Mapping Faces Servlet</servlet-name>
+        <url-pattern>*.jsf</url-pattern>
+    </servlet-mapping>
+
+    <!-- Welcome files -->
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+
+</web-app>

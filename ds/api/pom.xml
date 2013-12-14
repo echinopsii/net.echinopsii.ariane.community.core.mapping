@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Parent -->
+    <parent>
+        <groupId>com.spectral.cc.core.mapping</groupId>
+        <artifactId>com.spectral.cc.core.mapping.ds</artifactId>
+        <version>0.1-SNAPSHOT</version>
+        <relativePath>..</relativePath>
+    </parent>
+
+    <groupId>com.spectral.cc.core.mapping.ds</groupId>
+    <artifactId>com.spectral.cc.core.mapping.ds.api</artifactId>
+    <name>Control and Conquer Core Mapping DS API</name>
+    <packaging>bundle</packaging>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${version.java.source}</source>
+                    <target>${version.java.target}</target>
+                    <showDeprecation>true</showDeprecation>
+                    <showWarnings>true</showWarnings>
+                    <optimize>true</optimize>
+                </configuration>
+            </plugin>
+            <plugin>
+                <!-- This plugin takes care of packaging the artifact as an OSGi Bundle -->
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Fragment-Host>com.spectral.cc.core.mapping.ds.rim</Fragment-Host>
+                        <Export-Package>
+                            com.spectral.cc.core.mapping.ds.domain;version=${project.version},
+                            com.spectral.cc.core.mapping.ds.repository;version=${project.version},
+                            com.spectral.cc.core.mapping.ds.service;version=${project.version}
+                        </Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

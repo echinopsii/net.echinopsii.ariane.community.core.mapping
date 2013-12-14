@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Parent -->
+    <parent>
+        <groupId>com.spectral.cc.core</groupId>
+        <artifactId>com.spectral.cc.core.mapping</artifactId>
+        <version>0.1-SNAPSHOT</version>
+        <relativePath>..</relativePath>
+    </parent>
+
+    <groupId>com.spectral.cc.core.mapping</groupId>
+    <artifactId>com.spectral.cc.core.mapping.ds</artifactId>
+    <name>Control and Conquer Core Mapping DS</name>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>api</module>
+        <module>blueprints</module>
+        <module>rim</module>
+    </modules>
+</project>
