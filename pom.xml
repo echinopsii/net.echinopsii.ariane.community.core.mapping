@@ -53,6 +53,7 @@
         <version.com.fasterxml.jackson>2.1.2</version.com.fasterxml.jackson>
         <version.commons.fileupload>1.3</version.commons.fileupload>
         <version.commons.io>2.4</version.commons.io>
+        <version.commons.configuration>1.6</version.commons.configuration>
         <version.com.lowagie.itext>2.1.7</version.com.lowagie.itext>
         <version.com.sun.faces.jsf-api>2.1.26</version.com.sun.faces.jsf-api>
         <version.com.sun.faces.jsf-impl>2.1.26</version.com.sun.faces.jsf-impl>
@@ -251,10 +252,46 @@
             <version>${version.commons.io}</version>
         </dependency>
         <dependency>
+            <groupId>commons-configuration</groupId>
+            <artifactId>commons-configuration</artifactId>
+            <version>${version.commons.configuration}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.lowagie</groupId>
             <artifactId>itext</artifactId>
             <scope>provided</scope>
             <version>${version.com.lowagie.itext}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.orientechnologies</groupId>
+            <artifactId>orient-commons</artifactId>
+            <version>${version.osgi.com.orientdb}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.orientechnologies</groupId>
+            <artifactId>orientdb-core</artifactId>
+            <version>${version.osgi.com.orientdb}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.orientechnologies</groupId>
+            <artifactId>orientdb-nativeos</artifactId>
+            <version>${version.osgi.com.orientdb}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.orientechnologies</groupId>
+            <artifactId>orientdb-client</artifactId>
+            <version>${version.osgi.com.orientdb}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.orientechnologies</groupId>
+            <artifactId>orientdb-enterprise</artifactId>
+            <version>${version.osgi.com.orientdb}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.sun.faces</groupId>
@@ -395,6 +432,12 @@
             <artifactId>resteasy-jaxrs</artifactId>
             <scope>provided</scope>
             <version>${version.org.jboss.resteasy}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.neo4j</groupId>
+            <artifactId>neo4j-kernel</artifactId>
+            <scope>provided</scope>
+            <version>${version.osgi.com.neo4j}</version>
         </dependency>
         <dependency>
             <groupId>org.primefaces</groupId>
