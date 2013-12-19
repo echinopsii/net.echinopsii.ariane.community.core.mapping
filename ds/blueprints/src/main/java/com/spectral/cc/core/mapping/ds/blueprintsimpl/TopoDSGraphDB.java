@@ -25,6 +25,7 @@ import com.orientechnologies.orient.core.config.OGlobalConfiguration;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.cfg.TopoDSCfgLoader;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.*;
 import com.tinkerpop.blueprints.*;
+import com.tinkerpop.blueprints.impls.neo4j.Neo4jGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,13 +39,23 @@ import java.util.Set;
 public class TopoDSGraphDB {
 
     private final static String BLUEPRINTS_IMPL_ODB = "OrientGraph";
+    private final static String BLUEPRINTS_IMPL_N4J = "Neo4j";
 
     private final static Logger log = LoggerFactory.getLogger(TopoDSGraphDB.class);
 
-    private static Graph ddgraph = null;
+    private static String blpImpl   = null;
+    private static Graph  ddgraph   = null;
     private static Vertex idmanager = null;
 
     private static HashMap<Long, Boolean> autocommit = new HashMap<Long, Boolean>();
+
+    public static boolean isBlueprintsNeo4j() {
+        return (blpImpl.equals(BLUEPRINTS_IMPL_N4J));
+    }
+
+    public static boolean isBlueprintsOrientDB() {
+        return (blpImpl.equals(BLUEPRINTS_IMPL_ODB));
+    }
 
     public static boolean init(Dictionary<Object, Object> properties) throws JsonParseException, JsonMappingException, IOException {
         if (properties != null) {
@@ -55,9 +66,10 @@ public class TopoDSGraphDB {
     }
 
     public static boolean start() {
-        if (TopoDSCfgLoader.getDefaultCfgEntity() != null && TopoDSCfgLoader.getDefaultCfgEntity().getBlueprintsURL() != null) {
-            String impl = TopoDSCfgLoader.getDefaultCfgEntity().getBlueprintsImplementation();
-            switch (impl) {
+        if (TopoDSCfgLoader.getDefaultCfgEntity() != null &&
+                    (TopoDSCfgLoader.getDefaultCfgEntity().getBlueprintsURL() != null || TopoDSCfgLoader.getDefaultCfgEntity().getBlueprintsDirectory()!=null)) {
+            blpImpl = TopoDSCfgLoader.getDefaultCfgEntity().getBlueprintsImplementation();
+            switch (blpImpl) {
                 case BLUEPRINTS_IMPL_ODB:
                     String url = TopoDSCfgLoader.getDefaultCfgEntity().getBlueprintsURL();
                     String user = TopoDSCfgLoader.getDefaultCfgEntity().getBlueprintsUser();
@@ -69,37 +81,60 @@ public class TopoDSGraphDB {
                         ddgraph = new OrientGraph(url);
                         log.debug("Connected to OrientDB ({})", new Object[]{url});
                     }
+                    /*
+                    ((OrientGraph)ddgraph).setUseLightweightEdges(false);
+                    ((OrientGraph)ddgraph).setUseClassForEdgeLabel(false);
+                    ((OrientGraph)ddgraph).setUseClassForVertexLabel(false);
+                    ((OrientGraph)ddgraph).setUseVertexFieldsForEdgeLabels(false);
+                    */
                     OGlobalConfiguration.CACHE_LEVEL1_ENABLED.setValue(false);
-                    log.info("{} is started!", new Object[]{ddgraph.toString()});
-                    log.info(ddgraph.getFeatures().toString());
+                    log.info("{} is started ! ", new Object[]{ddgraph.toString()});
+                    log.debug(ddgraph.getFeatures().toString());
+                    break;
+                case BLUEPRINTS_IMPL_N4J:
+                    String directory = TopoDSCfgLoader.getDefaultCfgEntity().getBlueprintsDirectory();
+                    ddgraph = new Neo4jGraph(directory);
+                    log.info("{} is started ! ", new Object[]{ddgraph.toString()});
+                    log.debug(ddgraph.getFeatures().toString());
                     break;
                 default:
-                    log.error("This target MappingDS blueprints implementation {} is not managed by MappingDS Blueprints !", new Object[]{impl});
-                    log.error("List of valid target MappingDS blueprints implementation : {}", new Object[]{BLUEPRINTS_IMPL_ODB});
+                    log.error("This target MappingDS blueprints implementation {} is not managed by MappingDS Blueprints !", new Object[]{blpImpl});
+                    log.error("List of valid target MappingDS blueprints implementation : {}, {}", new Object[]{BLUEPRINTS_IMPL_ODB, BLUEPRINTS_IMPL_N4J});
                     return false;
             }
 
             if (ddgraph instanceof KeyIndexableGraph) {
+                log.debug("Create index for {} ...", TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
                 ((KeyIndexableGraph) ddgraph).createKeyIndex(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID, Vertex.class);
+                log.debug("Create index for {} ...", TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY);
                 ((KeyIndexableGraph) ddgraph).createKeyIndex(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY, Vertex.class);
+                log.debug("Create index for {} ...", TopoDSGraphPropertyNames.DD_CLUSTER_NAME_KEY);
                 ((KeyIndexableGraph) ddgraph).createKeyIndex(TopoDSGraphPropertyNames.DD_CLUSTER_NAME_KEY, Vertex.class);
+                log.debug("Create index for {} ...", TopoDSGraphPropertyNames.DD_CONTAINER_PAGATE_KEY);
                 ((KeyIndexableGraph) ddgraph).createKeyIndex(TopoDSGraphPropertyNames.DD_CONTAINER_PAGATE_KEY, Vertex.class);
+                log.debug("Create index for {} ...", TopoDSGraphPropertyNames.DD_NODE_NAME_KEY);
                 ((KeyIndexableGraph) ddgraph).createKeyIndex(TopoDSGraphPropertyNames.DD_NODE_NAME_KEY, Vertex.class);
+                log.debug("Create index for {} ...", TopoDSGraphPropertyNames.DD_GATE_PAEP_KEY);
                 ((KeyIndexableGraph) ddgraph).createKeyIndex(TopoDSGraphPropertyNames.DD_GATE_PAEP_KEY, Vertex.class);
+                log.debug("Create index for {} ...", TopoDSGraphPropertyNames.DD_ENDPOINT_URL_KEY);
                 ((KeyIndexableGraph) ddgraph).createKeyIndex(TopoDSGraphPropertyNames.DD_ENDPOINT_URL_KEY, Vertex.class);
+                log.debug("Create index for {} ...", TopoDSGraphPropertyNames.DD_TRANSPORT_NAME_KEY);
                 ((KeyIndexableGraph) ddgraph).createKeyIndex(TopoDSGraphPropertyNames.DD_TRANSPORT_NAME_KEY, Vertex.class);
+                log.debug("Create index for {} ...", TopoDSGraphPropertyNames.DD_GRAPH_EDGE_ID);
                 ((KeyIndexableGraph) ddgraph).createKeyIndex(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_ID, Edge.class);
             }
+            log.debug("Retrieve CC Mapping ID manager vertex if exists...");
             idmanager = ddgraph.getVertices(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID, (long) 0).iterator().hasNext() ?
                                 ddgraph.getVertices(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID, (long) 0).iterator().next() : null;
             if (idmanager == null) {
-                log.info("Initialize CC Mapping Blueprints DB...");
+                log.debug("Initialize CC Mapping Blueprints DB...");
                 idmanager = ddgraph.addVertex(null);
                 idmanager.setProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID, (long) 0);
                 idmanager.setProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_MAXCUR_KEY, (long) 0);
                 idmanager.setProperty(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_MAXCUR_KEY, (long) 0);
                 autocommit();
             }
+            log.debug("CC Mapping blueprints DB is started !");
             return true;
         } else {
             return false;
@@ -319,7 +354,13 @@ public class TopoDSGraphDB {
             TopoDSCache.putEntityToCache(entity);
             entity.synchronizeToDB();
             autocommit();
-            log.debug("Vertex {} has been saved on graph {}", new Object[]{id, ddgraph.toString() + "(" + ddgraph.hashCode() + ")"});
+            log.debug("Vertex {} ({}:{}) has been saved on graph {}", new Object[]{entityV.toString(), TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID, id,
+                                                                                   ddgraph.toString() + "(" + ddgraph.hashCode() + ")"});
+            if (log.isTraceEnabled()) {
+                for (String propKey : entityV.getPropertyKeys()) {
+                    log.trace("Vertex {} property {}: {}", new Object[]{entityV.toString(),propKey,entityV.getProperty(propKey).toString()});
+                }
+            }
         } catch (Exception E) {
             log.error("Exception catched while saving vertex " + id + ".");
             E.printStackTrace();
@@ -337,10 +378,30 @@ public class TopoDSGraphDB {
             } else {
                 id = consumeEdgeFreeID();
             }
+            if (log.isTraceEnabled()) {
+                for (String propKey : source.getPropertyKeys()) {
+                    log.trace("Source vertex {} property {}: {}", new Object[]{source.toString(),propKey,source.getProperty(propKey).toString()});
+                }
+                for (String propKey : destination.getPropertyKeys()) {
+                    log.trace("Destination vertex {} property {}: {}", new Object[]{destination.toString(),propKey,destination.getProperty(propKey).toString()});
+                }
+            }
             edge = ddgraph.addEdge(null, source, destination, label);
             edge.setProperty(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_ID, id);
             autocommit();
-            log.debug("Edge {} has been saved on graph {}", new Object[]{id, ddgraph.toString() + "(" + ddgraph.hashCode() + ")"});
+            log.debug("Edge {} ({}:{}) has been saved on graph {}", new Object[]{edge.toString(), TopoDSGraphPropertyNames.DD_GRAPH_EDGE_ID, id,
+                                                                                        ddgraph.toString() + "(" + ddgraph.hashCode() + ")"});
+            if (log.isTraceEnabled()) {
+                for (String propKey : edge.getPropertyKeys()) {
+                    log.trace("Edge property {}: {}", new Object[]{edge.toString(),propKey,edge.getProperty(propKey).toString()});
+                }
+                for (String propKey : source.getPropertyKeys()) {
+                    log.trace("Source vertex {} property {}: {}", new Object[]{source.toString(),propKey,source.getProperty(propKey).toString()});
+                }
+                for (String propKey : destination.getPropertyKeys()) {
+                    log.trace("Destination vertex {} property {}: {}", new Object[]{destination.toString(),propKey,destination.getProperty(propKey).toString()});
+                }
+            }
         } catch (Exception E) {
             String msg = "Exception catched while saving edge " + id + ".";
             log.error(msg);

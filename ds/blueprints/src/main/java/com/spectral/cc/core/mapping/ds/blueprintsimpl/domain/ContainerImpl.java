@@ -19,10 +19,7 @@
 
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.domain;
 
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSCacheEntity;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSGraphDB;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSGraphDBException;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSGraphPropertyNames;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.*;
 import com.spectral.cc.core.mapping.ds.domain.Cluster;
 import com.spectral.cc.core.mapping.ds.domain.Container;
 import com.spectral.cc.core.mapping.ds.domain.Gate;
@@ -304,10 +301,8 @@ public class ContainerImpl implements Container, TopoDSCacheEntity {
 	}
 	
 	private void synchronizePropertyToDB(String key, Object value) {
-		if (containerVertex!=null) {
-			log.debug("Synchronize container property {}...", new Object[]{key});
-			containerVertex.setProperty(TopoDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY+"_"+key, value);
-		}
+		if (containerVertex!=null)
+            TopoDSGraphDBObjectProps.synchronizeObjectPropertyToDB(containerVertex,key,value,"container");
 	}
 	
 	private void synchronizePrimaryAdminGateToDB() {
@@ -430,14 +425,7 @@ public class ContainerImpl implements Container, TopoDSCacheEntity {
 			if (containerProperties==null) {
 				containerProperties=new HashMap<String,Object>();
 			}
-			Iterator<String> iterK = containerVertex.getPropertyKeys().iterator();
-			while (iterK.hasNext()) {
-				String key = iterK.next();
-				if (key.contains(TopoDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY)) {
-					String subkey = key.split(TopoDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY+"_")[1];
-					containerProperties.put(subkey, containerVertex.getProperty(key));
-				}
-			}
+            TopoDSGraphDBObjectProps.synchronizeObjectPropertyFromDB(containerVertex,containerProperties);
 		}
 	}	
 

@@ -36,9 +36,10 @@ public class TopoDSCfgLoader {
     private final static String TOPO_DS_INTERNAL_DEFAULT_CONF_FILE = "topo.ds.blueprints.cfg.json";
 
     private static final String TOPO_DS_CFG_FROM_RIM_BLUEPRINTS_IMPL_KEY = "topo.ds.blueprints.implementation";
-    private static final String TOPO_DS_CFG_FROM_RIM_BLUEPRINTS_URL_KEY = "topo.ds.blueprints.url";
+    private static final String TOPO_DS_CFG_FROM_RIM_BLUEPRINTS_URL_KEY  = "topo.ds.blueprints.url";
     private static final String TOPO_DS_CFG_FROM_RIM_BLUEPRINTS_USER_KEY = "topo.ds.blueprints.user";
     private static final String TOPO_DS_CFG_FROM_RIM_BLUEPRINTS_PAWD_KEY = "topo.ds.blueprints.password";
+    private static final String TOPO_DS_CFG_FROM_RIM_BLUEPRINTS_DIR_KEY  = "topo.ds.blueprints.directory";
 
     private final static ObjectMapper jsonMapper = new ObjectMapper();
 
@@ -59,13 +60,15 @@ public class TopoDSCfgLoader {
 
     public static boolean load(Dictionary<Object, Object> properties) {
         Object oimpl = properties.get(TOPO_DS_CFG_FROM_RIM_BLUEPRINTS_IMPL_KEY);
-        String impl = null;
-        Object ourl = properties.get(TOPO_DS_CFG_FROM_RIM_BLUEPRINTS_URL_KEY);
-        String url = null;
+        String impl  = null;
+        Object ourl  = properties.get(TOPO_DS_CFG_FROM_RIM_BLUEPRINTS_URL_KEY);
+        String url   = null;
         Object ouser = properties.get(TOPO_DS_CFG_FROM_RIM_BLUEPRINTS_USER_KEY);
-        String user = null;
-        Object opwd = properties.get(TOPO_DS_CFG_FROM_RIM_BLUEPRINTS_PAWD_KEY);
-        String pwd = null;
+        String user  = null;
+        Object opwd  = properties.get(TOPO_DS_CFG_FROM_RIM_BLUEPRINTS_PAWD_KEY);
+        String pwd   = null;
+        Object odir  = properties.get(TOPO_DS_CFG_FROM_RIM_BLUEPRINTS_DIR_KEY);
+        String dir   = null;
 
         if (oimpl != null && oimpl instanceof String) {
             impl = (String) oimpl;
@@ -79,16 +82,21 @@ public class TopoDSCfgLoader {
         if (opwd != null && opwd instanceof String) {
             pwd = (String) opwd;
         }
+        if (odir != null && odir instanceof String) {
+            dir = (String) odir;
+        }
 
-        if (impl != null && url != null) {
+        if (impl != null && (url != null || dir != null)) {
             defaultCfgEntity = new TopoDSCfgEntity();
             defaultCfgEntity.setBlueprintsImplementation(impl);
             defaultCfgEntity.setBlueprintsURL(url);
             defaultCfgEntity.setBlueprintsUser(user);
             defaultCfgEntity.setBlueprintsPassword(pwd);
+            defaultCfgEntity.setBlueprintsDirectory(dir);
             log.debug("{}", new Object[]{defaultCfgEntity.toString()});
             return true;
         } else {
+            log.error("impl ({}) and (url ({}) or dir({})) shouldn't be null!", new Object[]{impl,url,dir});
             return false;
         }
     }

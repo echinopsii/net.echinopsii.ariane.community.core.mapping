@@ -182,8 +182,18 @@ public class EndpointImpl implements Endpoint, TopoDSCacheEntity {
 
     private void synchronizePropertyToDB(String key, Object value) {
         if (endpointVertex != null && key != null && value != null) {
+            if (log.isTraceEnabled()) {
+                for (String propKey : endpointVertex.getPropertyKeys()) {
+                    log.trace("Vertex {} property {}: {}", new Object[]{endpointVertex.toString(),propKey,endpointVertex.getProperty(propKey).toString()});
+                }
+            }
             log.debug("Synchronize property {}...", new Object[]{key});
             endpointVertex.setProperty(TopoDSGraphPropertyNames.DD_ENDPOINT_PROPS_KEY + "_" + key, value);
+            if (log.isTraceEnabled()) {
+                for (String propKey : endpointVertex.getPropertyKeys()) {
+                    log.trace("Vertex {} property {}: {}", new Object[]{endpointVertex.toString(),propKey,endpointVertex.getProperty(propKey).toString()});
+                }
+            }
         }
     }
 
@@ -207,6 +217,11 @@ public class EndpointImpl implements Endpoint, TopoDSCacheEntity {
 
     private void synchronizeTwinEndpointToDB(EndpointImpl twin) throws TopoDSGraphDBException {
         if (this.endpointVertex != null && twin.getElement() != null) {
+            if (log.isTraceEnabled()) {
+                for (String propKey : endpointVertex.getPropertyKeys()) {
+                    log.trace("Vertex {} property {}: {}", new Object[]{endpointVertex.toString(),propKey,endpointVertex.getProperty(propKey).toString()});
+                }
+            }
             VertexQuery query = this.endpointVertex.query();
             query.direction(Direction.BOTH);
             query.labels(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_TWIN_LABEL_KEY);
@@ -217,6 +232,11 @@ public class EndpointImpl implements Endpoint, TopoDSCacheEntity {
             }
             log.debug("Synchronize endpoint twin endpoint {} to db...", new Object[]{twin.getEndpointID()});
             TopoDSGraphDB.createEdge(this.endpointVertex, twin.getElement(), TopoDSGraphPropertyNames.DD_GRAPH_EDGE_TWIN_LABEL_KEY);
+            if (log.isTraceEnabled()) {
+                for (String propKey : endpointVertex.getPropertyKeys()) {
+                    log.trace("Vertex {} property {}: {}", new Object[]{endpointVertex.toString(),propKey,endpointVertex.getProperty(propKey).toString()});
+                }
+            }
         }
     }
 

@@ -22,7 +22,7 @@ package com.spectral.cc.core.mapping.ds.blueprintsimpl;
 public final class TopoDSGraphPropertyNames {
 
     public final static String DD_GRAPH_VERTEX_ID = "TopoGraphVertexID";
-    public final static String DD_GRAPH_EDGE_ID = "TopoGraphVertexID";
+    public final static String DD_GRAPH_EDGE_ID = "TopoGraphEdgeID";
     public final static String DD_GRAPH_VERTEX_FREE_IDS_KEY = "TopoGraphFreeVertexIDs";
     public final static String DD_GRAPH_EDGE_FREE_IDS_KEY = "TopoGraphFreeEdgeIDs";
     public final static String DD_GRAPH_VERTEX_MAXCUR_KEY = "TopoGraphVertexMaxCursor";

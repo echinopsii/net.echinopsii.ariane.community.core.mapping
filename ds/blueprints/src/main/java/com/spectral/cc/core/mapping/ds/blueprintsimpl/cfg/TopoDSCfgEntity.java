@@ -21,6 +21,9 @@ package com.spectral.cc.core.mapping.ds.blueprintsimpl.cfg;
 
 public class TopoDSCfgEntity {
 	private String       blueprintsImplementation = null;
+
+    private String       blueprintsDirectory      = null;
+
 	private String       blueprintsURL            = null;
 	private String       blueprintsUser           = null;
 	private String       blueprintsPassword       = null;
@@ -49,8 +52,18 @@ public class TopoDSCfgEntity {
 	public void setBlueprintsPassword(String blueprintsPassword) {
 		this.blueprintsPassword = blueprintsPassword;
 	}
-	public String toString() {
-		return "blueprintsConfiguration: \n\t" + blueprintsImplementation + 
+
+    public String getBlueprintsDirectory() {
+        return blueprintsDirectory;
+    }
+
+    public void setBlueprintsDirectory(String blueprintsDirectory) {
+        this.blueprintsDirectory = blueprintsDirectory;
+    }
+
+    public String toString() {
+		return "blueprintsConfiguration: \n\t" + blueprintsImplementation +
+               " ; \n\tblueprintsDirectory " + blueprintsDirectory +
 			   " ; \n\tblueprintsURL: " + blueprintsURL + 
 			   " ; \n\tblueprintsUser: " + blueprintsUser +
 			   " ; \n\tblueprintsPasswd : " + ((blueprintsPassword!=null) ? "******" : "null");

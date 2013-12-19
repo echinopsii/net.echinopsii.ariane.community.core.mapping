@@ -382,8 +382,16 @@ public class NodeImpl implements Node, TopoDSCacheEntity {
             query.labels(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
             query.has(TopoDSGraphPropertyNames.DD_NODE_EDGE_ENDPT_KEY, true);
             for (Vertex vertex : query.vertices()) {
-                if ((long) vertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID) == endpoint.getEndpointID()) {
-                    return;
+                Object id = vertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+                if (id!=null && id instanceof Long) {
+                    if (((long) id) == endpoint.getEndpointID()) {
+                        return;
+                    }
+                } else {
+                    if (id == null)
+                        log.error("CONSISTENCY ERROR: Vertex {} has null property {} !", new Object[]{vertex.toString(),TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID});
+                    else
+                        log.error("CONSISTENCY ERROR: Vertex {} property {} is not a Long instance !", new Object[]{vertex.toString(),TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID});
                 }
             }
             log.debug("Synchronize node endpoint {} to db...", new Object[]{endpoint.getEndpointID()});
@@ -554,13 +562,23 @@ public class NodeImpl implements Node, TopoDSCacheEntity {
             query.has(TopoDSGraphPropertyNames.DD_NODE_EDGE_ENDPT_KEY, true);
             for (Vertex vertex : query.vertices()) {
                 EndpointImpl endpoint = null;
-                TopoDSCacheEntity entity = TopoDSGraphDB.getVertexEntity((long) vertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
-                if (entity != null) {
-                    if (entity instanceof EndpointImpl) {
-                        endpoint = (EndpointImpl) entity;
-                    } else {
-                        log.error("CONSISTENCY ERROR : entity {} is not a node.", nodeID);
+                log.debug("Get {} from vertex {}", new Object[]{TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID,vertex.toString()});
+                Object id = vertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+                if (id!=null && id instanceof Long) {
+                    log.debug("Get entity {} ...", new Object[]{id});
+                    TopoDSCacheEntity entity = TopoDSGraphDB.getVertexEntity((long)id);
+                    if (entity != null) {
+                        if (entity instanceof EndpointImpl) {
+                            endpoint = (EndpointImpl) entity;
+                        } else {
+                            log.error("CONSISTENCY ERROR : entity {} is not a node.", nodeID);
+                        }
                     }
+                } else {
+                    if (id==null)
+                        log.error("CONSISTENCY ERROR : Vertex {} has null property {} !", new Object[]{vertex.toString(),TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID});
+                    else
+                        log.error("CONSISTENCY ERROR : Vertex {} property {} is not a Long instance !", new Object[]{vertex.toString(),TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID});
                 }
                 if (endpoint != null) {
                     this.nodeEndpoints.add(endpoint);
