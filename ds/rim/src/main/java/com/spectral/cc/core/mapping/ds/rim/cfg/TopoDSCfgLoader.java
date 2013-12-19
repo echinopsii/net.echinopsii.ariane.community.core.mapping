@@ -37,9 +37,6 @@ public class TopoDSCfgLoader {
 
     private static final String TOPO_DS_RIM_CFG_BUNDLE_NAME_KEY = "topo.ds.bundle.name";
 
-    private static final String TOPO_DS_CFG_LOADER_MEMORY_BDL_NAME = "com.spectral.cc.core.mapping.ds.memory";
-    private static final String TOPO_DS_CFG_LOADER_MEMORY_CFG_FILE = "topo.ds.rim.mem.json";
-
     private static final String TOPO_DS_CFG_LOADER_BLUEPRINTS_BDL_NAME = "com.spectral.cc.core.mapping.ds.blueprints";
     private static final String TOPO_DS_CFG_LOADER_BLUEPRINTS_CFG_FILE = "topo.ds.rim.blueprints.json";
 
@@ -71,14 +68,9 @@ public class TopoDSCfgLoader {
                 defaultCfgEntity.setBundleName(bundleName);
                 defaultCfgEntity.setBundleCfgFile(TOPO_DS_CFG_LOADER_BLUEPRINTS_CFG_FILE);
                 break;
-            case TOPO_DS_CFG_LOADER_MEMORY_BDL_NAME:
-                defaultCfgEntity = new TopoDSCfgEntity();
-                defaultCfgEntity.setBundleName(bundleName);
-                defaultCfgEntity.setBundleCfgFile(TOPO_DS_CFG_LOADER_MEMORY_CFG_FILE);
-                break;
             default:
                 log.error("This target TopoDS bundle name {} is not managed by TopoDS RIM !", new Object[]{bundleName});
-                log.error("List of valid target TopoDS bundle name : {}, {}", new Object[]{TOPO_DS_CFG_LOADER_BLUEPRINTS_BDL_NAME, TOPO_DS_CFG_LOADER_MEMORY_BDL_NAME});
+                log.error("List of valid target TopoDS bundle name : {}, {}", new Object[]{TOPO_DS_CFG_LOADER_BLUEPRINTS_BDL_NAME});
                 return false;
         }
         log.debug(defaultCfgEntity.toString());

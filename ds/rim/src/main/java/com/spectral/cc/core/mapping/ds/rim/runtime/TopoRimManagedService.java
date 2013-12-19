@@ -50,39 +50,51 @@ public class TopoRimManagedService {
 
     @Validate
     public void validate() {
-        log.debug("{} is starting...", new Object[]{TOPO_DS_SERVICE_NAME});
+        log.debug("{} is started...", new Object[]{TOPO_DS_SERVICE_NAME});
+    }
+
+    private void stop() {
+        if (topoSceRegistration!=null) {
+            log.debug("Unregister TopoSce Service...");
+            topoSceRegistration.unregister();
+        }
+        TopoRIMRuntime.stop();
     }
 
     @Invalidate
     public void invalidate() {
         log.info("Stopping " + TOPO_DS_SERVICE_NAME);
-        if (topoSceRegistration!=null) {
-            log.debug("Unregister TopoSce Service...");
-            topoSceRegistration.unregister();
-            TopoRIMRuntime.stop();
-        }
+        stop();
         log.info(TOPO_DS_SERVICE_NAME + " has been succesfully stopped");
     }
 
     @Updated
-    public void updated(Dictionary properties) {
-        log.debug("{} has been succesfully updated with {}", new Object[]{TOPO_DS_SERVICE_NAME, properties.toString()});
+    public synchronized void updated(Dictionary properties) {
+        if (!Thread.currentThread().toString().contains("iPOJO")) {
+            log.warn("Another thread ({}) than iPOJO tries to get RIM updated ...", new Object[]{Thread.currentThread().toString()});
+            return;
+        }
+        log.debug("{} is being updated by {}", new Object[]{TOPO_DS_SERVICE_NAME, Thread.currentThread().toString()});
         if (properties != null) {
-            log.info("{} configuration updated ({})", new Object[]{TOPO_DS_SERVICE_NAME, properties.toString()});
-            TopoRIMRuntime.stop();
+            stop();
             try {
+                log.debug("Loading configuration : {}", new Object[]{properties.toString()});
                 TopoDSCfgLoader.load(properties);
             } catch (IOException e) {
-                // TODO Auto-generated catch block
+                log.error("Error while loading {} configuration ! Check following root cause :", new Object[]{TOPO_DS_SERVICE_NAME});
                 e.printStackTrace();
+                return;
             }
             try {
-                TopoRIMRuntime.start(properties);
-                this.topoSceRegistration = this.bundleContext.registerService(TopoSce.class.getName(), TopoRIMRuntime.getTopoSce(), null);
-                log.info(TOPO_DS_SERVICE_NAME + " has been succesfully started...");
+                log.debug("Starting {} runtime ...", new Object[]{TOPO_DS_SERVICE_NAME});
+                if (TopoRIMRuntime.start(properties)) {
+                    log.debug("Registring OSGI {} ...",TOPO_DS_SERVICE_NAME);
+                    this.topoSceRegistration = this.bundleContext.registerService(TopoSce.class.getName(), TopoRIMRuntime.getTopoSce(), null);
+                    log.debug("{} has been succesfully updated...",TOPO_DS_SERVICE_NAME);
+                }
             } catch (ClassNotFoundException | InstantiationException
                              | IllegalAccessException | IOException e) {
-                // TODO Auto-generated catch block
+                log.error("Error while starting and/or registring {} ! Check following root cause : ",TOPO_DS_SERVICE_NAME);
                 e.printStackTrace();
             }
         } else {
