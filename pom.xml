@@ -44,7 +44,6 @@
         <version.war.plugin>2.1.1</version.war.plugin>
         <version.ipojo.plugin>1.10.0</version.ipojo.plugin>
 
-
         <!-- Dependencies versions-->
 
         <!-- CC module dependencies -->
@@ -79,11 +78,6 @@
         <version.org.apache.ipojo>1.10.1</version.org.apache.ipojo>
         <version.org.slf4j>1.6.4</version.org.slf4j>
 
-
-        <!-- Graph DB -->
-        <version.com.orientdb>1.3.0</version.com.orientdb>
-        <version.com.tinkerpop.blueprints>2.3.0</version.com.tinkerpop.blueprints>
-
         <!-- OSGI Min/Max versions -->
         <version.osgimin.org.osgi.framework>1.5</version.osgimin.org.osgi.framework>
         <version.osgimax.org.osgi.framework>2</version.osgimax.org.osgi.framework>
@@ -94,10 +88,39 @@
         <version.osgimin.org.osgi.service.cm>1.3.0</version.osgimin.org.osgi.service.cm>
         <version.osgimax.org.osgi.service.cm>2</version.osgimax.org.osgi.service.cm>
 
+        <version.osgimin.com.tinkerpop.blueprints>2.3.0</version.osgimin.com.tinkerpop.blueprints>
+        <version.osgimax.com.tinkerpop.blueprints>2.5.0</version.osgimax.com.tinkerpop.blueprints>
+
         <!-- jUnit test version -->
         <version.junit.junit>4.11</version.junit.junit>
-
     </properties>
+
+    <!-- Graph DB versions -->
+    <profiles>
+        <profile>
+            <id>blueprints-24</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <!-- WARNING: OrientDB 1.5.1 is bugged with blueprints 2.4.0. Use Neo4j impl only -->
+                <com.tinkerpop.blueprints.version>2.4.0</com.tinkerpop.blueprints.version>
+                <version.osgi.com.orientdb>1.5.1</version.osgi.com.orientdb>
+                <version.osgi.com.neo4j>1.9.5</version.osgi.com.neo4j>
+                <com.tinkerpop.blueprints.blueprints-neo4j-graph.groupid>com.tinkerpop.blueprints.osgi</com.tinkerpop.blueprints.blueprints-neo4j-graph.groupid>
+            </properties>
+        </profile>
+        <profile>
+            <id>blueprints-23</id>
+            <properties>
+                <!-- WARNING: Neo4j has not been tested with blueprints 2.3.0. Use OrientDB impl only -->
+                <com.tinkerpop.blueprints.version>2.3.0</com.tinkerpop.blueprints.version>
+                <version.osgi.com.orientdb>1.3.0</version.osgi.com.orientdb>
+                <version.osgi.com.neo4j>1.9.M05</version.osgi.com.neo4j>
+                <com.tinkerpop.blueprints.blueprints-neo4j-graph.groupid>com.tinkerpop.blueprints</com.tinkerpop.blueprints.blueprints-neo4j-graph.groupid>
+            </properties>
+        </profile>
+    </profiles>
 
     <build>
         <pluginManagement>
@@ -234,36 +257,6 @@
             <version>${version.com.lowagie.itext}</version>
         </dependency>
         <dependency>
-            <groupId>com.orientechnologies</groupId>
-            <artifactId>orient-commons</artifactId>
-            <version>${version.com.orientdb}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.orientechnologies</groupId>
-            <artifactId>orientdb-core</artifactId>
-            <version>${version.com.orientdb}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.orientechnologies</groupId>
-            <artifactId>orientdb-nativeos</artifactId>
-            <version>${version.com.orientdb}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.orientechnologies</groupId>
-            <artifactId>orientdb-client</artifactId>
-            <version>${version.com.orientdb}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.orientechnologies</groupId>
-            <artifactId>orientdb-enterprise</artifactId>
-            <version>${version.com.orientdb}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>com.sun.faces</groupId>
             <artifactId>jsf-api</artifactId>
             <exclusions>
@@ -290,15 +283,22 @@
         <dependency>
             <groupId>com.tinkerpop.blueprints.osgi</groupId>
             <artifactId>blueprints-core</artifactId>
-            <version>${version.com.tinkerpop.blueprints}</version>
+            <version>${com.tinkerpop.blueprints.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.tinkerpop.blueprints.osgi</groupId>
             <artifactId>blueprints-orient-graph</artifactId>
-            <version>${version.com.tinkerpop.blueprints}</version>
+            <version>${com.tinkerpop.blueprints.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>${com.tinkerpop.blueprints.blueprints-neo4j-graph.groupid}</groupId>
+            <artifactId>blueprints-neo4j-graph</artifactId>
+            <version>${com.tinkerpop.blueprints.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!--
         <dependency>
             <groupId>com.tinkerpop</groupId>
             <artifactId>pipes-osgi</artifactId>
@@ -311,6 +311,7 @@
             <version>${version.com.tinkerpop.blueprints}</version>
             <scope>provided</scope>
         </dependency>
+        -->
         <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>jsr250-api</artifactId>

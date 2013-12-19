@@ -45,6 +45,13 @@
                 <configuration>
                     <instructions>
                         <Fragment-Host>com.spectral.cc.core.mapping.ds.rim</Fragment-Host>
+                        <Import-Package>
+                            com.orientechnologies.orient.core.config;version="${version.osgi.com.orientdb}";resolution:=optional,
+                            com.tinkerpop.blueprints.impls.neo4j;version="[${version.osgimin.com.tinkerpop.blueprints},${version.osgimax.com.tinkerpop.blueprints})";resolution:=optional,
+                            com.tinkerpop.blueprints.impls.orient;version="[${version.osgimin.com.tinkerpop.blueprints},${version.osgimax.com.tinkerpop.blueprints})";resolution:=optional,
+                            com.tinkerpop.blueprints;version="[${version.osgimin.com.tinkerpop.blueprints},${version.osgimax.com.tinkerpop.blueprints})",
+                            *
+                        </Import-Package>
                         <Export-Package>
                             com.spectral.cc.core.mapping.ds.blueprintsimpl.repository;version=${project.version},
                             com.spectral.cc.core.mapping.ds.blueprintsimpl.service;version=${project.version}
