@@ -27,6 +27,8 @@ import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.*;
 import com.tinkerpop.blueprints.*;
 import com.tinkerpop.blueprints.impls.neo4j.Neo4jGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,7 +95,8 @@ public class TopoDSGraphDB {
                     break;
                 case BLUEPRINTS_IMPL_N4J:
                     String directory = TopoDSCfgLoader.getDefaultCfgEntity().getBlueprintsDirectory();
-                    ddgraph = new Neo4jGraph(directory);
+                    GraphDatabaseService graphDb = new GraphDatabaseFactory().newEmbeddedDatabase( directory );
+                    ddgraph = new Neo4jGraph(graphDb);
                     log.info("{} is started ! ", new Object[]{ddgraph.toString()});
                     log.debug(ddgraph.getFeatures().toString());
                     break;

@@ -44,12 +44,13 @@
                 <artifactId>maven-bundle-plugin</artifactId>
                 <configuration>
                     <instructions>
-                        <Fragment-Host>com.spectral.cc.core.mapping.ds.rim</Fragment-Host>
                         <Import-Package>
                             com.orientechnologies.orient.core.config;version="${version.osgi.com.orientdb}";resolution:=optional,
                             com.tinkerpop.blueprints.impls.neo4j;version="[${version.osgimin.com.tinkerpop.blueprints},${version.osgimax.com.tinkerpop.blueprints})";resolution:=optional,
                             com.tinkerpop.blueprints.impls.orient;version="[${version.osgimin.com.tinkerpop.blueprints},${version.osgimax.com.tinkerpop.blueprints})";resolution:=optional,
                             com.tinkerpop.blueprints;version="[${version.osgimin.com.tinkerpop.blueprints},${version.osgimax.com.tinkerpop.blueprints})",
+                            org.neo4j.graphdb;version="${version.osgi.com.neo4j}";resolution:=optional,
+                            org.neo4j.graphdb.factory;version="${version.osgi.com.neo4j}";resolution:=optional,
                             *
                         </Import-Package>
                         <Export-Package>

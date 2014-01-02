@@ -46,8 +46,11 @@ public class TopoRIMRuntime {
             String topoDScfgFileName = "topo.ds.rim.cfg.json";
             TopoDSCfgLoader.load(new TopoRIMRuntime().getClass().getResourceAsStream("/" + topoDScfgFileName));
         }
+        log.debug("Get topo service from factory ...");
         topoSce = TopoSceFactory.make(TopoDSCfgLoader.getDefaultCfgEntity().getBundleName());
+        log.debug("Init topo service ...");
         if (topoSce.init(properties)) {
+            log.debug("Start topo service ...");
             if (topoSce.start()) {
                 started = true;
             } else {
@@ -56,6 +59,7 @@ public class TopoRIMRuntime {
         } else {
             log.error("A problem occured while initializing Main Mapping DS service...");
         }
+        log.debug("Topo service started...");
         return started;
     }
 

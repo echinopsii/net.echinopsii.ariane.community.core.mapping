@@ -69,9 +69,9 @@ public class TopoRimManagedService {
     }
 
     @Updated
-    public synchronized void updated(Dictionary properties) {
-        if (!Thread.currentThread().toString().contains("iPOJO")) {
-            log.warn("Another thread ({}) than iPOJO tries to get RIM updated ...", new Object[]{Thread.currentThread().toString()});
+    public synchronized void updated(final Dictionary properties) {
+        if (Thread.currentThread().toString().contains("iPOJO")) {
+            log.debug("iPOJO tries to get RIM updated but container configuration manager is prefered ...", new Object[]{Thread.currentThread().toString()});
             return;
         }
         log.debug("{} is being updated by {}", new Object[]{TOPO_DS_SERVICE_NAME, Thread.currentThread().toString()});
@@ -85,18 +85,26 @@ public class TopoRimManagedService {
                 e.printStackTrace();
                 return;
             }
-            try {
-                log.debug("Starting {} runtime ...", new Object[]{TOPO_DS_SERVICE_NAME});
-                if (TopoRIMRuntime.start(properties)) {
-                    log.debug("Registring OSGI {} ...",TOPO_DS_SERVICE_NAME);
-                    this.topoSceRegistration = this.bundleContext.registerService(TopoSce.class.getName(), TopoRIMRuntime.getTopoSce(), null);
-                    log.debug("{} has been succesfully updated...",TOPO_DS_SERVICE_NAME);
+
+            final Runnable serviceStarter = new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        log.debug("Starting {} runtime ...", new Object[]{TOPO_DS_SERVICE_NAME});
+                        if (TopoRIMRuntime.start(properties)) {
+                            log.debug("Registring OSGI {} ...",TOPO_DS_SERVICE_NAME);
+                            topoSceRegistration = bundleContext.registerService(TopoSce.class.getName(), TopoRIMRuntime.getTopoSce(), null);
+                            log.debug("{} has been succesfully updated...",TOPO_DS_SERVICE_NAME);
+                        }
+                    } catch (ClassNotFoundException | InstantiationException
+                                     | IllegalAccessException | IOException e) {
+                        log.error("Error while starting and/or registring {} ! Check following root cause : ",TOPO_DS_SERVICE_NAME);
+                        e.printStackTrace();
+                    }
                 }
-            } catch (ClassNotFoundException | InstantiationException
-                             | IllegalAccessException | IOException e) {
-                log.error("Error while starting and/or registring {} ! Check following root cause : ",TOPO_DS_SERVICE_NAME);
-                e.printStackTrace();
-            }
+            };
+            new Thread(serviceStarter).start();
+
         } else {
             log.error("Configuration error for service pid {}. NULL dictionnary...", new Object[]{TopoRimManagedService.class.getName()});
         }

@@ -25,16 +25,24 @@ package com.spectral.cc.core.mapping.ds.rim.factory.service;
 import com.spectral.cc.core.mapping.ds.rim.cfg.TopoDSCfgLoader;
 import com.spectral.cc.core.mapping.ds.rim.registry.TopoDSRegistry;
 import com.spectral.cc.core.mapping.ds.service.TopoSce;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TopoSceFactory {
+
+    private static final Logger log = LoggerFactory.getLogger(TopoSceFactory.class);
 		
 	public static TopoSce make(String bundleName_) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		TopoSce ret = null;
 		String topoClassName = TopoDSRegistry.getEntityFromRegistry(bundleName_).getTopoSceFactoryClassName();
+        log.debug("Topo class name to instanciate according bundle name : ({},{})", new Object[]{bundleName_,topoClassName});
 		ClassLoader loader = new TopoSceFactory().getClass().getClassLoader();
-		@SuppressWarnings("unchecked")
-		Class<? extends TopoSce> topoSceClass = (Class<? extends TopoSce>) loader.loadClass(topoClassName); 
+        log.debug("Class loader {} retrieved...", new Object[]{loader.toString()});
+        @SuppressWarnings("unchecked")
+		Class<? extends TopoSce> topoSceClass = (Class<? extends TopoSce>) loader.loadClass(topoClassName);
+        log.debug("Class {} from class loader has been retrieved...", new Object[]{topoClassName});
 		ret = topoSceClass.newInstance();
+        log.debug("New TopoSce instance has been built : ({},{})", new Object[]{topoClassName, (ret!=null)?ret.toString() : "null"});
 		return ret;
 	}
 	

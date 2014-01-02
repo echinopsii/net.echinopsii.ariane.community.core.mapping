@@ -34,8 +34,6 @@ import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
 
-//import java.io.File;
-
 @Path("/domain/endpoint")
 public class RESTEndpoint {
     private static final Logger log = LoggerFactory.getLogger(RESTEndpoint.class);

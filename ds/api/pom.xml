@@ -34,7 +34,6 @@
                 <artifactId>maven-bundle-plugin</artifactId>
                 <configuration>
                     <instructions>
-                        <Fragment-Host>com.spectral.cc.core.mapping.ds.rim</Fragment-Host>
                         <Export-Package>
                             com.spectral.cc.core.mapping.ds.domain;version=${project.version},
                             com.spectral.cc.core.mapping.ds.repository;version=${project.version},
