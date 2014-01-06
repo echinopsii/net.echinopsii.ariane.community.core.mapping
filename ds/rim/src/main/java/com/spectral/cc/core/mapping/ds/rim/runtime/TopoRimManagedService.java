@@ -69,9 +69,9 @@ public class TopoRimManagedService {
     }
 
     @Updated
-    public synchronized void updated(final Dictionary properties) {
-        if (Thread.currentThread().toString().contains("iPOJO")) {
-            log.debug("iPOJO tries to get RIM updated but container configuration manager is prefered ...", new Object[]{Thread.currentThread().toString()});
+    public void updated(final Dictionary properties) {
+        if (!Thread.currentThread().toString().contains("iPOJO")) {
+            log.debug("Container configuration manager tries to get RIM updated but iPOJO is prefered ...", new Object[]{Thread.currentThread().toString()});
             return;
         }
         log.debug("{} is being updated by {}", new Object[]{TOPO_DS_SERVICE_NAME, Thread.currentThread().toString()});
