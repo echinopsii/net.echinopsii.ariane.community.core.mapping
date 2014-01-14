@@ -32,6 +32,7 @@ define(
             var r          = null,
                 epURL      = JSONEndpointDesc.endpointURL,
                 epID       = JSONEndpointDesc.endpointID,
+                properties = JSONEndpointDesc.endpointProperties,
                 epLinks    = [],
                 epNode     = Node_,
                 epIsPushed = false,
@@ -39,7 +40,8 @@ define(
                 linkAvgY   = 0,
                 linkAvgT   = 0,
                 circle     = null,
-                color      = (epNode!=null) ? epNode.getColor() : Raphael.getColor(),
+                color      = ((properties.primaryApplication!=null && properties.primaryApplication.color!=null) ?
+                                        "#" + properties.primaryApplication.color :(epNode!=null) ? epNode.getColor() : Raphael.getColor()),
                 txt12      = params.endpoint_txtBxURLTitle,
                 txt10      = params.endpoint_txtBxURLDef,
                 label      = null,

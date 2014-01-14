@@ -78,10 +78,10 @@ public class TopoDSGraphDB {
                     String pwd = TopoDSCfgLoader.getDefaultCfgEntity().getBlueprintsPassword();
                     if (user != null && pwd != null) {
                         ddgraph = new OrientGraph(url, user, pwd);
-                        log.debug("Connected to OrientDB ({}@{})", new Object[]{user, url});
+                        log.info("Connected to OrientDB ({}@{})", new Object[]{user, url});
                     } else {
                         ddgraph = new OrientGraph(url);
-                        log.debug("Connected to OrientDB ({})", new Object[]{url});
+                        log.info("Connected to OrientDB ({})", new Object[]{url});
                     }
                     /*
                     ((OrientGraph)ddgraph).setUseLightweightEdges(false);

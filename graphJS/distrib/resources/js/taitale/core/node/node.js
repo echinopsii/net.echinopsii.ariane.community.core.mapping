@@ -36,7 +36,9 @@ define(
 
             var r             = null,
                 nodeContainer = container_,
-                color         = (nodeContainer!=null) ? nodeContainer.getColor() : Raphael.getColor(),
+                color         = ((properties.primaryApplication != null && properties.primaryApplication.color != null) ?
+                                            "#"+properties.primaryApplication.color :
+                                            (nodeContainer!=null) ? nodeContainer.getColor() : Raphael.getColor()),
                 nodeName      = null,
                 nodeDesc      = null,
                 nodeR         = null,

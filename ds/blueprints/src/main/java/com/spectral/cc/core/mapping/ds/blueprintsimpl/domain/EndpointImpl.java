@@ -19,10 +19,7 @@
 
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.domain;
 
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSCacheEntity;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSGraphDB;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSGraphDBException;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSGraphPropertyNames;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.*;
 import com.spectral.cc.core.mapping.ds.domain.Endpoint;
 import com.spectral.cc.core.mapping.ds.domain.Node;
 import com.tinkerpop.blueprints.*;
@@ -182,18 +179,8 @@ public class EndpointImpl implements Endpoint, TopoDSCacheEntity {
 
     private void synchronizePropertyToDB(String key, Object value) {
         if (endpointVertex != null && key != null && value != null) {
-            if (log.isTraceEnabled()) {
-                for (String propKey : endpointVertex.getPropertyKeys()) {
-                    log.trace("Vertex {} property {}: {}", new Object[]{endpointVertex.toString(),propKey,endpointVertex.getProperty(propKey).toString()});
-                }
-            }
             log.debug("Synchronize property {}...", new Object[]{key});
-            endpointVertex.setProperty(TopoDSGraphPropertyNames.DD_ENDPOINT_PROPS_KEY + "_" + key, value);
-            if (log.isTraceEnabled()) {
-                for (String propKey : endpointVertex.getPropertyKeys()) {
-                    log.trace("Vertex {} property {}: {}", new Object[]{endpointVertex.toString(),propKey,endpointVertex.getProperty(propKey).toString()});
-                }
-            }
+            TopoDSGraphDBObjectProps.synchronizeObjectPropertyToDB(endpointVertex, key, value, TopoDSGraphPropertyNames.DD_ENDPOINT_PROPS_KEY);
         }
     }
 
@@ -269,14 +256,7 @@ public class EndpointImpl implements Endpoint, TopoDSCacheEntity {
             if (endpointProperties == null) {
                 endpointProperties = new HashMap<String, Object>();
             }
-            Iterator<String> iterK = endpointVertex.getPropertyKeys().iterator();
-            while (iterK.hasNext()) {
-                String key = iterK.next();
-                if (key.contains(TopoDSGraphPropertyNames.DD_ENDPOINT_PROPS_KEY)) {
-                    String subkey = key.split(TopoDSGraphPropertyNames.DD_ENDPOINT_PROPS_KEY + "_")[1];
-                    endpointProperties.put(subkey, endpointVertex.getProperty(key));
-                }
-            }
+            TopoDSGraphDBObjectProps.synchronizeObjectPropertyFromDB(endpointVertex,endpointProperties,TopoDSGraphPropertyNames.DD_ENDPOINT_PROPS_KEY);
         }
     }
 

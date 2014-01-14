@@ -25,6 +25,7 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.spectral.cc.core.mapping.ds.domain.Endpoint;
 import com.spectral.cc.core.mapping.ds.domain.Node;
+import com.spectral.cc.core.mapping.main.ds.PropertiesJSON;
 import com.spectral.cc.core.mapping.main.runtime.TopoWSRuntime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,59 +50,11 @@ public class NodeJSON {
 
     private final static void nodeProps2JSON(Node node, JsonGenerator jgenerator)
     throws JsonGenerationException, IOException {
-        jgenerator.writeObjectFieldStart(ND_PRP_TOKEN);
-        Iterator<Entry<String, Object>> iterP = node.getNodeProperties().entrySet().iterator();
-        while (iterP.hasNext()) {
-            Entry<String, Object> current = iterP.next();
-            String objectName = current.getKey();
-            Object obj = current.getValue();
-            log.debug("node property {}", new Object[]{objectName});
-
-            if (obj instanceof String) {
-                jgenerator.writeStringField(objectName, (String) obj);
-            } else if (obj instanceof Boolean) {
-                jgenerator.writeBooleanField(objectName, (Boolean) obj);
-            } else if (obj instanceof Long) {
-                jgenerator.writeNumberField(objectName, (Long) obj);
-            } else if (obj instanceof Integer) {
-                jgenerator.writeNumberField(objectName, (Integer) obj);
-            } else if (obj instanceof HashMap<?, ?>) {
-                log.debug("node property {} value is an object", new Object[]{objectName});
-                jgenerator.writeObjectFieldStart(objectName);
-                @SuppressWarnings("unchecked")
-                HashMap<String, Object> hobj = (HashMap<String, Object>) obj;
-                Iterator<String> iterHK = hobj.keySet().iterator();
-                while (iterHK.hasNext()) {
-                    String key = iterHK.next();
-                    Object value = hobj.get(key);
-                    if (value instanceof String) {
-                        log.debug("Container property Object {} value {}:{}", new Object[]{objectName, key, (String) value});
-                        jgenerator.writeStringField(key, (String) value);
-                    } else if (value instanceof Long) {
-                        log.debug("Container property Object {} value {}:{}", new Object[]{objectName, key, (Long) value});
-                        jgenerator.writeNumberField(key, (Long) value);
-                    }
-                }
-                jgenerator.writeEndObject();
-            } else if (obj instanceof ArrayList<?>) {
-                jgenerator.writeArrayFieldStart(objectName);
-                @SuppressWarnings("unchecked")
-                ArrayList<Object> aobj = (ArrayList<Object>) obj;
-                Iterator<Object> iterAK = aobj.iterator();
-                while (iterAK.hasNext()) {
-                    Object value = iterAK.next();
-                    if (value instanceof String) {
-                        jgenerator.writeString((String) value);
-                    } else if (value instanceof Long) {
-                        jgenerator.writeNumber((Long) value);
-                    }
-                }
-                jgenerator.writeEndArray();
-            } else {
-                log.error("Node property {} type is not managed...", new Object[]{objectName});
-            }
+        if (node.getNodeProperties()!=null && node.getNodeProperties().size()!=0) {
+            jgenerator.writeObjectFieldStart(ND_PRP_TOKEN);
+            PropertiesJSON.propertiesToJSON(node.getNodeProperties(),jgenerator);
+            jgenerator.writeEndObject();
         }
-        jgenerator.writeEndObject();
     }
 
     public final static void node2MapJSON(Node node, JsonGenerator jgenerator) throws IOException {

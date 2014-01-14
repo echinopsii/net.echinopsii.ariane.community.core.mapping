@@ -302,7 +302,7 @@ public class ContainerImpl implements Container, TopoDSCacheEntity {
 	
 	private void synchronizePropertyToDB(String key, Object value) {
 		if (containerVertex!=null)
-            TopoDSGraphDBObjectProps.synchronizeObjectPropertyToDB(containerVertex,key,value,"container");
+            TopoDSGraphDBObjectProps.synchronizeObjectPropertyToDB(containerVertex,key,value,TopoDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY);
 	}
 	
 	private void synchronizePrimaryAdminGateToDB() {
@@ -425,7 +425,7 @@ public class ContainerImpl implements Container, TopoDSCacheEntity {
 			if (containerProperties==null) {
 				containerProperties=new HashMap<String,Object>();
 			}
-            TopoDSGraphDBObjectProps.synchronizeObjectPropertyFromDB(containerVertex,containerProperties);
+            TopoDSGraphDBObjectProps.synchronizeObjectPropertyFromDB(containerVertex,containerProperties,TopoDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY);
 		}
 	}	
 

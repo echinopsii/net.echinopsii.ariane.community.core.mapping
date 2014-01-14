@@ -26,17 +26,16 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.spectral.cc.core.mapping.ds.domain.Container;
 import com.spectral.cc.core.mapping.ds.domain.Gate;
 import com.spectral.cc.core.mapping.ds.domain.Node;
+import com.spectral.cc.core.mapping.main.ds.PropertiesJSON;
 import com.spectral.cc.core.mapping.main.runtime.TopoWSRuntime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map.Entry;
 
 public class ContainerJSON {
 
@@ -58,64 +57,7 @@ public class ContainerJSON {
         if (writeOPropsFieldStart) {
             jgenerator.writeObjectFieldStart(CT_PRP_TOKEN);
         }
-        if (props != null) {
-            log.debug("Read container properties {}", new Object[]{props.toString()});
-            Iterator<Entry<String, Object>> iterP = props.entrySet().iterator();
-            while (iterP.hasNext()) {
-                Entry<String, Object> current = iterP.next();
-                String objectName = current.getKey();
-                Object obj = current.getValue();
-                log.debug("Container property {}", new Object[]{objectName});
-                if (obj instanceof String) {
-                    jgenerator.writeStringField(objectName, (String) obj);
-                } else if (obj instanceof Boolean) {
-                    jgenerator.writeBooleanField(objectName, (Boolean) obj);
-                } else if (obj instanceof Long) {
-                    jgenerator.writeNumberField(objectName, (Long) obj);
-                } else if (obj instanceof Integer) {
-                    jgenerator.writeNumberField(objectName, (Integer) obj);
-                } else if (obj instanceof HashMap<?, ?>) {
-                    log.debug("Container property {} value is an object", new Object[]{objectName});
-                    jgenerator.writeObjectFieldStart(objectName);
-                    @SuppressWarnings("unchecked")
-                    HashMap<String, Object> hobj = (HashMap<String, Object>) obj;
-                    Iterator<String> iterHK = hobj.keySet().iterator();
-                    while (iterHK.hasNext()) {
-                        String key = iterHK.next();
-                        Object value = hobj.get(key);
-                        if (value instanceof String) {
-                            log.debug("Container property Object {} value {}:{}", new Object[]{objectName, key, (String) value});
-                            jgenerator.writeStringField(key, (String) value);
-                        } else if (value instanceof Long) {
-                            log.debug("Container property Object {} value {}:{}", new Object[]{objectName, key, (Long) value});
-                            jgenerator.writeNumberField(key, (Long) value);
-                        } else if (value instanceof Integer) {
-                            jgenerator.writeNumberField(key, (Integer) value);
-                            log.debug("Container property Object {} value {}:{}", new Object[]{objectName, key, (Integer) value});
-                        }
-                    }
-                    jgenerator.writeEndObject();
-                } else if (obj instanceof ArrayList<?>) {
-                    jgenerator.writeArrayFieldStart(objectName);
-                    @SuppressWarnings("unchecked")
-                    ArrayList<Object> aobj = (ArrayList<Object>) obj;
-                    Iterator<Object> iterAK = aobj.iterator();
-                    while (iterAK.hasNext()) {
-                        Object value = iterAK.next();
-                        if (value instanceof String) {
-                            jgenerator.writeString((String) value);
-                        } else if (value instanceof Long) {
-                            jgenerator.writeNumber((Long) value);
-                        } else if (value instanceof Integer) {
-                            jgenerator.writeNumber((Integer) value);
-                        }
-                    }
-                    jgenerator.writeEndArray();
-                } else {
-                    log.error("Container property {} type is not managed...", new Object[]{objectName});
-                }
-            }
-        }
+        PropertiesJSON.propertiesToJSON(props, jgenerator);
         if (writeOPropsFieldEnd) {
             jgenerator.writeEndObject();
         }

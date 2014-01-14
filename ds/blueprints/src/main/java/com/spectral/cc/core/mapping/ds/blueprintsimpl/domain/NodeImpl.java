@@ -19,10 +19,7 @@
 
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.domain;
 
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSCacheEntity;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSGraphDB;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSGraphDBException;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSGraphPropertyNames;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.*;
 import com.spectral.cc.core.mapping.ds.domain.Container;
 import com.spectral.cc.core.mapping.ds.domain.Endpoint;
 import com.spectral.cc.core.mapping.ds.domain.Node;
@@ -295,8 +292,8 @@ public class NodeImpl implements Node, TopoDSCacheEntity {
     private void synchronizePropertyToDB(String key, Object value) {
         if (this.nodeVertex != null && key != null && value != null) {
             log.debug("Synchronize node property {} to db...", new Object[]{key});
+            TopoDSGraphDBObjectProps.synchronizeObjectPropertyToDB(nodeVertex, key, value, TopoDSGraphPropertyNames.DD_NODE_PROPS_KEY);
         }
-        nodeVertex.setProperty(TopoDSGraphPropertyNames.DD_NODE_PROPS_KEY + "_" + key, value);
     }
 
     private void synchronizeContainerToDB() {
@@ -439,14 +436,7 @@ public class NodeImpl implements Node, TopoDSCacheEntity {
             if (nodeProperties == null) {
                 nodeProperties = new HashMap<String, Object>();
             }
-            Iterator<String> iterK = nodeVertex.getPropertyKeys().iterator();
-            while (iterK.hasNext()) {
-                String key = iterK.next();
-                if (key.contains(TopoDSGraphPropertyNames.DD_NODE_PROPS_KEY)) {
-                    String subkey = key.split(TopoDSGraphPropertyNames.DD_NODE_PROPS_KEY + "_")[1];
-                    nodeProperties.put(subkey, nodeVertex.getProperty(key));
-                }
-            }
+            TopoDSGraphDBObjectProps.synchronizeObjectPropertyFromDB(nodeVertex,nodeProperties,TopoDSGraphPropertyNames.DD_NODE_PROPS_KEY);
         }
     }
 

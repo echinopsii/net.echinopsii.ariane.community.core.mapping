@@ -29,7 +29,7 @@
                                 <h:panelGrid columns="4" cellpadding="5">
                                     <h:panelGroup>
                                         <span class="inputTitle">View</span><br/>
-                                        <p:selectOneButton id="viewSelector" value="#{userProfileController.preferences['mappingDisplayView']}">
+                                        <p:selectOneButton id="viewSelector" value="#{userProfileController.sessionPreferences['mappingDisplayView']}">
                                             <f:selectItem itemLabel="Infrastructure" itemValue="Infrastructure"/>
                                             <f:selectItem itemLabel="Component" itemValue="Component" />
                                             <f:selectItem itemLabel="Application" itemValue="Application" />
@@ -37,14 +37,14 @@
                                     </h:panelGroup>
                                     <h:panelGroup>
                                         <span class="inputTitle">Layout</span><br/>
-                                        <p:selectOneButton id="layoutSelector" widgetVar="layoutSelector" value="#{userProfileController.preferences['mappingDisplayLayout']}">
+                                        <p:selectOneButton id="layoutSelector" widgetVar="layoutSelector" value="#{userProfileController.sessionPreferences['mappingDisplayLayout']}">
                                             <f:selectItem itemLabel="Tree" itemValue="Tree" />
                                             <f:selectItem itemLabel="Network" itemValue="Network" />
                                         </p:selectOneButton>
                                     </h:panelGroup>
                                     <h:panelGroup>
                                         <span class="inputTitle">Mode</span>
-                                        <p:selectOneButton id="modeSelector" widgetVar="modeSelector" value="#{userProfileController.preferences['mappingDisplayMode']}">
+                                        <p:selectOneButton id="modeSelector" widgetVar="modeSelector" value="#{userProfileController.sessionPreferences['mappingDisplayMode']}">
                                             <f:selectItem itemLabel="Navigation" itemValue="Navigation"/>
                                             <f:selectItem itemLabel="Edition" itemValue="Edition" />
                                         </p:selectOneButton>

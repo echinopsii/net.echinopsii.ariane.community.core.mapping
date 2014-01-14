@@ -61,7 +61,7 @@
         <version.javax.el>2.2</version.javax.el>
         <version.javax.annotations.jsr250-api>1.0</version.javax.annotations.jsr250-api>
         <version.javax.faces.api>2.1</version.javax.faces.api>
-        <version.javax.servlet.jsp.jsp-api>2.1</version.javax.servlet.jsp.jsp-api>
+        <version.javax.servlet.jsp.jsp-api>2.2</version.javax.servlet.jsp.jsp-api>
         <version.javax.servlet.jstl>1.2</version.javax.servlet.jstl>
         <version.javax.servlet.servlet-api>2.5</version.javax.servlet.servlet-api>
         <version.org.apache.poi>3.9</version.org.apache.poi>

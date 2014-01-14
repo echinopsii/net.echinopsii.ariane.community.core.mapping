@@ -46,6 +46,11 @@ public class TopoDSCfgLoader {
 
     private static TopoDSCfgEntity defaultCfgEntity = null;
 
+    public static boolean isValid(final Dictionary properties) {
+        if (properties.get(TOPO_DS_RIM_CFG_BUNDLE_NAME_KEY)==null) return false;
+        else return true;
+    }
+
     public static boolean load(InputStream is) throws JsonParseException, JsonMappingException, IOException {
         jsonMapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
         defaultCfgEntity = jsonMapper.readValue(is, TopoDSCfgEntity.class);

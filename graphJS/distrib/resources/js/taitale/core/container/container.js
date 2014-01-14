@@ -59,7 +59,7 @@ define(
             var layoutData        = null;
 
             var r                 = null,
-                color             = Raphael.getColor(),
+                color             = (properties.supportTeam!=null && properties.supportTeam.color!=null) ? "#"+properties.supportTeam.color : Raphael.getColor(),
                 txtFont           = params.container_txtTitle,
                 X                 = x_,
                 Y                 = y_,

@@ -42,15 +42,15 @@ public class TopoRIMRuntime {
 
     public final static boolean start(Dictionary<Object, Object> properties) throws ClassNotFoundException, InstantiationException, IllegalAccessException, JsonParseException, JsonMappingException, IOException {
         if (TopoDSCfgLoader.getDefaultCfgEntity() == null) {
-            log.debug("Load configuration from internal conf...");
+            log.info("Load configuration from internal conf...");
             String topoDScfgFileName = "topo.ds.rim.cfg.json";
             TopoDSCfgLoader.load(new TopoRIMRuntime().getClass().getResourceAsStream("/" + topoDScfgFileName));
         }
-        log.debug("Get topo service from factory ...");
+        log.info("Get topo service from factory ...");
         topoSce = TopoSceFactory.make(TopoDSCfgLoader.getDefaultCfgEntity().getBundleName());
-        log.debug("Init topo service ...");
+        log.info("Init topo service ...");
         if (topoSce.init(properties)) {
-            log.debug("Start topo service ...");
+            log.info("Start topo service ...");
             if (topoSce.start()) {
                 started = true;
             } else {
@@ -59,7 +59,7 @@ public class TopoRIMRuntime {
         } else {
             log.error("A problem occured while initializing Main Mapping DS service...");
         }
-        log.debug("Topo service started...");
+        log.info("Topo service started...");
         return started;
     }
 

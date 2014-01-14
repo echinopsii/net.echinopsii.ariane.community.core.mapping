@@ -41,7 +41,8 @@ public class Registrator implements Runnable {
         //TODO : check a better way to start war after OSGI layer
         while(MainMenuRegistryConsumer.getInstance().getMainMenuEntityRegistry()==null || UserPreferencesRegistryConsumer.getInstance().getUserPreferencesRegistry()==null)
             try {
-                Thread.sleep(10);
+                log.warn("Portal main menu registry and/or portal user preference registry are missing to load {}. Sleep some times...", OsgiActivator.TOPO_WS_SERVICE_NAME);
+                Thread.sleep(10000);
             } catch (InterruptedException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
@@ -74,9 +75,9 @@ public class Registrator implements Runnable {
                     UserPreferenceEntityType.TYPE_USR_PREF_ENTITY_ONEBUTTON_SELECT,
                     "Define your prefered mode").addSelectValue("Navigation").addSelectValue("Edition").setFieldDefault("Navigation")
             );
+        UserPreferencesRegistryConsumer.getInstance().getUserPreferencesRegistry().registerUserPreferenceSection(
+                                        new UserPreferenceSection("bookmarkedDSL", "Manage your bookmarked DSL requests", UserPreferenceSectionType.TYPE_USR_PREF_SECTION_MAP));
         UserPreferencesRegistryConsumer.getInstance().getUserPreferencesRegistry().registerUserPreferenceSection(mappingDisplay);
-
-        UserPreferencesRegistryConsumer.getInstance().getUserPreferencesRegistry().registerUserPreferenceSection(new UserPreferenceSection("bookmarkedDSL", "Manage your bookmarked DSL requests", UserPreferenceSectionType.TYPE_USR_PREF_SECTION_MAP));
 
         log.debug("{} has registered its user properties entities", new Object[]{OsgiActivator.TOPO_WS_SERVICE_NAME});
     }
