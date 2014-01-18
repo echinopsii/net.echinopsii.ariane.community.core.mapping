@@ -41,8 +41,8 @@ public class Registrator implements Runnable {
         //TODO : check a better way to start war after OSGI layer
         while(MainMenuRegistryConsumer.getInstance().getMainMenuEntityRegistry()==null || UserPreferencesRegistryConsumer.getInstance().getUserPreferencesRegistry()==null)
             try {
-                log.warn("Portal main menu registry and/or portal user preference registry are missing to load {}. Sleep some times...", OsgiActivator.TOPO_WS_SERVICE_NAME);
-                Thread.sleep(10000);
+                log.info("Portal main menu registry and/or portal user preference registry are missing to load {}. Sleep some times...", OsgiActivator.TOPO_WS_SERVICE_NAME);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
