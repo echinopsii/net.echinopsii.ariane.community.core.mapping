@@ -66,6 +66,7 @@ public final class TopoDSGraphPropertyNames {
 
     public static final String DD_TYPE_TRANSPORT_VALUE = "com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.TransportImpl";
     public static final String DD_TRANSPORT_NAME_KEY = "transportName";
+    public static final String DD_TRANSPORT_PROPS_KEY = "transportProperties";
 
     public static final String DD_LINK_SOURCE_EP_KEY = "linkEndpointSource";
     public static final String DD_LINK_TARGET_EP_KEY = "linkEndpointTarget";

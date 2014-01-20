@@ -19,6 +19,8 @@
 
 package com.spectral.cc.core.mapping.ds.domain;
 
+import java.util.HashMap;
+
 public interface Transport {
 	public long   getTransportID();
 	
@@ -27,4 +29,8 @@ public interface Transport {
 	 */
 	public String getTransportName();
 	public void   setTransportName(String name);
+
+    public HashMap<String, Object> getTransportProperties();
+    public void                    setTransportProperty(String propertyKey, Object value);
+
 }

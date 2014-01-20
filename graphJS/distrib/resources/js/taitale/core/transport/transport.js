@@ -29,6 +29,7 @@ define(
         function transport(JSONTransportDesc) {
             var id            = JSONTransportDesc.transportID,
                 name          = JSONTransportDesc.transportName,
+                properties    = JSONTransportDesc.transportProperties,
                 isMoulticast  = name.contains("multicast"),
                 multicastAddr = (isMoulticast ? name.split("://")[1] : ""),
                 helper_       = new helper();
@@ -58,7 +59,7 @@ define(
                         }
                     }
                     if (multicastBus==null) {
-                        multicastBus = new multicastbus(id, multicastBusRegistry.length, localisation, multicastAddr);
+                        multicastBus = new multicastbus(id, multicastBusRegistry.length, localisation, multicastAddr, properties);
                         multicastBusRegistry.push(multicastBus);
                     }
                     return multicastBus;

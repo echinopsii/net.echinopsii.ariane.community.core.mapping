@@ -24,11 +24,12 @@ define(
         'taitale-helper'
     ],
     function (cylinder, helper) {
-        function multicastBus(tid, ridx, localisation, multicastAddr) {
+        function multicastBus(tid, ridx, localisation, multicastAddr, properties_) {
             var id            = tid*1000+ridx,
                 dcName        = localisation.getDatacenter().dc,
                 areaName      = localisation.getArea().marea,
                 multicastAddr = multicastAddr,
+                properties    = properties_,
                 helper_       = new helper(),
                 isInserted    = false;
 
@@ -113,8 +114,10 @@ define(
             };
 
             this.setTopLeftCoord = function(x,y) {
-                var centerX = x + long/ 2, centerY = y + diameter/2;
-                mbus = new cylinder(centerX,centerY,diameter,long,multicastAddr);
+                var centerX = x + long/ 2, centerY = y + diameter/2,
+                    title = (properties.busDescription != null) ? properties.busDescription + " " + multicastAddr : multicastAddr,
+                    color = (properties.primaryApplication != null) ? properties.primaryApplication.color : "000000";
+                mbus = new cylinder(centerX,centerY,diameter,long,title,color);
             };
 
             this.definedNodesPoz = function() {
@@ -122,7 +125,9 @@ define(
             };
 
             this.setCylinder = function(centerX,centerY) {
-                mbus = new cylinder(centerX,centerY,diameter,long,multicastAddr);
+                var title = (properties.busDescription != null) ? properties.busDescription + " " + multicastAddr : multicastAddr,
+                    color = (properties.primaryApplication != null) ? properties.primaryApplication.color : "000000";
+                mbus = new cylinder(centerX,centerY,diameter,long,title,color);
             };
 
             this.setMoveJail = function(minX, minY, maxX, maxY){

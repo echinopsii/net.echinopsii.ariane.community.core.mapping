@@ -25,28 +25,28 @@ define(
         'raphael.free_transform'
     ],
     function (Raphael,helper) {
-
-        function cylinder(centerX,centerY,d,h,title) {
+        function cylinder(centerX,centerY,d,h,title,color_) {
             var r       = null,
                 ctrX    = centerX,
                 ctrY    = centerY,
                 x       = ctrX - h/ 2,
                 y       = ctrY - d/ 2,
                 title_  = title,
+                color   = color_,
                 vcpath  =
-                [
-                    ["M", x, y],
-                    ["C", x+d/8, y, x+d/5, y-d/4, x+d/5, y-d/2],
-                    ["C", x+d/5, y-3*d/4, x+d/8, y-d, x, y-d],
-                    ["C", x-d/8, y-d, x-d/5, y-3*d/4, x-d/5, y-d/2],
-                    ["C", x-d/5, y-d/5, x-d/8, y, x, y],
-                    ["Z"],
-                    ["M", x, y],
-                    ["L", x+h, y],
-                    ["C", x+h+d/8, y, x+h+d/5, y-d/4, x+h+d/5, y-d/2],
-                    ["C", x+h+d/5, y-3*d/4, x+h+d/8, y-d, x+h, y-d],
-                    ["L", x,y-d]
-                ],
+                    [
+                        ["M", x, y],
+                        ["C", x+d/8, y, x+d/5, y-d/4, x+d/5, y-d/2],
+                        ["C", x+d/5, y-3*d/4, x+d/8, y-d, x, y-d],
+                        ["C", x-d/8, y-d, x-d/5, y-3*d/4, x-d/5, y-d/2],
+                        ["C", x-d/5, y-d/5, x-d/8, y, x, y],
+                        ["Z"],
+                        ["M", x, y],
+                        ["L", x+h, y],
+                        ["C", x+h+d/8, y, x+h+d/5, y-d/4, x+h+d/5, y-d/2],
+                        ["C", x+h+d/5, y-3*d/4, x+h+d/8, y-d, x+h, y-d],
+                        ["L", x,y-d]
+                    ],
                 translateForm="",
                 helper_ = new helper();
 
@@ -142,7 +142,7 @@ define(
                 },
                 cyMove = function(dx,dy) {
                     mover(this.tX,this.ox1,this.oy1,this.ox2,this.oy2,this.ox3,this.oy3,
-                          this.ox4,this.oy4,this.ox5,this.oy5,this.ox6,this.oy6,dx,dy);
+                        this.ox4,this.oy4,this.ox5,this.oy5,this.ox6,this.oy6,dx,dy);
                 },
                 cyUP   = function() {
                     upper();
@@ -167,7 +167,7 @@ define(
 
             this.mover = function(dx,dy) {
                 mover(this.exttX,this.extox1,this.extoy1,this.extox2,this.extoy2,this.extox3,this.extoy3,
-                      this.extox4,this.extoy4,this.extox5,this.extoy5,this.extox6,this.extoy6,dx,dy);
+                    this.extox4,this.extoy4,this.extox5,this.extoy5,this.extox6,this.extoy6,dx,dy);
             };
 
             this.uper = function() {
@@ -189,14 +189,14 @@ define(
 
             this.getBindingPoints = function() {
                 var ret =
-                [
-                    {circle:bindingPt1,x:bindingPt1X,y:bindingPt1Y},
-                    {circle:bindingPt2,x:bindingPt2X,y:bindingPt2Y},
-                    {circle:bindingPt3,x:bindingPt3X,y:bindingPt3Y},
-                    {circle:bindingPt4,x:bindingPt4X,y:bindingPt4Y},
-                    {circle:bindingPt5,x:bindingPt5X,y:bindingPt5Y},
-                    {circle:bindingPt6,x:bindingPt6X,y:bindingPt6Y}
-                ];
+                    [
+                        {circle:bindingPt1,x:bindingPt1X,y:bindingPt1Y},
+                        {circle:bindingPt2,x:bindingPt2X,y:bindingPt2Y},
+                        {circle:bindingPt3,x:bindingPt3X,y:bindingPt3Y},
+                        {circle:bindingPt4,x:bindingPt4X,y:bindingPt4Y},
+                        {circle:bindingPt5,x:bindingPt5X,y:bindingPt5Y},
+                        {circle:bindingPt6,x:bindingPt6X,y:bindingPt6Y}
+                    ];
                 return ret;
             };
 
@@ -218,25 +218,25 @@ define(
             };
 
             /*
-            this.getCylinderPath = function() {
-                return cylinder;
-            };
+             this.getCylinderPath = function() {
+             return cylinder;
+             };
 
-            this.getFreeTransform = function() {
-                return ft;
-            };
+             this.getFreeTransform = function() {
+             return ft;
+             };
 
-            this.plugFreeTransform = function() {
-                ft = r.freeTransform(cylinderR,{},ftCallback);
-                ft.setOpts({boundary: boundary});
-                ft.hideHandles({undrag: false})
-            };
+             this.plugFreeTransform = function() {
+             ft = r.freeTransform(cylinderR,{},ftCallback);
+             ft.setOpts({boundary: boundary});
+             ft.hideHandles({undrag: false})
+             };
 
-            this.unplugFreeTransform = function() {
-                if (ft!=null)
-                    ft.unplug();
-            };
-            */
+             this.unplugFreeTransform = function() {
+             if (ft!=null)
+             ft.unplug();
+             };
+             */
 
             this.getTopLeftCoords = function() {
                 return {x:bindingPt4X,y:bindingPt4Y};
@@ -246,17 +246,24 @@ define(
                 return (cylinder!=null);
             }
 
+            function delHexColor(c1, c2) {
+                var hexStr = (parseInt(c1, 16) - parseInt(c2, 16)).toString(16);
+                while (hexStr.length < 6) { hexStr = '0' + hexStr; } // Zero pad.
+                return hexStr;
+            }
+
             this.print = function(r_) {
                 if (r == null || (r != null && r_!=r)) {
                     r = r_;
-                    //fill: "#000", stroke: "#666", "stroke-width": 2, "fill-opacity": .7
+                    var fillColor   = "#"+color,
+                        strokeColor = "#" + delHexColor("fff000", color);
                     cylinder  = r.path(vcpath).attr(
                         {
-                            fill: '#000',"fill-opacity": '0.7',"fill-rule": 'evenodd',stroke:'#666',"stroke-width": '2',"stroke-linecap": 'butt',
+                            fill: fillColor,"fill-opacity": '0.7',"fill-rule": 'evenodd',stroke:strokeColor,"stroke-width": '2',"stroke-linecap": 'butt',
                             "stroke-linejoin": 'round',"stroke-miterlimit": '4',"stroke-dashoffset": '0',"stroke-opacity": '1'
                         });
                     cylinder.transform(translateForm);
-                    titleTxt   = r.text(centerX, centerY-d, title_).attr({'font-size': '14px', 'font-weight': 'bold', 'font-family': 'Arial', fill: "#ccc"});
+                    titleTxt   = r.text(centerX, centerY-d, title_).attr({'font-size': '14px', 'font-weight': 'bold', 'font-family': 'Arial', fill: strokeColor});
                     titleTxt.transform(translateForm);
                     bindingPt1 = r.circle(bindingPt1X,bindingPt1Y,0);
                     bindingPt2 = r.circle(bindingPt2X,bindingPt2Y,0);
@@ -271,6 +278,7 @@ define(
                 }
             };
         }
+
 
         return cylinder;
     });

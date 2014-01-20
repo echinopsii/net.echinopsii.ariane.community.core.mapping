@@ -23,13 +23,16 @@ package com.spectral.cc.core.mapping.main.ds.domain;
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.spectral.cc.core.mapping.ds.domain.Endpoint;
 import com.spectral.cc.core.mapping.ds.domain.Transport;
+import com.spectral.cc.core.mapping.main.ds.PropertiesJSON;
 import com.spectral.cc.core.mapping.main.runtime.TopoWSRuntime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -38,11 +41,23 @@ public class TransportJSON {
 
     public final static String TP_ID_TOKEN   = "transportID";
     public final static String TP_NAME_TOKEN = "transportName";
+    public final static String TP_PRP_TOKEN  = "transportProperties";
+
+    private final static void transportProps2JSON(Transport transport, JsonGenerator jgenerator)
+            throws JsonGenerationException, IOException {
+        HashMap<String, Object> props = transport.getTransportProperties();
+        if (props != null && props.size()!=0) {
+            jgenerator.writeObjectFieldStart(TP_PRP_TOKEN);
+            PropertiesJSON.propertiesToJSON(props, jgenerator);
+            jgenerator.writeEndObject();
+        }
+    }
 
     public final static void transport2JSON(Transport transport, JsonGenerator jgenerator) throws JsonGenerationException, IOException {
         jgenerator.writeStartObject();
         jgenerator.writeNumberField(TP_ID_TOKEN, transport.getTransportID());
         jgenerator.writeStringField(TP_NAME_TOKEN, transport.getTransportName());
+        transportProps2JSON(transport, jgenerator);
         jgenerator.writeEndObject();
     }
 

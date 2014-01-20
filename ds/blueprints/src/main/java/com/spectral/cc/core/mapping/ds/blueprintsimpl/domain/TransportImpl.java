@@ -20,16 +20,26 @@
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.domain;
 
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSCacheEntity;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSGraphDBObjectProps;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSGraphPropertyNames;
 import com.spectral.cc.core.mapping.ds.domain.Transport;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Iterator;
 
 public class TransportImpl implements Transport, TopoDSCacheEntity {
-	
+
+    private static final Logger log = LoggerFactory.getLogger(TransportImpl.class);
+
 	private long   transportID     = 0;
 	private String transportName   = null;	
 	private Vertex transportVertex = null;
+
+    private HashMap<String,Object> transportProperties = null;
 	
 	@Override
 	public long getTransportID() {
@@ -46,8 +56,25 @@ public class TransportImpl implements Transport, TopoDSCacheEntity {
 			synchronizeToDB();
 		}
 	}
-	
-	@Override
+
+    @Override
+    public HashMap<String, Object> getTransportProperties() {
+        return transportProperties;
+    }
+
+    @Override
+    public void setTransportProperty(String propertyKey, Object value) {
+        if (transportProperties == null)
+            transportProperties = new HashMap<String, Object>();
+        transportProperties.put(propertyKey,value);
+        synchronizePropertyToDB(propertyKey, value);
+        log.debug("Set transport {} property : ({},{})", new Object[]{this.transportID,
+                                                                             propertyKey,
+                                                                             this.transportProperties.get(propertyKey)});
+
+    }
+
+    @Override
 	public Vertex getElement() {
 		return this.transportVertex;
 	}
@@ -61,19 +88,57 @@ public class TransportImpl implements Transport, TopoDSCacheEntity {
 
 	@Override
 	public void synchronizeToDB() {
-		if (this.transportVertex!=null) {
-			this.transportVertex.setProperty(TopoDSGraphPropertyNames.DD_TRANSPORT_NAME_KEY, this.transportName);
-		}
+        synchronizeNameToDB();
+        synchronizePropertiesToDB();
 	}
+
+    private void synchronizeNameToDB() {
+        if (this.transportVertex!=null)
+            this.transportVertex.setProperty(TopoDSGraphPropertyNames.DD_TRANSPORT_NAME_KEY, this.transportName);
+    }
+
+    private void synchronizePropertiesToDB() {
+        if (transportProperties!=null && transportVertex!=null) {
+            Iterator<String> iterK = this.transportProperties.keySet().iterator();
+            while (iterK.hasNext()) {
+                String key = iterK.next();
+                Object value = transportProperties.get(key);
+                synchronizePropertyToDB(key, value);
+            }
+        }
+    }
+
+    private void synchronizePropertyToDB(String key, Object value) {
+        if (transportVertex!=null)
+            TopoDSGraphDBObjectProps.synchronizeObjectPropertyToDB(transportVertex, key, value, TopoDSGraphPropertyNames.DD_TRANSPORT_PROPS_KEY);
+    }
 
 	@Override
 	public void synchronizeFromDB() {
-		if (this.transportVertex!=null) { 
-			this.transportID   = this.transportVertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
-			this.transportName = this.transportVertex.getProperty(TopoDSGraphPropertyNames.DD_TRANSPORT_NAME_KEY);			
-		}
+        synchronizeIDFromDB();
+        synchronizeNameFromDB();
+        synchronizePropertiesFromDB();
 	}
-	
+
+    private void synchronizeIDFromDB() {
+        if (this.transportVertex!=null)
+            this.transportID = this.transportVertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+    }
+
+    private void synchronizeNameFromDB() {
+        if (this.transportVertex!=null)
+            this.transportName = this.transportVertex.getProperty(TopoDSGraphPropertyNames.DD_TRANSPORT_NAME_KEY);
+    }
+
+    private void synchronizePropertiesFromDB() {
+        if (transportVertex!=null) {
+            if (transportProperties==null) {
+                transportProperties=new HashMap<String,Object>();
+            }
+            TopoDSGraphDBObjectProps.synchronizeObjectPropertyFromDB(transportVertex,transportProperties,TopoDSGraphPropertyNames.DD_TRANSPORT_PROPS_KEY);
+        }
+    }
+
 	@Override
     public boolean equals(Object o) {
         if (this == o) return true;
