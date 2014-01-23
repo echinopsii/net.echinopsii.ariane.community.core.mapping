@@ -47,7 +47,7 @@ public class ContainerRepoImpl implements ContainerRepo<ContainerImpl> {
     @Override
     public void delete(ContainerImpl container) {
         TopoDSGraphDB.deleteEntity(container);
-        log.debug("Deleted endpoint {} from graph({}).", new Object[]{container.toString(), TopoDSGraphDB.getVertexMaxCursor()});
+        log.debug("Deleted container {} from graph({}).", new Object[]{container.toString(), TopoDSGraphDB.getVertexMaxCursor()});
     }
 
     @Override

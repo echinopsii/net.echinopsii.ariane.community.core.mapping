@@ -94,8 +94,6 @@ public class NodeImpl implements Node, TopoDSCacheEntity {
 
     @Override
     public void setNodeProperty(String propertyKey, Object value) {
-        //if (this.nodeProperties==null ||
-        //   (this.nodeProperties.get(propertyKey)!=null && !this.nodeProperties.get(propertyKey).equals(value))) {
         if (propertyKey != null && value != null) {
             if (this.nodeProperties == null) {
                 this.nodeProperties = new HashMap<String, Object>();
@@ -106,7 +104,6 @@ public class NodeImpl implements Node, TopoDSCacheEntity {
                                                                             propertyKey,
                                                                             this.nodeProperties.get(propertyKey)});
         }
-        //}
     }
 
     @Override
@@ -435,6 +432,8 @@ public class NodeImpl implements Node, TopoDSCacheEntity {
         if (this.nodeVertex != null) {
             if (nodeProperties == null) {
                 nodeProperties = new HashMap<String, Object>();
+            } else {
+                nodeProperties.clear();
             }
             TopoDSGraphDBObjectProps.synchronizeObjectPropertyFromDB(nodeVertex,nodeProperties,TopoDSGraphPropertyNames.DD_NODE_PROPS_KEY);
         }
@@ -478,6 +477,7 @@ public class NodeImpl implements Node, TopoDSCacheEntity {
             query.direction(Direction.OUT);
             query.labels(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
             query.has(TopoDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY, true);
+            this.nodeChildNodes.clear();
             for (Vertex vertex : query.vertices()) {
                 NodeImpl child = null;
                 TopoDSCacheEntity entity = TopoDSGraphDB.getVertexEntity((long) vertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
@@ -514,6 +514,7 @@ public class NodeImpl implements Node, TopoDSCacheEntity {
             VertexQuery query = nodeVertex.query();
             query.direction(Direction.BOTH);
             query.labels(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_TWIN_LABEL_KEY);
+            this.nodeTwinNodes.clear();
             for (Vertex vertex : query.vertices()) {
                 NodeImpl twin = null;
                 TopoDSCacheEntity entity = TopoDSGraphDB.getVertexEntity((long) vertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
@@ -550,6 +551,7 @@ public class NodeImpl implements Node, TopoDSCacheEntity {
             query.direction(Direction.OUT);
             query.labels(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
             query.has(TopoDSGraphPropertyNames.DD_NODE_EDGE_ENDPT_KEY, true);
+            this.nodeEndpoints.clear();
             for (Vertex vertex : query.vertices()) {
                 EndpointImpl endpoint = null;
                 log.debug("Get {} from vertex {}", new Object[]{TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID,vertex.toString()});

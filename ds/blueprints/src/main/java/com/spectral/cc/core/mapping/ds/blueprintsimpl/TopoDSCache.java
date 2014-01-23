@@ -31,9 +31,15 @@ import java.util.HashMap;
 public class TopoDSCache {
     private static HashMap<String, TopoDSCacheEntity> ddL2cache = new HashMap<String, TopoDSCacheEntity>();
 
-    protected static synchronized void synchronize() throws TopoDSGraphDBException {
+    protected static synchronized void synchronizeToDB() throws TopoDSGraphDBException {
         for (TopoDSCacheEntity entity : ddL2cache.values()) {
             entity.synchronizeToDB();
+        }
+    }
+
+    protected static synchronized void synchronizeFromDB() throws TopoDSGraphDBException {
+        for (TopoDSCacheEntity entity : ddL2cache.values()) {
+            entity.synchronizeFromDB();
         }
     }
 

@@ -164,6 +164,7 @@ public class ClusterImpl implements Cluster, TopoDSCacheEntity {
             query.direction(Direction.OUT);
             query.labels(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
             query.has(TopoDSGraphPropertyNames.DD_CLUSTER_EDGE_CONT_KEY, true);
+            this.clusterContainers.clear();
             for (Vertex vertex : query.vertices()) {
                 ContainerImpl cont = null;
                 TopoDSCacheEntity entity = TopoDSGraphDB.getVertexEntity((long) vertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));

@@ -86,8 +86,6 @@ public class EndpointImpl implements Endpoint, TopoDSCacheEntity {
 
     @Override
     public void setEndpointProperty(String propertyKey, Object value) {
-        //if (this.endpointProperties==null ||
-        //   (this.endpointProperties.get(propertyKey)!=null && !this.endpointProperties.get(propertyKey).equals(value))) {
         if (propertyKey != null && value != null) {
             if (endpointProperties == null) {
                 endpointProperties = new HashMap<String, Object>();
@@ -98,7 +96,6 @@ public class EndpointImpl implements Endpoint, TopoDSCacheEntity {
                                                                                 propertyKey,
                                                                                 this.endpointProperties.get(propertyKey)});
         }
-        //}
     }
 
     @Override
@@ -255,6 +252,8 @@ public class EndpointImpl implements Endpoint, TopoDSCacheEntity {
         if (endpointVertex != null) {
             if (endpointProperties == null) {
                 endpointProperties = new HashMap<String, Object>();
+            } else {
+                endpointProperties.clear();
             }
             TopoDSGraphDBObjectProps.synchronizeObjectPropertyFromDB(endpointVertex,endpointProperties,TopoDSGraphPropertyNames.DD_ENDPOINT_PROPS_KEY);
         }
@@ -282,6 +281,7 @@ public class EndpointImpl implements Endpoint, TopoDSCacheEntity {
             VertexQuery query = endpointVertex.query();
             query.direction(Direction.BOTH);
             query.labels(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_TWIN_LABEL_KEY);
+            this.endpointTwinEndpoints.clear();
             for (Vertex vertex : query.vertices()) {
                 EndpointImpl twin = null;
                 TopoDSCacheEntity entity = TopoDSGraphDB.getVertexEntity((long) vertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));

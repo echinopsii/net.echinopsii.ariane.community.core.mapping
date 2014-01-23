@@ -134,6 +134,8 @@ public class TransportImpl implements Transport, TopoDSCacheEntity {
         if (transportVertex!=null) {
             if (transportProperties==null) {
                 transportProperties=new HashMap<String,Object>();
+            } else {
+                transportProperties.clear();
             }
             TopoDSGraphDBObjectProps.synchronizeObjectPropertyFromDB(transportVertex,transportProperties,TopoDSGraphPropertyNames.DD_TRANSPORT_PROPS_KEY);
         }

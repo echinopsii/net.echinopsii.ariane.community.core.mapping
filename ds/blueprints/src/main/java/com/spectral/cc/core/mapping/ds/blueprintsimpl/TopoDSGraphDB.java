@@ -146,7 +146,7 @@ public class TopoDSGraphDB {
 
     public static void stop() {
         try {
-            TopoDSCache.synchronize();
+            TopoDSCache.synchronizeToDB();
         } catch (TopoDSGraphDBException E) {
             String msg = "Exception while synchronizing TopoDSCache...";
             E.printStackTrace();
@@ -428,6 +428,80 @@ public class TopoDSGraphDB {
             autorollback();
         }
         return entity;
+    }
+
+    private static TopoDSCacheEntity getEdgeEntity(Edge edge) {
+        long id = (long) edge.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_ID);
+        TopoDSCacheEntity ret = TopoDSCache.getCachedEntity("E" + id);
+        if (ret == null) {
+            if (edge.getLabel().equals(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY)) {
+                ret = new LinkImpl();
+                ret.setElement(edge);
+                TopoDSCache.putEntityToCache(ret);
+                ret.synchronizeFromDB();
+            }
+        }
+        return ret;
+    }
+
+    public static TopoDSCacheEntity getEdgeEntity(long id) {
+        log.debug("Get cache entity {} if exists ...", new Object[]{"E"+id});
+        TopoDSCacheEntity ret = TopoDSCache.getCachedEntity("E" + id);
+        if (ret == null) {
+            Edge edge = (ddgraph.getEdges(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_ID,id).iterator().hasNext() ?
+                                 ddgraph.getEdges(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_ID,id).iterator().next() : null);
+            if (edge!=null && edge.getLabel().equals(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY)) {
+                ret = new LinkImpl();
+                ret.setElement(edge);
+                TopoDSCache.putEntityToCache(ret);
+                ret.synchronizeFromDB();
+            }
+        }
+        return ret;
+    }
+
+    private static TopoDSCacheEntity getVertexEntity(Vertex vertex) {
+        long id = (long) vertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+        String vertexType = vertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY);
+        TopoDSCacheEntity ret = TopoDSCache.getCachedEntity("V" + id);
+        if (ret == null) {
+            if (vertexType != null) {
+                switch (vertexType) {
+                    case TopoDSGraphPropertyNames.DD_TYPE_CLUSTER_VALUE:
+                        ret = new ClusterImpl();
+                        break;
+                    case TopoDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE:
+                        ret = new ContainerImpl();
+                        break;
+                    case TopoDSGraphPropertyNames.DD_TYPE_NODE_VALUE:
+                        ret = new NodeImpl();
+                        break;
+                    case TopoDSGraphPropertyNames.DD_TYPE_GATE_VALUE:
+                        ret = new GateImpl();
+                        break;
+                    case TopoDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE:
+                        ret = new EndpointImpl();
+                        break;
+                    case TopoDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE:
+                        ret = new TransportImpl();
+                        break;
+                    default:
+                        break;
+                }
+            }
+            if (ret != null) {
+                ret.setElement(vertex);
+                TopoDSCache.putEntityToCache(ret);
+                ret.synchronizeFromDB();
+            }
+        }
+        log.debug("{} : {}", new Object[]{vertexType, ((vertexType.equals(TopoDSGraphPropertyNames.DD_TYPE_CLUSTER_VALUE)) ? ((ClusterImpl)ret).getClusterName() :
+                                                     ((vertexType.equals(TopoDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE)) ? ((ContainerImpl)ret).getContainerPrimaryAdminGateURL() :
+                                                     ((vertexType.equals(TopoDSGraphPropertyNames.DD_TYPE_NODE_VALUE)) ? ((NodeImpl)ret).getNodeName() :
+                                                     ((vertexType.equals(TopoDSGraphPropertyNames.DD_TYPE_GATE_VALUE)) ? ((GateImpl)ret).getNodeName() :
+                                                     ((vertexType.equals(TopoDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE)) ? ((EndpointImpl)ret).getEndpointURL() :
+                                                     ((vertexType.equals(TopoDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE)) ? ((TransportImpl)ret).getTransportName() :"!!!!"))))))});
+        return ret;
     }
 
     public static TopoDSCacheEntity getVertexEntity(long id) {
@@ -743,40 +817,64 @@ public class TopoDSGraphDB {
         return ret;
     }
 
+    private static void removeVertex(Vertex vertex) throws TopoDSGraphDBException {
+        long vertexID = (long) vertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+        ddgraph.removeVertex(vertex);
+        if (vertexID == getVertexMaxCursor()) {
+            decrementVertexMaxCursor();
+        } else {
+            addVertexFreeID(vertexID);
+        }
+    }
+
+    private static void removeEdge(Edge edge) throws TopoDSGraphDBException {
+        long edgeID = (long) edge.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_ID);
+        ddgraph.removeEdge(edge);
+        if (edgeID == getEdgeMaxCursor()) {
+            decrementEdgeMaxCursor();
+        } else {
+            addEdgeFreeID(edgeID);
+        }
+    }
+
     public static void deleteEntity(TopoDSCacheEntity entity) {
         Element elem = entity.getElement();
         try {
             if (elem != null) {
                 if (elem instanceof Vertex) {
                     Vertex vertex = (Vertex) elem;
-                    for (Edge edge : vertex.getEdges(Direction.BOTH, TopoDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY)) {
-                        long edgeID = (long) edge.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_ID);
-                        ddgraph.removeEdge(edge);
-                        if (edgeID == getEdgeMaxCursor()) {
-                            decrementEdgeMaxCursor();
-                        } else {
-                            addEdgeFreeID(edgeID);
-                        }
+                    for (Edge edge : vertex.getEdges(Direction.OUT, TopoDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY)) {
+                        Vertex ownedVertex = edge.getVertex(Direction.IN);
+                        deleteEntity(getVertexEntity(ownedVertex));
                     }
-                    long vertexID = (long) vertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
-                    ddgraph.removeVertex(vertex);
-                    if (vertexID == getVertexMaxCursor()) {
-                        decrementVertexMaxCursor();
-                    } else {
-                        addVertexFreeID(vertexID);
+
+                    for (Edge edge : vertex.getEdges(Direction.IN, TopoDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY)) {
+                        TopoDSCacheEntity owningEntity = getVertexEntity(edge.getVertex(Direction.OUT));
+                        removeEdge(edge);
+                        owningEntity.synchronizeFromDB();
                     }
+
+                    for (Edge edge : vertex.getEdges(Direction.BOTH, TopoDSGraphPropertyNames.DD_GRAPH_EDGE_TWIN_LABEL_KEY)) {
+                        TopoDSCacheEntity twinEntity ;
+                        Vertex v = edge.getVertex(Direction.OUT);
+                        if (!v.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID).equals(vertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID)))
+                            twinEntity = getVertexEntity(v);
+                        else
+                            twinEntity = getVertexEntity(edge.getVertex(Direction.IN));
+                        removeEdge(edge);
+                        twinEntity.synchronizeFromDB();
+                    }
+
+                    for (Edge edge : vertex.getEdges(Direction.BOTH, TopoDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY))
+                        deleteEntity(getEdgeEntity(edge));
+
+                    TopoDSCache.removeEntityFromCache(entity);
+                    removeVertex(vertex);
                 } else if (elem instanceof Edge) {
-                    Edge edge = (Edge) elem;
-                    long edgeID = (long) edge.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_ID);
-                    ddgraph.removeEdge(edge);
-                    if (edgeID == getEdgeMaxCursor()) {
-                        decrementEdgeMaxCursor();
-                    } else {
-                        addEdgeFreeID(edgeID);
-                    }
+                    TopoDSCache.removeEntityFromCache(entity);
+                    removeEdge((Edge) elem);
                 }
             }
-            TopoDSCache.removeEntityFromCache(entity);
             autocommit();
         } catch (Exception E) {
             log.error("Exception catched while deleting entity " + entity.getElement().getId() + "...");

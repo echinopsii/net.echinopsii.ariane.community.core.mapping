@@ -138,9 +138,7 @@ public class LinkImpl implements Link, TopoDSCacheEntity {
     public void setElement(Element edge) {
         this.linkEdge = (Edge) edge;
         this.linkID = this.linkEdge.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_ID);
-        log.debug("Link edge has been initialized ({}).", new Object[]{
-                                                                              this.linkEdge.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID)
-        });
+        log.debug("Link edge has been initialized ({}).", new Object[]{this.linkEdge.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_ID)});
     }
 
     @Override
@@ -254,6 +252,7 @@ public class LinkImpl implements Link, TopoDSCacheEntity {
 
     private void synchronizeSubLinksFromDB() {
         if (this.linkEdge != null) {
+            linkSubLinks.clear();
             for (String key : this.linkEdge.getPropertyKeys()) {
                 if (key.contains(TopoDSGraphPropertyNames.DD_LINK_SUBLINKS_KEY)) {
                     long subLinkID = this.linkEdge.getProperty(key);

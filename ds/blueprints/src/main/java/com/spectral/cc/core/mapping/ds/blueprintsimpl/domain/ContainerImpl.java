@@ -146,16 +146,13 @@ public class ContainerImpl implements Container, TopoDSCacheEntity {
 	
 	@Override
 	public void setContainerProperty(String propertyKey,Object value){
-		//if (this.containerProperties==null || 
-		//   (this.containerProperties.get(propertyKey)!=null && !this.containerProperties.get(propertyKey).equals(value))) {
-			if (containerProperties == null) 
-				containerProperties = new HashMap<String, Object>();
-			containerProperties.put(propertyKey,value);
-			synchronizePropertyToDB(propertyKey, value);
-			log.debug("Set container {} property : ({},{})", new Object[]{this.containerID,
-																		  propertyKey,
-																		  this.containerProperties.get(propertyKey)});
-		//}
+        if (containerProperties == null)
+            containerProperties = new HashMap<String, Object>();
+        containerProperties.put(propertyKey,value);
+        synchronizePropertyToDB(propertyKey, value);
+        log.debug("Set container {} property : ({},{})", new Object[]{this.containerID,
+                                                                             propertyKey,
+                                                                             this.containerProperties.get(propertyKey)});
 	}
 
 	@Override
@@ -424,7 +421,9 @@ public class ContainerImpl implements Container, TopoDSCacheEntity {
 		if (containerVertex!=null) {
 			if (containerProperties==null) {
 				containerProperties=new HashMap<String,Object>();
-			}
+			} else {
+                containerProperties.clear();
+            }
             TopoDSGraphDBObjectProps.synchronizeObjectPropertyFromDB(containerVertex,containerProperties,TopoDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY);
 		}
 	}	
@@ -465,6 +464,7 @@ public class ContainerImpl implements Container, TopoDSCacheEntity {
 			query.direction(Direction.OUT);
 			query.labels(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
 			query.has(TopoDSGraphPropertyNames.DD_CONTAINER_EDGE_NODE_KEY, true);
+            this.containerNodes.clear();
 			for (Vertex vertex : query.vertices()) {
 				NodeImpl node = null;
 				TopoDSCacheEntity entity = TopoDSGraphDB.getVertexEntity((long)vertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
@@ -501,6 +501,7 @@ public class ContainerImpl implements Container, TopoDSCacheEntity {
 			query.direction(Direction.OUT);
 			query.labels(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
 			query.has(TopoDSGraphPropertyNames.DD_CONTAINER_EDGE_GATE_KEY, true);
+            this.containerGates.clear();
 			for (Vertex vertex : query.vertices()) {
 				GateImpl gate = null;
 				TopoDSCacheEntity entity = TopoDSGraphDB.getVertexEntity((long)vertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
