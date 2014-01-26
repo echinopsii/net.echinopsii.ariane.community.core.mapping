@@ -3,5 +3,5 @@
  */ 
 {
 	"bundleName"     : "com.spectral.cc.core.mapping.ds.blueprints",
-	"bundleCfgFile"  : "topo.ds.rim.blueprints.json"
+	"bundleCfgFile"  : "mapping.ds.rim.blueprints.json"
 }

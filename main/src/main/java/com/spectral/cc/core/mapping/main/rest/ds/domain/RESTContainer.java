@@ -23,7 +23,7 @@ import com.spectral.cc.core.mapping.ds.domain.Container;
 import com.spectral.cc.core.mapping.ds.service.MappingSce;
 import com.spectral.cc.core.mapping.main.ds.domain.ContainerJSON;
 import com.spectral.cc.core.mapping.main.rest.ToolBox;
-import com.spectral.cc.core.mapping.main.runtime.TopoWSRuntime;
+import com.spectral.cc.core.mapping.main.runtime.MappingWSRuntime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,8 +41,8 @@ public class RESTContainer {
     @GET
     @Path("/{param}")
     public Response printContainerJSON(@PathParam("param") long id) {
-        MappingSce topo = TopoWSRuntime.getMappingSce();
-        Container cont = (Container) topo.getContainerSce().getContainer(id);
+        MappingSce mapping = MappingWSRuntime.getMappingSce();
+        Container cont = (Container) mapping.getContainerSce().getContainer(id);
         if (cont != null) {
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             try {
@@ -62,11 +62,11 @@ public class RESTContainer {
 
     @GET
     public Response printAllContainerJSON() {
-        MappingSce topo = TopoWSRuntime.getMappingSce();
+        MappingSce mapping = MappingWSRuntime.getMappingSce();
         String result = "";
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         try {
-            ContainerJSON.manyContainers2JSON((HashSet<Container>) topo.getContainerSce().getContainers(null), outStream);
+            ContainerJSON.manyContainers2JSON((HashSet<Container>) mapping.getContainerSce().getContainers(null), outStream);
             result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
             return Response.status(200).entity(result).build();
         } catch (Exception e) {

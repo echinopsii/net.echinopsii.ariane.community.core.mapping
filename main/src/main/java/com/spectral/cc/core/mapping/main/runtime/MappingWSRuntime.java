@@ -28,14 +28,14 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-public class TopoWSRuntime {
-    private static final Logger log = LoggerFactory.getLogger(TopoWSRuntime.class);
+public class MappingWSRuntime {
+    private static final Logger log = LoggerFactory.getLogger(MappingWSRuntime.class);
 
     private static MappingSce mappingSce = null;
     private static JsonFactory jFactory = new JsonFactory();
 
-    public final static void start(MappingSce topoService_) throws ClassNotFoundException, InstantiationException, IllegalAccessException, JsonParseException, JsonMappingException, IOException {
-        mappingSce = topoService_;
+    public final static void start(MappingSce mappingService_) throws ClassNotFoundException, InstantiationException, IllegalAccessException, JsonParseException, JsonMappingException, IOException {
+        mappingSce = mappingService_;
         if (mappingSce == null) {
             log.error("failed to get dependency services!");
         }

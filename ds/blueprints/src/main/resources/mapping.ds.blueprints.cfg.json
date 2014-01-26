@@ -1,7 +1,7 @@
 /**
- * TopoGraph Datastore Runtime Injectection Manager : 
- * provide a Topograph DS configuration parser, factories and registry to inject
- * Topo DS interface implementation dependancies.
+ * MappingGraph Datastore Runtime Injectection Manager :
+ * provide a Mappinggraph DS configuration parser, factories and registry to inject
+ * Mapping DS interface implementation dependancies.
  *   
  * Copyright (C) 2013  Mathilde Ffrench
  * 

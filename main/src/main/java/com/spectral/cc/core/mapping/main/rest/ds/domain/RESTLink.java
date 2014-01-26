@@ -23,7 +23,7 @@ import com.spectral.cc.core.mapping.ds.domain.Link;
 import com.spectral.cc.core.mapping.ds.service.MappingSce;
 import com.spectral.cc.core.mapping.main.ds.domain.LinkJSON;
 import com.spectral.cc.core.mapping.main.rest.ToolBox;
-import com.spectral.cc.core.mapping.main.runtime.TopoWSRuntime;
+import com.spectral.cc.core.mapping.main.runtime.MappingWSRuntime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,8 +43,8 @@ public class RESTLink {
     @GET
     @Path("/{param}")
     public Response printLinkJSON(@PathParam("param") long id) {
-        MappingSce topo = TopoWSRuntime.getMappingSce();
-        Link link = (Link) topo.getLinkSce().getLink(id);
+        MappingSce mapping = MappingWSRuntime.getMappingSce();
+        Link link = (Link) mapping.getLinkSce().getLink(id);
         if (link != null) {
             try {
                 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -64,11 +64,11 @@ public class RESTLink {
 
     @GET
     public Response printAllLinkJSON() {
-        MappingSce topo   = TopoWSRuntime.getMappingSce();
+        MappingSce mapping   = MappingWSRuntime.getMappingSce();
         String  result = "";
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         try {
-            LinkJSON.manyLinks2JSON((HashSet<Link>) topo.getLinkSce().getLinks(null), outStream);
+            LinkJSON.manyLinks2JSON((HashSet<Link>) mapping.getLinkSce().getLinks(null), outStream);
             result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
             return Response.status(200).entity(result).build();
         } catch (Exception e) {

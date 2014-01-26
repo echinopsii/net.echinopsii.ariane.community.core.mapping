@@ -26,17 +26,14 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.spectral.cc.core.mapping.ds.domain.Endpoint;
 import com.spectral.cc.core.mapping.ds.domain.Node;
 import com.spectral.cc.core.mapping.main.ds.PropertiesJSON;
-import com.spectral.cc.core.mapping.main.runtime.TopoWSRuntime;
+import com.spectral.cc.core.mapping.main.runtime.MappingWSRuntime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map.Entry;
 
 public class NodeJSON {
 
@@ -86,7 +83,7 @@ public class NodeJSON {
     }
 
     public final static void oneNode2JSON(Node node, ByteArrayOutputStream outStream) throws IOException {
-        JsonGenerator jgenerator = TopoWSRuntime.getjFactory().createJsonGenerator(outStream, JsonEncoding.UTF8);
+        JsonGenerator jgenerator = MappingWSRuntime.getjFactory().createJsonGenerator(outStream, JsonEncoding.UTF8);
         jgenerator.writeStartObject();
         node2JSON(node, jgenerator);
         jgenerator.writeEndObject();
@@ -94,7 +91,7 @@ public class NodeJSON {
     }
 
     public final static void manyNodes2JSON(HashSet<Node> nodes, ByteArrayOutputStream outStream) throws IOException {
-        JsonGenerator jgenerator = TopoWSRuntime.getjFactory().createJsonGenerator(outStream, JsonEncoding.UTF8);
+        JsonGenerator jgenerator = MappingWSRuntime.getjFactory().createJsonGenerator(outStream, JsonEncoding.UTF8);
         jgenerator.writeStartObject();
         jgenerator.writeArrayFieldStart("nodes");
         Iterator<Node> iterC = nodes.iterator();

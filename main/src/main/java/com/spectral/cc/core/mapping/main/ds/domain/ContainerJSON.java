@@ -27,7 +27,7 @@ import com.spectral.cc.core.mapping.ds.domain.Container;
 import com.spectral.cc.core.mapping.ds.domain.Gate;
 import com.spectral.cc.core.mapping.ds.domain.Node;
 import com.spectral.cc.core.mapping.main.ds.PropertiesJSON;
-import com.spectral.cc.core.mapping.main.runtime.TopoWSRuntime;
+import com.spectral.cc.core.mapping.main.runtime.MappingWSRuntime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -112,13 +112,13 @@ public class ContainerJSON {
     }
 
     public final static void oneContainer2JSON(Container cont, ByteArrayOutputStream outStream) throws IOException {
-        JsonGenerator jgenerator = TopoWSRuntime.getjFactory().createJsonGenerator(outStream, JsonEncoding.UTF8);
+        JsonGenerator jgenerator = MappingWSRuntime.getjFactory().createJsonGenerator(outStream, JsonEncoding.UTF8);
         ContainerJSON.container2JSON(cont, jgenerator);
         jgenerator.close();
     }
 
     public final static void manyContainers2JSON(HashSet<Container> conts, ByteArrayOutputStream outStream) throws IOException {
-        JsonGenerator jgenerator = TopoWSRuntime.getjFactory().createJsonGenerator(outStream, JsonEncoding.UTF8);
+        JsonGenerator jgenerator = MappingWSRuntime.getjFactory().createJsonGenerator(outStream, JsonEncoding.UTF8);
         jgenerator.writeStartObject();
         jgenerator.writeArrayFieldStart("containers");
         Iterator<Container> iterC = conts.iterator();

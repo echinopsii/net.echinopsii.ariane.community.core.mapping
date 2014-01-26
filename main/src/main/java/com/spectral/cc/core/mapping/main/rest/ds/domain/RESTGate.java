@@ -23,7 +23,7 @@ import com.spectral.cc.core.mapping.ds.domain.Gate;
 import com.spectral.cc.core.mapping.ds.service.MappingSce;
 import com.spectral.cc.core.mapping.main.ds.domain.GateJSON;
 import com.spectral.cc.core.mapping.main.rest.ToolBox;
-import com.spectral.cc.core.mapping.main.runtime.TopoWSRuntime;
+import com.spectral.cc.core.mapping.main.runtime.MappingWSRuntime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,8 +43,8 @@ public class RESTGate {
     @GET
     @Path("/{param}")
     public Response printGateJSON(@PathParam("param") long id) {
-        MappingSce topo = TopoWSRuntime.getMappingSce();
-        Gate gate = (Gate) topo.getGateSce().getGate(id);
+        MappingSce mapping = MappingWSRuntime.getMappingSce();
+        Gate gate = (Gate) mapping.getGateSce().getGate(id);
         if (gate != null) {
             try {
                 ByteArrayOutputStream outStream= new ByteArrayOutputStream();
@@ -64,11 +64,11 @@ public class RESTGate {
 
     @GET
     public Response printAllGateJSON() {
-        MappingSce topo = TopoWSRuntime.getMappingSce();
+        MappingSce mapping = MappingWSRuntime.getMappingSce();
         String result = "";
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         try {
-            GateJSON.manyGates2JSON((HashSet<Gate>) topo.getGateSce().getGates(null), outStream);
+            GateJSON.manyGates2JSON((HashSet<Gate>) mapping.getGateSce().getGates(null), outStream);
             result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
             return Response.status(200).entity(result).build();
         } catch (Exception e) {

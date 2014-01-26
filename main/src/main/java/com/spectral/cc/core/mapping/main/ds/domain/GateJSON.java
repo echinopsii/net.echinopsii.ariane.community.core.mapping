@@ -22,7 +22,7 @@ package com.spectral.cc.core.mapping.main.ds.domain;
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.spectral.cc.core.mapping.ds.domain.Gate;
-import com.spectral.cc.core.mapping.main.runtime.TopoWSRuntime;
+import com.spectral.cc.core.mapping.main.runtime.MappingWSRuntime;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -45,13 +45,13 @@ public class GateJSON {
     }
 
     public final static void oneGate2JSON(Gate gate, ByteArrayOutputStream outStream) throws IOException {
-        JsonGenerator jgenerator = TopoWSRuntime.getjFactory().createJsonGenerator(outStream, JsonEncoding.UTF8);
+        JsonGenerator jgenerator = MappingWSRuntime.getjFactory().createJsonGenerator(outStream, JsonEncoding.UTF8);
         gate2JSON(gate, jgenerator);
         jgenerator.close();
     }
 
     public final static void manyGates2JSON(HashSet<Gate> gates, ByteArrayOutputStream outStream) throws IOException {
-        JsonGenerator jgenerator = TopoWSRuntime.getjFactory().createJsonGenerator(outStream, JsonEncoding.UTF8);
+        JsonGenerator jgenerator = MappingWSRuntime.getjFactory().createJsonGenerator(outStream, JsonEncoding.UTF8);
         jgenerator.writeStartObject();
         jgenerator.writeArrayFieldStart("gates");
         Iterator<Gate> iterC = gates.iterator();

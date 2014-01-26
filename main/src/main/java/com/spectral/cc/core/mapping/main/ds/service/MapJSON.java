@@ -23,7 +23,7 @@ import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.spectral.cc.core.mapping.ds.domain.*;
 import com.spectral.cc.core.mapping.main.ds.domain.*;
-import com.spectral.cc.core.mapping.main.runtime.TopoWSRuntime;
+import com.spectral.cc.core.mapping.main.runtime.MappingWSRuntime;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -50,7 +50,7 @@ public class MapJSON {
                                               HashSet<Link> links, propsToInjectHolder lprps2Inject,
                                               HashSet<Transport> transports, propsToInjectHolder tprps2Inject,
                                               propsToInjectHolder mprps2Inject, ByteArrayOutputStream outStream) throws IOException {
-        JsonGenerator jgenerator = TopoWSRuntime.getjFactory().createJsonGenerator(outStream, JsonEncoding.UTF8);
+        JsonGenerator jgenerator = MappingWSRuntime.getjFactory().createJsonGenerator(outStream, JsonEncoding.UTF8);
         jgenerator.writeStartObject();
 
         jgenerator.writeArrayFieldStart(MAP_CONTAINERS_ARRAY);

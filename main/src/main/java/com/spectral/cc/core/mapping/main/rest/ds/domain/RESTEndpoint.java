@@ -23,7 +23,7 @@ import com.spectral.cc.core.mapping.ds.domain.Endpoint;
 import com.spectral.cc.core.mapping.ds.service.MappingSce;
 import com.spectral.cc.core.mapping.main.ds.domain.EndpointJSON;
 import com.spectral.cc.core.mapping.main.rest.ToolBox;
-import com.spectral.cc.core.mapping.main.runtime.TopoWSRuntime;
+import com.spectral.cc.core.mapping.main.runtime.MappingWSRuntime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,8 +41,8 @@ public class RESTEndpoint {
     @GET
     @Path("/{param}")
     public Response printEndpointJSON(@PathParam("param") long id) {
-        MappingSce topo = TopoWSRuntime.getMappingSce();
-        Endpoint endpoint = (Endpoint) topo.getEndpointSce().getEndpoint(id);
+        MappingSce mapping = MappingWSRuntime.getMappingSce();
+        Endpoint endpoint = (Endpoint) mapping.getEndpointSce().getEndpoint(id);
         if (endpoint != null) {
             try {
                 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -62,11 +62,11 @@ public class RESTEndpoint {
 
     @GET
     public Response printAllEndpointJSON() {
-        MappingSce topo = TopoWSRuntime.getMappingSce();
+        MappingSce mapping = MappingWSRuntime.getMappingSce();
         String result = "";
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         try {
-            EndpointJSON.manyEndpoints2JSON((HashSet<Endpoint>) topo.getEndpointSce().getEndpoints(null), outStream);
+            EndpointJSON.manyEndpoints2JSON((HashSet<Endpoint>) mapping.getEndpointSce().getEndpoints(null), outStream);
             result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
             return Response.status(200).entity(result).build();
         } catch (Exception e) {

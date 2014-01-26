@@ -41,7 +41,7 @@ public class Registrator implements Runnable {
         //TODO : check a better way to start war after OSGI layer
         while(MainMenuRegistryConsumer.getInstance().getMainMenuEntityRegistry()==null || UserPreferencesRegistryConsumer.getInstance().getUserPreferencesRegistry()==null)
             try {
-                log.info("Portal main menu registry and/or portal user preference registry are missing to load {}. Sleep some times...", OsgiActivator.TOPO_WS_SERVICE_NAME);
+                log.info("Portal main menu registry and/or portal user preference registry are missing to load {}. Sleep some times...", OsgiActivator.MAPPING_WS_SERVICE_NAME);
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -52,7 +52,7 @@ public class Registrator implements Runnable {
             OsgiActivator.mainPortalMainMenuEntityList.add(entity);
             MainMenuRegistryConsumer.getInstance().getMainMenuEntityRegistry().registerMainMenuEntity(entity);
 
-            log.debug("{} has registered its main menu items", new Object[]{OsgiActivator.TOPO_WS_SERVICE_NAME});
+            log.debug("{} has registered its main menu items", new Object[]{OsgiActivator.MAPPING_WS_SERVICE_NAME});
 
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -79,6 +79,6 @@ public class Registrator implements Runnable {
                                         new UserPreferenceSection("bookmarkedDSL", "Manage your bookmarked DSL requests", UserPreferenceSectionType.TYPE_USR_PREF_SECTION_MAP));
         UserPreferencesRegistryConsumer.getInstance().getUserPreferencesRegistry().registerUserPreferenceSection(mappingDisplay);
 
-        log.debug("{} has registered its user properties entities", new Object[]{OsgiActivator.TOPO_WS_SERVICE_NAME});
+        log.debug("{} has registered its user properties entities", new Object[]{OsgiActivator.MAPPING_WS_SERVICE_NAME});
     }
 }

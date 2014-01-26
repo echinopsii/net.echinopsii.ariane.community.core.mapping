@@ -1,7 +1,7 @@
 /**
- * TopoGraph Datastore Runtime Injectection Manager : 
- * provide a Topograph DS configuration parser, factories and registry to inject
- * Topo DS interface implementation dependancies.
+ * Mapping Graph Datastore Runtime Injectection Manager :
+ * provide a Mapping graph DS configuration parser, factories and registry to inject
+ * Mapping DS interface implementation dependancies.
  *   
  * Copyright (C) 2013  Mathilde Ffrench
  * 
@@ -18,8 +18,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */ 
- 
+
 {
-	"bundleName"     : "com.spectral.cc.core.mapping.ds.blueprints",
-	"bundleCfgFile"  : "topo.ds.rim.blueprints.json"
+	"blueprintsImplementation" : "OrientGraph",
+	"blueprintsURL"            : "memory:taitale"
 }

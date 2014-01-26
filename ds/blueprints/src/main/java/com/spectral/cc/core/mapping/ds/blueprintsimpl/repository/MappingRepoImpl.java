@@ -21,12 +21,12 @@ package com.spectral.cc.core.mapping.ds.blueprintsimpl.repository;
 
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDB;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.*;
-import com.spectral.cc.core.mapping.ds.repository.TopoRepo;
+import com.spectral.cc.core.mapping.ds.repository.MappingRepo;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class TopoRepoImpl implements TopoRepo<ContainerImpl, NodeImpl, GateImpl, EndpointImpl, LinkImpl, TransportImpl> {
+public class MappingRepoImpl implements MappingRepo<ContainerImpl, NodeImpl, GateImpl, EndpointImpl, LinkImpl, TransportImpl> {
 
     private ClusterRepoImpl clusterRepo = new ClusterRepoImpl();
     private ContainerRepoImpl containerRepo = new ContainerRepoImpl();

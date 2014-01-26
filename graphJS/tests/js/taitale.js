@@ -2,7 +2,7 @@
 // │ Taitale 0.0.1   - JavaScript Taitale Library                                         │ \\
 // │ Use Raphael.js                                                                       │ \\
 // │ -------------------------------------------------------------------------------------│ \\
-// │ Taitale - provide an infrastructure topology graph engine                            │ \\
+// │ Taitale - provide an infrastructure mapping graph engine                             │ \\
 // │ Copyright (C) 2013  Mathilde Ffrench												  │ \\
 // │ 																					  │ \\
 // │ This program is free software: you can redistribute it and/or modify                 │ \\

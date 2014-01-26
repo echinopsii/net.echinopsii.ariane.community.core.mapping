@@ -25,7 +25,7 @@ import org.osgi.util.tracker.ServiceTracker;
 
 public class OsgiServiceTracker implements Runnable {
 
-    private ServiceTracker topoSceTracker = null;
+    private ServiceTracker mappingSceTracker = null;
     private BundleContext context;
 
     public OsgiServiceTracker(BundleContext context_) {
@@ -34,23 +34,23 @@ public class OsgiServiceTracker implements Runnable {
 
     @Override
     public void run() {
-        topoSceTracker = new ServiceTracker(context, MappingSce.class.getName(), null);
+        mappingSceTracker = new ServiceTracker(context, MappingSce.class.getName(), null);
         try {
-            if (topoSceTracker != null) {
-                topoSceTracker.open();
-                MappingSce mappingSce = (MappingSce) topoSceTracker.waitForService(60000);
+            if (mappingSceTracker != null) {
+                mappingSceTracker.open();
+                MappingSce mappingSce = (MappingSce) mappingSceTracker.waitForService(60000);
                 if (mappingSce != null) {
-                    TopoWSRuntime.start(mappingSce);
-                    OsgiActivator.log.info(OsgiActivator.TOPO_WS_SERVICE_NAME + " has been succesfully started !");
+                    MappingWSRuntime.start(mappingSce);
+                    OsgiActivator.log.info(OsgiActivator.MAPPING_WS_SERVICE_NAME + " has been succesfully started !");
                 } else {
-                    OsgiActivator.log.warn(OsgiActivator.TOPO_WS_SERVICE_NAME + " was not able to find its dependencies services (waiting  60 seconds).");
+                    OsgiActivator.log.warn(OsgiActivator.MAPPING_WS_SERVICE_NAME + " was not able to find its dependencies services (waiting  60 seconds).");
                 }
             }
         } catch (Exception e) {
-            OsgiActivator.log.error(OsgiActivator.TOPO_WS_SERVICE_NAME + " failed to start !!!");
+            OsgiActivator.log.error(OsgiActivator.MAPPING_WS_SERVICE_NAME + " failed to start !!!");
         } finally {
-            if (topoSceTracker != null) {
-                topoSceTracker.close();
+            if (mappingSceTracker != null) {
+                mappingSceTracker.close();
             }
         }
     }

@@ -23,7 +23,7 @@ import com.spectral.cc.core.mapping.ds.domain.Node;
 import com.spectral.cc.core.mapping.ds.service.MappingSce;
 import com.spectral.cc.core.mapping.main.ds.domain.NodeJSON;
 import com.spectral.cc.core.mapping.main.rest.ToolBox;
-import com.spectral.cc.core.mapping.main.runtime.TopoWSRuntime;
+import com.spectral.cc.core.mapping.main.runtime.MappingWSRuntime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,8 +43,8 @@ public class RESTNode {
     @GET
     @Path("/{param}")
     public Response printNodeJSON(@PathParam("param") long id) {
-        MappingSce topo = TopoWSRuntime.getMappingSce();
-        Node node = (Node) topo.getNodeSce().getNode(id);
+        MappingSce mapping = MappingWSRuntime.getMappingSce();
+        Node node = (Node) mapping.getNodeSce().getNode(id);
         if (node != null) {
             try {
                 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -64,11 +64,11 @@ public class RESTNode {
 
     @GET
     public Response printAllNodeJSON() {
-        MappingSce topo = TopoWSRuntime.getMappingSce();
+        MappingSce mapping = MappingWSRuntime.getMappingSce();
         String result = "";
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         try {
-            NodeJSON.manyNodes2JSON((HashSet<Node>) topo.getNodeSce().getNodes(null), outStream);
+            NodeJSON.manyNodes2JSON((HashSet<Node>) mapping.getNodeSce().getNodes(null), outStream);
             result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
             return Response.status(200).entity(result).build();
         } catch (Exception e) {

@@ -23,7 +23,7 @@ import com.spectral.cc.core.mapping.ds.domain.*;
 
 import java.util.Set;
 
-public interface TopoRepo<C extends Container, N extends Node, G extends Gate, E extends Endpoint, L extends Link, T extends Transport> {
+public interface MappingRepo<C extends Container, N extends Node, G extends Gate, E extends Endpoint, L extends Link, T extends Transport> {
 
     public ClusterRepo<? extends Cluster> getClusterRepo();
 

@@ -23,7 +23,7 @@ import com.spectral.cc.core.mapping.ds.domain.Transport;
 import com.spectral.cc.core.mapping.ds.service.MappingSce;
 import com.spectral.cc.core.mapping.main.ds.domain.TransportJSON;
 import com.spectral.cc.core.mapping.main.rest.ToolBox;
-import com.spectral.cc.core.mapping.main.runtime.TopoWSRuntime;
+import com.spectral.cc.core.mapping.main.runtime.MappingWSRuntime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,8 +41,8 @@ public class RESTTransport {
     @GET
     @Path("/{param}")
     public Response printLinkJSON(@PathParam("param") long id) {
-        MappingSce topo = TopoWSRuntime.getMappingSce();
-        Transport transport = (Transport) topo.getTransportSce().getTransport(id);
+        MappingSce mapping = MappingWSRuntime.getMappingSce();
+        Transport transport = (Transport) mapping.getTransportSce().getTransport(id);
         if (transport != null) {
             try {
                 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -62,11 +62,11 @@ public class RESTTransport {
 
     @GET
     public Response printAllTransportJSON() {
-        MappingSce topo = TopoWSRuntime.getMappingSce();
+        MappingSce mapping = MappingWSRuntime.getMappingSce();
         String result = "";
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         try {
-            TransportJSON.manyTransports2JSON((HashSet<Transport>) topo.getTransportSce().getTransports(null), outStream);
+            TransportJSON.manyTransports2JSON((HashSet<Transport>) mapping.getTransportSce().getTransports(null), outStream);
             result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
             return Response.status(200).entity(result).build();
         } catch (Exception e) {

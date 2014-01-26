@@ -29,22 +29,22 @@ import java.util.ArrayList;
 
 public class OsgiActivator implements BundleActivator {
 
-    protected static final String TOPO_WS_SERVICE_NAME = "Mapping Web Service";
+    protected static final String MAPPING_WS_SERVICE_NAME = "Mapping Web Service";
     protected static final Logger log = LoggerFactory.getLogger(OsgiActivator.class);
 
     protected static ArrayList<MainMenuEntity> mainPortalMainMenuEntityList = new ArrayList<MainMenuEntity>() ;
 
     @Override
     public void start(BundleContext context) throws Exception {
-        log.info("Starting " + TOPO_WS_SERVICE_NAME);
+        log.info("Starting " + MAPPING_WS_SERVICE_NAME);
         new Thread(new OsgiServiceTracker(context)).start();
         new Thread(new Registrator()).start();
     }
 
     @Override
     public void stop(BundleContext context) throws Exception {
-        log.info("Stopping " + TOPO_WS_SERVICE_NAME);
-        TopoWSRuntime.stop();
-        log.info(TOPO_WS_SERVICE_NAME + " has been succesfully stopped");
+        log.info("Stopping " + MAPPING_WS_SERVICE_NAME);
+        MappingWSRuntime.stop();
+        log.info(MAPPING_WS_SERVICE_NAME + " has been succesfully stopped");
     }
 }
