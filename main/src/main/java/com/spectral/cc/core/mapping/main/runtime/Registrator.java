@@ -68,7 +68,7 @@ public class Registrator implements Runnable {
                 new UserPreferenceEntity(
                     "mappingDisplayView",
                     UserPreferenceEntityType.TYPE_USR_PREF_ENTITY_ONEBUTTON_SELECT,
-                    "Define your prefered view").addSelectValue("Infrastructure").addSelectValue("Component").addSelectValue("Application").setFieldDefault("Infrastructure")).
+                    "Define your prefered view").addSelectValue("Component").addSelectValue("Cluster").addSelectValue("Application").setFieldDefault("Component")).
             addEntity(
                 new UserPreferenceEntity(
                     "mappingDisplayMode",
