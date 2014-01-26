@@ -24,7 +24,7 @@ import com.spectral.cc.core.mapping.ds.domain.Endpoint;
 import com.spectral.cc.core.mapping.ds.domain.Link;
 import com.spectral.cc.core.mapping.ds.domain.Node;
 import com.spectral.cc.core.mapping.ds.domain.Transport;
-import com.spectral.cc.core.mapping.ds.service.TopoSce;
+import com.spectral.cc.core.mapping.ds.service.MappingSce;
 import com.spectral.cc.core.mapping.main.ds.service.MapJSON;
 import com.spectral.cc.core.mapping.main.rest.ToolBox;
 import com.spectral.cc.core.mapping.main.runtime.TopoWSRuntime;
@@ -46,7 +46,7 @@ public class RESTMap {
     @GET
     @Path("/all")
     public Response printAllMapJSON() {
-        TopoSce topo = TopoWSRuntime.getTopoSce();
+        MappingSce topo = TopoWSRuntime.getMappingSce();
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         try {
             MapJSON.allMap2JSON((HashSet<Container>) topo.getContainerSce().getContainers(null),

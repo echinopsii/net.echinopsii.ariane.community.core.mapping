@@ -19,7 +19,7 @@
 
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.repository;
 
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSGraphDB;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDB;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.*;
 import com.spectral.cc.core.mapping.ds.repository.TopoRepo;
 
@@ -37,7 +37,7 @@ public class TopoRepoImpl implements TopoRepo<ContainerImpl, NodeImpl, GateImpl,
     private TransportRepoImpl transportRepo = new TransportRepoImpl();
 
     public void clear() {
-        TopoDSGraphDB.clear();
+        MappingDSGraphDB.clear();
     }
 
     public ClusterRepoImpl getClusterRepo() {
@@ -71,7 +71,7 @@ public class TopoRepoImpl implements TopoRepo<ContainerImpl, NodeImpl, GateImpl,
     @Override
     public NodeImpl findNodeByName(ContainerImpl cont, String name) {
         NodeImpl ret = null;
-        for (NodeImpl node : TopoDSGraphDB.getIndexedNodes(name)) {
+        for (NodeImpl node : MappingDSGraphDB.getIndexedNodes(name)) {
             if (node.getNodeContainer().equals(cont)) {
                 ret = node;
                 break;
@@ -84,7 +84,7 @@ public class TopoRepoImpl implements TopoRepo<ContainerImpl, NodeImpl, GateImpl,
     public NodeImpl findNodeContainingSubnode(ContainerImpl container,
                                               NodeImpl node) {
         NodeImpl ret = null;
-        for (NodeImpl pnode : TopoDSGraphDB.getNodes()) {
+        for (NodeImpl pnode : MappingDSGraphDB.getNodes()) {
             if (pnode.getNodeContainer().equals(container)) {
                 for (NodeImpl cnode : pnode.getNodeChildNodes()) {
                     if (cnode.equals(node)) {
@@ -101,7 +101,7 @@ public class TopoRepoImpl implements TopoRepo<ContainerImpl, NodeImpl, GateImpl,
     public Set<NodeImpl> findNodesInParentNode(ContainerImpl container,
                                                NodeImpl node) {
         Set<NodeImpl> ret = new HashSet<NodeImpl>();
-        for (NodeImpl cnode : TopoDSGraphDB.getNodes()) {
+        for (NodeImpl cnode : MappingDSGraphDB.getNodes()) {
             if (cnode.getNodeContainer().equals(container) && cnode.getNodeParentNode().equals(node)) {
                 ret.add(cnode);
             }
@@ -117,7 +117,7 @@ public class TopoRepoImpl implements TopoRepo<ContainerImpl, NodeImpl, GateImpl,
     @Override
     public Set<LinkImpl> findLinksBySourceEP(EndpointImpl endpoint) {
         Set<LinkImpl> ret = new HashSet<LinkImpl>();
-        for (LinkImpl link : TopoDSGraphDB.getLinks()) {
+        for (LinkImpl link : MappingDSGraphDB.getLinks()) {
             if (link.getLinkEndpointSource().equals(endpoint)) {
                 ret.add(link);
             }
@@ -128,7 +128,7 @@ public class TopoRepoImpl implements TopoRepo<ContainerImpl, NodeImpl, GateImpl,
     @Override
     public Set<LinkImpl> findLinksByDestinationEP(EndpointImpl endpoint) {
         Set<LinkImpl> ret = new HashSet<LinkImpl>();
-        for (LinkImpl link : TopoDSGraphDB.getLinks()) {
+        for (LinkImpl link : MappingDSGraphDB.getLinks()) {
             if (link.getLinkEndpointTarget()!=null /*else target is multicast transport*/ &&
                         link.getLinkEndpointTarget().equals(endpoint)) {
                 ret.add(link);
@@ -140,7 +140,7 @@ public class TopoRepoImpl implements TopoRepo<ContainerImpl, NodeImpl, GateImpl,
     @Override
     public LinkImpl findLinkBySourceEPandDestinationEP(EndpointImpl esource, EndpointImpl edest) {
         LinkImpl ret = null;
-        for (LinkImpl link : TopoDSGraphDB.getLinks()) {
+        for (LinkImpl link : MappingDSGraphDB.getLinks()) {
             if (link.getLinkEndpointSource() != null && link.getLinkEndpointTarget() != null &&
                         link.getLinkEndpointSource().equals(esource) && link.getLinkEndpointTarget().equals(edest)) {
                 ret = link;
@@ -153,7 +153,7 @@ public class TopoRepoImpl implements TopoRepo<ContainerImpl, NodeImpl, GateImpl,
     @Override
     public LinkImpl findMulticastLinkBySourceEPandTransport(EndpointImpl esource, TransportImpl transport) {
         LinkImpl ret = null;
-        for (LinkImpl link : TopoDSGraphDB.getLinks()) {
+        for (LinkImpl link : MappingDSGraphDB.getLinks()) {
             if (link.getLinkEndpointSource() != null && link.getLinkEndpointTarget() == null && link.getLinkTransport() != null &&
                         link.getLinkEndpointSource().equals(esource) && link.getLinkTransport().equals(transport)) {
                 ret = link;

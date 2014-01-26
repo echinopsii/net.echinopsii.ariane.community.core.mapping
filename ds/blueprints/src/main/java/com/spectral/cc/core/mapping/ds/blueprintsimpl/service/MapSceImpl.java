@@ -26,9 +26,9 @@ import org.slf4j.LoggerFactory;
 public class MapSceImpl implements MapSce {
 
     private static final Logger log = LoggerFactory.getLogger(MapSceImpl.class);
-    private TopoSceImpl sce = null;
+    private MappingSceImpl sce = null;
 
-    public MapSceImpl(TopoSceImpl sce_) {
+    public MapSceImpl(MappingSceImpl sce_) {
         this.sce = sce_;
     }
 }

@@ -31,7 +31,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public class EndpointImpl implements Endpoint, TopoDSCacheEntity {
+public class EndpointImpl implements Endpoint, MappingDSCacheEntity {
 
     private static final Logger log = LoggerFactory.getLogger(EndpointImpl.class);
 
@@ -112,11 +112,11 @@ public class EndpointImpl implements Endpoint, TopoDSCacheEntity {
                 if (ret) {
                     synchronizeTwinEndpointToDB((EndpointImpl) endpoint);
                 }
-            } catch (TopoDSGraphDBException E) {
+            } catch (MappingDSGraphDBException E) {
                 E.printStackTrace();
                 log.error("Exception while adding twin node {}...", new Object[]{endpoint.getEndpointID()});
                 this.endpointTwinEndpoints.remove((EndpointImpl) endpoint);
-                TopoDSGraphDB.autorollback();
+                MappingDSGraphDB.autorollback();
             }
             return ret;
         } else {
@@ -143,13 +143,13 @@ public class EndpointImpl implements Endpoint, TopoDSCacheEntity {
 
     public void setElement(Element endpointVertex) {
         this.endpointVertex = (Vertex) endpointVertex;
-        this.endpointVertex.setProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY, TopoDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE);
-        this.endpointID = this.endpointVertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
-        log.debug("Endpoint vertex has been initialized ({},{}).", new Object[]{this.endpointVertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID),
-                                                                                       this.endpointVertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY)});
+        this.endpointVertex.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY, MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE);
+        this.endpointID = this.endpointVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+        log.debug("Endpoint vertex has been initialized ({},{}).", new Object[]{this.endpointVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID),
+                                                                                       this.endpointVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY)});
     }
 
-    public void synchronizeToDB() throws TopoDSGraphDBException {
+    public void synchronizeToDB() throws MappingDSGraphDBException {
         synchronizeURLToDB();
         synchronizePropertiesToDB();
         synchronizeParentNodeToDB();
@@ -159,7 +159,7 @@ public class EndpointImpl implements Endpoint, TopoDSCacheEntity {
     private void synchronizeURLToDB() {
         if (endpointVertex != null && this.endpointURL != null) {
             log.debug("Synchronize endpoint URL {}...", new Object[]{this.endpointURL});
-            endpointVertex.setProperty(TopoDSGraphPropertyNames.DD_ENDPOINT_URL_KEY, this.endpointURL);
+            endpointVertex.setProperty(MappingDSGraphPropertyNames.DD_ENDPOINT_URL_KEY, this.endpointURL);
         }
     }
 
@@ -177,19 +177,19 @@ public class EndpointImpl implements Endpoint, TopoDSCacheEntity {
     private void synchronizePropertyToDB(String key, Object value) {
         if (endpointVertex != null && key != null && value != null) {
             log.debug("Synchronize property {}...", new Object[]{key});
-            TopoDSGraphDBObjectProps.synchronizeObjectPropertyToDB(endpointVertex, key, value, TopoDSGraphPropertyNames.DD_ENDPOINT_PROPS_KEY);
+            MappingDSGraphDBObjectProps.synchronizeObjectPropertyToDB(endpointVertex, key, value, MappingDSGraphPropertyNames.DD_ENDPOINT_PROPS_KEY);
         }
     }
 
     private void synchronizeParentNodeToDB() {
         if (endpointVertex != null && endpointParentNode != null && endpointParentNode.getElement() != null) {
             log.debug("Synchronize parent node {}...", new Object[]{endpointParentNode.getNodeID()});
-            endpointVertex.setProperty(TopoDSGraphPropertyNames.DD_ENDPOINT_PNODE_KEY,
-                                              endpointParentNode.getElement().getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
+            endpointVertex.setProperty(MappingDSGraphPropertyNames.DD_ENDPOINT_PNODE_KEY,
+                                              endpointParentNode.getElement().getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
         }
     }
 
-    private void synchronizeTwinEndpointsToDB() throws TopoDSGraphDBException {
+    private void synchronizeTwinEndpointsToDB() throws MappingDSGraphDBException {
         if (this.endpointVertex != null) {
             Iterator<EndpointImpl> iterTE = this.endpointTwinEndpoints.iterator();
             while (iterTE.hasNext()) {
@@ -199,7 +199,7 @@ public class EndpointImpl implements Endpoint, TopoDSCacheEntity {
         }
     }
 
-    private void synchronizeTwinEndpointToDB(EndpointImpl twin) throws TopoDSGraphDBException {
+    private void synchronizeTwinEndpointToDB(EndpointImpl twin) throws MappingDSGraphDBException {
         if (this.endpointVertex != null && twin.getElement() != null) {
             if (log.isTraceEnabled()) {
                 for (String propKey : endpointVertex.getPropertyKeys()) {
@@ -208,14 +208,14 @@ public class EndpointImpl implements Endpoint, TopoDSCacheEntity {
             }
             VertexQuery query = this.endpointVertex.query();
             query.direction(Direction.BOTH);
-            query.labels(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_TWIN_LABEL_KEY);
+            query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_TWIN_LABEL_KEY);
             for (Vertex vertex : query.vertices()) {
-                if ((long) vertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID) == twin.getEndpointID()) {
+                if ((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID) == twin.getEndpointID()) {
                     return;
                 }
             }
             log.debug("Synchronize endpoint twin endpoint {} to db...", new Object[]{twin.getEndpointID()});
-            TopoDSGraphDB.createEdge(this.endpointVertex, twin.getElement(), TopoDSGraphPropertyNames.DD_GRAPH_EDGE_TWIN_LABEL_KEY);
+            MappingDSGraphDB.createEdge(this.endpointVertex, twin.getElement(), MappingDSGraphPropertyNames.DD_GRAPH_EDGE_TWIN_LABEL_KEY);
             if (log.isTraceEnabled()) {
                 for (String propKey : endpointVertex.getPropertyKeys()) {
                     log.trace("Vertex {} property {}: {}", new Object[]{endpointVertex.toString(),propKey,endpointVertex.getProperty(propKey).toString()});
@@ -238,13 +238,13 @@ public class EndpointImpl implements Endpoint, TopoDSCacheEntity {
 
     private void synchronizeIDFromDB() {
         if (this.endpointVertex != null) {
-            this.endpointID = this.endpointVertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+            this.endpointID = this.endpointVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
         }
     }
 
     private void synchronizeURLFromDB() {
         if (endpointVertex != null) {
-            endpointURL = endpointVertex.getProperty(TopoDSGraphPropertyNames.DD_ENDPOINT_URL_KEY);
+            endpointURL = endpointVertex.getProperty(MappingDSGraphPropertyNames.DD_ENDPOINT_URL_KEY);
         }
     }
 
@@ -255,15 +255,15 @@ public class EndpointImpl implements Endpoint, TopoDSCacheEntity {
             } else {
                 endpointProperties.clear();
             }
-            TopoDSGraphDBObjectProps.synchronizeObjectPropertyFromDB(endpointVertex,endpointProperties,TopoDSGraphPropertyNames.DD_ENDPOINT_PROPS_KEY);
+            MappingDSGraphDBObjectProps.synchronizeObjectPropertyFromDB(endpointVertex, endpointProperties, MappingDSGraphPropertyNames.DD_ENDPOINT_PROPS_KEY);
         }
     }
 
     private void synchronizeParentNodeFromDB() {
         if (endpointVertex != null) {
-            Object parentNodeID = endpointVertex.getProperty(TopoDSGraphPropertyNames.DD_ENDPOINT_PNODE_KEY);
+            Object parentNodeID = endpointVertex.getProperty(MappingDSGraphPropertyNames.DD_ENDPOINT_PNODE_KEY);
             if (parentNodeID != null) {
-                TopoDSCacheEntity entity = TopoDSGraphDB.getVertexEntity((long) parentNodeID);
+                MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) parentNodeID);
                 ;
                 if (entity != null) {
                     if (entity instanceof NodeImpl || entity instanceof GateImpl) {
@@ -280,11 +280,11 @@ public class EndpointImpl implements Endpoint, TopoDSCacheEntity {
         if (this.endpointVertex != null) {
             VertexQuery query = endpointVertex.query();
             query.direction(Direction.BOTH);
-            query.labels(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_TWIN_LABEL_KEY);
+            query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_TWIN_LABEL_KEY);
             this.endpointTwinEndpoints.clear();
             for (Vertex vertex : query.vertices()) {
                 EndpointImpl twin = null;
-                TopoDSCacheEntity entity = TopoDSGraphDB.getVertexEntity((long) vertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
+                MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
                 if (entity != null) {
                     if (entity instanceof EndpointImpl) {
                         twin = (EndpointImpl) entity;
@@ -303,10 +303,10 @@ public class EndpointImpl implements Endpoint, TopoDSCacheEntity {
         if (this.endpointVertex != null && endpoint.getElement() != null) {
             VertexQuery query = this.endpointVertex.query();
             query.direction(Direction.OUT);
-            query.labels(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_TWIN_LABEL_KEY);
+            query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_TWIN_LABEL_KEY);
             for (Edge edge : query.edges()) {
                 if (edge.getVertex(Direction.OUT).equals(endpoint.getElement())) {
-                    TopoDSGraphDB.getDDgraph().removeEdge(edge);
+                    MappingDSGraphDB.getDDgraph().removeEdge(edge);
                 }
             }
         }

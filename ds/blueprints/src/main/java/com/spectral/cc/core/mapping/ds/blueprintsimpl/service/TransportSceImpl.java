@@ -27,9 +27,9 @@ import java.util.Set;
 
 public class TransportSceImpl implements TransportSce<TransportImpl> {
 
-	private TopoSceImpl sce = null;
+	private MappingSceImpl sce = null;
 	
-	public TransportSceImpl(TopoSceImpl sce_) {
+	public TransportSceImpl(MappingSceImpl sce_) {
 		sce = sce_;
 	}
 	

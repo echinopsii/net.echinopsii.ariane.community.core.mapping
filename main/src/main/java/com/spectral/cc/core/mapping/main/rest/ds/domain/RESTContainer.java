@@ -20,7 +20,7 @@
 package com.spectral.cc.core.mapping.main.rest.ds.domain;
 
 import com.spectral.cc.core.mapping.ds.domain.Container;
-import com.spectral.cc.core.mapping.ds.service.TopoSce;
+import com.spectral.cc.core.mapping.ds.service.MappingSce;
 import com.spectral.cc.core.mapping.main.ds.domain.ContainerJSON;
 import com.spectral.cc.core.mapping.main.rest.ToolBox;
 import com.spectral.cc.core.mapping.main.runtime.TopoWSRuntime;
@@ -41,7 +41,7 @@ public class RESTContainer {
     @GET
     @Path("/{param}")
     public Response printContainerJSON(@PathParam("param") long id) {
-        TopoSce topo = TopoWSRuntime.getTopoSce();
+        MappingSce topo = TopoWSRuntime.getMappingSce();
         Container cont = (Container) topo.getContainerSce().getContainer(id);
         if (cont != null) {
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -62,7 +62,7 @@ public class RESTContainer {
 
     @GET
     public Response printAllContainerJSON() {
-        TopoSce topo = TopoWSRuntime.getTopoSce();
+        MappingSce topo = TopoWSRuntime.getMappingSce();
         String result = "";
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         try {

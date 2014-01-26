@@ -19,9 +19,9 @@
 
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.repository;
 
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSCacheEntity;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSGraphDB;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSGraphPropertyNames;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSCacheEntity;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDB;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphPropertyNames;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.LinkImpl;
 import com.spectral.cc.core.mapping.ds.repository.LinkRepo;
 import org.slf4j.Logger;
@@ -35,28 +35,28 @@ public class LinkRepoImpl implements LinkRepo<LinkImpl> {
     public LinkImpl save(LinkImpl link) {
         if (link.getLinkEndpointSource() != null && link.getLinkEndpointSource().getElement() != null &&
                     link.getLinkEndpointTarget() != null && link.getLinkEndpointTarget().getElement() != null) {
-            TopoDSGraphDB.saveEdgeEntity(link, link.getLinkEndpointSource().getElement(), link.getLinkEndpointTarget().getElement(),
-                                                TopoDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY);
-            log.debug("Added unicast link {} to graph({}).", new Object[]{link.toString(), TopoDSGraphDB.getEdgeMaxCursor()});
+            MappingDSGraphDB.saveEdgeEntity(link, link.getLinkEndpointSource().getElement(), link.getLinkEndpointTarget().getElement(),
+                                                   MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY);
+            log.debug("Added unicast link {} to graph({}).", new Object[]{link.toString(), MappingDSGraphDB.getEdgeMaxCursor()});
         } else if (link.getLinkEndpointSource() != null && link.getLinkEndpointSource().getElement() != null &&
                     link.getLinkTransport() != null && link.getLinkTransport().getElement() != null) {
-            TopoDSGraphDB.saveEdgeEntity(link, link.getLinkEndpointSource().getElement(), link.getLinkTransport().getElement(),
-                                                TopoDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY);
-            log.debug("Added multicast link {} to graph({}).", new Object[]{link.toString(), TopoDSGraphDB.getEdgeMaxCursor()});
+            MappingDSGraphDB.saveEdgeEntity(link, link.getLinkEndpointSource().getElement(), link.getLinkTransport().getElement(),
+                                                   MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY);
+            log.debug("Added multicast link {} to graph({}).", new Object[]{link.toString(), MappingDSGraphDB.getEdgeMaxCursor()});
         }
         return link;
     }
 
     @Override
     public void delete(LinkImpl link) {
-        TopoDSGraphDB.deleteEntity(link);
-        log.debug("Deleted link {} from graph({}).", new Object[]{link.toString(), TopoDSGraphDB.getVertexMaxCursor()});
+        MappingDSGraphDB.deleteEntity(link);
+        log.debug("Deleted link {} from graph({}).", new Object[]{link.toString(), MappingDSGraphDB.getVertexMaxCursor()});
     }
 
     @Override
     public LinkImpl findLinkByID(long id) {
         LinkImpl ret = null;
-        TopoDSCacheEntity entity = TopoDSGraphDB.getLink(id);
+        MappingDSCacheEntity entity = MappingDSGraphDB.getLink(id);
         if (entity != null) {
             if (entity instanceof LinkImpl) {
                 ret = (LinkImpl) entity;

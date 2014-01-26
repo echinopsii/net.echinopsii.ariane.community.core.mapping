@@ -19,9 +19,9 @@
 
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.domain;
 
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSCacheEntity;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSGraphDB;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSGraphPropertyNames;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSCacheEntity;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDB;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphPropertyNames;
 import com.spectral.cc.core.mapping.ds.domain.Endpoint;
 import com.spectral.cc.core.mapping.ds.domain.Link;
 import com.spectral.cc.core.mapping.ds.domain.Transport;
@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashSet;
 import java.util.Set;
 
-public class LinkImpl implements Link, TopoDSCacheEntity {
+public class LinkImpl implements Link, MappingDSCacheEntity {
 
     private static final Logger log = LoggerFactory.getLogger(NodeImpl.class);
 
@@ -137,8 +137,8 @@ public class LinkImpl implements Link, TopoDSCacheEntity {
     @Override
     public void setElement(Element edge) {
         this.linkEdge = (Edge) edge;
-        this.linkID = this.linkEdge.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_ID);
-        log.debug("Link edge has been initialized ({}).", new Object[]{this.linkEdge.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_ID)});
+        this.linkID = this.linkEdge.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID);
+        log.debug("Link edge has been initialized ({}).", new Object[]{this.linkEdge.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID)});
     }
 
     @Override
@@ -152,19 +152,19 @@ public class LinkImpl implements Link, TopoDSCacheEntity {
 
     private void synchronizeSourceEndpointToDB() {
         if (this.linkEdge != null && this.linkEndpointSource != null) {
-            this.linkEdge.setProperty(TopoDSGraphPropertyNames.DD_LINK_SOURCE_EP_KEY, this.linkEndpointSource.getEndpointID());
+            this.linkEdge.setProperty(MappingDSGraphPropertyNames.DD_LINK_SOURCE_EP_KEY, this.linkEndpointSource.getEndpointID());
         }
     }
 
     private void synchronizeTargetEndpointToDB() {
         if (this.linkEdge != null && this.linkEndpointTarget != null) {
-            this.linkEdge.setProperty(TopoDSGraphPropertyNames.DD_LINK_TARGET_EP_KEY, this.linkEndpointTarget.getEndpointID());
+            this.linkEdge.setProperty(MappingDSGraphPropertyNames.DD_LINK_TARGET_EP_KEY, this.linkEndpointTarget.getEndpointID());
         }
     }
 
     private void synchronizeUpLinkToDB() {
         if (this.linkEdge != null && this.linkUpLink != null) {
-            this.linkEdge.setProperty(TopoDSGraphPropertyNames.DD_LINK_UPLINK_KEY, this.linkUpLink.getLinkID());
+            this.linkEdge.setProperty(MappingDSGraphPropertyNames.DD_LINK_UPLINK_KEY, this.linkUpLink.getLinkID());
         }
     }
 
@@ -176,13 +176,13 @@ public class LinkImpl implements Link, TopoDSCacheEntity {
 
     private void synchronizeSubLinkToDB(LinkImpl subLink) {
         if (this.linkEdge != null && subLink.getLinkID() != 0) {
-            this.linkEdge.setProperty(TopoDSGraphPropertyNames.DD_LINK_SUBLINKS_KEY + subLink.getLinkID(), subLink.getLinkID());
+            this.linkEdge.setProperty(MappingDSGraphPropertyNames.DD_LINK_SUBLINKS_KEY + subLink.getLinkID(), subLink.getLinkID());
         }
     }
 
     private void synchronizeTransportNameToDB() {
         if (this.linkEdge != null && this.linkTransport != null) {
-            this.linkEdge.setProperty(TopoDSGraphPropertyNames.DD_LINK_TRANSPORT_KEY, this.linkTransport.getTransportID());
+            this.linkEdge.setProperty(MappingDSGraphPropertyNames.DD_LINK_TRANSPORT_KEY, this.linkTransport.getTransportID());
         }
     }
 
@@ -198,15 +198,15 @@ public class LinkImpl implements Link, TopoDSCacheEntity {
 
     private void synchronizeIDFromDB() {
         if (this.linkEdge != null) {
-            this.linkID = this.linkEdge.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_ID);
+            this.linkID = this.linkEdge.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID);
         }
     }
 
     private void synchronizeSourceEndpointFromDB() {
         if (this.linkEdge != null) {
-            Object endpointID = this.linkEdge.getProperty(TopoDSGraphPropertyNames.DD_LINK_SOURCE_EP_KEY);
+            Object endpointID = this.linkEdge.getProperty(MappingDSGraphPropertyNames.DD_LINK_SOURCE_EP_KEY);
             if (endpointID != null) {
-                TopoDSCacheEntity entity = TopoDSGraphDB.getVertexEntity((long) endpointID);
+                MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) endpointID);
                 if (entity != null) {
                     if (entity instanceof EndpointImpl) {
                         linkEndpointSource = (EndpointImpl) entity;
@@ -220,9 +220,9 @@ public class LinkImpl implements Link, TopoDSCacheEntity {
 
     private void synchronizeTargetEndpointFromDB() {
         if (this.linkEdge != null) {
-            Object endpointID = this.linkEdge.getProperty(TopoDSGraphPropertyNames.DD_LINK_TARGET_EP_KEY);
+            Object endpointID = this.linkEdge.getProperty(MappingDSGraphPropertyNames.DD_LINK_TARGET_EP_KEY);
             if (endpointID != null) {
-                TopoDSCacheEntity entity = TopoDSGraphDB.getVertexEntity((long) endpointID);
+                MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) endpointID);
                 if (entity != null) {
                     if (entity instanceof EndpointImpl) {
                         linkEndpointTarget = (EndpointImpl) entity;
@@ -236,9 +236,9 @@ public class LinkImpl implements Link, TopoDSCacheEntity {
 
     private void synchronizeUpLinkFromDB() {
         if (this.linkEdge != null) {
-            Object upLinkID = this.linkEdge.getProperty(TopoDSGraphPropertyNames.DD_LINK_UPLINK_KEY);
+            Object upLinkID = this.linkEdge.getProperty(MappingDSGraphPropertyNames.DD_LINK_UPLINK_KEY);
             if (upLinkID != null) {
-                TopoDSCacheEntity entity = TopoDSGraphDB.getLink((long) upLinkID);
+                MappingDSCacheEntity entity = MappingDSGraphDB.getLink((long) upLinkID);
                 if (entity != null) {
                     if (entity instanceof LinkImpl) {
                         linkUpLink = (LinkImpl) entity;
@@ -254,11 +254,11 @@ public class LinkImpl implements Link, TopoDSCacheEntity {
         if (this.linkEdge != null) {
             linkSubLinks.clear();
             for (String key : this.linkEdge.getPropertyKeys()) {
-                if (key.contains(TopoDSGraphPropertyNames.DD_LINK_SUBLINKS_KEY)) {
+                if (key.contains(MappingDSGraphPropertyNames.DD_LINK_SUBLINKS_KEY)) {
                     long subLinkID = this.linkEdge.getProperty(key);
                     if (subLinkID != 0) {
                         LinkImpl subLink = null;
-                        TopoDSCacheEntity entity = TopoDSGraphDB.getLink(subLinkID);
+                        MappingDSCacheEntity entity = MappingDSGraphDB.getLink(subLinkID);
                         if (entity != null) {
                             if (entity instanceof LinkImpl) {
                                 subLink = (LinkImpl) entity;
@@ -277,9 +277,9 @@ public class LinkImpl implements Link, TopoDSCacheEntity {
 
     private void synchronizeTransportNameFromDB() {
         if (this.linkEdge != null) {
-            Object transportID = this.linkEdge.getProperty(TopoDSGraphPropertyNames.DD_LINK_TRANSPORT_KEY);
+            Object transportID = this.linkEdge.getProperty(MappingDSGraphPropertyNames.DD_LINK_TRANSPORT_KEY);
             if (transportID != null) {
-                TopoDSCacheEntity entity = TopoDSGraphDB.getVertexEntity((long) transportID);
+                MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) transportID);
                 if (entity != null) {
                     if (entity instanceof TransportImpl) {
                         linkTransport = (TransportImpl) entity;

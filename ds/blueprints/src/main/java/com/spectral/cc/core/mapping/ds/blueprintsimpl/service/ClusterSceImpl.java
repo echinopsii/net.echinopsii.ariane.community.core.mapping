@@ -24,9 +24,9 @@ import com.spectral.cc.core.mapping.ds.service.ClusterSce;
 
 public class ClusterSceImpl implements ClusterSce<ClusterImpl> {
 
-	private TopoSceImpl sce = null;
+	private MappingSceImpl sce = null;
 	
-	public ClusterSceImpl(TopoSceImpl sce_) {
+	public ClusterSceImpl(MappingSceImpl sce_) {
 		sce = sce_;
 	}
 	

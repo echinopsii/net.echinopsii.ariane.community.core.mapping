@@ -22,13 +22,13 @@
 package com.spectral.cc.core.mapping.ds.rim.factory.domain;
 
 import com.spectral.cc.core.mapping.ds.domain.Cluster;
-import com.spectral.cc.core.mapping.ds.rim.registry.TopoDSRegistry;
+import com.spectral.cc.core.mapping.ds.rim.registry.MappingDSRegistry;
 
 public class ClusterFactory {
 	
 	public static Cluster make(String type) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		Cluster ret = null;
-		String clusterClassName = TopoDSRegistry.getEntityFromRegistry(type).getClusterFactoryClassName();
+		String clusterClassName = MappingDSRegistry.getEntityFromRegistry(type).getClusterFactoryClassName();
 		ClassLoader loader = new ClusterFactory().getClass().getClassLoader();
 		@SuppressWarnings("unchecked")
 		Class<? extends Cluster> clusterClass = (Class<? extends Cluster>) loader.loadClass(clusterClassName); 

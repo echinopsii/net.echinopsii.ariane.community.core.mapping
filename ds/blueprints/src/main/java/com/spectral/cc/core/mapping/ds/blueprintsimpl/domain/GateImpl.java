@@ -19,10 +19,10 @@
 
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.domain;
 
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSCacheEntity;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSGraphDB;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSGraphDBException;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSGraphPropertyNames;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSCacheEntity;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDB;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDBException;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphPropertyNames;
 import com.spectral.cc.core.mapping.ds.domain.Endpoint;
 import com.spectral.cc.core.mapping.ds.domain.Gate;
 import com.spectral.cc.core.mapping.ds.domain.Node;
@@ -68,12 +68,12 @@ public class GateImpl extends NodeImpl implements Gate {
     @Override
     public void setElement(Element vertex) {
         super.setElement(vertex);
-        super.getElement().setProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY, TopoDSGraphPropertyNames.DD_TYPE_GATE_VALUE);
-        log.debug("Gate vertex has been initialized ({},{}).", new Object[]{super.getElement().getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID),
-                                                                                   super.getElement().getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY)});
+        super.getElement().setProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY, MappingDSGraphPropertyNames.DD_TYPE_GATE_VALUE);
+        log.debug("Gate vertex has been initialized ({},{}).", new Object[]{super.getElement().getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID),
+                                                                                   super.getElement().getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY)});
     }
 
-    public void synchronizeToDB() throws TopoDSGraphDBException {
+    public void synchronizeToDB() throws MappingDSGraphDBException {
         super.synchronizeToDB();
         synchronizeNodePrimaryAdminEndpointToDB();
     }
@@ -81,7 +81,7 @@ public class GateImpl extends NodeImpl implements Gate {
     private void synchronizeNodePrimaryAdminEndpointToDB() {
         if (super.getElement() != null && this.gatePrimaryAdminEndpoint != null) {
             log.debug("Synchronize gate primary endpoint to db...", new Object[]{this.gatePrimaryAdminEndpoint.getEndpointID()});
-            super.getElement().setProperty(TopoDSGraphPropertyNames.DD_GATE_PAEP_KEY, this.gatePrimaryAdminEndpoint.getEndpointID());
+            super.getElement().setProperty(MappingDSGraphPropertyNames.DD_GATE_PAEP_KEY, this.gatePrimaryAdminEndpoint.getEndpointID());
         }
     }
 
@@ -96,9 +96,9 @@ public class GateImpl extends NodeImpl implements Gate {
 
     private void synchronizeNodePrimaryAdminEndpointFromDB() {
         if (super.getElement() != null) {
-            Object paEndpointID = super.getElement().getProperty(TopoDSGraphPropertyNames.DD_GATE_PAEP_KEY);
+            Object paEndpointID = super.getElement().getProperty(MappingDSGraphPropertyNames.DD_GATE_PAEP_KEY);
             if (paEndpointID != null) {
-                TopoDSCacheEntity entity = TopoDSGraphDB.getVertexEntity((long) paEndpointID);
+                MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) paEndpointID);
                 if (entity != null) {
                     if (entity instanceof EndpointImpl) {
                         this.gatePrimaryAdminEndpoint = (EndpointImpl) entity;

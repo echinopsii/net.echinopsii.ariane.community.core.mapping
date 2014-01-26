@@ -32,7 +32,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public class NodeImpl implements Node, TopoDSCacheEntity {
+public class NodeImpl implements Node, MappingDSCacheEntity {
 
     private static final Logger log = LoggerFactory.getLogger(NodeImpl.class);
 
@@ -135,11 +135,11 @@ public class NodeImpl implements Node, TopoDSCacheEntity {
                 if (ret) {
                     synchronizeChildNodeToDB((NodeImpl) node);
                 }
-            } catch (TopoDSGraphDBException E) {
+            } catch (MappingDSGraphDBException E) {
                 E.printStackTrace();
                 log.error("Exception while adding child node {}...", new Object[]{node.getNodeID()});
                 this.nodeChildNodes.remove((NodeImpl) node);
-                TopoDSGraphDB.autorollback();
+                MappingDSGraphDB.autorollback();
             }
             return ret;
         } else {
@@ -174,11 +174,11 @@ public class NodeImpl implements Node, TopoDSCacheEntity {
                 if (ret) {
                     synchronizeTwinNodeToDB((NodeImpl) node);
                 }
-            } catch (TopoDSGraphDBException E) {
+            } catch (MappingDSGraphDBException E) {
                 E.printStackTrace();
                 log.error("Exception while adding twin node {}...", new Object[]{node.getNodeID()});
                 this.nodeTwinNodes.remove((NodeImpl) node);
-                TopoDSGraphDB.autorollback();
+                MappingDSGraphDB.autorollback();
             }
             return ret;
         } else {
@@ -213,11 +213,11 @@ public class NodeImpl implements Node, TopoDSCacheEntity {
                 if (ret) {
                     synchronizeEndpointToDB((EndpointImpl) endpoint);
                 }
-            } catch (TopoDSGraphDBException E) {
+            } catch (MappingDSGraphDBException E) {
                 E.printStackTrace();
                 log.error("Exception while adding endpoint {}...", new Object[]{endpoint.getEndpointID()});
                 this.nodeEndpoints.remove((EndpointImpl) endpoint);
-                TopoDSGraphDB.autorollback();
+                MappingDSGraphDB.autorollback();
             }
             return ret;
         } else {
@@ -244,13 +244,13 @@ public class NodeImpl implements Node, TopoDSCacheEntity {
 
     public void setElement(Element nodeVertex) {
         this.nodeVertex = (Vertex) nodeVertex;
-        this.nodeVertex.setProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY, TopoDSGraphPropertyNames.DD_TYPE_NODE_VALUE);
-        this.nodeID = this.nodeVertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
-        log.debug("Node vertex has been initialized ({},{}).", new Object[]{this.nodeVertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID),
-                                                                                   this.nodeVertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY)});
+        this.nodeVertex.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY, MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE);
+        this.nodeID = this.nodeVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+        log.debug("Node vertex has been initialized ({},{}).", new Object[]{this.nodeVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID),
+                                                                                   this.nodeVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY)});
     }
 
-    public void synchronizeToDB() throws TopoDSGraphDBException {
+    public void synchronizeToDB() throws MappingDSGraphDBException {
         synchronizeDepthToDB();
         synchronizeNameToDB();
         synchronizePropertiesToDB();
@@ -264,14 +264,14 @@ public class NodeImpl implements Node, TopoDSCacheEntity {
     private void synchronizeDepthToDB() {
         if (this.nodeVertex != null) {
             log.debug("Synchronize node depth {} to db...", new Object[]{this.nodeDepth});
-            nodeVertex.setProperty(TopoDSGraphPropertyNames.DD_NODE_DEPTH_KEY, this.nodeDepth);
+            nodeVertex.setProperty(MappingDSGraphPropertyNames.DD_NODE_DEPTH_KEY, this.nodeDepth);
         }
     }
 
     private void synchronizeNameToDB() {
         if (this.nodeVertex != null && this.nodeName != null) {
             log.debug("Synchronize node name {} to db...", new Object[]{this.nodeName});
-            nodeVertex.setProperty(TopoDSGraphPropertyNames.DD_NODE_NAME_KEY, this.nodeName);
+            nodeVertex.setProperty(MappingDSGraphPropertyNames.DD_NODE_NAME_KEY, this.nodeName);
         }
     }
 
@@ -289,25 +289,25 @@ public class NodeImpl implements Node, TopoDSCacheEntity {
     private void synchronizePropertyToDB(String key, Object value) {
         if (this.nodeVertex != null && key != null && value != null) {
             log.debug("Synchronize node property {} to db...", new Object[]{key});
-            TopoDSGraphDBObjectProps.synchronizeObjectPropertyToDB(nodeVertex, key, value, TopoDSGraphPropertyNames.DD_NODE_PROPS_KEY);
+            MappingDSGraphDBObjectProps.synchronizeObjectPropertyToDB(nodeVertex, key, value, MappingDSGraphPropertyNames.DD_NODE_PROPS_KEY);
         }
     }
 
     private void synchronizeContainerToDB() {
         if (this.nodeVertex != null && nodeContainer != null && nodeContainer.getElement() != null) {
             log.debug("Synchronize node container {} to db...", new Object[]{this.nodeContainer.getContainerID()});
-            nodeVertex.setProperty(TopoDSGraphPropertyNames.DD_NODE_CONT_KEY, this.nodeContainer.getElement().getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
+            nodeVertex.setProperty(MappingDSGraphPropertyNames.DD_NODE_CONT_KEY, this.nodeContainer.getElement().getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
         }
     }
 
     private void synchronizeParentNodeToDB() {
         if (this.nodeVertex != null && nodeParentNode != null && nodeParentNode.getElement() != null) {
             log.debug("Synchronize node parent node {} to db...", new Object[]{this.nodeParentNode.getNodeID()});
-            nodeVertex.setProperty(TopoDSGraphPropertyNames.DD_NODE_PNODE_KEY, this.nodeParentNode.getElement().getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
+            nodeVertex.setProperty(MappingDSGraphPropertyNames.DD_NODE_PNODE_KEY, this.nodeParentNode.getElement().getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
         }
     }
 
-    private void synchronizeChildNodesToDB() throws TopoDSGraphDBException {
+    private void synchronizeChildNodesToDB() throws MappingDSGraphDBException {
         if (this.nodeVertex != null) {
             Iterator<NodeImpl> iterCN = this.nodeChildNodes.iterator();
             while (iterCN.hasNext()) {
@@ -317,24 +317,24 @@ public class NodeImpl implements Node, TopoDSCacheEntity {
         }
     }
 
-    private void synchronizeChildNodeToDB(NodeImpl child) throws TopoDSGraphDBException {
+    private void synchronizeChildNodeToDB(NodeImpl child) throws MappingDSGraphDBException {
         if (this.nodeVertex != null && child.getElement() != null) {
             VertexQuery query = this.nodeVertex.query();
             query.direction(Direction.OUT);
-            query.labels(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
-            query.has(TopoDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY, true);
+            query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
+            query.has(MappingDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY, true);
             for (Vertex vertex : query.vertices()) {
-                if ((long) vertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID) == child.getNodeID()) {
+                if ((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID) == child.getNodeID()) {
                     return;
                 }
             }
             log.debug("Synchronize node child node {} to db...", new Object[]{child.getNodeID()});
-            Edge owns = TopoDSGraphDB.createEdge(this.nodeVertex, child.getElement(), TopoDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
-            owns.setProperty(TopoDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY, true);
+            Edge owns = MappingDSGraphDB.createEdge(this.nodeVertex, child.getElement(), MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
+            owns.setProperty(MappingDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY, true);
         }
     }
 
-    private void synchronizeTwinNodesToDB() throws TopoDSGraphDBException {
+    private void synchronizeTwinNodesToDB() throws MappingDSGraphDBException {
         if (this.nodeVertex != null) {
             Iterator<NodeImpl> iterTN = this.nodeTwinNodes.iterator();
             while (iterTN.hasNext()) {
@@ -344,22 +344,22 @@ public class NodeImpl implements Node, TopoDSCacheEntity {
         }
     }
 
-    private void synchronizeTwinNodeToDB(NodeImpl twin) throws TopoDSGraphDBException {
+    private void synchronizeTwinNodeToDB(NodeImpl twin) throws MappingDSGraphDBException {
         if (this.nodeVertex != null && twin.getElement() != null) {
             VertexQuery query = this.nodeVertex.query();
             query.direction(Direction.BOTH);
-            query.labels(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_TWIN_LABEL_KEY);
+            query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_TWIN_LABEL_KEY);
             for (Vertex vertex : query.vertices()) {
-                if ((long) vertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID) == twin.getNodeID()) {
+                if ((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID) == twin.getNodeID()) {
                     return;
                 }
             }
             log.debug("Synchronize node twin node {} to db...", new Object[]{twin.getNodeID()});
-            TopoDSGraphDB.createEdge(this.nodeVertex, twin.getElement(), TopoDSGraphPropertyNames.DD_GRAPH_EDGE_TWIN_LABEL_KEY);
+            MappingDSGraphDB.createEdge(this.nodeVertex, twin.getElement(), MappingDSGraphPropertyNames.DD_GRAPH_EDGE_TWIN_LABEL_KEY);
         }
     }
 
-    private void synchronizeEndpointsToDB() throws TopoDSGraphDBException {
+    private void synchronizeEndpointsToDB() throws MappingDSGraphDBException {
         if (this.nodeVertex != null) {
             Iterator<EndpointImpl> iterEP = this.nodeEndpoints.iterator();
             while (iterEP.hasNext()) {
@@ -369,28 +369,28 @@ public class NodeImpl implements Node, TopoDSCacheEntity {
         }
     }
 
-    private void synchronizeEndpointToDB(EndpointImpl endpoint) throws TopoDSGraphDBException {
+    private void synchronizeEndpointToDB(EndpointImpl endpoint) throws MappingDSGraphDBException {
         if (this.nodeVertex != null && endpoint.getElement() != null) {
             VertexQuery query = this.nodeVertex.query();
             query.direction(Direction.OUT);
-            query.labels(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
-            query.has(TopoDSGraphPropertyNames.DD_NODE_EDGE_ENDPT_KEY, true);
+            query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
+            query.has(MappingDSGraphPropertyNames.DD_NODE_EDGE_ENDPT_KEY, true);
             for (Vertex vertex : query.vertices()) {
-                Object id = vertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+                Object id = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
                 if (id!=null && id instanceof Long) {
                     if (((long) id) == endpoint.getEndpointID()) {
                         return;
                     }
                 } else {
                     if (id == null)
-                        log.error("CONSISTENCY ERROR: Vertex {} has null property {} !", new Object[]{vertex.toString(),TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID});
+                        log.error("CONSISTENCY ERROR: Vertex {} has null property {} !", new Object[]{vertex.toString(), MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID});
                     else
-                        log.error("CONSISTENCY ERROR: Vertex {} property {} is not a Long instance !", new Object[]{vertex.toString(),TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID});
+                        log.error("CONSISTENCY ERROR: Vertex {} property {} is not a Long instance !", new Object[]{vertex.toString(), MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID});
                 }
             }
             log.debug("Synchronize node endpoint {} to db...", new Object[]{endpoint.getEndpointID()});
-            Edge owns = TopoDSGraphDB.createEdge(this.nodeVertex, endpoint.getElement(), TopoDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
-            owns.setProperty(TopoDSGraphPropertyNames.DD_NODE_EDGE_ENDPT_KEY, true);
+            Edge owns = MappingDSGraphDB.createEdge(this.nodeVertex, endpoint.getElement(), MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
+            owns.setProperty(MappingDSGraphPropertyNames.DD_NODE_EDGE_ENDPT_KEY, true);
         }
     }
 
@@ -412,19 +412,19 @@ public class NodeImpl implements Node, TopoDSCacheEntity {
 
     private void synchronizeIDFromDB() {
         if (this.nodeVertex != null) {
-            this.nodeID = this.nodeVertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+            this.nodeID = this.nodeVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
         }
     }
 
     private void synchronizeDepthFromDB() {
         if (this.nodeVertex != null) {
-            this.nodeDepth = nodeVertex.getProperty(TopoDSGraphPropertyNames.DD_NODE_DEPTH_KEY);
+            this.nodeDepth = nodeVertex.getProperty(MappingDSGraphPropertyNames.DD_NODE_DEPTH_KEY);
         }
     }
 
     private void synchronizeNameFromDB() {
         if (this.nodeVertex != null) {
-            this.nodeName = nodeVertex.getProperty(TopoDSGraphPropertyNames.DD_NODE_NAME_KEY);
+            this.nodeName = nodeVertex.getProperty(MappingDSGraphPropertyNames.DD_NODE_NAME_KEY);
         }
     }
 
@@ -435,15 +435,15 @@ public class NodeImpl implements Node, TopoDSCacheEntity {
             } else {
                 nodeProperties.clear();
             }
-            TopoDSGraphDBObjectProps.synchronizeObjectPropertyFromDB(nodeVertex,nodeProperties,TopoDSGraphPropertyNames.DD_NODE_PROPS_KEY);
+            MappingDSGraphDBObjectProps.synchronizeObjectPropertyFromDB(nodeVertex, nodeProperties, MappingDSGraphPropertyNames.DD_NODE_PROPS_KEY);
         }
     }
 
     private void synchronizeContainerFromDB() {
         if (this.nodeVertex != null) {
-            Object containerID = nodeVertex.getProperty(TopoDSGraphPropertyNames.DD_NODE_CONT_KEY);
+            Object containerID = nodeVertex.getProperty(MappingDSGraphPropertyNames.DD_NODE_CONT_KEY);
             if (containerID != null) {
-                TopoDSCacheEntity entity = TopoDSGraphDB.getVertexEntity((long) containerID);
+                MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) containerID);
                 if (entity != null) {
                     if (entity instanceof ContainerImpl) {
                         nodeContainer = (ContainerImpl) entity;
@@ -457,9 +457,9 @@ public class NodeImpl implements Node, TopoDSCacheEntity {
 
     private void synchronizeParentNodeFromDB() {
         if (this.nodeVertex != null) {
-            Object parentNodeID = nodeVertex.getProperty(TopoDSGraphPropertyNames.DD_NODE_PNODE_KEY);
+            Object parentNodeID = nodeVertex.getProperty(MappingDSGraphPropertyNames.DD_NODE_PNODE_KEY);
             if (parentNodeID != null) {
-                TopoDSCacheEntity entity = TopoDSGraphDB.getVertexEntity((long) parentNodeID);
+                MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) parentNodeID);
                 if (entity != null) {
                     if (entity instanceof NodeImpl) {
                         nodeParentNode = (NodeImpl) entity;
@@ -475,12 +475,12 @@ public class NodeImpl implements Node, TopoDSCacheEntity {
         if (this.nodeVertex != null) {
             VertexQuery query = nodeVertex.query();
             query.direction(Direction.OUT);
-            query.labels(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
-            query.has(TopoDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY, true);
+            query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
+            query.has(MappingDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY, true);
             this.nodeChildNodes.clear();
             for (Vertex vertex : query.vertices()) {
                 NodeImpl child = null;
-                TopoDSCacheEntity entity = TopoDSGraphDB.getVertexEntity((long) vertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
+                MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
                 if (entity != null) {
                     if (entity instanceof NodeImpl) {
                         child = (NodeImpl) entity;
@@ -499,11 +499,11 @@ public class NodeImpl implements Node, TopoDSCacheEntity {
         if (this.nodeVertex != null && node.getElement() != null) {
             VertexQuery query = this.nodeVertex.query();
             query.direction(Direction.OUT);
-            query.labels(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
-            query.has(TopoDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY, true);
+            query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
+            query.has(MappingDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY, true);
             for (Edge edge : query.edges()) {
                 if (edge.getVertex(Direction.OUT).equals(node.getElement())) {
-                    TopoDSGraphDB.getDDgraph().removeEdge(edge);
+                    MappingDSGraphDB.getDDgraph().removeEdge(edge);
                 }
             }
         }
@@ -513,11 +513,11 @@ public class NodeImpl implements Node, TopoDSCacheEntity {
         if (this.nodeVertex != null) {
             VertexQuery query = nodeVertex.query();
             query.direction(Direction.BOTH);
-            query.labels(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_TWIN_LABEL_KEY);
+            query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_TWIN_LABEL_KEY);
             this.nodeTwinNodes.clear();
             for (Vertex vertex : query.vertices()) {
                 NodeImpl twin = null;
-                TopoDSCacheEntity entity = TopoDSGraphDB.getVertexEntity((long) vertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
+                MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
                 if (entity != null) {
                     if (entity instanceof NodeImpl) {
                         twin = (NodeImpl) entity;
@@ -536,10 +536,10 @@ public class NodeImpl implements Node, TopoDSCacheEntity {
         if (this.nodeVertex != null && node.getElement() != null) {
             VertexQuery query = this.nodeVertex.query();
             query.direction(Direction.OUT);
-            query.labels(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_TWIN_LABEL_KEY);
+            query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_TWIN_LABEL_KEY);
             for (Edge edge : query.edges()) {
                 if (edge.getVertex(Direction.OUT).equals(node.getElement())) {
-                    TopoDSGraphDB.getDDgraph().removeEdge(edge);
+                    MappingDSGraphDB.getDDgraph().removeEdge(edge);
                 }
             }
         }
@@ -549,16 +549,16 @@ public class NodeImpl implements Node, TopoDSCacheEntity {
         if (this.nodeVertex != null) {
             VertexQuery query = nodeVertex.query();
             query.direction(Direction.OUT);
-            query.labels(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
-            query.has(TopoDSGraphPropertyNames.DD_NODE_EDGE_ENDPT_KEY, true);
+            query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
+            query.has(MappingDSGraphPropertyNames.DD_NODE_EDGE_ENDPT_KEY, true);
             this.nodeEndpoints.clear();
             for (Vertex vertex : query.vertices()) {
                 EndpointImpl endpoint = null;
-                log.debug("Get {} from vertex {}", new Object[]{TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID,vertex.toString()});
-                Object id = vertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+                log.debug("Get {} from vertex {}", new Object[]{MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID,vertex.toString()});
+                Object id = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
                 if (id!=null && id instanceof Long) {
                     log.debug("Get entity {} ...", new Object[]{id});
-                    TopoDSCacheEntity entity = TopoDSGraphDB.getVertexEntity((long)id);
+                    MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) id);
                     if (entity != null) {
                         if (entity instanceof EndpointImpl) {
                             endpoint = (EndpointImpl) entity;
@@ -568,9 +568,9 @@ public class NodeImpl implements Node, TopoDSCacheEntity {
                     }
                 } else {
                     if (id==null)
-                        log.error("CONSISTENCY ERROR : Vertex {} has null property {} !", new Object[]{vertex.toString(),TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID});
+                        log.error("CONSISTENCY ERROR : Vertex {} has null property {} !", new Object[]{vertex.toString(), MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID});
                     else
-                        log.error("CONSISTENCY ERROR : Vertex {} property {} is not a Long instance !", new Object[]{vertex.toString(),TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID});
+                        log.error("CONSISTENCY ERROR : Vertex {} property {} is not a Long instance !", new Object[]{vertex.toString(), MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID});
                 }
                 if (endpoint != null) {
                     this.nodeEndpoints.add(endpoint);
@@ -580,7 +580,7 @@ public class NodeImpl implements Node, TopoDSCacheEntity {
     }
 
     private void removeEndpointFromDB(EndpointImpl endpoint) {
-        TopoDSGraphDB.deleteEntity((EndpointImpl) endpoint);
+        MappingDSGraphDB.deleteEntity((EndpointImpl) endpoint);
     }
 
     @Override

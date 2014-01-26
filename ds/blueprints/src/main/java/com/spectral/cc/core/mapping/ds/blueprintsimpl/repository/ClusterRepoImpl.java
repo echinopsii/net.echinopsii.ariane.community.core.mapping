@@ -19,8 +19,8 @@
 
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.repository;
 
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSCacheEntity;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSGraphDB;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSCacheEntity;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDB;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.ClusterImpl;
 import com.spectral.cc.core.mapping.ds.repository.ClusterRepo;
 import org.slf4j.Logger;
@@ -32,21 +32,21 @@ public class ClusterRepoImpl implements ClusterRepo<ClusterImpl> {
 
     @Override
     public ClusterImpl save(ClusterImpl cluster) {
-        TopoDSGraphDB.saveVertexEntity(cluster);
-        log.debug("Added cluster {} to graph({}).", new Object[]{cluster.toString(), TopoDSGraphDB.getVertexMaxCursor()});
+        MappingDSGraphDB.saveVertexEntity(cluster);
+        log.debug("Added cluster {} to graph({}).", new Object[]{cluster.toString(), MappingDSGraphDB.getVertexMaxCursor()});
         return cluster;
     }
 
     @Override
     public void delete(ClusterImpl cluster) {
-        TopoDSGraphDB.deleteEntity(cluster);
-        log.debug("Deleted cluster {} from graph({}).", new Object[]{cluster.toString(), TopoDSGraphDB.getVertexMaxCursor()});
+        MappingDSGraphDB.deleteEntity(cluster);
+        log.debug("Deleted cluster {} from graph({}).", new Object[]{cluster.toString(), MappingDSGraphDB.getVertexMaxCursor()});
     }
 
     @Override
     public ClusterImpl findClusteByID(long id) {
         ClusterImpl ret = null;
-        TopoDSCacheEntity entity = TopoDSGraphDB.getVertexEntity(id);
+        MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity(id);
         if (entity != null) {
             if (entity instanceof ClusterImpl) {
                 ret = (ClusterImpl) ret;
@@ -59,7 +59,7 @@ public class ClusterRepoImpl implements ClusterRepo<ClusterImpl> {
 
     @Override
     public ClusterImpl findClusterByName(String name) {
-        ClusterImpl ret = TopoDSGraphDB.getIndexedCluster(name);
+        ClusterImpl ret = MappingDSGraphDB.getIndexedCluster(name);
         return ret;
     }
 }

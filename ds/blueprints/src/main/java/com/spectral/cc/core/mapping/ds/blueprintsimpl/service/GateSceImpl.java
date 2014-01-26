@@ -30,9 +30,9 @@ import java.util.Set;
 
 public class GateSceImpl implements GateSce<GateImpl> {
 	
-	private TopoSceImpl sce = null;
+	private MappingSceImpl sce = null;
 	
-	public GateSceImpl(TopoSceImpl sce_) {
+	public GateSceImpl(MappingSceImpl sce_) {
 		sce = sce_;
 	}
 	

@@ -25,5 +25,5 @@
   "linkClass" : "com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.LinkImpl",
   "nodeClass" : "com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.NodeImpl",
   "transportClass" : "com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.TransportImpl",
-  "topoSceClass" : "com.spectral.cc.core.mapping.ds.blueprintsimpl.service.TopoSceImpl"
+  "topoSceClass" : "com.spectral.cc.core.mapping.ds.blueprintsimpl.service.MappingSceImpl"
  }

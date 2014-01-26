@@ -20,7 +20,7 @@
 package com.spectral.cc.core.mapping.main.rest.ds.domain;
 
 import com.spectral.cc.core.mapping.ds.domain.Endpoint;
-import com.spectral.cc.core.mapping.ds.service.TopoSce;
+import com.spectral.cc.core.mapping.ds.service.MappingSce;
 import com.spectral.cc.core.mapping.main.ds.domain.EndpointJSON;
 import com.spectral.cc.core.mapping.main.rest.ToolBox;
 import com.spectral.cc.core.mapping.main.runtime.TopoWSRuntime;
@@ -41,7 +41,7 @@ public class RESTEndpoint {
     @GET
     @Path("/{param}")
     public Response printEndpointJSON(@PathParam("param") long id) {
-        TopoSce topo = TopoWSRuntime.getTopoSce();
+        MappingSce topo = TopoWSRuntime.getMappingSce();
         Endpoint endpoint = (Endpoint) topo.getEndpointSce().getEndpoint(id);
         if (endpoint != null) {
             try {
@@ -62,7 +62,7 @@ public class RESTEndpoint {
 
     @GET
     public Response printAllEndpointJSON() {
-        TopoSce topo = TopoWSRuntime.getTopoSce();
+        MappingSce topo = TopoWSRuntime.getMappingSce();
         String result = "";
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         try {

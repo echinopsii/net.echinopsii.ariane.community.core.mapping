@@ -33,7 +33,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public class ContainerImpl implements Container, TopoDSCacheEntity {
+public class ContainerImpl implements Container, MappingDSCacheEntity {
 
 	private static final Logger log = LoggerFactory.getLogger(ContainerImpl.class);
 	
@@ -180,11 +180,11 @@ public class ContainerImpl implements Container, TopoDSCacheEntity {
 				ret = this.containerNodes.add((NodeImpl)node);
 				if (ret==true)
 					synchronizeNodeToDB((NodeImpl)node);
-			} catch (TopoDSGraphDBException E) {
+			} catch (MappingDSGraphDBException E) {
 				E.printStackTrace();
 				log.error("Exception while adding node {}...", new Object[]{node.getNodeID()});
 				this.containerNodes.remove((NodeImpl)node);
-				TopoDSGraphDB.autorollback();
+				MappingDSGraphDB.autorollback();
 			}
 			return ret;
 		}
@@ -223,12 +223,12 @@ public class ContainerImpl implements Container, TopoDSCacheEntity {
 					if (addToNodes) this.containerNodes.remove((NodeImpl)gate);
 					if (addToGates) this.containerGates.remove((GateImpl)gate);
 				}
-			} catch (TopoDSGraphDBException E) {
+			} catch (MappingDSGraphDBException E) {
 				E.printStackTrace();
 				log.error("Exception while adding gate {}...", new Object[]{gate.getNodeID()});				
 				if (addToNodes) this.containerNodes.remove((NodeImpl)gate);
 				if (addToGates) this.containerGates.remove((GateImpl)gate);
-				TopoDSGraphDB.autorollback();
+				MappingDSGraphDB.autorollback();
 			}
 			return addToNodes && addToGates;
 		} else {
@@ -242,13 +242,13 @@ public class ContainerImpl implements Container, TopoDSCacheEntity {
 
 	public void setElement(Element containerVertex) {
 		this.containerVertex = (Vertex)containerVertex;
-		this.containerVertex.setProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY, TopoDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE);
-		this.containerID = this.containerVertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
-		log.debug("Container vertex has been initialized ({},{}).", new Object[]{this.containerVertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID),
-																				 this.containerVertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY)});
+		this.containerVertex.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY, MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE);
+		this.containerID = this.containerVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+		log.debug("Container vertex has been initialized ({},{}).", new Object[]{this.containerVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID),
+																				 this.containerVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY)});
 	}
 	
-	public void synchronizeToDB() throws TopoDSGraphDBException {
+	public void synchronizeToDB() throws MappingDSGraphDBException {
         synchronizeCompanyToDB();
         synchronizeProductToDB();
         synchronizeTypeToDB();
@@ -263,7 +263,7 @@ public class ContainerImpl implements Container, TopoDSCacheEntity {
         if (containerVertex!=null) {
             if (this.containerCompany!=null) {
                 log.debug("Synchronize container company {}...", new Object[]{this.containerCompany});
-                containerVertex.setProperty(TopoDSGraphPropertyNames.DD_CONTAINER_COMPANY_KEY, this.containerCompany);
+                containerVertex.setProperty(MappingDSGraphPropertyNames.DD_CONTAINER_COMPANY_KEY, this.containerCompany);
             }
         }
     }
@@ -272,7 +272,7 @@ public class ContainerImpl implements Container, TopoDSCacheEntity {
         if (containerVertex!=null) {
             if (this.containerProduct!=null) {
                 log.debug("Synchronize container product {}...", new Object[]{this.containerProduct});
-                containerVertex.setProperty(TopoDSGraphPropertyNames.DD_CONTAINER_PRODUCT_KEY, this.containerProduct);
+                containerVertex.setProperty(MappingDSGraphPropertyNames.DD_CONTAINER_PRODUCT_KEY, this.containerProduct);
             }
         }
     }
@@ -281,7 +281,7 @@ public class ContainerImpl implements Container, TopoDSCacheEntity {
 		if (containerVertex!=null) {
 			if (this.containerType!=null) {
 				log.debug("Synchronize container type {}...", new Object[]{this.containerType});
-				containerVertex.setProperty(TopoDSGraphPropertyNames.DD_CONTAINER_TYPE_KEY, this.containerType);
+				containerVertex.setProperty(MappingDSGraphPropertyNames.DD_CONTAINER_TYPE_KEY, this.containerType);
 			}
 		}
 	}
@@ -299,13 +299,13 @@ public class ContainerImpl implements Container, TopoDSCacheEntity {
 	
 	private void synchronizePropertyToDB(String key, Object value) {
 		if (containerVertex!=null)
-            TopoDSGraphDBObjectProps.synchronizeObjectPropertyToDB(containerVertex,key,value,TopoDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY);
+            MappingDSGraphDBObjectProps.synchronizeObjectPropertyToDB(containerVertex, key, value, MappingDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY);
 	}
 	
 	private void synchronizePrimaryAdminGateToDB() {
 		if (containerVertex!=null && containerPrimaryAdminGate!=null && containerPrimaryAdminGate.getElement()!=null) {
 			log.debug("Synchronize container primary admin gate {}...", new Object[]{this.containerPrimaryAdminGate.getNodeID()});
-			containerVertex.setProperty(TopoDSGraphPropertyNames.DD_CONTAINER_PAGATE_KEY, 
+			containerVertex.setProperty(MappingDSGraphPropertyNames.DD_CONTAINER_PAGATE_KEY,
 									    this.containerPrimaryAdminGate.getNodeID());
 		}
 	}
@@ -313,12 +313,12 @@ public class ContainerImpl implements Container, TopoDSCacheEntity {
 	private void synchronizeClusterToDB() {
 		if (containerVertex!=null && containerCluster!=null && containerCluster.getElement()!=null) {
 			log.debug("Synchronize container cluster {}...", new Object[]{this.containerCluster.getClusterID()});
-			containerVertex.setProperty(TopoDSGraphPropertyNames.DD_CONTAINER_CLUSTER_KEY, 
+			containerVertex.setProperty(MappingDSGraphPropertyNames.DD_CONTAINER_CLUSTER_KEY,
 									    this.containerCluster.getClusterID());
 		}
 	}
 	
-	private void synchronizeNodesToDB() throws TopoDSGraphDBException {
+	private void synchronizeNodesToDB() throws MappingDSGraphDBException {
 		if (containerVertex!=null) {
 			Iterator<NodeImpl> iterCN = this.containerNodes.iterator();
 			while (iterCN.hasNext()) {
@@ -328,25 +328,25 @@ public class ContainerImpl implements Container, TopoDSCacheEntity {
 		}		
 	}
 	
-	private void synchronizeNodeToDB(NodeImpl node) throws TopoDSGraphDBException {
+	private void synchronizeNodeToDB(NodeImpl node) throws MappingDSGraphDBException {
 		if (containerVertex!=null) {
 			if (node instanceof GateImpl)
 				return;
 			VertexQuery query = this.containerVertex.query();
 			query.direction(Direction.OUT);
-			query.labels(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
-			query.has(TopoDSGraphPropertyNames.DD_CONTAINER_EDGE_NODE_KEY, true);
+			query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
+			query.has(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_NODE_KEY, true);
 			for (Vertex vertex : query.vertices()) {
-				if ((long)vertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID)==node.getNodeID())
+				if ((long)vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID)==node.getNodeID())
 					return;
 			}
 			log.debug("Synchronize container node {}...", new Object[]{node.getNodeID()});
-			Edge owns = TopoDSGraphDB.createEdge(this.containerVertex, node.getElement(), TopoDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY); 
-			owns.setProperty(TopoDSGraphPropertyNames.DD_CONTAINER_EDGE_NODE_KEY, true);
+			Edge owns = MappingDSGraphDB.createEdge(this.containerVertex, node.getElement(), MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
+			owns.setProperty(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_NODE_KEY, true);
 		}
 	}
 	
-	private void synchronizeGatesToDB() throws TopoDSGraphDBException {
+	private void synchronizeGatesToDB() throws MappingDSGraphDBException {
 		if (containerVertex!=null) {
 			Iterator<GateImpl> iterCG = this.containerGates.iterator();
 			while (iterCG.hasNext()) {
@@ -356,19 +356,19 @@ public class ContainerImpl implements Container, TopoDSCacheEntity {
 		}
 	}
 	
-	private void synchronizeGateToDB(GateImpl gate) throws TopoDSGraphDBException {
+	private void synchronizeGateToDB(GateImpl gate) throws MappingDSGraphDBException {
 		if (containerVertex!=null) {
 			VertexQuery query = this.containerVertex.query();
 			query.direction(Direction.OUT);
-			query.labels(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
-			query.has(TopoDSGraphPropertyNames.DD_CONTAINER_EDGE_GATE_KEY, true);
+			query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
+			query.has(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_GATE_KEY, true);
 			for (Vertex vertex : query.vertices()) {
-				if ((long)vertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID)==gate.getNodeID())
+				if ((long)vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID)==gate.getNodeID())
 					return;
 			}
 			log.debug("Synchronize container gate {}...", new Object[]{gate.getNodeID()});
-			Edge owns = TopoDSGraphDB.createEdge(this.containerVertex, gate.getElement(), TopoDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY); 
-			owns.setProperty(TopoDSGraphPropertyNames.DD_CONTAINER_EDGE_GATE_KEY, true);
+			Edge owns = MappingDSGraphDB.createEdge(this.containerVertex, gate.getElement(), MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
+			owns.setProperty(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_GATE_KEY, true);
 		}
 	}
 	
@@ -390,12 +390,12 @@ public class ContainerImpl implements Container, TopoDSCacheEntity {
 
 	private void synchronizeIDFromDB() {
 		if (this.containerVertex!=null)
-			this.containerID = this.containerVertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+			this.containerID = this.containerVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
 	}
 
     private void synchronizeCompanyFromDB() {
         if (containerVertex!=null) {
-            Object ret = containerVertex.getProperty(TopoDSGraphPropertyNames.DD_CONTAINER_COMPANY_KEY);
+            Object ret = containerVertex.getProperty(MappingDSGraphPropertyNames.DD_CONTAINER_COMPANY_KEY);
             if (ret!=null)
                 this.containerCompany = (String) ret;
         }
@@ -403,7 +403,7 @@ public class ContainerImpl implements Container, TopoDSCacheEntity {
 
     private void synchronizeProductFromDB() {
         if (containerVertex!=null) {
-            Object ret = containerVertex.getProperty(TopoDSGraphPropertyNames.DD_CONTAINER_PRODUCT_KEY);
+            Object ret = containerVertex.getProperty(MappingDSGraphPropertyNames.DD_CONTAINER_PRODUCT_KEY);
             if (ret!=null)
                 this.containerProduct = (String) ret;
         }
@@ -411,7 +411,7 @@ public class ContainerImpl implements Container, TopoDSCacheEntity {
 
 	private void synchronizeTypeFromDB() {
 		if (containerVertex!=null) {
-			Object ret = containerVertex.getProperty(TopoDSGraphPropertyNames.DD_CONTAINER_TYPE_KEY);
+			Object ret = containerVertex.getProperty(MappingDSGraphPropertyNames.DD_CONTAINER_TYPE_KEY);
 			if (ret!=null)
 				this.containerType = (String) ret;
 		}
@@ -424,15 +424,15 @@ public class ContainerImpl implements Container, TopoDSCacheEntity {
 			} else {
                 containerProperties.clear();
             }
-            TopoDSGraphDBObjectProps.synchronizeObjectPropertyFromDB(containerVertex,containerProperties,TopoDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY);
+            MappingDSGraphDBObjectProps.synchronizeObjectPropertyFromDB(containerVertex, containerProperties, MappingDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY);
 		}
 	}	
 
 	private void synchronizePrimaryAdminGateFromDB() {
 		if (containerVertex!=null) {
-			Object paGateID = this.containerVertex.getProperty(TopoDSGraphPropertyNames.DD_CONTAINER_PAGATE_KEY);
+			Object paGateID = this.containerVertex.getProperty(MappingDSGraphPropertyNames.DD_CONTAINER_PAGATE_KEY);
 			if (paGateID!=null) {
-				TopoDSCacheEntity entity = TopoDSGraphDB.getVertexEntity((long)paGateID);
+				MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) paGateID);
 				if (entity!=null) {
 					if (entity instanceof GateImpl)
 						containerPrimaryAdminGate = (GateImpl) entity;
@@ -445,9 +445,9 @@ public class ContainerImpl implements Container, TopoDSCacheEntity {
 	
 	private void synchronizeClusterFromDB() {
 		if (containerVertex!=null) {
-			Object clusterID = this.containerVertex.getProperty(TopoDSGraphPropertyNames.DD_CONTAINER_CLUSTER_KEY);
+			Object clusterID = this.containerVertex.getProperty(MappingDSGraphPropertyNames.DD_CONTAINER_CLUSTER_KEY);
 			if (clusterID!=null) {
-				TopoDSCacheEntity entity = TopoDSGraphDB.getVertexEntity((long)clusterID);
+				MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) clusterID);
 				if (entity!=null) {
 					if (entity instanceof ClusterImpl)
 						containerCluster = (ClusterImpl) entity;
@@ -462,12 +462,12 @@ public class ContainerImpl implements Container, TopoDSCacheEntity {
 		if (containerVertex!=null) {
 			VertexQuery query = containerVertex.query();
 			query.direction(Direction.OUT);
-			query.labels(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
-			query.has(TopoDSGraphPropertyNames.DD_CONTAINER_EDGE_NODE_KEY, true);
+			query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
+			query.has(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_NODE_KEY, true);
             this.containerNodes.clear();
 			for (Vertex vertex : query.vertices()) {
 				NodeImpl node = null;
-				TopoDSCacheEntity entity = TopoDSGraphDB.getVertexEntity((long)vertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
+				MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
 				if (entity!=null) {
 					if (entity instanceof NodeImpl) {
 						node = (NodeImpl)entity;
@@ -485,11 +485,11 @@ public class ContainerImpl implements Container, TopoDSCacheEntity {
 		if (this.containerVertex!=null && node.getElement()!=null) {
 			VertexQuery query = this.containerVertex.query();
 			query.direction(Direction.OUT);
-			query.labels(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
-			query.has(TopoDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY, true);
+			query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
+			query.has(MappingDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY, true);
 			for (Edge edge : query.edges()) {
 				if (edge.getVertex(Direction.OUT).equals(node.getElement())) {
-					TopoDSGraphDB.getDDgraph().removeEdge(edge);
+					MappingDSGraphDB.getDDgraph().removeEdge(edge);
 				}						
 			}
 		}
@@ -499,12 +499,12 @@ public class ContainerImpl implements Container, TopoDSCacheEntity {
 		if (containerVertex!=null) {
 			VertexQuery query = containerVertex.query();
 			query.direction(Direction.OUT);
-			query.labels(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
-			query.has(TopoDSGraphPropertyNames.DD_CONTAINER_EDGE_GATE_KEY, true);
+			query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
+			query.has(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_GATE_KEY, true);
             this.containerGates.clear();
 			for (Vertex vertex : query.vertices()) {
 				GateImpl gate = null;
-				TopoDSCacheEntity entity = TopoDSGraphDB.getVertexEntity((long)vertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
+				MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
 				if (entity!=null) {
 					if (entity instanceof GateImpl) {
 						gate = (GateImpl)entity;

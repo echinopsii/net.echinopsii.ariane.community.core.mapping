@@ -19,8 +19,8 @@
 
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.repository;
 
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSCacheEntity;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSGraphDB;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSCacheEntity;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDB;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.EndpointImpl;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.NodeImpl;
 import com.spectral.cc.core.mapping.ds.repository.NodeRepo;
@@ -34,13 +34,13 @@ public class NodeRepoImpl implements NodeRepo<NodeImpl> {
     private final static Logger log = LoggerFactory.getLogger(NodeRepoImpl.class);
 
     public static Set<NodeImpl> getRepository() {
-        return TopoDSGraphDB.getNodes();
+        return MappingDSGraphDB.getNodes();
     }
 
     @Override
     public NodeImpl saveNode(NodeImpl node) {
-        TopoDSGraphDB.saveVertexEntity(node);
-        log.debug("Added node {} to graph({}).", new Object[]{node.toString(), TopoDSGraphDB.getVertexMaxCursor()});
+        MappingDSGraphDB.saveVertexEntity(node);
+        log.debug("Added node {} to graph({}).", new Object[]{node.toString(), MappingDSGraphDB.getVertexMaxCursor()});
         return node;
     }
 
@@ -51,7 +51,7 @@ public class NodeRepoImpl implements NodeRepo<NodeImpl> {
         }
 
         for (EndpointImpl endpoint : node.getNodeEndpoints()) {
-            log.debug("Deleted endpoint {} from graph({}).", new Object[]{endpoint.getEndpointURL(), TopoDSGraphDB.getVertexMaxCursor()});
+            log.debug("Deleted endpoint {} from graph({}).", new Object[]{endpoint.getEndpointURL(), MappingDSGraphDB.getVertexMaxCursor()});
             node.removeEndpoint(endpoint);
         }
 
@@ -67,14 +67,14 @@ public class NodeRepoImpl implements NodeRepo<NodeImpl> {
             node.getNodeContainer().removeContainerNode(node);
         }
 
-        TopoDSGraphDB.deleteEntity(node);
-        log.debug("Deleted node {} and all its linked entities from graph({}).", new Object[]{node.toString(), TopoDSGraphDB.getVertexMaxCursor()});
+        MappingDSGraphDB.deleteEntity(node);
+        log.debug("Deleted node {} and all its linked entities from graph({}).", new Object[]{node.toString(), MappingDSGraphDB.getVertexMaxCursor()});
     }
 
     @Override
     public NodeImpl findNodeByID(long ID) {
         NodeImpl ret = null;
-        TopoDSCacheEntity entity = TopoDSGraphDB.getVertexEntity(ID);
+        MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity(ID);
         if (entity != null) {
             if (entity instanceof NodeImpl) {
                 ret = (NodeImpl) entity;
@@ -88,7 +88,7 @@ public class NodeRepoImpl implements NodeRepo<NodeImpl> {
     @Override
     public NodeImpl findNodeByEndpointURL(String URL) {
         NodeImpl ret = null;
-        EndpointImpl ep = TopoDSGraphDB.getIndexedEndpoint(URL);
+        EndpointImpl ep = MappingDSGraphDB.getIndexedEndpoint(URL);
         if (ep != null) {
             ret = ep.getEndpointParentNode();
         }
@@ -97,6 +97,6 @@ public class NodeRepoImpl implements NodeRepo<NodeImpl> {
 
     @Override
     public Set<NodeImpl> findNodesByProperties(String key, Object value) {
-        return TopoDSGraphDB.getNodes(key, value);
+        return MappingDSGraphDB.getNodes(key, value);
     }
 }

@@ -22,13 +22,13 @@
 package com.spectral.cc.core.mapping.ds.rim.factory.domain;
 
 import com.spectral.cc.core.mapping.ds.domain.Link;
-import com.spectral.cc.core.mapping.ds.rim.registry.TopoDSRegistry;
+import com.spectral.cc.core.mapping.ds.rim.registry.MappingDSRegistry;
 
 public class LinkFactory {
 
 	public static Link make(String type) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		Link ret = null;
-		String linkClassName = TopoDSRegistry.getEntityFromRegistry(type).getLinkFactoryClassName();
+		String linkClassName = MappingDSRegistry.getEntityFromRegistry(type).getLinkFactoryClassName();
 		ClassLoader loader = new LinkFactory().getClass().getClassLoader();
 		@SuppressWarnings("unchecked")
 		Class<? extends Link> linkClass = (Class<? extends Link>) loader.loadClass(linkClassName); 

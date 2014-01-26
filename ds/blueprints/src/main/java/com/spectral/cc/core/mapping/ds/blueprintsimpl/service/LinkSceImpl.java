@@ -19,7 +19,7 @@
 
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.service;
 
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSGraphDB;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDB;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.EndpointImpl;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.LinkImpl;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.TransportImpl;
@@ -33,9 +33,9 @@ public class LinkSceImpl implements LinkSce<LinkImpl> {
 
     private static final Logger log = LoggerFactory.getLogger(LinkSceImpl.class);
 
-    private TopoSceImpl sce = null;
+    private MappingSceImpl sce = null;
 
-    public LinkSceImpl(TopoSceImpl sce_) {
+    public LinkSceImpl(MappingSceImpl sce_) {
         sce = sce_;
     }
 
@@ -101,6 +101,6 @@ public class LinkSceImpl implements LinkSce<LinkImpl> {
     @Override
     public Set<LinkImpl> getLinks(String selector) {
         // TODO : manage selector - check graphdb queries
-        return TopoDSGraphDB.getLinks();
+        return MappingDSGraphDB.getLinks();
     }
 }

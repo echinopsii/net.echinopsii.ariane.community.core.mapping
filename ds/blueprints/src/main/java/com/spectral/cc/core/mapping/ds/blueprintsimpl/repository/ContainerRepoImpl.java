@@ -19,8 +19,8 @@
 
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.repository;
 
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSCacheEntity;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSGraphDB;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSCacheEntity;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDB;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.ContainerImpl;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.EndpointImpl;
 import com.spectral.cc.core.mapping.ds.repository.ContainerRepo;
@@ -34,26 +34,26 @@ public class ContainerRepoImpl implements ContainerRepo<ContainerImpl> {
     private final static Logger log = LoggerFactory.getLogger(ContainerRepoImpl.class);
 
     public static Set<ContainerImpl> getRepository() {
-        return TopoDSGraphDB.getContainers();
+        return MappingDSGraphDB.getContainers();
     }
 
     @Override
     public ContainerImpl save(ContainerImpl container) {
-        TopoDSGraphDB.saveVertexEntity(container);
-        log.debug("Added container {} to graph({}).", new Object[]{container.toString(), TopoDSGraphDB.getVertexMaxCursor()});
+        MappingDSGraphDB.saveVertexEntity(container);
+        log.debug("Added container {} to graph({}).", new Object[]{container.toString(), MappingDSGraphDB.getVertexMaxCursor()});
         return container;
     }
 
     @Override
     public void delete(ContainerImpl container) {
-        TopoDSGraphDB.deleteEntity(container);
-        log.debug("Deleted container {} from graph({}).", new Object[]{container.toString(), TopoDSGraphDB.getVertexMaxCursor()});
+        MappingDSGraphDB.deleteEntity(container);
+        log.debug("Deleted container {} from graph({}).", new Object[]{container.toString(), MappingDSGraphDB.getVertexMaxCursor()});
     }
 
     @Override
     public ContainerImpl findContainerByID(long id) {
         ContainerImpl ret = null;
-        TopoDSCacheEntity entity = TopoDSGraphDB.getVertexEntity(id);
+        MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity(id);
         if (entity != null) {
             if (entity instanceof ContainerImpl) {
                 ret = (ContainerImpl) entity;
@@ -67,7 +67,7 @@ public class ContainerRepoImpl implements ContainerRepo<ContainerImpl> {
     @Override
     public ContainerImpl findContainersByPrimaryAdminURL(String primaryAdminURL) {
         ContainerImpl ret = null;
-        EndpointImpl ep = TopoDSGraphDB.getIndexedEndpoint(primaryAdminURL);
+        EndpointImpl ep = MappingDSGraphDB.getIndexedEndpoint(primaryAdminURL);
         if (ep != null) {
             ret = ep.getEndpointParentNode().getNodeContainer();
         }

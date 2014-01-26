@@ -19,8 +19,8 @@
 
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.repository;
 
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSCacheEntity;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSGraphDB;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSCacheEntity;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDB;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.EndpointImpl;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.GateImpl;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.NodeImpl;
@@ -34,7 +34,7 @@ public class GateRepoImpl extends NodeRepoImpl implements GateRepo<NodeImpl, Gat
     private final static Logger log = LoggerFactory.getLogger(GateRepoImpl.class);
 
     public static Set<GateImpl> getGateRepository() {
-        return TopoDSGraphDB.getGates();
+        return MappingDSGraphDB.getGates();
     }
 
     @Override
@@ -56,7 +56,7 @@ public class GateRepoImpl extends NodeRepoImpl implements GateRepo<NodeImpl, Gat
     @Override
     public GateImpl findGateByID(long ID) {
         GateImpl ret = null;
-        TopoDSCacheEntity entity = TopoDSGraphDB.getVertexEntity(ID);
+        MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity(ID);
         if (entity != null) {
             if (entity instanceof GateImpl) {
                 ret = (GateImpl) entity;
@@ -70,7 +70,7 @@ public class GateRepoImpl extends NodeRepoImpl implements GateRepo<NodeImpl, Gat
     @Override
     public GateImpl findGateByEndpointURL(String URL) {
         GateImpl ret = null;
-        EndpointImpl ep = TopoDSGraphDB.getIndexedEndpoint(URL);
+        EndpointImpl ep = MappingDSGraphDB.getIndexedEndpoint(URL);
         if (ep != null) {
             ret = (GateImpl) ep.getEndpointParentNode();
         }

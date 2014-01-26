@@ -22,13 +22,13 @@
 package com.spectral.cc.core.mapping.ds.rim.factory.domain;
 
 import com.spectral.cc.core.mapping.ds.domain.Container;
-import com.spectral.cc.core.mapping.ds.rim.registry.TopoDSRegistry;
+import com.spectral.cc.core.mapping.ds.rim.registry.MappingDSRegistry;
 
 public class ContainerFactory {
 
 	public static Container make(String type) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		Container ret = null;
-		String containerClassName = TopoDSRegistry.getEntityFromRegistry(type).getContainerFactoryClassName();
+		String containerClassName = MappingDSRegistry.getEntityFromRegistry(type).getContainerFactoryClassName();
 		ClassLoader loader = new ContainerFactory().getClass().getClassLoader();
 		@SuppressWarnings("unchecked")
 		Class<? extends Container> containerClass = (Class<? extends Container>) loader.loadClass(containerClassName); 

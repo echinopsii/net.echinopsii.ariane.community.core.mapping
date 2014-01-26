@@ -22,13 +22,13 @@
 package com.spectral.cc.core.mapping.ds.rim.factory.domain;
 
 import com.spectral.cc.core.mapping.ds.domain.Endpoint;
-import com.spectral.cc.core.mapping.ds.rim.registry.TopoDSRegistry;
+import com.spectral.cc.core.mapping.ds.rim.registry.MappingDSRegistry;
 
 public class EndpointFactory {
 	
 	public static Endpoint make(String type) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		Endpoint ret = null;
-		String endpointClassName = TopoDSRegistry.getEntityFromRegistry(type).getEndpointFactoryClassName();
+		String endpointClassName = MappingDSRegistry.getEntityFromRegistry(type).getEndpointFactoryClassName();
 		ClassLoader loader = new EndpointFactory().getClass().getClassLoader();
 		@SuppressWarnings("unchecked")
 		Class<? extends Endpoint> endpointClass = (Class<? extends Endpoint>) loader.loadClass(endpointClassName); 

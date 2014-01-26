@@ -19,9 +19,9 @@
 
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.domain;
 
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSCacheEntity;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSGraphDBObjectProps;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSGraphPropertyNames;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSCacheEntity;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDBObjectProps;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphPropertyNames;
 import com.spectral.cc.core.mapping.ds.domain.Transport;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Iterator;
 
-public class TransportImpl implements Transport, TopoDSCacheEntity {
+public class TransportImpl implements Transport, MappingDSCacheEntity {
 
     private static final Logger log = LoggerFactory.getLogger(TransportImpl.class);
 
@@ -82,8 +82,8 @@ public class TransportImpl implements Transport, TopoDSCacheEntity {
 	@Override
 	public void setElement(Element vertex) {
 		this.transportVertex = (Vertex) vertex;
-		this.transportVertex.setProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY, TopoDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE);
-		this.transportID = this.transportVertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+		this.transportVertex.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY, MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE);
+		this.transportID = this.transportVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
 	}
 
 	@Override
@@ -94,7 +94,7 @@ public class TransportImpl implements Transport, TopoDSCacheEntity {
 
     private void synchronizeNameToDB() {
         if (this.transportVertex!=null)
-            this.transportVertex.setProperty(TopoDSGraphPropertyNames.DD_TRANSPORT_NAME_KEY, this.transportName);
+            this.transportVertex.setProperty(MappingDSGraphPropertyNames.DD_TRANSPORT_NAME_KEY, this.transportName);
     }
 
     private void synchronizePropertiesToDB() {
@@ -110,7 +110,7 @@ public class TransportImpl implements Transport, TopoDSCacheEntity {
 
     private void synchronizePropertyToDB(String key, Object value) {
         if (transportVertex!=null)
-            TopoDSGraphDBObjectProps.synchronizeObjectPropertyToDB(transportVertex, key, value, TopoDSGraphPropertyNames.DD_TRANSPORT_PROPS_KEY);
+            MappingDSGraphDBObjectProps.synchronizeObjectPropertyToDB(transportVertex, key, value, MappingDSGraphPropertyNames.DD_TRANSPORT_PROPS_KEY);
     }
 
 	@Override
@@ -122,12 +122,12 @@ public class TransportImpl implements Transport, TopoDSCacheEntity {
 
     private void synchronizeIDFromDB() {
         if (this.transportVertex!=null)
-            this.transportID = this.transportVertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+            this.transportID = this.transportVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
     }
 
     private void synchronizeNameFromDB() {
         if (this.transportVertex!=null)
-            this.transportName = this.transportVertex.getProperty(TopoDSGraphPropertyNames.DD_TRANSPORT_NAME_KEY);
+            this.transportName = this.transportVertex.getProperty(MappingDSGraphPropertyNames.DD_TRANSPORT_NAME_KEY);
     }
 
     private void synchronizePropertiesFromDB() {
@@ -137,7 +137,7 @@ public class TransportImpl implements Transport, TopoDSCacheEntity {
             } else {
                 transportProperties.clear();
             }
-            TopoDSGraphDBObjectProps.synchronizeObjectPropertyFromDB(transportVertex,transportProperties,TopoDSGraphPropertyNames.DD_TRANSPORT_PROPS_KEY);
+            MappingDSGraphDBObjectProps.synchronizeObjectPropertyFromDB(transportVertex, transportProperties, MappingDSGraphPropertyNames.DD_TRANSPORT_PROPS_KEY);
         }
     }
 

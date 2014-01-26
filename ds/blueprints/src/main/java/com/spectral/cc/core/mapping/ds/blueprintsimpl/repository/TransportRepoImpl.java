@@ -18,8 +18,8 @@
  */
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.repository;
 
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSCacheEntity;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSGraphDB;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSCacheEntity;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDB;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.TransportImpl;
 import com.spectral.cc.core.mapping.ds.repository.TransportRepo;
 import org.slf4j.Logger;
@@ -32,27 +32,27 @@ public class TransportRepoImpl implements TransportRepo<TransportImpl> {
     private final static Logger log = LoggerFactory.getLogger(TransportRepoImpl.class);
 
     public static Set<TransportImpl> getTransportRepository() {
-        return TopoDSGraphDB.getTransports();
+        return MappingDSGraphDB.getTransports();
     }
 
     @Override
     public TransportImpl save(TransportImpl transport) {
-        TopoDSGraphDB.saveVertexEntity(transport);
-        log.debug("Added transport {} to graph({}).", new Object[]{transport.toString(), TopoDSGraphDB.getVertexMaxCursor()});
+        MappingDSGraphDB.saveVertexEntity(transport);
+        log.debug("Added transport {} to graph({}).", new Object[]{transport.toString(), MappingDSGraphDB.getVertexMaxCursor()});
         return transport;
     }
 
     @Override
     public void delete(TransportImpl transport) {
-        TopoDSGraphDB.deleteEntity(transport);
-        log.debug("Deleted transport {} from graph({}).", new Object[]{transport.toString(), TopoDSGraphDB.getVertexMaxCursor()});
+        MappingDSGraphDB.deleteEntity(transport);
+        log.debug("Deleted transport {} from graph({}).", new Object[]{transport.toString(), MappingDSGraphDB.getVertexMaxCursor()});
     }
 
     @Override
     public TransportImpl findTransportByID(long ID) {
         TransportImpl ret = null;
         log.debug("search transport for ID {}", new Object[]{ID});
-        TopoDSCacheEntity entity = TopoDSGraphDB.getVertexEntity(ID);
+        MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity(ID);
         if (entity != null) {
             if (entity instanceof TransportImpl) {
                 ret = (TransportImpl) entity;
@@ -66,6 +66,6 @@ public class TransportRepoImpl implements TransportRepo<TransportImpl> {
 
     @Override
     public TransportImpl findTransportByName(String name) {
-        return TopoDSGraphDB.getIndexedTransport(name);
+        return MappingDSGraphDB.getIndexedTransport(name);
     }
 }

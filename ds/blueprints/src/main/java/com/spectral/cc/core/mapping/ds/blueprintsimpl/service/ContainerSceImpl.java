@@ -32,9 +32,9 @@ public class ContainerSceImpl implements ContainerSce<ContainerImpl> {
 
     private static final Logger log = LoggerFactory.getLogger(ContainerSceImpl.class);
 
-    private TopoSceImpl sce = null;
+    private MappingSceImpl sce = null;
 
-    public ContainerSceImpl(TopoSceImpl sce_) {
+    public ContainerSceImpl(MappingSceImpl sce_) {
         this.sce = sce_;
     }
 

@@ -19,10 +19,10 @@
 
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.domain;
 
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSCacheEntity;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSGraphDB;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSGraphDBException;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSGraphPropertyNames;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSCacheEntity;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDB;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDBException;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphPropertyNames;
 import com.spectral.cc.core.mapping.ds.domain.Cluster;
 import com.spectral.cc.core.mapping.ds.domain.Container;
 import com.tinkerpop.blueprints.*;
@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ClusterImpl implements Cluster, TopoDSCacheEntity {
+public class ClusterImpl implements Cluster, MappingDSCacheEntity {
 
     private static final Logger log = LoggerFactory.getLogger(ContainerImpl.class);
 
@@ -76,11 +76,11 @@ public class ClusterImpl implements Cluster, TopoDSCacheEntity {
                     synchronizeContainerToDB((ContainerImpl) container);
                     container.setContainerCluster(this);
                 }
-            } catch (TopoDSGraphDBException E) {
+            } catch (MappingDSGraphDBException E) {
                 E.printStackTrace();
                 log.error("Exception while adding container {}...", new Object[]{container.getContainerID()});
                 this.clusterContainers.remove((ContainerImpl) container);
-                TopoDSGraphDB.autorollback();
+                MappingDSGraphDB.autorollback();
             }
             return ret;
         } else {
@@ -96,43 +96,43 @@ public class ClusterImpl implements Cluster, TopoDSCacheEntity {
     @Override
     public void setElement(Element vertex) {
         this.clusterVertex = (Vertex) vertex;
-        this.clusterVertex.setProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY, TopoDSGraphPropertyNames.DD_TYPE_CLUSTER_VALUE);
-        this.clusterID = this.clusterVertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
-        log.debug("Cluster vertex has been initialized ({},{}).", new Object[]{this.clusterVertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID),
-                                                                                      this.clusterVertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY)});
+        this.clusterVertex.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY, MappingDSGraphPropertyNames.DD_TYPE_CLUSTER_VALUE);
+        this.clusterID = this.clusterVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+        log.debug("Cluster vertex has been initialized ({},{}).", new Object[]{this.clusterVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID),
+                                                                                      this.clusterVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY)});
     }
 
     @Override
-    public void synchronizeToDB() throws TopoDSGraphDBException {
+    public void synchronizeToDB() throws MappingDSGraphDBException {
         synchronizeNameToDB();
         synchronizeContainersToDB();
     }
 
     private void synchronizeNameToDB() {
         if (this.clusterVertex != null && this.clusterName != null) {
-            this.clusterVertex.setProperty(TopoDSGraphPropertyNames.DD_CLUSTER_NAME_KEY, this.clusterName);
+            this.clusterVertex.setProperty(MappingDSGraphPropertyNames.DD_CLUSTER_NAME_KEY, this.clusterName);
         }
     }
 
-    private void synchronizeContainersToDB() throws TopoDSGraphDBException {
+    private void synchronizeContainersToDB() throws MappingDSGraphDBException {
         for (ContainerImpl cont : this.clusterContainers) {
             synchronizeContainerToDB(cont);
         }
     }
 
-    private void synchronizeContainerToDB(ContainerImpl cont) throws TopoDSGraphDBException {
+    private void synchronizeContainerToDB(ContainerImpl cont) throws MappingDSGraphDBException {
         if (this.clusterVertex != null && cont.getContainerID() != 0) {
             VertexQuery query = this.clusterVertex.query();
             query.direction(Direction.OUT);
-            query.labels(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
-            query.has(TopoDSGraphPropertyNames.DD_CLUSTER_EDGE_CONT_KEY, true);
+            query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
+            query.has(MappingDSGraphPropertyNames.DD_CLUSTER_EDGE_CONT_KEY, true);
             for (Vertex vertex : query.vertices()) {
-                if ((long) vertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID) == cont.getContainerID()) {
+                if ((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID) == cont.getContainerID()) {
                     return;
                 }
             }
-            Edge owns = TopoDSGraphDB.createEdge(this.clusterVertex, cont.getElement(), TopoDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
-            owns.setProperty(TopoDSGraphPropertyNames.DD_CLUSTER_EDGE_CONT_KEY, true);
+            Edge owns = MappingDSGraphDB.createEdge(this.clusterVertex, cont.getElement(), MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
+            owns.setProperty(MappingDSGraphPropertyNames.DD_CLUSTER_EDGE_CONT_KEY, true);
         }
     }
 
@@ -148,13 +148,13 @@ public class ClusterImpl implements Cluster, TopoDSCacheEntity {
 
     private void synchronizeIDFromDB() {
         if (this.clusterVertex != null) {
-            this.clusterID = this.clusterVertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+            this.clusterID = this.clusterVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
         }
     }
 
     private void synchronizeNameFromDB() {
         if (this.clusterVertex != null) {
-            this.clusterName = this.clusterVertex.getProperty(TopoDSGraphPropertyNames.DD_CLUSTER_NAME_KEY);
+            this.clusterName = this.clusterVertex.getProperty(MappingDSGraphPropertyNames.DD_CLUSTER_NAME_KEY);
         }
     }
 
@@ -162,12 +162,12 @@ public class ClusterImpl implements Cluster, TopoDSCacheEntity {
         if (this.clusterVertex != null) {
             VertexQuery query = this.clusterVertex.query();
             query.direction(Direction.OUT);
-            query.labels(TopoDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
-            query.has(TopoDSGraphPropertyNames.DD_CLUSTER_EDGE_CONT_KEY, true);
+            query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
+            query.has(MappingDSGraphPropertyNames.DD_CLUSTER_EDGE_CONT_KEY, true);
             this.clusterContainers.clear();
             for (Vertex vertex : query.vertices()) {
                 ContainerImpl cont = null;
-                TopoDSCacheEntity entity = TopoDSGraphDB.getVertexEntity((long) vertex.getProperty(TopoDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
+                MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
                 if (entity != null) {
                     if (entity instanceof ContainerImpl) {
                         cont = (ContainerImpl) entity;

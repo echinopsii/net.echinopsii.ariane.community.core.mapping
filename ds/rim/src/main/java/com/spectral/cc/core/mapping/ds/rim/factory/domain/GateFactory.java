@@ -22,13 +22,13 @@
 package com.spectral.cc.core.mapping.ds.rim.factory.domain;
 
 import com.spectral.cc.core.mapping.ds.domain.Gate;
-import com.spectral.cc.core.mapping.ds.rim.registry.TopoDSRegistry;
+import com.spectral.cc.core.mapping.ds.rim.registry.MappingDSRegistry;
 
 public class GateFactory {
 
 	public static Gate make(String type) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		Gate ret = null;
-		String gateClassName = TopoDSRegistry.getEntityFromRegistry(type).getTransportFactoryClassName();
+		String gateClassName = MappingDSRegistry.getEntityFromRegistry(type).getTransportFactoryClassName();
 		ClassLoader loader = new GateFactory().getClass().getClassLoader();
 		@SuppressWarnings("unchecked")
 		Class<? extends Gate> gateClass = (Class<? extends Gate>) loader.loadClass(gateClassName); 

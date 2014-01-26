@@ -22,7 +22,7 @@ package com.spectral.cc.core.mapping.main.runtime;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.spectral.cc.core.mapping.ds.service.TopoSce;
+import com.spectral.cc.core.mapping.ds.service.MappingSce;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,12 +31,12 @@ import java.io.IOException;
 public class TopoWSRuntime {
     private static final Logger log = LoggerFactory.getLogger(TopoWSRuntime.class);
 
-    private static TopoSce topoSce = null;
+    private static MappingSce mappingSce = null;
     private static JsonFactory jFactory = new JsonFactory();
 
-    public final static void start(TopoSce topoService_) throws ClassNotFoundException, InstantiationException, IllegalAccessException, JsonParseException, JsonMappingException, IOException {
-        topoSce = topoService_;
-        if (topoSce == null) {
+    public final static void start(MappingSce topoService_) throws ClassNotFoundException, InstantiationException, IllegalAccessException, JsonParseException, JsonMappingException, IOException {
+        mappingSce = topoService_;
+        if (mappingSce == null) {
             log.error("failed to get dependency services!");
         }
     }
@@ -45,8 +45,8 @@ public class TopoWSRuntime {
         //if any cache save or clean it here
     }
 
-    public final static TopoSce getTopoSce() {
-        return topoSce;
+    public final static MappingSce getMappingSce() {
+        return mappingSce;
     }
 
     public static JsonFactory getjFactory() {

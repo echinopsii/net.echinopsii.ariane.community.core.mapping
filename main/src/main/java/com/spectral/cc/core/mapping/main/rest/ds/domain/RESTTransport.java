@@ -20,7 +20,7 @@
 package com.spectral.cc.core.mapping.main.rest.ds.domain;
 
 import com.spectral.cc.core.mapping.ds.domain.Transport;
-import com.spectral.cc.core.mapping.ds.service.TopoSce;
+import com.spectral.cc.core.mapping.ds.service.MappingSce;
 import com.spectral.cc.core.mapping.main.ds.domain.TransportJSON;
 import com.spectral.cc.core.mapping.main.rest.ToolBox;
 import com.spectral.cc.core.mapping.main.runtime.TopoWSRuntime;
@@ -41,7 +41,7 @@ public class RESTTransport {
     @GET
     @Path("/{param}")
     public Response printLinkJSON(@PathParam("param") long id) {
-        TopoSce topo = TopoWSRuntime.getTopoSce();
+        MappingSce topo = TopoWSRuntime.getMappingSce();
         Transport transport = (Transport) topo.getTransportSce().getTransport(id);
         if (transport != null) {
             try {
@@ -62,7 +62,7 @@ public class RESTTransport {
 
     @GET
     public Response printAllTransportJSON() {
-        TopoSce topo = TopoWSRuntime.getTopoSce();
+        MappingSce topo = TopoWSRuntime.getMappingSce();
         String result = "";
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         try {

@@ -32,9 +32,9 @@ public class NodeSceImpl implements NodeSce<NodeImpl> {
 
     private static final Logger log = LoggerFactory.getLogger(NodeSceImpl.class);
 
-    private TopoSceImpl sce = null;
+    private MappingSceImpl sce = null;
 
-    public NodeSceImpl(TopoSceImpl sce_) {
+    public NodeSceImpl(MappingSceImpl sce_) {
         sce = sce_;
     }
 

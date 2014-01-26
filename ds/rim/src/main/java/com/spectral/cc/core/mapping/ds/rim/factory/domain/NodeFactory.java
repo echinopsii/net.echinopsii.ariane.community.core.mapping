@@ -22,13 +22,13 @@
 package com.spectral.cc.core.mapping.ds.rim.factory.domain;
 
 import com.spectral.cc.core.mapping.ds.domain.Node;
-import com.spectral.cc.core.mapping.ds.rim.registry.TopoDSRegistry;
+import com.spectral.cc.core.mapping.ds.rim.registry.MappingDSRegistry;
 
 public class NodeFactory {
 
 	public static Node make (String type) throws ClassNotFoundException, InstantiationException, IllegalAccessException{
 		Node ret = null;
-		String nodeClassName = TopoDSRegistry.getEntityFromRegistry(type).getNodeFactoryClassName();
+		String nodeClassName = MappingDSRegistry.getEntityFromRegistry(type).getNodeFactoryClassName();
 		ClassLoader loader = new NodeFactory().getClass().getClassLoader();
 		@SuppressWarnings("unchecked")
 		Class<? extends Node> nodeClass = (Class<? extends Node>) loader.loadClass(nodeClassName); 

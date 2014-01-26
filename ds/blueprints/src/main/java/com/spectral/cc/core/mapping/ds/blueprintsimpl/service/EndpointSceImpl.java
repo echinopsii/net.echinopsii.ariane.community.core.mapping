@@ -31,9 +31,9 @@ public class EndpointSceImpl implements EndpointSce<EndpointImpl> {
 
     private static final Logger log = LoggerFactory.getLogger(EndpointSceImpl.class);
 
-    private TopoSceImpl sce = null;
+    private MappingSceImpl sce = null;
 
-    public EndpointSceImpl(TopoSceImpl sce_) {
+    public EndpointSceImpl(MappingSceImpl sce_) {
         sce = sce_;
     }
 

@@ -22,13 +22,13 @@
 package com.spectral.cc.core.mapping.ds.rim.factory.domain;
 
 import com.spectral.cc.core.mapping.ds.domain.Transport;
-import com.spectral.cc.core.mapping.ds.rim.registry.TopoDSRegistry;
+import com.spectral.cc.core.mapping.ds.rim.registry.MappingDSRegistry;
 
 public class TransportFactory {
 
 	public static Transport make(String type) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		Transport ret = null;
-		String transportClassName = TopoDSRegistry.getEntityFromRegistry(type).getTransportFactoryClassName();
+		String transportClassName = MappingDSRegistry.getEntityFromRegistry(type).getTransportFactoryClassName();
 		ClassLoader loader = new TransportFactory().getClass().getClassLoader();
 		@SuppressWarnings("unchecked")
 		Class<? extends Transport> transportClass = (Class<? extends Transport>) loader.loadClass(transportClassName); 

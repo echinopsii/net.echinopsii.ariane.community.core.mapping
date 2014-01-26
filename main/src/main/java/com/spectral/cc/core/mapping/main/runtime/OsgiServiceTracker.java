@@ -19,7 +19,7 @@
  */
 package com.spectral.cc.core.mapping.main.runtime;
 
-import com.spectral.cc.core.mapping.ds.service.TopoSce;
+import com.spectral.cc.core.mapping.ds.service.MappingSce;
 import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -34,13 +34,13 @@ public class OsgiServiceTracker implements Runnable {
 
     @Override
     public void run() {
-        topoSceTracker = new ServiceTracker(context, TopoSce.class.getName(), null);
+        topoSceTracker = new ServiceTracker(context, MappingSce.class.getName(), null);
         try {
             if (topoSceTracker != null) {
                 topoSceTracker.open();
-                TopoSce topoSce = (TopoSce) topoSceTracker.waitForService(60000);
-                if (topoSce != null) {
-                    TopoWSRuntime.start(topoSce);
+                MappingSce mappingSce = (MappingSce) topoSceTracker.waitForService(60000);
+                if (mappingSce != null) {
+                    TopoWSRuntime.start(mappingSce);
                     OsgiActivator.log.info(OsgiActivator.TOPO_WS_SERVICE_NAME + " has been succesfully started !");
                 } else {
                     OsgiActivator.log.warn(OsgiActivator.TOPO_WS_SERVICE_NAME + " was not able to find its dependencies services (waiting  60 seconds).");

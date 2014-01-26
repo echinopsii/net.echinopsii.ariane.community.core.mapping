@@ -19,8 +19,8 @@
 
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.repository;
 
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSCacheEntity;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.TopoDSGraphDB;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSCacheEntity;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDB;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.EndpointImpl;
 import com.spectral.cc.core.mapping.ds.repository.EndpointRepo;
 import org.slf4j.Logger;
@@ -34,26 +34,26 @@ public class EndpointRepoImpl implements EndpointRepo<EndpointImpl> {
 
     @Override
     public EndpointImpl save(EndpointImpl endpoint) {
-        TopoDSGraphDB.saveVertexEntity(endpoint);
-        log.debug("Added endpoint {} to graph({}).", new Object[]{endpoint.toString(), TopoDSGraphDB.getVertexMaxCursor()});
+        MappingDSGraphDB.saveVertexEntity(endpoint);
+        log.debug("Added endpoint {} to graph({}).", new Object[]{endpoint.toString(), MappingDSGraphDB.getVertexMaxCursor()});
         return endpoint;
     }
 
     @Override
     public void delete(EndpointImpl endpoint) {
-        TopoDSGraphDB.deleteEntity(endpoint);
-        log.debug("Deleted endpoint {} from graph({}).", new Object[]{endpoint.toString(), TopoDSGraphDB.getVertexMaxCursor()});
+        MappingDSGraphDB.deleteEntity(endpoint);
+        log.debug("Deleted endpoint {} from graph({}).", new Object[]{endpoint.toString(), MappingDSGraphDB.getVertexMaxCursor()});
     }
 
     @Override
     public Set<EndpointImpl> getAllEndpoints() {
-        return TopoDSGraphDB.getEndpoints();
+        return MappingDSGraphDB.getEndpoints();
     }
 
     @Override
     public EndpointImpl findEndpointByID(long id) {
         EndpointImpl ret = null;
-        TopoDSCacheEntity entity = TopoDSGraphDB.getVertexEntity(id);
+        MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity(id);
         if (entity != null) {
             if (entity instanceof EndpointImpl) {
                 ret = (EndpointImpl) entity;
@@ -66,11 +66,11 @@ public class EndpointRepoImpl implements EndpointRepo<EndpointImpl> {
 
     @Override
     public EndpointImpl findEndpointByURL(String url) {
-        return TopoDSGraphDB.getIndexedEndpoint(url);
+        return MappingDSGraphDB.getIndexedEndpoint(url);
     }
 
     @Override
     public Set<EndpointImpl> findEndpointsByProperties(String key, Object value) {
-        return TopoDSGraphDB.getEndpoints(key, value);
+        return MappingDSGraphDB.getEndpoints(key, value);
     }
 }
