@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.spectral.cc.core</groupId>
         <artifactId>com.spectral.cc.core.mapping</artifactId>
-        <version>0.1-SNAPSHOT</version>
+        <version>0.1</version>
         <relativePath>..</relativePath>
     </parent>
 

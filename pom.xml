@@ -6,7 +6,7 @@
     <groupId>com.spectral.cc.core</groupId>
     <artifactId>com.spectral.cc.core.mapping</artifactId>
     <name>Control and Conquer Core Mapping Parent</name>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.1</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -47,7 +47,7 @@
         <!-- Dependencies versions-->
 
         <!-- CC module dependencies -->
-        <version.com.spectral.cc.core.portal>0.1-SNAPSHOT</version.com.spectral.cc.core.portal>
+        <version.com.spectral.cc.core.portal>0.1</version.com.spectral.cc.core.portal>
 
         <!-- Commons (webapp, shiro, rest ...) -->
         <version.com.fasterxml.jackson>2.1.2</version.com.fasterxml.jackson>
