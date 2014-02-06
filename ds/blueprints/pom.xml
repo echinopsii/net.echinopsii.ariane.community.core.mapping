@@ -6,7 +6,7 @@
         <groupId>com.spectral.cc.core.mapping</groupId>
         <artifactId>com.spectral.cc.core.mapping.ds</artifactId>
         <relativePath>..</relativePath>
-        <version>0.1</version>
+        <version>0.1.0.RELEASE</version>
     </parent>
 
     <groupId>com.spectral.cc.core.mapping.ds</groupId>
