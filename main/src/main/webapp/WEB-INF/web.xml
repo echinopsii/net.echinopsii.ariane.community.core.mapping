@@ -36,7 +36,7 @@
     <!-- SHIRO CONFIGURATION -->
     <context-param>
         <param-name>shiroEnvironmentClass</param-name>
-        <param-value>com.spectral.cc.core.portal.commons.tools.IniOSGIWebEnvironment</param-value>
+        <param-value>com.spectral.cc.core.portal.idm.tools.IniOSGIWebEnvironment</param-value>
     </context-param>
 
     <listener>

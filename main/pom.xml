@@ -144,6 +144,8 @@
                             com.fasterxml.jackson.core.type;version="${version.com.fasterxml.jackson}",
                             com.fasterxml.jackson.core.util;version="${version.com.fasterxml.jackson}",
                             com.spectral.cc.core.mapping*;version=${project.version},
+                            com.spectral.cc.core.portal.idm.controller;version="${version.com.spectral.cc.core.portal}",
+                            com.spectral.cc.core.portal.idm.tools;version=${version.com.spectral.cc.core.portal},
                             com.spectral.cc.core.portal.commons.consumer;version=${version.com.spectral.cc.core.portal},
                             com.spectral.cc.core.portal.commons.controller;version=${version.com.spectral.cc.core.portal},
                             com.spectral.cc.core.portal.commons.model;version=${version.com.spectral.cc.core.portal},
