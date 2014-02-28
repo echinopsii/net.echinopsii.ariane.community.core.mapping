@@ -78,10 +78,10 @@ public class MappingDSGraphDB {
                     String pwd = MappingDSCfgLoader.getDefaultCfgEntity().getBlueprintsPassword();
                     if (user != null && pwd != null) {
                         ddgraph = new OrientGraph(url, user, pwd);
-                        log.info("Connected to OrientDB ({}@{})", new Object[]{user, url});
+                        log.debug("Connected to OrientDB ({}@{})", new Object[]{user, url});
                     } else {
                         ddgraph = new OrientGraph(url);
-                        log.info("Connected to OrientDB ({})", new Object[]{url});
+                        log.debug("Connected to OrientDB ({})", new Object[]{url});
                     }
                     /*
                     ((OrientGraph)ddgraph).setUseLightweightEdges(false);
@@ -90,14 +90,14 @@ public class MappingDSGraphDB {
                     ((OrientGraph)ddgraph).setUseVertexFieldsForEdgeLabels(false);
                     */
                     OGlobalConfiguration.CACHE_LEVEL1_ENABLED.setValue(false);
-                    log.info("{} is started ! ", new Object[]{ddgraph.toString()});
+                    log.debug("{} is started", new Object[]{ddgraph.toString()});
                     log.debug(ddgraph.getFeatures().toString());
                     break;
                 case BLUEPRINTS_IMPL_N4J:
                     String directory = MappingDSCfgLoader.getDefaultCfgEntity().getBlueprintsDirectory();
                     GraphDatabaseService graphDb = new GraphDatabaseFactory().newEmbeddedDatabase( directory );
                     ddgraph = new Neo4jGraph(graphDb);
-                    log.info("{} is started ! ", new Object[]{ddgraph.toString()});
+                    log.debug("{} is started", new Object[]{ddgraph.toString()});
                     log.debug(ddgraph.getFeatures().toString());
                     break;
                 default:
@@ -154,7 +154,7 @@ public class MappingDSGraphDB {
         } finally {
             String ddgraphinfo = ddgraph.toString();
             ddgraph.shutdown();
-            log.info("{} is stopped!", new Object[]{ddgraphinfo});
+            log.debug("{} is stopped", new Object[]{ddgraphinfo});
         }
     }
 

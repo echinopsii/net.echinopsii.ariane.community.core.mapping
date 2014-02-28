@@ -1,0 +1,7 @@
+com.spectral.cc.core.mapping.wat.rest.ds.domain.ContainerEndpoint
+com.spectral.cc.core.mapping.wat.rest.ds.domain.NodeEndpoint
+com.spectral.cc.core.mapping.wat.rest.ds.domain.GateEndpoint
+com.spectral.cc.core.mapping.wat.rest.ds.domain.EndpointEndpoint
+com.spectral.cc.core.mapping.wat.rest.ds.domain.LinkEndpoint
+com.spectral.cc.core.mapping.wat.rest.ds.domain.TransportEndpoint
+com.spectral.cc.core.mapping.wat.rest.ds.service.MapEndpoint

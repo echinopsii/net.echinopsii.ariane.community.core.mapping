@@ -42,15 +42,15 @@ public class MappingRIMRuntime {
 
     public final static boolean start(Dictionary<Object, Object> properties) throws ClassNotFoundException, InstantiationException, IllegalAccessException, JsonParseException, JsonMappingException, IOException {
         if (MappingDSCfgLoader.getDefaultCfgEntity() == null) {
-            log.info("Load configuration from internal conf...");
+            log.debug("Load configuration from internal conf...");
             String mappingDScfgFileName = "mapping.ds.rim.cfg.json";
             MappingDSCfgLoader.load(new MappingRIMRuntime().getClass().getResourceAsStream("/" + mappingDScfgFileName));
         }
-        log.info("Get mapping service from factory ...");
+        log.debug("Get mapping service from factory ...");
         mappingSce = MappingSceFactory.make(MappingDSCfgLoader.getDefaultCfgEntity().getBundleName());
-        log.info("Init mapping service ...");
+        log.debug("Init mapping service ...");
         if (mappingSce.init(properties)) {
-            log.info("Start mapping service ...");
+            log.debug("Start mapping service ...");
             if (mappingSce.start()) {
                 started = true;
             } else {
@@ -59,7 +59,7 @@ public class MappingRIMRuntime {
         } else {
             log.error("A problem occured while initializing Main Mapping DS service...");
         }
-        log.info("Mapping service started...");
+        log.debug("Mapping service started...");
         return started;
     }
 

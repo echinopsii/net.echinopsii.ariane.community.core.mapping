@@ -1,0 +1,113 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<ui:composition template="/templates/mainLayout.xhtml">
+    <ui:define name="moduleHeader">
+        <h:outputStylesheet library="css" name="mapping.css" />
+        <h:outputStylesheet library="css/primeui" name="primeui-0.9.6.css" />
+        <script data-main="#{request.contextPath}/javax.faces.resource/taitale.js.jsf?ln=js" src="#{request.contextPath}/javax.faces.resource/require/require.js.jsf?ln=js" type="text/javascript" charset="utf-8"/>
+    </ui:define>
+    <ui:define name="moduleContent">
+        <p:layout id="mappingLayout" widgetVar="mappingLW">
+            <p:layoutUnit id="mappingOuput" position="east" size="400" header="Mapping focus" resizable="true" collapsible="true" effect="fade" collapsed="true">
+                <h:outputText value="Layout for map object output (definition, monitoring ...)" /> <br/>
+                <p:commandButton value="Toggle" onclick="mappingLW.toggle('east')"/>
+            </p:layoutUnit>
+            <p:layoutUnit position="center" resizable="false">
+                <p:layout>
+                    <p:layoutUnit id="mappingTools" position="north" size="210" header="Mapping tools" resizable="false" collapsible="true">
+                        <p:tabView id="mappingToolsView" activeIndex="2">
+                            <p:tab id="mappingToolsExportTab" title="Export">
+                                <p:graphicImage value="#{request.contextPath}/javax.faces.resource/csv.png?ln=images/export" />
+                                <p:graphicImage value="#{request.contextPath}/javax.faces.resource/excel.png?ln=images/export" />
+                                <p:graphicImage value="#{request.contextPath}/javax.faces.resource/pdf.png?ln=images/export" />
+                                <p:graphicImage value="#{request.contextPath}/javax.faces.resource/xml.png?ln=images/export" />
+                            </p:tab>
+                            <p:tab id="mappingToolsDisplayTab" title="Options">
+                                <h:panelGrid columns="4" cellpadding="5">
+                                    <h:panelGroup>
+                                        <span class="inputTitle">View</span><br/>
+                                        <p:selectOneButton id="viewSelector" value="#{userProfileController.sessionPreferences['mappingDisplayView']}">
+                                            <f:selectItem itemLabel="Component" itemValue="Component"/>
+                                            <f:selectItem itemLabel="Cluster" itemValue="Cluster" />
+                                            <f:selectItem itemLabel="Application" itemValue="Application" />
+                                        </p:selectOneButton>
+                                    </h:panelGroup>
+                                    <h:panelGroup>
+                                        <span class="inputTitle">Layout</span><br/>
+                                        <p:selectOneButton id="layoutSelector" widgetVar="layoutSelector" value="#{userProfileController.sessionPreferences['mappingDisplayLayout']}">
+                                            <f:selectItem itemLabel="Tree" itemValue="Tree" />
+                                            <f:selectItem itemLabel="Network" itemValue="Network" />
+                                        </p:selectOneButton>
+                                    </h:panelGroup>
+                                    <h:panelGroup>
+                                        <span class="inputTitle">Mode</span>
+                                        <p:selectOneButton id="modeSelector" widgetVar="modeSelector" value="#{userProfileController.sessionPreferences['mappingDisplayMode']}">
+                                            <f:selectItem itemLabel="Navigation" itemValue="Navigation"/>
+                                            <f:selectItem itemLabel="Edition" itemValue="Edition" />
+                                        </p:selectOneButton>
+                                    </h:panelGroup>
+                                    <h:panelGroup>
+                                        <span class="inputTitle">Notifications options</span>
+                                        <p:selectManyButton id="notificationsOptions" widgetVar="notificationsOptions" value="#{notificationsController.defaultNotifications}">
+                                            <f:selectItem itemLabel="Notify infos" itemValue="notifyInfos" />
+                                            <f:selectItem itemLabel="Notify warnings" itemValue="notifyWarns" />
+                                            <f:selectItem itemLabel="Notify errors" itemValue="notifyErrs" />
+                                        </p:selectManyButton>
+                                    </h:panelGroup>
+                                </h:panelGrid>
+                                <div id="networkOptions">
+                                    <h:panelGrid columns="2" cellpadding="5">
+                                        <h:panelGroup>
+                                            <span class="inputTitle">Display options</span>
+                                            <p:selectManyButton id="networkLayoutDisplayOptions" widgetVar="networkLayoutDisplayOptions">
+                                                <f:selectItem itemLabel="Display datacenters" itemValue="displayDC" />
+                                                <f:selectItem itemLabel="Display areas" itemValue="displayArea" />
+                                                <f:selectItem itemLabel="Display subnets" itemValue="displayLan" />
+                                            </p:selectManyButton>
+                                        </h:panelGroup>
+                                    </h:panelGrid>
+                                </div>
+                                <div id="treeOptions">
+                                    <h:panelGrid columns="2" cellpadding="5">
+                                        <h:panelGroup>
+                                            <span class="inputTitle">Root tree sorting</span>
+                                            <p:selectOneButton id="rootTreeSorting" widgetVar="rootTreeSorting">
+                                                <f:selectItem itemLabel="By maximum vertex linked" itemValue="1" />
+                                                <f:selectItem itemLabel="By minimum vertex linked" itemValue="-1" />
+                                            </p:selectOneButton>
+                                        </h:panelGroup>
+                                        <h:panelGroup>
+                                            <span class="inputTitle">Sub trees sorting</span>
+                                            <p:selectOneButton id="subTreesSorting" widgetVar="subTreesSorting">
+                                                <f:selectItem itemLabel="By maximum vertex linked" itemValue="1" />
+                                                <f:selectItem itemLabel="By minimum vertex linked" itemValue="-1" />
+                                            </p:selectOneButton>
+                                        </h:panelGroup>
+                                    </h:panelGrid>
+                                </div>
+                            </p:tab>
+                            <p:tab id="mappingToolsQueryTab" title="Query" >
+                                <h:panelGrid columns="2" cellpadding="5">
+                                    <p:inputTextarea id="queryAutoComplete" rows="6" cols="180" autoResize="false"
+                                                     completeMethod="#{autoCompleteController.completeArea}" queryDelay="200" minQueryLength="4"/>
+                                    <h:panelGroup>
+                                        <p:commandButton type="button" value="Execute query" title="Execute" icon="icon-play-circle icon-large" style="width:150px"/><br/>
+                                        <p:commandButton type="button" value="Load stored query" title="Load" icon="icon-upload icon-large" style="width:150px"/><br/>
+                                        <p:commandButton type="button" value="Save query" title="Save" icon="icon-download icon-large" style="width:150px"/>
+                                    </h:panelGroup>
+                                </h:panelGrid>
+                            </p:tab>
+                        </p:tabView>
+                    </p:layoutUnit>
+                    <p:layoutUnit id="mappyLayout" position="center" resizable="false">
+                        <div id="mappyCanvas" oncontextmenu="return false;"/>
+                    </p:layoutUnit>
+                </p:layout>
+            </p:layoutUnit>
+        </p:layout>
+    </ui:define>
+</ui:composition>
+</html>

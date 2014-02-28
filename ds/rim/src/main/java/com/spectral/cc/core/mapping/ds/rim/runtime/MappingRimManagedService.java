@@ -39,7 +39,7 @@ import java.util.Dictionary;
 public class MappingRimManagedService {
 
     private static final Logger log = LoggerFactory.getLogger(MappingRimManagedService.class);
-    private static final String MAPPING_DS_SERVICE_NAME = "Mapping DS RIM service";
+    private static final String MAPPING_DS_SERVICE_NAME = "CC Mapping DS";
     private static Dictionary<Object, Object> config = null;
 
     private final BundleContext bundleContext;
@@ -52,7 +52,7 @@ public class MappingRimManagedService {
 
     private void start() {
         try {
-            log.info("Loading configuration : {}", new Object[]{config.toString()});
+            log.debug("Loading configuration : {}", new Object[]{config.toString()});
             MappingDSCfgLoader.load(config);
         } catch (IOException e) {
             log.error("Error while loading {} configuration ! Check following root cause :", new Object[]{MAPPING_DS_SERVICE_NAME});
@@ -61,9 +61,8 @@ public class MappingRimManagedService {
         }
 
         try {
-            log.info("Starting {} runtime ...", new Object[]{MAPPING_DS_SERVICE_NAME});
             if (MappingRIMRuntime.start(config)) {
-                log.info("Registring service {} ...", MAPPING_DS_SERVICE_NAME);
+                log.debug("Registring service {} ...", MAPPING_DS_SERVICE_NAME);
                 mappingSceRegistration = bundleContext.registerService(MappingSce.class.getName(), MappingRIMRuntime.getMappingSce(), null);
                 isStarted = true;
             }
@@ -76,18 +75,17 @@ public class MappingRimManagedService {
 
     @Validate
     public void validate() throws InterruptedException {
-        log.info("{} is starting...", new Object[]{MAPPING_DS_SERVICE_NAME});
         while(config==null) {
-            log.warn("Config is missing for {}. Sleep some times...", MAPPING_DS_SERVICE_NAME);
+            log.debug("Config is missing for {}. Sleep some times...", MAPPING_DS_SERVICE_NAME);
             Thread.sleep(10);
         }
         start();
-        log.info("{} is started...", new Object[]{MAPPING_DS_SERVICE_NAME});
+        log.info("{} is started", new Object[]{MAPPING_DS_SERVICE_NAME});
     }
 
     private void stop() {
         if (mappingSceRegistration!=null) {
-            log.info("Unregister MappingSce Service...");
+            log.debug("Unregister MappingSce Service...");
             mappingSceRegistration.unregister();
         }
         MappingRIMRuntime.stop();
@@ -95,21 +93,21 @@ public class MappingRimManagedService {
 
     @Invalidate
     public void invalidate() {
-        log.info("Stopping " + MAPPING_DS_SERVICE_NAME);
+        log.info("{} is stopping. Could take some time...", MAPPING_DS_SERVICE_NAME);
         stop();
-        log.info(MAPPING_DS_SERVICE_NAME + " has been succesfully stopped");
+        log.info("{} is stopped", MAPPING_DS_SERVICE_NAME);
     }
 
     @Updated
     public void updated(final Dictionary properties) {
-        log.info("{} is being updated by {}", new Object[]{MAPPING_DS_SERVICE_NAME, Thread.currentThread().toString()});
+        log.debug("{} is being updated by {}", new Object[]{MAPPING_DS_SERVICE_NAME, Thread.currentThread().toString()});
         if (MappingDSCfgLoader.isValid(properties)) {
             config = properties;
             if (isStarted) {
                 final Runnable applyConfigUpdate = new Runnable() {
                     @Override
                     public void run() {
-                        log.info("{} will be restart to apply configuration changes...", MAPPING_DS_SERVICE_NAME);
+                        log.debug("{} will be restart to apply configuration changes...", MAPPING_DS_SERVICE_NAME);
                         stop();
                         start();
                     }
