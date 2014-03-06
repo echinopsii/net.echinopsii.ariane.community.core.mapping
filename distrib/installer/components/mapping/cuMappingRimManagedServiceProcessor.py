@@ -45,7 +45,7 @@ class cuMappingRimManagedServiceProcessor(AConfUnit):
 
     def __init__(self, targetConfDir):
         self.confUnitName = "CC mapping RIM managed service"
-        self.confTemplatePath = os.path.abspath("resources/templates/components/com.spectral.cc.core.mapping.ds.rim.runtime.MappingRimManagedService.properties.tpl")
-        self.confFinalPath = targetConfDir + "com.spectral.cc.core.mapping.ds.rim.runtime.MappingRimManagedService.properties"
+        self.confTemplatePath = os.path.abspath("resources/templates/components/com.spectral.cc.core.MappingRimManagedService.properties.tpl")
+        self.confFinalPath = targetConfDir + "com.spectral.cc.core.MappingRimManagedService.properties"
         mapDir = cpMappingDirectory()
         self.paramsDictionary = {mapDir.name: mapDir}
