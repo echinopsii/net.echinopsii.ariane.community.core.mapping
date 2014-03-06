@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Dictionary;
 
-@Component(managedservice="com.spectral.cc.core.mapping.ds.rim.runtime.MappingRimManagedService")
+@Component(managedservice="com.spectral.cc.core.MappingRimManagedService")
 @Instantiate
 public class MappingRimManagedService {
 
