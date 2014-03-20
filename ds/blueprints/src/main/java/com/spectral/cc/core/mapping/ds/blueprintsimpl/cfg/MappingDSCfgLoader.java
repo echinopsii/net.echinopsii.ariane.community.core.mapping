@@ -39,7 +39,9 @@ public class MappingDSCfgLoader {
     private static final String MAPPING_DS_CFG_FROM_RIM_BLUEPRINTS_URL_KEY  = "mapping.ds.blueprints.url";
     private static final String MAPPING_DS_CFG_FROM_RIM_BLUEPRINTS_USER_KEY = "mapping.ds.blueprints.user";
     private static final String MAPPING_DS_CFG_FROM_RIM_BLUEPRINTS_PAWD_KEY = "mapping.ds.blueprints.password";
-    private static final String MAPPING_DS_CFG_FROM_RIM_BLUEPRINTS_DIR_KEY  = "mapping.ds.blueprints.directory";
+    private static final String MAPPING_DS_CFG_FROM_RIM_BLUEPRINTS_GP_KEY = "mapping.ds.blueprints.graphpath";
+    private static final String MAPPING_DS_CFG_FROM_RIM_BLUEPRINTS_NEO4J_CONFFILE_KEY = "mapping.ds.blueprints.neo4j.configfile";
+
 
     private final static ObjectMapper jsonMapper = new ObjectMapper();
 
@@ -67,8 +69,11 @@ public class MappingDSCfgLoader {
         String user  = null;
         Object opwd  = properties.get(MAPPING_DS_CFG_FROM_RIM_BLUEPRINTS_PAWD_KEY);
         String pwd   = null;
-        Object odir  = properties.get(MAPPING_DS_CFG_FROM_RIM_BLUEPRINTS_DIR_KEY);
+        Object odir  = properties.get(MAPPING_DS_CFG_FROM_RIM_BLUEPRINTS_GP_KEY);
         String dir   = null;
+        Object oncf  = properties.get(MAPPING_DS_CFG_FROM_RIM_BLUEPRINTS_NEO4J_CONFFILE_KEY);
+        String ncf = null;
+
 
         if (oimpl != null && oimpl instanceof String) {
             impl = (String) oimpl;
@@ -85,18 +90,22 @@ public class MappingDSCfgLoader {
         if (odir != null && odir instanceof String) {
             dir = (String) odir;
         }
+        if (oncf != null && oncf instanceof String) {
+            ncf = (String) oncf;
+        }
 
-        if (impl != null && (url != null || dir != null)) {
+        if (impl != null && (url != null || dir != null || ncf != null)) {
             defaultCfgEntity = new MappingDSCfgEntity();
             defaultCfgEntity.setBlueprintsImplementation(impl);
             defaultCfgEntity.setBlueprintsURL(url);
             defaultCfgEntity.setBlueprintsUser(user);
             defaultCfgEntity.setBlueprintsPassword(pwd);
-            defaultCfgEntity.setBlueprintsDirectory(dir);
+            defaultCfgEntity.setBlueprintsGraphPath(dir);
+            defaultCfgEntity.setBlueprintsNeoConfigFile(ncf);
             log.debug("{}", new Object[]{defaultCfgEntity.toString()});
             return true;
         } else {
-            log.error("impl ({}) and (url ({}) or dir({})) shouldn't be null!", new Object[]{impl,url,dir});
+            log.error("impl ({}) and (url ({}) or dir({}) or ncf({})) shouldn't be null!", new Object[]{impl,url,dir,ncf});
             return false;
         }
     }

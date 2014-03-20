@@ -22,7 +22,8 @@ package com.spectral.cc.core.mapping.ds.blueprintsimpl.cfg;
 public class MappingDSCfgEntity {
 	private String       blueprintsImplementation = null;
 
-    private String       blueprintsDirectory      = null;
+    private String blueprintsGraphPath = null;
+    private String       blueprintsNeoConfigFile  = null;
 
 	private String       blueprintsURL            = null;
 	private String       blueprintsUser           = null;
@@ -52,20 +53,25 @@ public class MappingDSCfgEntity {
 	public void setBlueprintsPassword(String blueprintsPassword) {
 		this.blueprintsPassword = blueprintsPassword;
 	}
-
-    public String getBlueprintsDirectory() {
-        return blueprintsDirectory;
+    public String getBlueprintsGraphPath() {
+        return blueprintsGraphPath;
     }
-
-    public void setBlueprintsDirectory(String blueprintsDirectory) {
-        this.blueprintsDirectory = blueprintsDirectory;
+    public void setBlueprintsGraphPath(String blueprintsGraphPath) {
+        this.blueprintsGraphPath = blueprintsGraphPath;
+    }
+    public String getBlueprintsNeoConfigFile() {
+        return blueprintsNeoConfigFile;
+    }
+    public void setBlueprintsNeoConfigFile(String blueprintsNeoConfigFile) {
+        this.blueprintsNeoConfigFile = blueprintsNeoConfigFile;
     }
 
     public String toString() {
 		return "blueprintsConfiguration: \n\t" + blueprintsImplementation +
-               " ; \n\tblueprintsDirectory " + blueprintsDirectory +
+               " ; \n\tblueprintsGraphPath: " + blueprintsGraphPath +
+               " ; \n\tblueprintsNeoConfigFile: " + blueprintsNeoConfigFile +
 			   " ; \n\tblueprintsURL: " + blueprintsURL + 
 			   " ; \n\tblueprintsUser: " + blueprintsUser +
-			   " ; \n\tblueprintsPasswd : " + ((blueprintsPassword!=null) ? "******" : "null");
+			   " ; \n\tblueprintsPasswd: " + ((blueprintsPassword!=null) ? "******" : "null");
 	}
 }

@@ -80,7 +80,8 @@ public class MappingRimManagedService {
             Thread.sleep(10);
         }
         start();
-        log.info("{} is started", new Object[]{MAPPING_DS_SERVICE_NAME});
+        if (isStarted)
+            log.info("{} is started", new Object[]{MAPPING_DS_SERVICE_NAME});
     }
 
     private void stop() {

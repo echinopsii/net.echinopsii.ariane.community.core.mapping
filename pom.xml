@@ -451,6 +451,12 @@
             <version>${version.osgi.com.neo4j}</version>
         </dependency>
         <dependency>
+            <groupId>org.neo4j.app</groupId>
+            <artifactId>neo4j-server</artifactId>
+            <scope>provided</scope>
+            <version>${version.osgi.com.neo4j}</version>
+        </dependency>
+        <dependency>
             <groupId>org.primefaces</groupId>
             <artifactId>primefaces</artifactId>
             <scope>provided</scope>

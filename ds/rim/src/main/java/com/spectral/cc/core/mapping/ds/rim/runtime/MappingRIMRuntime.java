@@ -59,7 +59,8 @@ public class MappingRIMRuntime {
         } else {
             log.error("A problem occured while initializing Main Mapping DS service...");
         }
-        log.debug("Mapping service started...");
+        if (started)
+            log.debug("Mapping service started...");
         return started;
     }
 
