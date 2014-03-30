@@ -12,7 +12,7 @@
 
     <groupId>com.spectral.cc.core.mapping</groupId>
     <artifactId>com.spectral.cc.core.mapping.ds</artifactId>
-    <name>Control and Conquer Core Mapping DS</name>
+    <name>CC Core Mapping DS</name>
     <packaging>pom</packaging>
 
     <modules>

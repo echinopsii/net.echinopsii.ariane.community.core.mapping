@@ -32,11 +32,11 @@ public final class MappingDSGraphPropertyNames {
     public final static String DD_GRAPH_EDGE_TWIN_LABEL_KEY = "twin";
     public final static String DD_GRAPH_EDGE_LINK_LABEL_KEY = "link";
 
-    public final static String DD_TYPE_CLUSTER_VALUE = "com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.ClusterImpl";
+    public final static String DD_TYPE_CLUSTER_VALUE = "cluster";
     public static final String DD_CLUSTER_NAME_KEY = "clusterName";
     public static final String DD_CLUSTER_EDGE_CONT_KEY = "clusterContainers";
 
-    public final static String DD_TYPE_CONTAINER_VALUE = "com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.ContainerImpl";
+    public final static String DD_TYPE_CONTAINER_VALUE = "container";
     public static final String DD_CONTAINER_COMPANY_KEY = "containerCompany";
     public static final String DD_CONTAINER_PRODUCT_KEY = "containerProduct";
     public static final String DD_CONTAINER_TYPE_KEY = "containerType";
@@ -46,7 +46,7 @@ public final class MappingDSGraphPropertyNames {
     public static final String DD_CONTAINER_EDGE_NODE_KEY = "containerNodes";
     public static final String DD_CONTAINER_EDGE_GATE_KEY = "containerGates";
 
-    public static final String DD_TYPE_NODE_VALUE = "com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.NodeImpl";
+    public static final String DD_TYPE_NODE_VALUE = "node";
     public static final String DD_NODE_ID_KEY = "nodeID";
     public static final String DD_NODE_NAME_KEY = "nodeName";
     public static final String DD_NODE_DEPTH_KEY = "nodeDepth";
@@ -56,15 +56,15 @@ public final class MappingDSGraphPropertyNames {
     public static final String DD_NODE_EDGE_CHILD_KEY = "nodeChildNode";
     public static final String DD_NODE_EDGE_ENDPT_KEY = "nodeEndpoint";
 
-    public static final String DD_TYPE_GATE_VALUE = "com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.GateImpl";
+    public static final String DD_TYPE_GATE_VALUE = "gate";
     public static final String DD_GATE_PAEP_KEY = "containerGatePrimaryAdminEndpoint";
 
-    public static final String DD_TYPE_ENDPOINT_VALUE = "com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.EndpointImpl";
+    public static final String DD_TYPE_ENDPOINT_VALUE = "endpoint";
     public static final String DD_ENDPOINT_URL_KEY = "endpointURL";
     public static final String DD_ENDPOINT_PROPS_KEY = "endpointProperties";
     public static final String DD_ENDPOINT_PNODE_KEY = "endpointParentNode";
 
-    public static final String DD_TYPE_TRANSPORT_VALUE = "com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.TransportImpl";
+    public static final String DD_TYPE_TRANSPORT_VALUE = "transport";
     public static final String DD_TRANSPORT_NAME_KEY = "transportName";
     public static final String DD_TRANSPORT_PROPS_KEY = "transportProperties";
 

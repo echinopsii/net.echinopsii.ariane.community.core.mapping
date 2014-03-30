@@ -5,12 +5,13 @@
     <!-- General information -->
     <groupId>com.spectral.cc.core</groupId>
     <artifactId>com.spectral.cc.core.mapping</artifactId>
-    <name>Control and Conquer Core Mapping Parent</name>
+    <name>CC Core Mapping Parent</name>
     <version>0.3.0.SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
         <module>ds</module>
+        <module>mapper</module>
         <module>wat</module>
     </modules>
 
@@ -77,6 +78,8 @@
         <!-- Technical stuff -->
         <version.org.apache.ipojo>1.11.0</version.org.apache.ipojo>
         <version.org.slf4j>1.6.4</version.org.slf4j>
+
+        <version.scala>2.10.3</version.scala>
 
         <!-- OSGI Min/Max versions -->
         <version.osgimin.org.osgi.framework>1.5</version.osgimin.org.osgi.framework>
@@ -226,6 +229,16 @@
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-ipojo-plugin</artifactId>
                     <version>${version.ipojo.plugin}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.scalatest</groupId>
+                    <artifactId>scalatest-maven-plugin</artifactId>
+                    <version>1.0-RC2</version>
+                </plugin>
+                <plugin>
+                    <groupId>net.alchim31.maven</groupId>
+                    <artifactId>scala-maven-plugin</artifactId>
+                    <version>3.1.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -475,9 +488,20 @@
             <version>${version.rome.rome}</version>
         </dependency>
         <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>${version.scala}</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${version.junit.junit}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest_2.10</artifactId>
+            <version>2.1.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -11,7 +11,7 @@
 
     <groupId>com.spectral.cc.core.mapping</groupId>
     <artifactId>com.spectral.cc.core.mapping.wat</artifactId>
-    <name>Control and Conquer Core Mapping WebApp Tooling</name>
+    <name>CC Core Mapping WebApp Tooling</name>
     <packaging>bundle</packaging>
 
     <dependencies>

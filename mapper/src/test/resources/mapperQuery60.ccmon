@@ -1,0 +1,6 @@
+{
+    'startContainer': 'FROM container WHERE startContainer.containerPrimaryAdminGate.nodeName =~ ".*tibrvrdl03prd01.*"',
+    'startNode': 'FROM node WHERE startNode.nodeName="APP6969.tibrvrdl03prd01"'
+}
+--
+{'endContainer': 'FROM container WHERE endContainer.containerPrimaryAdminGate.nodeName =~ ".*tibrvrdwprd01.*"'}

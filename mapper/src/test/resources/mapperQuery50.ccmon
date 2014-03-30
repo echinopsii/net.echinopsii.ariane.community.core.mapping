@@ -1,0 +1,3 @@
+{'startContainers': 'FROM container WHERE  startContainers.containerPrimaryAdminGate.nodeName =~ ".*tibrvrdl03prd01.*" OR startContainers.containerPrimaryAdminGate.nodeName =~ ".*tibrvrdl05prd01.*"'}
+--
+{'endContainer': 'FROM container WHERE endContainer.containerPrimaryAdminGate.nodeName =~ ".*tibrvrdwprd01.*"'}

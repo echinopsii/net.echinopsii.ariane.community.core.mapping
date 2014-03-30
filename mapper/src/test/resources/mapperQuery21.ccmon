@@ -1,0 +1,3 @@
+{"startNode": "FROM node WHERE startNode.nodeName=\"APP6969.tibrvrdl03prd01\""}
+--
+{"endNode": "FROM node WHERE endNode.nodeName=\"APP6969.tibrvrdl05prd01\""}

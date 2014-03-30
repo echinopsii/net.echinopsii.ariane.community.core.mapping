@@ -1,0 +1,3 @@
+{"startEP": "FROM endpoint WHERE startEP.endpointURL=\"multicast-udp-tibrv://tibrvrdl03prd01.lab01.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969\""}
+--
+{"endEP": "FROM endpoint WHERE endEP.endpointURL=\"multicast-udp-tibrv://tibrvrdl05prd01.lab01.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969\""}

@@ -12,7 +12,7 @@
 
     <groupId>com.spectral.cc.core.mapping.ds</groupId>
     <artifactId>com.spectral.cc.core.mapping.ds.rim</artifactId>
-    <name>Control and Conquer Core Mapping DS Runtime Injection Manager</name>
+    <name>CC Core Mapping DS Runtime Injection Manager</name>
     <packaging>bundle</packaging>
 
     <dependencies>

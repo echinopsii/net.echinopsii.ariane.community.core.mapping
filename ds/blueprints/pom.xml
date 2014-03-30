@@ -11,7 +11,7 @@
 
     <groupId>com.spectral.cc.core.mapping.ds</groupId>
     <artifactId>com.spectral.cc.core.mapping.ds.blueprints</artifactId>
-    <name>Control and Conquer Core Mapping DS Blueprints Implementation</name>
+    <name>CC Core Mapping DS Blueprints Implementation</name>
     <packaging>bundle</packaging>
 
     <dependencies>

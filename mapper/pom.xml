@@ -4,19 +4,46 @@
 
     <!-- Parent -->
     <parent>
-        <groupId>com.spectral.cc.core.mapping</groupId>
-        <artifactId>com.spectral.cc.core.mapping.ds</artifactId>
+        <groupId>com.spectral.cc.core</groupId>
+        <artifactId>com.spectral.cc.core.mapping</artifactId>
         <version>0.3.0.SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
-    <groupId>com.spectral.cc.core.mapping.ds</groupId>
-    <artifactId>com.spectral.cc.core.mapping.ds.api</artifactId>
-    <name>CC Core Mapping DS API</name>
+    <groupId>com.spectral.cc.core.mapping.mapper</groupId>
+    <artifactId>com.spectral.cc.core.mapping.mapper</artifactId>
+    <name>CC Core Mapper DSL</name>
     <packaging>bundle</packaging>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>scala-compile</id>
+                        <goals>
+                            <goal>add-source</goal>
+                            <goal>compile</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                    </execution>
+                    <execution>
+                        <id>scala-test-compile</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <jvmArgs>
+                        <jvmArg>-Xms64m</jvmArg>
+                        <jvmArg>-Xmx1024m</jvmArg>
+                    </jvmArgs>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -34,11 +61,7 @@
                 <artifactId>maven-bundle-plugin</artifactId>
                 <configuration>
                     <instructions>
-                        <Export-Package>
-                            com.spectral.cc.core.mapping.ds.domain;version=${project.version},
-                            com.spectral.cc.core.mapping.ds.repository;version=${project.version},
-                            com.spectral.cc.core.mapping.ds.service;version=${project.version}
-                        </Export-Package>
+                        <Export-Package/>
                     </instructions>
                 </configuration>
             </plugin>
