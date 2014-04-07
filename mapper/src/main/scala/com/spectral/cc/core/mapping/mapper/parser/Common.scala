@@ -25,9 +25,7 @@ class Common extends JavaTokenParsers {
   def ignoreCase1(str: String): Parser[String] = ("""(?i)\b""" + str + """\b""").r ^^ (x => x.toLowerCase)
   def ignoreCase2(str: String): Parser[String] = (str + """\b""").r ^^ (x => x.toLowerCase)
   def ignoreCase(str: String): Parser[String] = ignoreCase1(str) | ignoreCase2(str) | failure(str + " expected")
-
   def ignoreCases(strings: String*): Parser[String] = ignoreCases(strings.toList)
-
   def ignoreCases(strings: List[String]): Parser[String] = strings match {
     case List(x) => ignoreCase(x)
     case first :: rest => ignoreCase(first) | ignoreCases(rest)
@@ -37,7 +35,13 @@ class Common extends JavaTokenParsers {
   def stripQuotesEscape(s: String) = s.replaceAll("\\\\\"" , "\"");
   def stripQuotes(s: String) = s.substring(1, s.length - 1)
 
-  def string: Parser[String] = (quoteString | apostropheString) ^^ (str => {stripQuotes(str)})
   def apostropheString: Parser[String] = ("\'" + """([^'\p{Cntrl}\\]|\\[\\/bfnrt]|\\u[a-fA-F0-9]{4})*""" + "\'").r
   def quoteString: Parser[String] = stringLiteral ^^ (str => stripQuotesEscape(str))
+  def string: Parser[String] = (quoteString | apostropheString) ^^ (str => {stripQuotes(str)})
+
+  val ccmonobjtypes = List("container", "node", "endpoint")
+  val ccmonkeywords = List("from","where","and","or","like","=","!=","<>",">","<",">=","<=","=~","container","node","endpoint")
+  def notAKeyword: Parser[String] =
+    not(ignoreCases(ccmonkeywords: _*)) ~> ident | ignoreCases(ccmonkeywords: _*) ~> failure("Invalid keyword usage !")
+  def ccobjtype: Parser[String] = ignoreCases(ccmonobjtypes: _*)
 }

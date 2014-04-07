@@ -19,19 +19,13 @@
 package com.spectral.cc.core.mapping.mapper.parser
 
 import scala.util.parsing.combinator._
+import com.spectral.cc.core.mapping.mapper.MapperParser
+import com.spectral.cc.core.mapping.mapper.internal.Predicate
 
-trait SQLlikeValue extends Common with JavaTokenParsers {
-
-  val ccmonobjtypes = List("container", "node", "endpoint")
-  val ccmonkeywords = List("from","where","and","or","container","node","endpoint")
-
-  def ccMonSQLLike: Parser[(String,String)] =
-    (ignoreCase("from") ~> ccobjtype) ~ (ignoreCase("where") ~> predicate) ^^ {case ccmblktype ~ predicate => (ccmblktype,predicate)}
-
-  def predicate: Parser[String] = """.*""".r
-
-  def notAKeyword: Parser[String] =
-    not(ignoreCases(ccmonkeywords: _*)) ~> """.*""".r | ignoreCases(ccmonkeywords: _*) ~> failure("Invalid keyword usage !")
-
-  def ccobjtype: Parser[String] = ignoreCases(ccmonobjtypes: _*)
+trait SqlLike extends Common with Predicates with JavaTokenParsers {
+  def sqlLike(blockEntity: String, mapperParser: MapperParser): Parser[(String,Predicate)] = {
+    (ignoreCase("from") ~> ccobjtype) ~ (ignoreCase("where") ~> predicate(blockEntity, ccobjtype.toString, mapperParser)) ^^ {
+      case ccmblktype ~ predicate => (ccmblktype,predicate)
+    }
+  }
 }

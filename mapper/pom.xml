@@ -15,6 +15,16 @@
     <name>CC Core Mapper DSL</name>
     <packaging>bundle</packaging>
 
+    <dependencies>
+        <!-- Internal -->
+        <dependency>
+            <groupId>com.spectral.cc.core.mapping.ds</groupId>
+            <artifactId>com.spectral.cc.core.mapping.ds.api</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>

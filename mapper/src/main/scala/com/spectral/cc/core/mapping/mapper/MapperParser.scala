@@ -18,11 +18,15 @@
  */
 package com.spectral.cc.core.mapping.mapper
 
-import com.spectral.cc.core.mapping.mapper.parser.{SQLlikeValue, CCMon, Common}
+import com.spectral.cc.core.mapping.mapper.parser.{SqlLike, CCMon, Common}
+import com.spectral.cc.core.mapping.mapper.internal.IdentifierExp
+import com.spectral.cc.core.mapping.mapper.internal.Block
 
-class MapperParser extends Common with CCMon with SQLlikeValue {
+class MapperParser extends Common with CCMon with SqlLike {
 
-  def parse(queryText: String): Unit /*MapperQuery*/ = {
+  var identifierRegistry:Map[String, IdentifierExp] = Map()
+
+  def parse(queryText: String): MapperQuery = {
     /*
      * Lexer
      */
@@ -39,36 +43,48 @@ class MapperParser extends Common with CCMon with SQLlikeValue {
      * Parser
      */
     val parsedStartBlock = parseBlock(lexedStartBlock)
-    parsedStartBlock foreach {case (startObjID, (startObjType, startObjPredicate)) => println("Start OBJ ID: " + startObjID + "\n" +
-                                                                                              "Start OBJ Type: " + startObjType + "\n" +
-                                                                                              "Start OBJ Predicate: " + startObjPredicate)}
     val parsedEndBlock = parseBlock(lexedEndBlock)
-    parsedEndBlock foreach {case (endObjID, (endObjType, endObjPredicate)) => println("End OBJ ID: " + endObjID + "\n" +
-                                                                                      "End OBJ Type: " + endObjType + "\n" +
-                                                                                      "End OBJ Predicate: " + endObjPredicate)}
+
+    MapperQuery(parsedStartBlock,parsedEndBlock)
   }
 
-  private def parseBlock(lexedBlock: Map[String, String]): Map[String, (String,String)] = {
-    var parsedBlock: Map[String, (String, String)] = Map()
+  private def parseBlock(lexedBlock: Map[String, String]): Block = {
+    val block:Block = new Block()
     lexedBlock foreach {
-      case (startObjID, startObjIDValue) =>
-        parseAll(notAKeyword, startObjID) match {
+      case (objID, objValue) =>
+        parseAll(notAKeyword, objID) match {
           case Success(result, _) => {
-            startObjIDValue match {
-              case startObjIDSQLLike:String => {
-                parseAll(ccMonSQLLike, startObjIDSQLLike) match {
+            identifierRegistry+=(objID -> new IdentifierExp(iName = objID))
+            objValue match {
+              case sqlLikeT:String => {
+                parseAll(sqlLike(objID, this), sqlLikeT) match {
                   case Success(result, _) => {
-                    parsedBlock += (startObjID -> result)
+                    block.mapPointsPredicate += (objID -> result)
                   }
                   case failure : NoSuccess => throw new MapperParserException(failure.msg)
                 }
               }
-              case _ => throw new MapperParserException("Unexpected startObjIDValue type")
+              case _ => throw new MapperParserException("Unexpected objValue type")
             }
           }
           case failure : NoSuccess => throw new MapperParserException(failure.msg)
         }
     }
-    parsedBlock
+    block
   }
+
+  /*
+  private def mapPointIdentifier: Parser[String] = {
+    notAKeyword ~> checkMapEndpointUnicity(notAKeyword.toString)
+    //^^ { case str => if (identifierRegistry.get(str)==None) { str } else { failure("Map endpoint "+str+" is defined more than once !") }}
+  }
+
+  private def checkMapEndpointUnicity(iName: String): Parser[String] = {
+    if (identifierRegistry.get(iName)==None) {
+      iName.r
+    } else {
+      failure("Map endpoint "+iName+" is defined more than once !")
+    }
+  }
+  */
 }

@@ -19,7 +19,36 @@
 package com.spectral.cc.core.mapping.mapper.parser
 
 import scala.util.parsing.combinator.JavaTokenParsers
+import com.spectral.cc.core.mapping.mapper.MapperParser
+import com.spectral.cc.core.mapping.mapper.internal.{And,Ops,Or,Predicate}
 
-trait Predicates extends Common with JavaTokenParsers {
+trait Predicates extends Common with Expressions with JavaTokenParsers {
+  def predicate(blockEntityName: String, blockEntityType: String, mapperParser: MapperParser): Parser[Predicate] = predicateOr(blockEntityName,blockEntityType, mapperParser)
 
+  def predicateOr(blockEntityName: String, blockEntityType: String, mapperParser: MapperParser): Parser[Predicate] = {
+    predicateAnd(blockEntityName,blockEntityType,mapperParser) ~ rep(ignoreCase("or") ~> predicateAnd(blockEntityName,blockEntityType,mapperParser)) ^^ {
+      case head ~ rest => rest.foldLeft(head)((a,b) => new Or(a,b))
+    }
+  }
+
+  def predicateAnd(blockEntityName: String, blockEntityType: String, mapperParser: MapperParser): Parser[Predicate] = {
+    predicateOps(blockEntityName,blockEntityType,mapperParser) ~ rep(ignoreCase("and") ~> predicateOps(blockEntityName,blockEntityType,mapperParser)) ^^ {
+      case head ~ rest => rest.foldLeft(head)((a, b) => new And(a,b))
+    }
+  }
+
+  def predicateOps(blockEntityName: String, blockEntityType: String, mapperParser: MapperParser): Parser[Predicate] =
+    operators(blockEntityName,blockEntityType,mapperParser)
+
+  def operators(blockEntityName: String, blockEntityType: String, mapperParser: MapperParser): Parser[Predicate] =
+      expression(blockEntityName,blockEntityType,mapperParser) ~ "=" ~ expression(blockEntityName,blockEntityType,mapperParser) ^^ { case l~o~r => new Ops(l,r,o) } |
+      expression(blockEntityName,blockEntityType,mapperParser) ~ "!=" ~ expression(blockEntityName,blockEntityType,mapperParser) ^^ { case l~o~r => new Ops(l,r,"<>") }|
+      expression(blockEntityName,blockEntityType,mapperParser) ~ "<>" ~ expression(blockEntityName,blockEntityType,mapperParser) ^^ { case l~o~r => new Ops(l,r,o) }|
+      expression(blockEntityName,blockEntityType,mapperParser) ~ ">" ~ expression(blockEntityName,blockEntityType,mapperParser) ^^ { case l~o~r => new Ops(l,r,o) } |
+      expression(blockEntityName,blockEntityType,mapperParser) ~ "<" ~ expression(blockEntityName,blockEntityType,mapperParser) ^^ { case l~o~r => new Ops(l,r,o) } |
+      expression(blockEntityName,blockEntityType,mapperParser) ~ ">=" ~ expression(blockEntityName,blockEntityType,mapperParser) ^^ { case l~o~r => new Ops(l,r,o) }|
+      expression(blockEntityName,blockEntityType,mapperParser) ~ "<=" ~ expression(blockEntityName,blockEntityType,mapperParser) ^^ { case l~o~r => new Ops(l,r,o) }|
+      expression(blockEntityName,blockEntityType,mapperParser) ~ "=~" ~ expression(blockEntityName,blockEntityType,mapperParser) ^^ { case l~o~r => new Ops(l,r,o) }|
+      expression(blockEntityName,blockEntityType,mapperParser) ~ ignoreCase("like") ~ expression(blockEntityName,blockEntityType,mapperParser) ^^ { case l~o~r => new Ops(l,r,"=~") }|
+      failure("Unsupported operation")
 }
