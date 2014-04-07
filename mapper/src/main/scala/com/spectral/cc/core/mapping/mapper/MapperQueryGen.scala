@@ -22,7 +22,11 @@ import com.spectral.cc.core.mapping.mapper.internal.{Block,Predicate}
 import scala.collection.mutable
 import scala.Predef.=:=.tpEquals
 
-case class MapperQuery(startBlock: Block, endBlock: Block) {
+abstract class MapperQueryGen(val startBlock: Block, val endBlock : Block) {
+  def genQuery(): String
+}
+
+case class MapperToCypherQueryGen(override val startBlock: Block, override val endBlock: Block) extends MapperQueryGen(startBlock, endBlock) {
   private def cypherBlockStart(blockLine:(String,(String,Predicate))):String = {
     val matcher = blockLine._2._2.toCypherMatch
     var cypher = "\nSTART " + blockLine._1 + " = node(*)\n"
@@ -78,7 +82,7 @@ case class MapperQuery(startBlock: Block, endBlock: Block) {
     cypher
   }
 
-  def genCypher(): String = {
+  def genQuery(): String = {
     var cypher : String = ""
     var withList : mutable.MutableList[String] = mutable.MutableList()
     var startLinkPointsCount : Int = 0

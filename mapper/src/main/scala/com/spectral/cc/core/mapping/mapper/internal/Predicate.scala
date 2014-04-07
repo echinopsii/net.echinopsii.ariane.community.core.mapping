@@ -18,17 +18,19 @@
  */
 package com.spectral.cc.core.mapping.mapper.internal
 
+import com.typesafe.scalalogging.slf4j.Logging
+
 abstract class Predicate extends Expression {
   override var eType: String = "Predicate"
 }
 
-case class And(left: Predicate, right: Predicate) extends Predicate {
+case class And(left: Predicate, right: Predicate) extends Predicate with Logging {
   override def toString() = left.toString + " and " + right.toString
 
   def toCypherMatch : (String,String) = {
     val lmatcher : (String,String) = left.toCypherMatch
     val rmatcher : (String,String) = right.toCypherMatch
-    //println("[AND matcher] left : " + lmatcher + " ; right : " + rmatcher)
+    logger.debug("[AND matcher] left : "+lmatcher+" ; right : " + rmatcher)
 
     var matcher : String = lmatcher._1
     var mjwhere : String = ""
@@ -53,13 +55,13 @@ case class And(left: Predicate, right: Predicate) extends Predicate {
   def calcType : String = eType
 }
 
-case class Or(left: Predicate, right: Predicate) extends Predicate {
+case class Or(left: Predicate, right: Predicate) extends Predicate with Logging {
   override def toString() = left.toString + " or " + right.toString
 
   def toCypherMatch : (String,String) = {
     val lmatcher : (String,String) = left.toCypherMatch
     val rmatcher : (String,String) = right.toCypherMatch
-    //println("[OR matcher] left : " + lmatcher + " ; right : " + rmatcher)
+    logger.debug("[OR matcher] left : "+lmatcher+" ; right : "+ rmatcher)
 
     var matcher : String = lmatcher._1
     var mjwhere : String = ""
@@ -84,13 +86,13 @@ case class Or(left: Predicate, right: Predicate) extends Predicate {
   def calcType : String = eType
 }
 
-case class Ops(left: Expression, right: Expression, ops: String) extends Predicate {
+case class Ops(left: Expression, right: Expression, ops: String) extends Predicate with Logging {
   override def toString() = left.toString + " " + ops + " " + right.toString
 
   def toCypherMatch : (String,String) = {
     val lmatcher : (String,String) = left.toCypherMatch
     val rmatcher : (String,String) = right.toCypherMatch
-    //println("[OPS ("+ops+") matcher] left : " + lmatcher + " ; right : " + rmatcher)
+    logger.debug("[OPS ("+ops+")  matcher] left : "+lmatcher+" ; right : "+rmatcher)
 
     var matcher : String = ""
     var mjwhere : String = ""

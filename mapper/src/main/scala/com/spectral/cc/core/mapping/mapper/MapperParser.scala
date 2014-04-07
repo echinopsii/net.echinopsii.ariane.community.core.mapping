@@ -22,11 +22,11 @@ import com.spectral.cc.core.mapping.mapper.parser.{SqlLike, CCMon, Common}
 import com.spectral.cc.core.mapping.mapper.internal.IdentifierExp
 import com.spectral.cc.core.mapping.mapper.internal.Block
 
-class MapperParser extends Common with CCMon with SqlLike {
+class MapperParser(val queryType: String) extends Common with CCMon with SqlLike {
 
   var identifierRegistry:Map[String, IdentifierExp] = Map()
 
-  def parse(queryText: String): MapperQuery = {
+  def parse(queryText: String): MapperQueryGen = {
     /*
      * Lexer
      */
@@ -45,7 +45,11 @@ class MapperParser extends Common with CCMon with SqlLike {
     val parsedStartBlock = parseBlock(lexedStartBlock)
     val parsedEndBlock = parseBlock(lexedEndBlock)
 
-    MapperQuery(parsedStartBlock,parsedEndBlock)
+    queryType match {
+      case "cypher" => MapperToCypherQueryGen(parsedStartBlock,parsedEndBlock)
+      case "gremlin" => throw new MapperParserException("not implemented yet !")
+      case _ => throw new MapperParserException("invalid query type !")
+    }
   }
 
   private def parseBlock(lexedBlock: Map[String, String]): Block = {

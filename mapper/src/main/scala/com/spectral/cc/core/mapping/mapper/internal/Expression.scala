@@ -20,6 +20,7 @@ package com.spectral.cc.core.mapping.mapper.internal
 
 import com.spectral.cc.core.mapping.ds.domain.{Gate, Endpoint, Node, Container}
 import com.spectral.cc.core.mapping.mapper.MapperParserException
+import com.typesafe.scalalogging.slf4j.Logging
 
 abstract class Expression() {
   var eType: String
@@ -29,7 +30,7 @@ abstract class Expression() {
   def calcType : String
 }
 
-case class IdentifierExp(var eType: String = "", iName: String, var iRoot: Option[IdentifierExp] = None, var iProp: Option[IdentifierExp] = None) extends Expression {
+case class IdentifierExp(var eType: String = "", iName: String, var iRoot: Option[IdentifierExp] = None, var iProp: Option[IdentifierExp] = None) extends Expression with Logging {
   override def toString() = if (iRoot!=None) {iRoot.get.toString+"."+iName} else {iName}
 
   def toCypherMatch : (String,String) = {
@@ -37,7 +38,7 @@ case class IdentifierExp(var eType: String = "", iName: String, var iRoot: Optio
     if (iRoot!=None && (iRoot.get.propertiesDepth == 1 && iRoot.get.iRoot != None)) {
       cypherMatch=globalRoot.iName+"-[owns]->"+iRoot.get.toCypherWhere
     }
-    //println("[IDT ("+iName+") matcher] :" + cypherMatch)
+    logger.debug("[IDT ("+iName+") matcher] : "+cypherMatch)
     (cypherMatch,iRoot.get.toCypherWhere+".MappingGraphVertexID = "+iRoot.get.toString)
   }
   def toCypherWhere : String = {
