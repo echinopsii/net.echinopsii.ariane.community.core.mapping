@@ -19,6 +19,7 @@
 
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.service;
 
+import com.spectral.cc.core.mapping.ds.service.Map;
 import com.spectral.cc.core.mapping.ds.service.MapSce;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,5 +31,11 @@ public class MapSceImpl implements MapSce {
 
     public MapSceImpl(MappingSceImpl sce_) {
         this.sce = sce_;
+    }
+
+    @Override
+    public Map getMap(String mapperQuery) {
+        MapImpl map = null;
+        return map;
     }
 }

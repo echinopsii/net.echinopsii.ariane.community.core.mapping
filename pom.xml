@@ -78,8 +78,8 @@
         <!-- Technical stuff -->
         <version.org.apache.ipojo>1.11.0</version.org.apache.ipojo>
         <version.org.slf4j>1.6.4</version.org.slf4j>
-
-        <version.scala>2.10.3</version.scala>
+        <version.scala.logging>1.1.0</version.scala.logging>
+        <version.scala>2.10.0</version.scala>
 
         <!-- OSGI Min/Max versions -->
         <version.osgimin.org.osgi.framework>1.5</version.osgimin.org.osgi.framework>
@@ -238,7 +238,7 @@
                 <plugin>
                     <groupId>net.alchim31.maven</groupId>
                     <artifactId>scala-maven-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.1.6</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -315,6 +315,12 @@
             <groupId>com.orientechnologies</groupId>
             <artifactId>orientdb-enterprise</artifactId>
             <version>${version.osgi.com.orientdb}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe</groupId>
+            <artifactId>scalalogging-slf4j_2.10</artifactId>
+            <version>${version.scala.logging}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -487,6 +493,7 @@
             <scope>provided</scope>
             <version>${version.rome.rome}</version>
         </dependency>
+
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>

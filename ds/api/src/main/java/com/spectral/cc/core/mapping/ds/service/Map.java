@@ -15,10 +15,33 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 package com.spectral.cc.core.mapping.ds.service;
 
-public interface RouteSce {
+import com.spectral.cc.core.mapping.ds.domain.*;
 
+import java.util.Set;
+
+public interface Map<CL extends Cluster, CO extends Container, G extends Gate, N extends Node, E extends Endpoint, L extends Link, T extends Transport> {
+    public Set<Cluster> getClusters();
+    public Map          addCluster(Cluster cluster);
+
+    public Set<Container> getContainers();
+    public Map            addContainer(Container container);
+
+    public Set<Gate> getGates();
+    public Map       addGate(Gate gate);
+
+    public Set<Node> getNodes();
+    public Map       addNode(Node node);
+
+    public Set<Endpoint> getEndpoints();
+    public Map           addEndpoint(Endpoint endpoint);
+
+    public Set<Link> getLinks();
+    public Map       addLink(Link link);
+
+    public Set<Transport> getTransports();
+    public Map            addTransport(Transport transport);
 }

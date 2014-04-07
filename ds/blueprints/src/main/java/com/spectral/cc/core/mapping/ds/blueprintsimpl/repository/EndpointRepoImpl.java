@@ -58,7 +58,7 @@ public class EndpointRepoImpl implements EndpointRepo<EndpointImpl> {
             if (entity instanceof EndpointImpl) {
                 ret = (EndpointImpl) entity;
             } else {
-                log.error("DAEDALUS CONSISTENCY ERROR : entity {} is not an endpoint.", entity.getElement().getId());
+                log.error("CONSISTENCY ERROR : entity {} is not an endpoint.", entity.getElement().getId());
             }
         }
         return ret;

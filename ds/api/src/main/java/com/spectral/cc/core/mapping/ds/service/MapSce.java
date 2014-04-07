@@ -20,4 +20,5 @@
 package com.spectral.cc.core.mapping.ds.service;
 
 public interface MapSce {
+    public Map getMap(String mapperQuery);
 }

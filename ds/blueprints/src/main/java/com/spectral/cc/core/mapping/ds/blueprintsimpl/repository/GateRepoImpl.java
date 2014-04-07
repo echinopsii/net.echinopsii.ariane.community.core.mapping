@@ -61,7 +61,7 @@ public class GateRepoImpl extends NodeRepoImpl implements GateRepo<NodeImpl, Gat
             if (entity instanceof GateImpl) {
                 ret = (GateImpl) entity;
             } else {
-                log.error("DAEDALUS CONSISTENCY ERROR : entity {} is not a gate.", entity.getElement().getId());
+                log.error("CONSISTENCY ERROR : entity {} is not a gate.", entity.getElement().getId());
             }
         }
         return ret;

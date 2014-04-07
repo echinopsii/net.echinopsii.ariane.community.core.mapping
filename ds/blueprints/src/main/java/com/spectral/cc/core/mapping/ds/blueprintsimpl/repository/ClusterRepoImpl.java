@@ -51,7 +51,7 @@ public class ClusterRepoImpl implements ClusterRepo<ClusterImpl> {
             if (entity instanceof ClusterImpl) {
                 ret = (ClusterImpl) ret;
             } else {
-                log.error("DAEDALUS CONSISTENCY ERROR : entity {} is not a cluster.", entity.getElement().getId());
+                log.error("CONSISTENCY ERROR : entity {} is not a cluster.", entity.getElement().getId());
             }
         }
         return ret;
