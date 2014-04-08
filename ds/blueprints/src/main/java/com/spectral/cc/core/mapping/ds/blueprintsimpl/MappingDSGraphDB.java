@@ -22,8 +22,10 @@ package com.spectral.cc.core.mapping.ds.blueprintsimpl;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.orientechnologies.orient.core.config.OGlobalConfiguration;
+import com.spectral.cc.core.mapping.ds.MappingDSGraphPropertyNames;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.cfg.MappingDSCfgLoader;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.*;
+import com.spectral.cc.core.mapping.ds.dsl.MapperExecutor;
 import com.tinkerpop.blueprints.*;
 import com.tinkerpop.blueprints.impls.neo4j.Neo4jGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
@@ -33,10 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class MappingDSGraphDB {
 
@@ -48,6 +47,7 @@ public class MappingDSGraphDB {
     private static String blpImpl                                    = null;
     private static MappingDSGraphDBNeo4jBootstrapper neoBootstrapper = null;
     private static Graph  ccgraph                                    = null;
+    private static MapperExecutor executor                           = null;
     private static Vertex idmanager                                  = null;
 
     private static HashMap<Long, Boolean> autocommit = new HashMap<Long, Boolean>();
@@ -107,6 +107,7 @@ public class MappingDSGraphDB {
                     }
                     if (graphDb!=null) {
                         ccgraph = new Neo4jGraph(graphDb);
+                        executor = new MapperExecutor(graphDb);
                         log.debug("{} is started", new Object[]{ccgraph.toString()});
                         log.debug(ccgraph.getFeatures().toString());
                     } else {
@@ -222,6 +223,17 @@ public class MappingDSGraphDB {
             log.error("Rollback operation...");
             ((TransactionalGraph) ccgraph).rollback();
         }
+    }
+
+    public static Map<String, Long> executeQuery(String query) {
+        Map<String,Long> ret = null;
+        switch (blpImpl) {
+            case BLUEPRINTS_IMPL_N4J:
+                ret = (Map<String,Long>)executor.execute(query);
+            default:
+                log.error("Mapper DSL is not implemented yet for this MappingDS blueprints implementation !", new Object[]{blpImpl});
+        }
+        return ret;
     }
 
     public static Graph getDDgraph() {

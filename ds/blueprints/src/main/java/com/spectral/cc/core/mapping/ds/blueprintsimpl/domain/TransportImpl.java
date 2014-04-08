@@ -21,7 +21,7 @@ package com.spectral.cc.core.mapping.ds.blueprintsimpl.domain;
 
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSCacheEntity;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDBObjectProps;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphPropertyNames;
+import com.spectral.cc.core.mapping.ds.MappingDSGraphPropertyNames;
 import com.spectral.cc.core.mapping.ds.domain.Transport;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;

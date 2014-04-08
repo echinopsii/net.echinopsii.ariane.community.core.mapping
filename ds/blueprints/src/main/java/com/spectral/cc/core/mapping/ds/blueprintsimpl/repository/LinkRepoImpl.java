@@ -21,7 +21,7 @@ package com.spectral.cc.core.mapping.ds.blueprintsimpl.repository;
 
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSCacheEntity;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDB;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphPropertyNames;
+import com.spectral.cc.core.mapping.ds.MappingDSGraphPropertyNames;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.LinkImpl;
 import com.spectral.cc.core.mapping.ds.repository.LinkRepo;
 import org.slf4j.Logger;

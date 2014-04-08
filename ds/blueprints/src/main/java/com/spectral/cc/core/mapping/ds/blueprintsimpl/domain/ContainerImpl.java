@@ -19,6 +19,7 @@
 
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.domain;
 
+import com.spectral.cc.core.mapping.ds.MappingDSGraphPropertyNames;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.*;
 import com.spectral.cc.core.mapping.ds.domain.Cluster;
 import com.spectral.cc.core.mapping.ds.domain.Container;

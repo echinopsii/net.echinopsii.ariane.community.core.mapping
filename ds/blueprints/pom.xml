@@ -22,6 +22,12 @@
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.spectral.cc.core.mapping.ds</groupId>
+            <artifactId>com.spectral.cc.core.mapping.ds.dsl</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -78,6 +84,7 @@
                             com.orientechnologies.orient.core.config;version="${version.osgi.com.orientdb}";resolution:=optional,
                             com.spectral.cc.core.mapping.ds.service;version="${project.version}",
                             com.spectral.cc.core.mapping.ds.domain;version="${project.version}",
+                            com.spectral.cc.core.mapping.ds.dsl;version="${project.version}",
                             com.spectral.cc.core.mapping.ds.repository;version="${project.version}}",
                             com.tinkerpop.blueprints.impls.neo4j;version="[${version.osgimin.com.tinkerpop.blueprints},${version.osgimax.com.tinkerpop.blueprints})";resolution:=optional,
                             com.tinkerpop.blueprints.impls.orient;version="[${version.osgimin.com.tinkerpop.blueprints},${version.osgimax.com.tinkerpop.blueprints})";resolution:=optional,

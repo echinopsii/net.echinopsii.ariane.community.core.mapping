@@ -3,7 +3,6 @@ package com.spectral.cc.core.mapping.ds;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDB;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphPropertyNames;
 import com.tinkerpop.blueprints.Vertex;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

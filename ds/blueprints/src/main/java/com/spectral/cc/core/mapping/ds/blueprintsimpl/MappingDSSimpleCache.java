@@ -19,6 +19,7 @@
 
 package com.spectral.cc.core.mapping.ds.blueprintsimpl;
 
+import com.spectral.cc.core.mapping.ds.MappingDSGraphPropertyNames;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.ClusterImpl;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.EndpointImpl;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.TransportImpl;

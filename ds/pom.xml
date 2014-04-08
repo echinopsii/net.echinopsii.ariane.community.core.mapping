@@ -17,6 +17,7 @@
 
     <modules>
         <module>api</module>
+        <module>dsl</module>
         <module>blueprints</module>
         <module>rim</module>
     </modules>
