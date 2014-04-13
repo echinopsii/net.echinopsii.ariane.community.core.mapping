@@ -225,13 +225,15 @@ public class MappingDSGraphDB {
         }
     }
 
-    public static Map<String, Long> executeQuery(String query) {
-        Map<String,Long> ret = null;
+    public static Map<String, String> executeQuery(String query) {
+        Map<String,String> ret = null;
         switch (blpImpl) {
             case BLUEPRINTS_IMPL_N4J:
-                ret = (Map<String,Long>)executor.execute(query);
+                ret = executor.execute(query);
+                break;
             default:
                 log.error("Mapper DSL is not implemented yet for this MappingDS blueprints implementation !", new Object[]{blpImpl});
+                break;
         }
         return ret;
     }
