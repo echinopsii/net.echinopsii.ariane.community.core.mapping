@@ -1,0 +1,8 @@
+{'startContainer': 'FROM container WHERE startContainer.containerPrimaryAdminGate.nodeName =~ ".*tibrvrdl03prd01.*"'}
+-
+{
+    'moulticast': 'FROM transport WHERE moulticast.transportName = "multicast-udp-tibrv://;239.69.69.69"',
+    'ptContainer': 'FROM container WHERE ptContainer.containerPrimaryAdminGate.nodeName =~ ".*tibrvrdmprd01.*"'
+}
+-
+{'endContainer': 'FROM container WHERE endContainer.containerPrimaryAdminGate.nodeName =~ ".*tibrvrdl05prd01.*"'}

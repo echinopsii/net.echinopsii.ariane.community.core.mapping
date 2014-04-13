@@ -17,7 +17,7 @@ MATCH path = startContainer -[:owns|link*]- endEP
 WHERE
 ALL(n in nodes(path) where 1=length(filter(m in nodes(path) : m=n))) AND
 ALL(n in nodes(path) where n.MappingGraphVertexType <> "cluster")
-RETURN
+RETURN DISTINCT
 EXTRACT(co in FILTER( n in nodes(path): n.MappingGraphVertexType! = "container"): co.MappingGraphVertexID) as CID,
 EXTRACT(no in FILTER( n in nodes(path): n.MappingGraphVertexType! = "node"): no.MappingGraphVertexID) as NID,
 EXTRACT(e in FILTER( n in nodes(path): n.MappingGraphVertexType! = "endpoint"): e.MappingGraphVertexID) as EID,

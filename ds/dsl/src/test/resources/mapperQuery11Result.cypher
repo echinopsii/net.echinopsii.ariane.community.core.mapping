@@ -15,7 +15,27 @@ endContainerContainerPrimaryAdminGate.MappingGraphVertexID = endContainer.contai
 (endContainerContainerPrimaryAdminGate.nodeName =~ ".*tibrvrdl05prd01.*")
 WITH startContainer, endContainer
 
-MATCH path = startContainer -[:owns|link*]- endContainer
+START moulticast = node(*)
+WHERE
+moulticast.MappingGraphVertexType! = "transport" AND
+(moulticast.transportName = "multicast-udp-tibrv://;239.69.69.69")
+WITH startContainer, endContainer, moulticast
+
+START ptNodeEPs = node(*)
+MATCH ptNode -[:owns*]-> ptNodeEPs
+WHERE
+ptNodeEPs.MappingGraphVertexType! = "endpoint" AND
+ptNode.MappingGraphVertexType! = "node" AND
+(ptNode.nodeName = "APP6969.tibrvrdmprd01")
+WITH startContainer, endContainer, moulticast, ptNodeEPs
+
+START ptUnion = node(*)
+WHERE
+ptUnion.MappingGraphVertexID! = moulticast.MappingGraphVertexID OR
+ptUnion.MappingGraphVertexID! = ptNodeEPs.MappingGraphVertexID
+WITH startContainer, endContainer, ptUnion
+
+MATCH path = startContainer -[:owns|link*]- ptUnion -[:owns|link*]- endContainer
 WHERE
 ALL(n in nodes(path) where 1=length(filter(m in nodes(path) : m=n))) AND
 ALL(n in nodes(path) where n.MappingGraphVertexType <> "cluster")

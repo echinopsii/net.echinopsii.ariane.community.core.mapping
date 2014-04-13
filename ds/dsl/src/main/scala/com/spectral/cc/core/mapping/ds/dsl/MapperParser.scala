@@ -31,11 +31,13 @@ class MapperParser(val queryType: String) extends Common with CCMon with SqlLike
      * Lexer
      */
     var lexedStartBlock: Map[String, String] = null
+    var lexedLinkBlock: Map[String, String] = null
     var lexedEndBlock: Map[String, String] =  null
     parseAll(map, queryText) match {
       case Success(result, _) =>
         lexedStartBlock = result._1
-        lexedEndBlock = result._2
+        lexedLinkBlock = result._2
+        lexedEndBlock = result._3
       case failure : NoSuccess => throw new MapperParserException(failure.msg)
     }
 
@@ -43,16 +45,19 @@ class MapperParser(val queryType: String) extends Common with CCMon with SqlLike
      * Parser
      */
     val parsedStartBlock = parseBlock(lexedStartBlock)
+    val parsedLinkBlock = parseBlock(lexedLinkBlock)
     val parsedEndBlock = parseBlock(lexedEndBlock)
 
     queryType match {
-      case "cypher" => MapperToCypherQueryGen(parsedStartBlock,parsedEndBlock)
+      case "cypher" => MapperToCypherQueryGen(parsedStartBlock,parsedLinkBlock,parsedEndBlock)
       case "gremlin" => throw new MapperParserException("not implemented yet !")
       case _ => throw new MapperParserException("invalid query type !")
     }
   }
 
   private def parseBlock(lexedBlock: Map[String, String]): Block = {
+    if (lexedBlock==null)
+      return null
     val block:Block = new Block()
     lexedBlock foreach {
       case (objID, objValue) =>
