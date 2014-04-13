@@ -1,17 +1,23 @@
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.service;
 
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDB;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.cfg.MappingDSCfgLoader;
 import com.spectral.cc.core.mapping.ds.domain.*;
 import com.spectral.cc.core.mapping.ds.service.MappingSce;
+import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.io.File;
+import java.io.IOException;
 
 import static org.junit.Assert.assertTrue;
 
 public class MappingSceTest {
 
 	private static MappingSce mappingSce = new MappingSceImpl(); //working for this junit test only - real instantiation should be done
-																//thanks RIM or OSGI 
+																//thanks RIM or OSGI
 	private static Container   rvrdLan     = null;
 	private static Gate        gateLan     = null;
 	private static Node        nodeLan     = null;
@@ -21,10 +27,11 @@ public class MappingSceTest {
 	private static Gate        gateMan     = null;
 	private static Node        nodeMan     = null;
 	private static Endpoint    endpointMan = null;
-	
+
+    private static Transport   transport   = null;
 	private static Link        link        = null;
 	
-	@BeforeClass 
+	@BeforeClass
 	public static void testSetup() {
 		mappingSce.init(null);
 		mappingSce.start();
@@ -39,30 +46,40 @@ public class MappingSceTest {
 		String urlGMan      = "tcp-tibrvd://tibrvrdmprd01.lab01.dev.dekatonshivr.echinopsii.net:7500";
 		String gateNameGMan = "cligate.tibrvrdmprd01";			
 		String urlEMan      = "tcp-tibrvrd://tibrvrdmprd01.lab01.dev.dekatonshivr.echinopsii.net:6969";
-		
-		rvrdLan = mappingSce.getContainerSce().createContainer(urlLan,gateNameLan);
-		rvrdLan.setContainerType("RV Router Daemon");
-		rvrdLan.setContainerProperty("RVRD_HOSTNAME", "tibrvrdl03prd01");
-		gateLan = mappingSce.getGateSce().createGate(urlGLan, gateNameGLan, rvrdLan.getContainerID(), false);
-		nodeLan = mappingSce.getNodeSce().createNode("APP6969.tibrvrdl03prd01", rvrdLan.getContainerID(), 0);
-		endpointLan = mappingSce.getEndpointSce().createEndpoint(urlELan, nodeLan.getNodeID());
-		endpointLan.setEndpointProperty("RVRD_NEIGHBD_LPORT", 6969);
-		
-		rvrdMan = mappingSce.getContainerSce().createContainer(urlMan,gateNameMan);
-		rvrdMan.setContainerType("RV Router Daemon");
-		rvrdMan.setContainerProperty("RVRD_HOSTNAME", "tibrvrdmprd01");
-		gateMan = mappingSce.getGateSce().createGate(urlGMan, gateNameGMan, rvrdMan.getContainerID(), false);
-		nodeMan = mappingSce.getNodeSce().createNode("APP6969.tibrvrdmprd01", rvrdMan.getContainerID(), 0);
-		endpointMan = mappingSce.getEndpointSce().createEndpoint(urlEMan, nodeMan.getNodeID());
-		endpointMan.setEndpointProperty("RVRD_NEIGHBD_LPORT", 6969);
-		
-		link = mappingSce.getLinkSce().createLink(endpointLan.getEndpointID(), endpointMan.getEndpointID(), 0, 0);
+        String transportName= "tcp-tibrvrd";
+
+        try {
+            rvrdLan = mappingSce.getContainerSce().createContainer(urlLan, gateNameLan);
+            rvrdLan.setContainerType("RV Router Daemon");
+            rvrdLan.setContainerProperty("RVRD_HOSTNAME", "tibrvrdl03prd01");
+            gateLan = mappingSce.getGateSce().createGate(urlGLan, gateNameGLan, rvrdLan.getContainerID(), false);
+            nodeLan = mappingSce.getNodeSce().createNode("APP6969.tibrvrdl03prd01", rvrdLan.getContainerID(), 0);
+            endpointLan = mappingSce.getEndpointSce().createEndpoint(urlELan, nodeLan.getNodeID());
+            endpointLan.setEndpointProperty("RVRD_NEIGHBD_LPORT", 6969);
+
+            rvrdMan = mappingSce.getContainerSce().createContainer(urlMan, gateNameMan);
+            rvrdMan.setContainerType("RV Router Daemon");
+            rvrdMan.setContainerProperty("RVRD_HOSTNAME", "tibrvrdmprd01");
+            gateMan = mappingSce.getGateSce().createGate(urlGMan, gateNameGMan, rvrdMan.getContainerID(), false);
+            nodeMan = mappingSce.getNodeSce().createNode("APP6969.tibrvrdmprd01", rvrdMan.getContainerID(), 0);
+            endpointMan = mappingSce.getEndpointSce().createEndpoint(urlEMan, nodeMan.getNodeID());
+            endpointMan.setEndpointProperty("RVRD_NEIGHBD_LPORT", 6969);
+
+            transport = mappingSce.getTransportSce().createTransport(transportName);
+
+            link = mappingSce.getLinkSce().createLink(endpointLan.getEndpointID(), endpointMan.getEndpointID(), transport.getTransportID(), 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 	}
 	
 	@AfterClass
-	public static void testCleanup() {
-		//MappingDSGraphDB.clear();
-		//mappingSce.stop();
+	public static void testCleanup() throws IOException {
+		mappingSce.stop();
+        if (MappingDSCfgLoader.getDefaultCfgEntity().getBlueprintsGraphPath()!=null) {
+            File dir = new File(MappingDSCfgLoader.getDefaultCfgEntity().getBlueprintsGraphPath());
+            if (dir.isDirectory()) FileUtils.deleteDirectory(dir);
+        }
 	}
 	
 	@Test
