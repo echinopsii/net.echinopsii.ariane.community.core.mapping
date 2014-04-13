@@ -20,10 +20,10 @@
                     <p:layoutUnit id="mappingTools" position="north" size="210" header="Mapping tools" resizable="false" collapsible="true">
                         <p:tabView id="mappingToolsView" activeIndex="2">
                             <p:tab id="mappingToolsExportTab" title="Export">
-                                <p:graphicImage value="#{request.contextPath}/javax.faces.resource/csv.png?ln=images/export" />
-                                <p:graphicImage value="#{request.contextPath}/javax.faces.resource/excel.png?ln=images/export" />
-                                <p:graphicImage value="#{request.contextPath}/javax.faces.resource/pdf.png?ln=images/export" />
-                                <p:graphicImage value="#{request.contextPath}/javax.faces.resource/xml.png?ln=images/export" />
+                                <p:graphicImage value="#{request.contextPath}/javax.faces.resource/export/csv.png.jsf?ln=images" />
+                                <p:graphicImage value="#{request.contextPath}/javax.faces.resource/export/excel.png.jsf?ln=images" />
+                                <p:graphicImage value="#{request.contextPath}/javax.faces.resource/export/pdf.png.jsf?ln=images" />
+                                <p:graphicImage value="#{request.contextPath}/javax.faces.resource/export/xml.png.jsf?ln=images" />
                             </p:tab>
                             <p:tab id="mappingToolsDisplayTab" title="Options">
                                 <h:panelGrid columns="4" cellpadding="5">
@@ -91,10 +91,11 @@
                             </p:tab>
                             <p:tab id="mappingToolsQueryTab" title="Query" >
                                 <h:panelGrid columns="2" cellpadding="5">
-                                    <p:inputTextarea id="queryAutoComplete" rows="6" cols="180" autoResize="false"
-                                                     completeMethod="#{autoCompleteController.completeArea}" queryDelay="200" minQueryLength="4"/>
+                                    <!--<p:inputTextarea id="mdslQuery" rows="6" cols="180" autoResize="false" widgetVar="mdslQuery"
+                                                     completeMethod="#{autoCompleteController.completeArea}" queryDelay="200" minQueryLength="4"/>-->
+                                    <p:inputTextarea id="mdslQuery" rows="6" cols="180" autoResize="false" widgetVar="mdslQuery"/>
                                     <h:panelGroup>
-                                        <p:commandButton type="button" value="Execute query" title="Execute" icon="icon-play-circle icon-large" style="width:150px"/><br/>
+                                        <p:commandButton id="execQuery" widgetVar="execQuery" type="button" value="Execute query" title="Execute" icon="icon-play-circle icon-large" style="width:150px"/><br/>
                                         <p:commandButton type="button" value="Load stored query" title="Load" icon="icon-upload icon-large" style="width:150px"/><br/>
                                         <p:commandButton type="button" value="Save query" title="Save" icon="icon-download icon-large" style="width:150px"/>
                                     </h:panelGroup>
