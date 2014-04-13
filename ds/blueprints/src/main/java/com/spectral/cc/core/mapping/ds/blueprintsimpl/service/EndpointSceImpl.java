@@ -19,6 +19,7 @@
 
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.service;
 
+import com.spectral.cc.core.mapping.ds.MappingDSException;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.EndpointImpl;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.NodeImpl;
 import com.spectral.cc.core.mapping.ds.service.EndpointSce;
@@ -38,7 +39,7 @@ public class EndpointSceImpl implements EndpointSce<EndpointImpl> {
     }
 
     @Override
-    public EndpointImpl createEndpoint(String url, long parentNodeID) {
+    public EndpointImpl createEndpoint(String url, long parentNodeID) throws MappingDSException {
         EndpointImpl ret = sce.getGlobalRepo().getEndpointRepo().findEndpointByURL(url);
         if (ret == null) {
             NodeImpl parentNode = sce.getGlobalRepo().getNodeRepo().findNodeByID(parentNodeID);
@@ -49,21 +50,21 @@ public class EndpointSceImpl implements EndpointSce<EndpointImpl> {
                 sce.getGlobalRepo().getEndpointRepo().save(ret);
                 parentNode.addEnpoint(ret);
             } else {
-                log.error("Endpoint parent node {} is not in the node repository !");
+                throw new MappingDSException("Endpoint creation failed : provided parent node " + parentNodeID + " doesn't exists.");
             }
         } else {
-            // TODO: raise exception !
+            log.debug("Endpoint ({}) creation failed : already exists", url);
         }
         return ret;
     }
 
     @Override
-    public void deleteEndpoint(long endpointID) {
+    public void deleteEndpoint(long endpointID) throws MappingDSException {
         EndpointImpl remove = sce.getGlobalRepo().getEndpointRepo().findEndpointByID(endpointID);
         if (remove != null) {
             sce.getGlobalRepo().getEndpointRepo().delete(remove);
         } else {
-            // TODO: raise exception
+            throw new MappingDSException("Unable to remove endpoint with id " + endpointID + ": endpoint not found.");
         }
     }
 

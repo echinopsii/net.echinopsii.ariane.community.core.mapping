@@ -23,6 +23,7 @@ package com.spectral.cc.core.mapping.wat.json.ds.domain;
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.spectral.cc.core.mapping.ds.MappingDSGraphPropertyNames;
 import com.spectral.cc.core.mapping.ds.domain.Transport;
 import com.spectral.cc.core.mapping.wat.MappingBootstrap;
 import com.spectral.cc.core.mapping.wat.json.PropertiesJSON;
@@ -38,9 +39,9 @@ import java.util.Iterator;
 public class TransportJSON {
     private final static Logger log   = LoggerFactory.getLogger(TransportJSON.class);
 
-    public final static String TP_ID_TOKEN   = "transportID";
-    public final static String TP_NAME_TOKEN = "transportName";
-    public final static String TP_PRP_TOKEN  = "transportProperties";
+    public final static String TP_ID_TOKEN   = MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE+"ID";
+    public final static String TP_NAME_TOKEN = MappingDSGraphPropertyNames.DD_TRANSPORT_NAME_KEY;
+    public final static String TP_PRP_TOKEN  = MappingDSGraphPropertyNames.DD_TRANSPORT_PROPS_KEY;
 
     private final static void transportProps2JSON(Transport transport, JsonGenerator jgenerator)
             throws JsonGenerationException, IOException {

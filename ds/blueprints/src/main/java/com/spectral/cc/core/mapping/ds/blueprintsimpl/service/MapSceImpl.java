@@ -19,10 +19,14 @@
 
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.service;
 
-import com.spectral.cc.core.mapping.ds.service.Map;
+import com.spectral.cc.core.mapping.ds.MappingDSGraphPropertyNames;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDB;
+import com.spectral.cc.core.mapping.ds.domain.*;
 import com.spectral.cc.core.mapping.ds.service.MapSce;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
 
 public class MapSceImpl implements MapSce {
 
@@ -33,9 +37,67 @@ public class MapSceImpl implements MapSce {
         this.sce = sce_;
     }
 
+    private static void addContainerToResultMap(Container container,  MapImpl map) {
+        map.addContainer(container);
+        map.addCluster(container.getContainerCluster());
+    }
+
+    private static void addNodeToResultMap(Node node, MapImpl map) {
+        log.debug("Add node to result map : " + node.getNodeName());
+        map.addNode(node);
+        if (node.getNodeContainer()!=null)
+            map.addContainer(node.getNodeContainer());
+        if (node.getNodeParentNode()!=null)
+            addNodeToResultMap(node.getNodeParentNode(), map);
+    }
+
+    private static void addEndpointToResultMap(Endpoint endpoint, MapImpl map) {
+        log.debug("Add endpoint to result map : " + endpoint.getEndpointURL());
+        map.addEndpoint(endpoint);
+        if (endpoint.getEndpointParentNode()!=null)
+            addNodeToResultMap(endpoint.getEndpointParentNode(), map);
+    }
+
+    private static void addLinkToResultMap(Link link, MapImpl map) {
+        log.debug("Add link to result map : " + link.getLinkID());
+        map.addLink(link);
+        if (link.getLinkTransport()!=null)
+            map.addTransport(link.getLinkTransport());
+    }
+
     @Override
-    public Map getMap(String mapperQuery) {
-        MapImpl map = null;
+    public MapImpl getMap(String mapperQuery) {
+        MapImpl map = new MapImpl();
+        Map<String, String> minimalMap = MappingDSGraphDB.executeQuery(mapperQuery);
+        for (String id : minimalMap.keySet()) {
+            String type = minimalMap.get(id);
+            switch (type) {
+                case MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE:
+                    Container container = sce.getContainerSce().getContainer(new Long(id.substring(1, id.length())));
+                    addContainerToResultMap(container, map);
+                    break;
+                case MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE:
+                    Node node = sce.getNodeSce().getNode(new Long(id.substring(1,id.length())));
+                    addNodeToResultMap(node, map);
+                    break;
+                case MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE:
+                    Endpoint endpoint = sce.getEndpointSce().getEndpoint(new Long(id.substring(1,id.length())));
+                    addEndpointToResultMap(endpoint, map);
+                    break;
+                case MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE:
+                    Transport transport = sce.getTransportSce().getTransport(new Long(id.substring(1,id.length())));
+                    log.debug("Add transport to result map : " + transport.getTransportName());
+                    map.addTransport(transport);
+                    break;
+                case MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY:
+                    Link link = sce.getLinkSce().getLink(new Long(id.substring(1,id.length())));
+                    addLinkToResultMap(link, map);
+                    break;
+                default:
+                    log.error("Unsupported type {} for object {} in minimal map return !", type, id.substring(1,id.length()));
+                    break;
+            }
+        }
         return map;
     }
 }

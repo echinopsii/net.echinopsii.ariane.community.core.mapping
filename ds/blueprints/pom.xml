@@ -82,6 +82,7 @@
                             com.fasterxml.jackson.core.type;version="${version.com.fasterxml.jackson}",
                             com.fasterxml.jackson.core.util;version="${version.com.fasterxml.jackson}",
                             com.orientechnologies.orient.core.config;version="${version.osgi.com.orientdb}";resolution:=optional,
+                            com.spectral.cc.core.mapping.ds;version="${project.version}",
                             com.spectral.cc.core.mapping.ds.service;version="${project.version}",
                             com.spectral.cc.core.mapping.ds.domain;version="${project.version}",
                             com.spectral.cc.core.mapping.ds.dsl;version="${project.version}",

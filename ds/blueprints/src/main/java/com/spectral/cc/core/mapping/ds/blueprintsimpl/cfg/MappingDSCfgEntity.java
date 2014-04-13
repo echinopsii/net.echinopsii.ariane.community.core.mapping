@@ -22,7 +22,7 @@ package com.spectral.cc.core.mapping.ds.blueprintsimpl.cfg;
 public class MappingDSCfgEntity {
 	private String       blueprintsImplementation = null;
 
-    private String blueprintsGraphPath = null;
+    private String       blueprintsGraphPath      = null;
     private String       blueprintsNeoConfigFile  = null;
 
 	private String       blueprintsURL            = null;

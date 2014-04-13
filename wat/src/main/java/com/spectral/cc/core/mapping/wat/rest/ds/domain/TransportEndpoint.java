@@ -19,9 +19,12 @@
  */
 package com.spectral.cc.core.mapping.wat.rest.ds.domain;
 
+import com.spectral.cc.core.mapping.ds.MappingDSException;
+import com.spectral.cc.core.mapping.ds.domain.Container;
 import com.spectral.cc.core.mapping.ds.domain.Transport;
 import com.spectral.cc.core.mapping.ds.service.MappingSce;
 import com.spectral.cc.core.mapping.wat.MappingBootstrap;
+import com.spectral.cc.core.mapping.wat.json.ds.domain.ContainerJSON;
 import com.spectral.cc.core.mapping.wat.json.ds.domain.TransportJSON;
 import com.spectral.cc.core.mapping.wat.rest.ToolBox;
 import org.slf4j.Logger;
@@ -30,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
@@ -40,7 +44,7 @@ public class TransportEndpoint {
 
     @GET
     @Path("/{param}")
-    public Response printLinkJSON(@PathParam("param") long id) {
+    public Response displayTransport(@PathParam("param") long id) {
         MappingSce mapping = MappingBootstrap.getMappingSce();
         Transport transport = (Transport) mapping.getTransportSce().getTransport(id);
         if (transport != null) {
@@ -61,7 +65,7 @@ public class TransportEndpoint {
     }
 
     @GET
-    public Response printAllTransportJSON() {
+    public Response displayAllTransports() {
         MappingSce mapping = MappingBootstrap.getMappingSce();
         String result = "";
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -75,5 +79,53 @@ public class TransportEndpoint {
             result = e.getMessage();
             return Response.status(500).entity(result).build();
         }
+    }
+
+    @GET
+    @Path("/create")
+    public Response createTransport(@QueryParam("Name")String transportName) {
+        MappingSce mapping  = MappingBootstrap.getMappingSce();
+        Transport transport = (Transport) mapping.getTransportSce().createTransport(transportName);
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        try {
+            TransportJSON.oneTransport2JSON(transport, outStream);
+            String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+            return Response.status(200).entity(result).build();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            e.printStackTrace();
+            String result = e.getMessage();
+            return Response.status(500).entity(result).build();
+        }
+    }
+
+    @GET
+    @Path("/delete")
+    public Response deleteTransport(@QueryParam("ID")long transportID) {
+        MappingSce mapping = MappingBootstrap.getMappingSce();
+        try {
+            mapping.getTransportSce().deleteTransport(transportID);
+            return Response.status(200).entity("Transport (" + transportID + ") has been successfully deleted !").build();
+        } catch (MappingDSException e) {
+            return Response.status(500).entity("Error while deleting transport with id " + transportID).build();
+        }
+    }
+
+    @GET
+    @Path("/get")
+    public Response getTransport(@QueryParam("ID")long transportID) {
+        return displayTransport(transportID);
+    }
+
+    @GET
+    @Path("/update/name")
+    public Response setTransportName(@QueryParam("ID")long id, @QueryParam("name")String name) {
+        return null;
+    }
+
+    @GET
+    @Path("/update/property")
+    public Response setTransportProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name, @QueryParam("propertyValue") String value) {
+        return null;
     }
 }

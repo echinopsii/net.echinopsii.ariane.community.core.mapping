@@ -19,14 +19,15 @@
 
 package com.spectral.cc.core.mapping.ds.service;
 
+import com.spectral.cc.core.mapping.ds.MappingDSException;
 import com.spectral.cc.core.mapping.ds.domain.Container;
 
 import java.util.Set;
 
 public interface ContainerSce<C extends Container> {
-    public C createContainer(String primaryAdminURL, String primaryAdminGateName);
+    public C createContainer(String primaryAdminURL, String primaryAdminGateName) throws MappingDSException;
 
-    public void deleteContainer(String primaryAdminURL);
+    public void deleteContainer(String primaryAdminURL) throws MappingDSException;
 
     public C getContainer(long id);
 

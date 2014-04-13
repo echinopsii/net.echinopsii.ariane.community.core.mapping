@@ -35,6 +35,7 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
+                            com.spectral.cc.core.mapping.ds;version=${project.version},
                             com.spectral.cc.core.mapping.ds.domain;version=${project.version},
                             com.spectral.cc.core.mapping.ds.repository;version=${project.version},
                             com.spectral.cc.core.mapping.ds.service;version=${project.version}

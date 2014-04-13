@@ -23,6 +23,7 @@ package com.spectral.cc.core.mapping.wat.json.ds.domain;
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.spectral.cc.core.mapping.ds.MappingDSGraphPropertyNames;
 import com.spectral.cc.core.mapping.ds.domain.Container;
 import com.spectral.cc.core.mapping.ds.domain.Gate;
 import com.spectral.cc.core.mapping.ds.domain.Node;
@@ -41,15 +42,15 @@ public class ContainerJSON {
 
     private final static Logger log = LoggerFactory.getLogger(ContainerJSON.class);
 
-    public final static String CT_ID_TOKEN = "containerID";
-    public final static String CT_COMPANY_TOKEN = "containerCompany";
-    public final static String CT_PRODUCT_TOKEN = "containerProduct";
-    public final static String CT_TYPE_TOKEN = "containerType";
-    public final static String CT_PAGTID_TOKEN = "containerPrimaryAdminGateID";
-    public final static String CT_GATE_URI = "containerGateURI";
-    public final static String CT_NID_TOKEN = "containerNodesID";
-    public final static String CT_GID_TOKEN = "containerGatesID";
-    public final static String CT_PRP_TOKEN = "containerProperties";
+    public final static String CT_ID_TOKEN = MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE+"ID";
+    public final static String CT_COMPANY_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_COMPANY_KEY;
+    public final static String CT_PRODUCT_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_PRODUCT_KEY;
+    public final static String CT_TYPE_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_TYPE_KEY;
+    public final static String CT_PAGTID_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_PAGATE_KEY+"ID";
+    public final static String CT_GATE_URI = MappingDSGraphPropertyNames.DD_CONTAINER_GATEURI_KEY;
+    public final static String CT_NID_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_NODE_KEY+"ID";
+    public final static String CT_GID_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_GATE_KEY+"ID";
+    public final static String CT_PRP_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY;
 
     private final static void containerProps2JSON(HashMap<String, Object> props, JsonGenerator jgenerator,
                                                   boolean writeOPropsFieldStart, boolean writeOPropsFieldEnd)

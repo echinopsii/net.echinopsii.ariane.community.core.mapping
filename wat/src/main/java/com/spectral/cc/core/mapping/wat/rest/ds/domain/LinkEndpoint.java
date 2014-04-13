@@ -19,6 +19,7 @@
  */
 package com.spectral.cc.core.mapping.wat.rest.ds.domain;
 
+import com.spectral.cc.core.mapping.ds.MappingDSException;
 import com.spectral.cc.core.mapping.ds.domain.Link;
 import com.spectral.cc.core.mapping.ds.service.MappingSce;
 import com.spectral.cc.core.mapping.wat.MappingBootstrap;
@@ -30,11 +31,10 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
-
-//import java.io.File;
 
 @Path("/domain/link")
 public class LinkEndpoint {
@@ -42,7 +42,7 @@ public class LinkEndpoint {
 
     @GET
     @Path("/{param}")
-    public Response printLinkJSON(@PathParam("param") long id) {
+    public Response displayLink(@PathParam("param") long id) {
         MappingSce mapping = MappingBootstrap.getMappingSce();
         Link link = (Link) mapping.getLinkSce().getLink(id);
         if (link != null) {
@@ -63,7 +63,7 @@ public class LinkEndpoint {
     }
 
     @GET
-    public Response printAllLinkJSON() {
+    public Response displayAllLinks() {
         MappingSce mapping   = MappingBootstrap.getMappingSce();
         String  result = "";
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -77,5 +77,52 @@ public class LinkEndpoint {
             result = e.getMessage();
             return Response.status(500).entity(result).build();
         }
+    }
+
+    @GET
+    @Path("/create")
+    public Response createLink(long sourceEndpointID, long targetEndpointID,
+                               long transportID, long upLinkID) {
+        MappingSce mapping = MappingBootstrap.getMappingSce();
+        try {
+            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+            Link link = mapping.getLinkSce().createLink(sourceEndpointID, targetEndpointID, transportID, upLinkID);
+            try {
+                LinkJSON.oneLink2JSON(link, outStream);
+                String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                return Response.status(200).entity(result).build();
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                e.printStackTrace();
+                String result = e.getMessage();
+                return Response.status(500).entity(result).build();
+            }
+        } catch (MappingDSException e) {
+            log.error(e.getMessage());
+            e.printStackTrace();
+            String result = e.getMessage();
+            return Response.status(500).entity(result).build();
+        }
+    }
+
+    @GET
+    @Path("/delete")
+    public Response deleteLink(long linkID) {
+        MappingSce mapping = MappingBootstrap.getMappingSce();
+        try {
+            mapping.getLinkSce().deleteLink(linkID);
+            return Response.status(200).entity("Link (" + linkID + ") successfully deleted.").build();
+        } catch (MappingDSException e) {
+            log.error(e.getMessage());
+            e.printStackTrace();
+            String result = e.getMessage();
+            return Response.status(500).entity(result).build();
+        }
+    }
+
+    @GET
+    @Path("/get")
+    public Response getLink(@QueryParam("linkID")long id) {
+        return displayLink(id);
     }
 }

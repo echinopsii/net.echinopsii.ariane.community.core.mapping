@@ -464,6 +464,12 @@
         </dependency>
         <dependency>
             <groupId>org.neo4j</groupId>
+            <artifactId>neo4j-backup</artifactId>
+            <scope>provided</scope>
+            <version>${version.osgi.com.neo4j}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.neo4j</groupId>
             <artifactId>neo4j-kernel</artifactId>
             <scope>provided</scope>
             <version>${version.osgi.com.neo4j}</version>

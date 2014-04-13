@@ -19,13 +19,14 @@
 
 package com.spectral.cc.core.mapping.ds.service;
 
+import com.spectral.cc.core.mapping.ds.MappingDSException;
 import com.spectral.cc.core.mapping.ds.domain.Gate;
 
 import java.util.Set;
 
 public interface GateSce<G extends Gate> {
-	public G    createGate(String url, String name, long containerid, boolean isPrimaryAdmin);
-	public void deleteGate(long nodeID);
+	public G    createGate(String url, String name, long containerid, boolean isPrimaryAdmin) throws MappingDSException;
+	public void deleteGate(long nodeID) throws MappingDSException;
 	
 	public G    getGate(long id);
 

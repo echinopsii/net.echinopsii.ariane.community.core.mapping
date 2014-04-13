@@ -23,6 +23,7 @@ package com.spectral.cc.core.mapping.wat.json.ds.domain;
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.spectral.cc.core.mapping.ds.MappingDSGraphPropertyNames;
 import com.spectral.cc.core.mapping.ds.domain.Link;
 import com.spectral.cc.core.mapping.wat.MappingBootstrap;
 
@@ -34,10 +35,10 @@ import java.util.Iterator;
 public class LinkJSON {
     //private final static Logger  log   = LoggerFactory.getLogger(EndpointJSON.class);
 
-    public final static String LK_ID_TOKEN = "linkID";
-    public final static String LK_SEP_TOKEN = "linkSEPID";
-    public final static String LK_TEP_TOKEN = "linkTEPID";
-    public final static String LK_TRP_TOKEN = "linkTRPID";
+    public final static String LK_ID_TOKEN  = MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY+"ID";
+    public final static String LK_SEP_TOKEN = MappingDSGraphPropertyNames.DD_LINK_SOURCE_EP_REST_KEY;
+    public final static String LK_TEP_TOKEN = MappingDSGraphPropertyNames.DD_LINK_TARGET_EP_REST_KEY;
+    public final static String LK_TRP_TOKEN = MappingDSGraphPropertyNames.DD_LINK_TRANSPORT_REST_KEY;
 
     public final static void link2JSON(Link link, JsonGenerator jgenerator) throws JsonGenerationException, IOException {
         jgenerator.writeStartObject();

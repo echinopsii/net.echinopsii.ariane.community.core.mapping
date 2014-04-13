@@ -23,6 +23,7 @@ package com.spectral.cc.core.mapping.wat.json.ds.domain;
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.spectral.cc.core.mapping.ds.MappingDSGraphPropertyNames;
 import com.spectral.cc.core.mapping.ds.domain.Endpoint;
 import com.spectral.cc.core.mapping.ds.domain.Node;
 import com.spectral.cc.core.mapping.wat.MappingBootstrap;
@@ -39,11 +40,11 @@ public class NodeJSON {
 
     private final static Logger log = LoggerFactory.getLogger(NodeJSON.class);
 
-    public final static String ND_ID_TOKEN = "nodeID";
-    public final static String ND_NAME_TOKEN = "nodeName";
-    public final static String ND_CONID_TOKEN = "nodeContainerID";
-    public final static String ND_EPSID_TOKEN = "nodeEndpointsID";
-    public final static String ND_PRP_TOKEN = "nodeProperties";
+    public final static String ND_ID_TOKEN = MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE+"ID";
+    public final static String ND_NAME_TOKEN = MappingDSGraphPropertyNames.DD_NODE_NAME_KEY;
+    public final static String ND_CONID_TOKEN = MappingDSGraphPropertyNames.DD_NODE_CONT_KEY+"ID";
+    public final static String ND_EPSID_TOKEN = MappingDSGraphPropertyNames.DD_NODE_EDGE_ENDPT_KEY+"ID";
+    public final static String ND_PRP_TOKEN = MappingDSGraphPropertyNames.DD_NODE_PROPS_KEY;
 
     private final static void nodeProps2JSON(Node node, JsonGenerator jgenerator)
     throws JsonGenerationException, IOException {

@@ -19,6 +19,8 @@
 
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.service;
 
+import com.spectral.cc.core.mapping.ds.MappingDSException;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDBException;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.ContainerImpl;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.GateImpl;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.repository.ContainerRepoImpl;
@@ -39,16 +41,25 @@ public class ContainerSceImpl implements ContainerSce<ContainerImpl> {
     }
 
     @Override
-    public ContainerImpl createContainer(String primaryAdminURL, String primaryAdminGateName) {
+    public ContainerImpl createContainer(String primaryAdminURL, String primaryAdminGateName) throws MappingDSException {
         ContainerImpl ret = sce.getGlobalRepo().getContainerRepo().findContainersByPrimaryAdminURL(primaryAdminURL);
         if (ret == null) {
             ret = new ContainerImpl();
             sce.getGlobalRepo().getContainerRepo().save(ret);
 
-            GateImpl primaryAdminService = sce.getGateSce().createGate(primaryAdminURL, primaryAdminGateName, ret.getContainerID(), true);
-            log.debug("Container primary gate ({}) saved !", primaryAdminService.getNodeName());
-            ret.setContainerPrimaryAdminGate(primaryAdminService);
-
+            try {
+                GateImpl primaryAdminService = sce.getGateSce().createGate(primaryAdminURL, primaryAdminGateName, ret.getContainerID(), true);
+                log.debug("Container primary gate ({}) saved !", primaryAdminService.getNodeName());
+                ret.setContainerPrimaryAdminGate(primaryAdminService);
+            } catch (MappingDSException e) {
+                try {
+                    deleteContainer(primaryAdminURL);
+                    log.error("Unable to create container gate : container has been deleted...");
+                } catch (MappingDSException e1) {
+                    log.error("Unable to remove previously created erronous container.");
+                }
+                throw new MappingDSException("Unable to create container " + primaryAdminURL + " : gate creation failed.");
+            }
             log.debug("Container {} with primaryAdminURL ({}) has been saved.",
                              new Object[]{ret.getContainerID(), ret.getContainerPrimaryAdminGateURL()});
         } else {
@@ -58,12 +69,12 @@ public class ContainerSceImpl implements ContainerSce<ContainerImpl> {
     }
 
     @Override
-    public void deleteContainer(String primaryAdminURL) {
+    public void deleteContainer(String primaryAdminURL) throws MappingDSException {
         ContainerImpl remove = sce.getGlobalRepo().getContainerRepo().findContainersByPrimaryAdminURL(primaryAdminURL);
         if (remove != null) {
             sce.getGlobalRepo().getContainerRepo().delete(remove);
         } else {
-            //TODO : raise exception
+            throw new MappingDSException("Unable to remove container with primary admin URL " + primaryAdminURL + ": container not found .");
         }
     }
 

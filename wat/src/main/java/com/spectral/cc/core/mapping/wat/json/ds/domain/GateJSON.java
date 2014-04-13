@@ -21,6 +21,7 @@ package com.spectral.cc.core.mapping.wat.json.ds.domain;
 
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.spectral.cc.core.mapping.ds.MappingDSGraphPropertyNames;
 import com.spectral.cc.core.mapping.ds.domain.Gate;
 import com.spectral.cc.core.mapping.wat.MappingBootstrap;
 
@@ -32,8 +33,8 @@ import java.util.Iterator;
 public class GateJSON {
     //private final static Logger  log   = LoggerFactory.getLogger(GateJSON.class);
 
-    private final static String GT_ADMPEP_TOKEN = "gateAdminPrimEPID";
-    private final static String GT_NODE_TOKEN   = "node";
+    private final static String GT_ADMPEP_TOKEN = MappingDSGraphPropertyNames.DD_GATE_PAEP_KEY+"ID";
+    private final static String GT_NODE_TOKEN   = MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE;
 
     public final static void gate2JSON(Gate gate, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeStartObject();

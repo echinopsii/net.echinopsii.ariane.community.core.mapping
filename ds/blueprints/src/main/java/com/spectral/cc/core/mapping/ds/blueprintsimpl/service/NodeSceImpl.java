@@ -19,6 +19,7 @@
 
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.service;
 
+import com.spectral.cc.core.mapping.ds.MappingDSException;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.ContainerImpl;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.NodeImpl;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.repository.NodeRepoImpl;
@@ -39,7 +40,7 @@ public class NodeSceImpl implements NodeSce<NodeImpl> {
     }
 
     @Override
-    public NodeImpl createNode(String nodeName, long containerID, long parentNodeID) {
+    public NodeImpl createNode(String nodeName, long containerID, long parentNodeID) throws MappingDSException {
         ContainerImpl cont = sce.getGlobalRepo().getContainerRepo().findContainerByID(containerID);
         NodeImpl ret = sce.getGlobalRepo().findNodeByName(cont, nodeName);
         if (ret == null) {
@@ -53,7 +54,7 @@ public class NodeSceImpl implements NodeSce<NodeImpl> {
                     if (parent != null) {
                         ret.setNodeParentNode(parent);
                     } else {
-                        log.error("Parent Node {} is not is the node repository !", new Object[]{parentNodeID});
+                        throw new MappingDSException("Node creation failed : provided parend node " + parentNodeID + " doesn't exists.");
                     }
                 }
                 sce.getGlobalRepo().getNodeRepo().saveNode(ret);
@@ -62,21 +63,21 @@ public class NodeSceImpl implements NodeSce<NodeImpl> {
                     ret.getNodeParentNode().addNodeChildNode(ret);
                 }
             } else {
-                log.error("Container {} is not is the container repository !", new Object[]{containerID});
+                throw new MappingDSException("Node creation failed : provided container " + containerID + " doesn't exists.");
             }
         } else {
-            // TODO: raise exception
+            log.debug("Node ({}) creation failed : already exists", nodeName);
         }
         return ret;
     }
 
     @Override
-    public void deleteNode(long nodeID) {
+    public void deleteNode(long nodeID) throws MappingDSException {
         NodeImpl remove = sce.getGlobalRepo().getNodeRepo().findNodeByID(nodeID);
         if (remove != null) {
             sce.getGlobalRepo().getNodeRepo().deleteNode(remove);
         } else {
-            // TODO: raise exception
+            throw new MappingDSException("Unable to remove node with id " + nodeID + ": node not found .");
         }
     }
 
@@ -86,13 +87,13 @@ public class NodeSceImpl implements NodeSce<NodeImpl> {
     }
 
     @Override
-    public Set<NodeImpl> getNodes(String selector) {
-        // TODO : manage selector - check graphdb query
-        return NodeRepoImpl.getRepository();
+    public Set<NodeImpl> getNodes(String key, Object value) {
+        return sce.getGlobalRepo().getNodeRepo().findNodesByProperties(key, value);
     }
 
     @Override
-    public Set<NodeImpl> getNodes(String key, Object value) {
-        return sce.getGlobalRepo().getNodeRepo().findNodesByProperties(key, value);
+    public Set<NodeImpl> getNodes(String selector) {
+        // TODO : manage selector - check graphdb query
+        return NodeRepoImpl.getRepository();
     }
 }

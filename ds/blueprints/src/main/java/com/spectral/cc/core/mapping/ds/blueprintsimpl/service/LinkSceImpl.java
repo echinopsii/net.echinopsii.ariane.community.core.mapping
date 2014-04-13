@@ -19,6 +19,7 @@
 
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.service;
 
+import com.spectral.cc.core.mapping.ds.MappingDSException;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDB;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.EndpointImpl;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.LinkImpl;
@@ -41,7 +42,7 @@ public class LinkSceImpl implements LinkSce<LinkImpl> {
 
     @Override
     public LinkImpl createLink(long sourceEndpointID, long targetEndpointID,
-                               long transportID, long upLinkID) {
+                               long transportID, long upLinkID) throws MappingDSException {
         LinkImpl ret = null;
 
         EndpointImpl epsource = sce.getGlobalRepo().getEndpointRepo().findEndpointByID(sourceEndpointID);
@@ -49,7 +50,7 @@ public class LinkSceImpl implements LinkSce<LinkImpl> {
         TransportImpl transport = sce.getGlobalRepo().getTransportRepo().findTransportByID(transportID);
         LinkImpl upLink = sce.getGlobalRepo().getLinkRepo().findLinkByID(upLinkID);
 
-        if (epsource != null && eptarget != null) {
+        if (epsource != null && eptarget != null && transport != null) {
             ret = sce.getGlobalRepo().findLinkBySourceEPandDestinationEP(epsource, eptarget);
             if (ret == null) {
                 ret = new LinkImpl();
@@ -60,11 +61,10 @@ public class LinkSceImpl implements LinkSce<LinkImpl> {
                 sce.getGlobalRepo().getLinkRepo().save(ret);
                 log.debug("Unicast link ({}) saved !", new Object[]{ret.toString()});
             } else {
-                //TODO : log warn
+                log.debug("Unicast link ({},{},{}) creation failed : already exists", new Object[]{sourceEndpointID, targetEndpointID, transportID});
             }
         } else {
-            log.debug("transport name: " + transport.getTransportName());
-            if (epsource != null && eptarget == null && transport.getTransportName().contains("multicast")) {
+            if (epsource != null && eptarget == null && transport != null && transport.getTransportName().contains("multicast")) {
                 ret = sce.getGlobalRepo().findMulticastLinkBySourceEPandTransport(epsource, transport);
                 if (ret == null) {
                     ret = new LinkImpl();
@@ -74,9 +74,23 @@ public class LinkSceImpl implements LinkSce<LinkImpl> {
                     ret.setLinkUpLink(upLink);
                     sce.getGlobalRepo().getLinkRepo().save(ret);
                     log.debug("Multicast link ({}) saved !", new Object[]{ret.toString()});
+                } else {
+                    log.debug("Multicast link ({},{}) creation failed : already exists", new Object[]{sourceEndpointID, transportID});
                 }
             } else {
-                //TODO : log error
+                if (transport != null) {
+                    if (transport.getTransportName().contains("multicast")) {
+                        if (eptarget!=null) {
+                            throw new MappingDSException("Multicast link creation failed : provided target endpoint != 0");
+                        } else {
+                            throw new MappingDSException("Multicast link creation failed : provided source endpoint " + sourceEndpointID + " | transport " + transportID + "doesn't exists.");
+                        }
+                    } else {
+                        throw new MappingDSException("Unicast link creation failed : provided source endpoint " + sourceEndpointID + " | target endpoint " + targetEndpointID + " | transport " + transportID + "doesn't exists.");
+                    }
+                } else {
+                    throw new MappingDSException("Multicast link creation failed : provided transport " + transportID + "doesn't exists.");
+                }
             }
         }
 
@@ -84,12 +98,12 @@ public class LinkSceImpl implements LinkSce<LinkImpl> {
     }
 
     @Override
-    public void deleteLink(long linkID) {
+    public void deleteLink(long linkID) throws MappingDSException {
         LinkImpl remove = sce.getGlobalRepo().getLinkRepo().findLinkByID(linkID);
         if (remove != null) {
             sce.getGlobalRepo().getLinkRepo().delete(remove);
         } else {
-            // TODO: raise exception
+            throw new MappingDSException("Unable to remove link with id " + linkID + ": link not found.");
         }
     }
 

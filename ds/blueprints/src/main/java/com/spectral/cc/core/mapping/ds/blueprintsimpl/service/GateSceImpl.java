@@ -19,17 +19,22 @@
 
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.service;
 
+import com.spectral.cc.core.mapping.ds.MappingDSException;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.ContainerImpl;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.EndpointImpl;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.GateImpl;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.NodeImpl;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.repository.GateRepoImpl;
 import com.spectral.cc.core.mapping.ds.service.GateSce;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 
 public class GateSceImpl implements GateSce<GateImpl> {
-	
+
+    private static final Logger log = LoggerFactory.getLogger(GateSceImpl.class);
+
 	private MappingSceImpl sce = null;
 	
 	public GateSceImpl(MappingSceImpl sce_) {
@@ -37,7 +42,7 @@ public class GateSceImpl implements GateSce<GateImpl> {
 	}
 	
 	@Override
-	public GateImpl createGate(String url, String name, long containerid, boolean isPrimaryAdmin) {
+	public GateImpl createGate(String url, String name, long containerid, boolean isPrimaryAdmin) throws MappingDSException {
 		GateImpl ret = null;
 		NodeImpl check = sce.getGlobalRepo().getGateRepo().findNodeByEndpointURL(url);
 		if (check instanceof GateImpl)
@@ -61,22 +66,23 @@ public class GateSceImpl implements GateSce<GateImpl> {
 				ret.addEnpoint(ep);
 				ep.setEndpointParentNode(ret);
 				container.addContainerGate(ret);
+
 			} else {
-				// TODO: raise exception !!!
+                throw new MappingDSException("Gate creation failed : provided container " + containerid + " doesn't exists.");
 			}				
 		} else {
-			// TODO: log error : gate already exists
+            log.debug("Gate ({}) creation failed : already exists", name);
 		}
 		return ret;
 	}
 
 	@Override
-	public void deleteGate(long nodeID) {
+	public void deleteGate(long nodeID) throws MappingDSException {
 		GateImpl remove = sce.getGlobalRepo().getGateRepo().findGateByID(nodeID);
 		if ( remove != null ) {			
 			sce.getGlobalRepo().getGateRepo().delete(remove);
 		} else {
-			// TODO: raise exception
+            throw new MappingDSException("Unable to remove gate with id " + nodeID + ": gate not found.");
 		}		
 	}
 

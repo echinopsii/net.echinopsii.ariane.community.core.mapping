@@ -42,12 +42,12 @@ public final class MappingDSGraphPropertyNames {
     public static final String DD_CONTAINER_TYPE_KEY = "containerType";
     public static final String DD_CONTAINER_PROPS_KEY = "containerProperties";
     public static final String DD_CONTAINER_PAGATE_KEY = "containerPrimaryAdminGate";
+    public static final String DD_CONTAINER_GATEURI_KEY = "containerGateURI";
     public static final String DD_CONTAINER_CLUSTER_KEY = "containerCluster";
     public static final String DD_CONTAINER_EDGE_NODE_KEY = "containerNodes";
     public static final String DD_CONTAINER_EDGE_GATE_KEY = "containerGates";
 
     public static final String DD_TYPE_NODE_VALUE = "node";
-    public static final String DD_NODE_ID_KEY = "nodeID";
     public static final String DD_NODE_NAME_KEY = "nodeName";
     public static final String DD_NODE_DEPTH_KEY = "nodeDepth";
     public static final String DD_NODE_PROPS_KEY = "nodeProperties";
@@ -69,8 +69,11 @@ public final class MappingDSGraphPropertyNames {
     public static final String DD_TRANSPORT_PROPS_KEY = "transportProperties";
 
     public static final String DD_LINK_SOURCE_EP_KEY = "linkEndpointSource";
+    public static final String DD_LINK_SOURCE_EP_REST_KEY = "linkSEPID";
     public static final String DD_LINK_TARGET_EP_KEY = "linkEndpointTarget";
+    public static final String DD_LINK_TARGET_EP_REST_KEY = "linkTEPID";
     public static final String DD_LINK_UPLINK_KEY = "linkUpLink";
     public static final String DD_LINK_SUBLINKS_KEY = "linkSubLinks";
     public static final String DD_LINK_TRANSPORT_KEY = "linkTransport";
+    public static final String DD_LINK_TRANSPORT_REST_KEY = "linkTRPID";
 }

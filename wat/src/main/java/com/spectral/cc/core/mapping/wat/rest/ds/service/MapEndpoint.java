@@ -20,6 +20,7 @@
 package com.spectral.cc.core.mapping.wat.rest.ds.service;
 
 import com.spectral.cc.core.mapping.ds.domain.*;
+import com.spectral.cc.core.mapping.ds.service.Map;
 import com.spectral.cc.core.mapping.ds.service.MappingSce;
 import com.spectral.cc.core.mapping.wat.MappingBootstrap;
 import com.spectral.cc.core.mapping.wat.json.ds.service.MapJSON;
@@ -29,6 +30,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
@@ -53,6 +56,29 @@ public class MapEndpoint {
             String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
             return Response.status(200).entity(result).build();
         } catch (Exception e) {
+            log.error(e.getMessage());
+            e.printStackTrace();
+            String result = e.getMessage();
+            return Response.status(500).entity(result).build();
+        }
+    }
+
+    @GET
+    @Path("/query")
+    public Response printMapFromQueryJSON(@QueryParam("mdsl") String query) {
+        MappingSce mapping = MappingBootstrap.getMappingSce();
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        try {
+            Map map = mapping.getMapSce().getMap(query);
+            MapJSON.allMap2JSON((HashSet<Container>) map.getContainers(),
+                                (HashSet<Node>) map.getNodes(),
+                                (HashSet<Endpoint>) map.getEndpoints(),
+                                (HashSet<Link>) map.getLinks(),
+                                (HashSet<Transport>) map.getTransports(), outStream);
+            String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+            return Response.status(200).entity(result).build();
+        } catch (Exception e) {
+            log.error("Original query is : " + query);
             log.error(e.getMessage());
             e.printStackTrace();
             String result = e.getMessage();

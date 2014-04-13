@@ -19,6 +19,7 @@
  */
 package com.spectral.cc.core.mapping.wat.rest.ds.domain;
 
+import com.spectral.cc.core.mapping.ds.MappingDSException;
 import com.spectral.cc.core.mapping.ds.domain.Gate;
 import com.spectral.cc.core.mapping.ds.service.MappingSce;
 import com.spectral.cc.core.mapping.wat.MappingBootstrap;
@@ -30,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
@@ -40,7 +42,7 @@ public class GateEndpoint {
 
     @GET
     @Path("/{param}")
-    public Response printGateJSON(@PathParam("param") long id) {
+    public Response displayGate(@PathParam("param") long id) {
         MappingSce mapping = MappingBootstrap.getMappingSce();
         Gate gate = (Gate) mapping.getGateSce().getGate(id);
         if (gate != null) {
@@ -61,7 +63,7 @@ public class GateEndpoint {
     }
 
     @GET
-    public Response printAllGateJSON() {
+    public Response displayAllGates() {
         MappingSce mapping = MappingBootstrap.getMappingSce();
         String result = "";
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -75,5 +77,58 @@ public class GateEndpoint {
             result = e.getMessage();
             return Response.status(500).entity(result).build();
         }
+    }
+
+    @GET
+    @Path("/create")
+    public Response createGate(@QueryParam("URL")String url, @QueryParam("name")String name,
+                               @QueryParam("containerID")long containerid, @QueryParam("isPrimaryAdmin")boolean isPrimaryAdmin) {
+        MappingSce mapping = MappingBootstrap.getMappingSce();
+        try {
+            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+            Gate gate = mapping.getGateSce().createGate(url, name, containerid, isPrimaryAdmin);
+            try {
+                GateJSON.oneGate2JSON(gate, outStream);
+                String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                return Response.status(200).entity(result).build();
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                e.printStackTrace();
+                String result = e.getMessage();
+                return Response.status(500).entity(result).build();
+            }
+        } catch (MappingDSException e) {
+            log.error(e.getMessage());
+            e.printStackTrace();
+            String result = e.getMessage();
+            return Response.status(500).entity(result).build();
+        }
+    }
+
+    @GET
+    @Path("/delete")
+    public Response deleteGate(@QueryParam("ID")long nodeID) {
+        MappingSce mapping = MappingBootstrap.getMappingSce();
+        try {
+            mapping.getGateSce().deleteGate(nodeID);
+            return Response.status(200).entity("Gate (" + nodeID + ") successfully deleted.").build();
+        } catch (MappingDSException e) {
+            log.error(e.getMessage());
+            e.printStackTrace();
+            String result = e.getMessage();
+            return Response.status(500).entity(result).build();
+        }
+    }
+
+    @GET
+    @Path("/get")
+    public Response getGate(@QueryParam("ID")long id) {
+        return displayGate(id);
+    }
+
+    @GET
+    @Path("/update/primaryEndpoint")
+    public Response setPrimaryEndpoint(@QueryParam("ID")long id, @QueryParam("endpointID")long endpointID) {
+        return null;
     }
 }

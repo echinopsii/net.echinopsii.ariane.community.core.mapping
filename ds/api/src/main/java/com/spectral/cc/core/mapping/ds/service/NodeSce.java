@@ -19,14 +19,15 @@
 
 package com.spectral.cc.core.mapping.ds.service;
 
+import com.spectral.cc.core.mapping.ds.MappingDSException;
 import com.spectral.cc.core.mapping.ds.domain.Node;
 
 import java.util.Set;
 
 public interface NodeSce<N extends Node> {
-    public N createNode(String nodeName, long containerID, long parentNodeID);
+    public N createNode(String nodeName, long containerID, long parentNodeID) throws MappingDSException;
 
-    public void deleteNode(long nodeID);
+    public void deleteNode(long nodeID) throws MappingDSException;
 
     public N getNode(long id);
 

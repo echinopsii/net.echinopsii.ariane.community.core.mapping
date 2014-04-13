@@ -19,11 +19,13 @@
 
 package com.spectral.cc.core.mapping.ds.service;
 
+import com.spectral.cc.core.mapping.ds.MappingDSException;
+
 import java.util.Set;
 
 public interface TransportSce<T> {
 	public T    createTransport(String transportName);
-	public void deleteTransport(long transportID);
+	public void deleteTransport(long transportID) throws MappingDSException;
 
     public T    getTransport(long transportID);
 

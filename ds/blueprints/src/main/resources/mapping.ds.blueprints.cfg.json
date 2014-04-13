@@ -20,6 +20,6 @@
  */ 
 
 {
-	"blueprintsImplementation" : "OrientGraph",
-	"blueprintsURL"            : "memory:taitale"
+	"blueprintsImplementation" : "Neo4j",
+    "blueprintsGraphPath"      : "/tmp/neo4j"
 }

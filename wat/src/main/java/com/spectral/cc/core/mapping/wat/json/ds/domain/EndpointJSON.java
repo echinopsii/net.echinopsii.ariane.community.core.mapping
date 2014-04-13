@@ -22,6 +22,7 @@ package com.spectral.cc.core.mapping.wat.json.ds.domain;
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.spectral.cc.core.mapping.ds.MappingDSGraphPropertyNames;
 import com.spectral.cc.core.mapping.ds.domain.Endpoint;
 import com.spectral.cc.core.mapping.wat.MappingBootstrap;
 import com.spectral.cc.core.mapping.wat.json.PropertiesJSON;
@@ -38,10 +39,10 @@ public class EndpointJSON {
 
     private final static Logger log = LoggerFactory.getLogger(EndpointJSON.class);
 
-    public final static String EP_ID_TOKEN = "endpointID";
-    public final static String EP_URL_TOKEN = "endpointURL";
-    public final static String EP_PNODEID_TOKEN = "endpointParentNodeID";
-    public final static String EP_PRP_TOKEN = "endpointProperties";
+    public final static String EP_ID_TOKEN = MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE+"ID";
+    public final static String EP_URL_TOKEN = MappingDSGraphPropertyNames.DD_ENDPOINT_URL_KEY;
+    public final static String EP_PNODEID_TOKEN = MappingDSGraphPropertyNames.DD_ENDPOINT_PNODE_KEY+"ID";
+    public final static String EP_PRP_TOKEN = MappingDSGraphPropertyNames.DD_ENDPOINT_PROPS_KEY;
 
     private final static void endpointProps2JSON(Endpoint endpoint, JsonGenerator jgenerator)
             throws JsonGenerationException, IOException {

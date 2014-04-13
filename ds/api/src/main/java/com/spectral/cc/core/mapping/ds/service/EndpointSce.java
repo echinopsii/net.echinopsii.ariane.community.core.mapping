@@ -19,14 +19,15 @@
 
 package com.spectral.cc.core.mapping.ds.service;
 
+import com.spectral.cc.core.mapping.ds.MappingDSException;
 import com.spectral.cc.core.mapping.ds.domain.Endpoint;
 
 import java.util.Set;
 
 public interface EndpointSce<E extends Endpoint> {
-    public E createEndpoint(String url, long parentNodeID);
+    public E createEndpoint(String url, long parentNodeID) throws MappingDSException;
 
-    public void deleteEndpoint(long endpointID);
+    public void deleteEndpoint(long endpointID) throws MappingDSException;
 
     public E getEndpoint(long id);
 

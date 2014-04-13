@@ -19,6 +19,7 @@
  */
 package com.spectral.cc.core.mapping.wat.rest.ds.domain;
 
+import com.spectral.cc.core.mapping.ds.MappingDSException;
 import com.spectral.cc.core.mapping.ds.domain.Container;
 import com.spectral.cc.core.mapping.ds.service.MappingSce;
 import com.spectral.cc.core.mapping.wat.MappingBootstrap;
@@ -30,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
@@ -40,7 +42,7 @@ public class ContainerEndpoint {
 
     @GET
     @Path("/{param}")
-    public Response printContainerJSON(@PathParam("param") long id) {
+    public Response displayContainer(@PathParam("param") long id) {
         MappingSce mapping = MappingBootstrap.getMappingSce();
         Container cont = (Container) mapping.getContainerSce().getContainer(id);
         if (cont != null) {
@@ -61,7 +63,7 @@ public class ContainerEndpoint {
     }
 
     @GET
-    public Response printAllContainerJSON() {
+    public Response displayAllContainers() {
         MappingSce mapping = MappingBootstrap.getMappingSce();
         String result = "";
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -75,5 +77,130 @@ public class ContainerEndpoint {
             result = e.getMessage();
             return Response.status(500).entity(result).build();
         }
+    }
+
+    @GET
+    @Path("/get")
+    public Response getContainer(@QueryParam("containerPrimaryAdminURL") String primaryAdminURL) {
+        MappingSce mapping = MappingBootstrap.getMappingSce();
+        Container cont = (Container) mapping.getContainerSce().getContainer(primaryAdminURL);
+        if (cont != null) {
+            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+            try {
+                ContainerJSON.oneContainer2JSON(cont, outStream);
+                String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                return Response.status(200).entity(result).build();
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                e.printStackTrace();
+                String result = e.getMessage();
+                return Response.status(500).entity(result).build();
+            }
+        } else {
+            return Response.status(404).entity("NOT FOUND ! No container with primary admin url " + primaryAdminURL + " in the repository").build();
+        }
+    }
+
+    @GET
+    @Path("/get")
+    public Response getContainer(@QueryParam("ID") long id) {
+        return displayContainer(id);
+    }
+
+    @GET
+    @Path("/create")
+    public Response createContainer(@QueryParam("primaryAdminURL") String primaryAdminURL, @QueryParam("primaryAdminGateName") String primaryAdminGateName) {
+        MappingSce mapping = MappingBootstrap.getMappingSce();
+        try {
+            Container cont = (Container) mapping.getContainerSce().createContainer(primaryAdminURL, primaryAdminGateName);
+            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+            try {
+                ContainerJSON.oneContainer2JSON(cont, outStream);
+                String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                return Response.status(200).entity(result).build();
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                e.printStackTrace();
+                String result = e.getMessage();
+                return Response.status(500).entity(result).build();
+            }
+        } catch (MappingDSException e) {
+            log.error(e.getMessage());
+            e.printStackTrace();
+            String result = e.getMessage();
+            return Response.status(500).entity(result).build();
+        }
+    }
+
+    @GET
+    @Path("/delete")
+    public Response deleteContainer(@QueryParam("primaryAdminURL") String primaryAdminURL) {
+        MappingSce mapping = MappingBootstrap.getMappingSce();
+        try {
+            mapping.getContainerSce().deleteContainer(primaryAdminURL);
+            return Response.status(200).entity("Container with primary admin URL " + primaryAdminURL + " has been successfully deleted !").build();
+        } catch (MappingDSException e) {
+            return Response.status(500).entity("Error while deleting container with primary admin URL " + primaryAdminURL).build();
+        }
+    }
+
+    @GET
+    @Path("/update/company")
+    public Response setContainerCompany(@QueryParam("ID") long id, @QueryParam("company") String company) {
+        return null;
+    }
+
+    @GET
+    @Path("/update/product")
+    public Response setContainerProduct(@QueryParam("ID") long id, @QueryParam("product") String product) {
+        return null;
+    }
+
+    @GET
+    @Path("/update/type")
+    public Response setContainerType(@QueryParam("ID") long id, @QueryParam("type") String type) {
+        return null;
+    }
+
+    @GET
+    @Path("/update/primaryAdminGate")
+    public Response setContainerPrimaryAdminGate(@QueryParam("ID") long id, @QueryParam("paGateID") long paGateID) {
+        return null;
+    }
+
+    @GET
+    @Path("/update/cluster")
+    public Response setContainerCluster(@QueryParam("ID") long id, @QueryParam("clusterID") long clusterID) {
+        return null;
+    }
+
+    @GET
+    @Path("/update/property")
+    public Response setContainerProperty(@QueryParam("ID") long id, @QueryParam("propertyName") String name, @QueryParam("propertyValue") String value) {
+        return null;
+    }
+
+    @GET
+    @Path("/update/nodes/add")
+    public Response addContainerNode(@QueryParam("ID") long id, @QueryParam("nodeID") long nodeID) {
+        return null;
+    }
+
+    @GET
+    @Path("/update/nodes/delete")
+    public Response deleteContainerNode(@QueryParam("ID") long id, @QueryParam("nodeID") long nodeID) {
+        return null;
+    }
+
+    @GET
+    @Path("/update/gates/add")
+    public Response addContainerGate(@QueryParam("ID") long id, @QueryParam("gateID") long gateID) {
+        return null;
+    }
+
+    @GET
+    @Path("/update/gates/delete")
+    public Response deleteContainerGate(@QueryParam("ID") long id, @QueryParam("nodeID") long gateID) {
+        return null;
     }
 }

@@ -19,13 +19,18 @@
 
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.service;
 
+import com.spectral.cc.core.mapping.ds.MappingDSException;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.TransportImpl;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.repository.TransportRepoImpl;
 import com.spectral.cc.core.mapping.ds.service.TransportSce;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 
 public class TransportSceImpl implements TransportSce<TransportImpl> {
+
+    private static final Logger log = LoggerFactory.getLogger(LinkSceImpl.class);
 
 	private MappingSceImpl sce = null;
 	
@@ -41,18 +46,18 @@ public class TransportSceImpl implements TransportSce<TransportImpl> {
 			ret.setTransportName(transportName);
 			sce.getGlobalRepo().getTransportRepo().save(ret);
 		} else {
-			//TODO: log debug
+            log.debug("Transport ({}) creation failed: already exists", new Object[]{transportName});
 		}
 		return ret;
 	}
 
 	@Override
-	public void deleteTransport(long transportID) {
+	public void deleteTransport(long transportID) throws MappingDSException {
 		TransportImpl remove = sce.getGlobalRepo().getTransportRepo().findTransportByID(transportID);
 		if (remove != null) {
 			sce.getGlobalRepo().getTransportRepo().delete(remove);
-		} else { 
-			//TODO: log info/warn (?)
+		} else {
+            throw new MappingDSException("Unable to remove transport with id " + transportID + ": transport not found.");
 		}
 	}
 
