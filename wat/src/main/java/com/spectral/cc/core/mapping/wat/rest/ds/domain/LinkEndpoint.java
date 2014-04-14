@@ -20,7 +20,9 @@
 package com.spectral.cc.core.mapping.wat.rest.ds.domain;
 
 import com.spectral.cc.core.mapping.ds.MappingDSException;
+import com.spectral.cc.core.mapping.ds.domain.Endpoint;
 import com.spectral.cc.core.mapping.ds.domain.Link;
+import com.spectral.cc.core.mapping.ds.domain.Transport;
 import com.spectral.cc.core.mapping.ds.service.MappingSce;
 import com.spectral.cc.core.mapping.wat.MappingBootstrap;
 import com.spectral.cc.core.mapping.wat.json.ds.domain.LinkJSON;
@@ -43,8 +45,7 @@ public class LinkEndpoint {
     @GET
     @Path("/{param}")
     public Response displayLink(@PathParam("param") long id) {
-        MappingSce mapping = MappingBootstrap.getMappingSce();
-        Link link = (Link) mapping.getLinkSce().getLink(id);
+        Link link = (Link) MappingBootstrap.getMappingSce().getLinkSce().getLink(id);
         if (link != null) {
             try {
                 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -64,11 +65,10 @@ public class LinkEndpoint {
 
     @GET
     public Response displayAllLinks() {
-        MappingSce mapping   = MappingBootstrap.getMappingSce();
         String  result = "";
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         try {
-            LinkJSON.manyLinks2JSON((HashSet<Link>) mapping.getLinkSce().getLinks(null), outStream);
+            LinkJSON.manyLinks2JSON((HashSet<Link>) MappingBootstrap.getMappingSce().getLinkSce().getLinks(null), outStream);
             result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
             return Response.status(200).entity(result).build();
         } catch (Exception e) {
@@ -83,10 +83,9 @@ public class LinkEndpoint {
     @Path("/create")
     public Response createLink(long sourceEndpointID, long targetEndpointID,
                                long transportID, long upLinkID) {
-        MappingSce mapping = MappingBootstrap.getMappingSce();
         try {
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-            Link link = mapping.getLinkSce().createLink(sourceEndpointID, targetEndpointID, transportID, upLinkID);
+            Link link = MappingBootstrap.getMappingSce().getLinkSce().createLink(sourceEndpointID, targetEndpointID, transportID, upLinkID);
             try {
                 LinkJSON.oneLink2JSON(link, outStream);
                 String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
@@ -108,9 +107,8 @@ public class LinkEndpoint {
     @GET
     @Path("/delete")
     public Response deleteLink(long linkID) {
-        MappingSce mapping = MappingBootstrap.getMappingSce();
         try {
-            mapping.getLinkSce().deleteLink(linkID);
+            MappingBootstrap.getMappingSce().getLinkSce().deleteLink(linkID);
             return Response.status(200).entity("Link (" + linkID + ") successfully deleted.").build();
         } catch (MappingDSException e) {
             log.error(e.getMessage());
@@ -122,7 +120,58 @@ public class LinkEndpoint {
 
     @GET
     @Path("/get")
-    public Response getLink(@QueryParam("linkID")long id) {
+    public Response getLink(@QueryParam("ID")long id) {
         return displayLink(id);
+    }
+
+    @GET
+    @Path("/update/transport")
+    public Response setLinkTransport(@QueryParam("ID")long id, @QueryParam("transportID") long transportID) {
+        Link link = MappingBootstrap.getMappingSce().getLinkSce().getLink(id);
+        if (link!=null) {
+            Transport transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(transportID);
+            if (transport!=null) {
+                link.setLinkTransport(transport);
+                return Response.status(200).entity("Link ("+id+") transport successfully updated to " + transportID + ".").build();
+            } else {
+                return Response.status(500).entity("Error while updating link (" + id + ") transport " + transportID + " : transport " + id + " not found.").build();
+            }
+        } else {
+            return Response.status(500).entity("Error while updating link (" + id + ") transport " + transportID + " : link " + id + " not found.").build();
+        }
+    }
+
+    @GET
+    @Path("/update/sourceEP")
+    public Response setLinkEndpointSource(@QueryParam("ID")long id, @QueryParam("SEPID") long SEPID) {
+        Link link = MappingBootstrap.getMappingSce().getLinkSce().getLink(id);
+        if (link!=null) {
+            Endpoint sourceEP = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(SEPID);
+            if (sourceEP!=null) {
+                link.setLinkEndpointSource(sourceEP);
+                return Response.status(200).entity("Link ("+id+") source endpoint successfully updated to " + SEPID + ".").build();
+            } else {
+                return Response.status(500).entity("Error while updating link (" + id + ") source endpoint " + SEPID + " : link " + id + " not found.").build();
+            }
+        } else {
+            return Response.status(500).entity("Error while updating link (" + id + ") source endpoint " + SEPID + " : link " + id + " not found.").build();
+        }
+    }
+
+    @GET
+    @Path("/update/targetEP")
+    public Response setLinkEndpointTarget(@QueryParam("ID")long id, @QueryParam("TEPID") long TEPID) {
+        Link link = MappingBootstrap.getMappingSce().getLinkSce().getLink(id);
+        if (link!=null) {
+            Endpoint targetEP = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(TEPID);
+            if (targetEP!=null) {
+                link.setLinkEndpointTarget(targetEP);
+                return Response.status(200).entity("Link ("+id+") target endpoint successfully updated to " + TEPID + ".").build();
+            } else {
+                return Response.status(500).entity("Error while updating link (" + id + ") target endpoint " + TEPID + " : link " + id + " not found.").build();
+            }
+        } else {
+            return Response.status(500).entity("Error while updating link (" + id + ") target endpoint " + TEPID + " : link " + id + " not found.").build();
+        }
     }
 }

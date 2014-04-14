@@ -52,4 +52,9 @@ public class ClusterSceImpl implements ClusterSce<ClusterImpl> {
 			//TODO : raise exception
 		}
 	}
+
+    @Override
+    public ClusterImpl getCluster(long clusterID) {
+        return sce.getGlobalRepo().getClusterRepo().findClusteByID(clusterID);
+    }
 }

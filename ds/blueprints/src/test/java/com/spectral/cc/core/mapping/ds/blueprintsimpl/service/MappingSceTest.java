@@ -1,6 +1,5 @@
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.service;
 
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDB;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.cfg.MappingDSCfgLoader;
 import com.spectral.cc.core.mapping.ds.domain.*;
 import com.spectral.cc.core.mapping.ds.service.MappingSce;
@@ -51,19 +50,19 @@ public class MappingSceTest {
         try {
             rvrdLan = mappingSce.getContainerSce().createContainer(urlLan, gateNameLan);
             rvrdLan.setContainerType("RV Router Daemon");
-            rvrdLan.setContainerProperty("RVRD_HOSTNAME", "tibrvrdl03prd01");
+            rvrdLan.addContainerProperty("RVRD_HOSTNAME", "tibrvrdl03prd01");
             gateLan = mappingSce.getGateSce().createGate(urlGLan, gateNameGLan, rvrdLan.getContainerID(), false);
             nodeLan = mappingSce.getNodeSce().createNode("APP6969.tibrvrdl03prd01", rvrdLan.getContainerID(), 0);
             endpointLan = mappingSce.getEndpointSce().createEndpoint(urlELan, nodeLan.getNodeID());
-            endpointLan.setEndpointProperty("RVRD_NEIGHBD_LPORT", 6969);
+            endpointLan.addEndpointProperty("RVRD_NEIGHBD_LPORT", 6969);
 
             rvrdMan = mappingSce.getContainerSce().createContainer(urlMan, gateNameMan);
             rvrdMan.setContainerType("RV Router Daemon");
-            rvrdMan.setContainerProperty("RVRD_HOSTNAME", "tibrvrdmprd01");
+            rvrdMan.addContainerProperty("RVRD_HOSTNAME", "tibrvrdmprd01");
             gateMan = mappingSce.getGateSce().createGate(urlGMan, gateNameGMan, rvrdMan.getContainerID(), false);
             nodeMan = mappingSce.getNodeSce().createNode("APP6969.tibrvrdmprd01", rvrdMan.getContainerID(), 0);
             endpointMan = mappingSce.getEndpointSce().createEndpoint(urlEMan, nodeMan.getNodeID());
-            endpointMan.setEndpointProperty("RVRD_NEIGHBD_LPORT", 6969);
+            endpointMan.addEndpointProperty("RVRD_NEIGHBD_LPORT", 6969);
 
             transport = mappingSce.getTransportSce().createTransport(transportName);
 

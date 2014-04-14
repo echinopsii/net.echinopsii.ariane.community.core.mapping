@@ -86,7 +86,7 @@ public class EndpointImpl implements Endpoint, MappingDSCacheEntity {
     }
 
     @Override
-    public void setEndpointProperty(String propertyKey, Object value) {
+    public void addEndpointProperty(String propertyKey, Object value) {
         if (propertyKey != null && value != null) {
             if (endpointProperties == null) {
                 endpointProperties = new HashMap<String, Object>();
@@ -96,6 +96,14 @@ public class EndpointImpl implements Endpoint, MappingDSCacheEntity {
             log.debug("Set endpoint {} property : ({},{})", new Object[]{this.endpointID,
                                                                                 propertyKey,
                                                                                 this.endpointProperties.get(propertyKey)});
+        }
+    }
+
+    @Override
+    public void removeEndpointProperty(String propertyKey) {
+        if (endpointProperties!=null) {
+            endpointProperties.remove(propertyKey);
+            removePropertyFromDB(propertyKey);
         }
     }
 
@@ -257,6 +265,13 @@ public class EndpointImpl implements Endpoint, MappingDSCacheEntity {
                 endpointProperties.clear();
             }
             MappingDSGraphDBObjectProps.synchronizeObjectPropertyFromDB(endpointVertex, endpointProperties, MappingDSGraphPropertyNames.DD_ENDPOINT_PROPS_KEY);
+        }
+    }
+
+    private void removePropertyFromDB(String key) {
+        if (endpointVertex != null) {
+            log.debug("Remove endpoint property {} from db...", new Object[]{key});
+            MappingDSGraphDBObjectProps.removeObjectPropertyFromDB(endpointVertex, key, MappingDSGraphPropertyNames.DD_ENDPOINT_PROPS_KEY);
         }
     }
 

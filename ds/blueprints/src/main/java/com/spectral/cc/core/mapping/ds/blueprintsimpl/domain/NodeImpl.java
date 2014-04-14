@@ -94,7 +94,7 @@ public class NodeImpl implements Node, MappingDSCacheEntity {
     }
 
     @Override
-    public void setNodeProperty(String propertyKey, Object value) {
+    public void addNodeProperty(String propertyKey, Object value) {
         if (propertyKey != null && value != null) {
             if (this.nodeProperties == null) {
                 this.nodeProperties = new HashMap<String, Object>();
@@ -104,6 +104,14 @@ public class NodeImpl implements Node, MappingDSCacheEntity {
             log.debug("Set node {} property : ({},{})", new Object[]{this.getNodeID(),
                                                                             propertyKey,
                                                                             this.nodeProperties.get(propertyKey)});
+        }
+    }
+
+    @Override
+    public void removeNodeProperty(String propertyKey) {
+        if (this.nodeProperties!=null) {
+            this.nodeProperties.remove(propertyKey);
+            removePropertyFromDB(propertyKey);
         }
     }
 
@@ -437,6 +445,13 @@ public class NodeImpl implements Node, MappingDSCacheEntity {
                 nodeProperties.clear();
             }
             MappingDSGraphDBObjectProps.synchronizeObjectPropertyFromDB(nodeVertex, nodeProperties, MappingDSGraphPropertyNames.DD_NODE_PROPS_KEY);
+        }
+    }
+
+    private void removePropertyFromDB(String key) {
+        if (this.nodeVertex != null) {
+            log.debug("Remove node property {} from db...", new Object[]{key});
+            MappingDSGraphDBObjectProps.removeObjectPropertyFromDB(nodeVertex, key, MappingDSGraphPropertyNames.DD_NODE_PROPS_KEY);
         }
     }
 

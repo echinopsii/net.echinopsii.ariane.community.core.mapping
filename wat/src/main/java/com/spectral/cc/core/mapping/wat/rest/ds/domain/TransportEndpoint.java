@@ -120,12 +120,36 @@ public class TransportEndpoint {
     @GET
     @Path("/update/name")
     public Response setTransportName(@QueryParam("ID")long id, @QueryParam("name")String name) {
-        return null;
+        Transport transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(id);
+        if (transport != null) {
+            transport.setTransportName(name);
+            return Response.status(200).entity("Transport ("+id+") name successfully updated to " + name + ".").build();
+        } else {
+            return Response.status(500).entity("Error while updating transport (" + id + ") name " + name + " : link " + id + " not found.").build();
+        }
     }
 
     @GET
-    @Path("/update/property")
-    public Response setTransportProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name, @QueryParam("propertyValue") String value) {
-        return null;
+    @Path("/update/properties/add")
+    public Response addTransportProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name, @QueryParam("propertyValue") String value) {
+        Transport transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(id);
+        if (transport != null) {
+            transport.addTransportProperty(name, value);
+            return Response.status(200).entity("Property ("+name+","+value+") successfully added to transport "+id+".").build();
+        } else {
+            return Response.status(500).entity("Error while adding property "+name+" to transport "+id+" : transport " + id + " not found.").build();
+        }
+    }
+
+    @GET
+    @Path("/update/properties/delete")
+    public Response deleteTransportProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name) {
+        Transport transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(id);
+        if (transport != null) {
+            transport.removeTransportProperty(name);
+            return Response.status(200).entity("Property ("+name+") successfully deleted from transport "+id+".").build();
+        } else {
+            return Response.status(500).entity("Error while deleting property "+name+" from transport "+id+" : transport " + id + " not found.").build();
+        }
     }
 }

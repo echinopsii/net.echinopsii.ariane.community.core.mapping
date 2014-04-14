@@ -56,7 +56,8 @@ public interface Container {
 	public void    setContainerCluster(Cluster cluster);
 	
 	public HashMap<String, Object> getContainerProperties();
-	public void                    setContainerProperty(String propertyKey, Object value);
+	public void addContainerProperty(String propertyKey, Object value);
+    public void removeContainerProperty(String propertyKey);
 	
 	/**
 	 * 
@@ -75,4 +76,5 @@ public interface Container {
 	
 	public Set<? extends Gate>  getContainerGates();
 	public boolean              addContainerGate(Gate service);
+    public boolean              removeContainerGate(Gate service);
 }

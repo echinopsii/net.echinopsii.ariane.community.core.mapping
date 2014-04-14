@@ -46,6 +46,18 @@ public class MappingDSGraphDBObjectProps {
         vertex.setProperty(mappingObjPropsKey+"_"+key, value);
     }
 
+    public static void removeObjectPropertyFromDB(Vertex vertex, String key, String mappingObjPropsKey) {
+        Object value = vertex.getProperty(mappingObjPropsKey+"_"+key);
+        if (MappingDSGraphDB.isBlueprintsNeo4j() && value == null) {
+            for (String pKey : vertex.getPropertyKeys()) {
+                if (pKey.startsWith(mappingObjPropsKey+"_"+key+"_HashMap_"))
+                    vertex.removeProperty(pKey);
+            }
+        } else if (value != null) {
+            vertex.removeProperty(mappingObjPropsKey+"_"+key);
+        }
+    }
+
     public static void synchronizeObjectPropertyFromDB(Vertex vertex, HashMap<String,Object> props, String mappingObjPropsKey) {
         HashMap<String, Object> neoObjProps = new HashMap<String,Object>();
         Iterator<String> iterK = vertex.getPropertyKeys().iterator();

@@ -63,7 +63,7 @@ public class TransportImpl implements Transport, MappingDSCacheEntity {
     }
 
     @Override
-    public void setTransportProperty(String propertyKey, Object value) {
+    public void addTransportProperty(String propertyKey, Object value) {
         if (transportProperties == null)
             transportProperties = new HashMap<String, Object>();
         transportProperties.put(propertyKey,value);
@@ -72,6 +72,14 @@ public class TransportImpl implements Transport, MappingDSCacheEntity {
                                                                              propertyKey,
                                                                              this.transportProperties.get(propertyKey)});
 
+    }
+
+    @Override
+    public void removeTransportProperty(String propertyKey) {
+        if (transportProperties!=null) {
+            transportProperties.remove(propertyKey);
+            removePropertyFromDB(propertyKey);
+        }
     }
 
     @Override
@@ -138,6 +146,13 @@ public class TransportImpl implements Transport, MappingDSCacheEntity {
                 transportProperties.clear();
             }
             MappingDSGraphDBObjectProps.synchronizeObjectPropertyFromDB(transportVertex, transportProperties, MappingDSGraphPropertyNames.DD_TRANSPORT_PROPS_KEY);
+        }
+    }
+
+    private void removePropertyFromDB(String key) {
+        if (transportVertex != null) {
+            log.debug("Remove transport property {} from db...", new Object[]{key});
+            MappingDSGraphDBObjectProps.removeObjectPropertyFromDB(transportVertex, key, MappingDSGraphPropertyNames.DD_TRANSPORT_PROPS_KEY);
         }
     }
 

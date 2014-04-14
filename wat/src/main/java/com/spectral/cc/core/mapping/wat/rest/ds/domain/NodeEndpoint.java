@@ -20,6 +20,8 @@
 package com.spectral.cc.core.mapping.wat.rest.ds.domain;
 
 import com.spectral.cc.core.mapping.ds.MappingDSException;
+import com.spectral.cc.core.mapping.ds.domain.Container;
+import com.spectral.cc.core.mapping.ds.domain.Endpoint;
 import com.spectral.cc.core.mapping.ds.domain.Node;
 import com.spectral.cc.core.mapping.ds.service.MappingSce;
 import com.spectral.cc.core.mapping.wat.MappingBootstrap;
@@ -43,8 +45,7 @@ public class NodeEndpoint {
     @GET
     @Path("/{param}")
     public Response displayNode(@PathParam("param") long id) {
-        MappingSce mapping = MappingBootstrap.getMappingSce();
-        Node node = (Node) mapping.getNodeSce().getNode(id);
+        Node node = (Node) MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
         if (node != null) {
             try {
                 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -64,11 +65,10 @@ public class NodeEndpoint {
 
     @GET
     public Response displayAllNodes() {
-        MappingSce mapping = MappingBootstrap.getMappingSce();
         String result = "";
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         try {
-            NodeJSON.manyNodes2JSON((HashSet<Node>) mapping.getNodeSce().getNodes(null), outStream);
+            NodeJSON.manyNodes2JSON((HashSet<Node>) MappingBootstrap.getMappingSce().getNodeSce().getNodes(null), outStream);
             result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
             return Response.status(200).entity(result).build();
         } catch (Exception e) {
@@ -82,10 +82,9 @@ public class NodeEndpoint {
     @GET
     @Path("/create")
     public Response createNode(@QueryParam("name")String nodeName, @QueryParam("containerID")long containerID, @QueryParam("parentNodeID")long parentNodeID) {
-        MappingSce mapping = MappingBootstrap.getMappingSce();
         try {
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-            Node node = mapping.getNodeSce().createNode(nodeName, containerID, parentNodeID);
+            Node node = MappingBootstrap.getMappingSce().getNodeSce().createNode(nodeName, containerID, parentNodeID);
             try {
                 NodeJSON.oneNode2JSON(node, outStream);
                 String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
@@ -128,60 +127,172 @@ public class NodeEndpoint {
     @GET
     @Path("/update/name")
     public Response setNodeName(@QueryParam("ID")long id, @QueryParam("name")String name) {
-        return null;
+        Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
+        if (node != null) {
+            node.setNodeName(name);
+            return Response.status(200).entity("Node ("+id+") name successfully updated to " + name + ".").build();
+        } else {
+            return Response.status(500).entity("Error while updating node (" + id + ") name " + name + " : node " + id + " not found.").build();
+        }
     }
 
     @GET
     @Path("/update/container")
     public Response setNodeContainer(@QueryParam("ID")long id, @QueryParam("containerID")long containerID) {
-        return null;
+        Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
+        if (node != null) {
+            Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(containerID);
+            if (container != null) {
+                node.setNodeContainer(container);
+                return Response.status(200).entity("Node ("+id+") container successfully updated to " + containerID + ".").build();
+            } else {
+                return Response.status(500).entity("Error while updating node (" + id + ") container " + containerID + " : container " + containerID + " not found.").build();
+            }
+        } else {
+            return Response.status(500).entity("Error while updating node (" + id + ") container " + containerID + " : node " + id + " not found.").build();
+        }
     }
 
     @GET
     @Path("/update/parentNode")
-    public Response setNodeParentNode(@QueryParam("ID")long id, @QueryParam("parentNode")long parentNodeID) {
-        return null;
-    }
-
-    @GET
-    @Path("/update/property")
-    public Response setNodeProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name, @QueryParam("propertyValue") String value) {
-        return null;
+    public Response setNodeParentNode(@QueryParam("ID")long id, @QueryParam("parentNodeID")long parentNodeID) {
+        Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
+        if (node != null) {
+            Node parentNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
+            if (parentNode!=null) {
+                node.setNodeParentNode(parentNode);
+                return Response.status(200).entity("Node ("+parentNodeID+") parent node successfully updated to " + parentNodeID + ".").build();
+            } else {
+                return Response.status(500).entity("Error while updating node (" + id + ") parent node " + parentNodeID + " : parent node " + parentNodeID + " not found.").build();
+            }
+        } else {
+            return Response.status(500).entity("Error while updating node (" + id + ") parent node " + parentNodeID + " : node " + id + " not found.").build();
+        }
     }
 
     @GET
     @Path("/update/childNodes/add")
     public Response addNodeChildNode(@QueryParam("ID")long id, @QueryParam("childNodeID") long childNodeID) {
-        return null;
+        Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
+        if (node != null) {
+            Node childNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(childNodeID);
+            if (childNode!=null) {
+                node.addNodeChildNode(childNode);
+                return Response.status(200).entity("Child node ("+childNodeID+") successfully added to node " + id + ".").build();
+            } else {
+                return Response.status(500).entity("Error while adding child node " + childNodeID + " to node " + id + " : child node " + childNodeID + " not found.").build();
+            }
+        } else {
+            return Response.status(500).entity("Error while adding child node " + childNodeID + " to node " + id + " : node " + id + " not found.").build();
+        }
     }
 
     @GET
     @Path("/update/childNodes/delete")
     public Response deleteNodeChildNode(@QueryParam("ID")long id, @QueryParam("childNodeID") long childNodeID) {
-        return null;
+        Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
+        if (node != null) {
+            Node childNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(childNodeID);
+            if (childNode!=null) {
+                node.removeNodeChildNode(childNode);
+                return Response.status(200).entity("Child node ("+childNodeID+") successfully deleted from node " + id + ".").build();
+            } else {
+                return Response.status(500).entity("Error while deleting child node " + childNodeID + " from node " + id + " : child node " + childNodeID + " not found.").build();
+            }
+        } else {
+            return Response.status(500).entity("Error while deleting child node " + childNodeID + " from node " + id + " : node " + id + " not found.").build();
+        }
     }
 
     @GET
     @Path("/update/twinNodes/add")
     public Response addNodeTwinNode(@QueryParam("ID")long id, @QueryParam("twinNodeID") long twinNodeID) {
-        return null;
+        Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
+        if (node != null) {
+            Node twinNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(twinNodeID);
+            if (twinNode!=null) {
+                node.addTwinNode(twinNode);
+                return Response.status(200).entity("Twin node ("+twinNodeID+") successfully added to node " + id + ".").build();
+            } else {
+                return Response.status(500).entity("Error while adding twin node " + twinNodeID + " to node " + id + " : twin node " + twinNodeID + " not found.").build();
+            }
+        } else {
+            return Response.status(500).entity("Error while adding twin node " + twinNodeID + " to node " + id + " : node " + id + " not found.").build();
+        }
     }
 
     @GET
     @Path("/update/twinNodes/delete")
     public Response deleteNodeTwinNode(@QueryParam("ID")long id, @QueryParam("twinNodeID") long twinNodeID) {
-        return null;
+        Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
+        if (node != null) {
+            Node twinNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(twinNodeID);
+            if (twinNode!=null) {
+                node.removeTwinNode(twinNode);
+                return Response.status(200).entity("Twin node ("+twinNodeID+") successfully deleted from node " + id + ".").build();
+            } else {
+                return Response.status(500).entity("Error while deleting twin node " + twinNodeID + " from node " + id + " : twin node " + twinNodeID + " not found.").build();
+            }
+        } else {
+            return Response.status(500).entity("Error while deleting twin node "+twinNodeID+" from node "+id+" : node " + id + " not found.").build();
+        }
     }
 
     @GET
     @Path("/update/endpoints/add")
     public Response addNodeEndpoint(@QueryParam("ID")long id, @QueryParam("endpointID") long endpointID) {
-        return null;
+        Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
+        if (node != null) {
+            Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(endpointID);
+            if (endpoint != null) {
+                node.addEnpoint(endpoint);
+                return Response.status(200).entity("Endpoint ("+endpointID+") successfully added to node " + id + ".").build();
+            } else {
+                return Response.status(500).entity("Error while adding endpoint "+endpointID+" to node " + id + " : node " + id + " not found.").build();
+            }
+        } else {
+            return Response.status(500).entity("Error while adding endpoint "+endpointID+" to node "+id+" : node " + id + " not found.").build();
+        }
     }
 
     @GET
     @Path("/update/endpoints/delete")
     public Response deleteNodeEndpoint(@QueryParam("ID")long id, @QueryParam("endpointID") long endpointID) {
-        return null;
+        Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
+        if (node != null) {
+            Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(endpointID);
+            if (endpoint != null) {
+                node.removeEndpoint(endpoint);
+                return Response.status(200).entity("Endpoint ("+endpointID+") successfully deleted from node " + id + ".").build();
+            } else {
+                return Response.status(500).entity("Error while deleting endpoint "+endpointID+" from node " + id + " : node " + id + " not found.").build();
+            }
+        } else {
+            return Response.status(500).entity("Error while deleting endpoint "+endpointID+" from node : node " + id + " not found.").build();
+        }
+    }
+
+    @GET
+    @Path("/update/properties/add")
+    public Response addNodeProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name, @QueryParam("propertyValue") String value) {
+        Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
+        if (node != null) {
+            node.addNodeProperty(name,value);
+            return Response.status(200).entity("Property ("+name+","+value+") successfully added to node "+id+".").build();
+        } else {
+            return Response.status(500).entity("Error while adding property "+name+" to node "+id+" : node " + id + " not found.").build();
+        }
+    }
+
+    @GET
+    @Path("/update/properties/delete")
+    public Response deleteNodeProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name) {
+        Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
+        if (node != null) {
+            node.removeNodeProperty(name);
+            return Response.status(200).entity("Property ("+name+") successfully deleted from node "+id+".").build();
+        } else {
+            return Response.status(500).entity("Error while adding property "+name+" from node "+id+" : node " + id + " not found.").build();
+        }
     }
 }

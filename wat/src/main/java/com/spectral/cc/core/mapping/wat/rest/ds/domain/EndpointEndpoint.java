@@ -21,6 +21,7 @@ package com.spectral.cc.core.mapping.wat.rest.ds.domain;
 
 import com.spectral.cc.core.mapping.ds.MappingDSException;
 import com.spectral.cc.core.mapping.ds.domain.Endpoint;
+import com.spectral.cc.core.mapping.ds.domain.Node;
 import com.spectral.cc.core.mapping.ds.service.MappingSce;
 import com.spectral.cc.core.mapping.wat.MappingBootstrap;
 import com.spectral.cc.core.mapping.wat.json.ds.domain.EndpointJSON;
@@ -43,8 +44,7 @@ public class EndpointEndpoint {
     @GET
     @Path("/{param}")
     public Response displayEndpoint(@PathParam("param") long id) {
-        MappingSce mapping = MappingBootstrap.getMappingSce();
-        Endpoint endpoint = (Endpoint) mapping.getEndpointSce().getEndpoint(id);
+        Endpoint endpoint = (Endpoint) MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
         if (endpoint != null) {
             try {
                 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -64,11 +64,10 @@ public class EndpointEndpoint {
 
     @GET
     public Response displayAllEndpoints() {
-        MappingSce mapping = MappingBootstrap.getMappingSce();
         String result = "";
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         try {
-            EndpointJSON.manyEndpoints2JSON((HashSet<Endpoint>) mapping.getEndpointSce().getEndpoints(null), outStream);
+            EndpointJSON.manyEndpoints2JSON((HashSet<Endpoint>) MappingBootstrap.getMappingSce().getEndpointSce().getEndpoints(null), outStream);
             result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
             return Response.status(200).entity(result).build();
         } catch (Exception e) {
@@ -82,10 +81,9 @@ public class EndpointEndpoint {
     @GET
     @Path("/create")
     public Response createEndpoint(@QueryParam("endpointURL")String url, @QueryParam("parentNodeID")long parentNodeID) {
-        MappingSce mapping = MappingBootstrap.getMappingSce();
         try {
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-            Endpoint endpoint = mapping.getEndpointSce().createEndpoint(url, parentNodeID);
+            Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().createEndpoint(url, parentNodeID);
             try {
                 EndpointJSON.oneEndpoint2JSON(endpoint, outStream);
                 String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
@@ -107,9 +105,8 @@ public class EndpointEndpoint {
     @GET
     @Path("/delete")
     public Response deleteEndpoint(@QueryParam("ID")long endpointID) {
-        MappingSce mapping = MappingBootstrap.getMappingSce();
         try {
-            mapping.getEndpointSce().deleteEndpoint(endpointID);
+            MappingBootstrap.getMappingSce().getEndpointSce().deleteEndpoint(endpointID);
             return Response.status(200).entity("Endpoint (" + endpointID + ") successfully deleted.").build();
         } catch (MappingDSException e) {
             log.error(e.getMessage());
@@ -128,8 +125,7 @@ public class EndpointEndpoint {
     @GET
     @Path("/get")
     public Response getEndpoint(@QueryParam("URL")String URL) {
-        MappingSce mapping = MappingBootstrap.getMappingSce();
-        Endpoint endpoint = (Endpoint) mapping.getEndpointSce().getEndpoint(URL);
+        Endpoint endpoint = (Endpoint) MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(URL);
         if (endpoint != null) {
             try {
                 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -150,30 +146,87 @@ public class EndpointEndpoint {
     @GET
     @Path("/update/url")
     public Response setEndpointURL(@QueryParam("ID")long id, @QueryParam("URL") String url) {
-        return null;
+        Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
+        if (endpoint!=null) {
+            endpoint.setEndpointURL(url);
+            return Response.status(200).entity("Endpoint ("+id+") URL successfully updated to " + url + ".").build();
+        } else {
+            return Response.status(500).entity("Error while updating endpoint (" + id + ") URL " + url + " : endpoint " + id + " not found.").build();
+        }
     }
 
     @GET
     @Path("/update/parentNode")
     public Response setEndpointParentNode(@QueryParam("ID")long id, @QueryParam("parentNodeID") long parentNodeID) {
-        return null;
+        Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
+        if (endpoint!=null) {
+            Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(parentNodeID);
+            if (node!=null) {
+                node.setNodeParentNode(node);
+                return Response.status(200).entity("Endpoint ("+id+") parent node successfully updated to " + parentNodeID + ".").build();
+            } else {
+                return Response.status(500).entity("Error while updating endpoint (" + id + ") parent node " + parentNodeID + " : node " + parentNodeID + " not found.").build();
+            }
+        } else {
+            return Response.status(500).entity("Error while updating endpoint (" + id + ") parent node " + parentNodeID + " : endpoint " + id + " not found.").build();
+        }
     }
 
     @GET
     @Path("/update/twinEndpoints/add")
     public Response addTwinEndpoint(@QueryParam("ID")long id, @QueryParam("twinEndpointID") long twinEndpointID) {
-        return null;
+        Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
+        if (endpoint!=null) {
+            Endpoint twinEP = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(twinEndpointID);
+            if (twinEP!=null) {
+                endpoint.addTwinEndpoint(twinEP);
+                return Response.status(200).entity("Twin endpoint ("+twinEndpointID+") successfully added to endpoint " + id + ".").build();
+            } else {
+                return Response.status(500).entity("Error while adding twin endpoint " + twinEndpointID + " to endpoint (" + id + ") : endpoint " + twinEndpointID + " not found.").build();
+            }
+        } else {
+            return Response.status(500).entity("Error while adding twin endpoint " + twinEndpointID + " to endpoint (" + id + ") : endpoint " + id + " not found.").build();
+        }
     }
 
     @GET
     @Path("/update/twinEndpoints/delete")
     public Response deleteTwinEndpoint(@QueryParam("ID")long id, @QueryParam("twinEndpointID") long twinEndpointID) {
-        return null;
+        Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
+        if (endpoint!=null) {
+            Endpoint twinEP = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(twinEndpointID);
+            if (twinEP!=null) {
+                endpoint.removeTwinEndpoint(twinEP);
+                return Response.status(200).entity("Twin endpoint ("+twinEndpointID+") successfully deleted from endpoint " + id + ".").build();
+            } else {
+                return Response.status(500).entity("Error while deleting twin endpoint " + twinEndpointID + " from endpoint (" + id + ") : endpoint " + twinEndpointID + " not found.").build();
+            }
+        } else {
+            return Response.status(500).entity("Error while deleting twin endpoint " + twinEndpointID + " from endpoint (" + id + ") : endpoint " + id + " not found.").build();
+        }
     }
 
     @GET
-    @Path("/update/property")
-    public Response setEndpointProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name, @QueryParam("propertyValue") String value) {
-        return null;
+    @Path("/update/properties/add")
+    public Response addEndpointProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name, @QueryParam("propertyValue") String value) {
+        Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
+        if (endpoint!=null) {
+            endpoint.addEndpointProperty(name, value);
+            return Response.status(200).entity("Property ("+name+","+value+") successfully added to endpoint "+id+".").build();
+        } else {
+            return Response.status(500).entity("Error while adding property " + name + " to endpoint (" + id + ") : endpoint " + id + " not found.").build();
+        }
+    }
+
+    @GET
+    @Path("/update/properties/delete")
+    public Response deleteEndpointProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name) {
+        Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
+        if (endpoint!=null) {
+            endpoint.removeEndpointProperty(name);
+            return Response.status(200).entity("Property ("+name+") successfully deleted from endpoint "+id+".").build();
+        } else {
+            return Response.status(500).entity("Error while deleting property " + name + " from endpoint (" + id + ") : endpoint " + id + " not found.").build();
+        }
     }
 }

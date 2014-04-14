@@ -37,7 +37,8 @@ public interface Node {
 	public long getNodeDepth();
 	
 	public HashMap<String, Object> getNodeProperties();
-	public void                    setNodeProperty(String propertyKey, Object value);
+	public void addNodeProperty(String propertyKey, Object value);
+    public void removeNodeProperty(String propertyKey);
 	
 	public Node getNodeParentNode();
 	public void setNodeParentNode(Node node);

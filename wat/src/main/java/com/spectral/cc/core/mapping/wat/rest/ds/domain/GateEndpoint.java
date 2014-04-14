@@ -20,6 +20,7 @@
 package com.spectral.cc.core.mapping.wat.rest.ds.domain;
 
 import com.spectral.cc.core.mapping.ds.MappingDSException;
+import com.spectral.cc.core.mapping.ds.domain.Endpoint;
 import com.spectral.cc.core.mapping.ds.domain.Gate;
 import com.spectral.cc.core.mapping.ds.service.MappingSce;
 import com.spectral.cc.core.mapping.wat.MappingBootstrap;
@@ -43,8 +44,7 @@ public class GateEndpoint {
     @GET
     @Path("/{param}")
     public Response displayGate(@PathParam("param") long id) {
-        MappingSce mapping = MappingBootstrap.getMappingSce();
-        Gate gate = (Gate) mapping.getGateSce().getGate(id);
+        Gate gate = (Gate) MappingBootstrap.getMappingSce().getGateSce().getGate(id);
         if (gate != null) {
             try {
                 ByteArrayOutputStream outStream= new ByteArrayOutputStream();
@@ -64,11 +64,10 @@ public class GateEndpoint {
 
     @GET
     public Response displayAllGates() {
-        MappingSce mapping = MappingBootstrap.getMappingSce();
         String result = "";
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         try {
-            GateJSON.manyGates2JSON((HashSet<Gate>) mapping.getGateSce().getGates(null), outStream);
+            GateJSON.manyGates2JSON((HashSet<Gate>) MappingBootstrap.getMappingSce().getGateSce().getGates(null), outStream);
             result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
             return Response.status(200).entity(result).build();
         } catch (Exception e) {
@@ -83,10 +82,9 @@ public class GateEndpoint {
     @Path("/create")
     public Response createGate(@QueryParam("URL")String url, @QueryParam("name")String name,
                                @QueryParam("containerID")long containerid, @QueryParam("isPrimaryAdmin")boolean isPrimaryAdmin) {
-        MappingSce mapping = MappingBootstrap.getMappingSce();
         try {
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-            Gate gate = mapping.getGateSce().createGate(url, name, containerid, isPrimaryAdmin);
+            Gate gate = MappingBootstrap.getMappingSce().getGateSce().createGate(url, name, containerid, isPrimaryAdmin);
             try {
                 GateJSON.oneGate2JSON(gate, outStream);
                 String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
@@ -108,9 +106,8 @@ public class GateEndpoint {
     @GET
     @Path("/delete")
     public Response deleteGate(@QueryParam("ID")long nodeID) {
-        MappingSce mapping = MappingBootstrap.getMappingSce();
         try {
-            mapping.getGateSce().deleteGate(nodeID);
+            MappingBootstrap.getMappingSce().getGateSce().deleteGate(nodeID);
             return Response.status(200).entity("Gate (" + nodeID + ") successfully deleted.").build();
         } catch (MappingDSException e) {
             log.error(e.getMessage());
@@ -129,6 +126,17 @@ public class GateEndpoint {
     @GET
     @Path("/update/primaryEndpoint")
     public Response setPrimaryEndpoint(@QueryParam("ID")long id, @QueryParam("endpointID")long endpointID) {
-        return null;
+        Gate gate = MappingBootstrap.getMappingSce().getGateSce().getGate(id);
+        if (gate != null) {
+            Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(endpointID);
+            if (endpoint != null) {
+                gate.setNodePrimaryAdminEnpoint(endpoint);
+                return Response.status(200).entity("Gate ("+id+") primary endpoint successfully updated to " + endpointID + ".").build();
+            } else {
+                return Response.status(500).entity("Error while updating gate (" + id + ") primary endpoint " + endpointID + " : gate " + id + " not found.").build();
+            }
+        } else {
+            return Response.status(500).entity("Error while updating gate (" + id + ") primary endpoint " + endpointID + " : gate " + id + " not found.").build();
+        }
     }
 }

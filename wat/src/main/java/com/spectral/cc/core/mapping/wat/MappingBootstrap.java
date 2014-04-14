@@ -170,9 +170,11 @@ public class MappingBootstrap implements FaceletsResourceResolverService {
                                                                                                             setFieldDefault("Navigation"));
 
         userPreferencesRegistry.registerUserPreferenceSection(mappingDisplay);
+        /*
         userPreferencesRegistry.registerUserPreferenceSection(new UserPreferenceSection("bookmarkedDSL",
                                                                                         "Manage your bookmarked DSL requests",
                                                                                         UserPreferenceSectionType.TYPE_USR_PREF_SECTION_MAP));
+                                                                                        */
         log.debug("{} has registered its user properties entities", new Object[]{MAPPING_COMPONENT});
         log.info("{} is started", MAPPING_COMPONENT);
     }

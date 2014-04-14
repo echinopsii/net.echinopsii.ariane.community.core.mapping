@@ -1,7 +1,7 @@
 /**
- * Mapping Datastore Interface :
- * provide a Mapping DS domain, repository and service interfaces
- * Copyright (C) 2013  Mathilde Ffrench
+ * [DEFINE YOUR PROJECT NAME/MODULE HERE]
+ * [DEFINE YOUR PROJECT DESCRIPTION HERE] 
+ * Copyright (C) 14/04/14 echinopsii
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -15,15 +15,9 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
-package com.spectral.cc.core.mapping.ds.service;
+package com.spectral.cc.core.mapping.wat.json;
 
-import com.spectral.cc.core.mapping.ds.domain.Cluster;
-
-public interface ClusterSce<CL extends Cluster> {
-	public CL   createCluster(String clusterName);
-	public void removeCluster(String clusterName);
-
-    public CL getCluster(long clusterID);
+public class JSONAnon {
 }

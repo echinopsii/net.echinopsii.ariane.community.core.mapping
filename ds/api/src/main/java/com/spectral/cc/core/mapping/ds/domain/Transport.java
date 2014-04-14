@@ -31,6 +31,7 @@ public interface Transport {
 	public void   setTransportName(String name);
 
     public HashMap<String, Object> getTransportProperties();
-    public void                    setTransportProperty(String propertyKey, Object value);
+    public void addTransportProperty(String propertyKey, Object value);
+    public void removeTransportProperty(String propertyKey);
 
 }

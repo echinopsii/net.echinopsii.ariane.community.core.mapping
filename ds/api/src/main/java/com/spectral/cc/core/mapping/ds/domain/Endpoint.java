@@ -38,5 +38,6 @@ public interface Endpoint {
 	public boolean                 removeTwinEndpoint(Endpoint endpoint);
 	
 	public HashMap<String, Object> getEndpointProperties();
-	public void                    setEndpointProperty(String propertyKey, Object value);
+	public void addEndpointProperty(String propertyKey, Object value);
+    public void removeEndpointProperty(String propertyKey);
 }

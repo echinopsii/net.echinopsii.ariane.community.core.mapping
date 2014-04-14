@@ -146,7 +146,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 	}
 	
 	@Override
-	public void setContainerProperty(String propertyKey,Object value){
+	public void addContainerProperty(String propertyKey, Object value){
         if (containerProperties == null)
             containerProperties = new HashMap<String, Object>();
         containerProperties.put(propertyKey,value);
@@ -156,7 +156,15 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
                                                                              this.containerProperties.get(propertyKey)});
 	}
 
-	@Override
+    @Override
+    public void removeContainerProperty(String propertyKey) {
+        if (containerProperties!=null) {
+            containerProperties.remove(propertyKey);
+            removePropertyFromDB(propertyKey);
+        }
+    }
+
+    @Override
 	public Set<NodeImpl> getContainerNodes(long depth) {
 		Set<NodeImpl> ret = null;
 		if (depth==1) {
@@ -216,11 +224,12 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 			boolean addToNodes = false;
 			boolean addToGates = false;
 			try {
-				addToNodes = this.containerNodes.add((NodeImpl)gate);
-				addToGates = this.containerGates.add((GateImpl)gate);
-				if (addToNodes && addToGates)
-					synchronizeGateToDB((GateImpl)gate);
-				else {
+                addToNodes = this.containerNodes.add((NodeImpl) gate);
+                addToGates = this.containerGates.add((GateImpl) gate);
+                if (addToNodes && addToGates) {
+                    synchronizeNodeToDB((NodeImpl) gate);
+                    synchronizeGateToDB((GateImpl) gate);
+                } else {
 					if (addToNodes) this.containerNodes.remove((NodeImpl)gate);
 					if (addToGates) this.containerGates.remove((GateImpl)gate);
 				}
@@ -236,8 +245,27 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 			return false;
 		}			
 	}
-	
-	public Vertex getElement() {
+
+    @Override
+    public boolean removeContainerGate(Gate gate) {
+        // a gate is also a node
+        if (gate instanceof GateImpl) {
+            boolean removedFromNodes = this.containerNodes.remove(gate);
+            boolean removedFromGates = this.containerGates.remove(gate);
+            if (removedFromGates && removedFromNodes) {
+                removeNodeFromDB((NodeImpl)gate);
+                removeGateFromDB((GateImpl)gate);
+            } else {
+                if (removedFromNodes) this.containerNodes.add((NodeImpl)gate);
+                if (removedFromGates) this.containerGates.add((GateImpl)gate);
+            }
+            return removedFromGates && removedFromNodes;
+        } else {
+            return true;
+        }
+    }
+
+    public Vertex getElement() {
 		return containerVertex;
 	}
 
@@ -427,7 +455,14 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
             }
             MappingDSGraphDBObjectProps.synchronizeObjectPropertyFromDB(containerVertex, containerProperties, MappingDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY);
 		}
-	}	
+	}
+
+    private void removePropertyFromDB(String key) {
+        if (containerVertex != null) {
+            log.debug("Remove container property {} from db...", new Object[]{key});
+            MappingDSGraphDBObjectProps.removeObjectPropertyFromDB(containerVertex, key, MappingDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY);
+        }
+    }
 
 	private void synchronizePrimaryAdminGateFromDB() {
 		if (containerVertex!=null) {
@@ -520,6 +555,20 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 			}
 		}
 	}
+
+    private void removeGateFromDB(GateImpl node) {
+        if (this.containerVertex!=null && node.getElement()!=null) {
+            VertexQuery query = this.containerVertex.query();
+            query.direction(Direction.OUT);
+            query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
+            query.has(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_GATE_KEY, true);
+            for (Edge edge : query.edges()) {
+                if (edge.getVertex(Direction.OUT).equals(node.getElement())) {
+                    MappingDSGraphDB.getDDgraph().removeEdge(edge);
+                }
+            }
+        }
+    }
 	
 	@Override
     public boolean equals(Object o) {
