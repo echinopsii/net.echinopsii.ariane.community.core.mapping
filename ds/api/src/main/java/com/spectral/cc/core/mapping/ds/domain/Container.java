@@ -58,6 +58,13 @@ public interface Container {
 	public HashMap<String, Object> getContainerProperties();
 	public void addContainerProperty(String propertyKey, Object value);
     public void removeContainerProperty(String propertyKey);
+
+    public Container getContainerParentContainer();
+    public void      setContainerParentContainer(Container container);
+
+    public Set<? extends Container> getContainerChildContainers();
+    public boolean                  addContainerChildContainer(Container container);
+    public boolean                  removeContainerChildContainer(Container container);
 	
 	/**
 	 * 

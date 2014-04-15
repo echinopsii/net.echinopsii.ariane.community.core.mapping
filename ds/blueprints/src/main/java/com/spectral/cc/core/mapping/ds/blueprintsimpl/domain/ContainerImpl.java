@@ -45,6 +45,9 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 	private GateImpl               containerPrimaryAdminGate = null;
 	
 	private ClusterImpl            containerCluster          = null;
+
+    private ContainerImpl          containerParentContainer  = null;
+    private Set<ContainerImpl>     containerChildContainers  = new HashSet<ContainerImpl>();
 	
 	private HashMap<String,Object> containerProperties       = null;
 	
@@ -165,6 +168,54 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
     }
 
     @Override
+    public Container getContainerParentContainer() {
+        return this.containerParentContainer;
+    }
+
+    @Override
+    public void setContainerParentContainer(Container container) {
+        if (this.containerParentContainer==null || !this.containerParentContainer.equals(container)) {
+            if (container instanceof ContainerImpl) {
+                this.containerParentContainer = (ContainerImpl) container;
+            }
+        }
+    }
+
+    @Override
+    public Set<ContainerImpl> getContainerChildContainers() {
+        return this.containerChildContainers;
+    }
+
+    @Override
+    public boolean addContainerChildContainer(Container container) {
+        boolean ret = false;
+        if (container instanceof ContainerImpl) {
+            try {
+                ret = this.containerChildContainers.add((ContainerImpl)container);
+                if (ret)
+                    synchronizeChildContainersToDB();
+            } catch (MappingDSGraphDBException E) {
+                E.printStackTrace();
+                log.error("Exception while adding child container {}...", new Object[]{container.getContainerID()});
+                this.containerNodes.remove((ContainerImpl)container);
+                MappingDSGraphDB.autorollback();
+            }
+        }
+        return ret;
+    }
+
+    @Override
+    public boolean removeContainerChildContainer(Container container) {
+        boolean ret = false;
+        if (container instanceof ContainerImpl) {
+            ret = containerChildContainers.remove(container);
+            if (ret)
+                removeChildContainerFromDB((ContainerImpl)container);
+        }
+        return ret;
+    }
+
+    @Override
 	public Set<NodeImpl> getContainerNodes(long depth) {
 		Set<NodeImpl> ret = null;
 		if (depth==1) {
@@ -187,7 +238,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 			boolean ret = false; 
 			try {
 				ret = this.containerNodes.add((NodeImpl)node);
-				if (ret==true)
+				if (ret)
 					synchronizeNodeToDB((NodeImpl)node);
 			} catch (MappingDSGraphDBException E) {
 				E.printStackTrace();
@@ -284,6 +335,8 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 		synchronizePropertiesToDB();
 		synchronizePrimaryAdminGateToDB();
 		synchronizeClusterToDB();
+        synchronizeParentContainerToDB();
+        synchronizeChildContainersToDB();
 		synchronizeNodesToDB();
 		synchronizeGatesToDB();
 	}
@@ -346,7 +399,41 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 									    this.containerCluster.getClusterID());
 		}
 	}
-	
+
+    private void synchronizeParentContainerToDB() {
+        if (containerVertex!=null && containerParentContainer!=null && containerParentContainer.getElement()!=null) {
+            log.debug("Synchronize container parent container {}...", new Object[]{this.containerParentContainer.getContainerID()});
+            containerVertex.setProperty(MappingDSGraphPropertyNames.DD_CONTAINER_PCONTER_KEY,
+                                               this.containerParentContainer.getContainerID());
+        }
+    }
+
+    private void synchronizeChildContainersToDB() throws MappingDSGraphDBException {
+        if (containerVertex!=null) {
+            Iterator<ContainerImpl> iterCCC = this.containerChildContainers.iterator();
+            while (iterCCC.hasNext()) {
+                ContainerImpl aContainer = iterCCC.next();
+                synchronizeChildContainerToDB(aContainer);
+            }
+        }
+    }
+
+    private void synchronizeChildContainerToDB(ContainerImpl container) throws MappingDSGraphDBException {
+        if (containerVertex!=null) {
+            VertexQuery query = this.containerVertex.query();
+            query.direction(Direction.OUT);
+            query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
+            query.has(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_CHILD_CONTAINER_KEY, true);
+            for (Vertex vertex : query.vertices()) {
+                if ((long)vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID)==container.getContainerID())
+                    return;
+            }
+            log.debug("Synchronize container child container {}...", new Object[]{container.getContainerID()});
+            Edge owns = MappingDSGraphDB.createEdge(this.containerVertex, container.getElement(), MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
+            owns.setProperty(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_CHILD_CONTAINER_KEY, true);
+        }
+    }
+
 	private void synchronizeNodesToDB() throws MappingDSGraphDBException {
 		if (containerVertex!=null) {
 			Iterator<NodeImpl> iterCN = this.containerNodes.iterator();
@@ -411,6 +498,8 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 			synchronizePropertiesFromDB();
 			synchronizePrimaryAdminGateFromDB();
 			synchronizeClusterFromDB();
+            synchronizeParentContainerFromDB();
+            synchronizeChildContainersFromDB();
 			synchronizeNodesFromDB();
 			synchronizeGatesFromDB();
 			isBeingSyncFromDB = false;
@@ -493,6 +582,58 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 			}
 		}
 	}
+
+    private void synchronizeParentContainerFromDB() {
+        if (containerVertex!=null) {
+            Object containerID = this.containerVertex.getProperty(MappingDSGraphPropertyNames.DD_CONTAINER_PCONTER_KEY);
+            if (containerID!=null) {
+                MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) containerID);
+                if (entity!=null) {
+                    if (entity instanceof ContainerImpl)
+                        containerParentContainer = (ContainerImpl) entity;
+                    else
+                        log.error("CONSISTENCY ERROR : entity {} is not a container.", entity.getElement().getId());
+                }
+            }
+        }
+    }
+
+    private void synchronizeChildContainersFromDB() {
+        if (containerVertex!=null) {
+            VertexQuery query = containerVertex.query();
+            query.direction(Direction.OUT);
+            query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
+            query.has(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_CHILD_CONTAINER_KEY, true);
+            this.containerChildContainers.clear();
+            for (Vertex vertex : query.vertices()) {
+                ContainerImpl container = null;
+                MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
+                if (entity!=null) {
+                    if (entity instanceof ContainerImpl) {
+                        container = (ContainerImpl)entity;
+                    } else {
+                        log.error("CONSISTENCY ERROR : entity {} is not a container.", entity.getElement().getId());
+                    }
+                }
+                if (container!=null)
+                    this.containerChildContainers.add(container);
+            }
+        }
+    }
+
+    private void removeChildContainerFromDB(ContainerImpl container) {
+        if (this.containerVertex!=null && container.getElement()!=null) {
+            VertexQuery query = this.containerVertex.query();
+            query.direction(Direction.OUT);
+            query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
+            query.has(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_CHILD_CONTAINER_KEY, true);
+            for (Edge edge : query.edges()) {
+                if (edge.getVertex(Direction.OUT).equals(container.getElement())) {
+                    MappingDSGraphDB.getDDgraph().removeEdge(edge);
+                }
+            }
+        }
+    }
 	
 	private void synchronizeNodesFromDB() {
 		if (containerVertex!=null) {
@@ -522,7 +663,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 			VertexQuery query = this.containerVertex.query();
 			query.direction(Direction.OUT);
 			query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
-			query.has(MappingDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY, true);
+			query.has(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_NODE_KEY, true);
 			for (Edge edge : query.edges()) {
 				if (edge.getVertex(Direction.OUT).equals(node.getElement())) {
 					MappingDSGraphDB.getDDgraph().removeEdge(edge);

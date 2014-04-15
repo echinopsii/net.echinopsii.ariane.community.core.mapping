@@ -148,7 +148,7 @@ public class ContainerEndpoint {
         if (container!=null) {
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             container.setContainerCompany(company);
-            return Response.status(200).entity("Container ("+id+") company successfully updated to " + company + ".").build();
+            return Response.status(200).entity("Container (" + id + ") company successfully updated to " + company + ".").build();
         } else {
             return Response.status(404).entity("Error while updating container ("+id+") company "+company+" : container " + id + " not found.").build();
         }
@@ -209,6 +209,57 @@ public class ContainerEndpoint {
             }
         } else {
             return Response.status(404).entity("Error while updating container ("+id+") cluster "+clusterID+": container "+id+" not found.").build();
+        }
+    }
+
+    @GET
+    @Path("/update/parentContainer")
+    public Response setContainerParentContainer(@QueryParam("ID") long id, @QueryParam("parentContainerID") long parentContainerID) {
+        Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
+        if (container!=null) {
+            Container parentContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(parentContainerID);
+            if (parentContainer!=null) {
+                parentContainer.setContainerParentContainer(parentContainer);
+                return Response.status(200).entity("Container ("+id+") parent container successfully updated to "+parentContainerID+".").build();
+            } else {
+                return Response.status(404).entity("Error while updating container ("+id+") parent container "+parentContainerID+": parent container "+parentContainerID+" not found.").build();
+            }
+        } else {
+            return Response.status(404).entity("Error while updating container ("+id+") parent container "+parentContainerID+": container "+id+" not found.").build();
+        }
+    }
+
+    @GET
+    @Path("/update/childContainers/add")
+    public Response addContainerChildContainer(@QueryParam("ID") long id, @QueryParam("childContainerID") long childContainerID) {
+        Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
+        if (container != null) {
+            Container childContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(childContainerID);
+            if (childContainer!=null) {
+                container.addContainerChildContainer(childContainer);
+                return Response.status(200).entity("Child container "+ childContainerID +" successfully added to container "+id+".").build();
+            } else {
+                return Response.status(404).entity("Error while adding child container into container " +id+ " : child container "+childContainerID+" not found.").build();
+            }
+        } else {
+            return Response.status(404).entity("Error while adding child container ("+childContainerID+") to container "+id+": container "+id+" not found.").build();
+        }
+    }
+
+    @GET
+    @Path("/update/childContainers/delete")
+    public Response deleteContainerChildContainer(@QueryParam("ID") long id, @QueryParam("childContainerID") long childContainerID) {
+        Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
+        if (container != null) {
+            Container childContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(childContainerID);
+            if (childContainer!=null) {
+                container.removeContainerChildContainer(childContainer);
+                return Response.status(200).entity("Child container "+ childContainerID +" successfully deleted from container "+id+".").build();
+            } else {
+                return Response.status(404).entity("Error while deleting child container from container " +id+ " : child container "+childContainerID+" not found.").build();
+            }
+        } else {
+            return Response.status(404).entity("Error while deleting child container ("+childContainerID+") from container "+id+": container "+id+" not found.").build();
         }
     }
 

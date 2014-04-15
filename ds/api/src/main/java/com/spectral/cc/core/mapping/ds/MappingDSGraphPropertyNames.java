@@ -44,6 +44,8 @@ public final class MappingDSGraphPropertyNames {
     public static final String DD_CONTAINER_PAGATE_KEY = "containerPrimaryAdminGate";
     public static final String DD_CONTAINER_GATEURI_KEY = "containerGateURI";
     public static final String DD_CONTAINER_CLUSTER_KEY = "containerCluster";
+    public static final String DD_CONTAINER_PCONTER_KEY = "containerParentContainer";
+    public static final String DD_CONTAINER_EDGE_CHILD_CONTAINER_KEY = "containerChildContainers";
     public static final String DD_CONTAINER_EDGE_NODE_KEY = "containerNodes";
     public static final String DD_CONTAINER_EDGE_GATE_KEY = "containerGates";
 
