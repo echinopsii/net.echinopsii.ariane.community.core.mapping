@@ -58,7 +58,7 @@ public class GateEndpoint {
                 return Response.status(500).entity(result).build();
             }
         } else {
-            return Response.status(404).entity("NOT FOUND ! No gate with id " + id + " in the repository").build();
+            return Response.status(404).entity("Gate with id " + id + " not found.").build();
         }
     }
 
@@ -133,10 +133,10 @@ public class GateEndpoint {
                 gate.setNodePrimaryAdminEnpoint(endpoint);
                 return Response.status(200).entity("Gate ("+id+") primary endpoint successfully updated to " + endpointID + ".").build();
             } else {
-                return Response.status(500).entity("Error while updating gate (" + id + ") primary endpoint " + endpointID + " : gate " + id + " not found.").build();
+                return Response.status(404).entity("Error while updating gate (" + id + ") primary endpoint " + endpointID + " : gate " + id + " not found.").build();
             }
         } else {
-            return Response.status(500).entity("Error while updating gate (" + id + ") primary endpoint " + endpointID + " : gate " + id + " not found.").build();
+            return Response.status(404).entity("Error while updating gate (" + id + ") primary endpoint " + endpointID + " : gate " + id + " not found.").build();
         }
     }
 }

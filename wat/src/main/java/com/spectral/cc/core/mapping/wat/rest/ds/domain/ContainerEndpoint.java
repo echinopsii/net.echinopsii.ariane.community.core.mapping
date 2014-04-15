@@ -59,7 +59,7 @@ public class ContainerEndpoint {
                 return Response.status(500).entity(result).build();
             }
         } else {
-            return Response.status(404).entity("NOT FOUND ! No container with id " + id + " in the repository").build();
+            return Response.status(404).entity("Container with id " + id + " not found").build();
         }
     }
 
@@ -81,7 +81,7 @@ public class ContainerEndpoint {
 
     @GET
     @Path("/get")
-    public Response getContainer(@QueryParam("containerPrimaryAdminURL") String primaryAdminURL) {
+    public Response getContainer(@QueryParam("primaryAdminURL") String primaryAdminURL) {
         Container cont = (Container) MappingBootstrap.getMappingSce().getContainerSce().getContainer(primaryAdminURL);
         if (cont != null) {
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -96,7 +96,7 @@ public class ContainerEndpoint {
                 return Response.status(500).entity(result).build();
             }
         } else {
-            return Response.status(404).entity("NOT FOUND ! No container with primary admin url " + primaryAdminURL + " in the repository").build();
+            return Response.status(404).entity("Container with primary admin url " + primaryAdminURL + " not found").build();
         }
     }
 
@@ -150,7 +150,7 @@ public class ContainerEndpoint {
             container.setContainerCompany(company);
             return Response.status(200).entity("Container ("+id+") company successfully updated to " + company + ".").build();
         } else {
-            return Response.status(500).entity("Error while updating container ("+id+") company "+company+" : container " + id + " not found.").build();
+            return Response.status(404).entity("Error while updating container ("+id+") company "+company+" : container " + id + " not found.").build();
         }
     }
 
@@ -162,7 +162,7 @@ public class ContainerEndpoint {
             container.setContainerProduct(product);
             return Response.status(200).entity("Container ("+id+")product successfully updated to "+product+".").build();
         } else {
-            return Response.status(500).entity("Error while updating container ("+id+") product "+product+" : container "+id+" not found.").build();
+            return Response.status(404).entity("Error while updating container ("+id+") product "+product+" : container "+id+" not found.").build();
         }
     }
 
@@ -174,7 +174,7 @@ public class ContainerEndpoint {
             container.setContainerType(type);
             return Response.status(200).entity("Container ("+id+") type successfully updated to "+type+".").build();
         } else {
-            return Response.status(500).entity("Error while updating container ("+id+") type "+type+" : container "+id+" not found.").build();
+            return Response.status(404).entity("Error while updating container ("+id+") type "+type+" : container "+id+" not found.").build();
         }
     }
 
@@ -188,10 +188,10 @@ public class ContainerEndpoint {
                 container.setContainerPrimaryAdminGate(gate);
                 return Response.status(200).entity("Container ("+id+") primary admin gate successfully updated to "+gate.getNodeName()+".").build();
             } else {
-                return Response.status(500).entity("Error while updating container ("+id+") primary admin gate : gate "+paGateID+" not found.").build();
+                return Response.status(404).entity("Error while updating container ("+id+") primary admin gate : gate "+paGateID+" not found.").build();
             }
         } else {
-            return Response.status(500).entity("Error while updating container ("+id+") primary admin gate "+paGateID+" : container "+id+" not found.").build();
+            return Response.status(404).entity("Error while updating container ("+id+") primary admin gate "+paGateID+" : container "+id+" not found.").build();
         }
     }
 
@@ -205,10 +205,10 @@ public class ContainerEndpoint {
                 container.setContainerCluster(cluster);
                 return Response.status(200).entity("Container ("+id+") cluster successfully updated to "+clusterID+".").build();
             } else {
-                return Response.status(500).entity("Error while updating container "+id+" cluster : cluster "+clusterID+" not found.").build();
+                return Response.status(404).entity("Error while updating container "+id+" cluster : cluster "+clusterID+" not found.").build();
             }
         } else {
-            return Response.status(500).entity("Error while updating container ("+id+") cluster "+clusterID+": container "+id+" not found.").build();
+            return Response.status(404).entity("Error while updating container ("+id+") cluster "+clusterID+": container "+id+" not found.").build();
         }
     }
 
@@ -222,10 +222,10 @@ public class ContainerEndpoint {
                 container.addContainerNode(node);
                 return Response.status(200).entity("Node "+ nodeID +" successfully added to container "+id+".").build();
             } else {
-                return Response.status(500).entity("Error while adding node into container " +id+ " : node "+nodeID+" not found.").build();
+                return Response.status(404).entity("Error while adding node into container " +id+ " : node "+nodeID+" not found.").build();
             }
         } else {
-            return Response.status(500).entity("Error while adding node "+nodeID+" into container ("+id+") : container "+id+" not found.").build();
+            return Response.status(404).entity("Error while adding node "+nodeID+" into container ("+id+") : container "+id+" not found.").build();
         }
     }
 
@@ -239,10 +239,10 @@ public class ContainerEndpoint {
                 container.removeContainerNode(node);
                 return Response.status(200).entity("Node "+ nodeID +" successfully deleted from container "+id+".").build();
             } else {
-                return Response.status(500).entity("Error while deleting node from container " +id+ " : node "+nodeID+" not found.").build();
+                return Response.status(404).entity("Error while deleting node from container " +id+ " : node "+nodeID+" not found.").build();
             }
         } else {
-            return Response.status(500).entity("Error while deletinging node "+nodeID+" into container : container "+id+" not found.").build();
+            return Response.status(404).entity("Error while deletinging node "+nodeID+" into container : container "+id+" not found.").build();
         }
     }
 
@@ -256,10 +256,10 @@ public class ContainerEndpoint {
                 container.addContainerGate(gate);
                 return Response.status(200).entity("Gate "+ gateID +" successfully added to container "+id+".").build();
             } else {
-                return Response.status(500).entity("Error while adding gate into container " +id+ " : gate "+gateID+" not found.").build();
+                return Response.status(404).entity("Error while adding gate into container " +id+ " : gate "+gateID+" not found.").build();
             }
         } else {
-            return Response.status(500).entity("Error while adding gate "+gateID+" into container ("+id+") : container "+id+" not found.").build();
+            return Response.status(404).entity("Error while adding gate "+gateID+" into container ("+id+") : container "+id+" not found.").build();
         }
     }
 
@@ -273,10 +273,10 @@ public class ContainerEndpoint {
                 container.removeContainerGate(gate);
                 return Response.status(200).entity("Gate "+ gateID +" successfully deleted from container "+id+".").build();
             } else {
-                return Response.status(500).entity("Error while deleting gate from container " +id+ " : gate "+gateID+" not found.").build();
+                return Response.status(404).entity("Error while deleting gate from container " +id+ " : gate "+gateID+" not found.").build();
             }
         } else {
-            return Response.status(500).entity("Error while deleting gate "+gateID+" from container ("+id+") : container "+id+" not found.").build();
+            return Response.status(404).entity("Error while deleting gate "+gateID+" from container ("+id+") : container "+id+" not found.").build();
         }
     }
 
@@ -288,7 +288,7 @@ public class ContainerEndpoint {
             container.addContainerProperty(name, value);
             return Response.status(200).entity("Property ("+name+","+value+") successfully added to container "+id+".").build();
         } else {
-            return Response.status(500).entity("Error while adding property ("+name+","+value+") into container : container "+id+" not found.").build();
+            return Response.status(404).entity("Error while adding property ("+name+","+value+") into container : container "+id+" not found.").build();
         }
     }
 
@@ -300,7 +300,7 @@ public class ContainerEndpoint {
             container.removeContainerProperty(name);
             return Response.status(200).entity("Property ("+name+") successfully deleted from container "+id+".").build();
         } else {
-            return Response.status(500).entity("Error while deleting property ("+name+") from container : container "+id+" not found.").build();
+            return Response.status(404).entity("Error while deleting property ("+name+") from container : container "+id+" not found.").build();
         }
     }
 }

@@ -31,4 +31,5 @@ public interface Cluster {
 	
 	public Set<? extends Container> getClusterContainers();
 	public boolean                  addClusterContainer(Container container);
+    public boolean                  removeClusterContainer(Container container);
 }

@@ -19,10 +19,18 @@
 
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.service;
 
+import com.spectral.cc.core.mapping.ds.MappingDSException;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.ClusterImpl;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.repository.ClusterRepoImpl;
 import com.spectral.cc.core.mapping.ds.service.ClusterSce;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Set;
 
 public class ClusterSceImpl implements ClusterSce<ClusterImpl> {
+
+    private static final Logger log = LoggerFactory.getLogger(ClusterSceImpl.class);
 
 	private MappingSceImpl sce = null;
 	
@@ -38,23 +46,29 @@ public class ClusterSceImpl implements ClusterSce<ClusterImpl> {
 			ret.setClusterName(clusterName);
 			sce.getGlobalRepo().getClusterRepo().save(ret);
 		} else {
-			//TODO : raise exception
+            log.debug("Cluster with this name ({}) already exist.", new Object[]{clusterName});
 		}
 		return ret;		
 	}
 
 	@Override
-	public void removeCluster(String clusterName) {
+	public void deleteCluster(String clusterName) throws MappingDSException {
 		ClusterImpl remove = sce.getGlobalRepo().getClusterRepo().findClusterByName(clusterName);
 		if (remove!=null) {
 			sce.getGlobalRepo().getClusterRepo().delete(remove);
 		} else {
-			//TODO : raise exception
+            throw new MappingDSException("Unable to remove cluster with name " + clusterName + ": cluster not found .");
 		}
 	}
 
     @Override
     public ClusterImpl getCluster(long clusterID) {
         return sce.getGlobalRepo().getClusterRepo().findClusteByID(clusterID);
+    }
+
+    @Override
+    public Set<ClusterImpl> getClusters(String selector) {
+        //TODO : manage selector - check graphdb query
+        return ClusterRepoImpl.getRepository();
     }
 }

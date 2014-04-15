@@ -59,7 +59,7 @@ public class LinkEndpoint {
                 return Response.status(500).entity(result).build();
             }
         } else {
-            return Response.status(404).entity("NOT FOUND ! No link with id " + id + " in the repository").build();
+            return Response.status(404).entity("Link with id " + id + " not found.").build();
         }
     }
 
@@ -134,10 +134,10 @@ public class LinkEndpoint {
                 link.setLinkTransport(transport);
                 return Response.status(200).entity("Link ("+id+") transport successfully updated to " + transportID + ".").build();
             } else {
-                return Response.status(500).entity("Error while updating link (" + id + ") transport " + transportID + " : transport " + id + " not found.").build();
+                return Response.status(404).entity("Error while updating link (" + id + ") transport " + transportID + " : transport " + id + " not found.").build();
             }
         } else {
-            return Response.status(500).entity("Error while updating link (" + id + ") transport " + transportID + " : link " + id + " not found.").build();
+            return Response.status(404).entity("Error while updating link (" + id + ") transport " + transportID + " : link " + id + " not found.").build();
         }
     }
 
@@ -151,10 +151,10 @@ public class LinkEndpoint {
                 link.setLinkEndpointSource(sourceEP);
                 return Response.status(200).entity("Link ("+id+") source endpoint successfully updated to " + SEPID + ".").build();
             } else {
-                return Response.status(500).entity("Error while updating link (" + id + ") source endpoint " + SEPID + " : link " + id + " not found.").build();
+                return Response.status(404).entity("Error while updating link (" + id + ") source endpoint " + SEPID + " : link " + id + " not found.").build();
             }
         } else {
-            return Response.status(500).entity("Error while updating link (" + id + ") source endpoint " + SEPID + " : link " + id + " not found.").build();
+            return Response.status(404).entity("Error while updating link (" + id + ") source endpoint " + SEPID + " : link " + id + " not found.").build();
         }
     }
 
@@ -168,10 +168,10 @@ public class LinkEndpoint {
                 link.setLinkEndpointTarget(targetEP);
                 return Response.status(200).entity("Link ("+id+") target endpoint successfully updated to " + TEPID + ".").build();
             } else {
-                return Response.status(500).entity("Error while updating link (" + id + ") target endpoint " + TEPID + " : link " + id + " not found.").build();
+                return Response.status(404).entity("Error while updating link (" + id + ") target endpoint " + TEPID + " : link " + id + " not found.").build();
             }
         } else {
-            return Response.status(500).entity("Error while updating link (" + id + ") target endpoint " + TEPID + " : link " + id + " not found.").build();
+            return Response.status(404).entity("Error while updating link (" + id + ") target endpoint " + TEPID + " : link " + id + " not found.").build();
         }
     }
 }

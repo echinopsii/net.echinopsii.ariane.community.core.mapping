@@ -60,7 +60,7 @@ public class TransportEndpoint {
                 return Response.status(500).entity(result).build();
             }
         } else {
-            return Response.status(404).entity("NOT FOUND ! No transport with id " + id + " in the repository").build();
+            return Response.status(404).entity("Transport with id " + id + " not found.").build();
         }
     }
 
@@ -107,7 +107,7 @@ public class TransportEndpoint {
             mapping.getTransportSce().deleteTransport(transportID);
             return Response.status(200).entity("Transport (" + transportID + ") has been successfully deleted !").build();
         } catch (MappingDSException e) {
-            return Response.status(500).entity("Error while deleting transport with id " + transportID).build();
+            return Response.status(404).entity("Error while deleting transport with id " + transportID).build();
         }
     }
 
@@ -125,7 +125,7 @@ public class TransportEndpoint {
             transport.setTransportName(name);
             return Response.status(200).entity("Transport ("+id+") name successfully updated to " + name + ".").build();
         } else {
-            return Response.status(500).entity("Error while updating transport (" + id + ") name " + name + " : link " + id + " not found.").build();
+            return Response.status(404).entity("Error while updating transport (" + id + ") name " + name + " : link " + id + " not found.").build();
         }
     }
 
@@ -137,7 +137,7 @@ public class TransportEndpoint {
             transport.addTransportProperty(name, value);
             return Response.status(200).entity("Property ("+name+","+value+") successfully added to transport "+id+".").build();
         } else {
-            return Response.status(500).entity("Error while adding property "+name+" to transport "+id+" : transport " + id + " not found.").build();
+            return Response.status(404).entity("Error while adding property "+name+" to transport "+id+" : transport " + id + " not found.").build();
         }
     }
 
@@ -149,7 +149,7 @@ public class TransportEndpoint {
             transport.removeTransportProperty(name);
             return Response.status(200).entity("Property ("+name+") successfully deleted from transport "+id+".").build();
         } else {
-            return Response.status(500).entity("Error while deleting property "+name+" from transport "+id+" : transport " + id + " not found.").build();
+            return Response.status(404).entity("Error while deleting property "+name+" from transport "+id+" : transport " + id + " not found.").build();
         }
     }
 }

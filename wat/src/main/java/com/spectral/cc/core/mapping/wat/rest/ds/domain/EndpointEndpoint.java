@@ -58,7 +58,7 @@ public class EndpointEndpoint {
                 return Response.status(500).entity(result).build();
             }
         } else {
-            return Response.status(404).entity("NOT FOUND ! No endpoint with id " + id + " in the repository").build();
+            return Response.status(404).entity("Endpoint with id " + id + " not found.").build();
         }
     }
 
@@ -139,7 +139,7 @@ public class EndpointEndpoint {
                 return Response.status(500).entity(result).build();
             }
         } else {
-            return Response.status(404).entity("NOT FOUND ! No endpoint with URL " + URL + " in the repository").build();
+            return Response.status(404).entity("Endpoint with URL " + URL + " not found.").build();
         }
     }
 
@@ -151,7 +151,7 @@ public class EndpointEndpoint {
             endpoint.setEndpointURL(url);
             return Response.status(200).entity("Endpoint ("+id+") URL successfully updated to " + url + ".").build();
         } else {
-            return Response.status(500).entity("Error while updating endpoint (" + id + ") URL " + url + " : endpoint " + id + " not found.").build();
+            return Response.status(404).entity("Error while updating endpoint (" + id + ") URL " + url + " : endpoint " + id + " not found.").build();
         }
     }
 
@@ -165,10 +165,10 @@ public class EndpointEndpoint {
                 node.setNodeParentNode(node);
                 return Response.status(200).entity("Endpoint ("+id+") parent node successfully updated to " + parentNodeID + ".").build();
             } else {
-                return Response.status(500).entity("Error while updating endpoint (" + id + ") parent node " + parentNodeID + " : node " + parentNodeID + " not found.").build();
+                return Response.status(404).entity("Error while updating endpoint (" + id + ") parent node " + parentNodeID + " : node " + parentNodeID + " not found.").build();
             }
         } else {
-            return Response.status(500).entity("Error while updating endpoint (" + id + ") parent node " + parentNodeID + " : endpoint " + id + " not found.").build();
+            return Response.status(404).entity("Error while updating endpoint (" + id + ") parent node " + parentNodeID + " : endpoint " + id + " not found.").build();
         }
     }
 
@@ -182,10 +182,10 @@ public class EndpointEndpoint {
                 endpoint.addTwinEndpoint(twinEP);
                 return Response.status(200).entity("Twin endpoint ("+twinEndpointID+") successfully added to endpoint " + id + ".").build();
             } else {
-                return Response.status(500).entity("Error while adding twin endpoint " + twinEndpointID + " to endpoint (" + id + ") : endpoint " + twinEndpointID + " not found.").build();
+                return Response.status(404).entity("Error while adding twin endpoint " + twinEndpointID + " to endpoint (" + id + ") : endpoint " + twinEndpointID + " not found.").build();
             }
         } else {
-            return Response.status(500).entity("Error while adding twin endpoint " + twinEndpointID + " to endpoint (" + id + ") : endpoint " + id + " not found.").build();
+            return Response.status(404).entity("Error while adding twin endpoint " + twinEndpointID + " to endpoint (" + id + ") : endpoint " + id + " not found.").build();
         }
     }
 
@@ -199,10 +199,10 @@ public class EndpointEndpoint {
                 endpoint.removeTwinEndpoint(twinEP);
                 return Response.status(200).entity("Twin endpoint ("+twinEndpointID+") successfully deleted from endpoint " + id + ".").build();
             } else {
-                return Response.status(500).entity("Error while deleting twin endpoint " + twinEndpointID + " from endpoint (" + id + ") : endpoint " + twinEndpointID + " not found.").build();
+                return Response.status(404).entity("Error while deleting twin endpoint " + twinEndpointID + " from endpoint (" + id + ") : endpoint " + twinEndpointID + " not found.").build();
             }
         } else {
-            return Response.status(500).entity("Error while deleting twin endpoint " + twinEndpointID + " from endpoint (" + id + ") : endpoint " + id + " not found.").build();
+            return Response.status(404).entity("Error while deleting twin endpoint " + twinEndpointID + " from endpoint (" + id + ") : endpoint " + id + " not found.").build();
         }
     }
 
@@ -214,7 +214,7 @@ public class EndpointEndpoint {
             endpoint.addEndpointProperty(name, value);
             return Response.status(200).entity("Property ("+name+","+value+") successfully added to endpoint "+id+".").build();
         } else {
-            return Response.status(500).entity("Error while adding property " + name + " to endpoint (" + id + ") : endpoint " + id + " not found.").build();
+            return Response.status(404).entity("Error while adding property " + name + " to endpoint (" + id + ") : endpoint " + id + " not found.").build();
         }
     }
 
@@ -226,7 +226,7 @@ public class EndpointEndpoint {
             endpoint.removeEndpointProperty(name);
             return Response.status(200).entity("Property ("+name+") successfully deleted from endpoint "+id+".").build();
         } else {
-            return Response.status(500).entity("Error while deleting property " + name + " from endpoint (" + id + ") : endpoint " + id + " not found.").build();
+            return Response.status(404).entity("Error while deleting property " + name + " from endpoint (" + id + ") : endpoint " + id + " not found.").build();
         }
     }
 }

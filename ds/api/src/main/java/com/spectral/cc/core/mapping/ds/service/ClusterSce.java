@@ -19,11 +19,15 @@
 
 package com.spectral.cc.core.mapping.ds.service;
 
+import com.spectral.cc.core.mapping.ds.MappingDSException;
 import com.spectral.cc.core.mapping.ds.domain.Cluster;
+
+import java.util.Set;
 
 public interface ClusterSce<CL extends Cluster> {
 	public CL   createCluster(String clusterName);
-	public void removeCluster(String clusterName);
+	public void deleteCluster(String clusterName) throws MappingDSException;
 
     public CL getCluster(long clusterID);
+    public Set<CL> getClusters(String selector);
 }

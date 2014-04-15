@@ -581,6 +581,25 @@ public class MappingDSGraphDB {
         return ret;
     }
 
+    public static Set<ClusterImpl> getClusters(){
+        Set<ClusterImpl> ret = new HashSet<ClusterImpl>();
+        log.debug("Get all clusters from graph {}...", new Object[]{ccgraph.toString() + "(" + ccgraph.hashCode() + ")"});
+        for (Vertex vertex : ccgraph.getVertices(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY,
+                                                        MappingDSGraphPropertyNames.DD_TYPE_CLUSTER_VALUE)) {
+            long id = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+            ClusterImpl tmp = (ClusterImpl) getVertexEntity(id);
+            if (tmp == null) {
+                tmp = new ClusterImpl();
+                tmp.setElement(vertex);
+                MappingDSSimpleCache.putEntityToCache(tmp);
+                tmp.synchronizeFromDB();
+            }
+            log.debug("Add cluster {} to Set...", new Object[]{id});
+            ret.add(tmp);
+        }
+        return ret;
+    }
+
     public static Set<ContainerImpl> getContainers() {
         Set<ContainerImpl> ret = new HashSet<ContainerImpl>();
         log.debug("Get all containers from graph {}...", new Object[]{ccgraph.toString() + "(" + ccgraph.hashCode() + ")"});

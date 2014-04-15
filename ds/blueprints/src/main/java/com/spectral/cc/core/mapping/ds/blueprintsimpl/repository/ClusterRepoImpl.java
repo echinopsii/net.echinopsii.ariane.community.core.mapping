@@ -26,9 +26,15 @@ import com.spectral.cc.core.mapping.ds.repository.ClusterRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Set;
+
 public class ClusterRepoImpl implements ClusterRepo<ClusterImpl> {
 
     private final static Logger log = LoggerFactory.getLogger(ClusterRepoImpl.class);
+
+    public static Set<ClusterImpl> getRepository() {
+        return MappingDSGraphDB.getClusters();
+    }
 
     @Override
     public ClusterImpl save(ClusterImpl cluster) {

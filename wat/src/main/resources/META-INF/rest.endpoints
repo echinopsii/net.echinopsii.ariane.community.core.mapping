@@ -1,3 +1,4 @@
+com.spectral.cc.core.mapping.wat.rest.ds.domain.ClusterEndpoint
 com.spectral.cc.core.mapping.wat.rest.ds.domain.ContainerEndpoint
 com.spectral.cc.core.mapping.wat.rest.ds.domain.NodeEndpoint
 com.spectral.cc.core.mapping.wat.rest.ds.domain.GateEndpoint

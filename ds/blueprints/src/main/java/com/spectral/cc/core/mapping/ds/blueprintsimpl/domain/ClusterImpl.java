@@ -89,6 +89,17 @@ public class ClusterImpl implements Cluster, MappingDSCacheEntity {
     }
 
     @Override
+    public boolean removeClusterContainer(Container container) {
+        if (container instanceof ContainerImpl) {
+            boolean ret = this.clusterContainers.remove(container);
+            if (ret) removeContainerFromDB((ContainerImpl)container);
+            return ret;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
     public Element getElement() {
         return this.clusterVertex;
     }
@@ -99,7 +110,7 @@ public class ClusterImpl implements Cluster, MappingDSCacheEntity {
         this.clusterVertex.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY, MappingDSGraphPropertyNames.DD_TYPE_CLUSTER_VALUE);
         this.clusterID = this.clusterVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
         log.debug("Cluster vertex has been initialized ({},{}).", new Object[]{this.clusterVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID),
-                                                                                      this.clusterVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY)});
+                                                                               this.clusterVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY)});
     }
 
     @Override
@@ -172,11 +183,25 @@ public class ClusterImpl implements Cluster, MappingDSCacheEntity {
                     if (entity instanceof ContainerImpl) {
                         cont = (ContainerImpl) entity;
                     } else {
-                        log.error("DAEDALUS CONSISTENCY ERROR : entity {} is not a container.", entity.getElement().getId());
+                        log.error("CONSISTENCY ERROR : entity {} is not a container.", entity.getElement().getId());
                     }
                 }
                 if (cont != null) {
                     this.clusterContainers.add(cont);
+                }
+            }
+        }
+    }
+
+    private void removeContainerFromDB(ContainerImpl container) {
+        if (this.clusterVertex!=null && container.getElement()!=null) {
+            VertexQuery query = this.clusterVertex.query();
+            query.direction(Direction.OUT);
+            query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
+            query.has(MappingDSGraphPropertyNames.DD_CLUSTER_EDGE_CONT_KEY, true);
+            for (Edge edge : query.edges()) {
+                if (edge.getVertex(Direction.OUT).equals(container.getElement())) {
+                    MappingDSGraphDB.getDDgraph().removeEdge(edge);
                 }
             }
         }

@@ -19,6 +19,140 @@
  */
 package com.spectral.cc.core.mapping.wat.rest.ds.domain;
 
-public class ClusterEndpoint {
+import com.spectral.cc.core.mapping.ds.MappingDSException;
+import com.spectral.cc.core.mapping.ds.domain.Cluster;
+import com.spectral.cc.core.mapping.ds.domain.Container;
+import com.spectral.cc.core.mapping.wat.MappingBootstrap;
+import com.spectral.cc.core.mapping.wat.json.ds.domain.ClusterJSON;
+import com.spectral.cc.core.mapping.wat.rest.ToolBox;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Response;
+import java.io.ByteArrayOutputStream;
+import java.util.HashSet;
+
+@Path("/domain/cluster")
+public class ClusterEndpoint {
+    private static final Logger log = LoggerFactory.getLogger(ContainerEndpoint.class);
+
+    @GET
+    @Path("/{param}")
+    public Response displayCluster(@PathParam("param") long id) {
+        Cluster cluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(id);
+        if (cluster != null) {
+            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+            try {
+                ClusterJSON.oneCluster2JSON(cluster, outStream);
+                String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                return Response.status(200).entity(result).build();
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                e.printStackTrace();
+                String result = e.getMessage();
+                return Response.status(500).entity(result).build();
+            }
+        } else {
+            return Response.status(404).entity("Cluster with id " + id + " not found.").build();
+        }
+    }
+
+    @GET
+    public Response displayAllClusters() {
+        String result = "";
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        try {
+            ClusterJSON.manyClusters2JSON((HashSet<Cluster>) MappingBootstrap.getMappingSce().getClusterSce().getClusters(null), outStream);
+            result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+            return Response.status(200).entity(result).build();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            e.printStackTrace();
+            result = e.getMessage();
+            return Response.status(500).entity(result).build();
+        }
+    }
+
+    @GET
+    @Path("/get")
+    public Response getContainer(@QueryParam("ID") long id) {
+        return displayCluster(id);
+    }
+
+    @GET
+    @Path("/create")
+    public Response createCluster(@QueryParam("name") String name) {
+        Cluster cluster = MappingBootstrap.getMappingSce().getClusterSce().createCluster(name);
+        try {
+            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+            ClusterJSON.oneCluster2JSON(cluster, outStream);
+            String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+            return Response.status(200).entity(result).build();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            e.printStackTrace();
+            String result = e.getMessage();
+            return Response.status(500).entity(result).build();
+        }
+    }
+
+    @GET
+    @Path("/delete")
+    public Response deleteCluster(@QueryParam("name") String name) {
+        try {
+            MappingBootstrap.getMappingSce().getClusterSce().deleteCluster(name);
+            return Response.status(200).entity("Cluster (" + name + ") has been successfully deleted !").build();
+        } catch (MappingDSException e) {
+            return Response.status(500).entity("Error while deleting cluster with name " + name).build();
+        }
+    }
+
+    @GET
+    @Path("/update/name")
+    public Response setClusterName(@QueryParam("ID")long id, @QueryParam("name")String name) {
+        Cluster cluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(id);
+        if (cluster != null) {
+            cluster.setClusterName(name);
+            return Response.status(200).entity("Cluster ("+id+") name successfully updated to " + name + ".").build();
+        } else {
+            return Response.status(404).entity("Error while updating cluster ("+id+") name "+name+" : cluster " + id + " not found.").build();
+        }
+    }
+
+    @GET
+    @Path("/update/container/add")
+    public Response addClusterContainer(@QueryParam("ID")long id, @QueryParam("containerID")long containerID) {
+        Cluster cluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(id);
+        if (cluster != null) {
+            Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(containerID);
+            if (container!=null) {
+                cluster.addClusterContainer(container);
+                return Response.status(200).entity("Container "+ containerID +" successfully added to cluster "+id+".").build();
+            } else {
+                return Response.status(404).entity("Error while adding container " + id + " to cluster (" + id + ") : container " + containerID + " not found.").build();
+            }
+        } else {
+            return Response.status(404).entity("Error while adding container " + id + " to cluster (" + id + ") : cluster " + id + " not found.").build();
+        }
+    }
+
+    @GET
+    @Path("/update/container/delete")
+    public Response deleteClusterContainer(@QueryParam("ID")long id, @QueryParam("containerID")long containerID) {
+        Cluster cluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(id);
+        if (cluster != null) {
+            Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(containerID);
+            if (container!=null) {
+                return Response.status(200).entity("Container "+ containerID +" successfully deleted from cluster "+id+".").build();
+            } else {
+                return Response.status(404).entity("Error while deleting container " + id + " from cluster (" + id + ") : container " + containerID + " not found.").build();
+            }
+        } else {
+            return Response.status(404).entity("Error while adding container "+id+" to cluster ("+id+") : cluster " + id + " not found.").build();
+        }
+    }
 }
