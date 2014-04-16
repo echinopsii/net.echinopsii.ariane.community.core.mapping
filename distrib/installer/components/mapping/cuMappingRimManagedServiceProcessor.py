@@ -54,7 +54,7 @@ class cpMappingNeo4JConfigFile(AConfParamNotNone):
         if not super().isValid:
             return False
         else:
-            if os.path.exists(self.value) and os.path.isFile(self.value):
+            if os.path.exists(self.value) and os.path.isfile(self.value):
                 return True
             else:
                 print(self.description + " (" + self.value + ") is not valid. Check if it exists and it has good rights.")

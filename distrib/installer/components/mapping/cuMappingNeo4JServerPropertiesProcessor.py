@@ -76,7 +76,7 @@ class cpMappingNeo4JTuningPropsFile(AConfParamNotNone):
 
 class cpMappingNeo4JLogConfigFile(AConfParamNotNone):
 
-    name = "#mappingNeo4JLogConfigFile"
+    name = "##mappingNeo4JLogConfigFile"
     description = "CC mapping Neo4J log config file path definition"
     hide = False
 
@@ -98,7 +98,7 @@ class cuMappingNeo4JServerPropertiesProcessor(AConfUnit):
     def __init__(self, targetConfDir):
         self.confUnitName = "CC mapping Neo4J server properties configuration file"
         self.confTemplatePath = os.path.abspath("resources/templates/components/neo4j-server.properties.tpl")
-        self.confFinalPath = targetConfDir + "neo4j-server.properties"
+        self.confFinalPath = targetConfDir + "/neo4j-server.properties"
 
         logConfigFilePath = cpMappingNeo4JLogConfigFile()
         tuningConfigFilePath = cpMappingNeo4JTuningPropsFile()

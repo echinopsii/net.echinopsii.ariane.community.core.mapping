@@ -25,5 +25,5 @@ class cuMappingNeo4JLoggingXMLProcessor(AConfUnit):
     def __init__(self, targetConfDir):
         self.confUnitName = "CC mapping Neo4J logging configuration file"
         self.confTemplatePath = os.path.abspath("resources/templates/components/neo4j-http-logging.xml.tpl")
-        self.confFinalPath = targetConfDir + "neo4j-http-logging.xml"
+        self.confFinalPath = targetConfDir + "/neo4j-http-logging.xml"
         self.paramsDictionary = {}
