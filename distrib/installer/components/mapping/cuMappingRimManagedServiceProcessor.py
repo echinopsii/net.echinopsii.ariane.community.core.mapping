@@ -24,7 +24,7 @@ __author__ = 'mffrench'
 class cpMappingDirectory(AConfParamNotNone):
 
     name = "##mappingDirectory"
-    description = "CC mapping Neo4j DB path definition"
+    description = "CC mapping DB path definition"
     hide = False
 
     def __init__(self):
@@ -41,6 +41,26 @@ class cpMappingDirectory(AConfParamNotNone):
                 return False
 
 
+class cpMappingNeo4JConfigFile(AConfParamNotNone):
+
+    name = "##mappingNeo4JConfigFile"
+    description = "CC mapping Neo4j configuration file path"
+    hide = False
+
+    def __init__(self):
+        self.value = None
+
+    def isValid(self):
+        if not super().isValid:
+            return False
+        else:
+            if os.path.exists(self.value) and os.path.isFile(self.value):
+                return True
+            else:
+                print(self.description + " (" + self.value + ") is not valid. Check if it exists and it has good rights.")
+                return False
+
+
 class cuMappingRimManagedServiceProcessor(AConfUnit):
 
     def __init__(self, targetConfDir):
@@ -48,4 +68,8 @@ class cuMappingRimManagedServiceProcessor(AConfUnit):
         self.confTemplatePath = os.path.abspath("resources/templates/components/com.spectral.cc.core.MappingRimManagedService.properties.tpl")
         self.confFinalPath = targetConfDir + "com.spectral.cc.core.MappingRimManagedService.properties"
         mapDir = cpMappingDirectory()
-        self.paramsDictionary = {mapDir.name: mapDir}
+        mapNeo4JConfFile = cpMappingNeo4JConfigFile()
+        self.paramsDictionary = {
+            mapDir.name: mapDir,
+            mapNeo4JConfFile.name: mapNeo4JConfFile
+        }
