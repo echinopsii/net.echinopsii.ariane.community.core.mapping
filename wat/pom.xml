@@ -30,12 +30,6 @@
         </dependency>
         <dependency>
             <groupId>com.spectral.cc.core.portal</groupId>
-            <artifactId>com.spectral.cc.core.portal.wat</artifactId>
-            <version>${version.com.spectral.cc.core.portal}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.spectral.cc.core.portal</groupId>
             <artifactId>com.spectral.cc.core.portal.base</artifactId>
             <version>${version.com.spectral.cc.core.portal}</version>
             <scope>provided</scope>
@@ -107,11 +101,7 @@
                             com.fasterxml.jackson.core.util;version="${version.com.fasterxml.jackson}",
                             com.spectral.cc.core.mapping*;version=${project.version},
                             com.spectral.cc.core.portal.base.model;version=${version.com.spectral.cc.core.portal},
-                            com.spectral.cc.core.portal.base.registry;version=${version.com.spectral.cc.core.portal},
-                            com.spectral.cc.core.portal.wat.consumer;version=${version.com.spectral.cc.core.portal},
-                            com.spectral.cc.core.portal.wat.controller;version=${version.com.spectral.cc.core.portal},
-                            com.spectral.cc.core.portal.wat.facesplugin;version=${version.com.spectral.cc.core.portal},
-                            com.spectral.cc.core.portal.wat.tools;version=${version.com.spectral.cc.core.portal},
+                            com.spectral.cc.core.portal.base.plugin;version=${version.com.spectral.cc.core.portal},
                             com.sun.el;version="${version.org.glassfish.web.el-impl}"
                             com.sun.faces;version="${version.javax.faces.api}",
                             com.sun.faces.application;version="${version.javax.faces.api}",
