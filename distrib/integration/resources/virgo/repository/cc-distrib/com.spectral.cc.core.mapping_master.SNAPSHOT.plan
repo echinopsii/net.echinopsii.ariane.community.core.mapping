@@ -1,4 +1,4 @@
-<plan name="com.spectral.cc.core.mapping" version="0.3.0.SNAPSHOT" scoped="false" atomic="false"
+<plan name="com.spectral.cc.core.mapping" version="0.4.0.SNAPSHOT" scoped="false" atomic="false"
                 xmlns="http://www.eclipse.org/virgo/schema/plan"
 				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 				xsi:schemaLocation="
@@ -6,8 +6,8 @@
 				        http://www.eclipse.org/virgo/schema/plan/eclipse-virgo-plan.xsd">
 
         <artifact type="configuration" name="com.spectral.cc.core.MappingRimManagedService"/>
-        <artifact type="bundle" name="com.spectral.cc.core.mapping.ds.api" version="0.3.0.SNAPSHOT"/>
-        <artifact type="bundle" name="com.spectral.cc.core.mapping.ds.blueprints" version="0.3.0.SNAPSHOT"/>
-        <artifact type="bundle" name="com.spectral.cc.core.mapping.ds.rim" version="0.3.0.SNAPSHOT"/>
-        <artifact type="bundle" name="com.spectral.cc.core.mapping.wat" version="0.3.0.SNAPSHOT"/>
+        <artifact type="bundle" name="com.spectral.cc.core.mapping.ds.api" version="[0.4.0,0.5.0)"/>
+        <artifact type="bundle" name="com.spectral.cc.core.mapping.ds.blueprints" version="[0.4.0,0.5.0)"/>
+        <artifact type="bundle" name="com.spectral.cc.core.mapping.ds.rim" version="[0.4.0,0.5.0)"/>
+        <artifact type="bundle" name="com.spectral.cc.core.mapping.wat" version="[0.4.0,0.5.0)"/>
 </plan>
