@@ -44,6 +44,7 @@ public class GateEndpoint {
     @GET
     @Path("/{param}")
     public Response displayGate(@PathParam("param") long id) {
+        log.debug("[{}] get gate : {}", new Object[]{Thread.currentThread().getId(), id});
         Gate gate = (Gate) MappingBootstrap.getMappingSce().getGateSce().getGate(id);
         if (gate != null) {
             try {
@@ -66,6 +67,7 @@ public class GateEndpoint {
     public Response displayAllGates() {
         String result = "";
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        log.debug("[{}] get gates", new Object[]{Thread.currentThread().getId()});
         try {
             GateJSON.manyGates2JSON((HashSet<Gate>) MappingBootstrap.getMappingSce().getGateSce().getGates(null), outStream);
             result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
@@ -81,10 +83,11 @@ public class GateEndpoint {
     @GET
     @Path("/create")
     public Response createGate(@QueryParam("URL")String url, @QueryParam("name")String name,
-                               @QueryParam("containerID")long containerid, @QueryParam("isPrimaryAdmin")boolean isPrimaryAdmin) {
+                               @QueryParam("containerID")long containerID, @QueryParam("isPrimaryAdmin")boolean isPrimaryAdmin) {
+        log.debug("[{}] create gate : ({},{},{},{})", new Object[]{Thread.currentThread().getId(), url, name, containerID, isPrimaryAdmin});
         try {
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-            Gate gate = MappingBootstrap.getMappingSce().getGateSce().createGate(url, name, containerid, isPrimaryAdmin);
+            Gate gate = MappingBootstrap.getMappingSce().getGateSce().createGate(url, name, containerID, isPrimaryAdmin);
             try {
                 GateJSON.oneGate2JSON(gate, outStream);
                 String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
@@ -106,6 +109,7 @@ public class GateEndpoint {
     @GET
     @Path("/delete")
     public Response deleteGate(@QueryParam("ID")long nodeID) {
+        log.debug("[{}] delete gate : ({})", new Object[]{Thread.currentThread().getId(), nodeID});
         try {
             MappingBootstrap.getMappingSce().getGateSce().deleteGate(nodeID);
             return Response.status(200).entity("Gate (" + nodeID + ") successfully deleted.").build();
@@ -126,6 +130,7 @@ public class GateEndpoint {
     @GET
     @Path("/update/primaryEndpoint")
     public Response setPrimaryEndpoint(@QueryParam("ID")long id, @QueryParam("endpointID")long endpointID) {
+        log.debug("[{}] update primary admin endpoint : ({},{})", new Object[]{Thread.currentThread().getId(), id, endpointID});
         Gate gate = MappingBootstrap.getMappingSce().getGateSce().getGate(id);
         if (gate != null) {
             Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(endpointID);

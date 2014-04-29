@@ -1,7 +1,7 @@
 /**
- * [DEFINE YOUR PROJECT NAME/MODULE HERE]
- * [DEFINE YOUR PROJECT DESCRIPTION HERE] 
- * Copyright (C) 14/04/14 echinopsii
+ * Properties Serialization Exception
+ * provide a mapping DS Web Service and REST Service
+ * Copyright (C) 2014  Mathilde Ffrench
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -19,5 +19,10 @@
 
 package com.spectral.cc.core.mapping.wat.json;
 
-public class JSONAnon {
+public class PropertiesException extends Exception {
+    private static final long serialVersionUID = -5787356297845468334L;
+
+    public PropertiesException() { super(); }
+
+    public PropertiesException(String message) { super(message); }
 }

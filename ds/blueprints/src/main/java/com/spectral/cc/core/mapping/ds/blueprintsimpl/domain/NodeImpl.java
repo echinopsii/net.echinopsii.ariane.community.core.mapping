@@ -274,6 +274,7 @@ public class NodeImpl implements Node, MappingDSCacheEntity {
         if (this.nodeVertex != null) {
             log.debug("Synchronize node depth {} to db...", new Object[]{this.nodeDepth});
             nodeVertex.setProperty(MappingDSGraphPropertyNames.DD_NODE_DEPTH_KEY, this.nodeDepth);
+            MappingDSGraphDB.autocommit();
         }
     }
 
@@ -281,6 +282,7 @@ public class NodeImpl implements Node, MappingDSCacheEntity {
         if (this.nodeVertex != null && this.nodeName != null) {
             log.debug("Synchronize node name {} to db...", new Object[]{this.nodeName});
             nodeVertex.setProperty(MappingDSGraphPropertyNames.DD_NODE_NAME_KEY, this.nodeName);
+            MappingDSGraphDB.autocommit();
         }
     }
 
@@ -299,6 +301,7 @@ public class NodeImpl implements Node, MappingDSCacheEntity {
         if (this.nodeVertex != null && key != null && value != null) {
             log.debug("Synchronize node property {} to db...", new Object[]{key});
             MappingDSGraphDBObjectProps.synchronizeObjectPropertyToDB(nodeVertex, key, value, MappingDSGraphPropertyNames.DD_NODE_PROPS_KEY);
+            MappingDSGraphDB.autocommit();
         }
     }
 
@@ -306,6 +309,7 @@ public class NodeImpl implements Node, MappingDSCacheEntity {
         if (this.nodeVertex != null && nodeContainer != null && nodeContainer.getElement() != null) {
             log.debug("Synchronize node container {} to db...", new Object[]{this.nodeContainer.getContainerID()});
             nodeVertex.setProperty(MappingDSGraphPropertyNames.DD_NODE_CONT_KEY, this.nodeContainer.getElement().getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
+            MappingDSGraphDB.autocommit();
         }
     }
 
@@ -313,6 +317,7 @@ public class NodeImpl implements Node, MappingDSCacheEntity {
         if (this.nodeVertex != null && nodeParentNode != null && nodeParentNode.getElement() != null) {
             log.debug("Synchronize node parent node {} to db...", new Object[]{this.nodeParentNode.getNodeID()});
             nodeVertex.setProperty(MappingDSGraphPropertyNames.DD_NODE_PNODE_KEY, this.nodeParentNode.getElement().getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
+            MappingDSGraphDB.autocommit();
         }
     }
 
@@ -340,6 +345,7 @@ public class NodeImpl implements Node, MappingDSCacheEntity {
             log.debug("Synchronize node child node {} to db...", new Object[]{child.getNodeID()});
             Edge owns = MappingDSGraphDB.createEdge(this.nodeVertex, child.getElement(), MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
             owns.setProperty(MappingDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY, true);
+            MappingDSGraphDB.autocommit();
         }
     }
 
@@ -365,6 +371,7 @@ public class NodeImpl implements Node, MappingDSCacheEntity {
             }
             log.debug("Synchronize node twin node {} to db...", new Object[]{twin.getNodeID()});
             MappingDSGraphDB.createEdge(this.nodeVertex, twin.getElement(), MappingDSGraphPropertyNames.DD_GRAPH_EDGE_TWIN_LABEL_KEY);
+            MappingDSGraphDB.autocommit();
         }
     }
 
@@ -400,6 +407,7 @@ public class NodeImpl implements Node, MappingDSCacheEntity {
             log.debug("Synchronize node endpoint {} to db...", new Object[]{endpoint.getEndpointID()});
             Edge owns = MappingDSGraphDB.createEdge(this.nodeVertex, endpoint.getElement(), MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
             owns.setProperty(MappingDSGraphPropertyNames.DD_NODE_EDGE_ENDPT_KEY, true);
+            MappingDSGraphDB.autocommit();
         }
     }
 
@@ -452,6 +460,7 @@ public class NodeImpl implements Node, MappingDSCacheEntity {
         if (this.nodeVertex != null) {
             log.debug("Remove node property {} from db...", new Object[]{key});
             MappingDSGraphDBObjectProps.removeObjectPropertyFromDB(nodeVertex, key, MappingDSGraphPropertyNames.DD_NODE_PROPS_KEY);
+            MappingDSGraphDB.autocommit();
         }
     }
 
@@ -522,6 +531,7 @@ public class NodeImpl implements Node, MappingDSCacheEntity {
                     MappingDSGraphDB.getDDgraph().removeEdge(edge);
                 }
             }
+            MappingDSGraphDB.autocommit();
         }
     }
 
@@ -558,6 +568,7 @@ public class NodeImpl implements Node, MappingDSCacheEntity {
                     MappingDSGraphDB.getDDgraph().removeEdge(edge);
                 }
             }
+            MappingDSGraphDB.autocommit();
         }
     }
 

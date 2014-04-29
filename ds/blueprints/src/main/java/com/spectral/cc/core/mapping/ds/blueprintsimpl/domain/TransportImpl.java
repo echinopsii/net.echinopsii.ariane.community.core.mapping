@@ -20,6 +20,7 @@
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.domain;
 
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSCacheEntity;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDB;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDBObjectProps;
 import com.spectral.cc.core.mapping.ds.MappingDSGraphPropertyNames;
 import com.spectral.cc.core.mapping.ds.domain.Transport;
@@ -101,8 +102,10 @@ public class TransportImpl implements Transport, MappingDSCacheEntity {
 	}
 
     private void synchronizeNameToDB() {
-        if (this.transportVertex!=null)
+        if (this.transportVertex!=null) {
             this.transportVertex.setProperty(MappingDSGraphPropertyNames.DD_TRANSPORT_NAME_KEY, this.transportName);
+            MappingDSGraphDB.autocommit();
+        }
     }
 
     private void synchronizePropertiesToDB() {
@@ -117,8 +120,10 @@ public class TransportImpl implements Transport, MappingDSCacheEntity {
     }
 
     private void synchronizePropertyToDB(String key, Object value) {
-        if (transportVertex!=null)
+        if (transportVertex!=null) {
             MappingDSGraphDBObjectProps.synchronizeObjectPropertyToDB(transportVertex, key, value, MappingDSGraphPropertyNames.DD_TRANSPORT_PROPS_KEY);
+            MappingDSGraphDB.autocommit();
+        }
     }
 
 	@Override
@@ -153,6 +158,7 @@ public class TransportImpl implements Transport, MappingDSCacheEntity {
         if (transportVertex != null) {
             log.debug("Remove transport property {} from db...", new Object[]{key});
             MappingDSGraphDBObjectProps.removeObjectPropertyFromDB(transportVertex, key, MappingDSGraphPropertyNames.DD_TRANSPORT_PROPS_KEY);
+            MappingDSGraphDB.autocommit();
         }
     }
 

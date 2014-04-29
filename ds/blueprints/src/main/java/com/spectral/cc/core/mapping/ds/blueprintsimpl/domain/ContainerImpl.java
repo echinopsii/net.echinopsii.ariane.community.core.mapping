@@ -346,6 +346,8 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
             if (this.containerCompany!=null) {
                 log.debug("Synchronize container company {}...", new Object[]{this.containerCompany});
                 containerVertex.setProperty(MappingDSGraphPropertyNames.DD_CONTAINER_COMPANY_KEY, this.containerCompany);
+                MappingDSGraphDB.autocommit();
+                log.debug("Synchronize container company {} done...", new Object[]{this.containerCompany});
             }
         }
     }
@@ -355,6 +357,8 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
             if (this.containerProduct!=null) {
                 log.debug("Synchronize container product {}...", new Object[]{this.containerProduct});
                 containerVertex.setProperty(MappingDSGraphPropertyNames.DD_CONTAINER_PRODUCT_KEY, this.containerProduct);
+                MappingDSGraphDB.autocommit();
+                log.debug("Synchronize container product {} done...", new Object[]{this.containerProduct});
             }
         }
     }
@@ -364,6 +368,8 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 			if (this.containerType!=null) {
 				log.debug("Synchronize container type {}...", new Object[]{this.containerType});
 				containerVertex.setProperty(MappingDSGraphPropertyNames.DD_CONTAINER_TYPE_KEY, this.containerType);
+                MappingDSGraphDB.autocommit();
+                log.debug("Synchronize container product {} done...", new Object[]{this.containerProduct});
 			}
 		}
 	}
@@ -380,8 +386,10 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 	}
 	
 	private void synchronizePropertyToDB(String key, Object value) {
-		if (containerVertex!=null)
+		if (containerVertex!=null) {
             MappingDSGraphDBObjectProps.synchronizeObjectPropertyToDB(containerVertex, key, value, MappingDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY);
+            MappingDSGraphDB.autocommit();
+        }
 	}
 	
 	private void synchronizePrimaryAdminGateToDB() {
@@ -389,6 +397,8 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 			log.debug("Synchronize container primary admin gate {}...", new Object[]{this.containerPrimaryAdminGate.getNodeID()});
 			containerVertex.setProperty(MappingDSGraphPropertyNames.DD_CONTAINER_PAGATE_KEY,
 									    this.containerPrimaryAdminGate.getNodeID());
+            MappingDSGraphDB.autocommit();
+            log.debug("Synchronize container primary admin gate {} done...", new Object[]{this.containerPrimaryAdminGate.getNodeID()});
 		}
 	}
 	
@@ -397,6 +407,8 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 			log.debug("Synchronize container cluster {}...", new Object[]{this.containerCluster.getClusterID()});
 			containerVertex.setProperty(MappingDSGraphPropertyNames.DD_CONTAINER_CLUSTER_KEY,
 									    this.containerCluster.getClusterID());
+            MappingDSGraphDB.autocommit();
+            log.debug("Synchronize container cluster {} done...", new Object[]{this.containerCluster.getClusterID()});
 		}
 	}
 
@@ -405,6 +417,8 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
             log.debug("Synchronize container parent container {}...", new Object[]{this.containerParentContainer.getContainerID()});
             containerVertex.setProperty(MappingDSGraphPropertyNames.DD_CONTAINER_PCONTER_KEY,
                                                this.containerParentContainer.getContainerID());
+            MappingDSGraphDB.autocommit();
+            log.debug("Synchronize container parent container {} done...", new Object[]{this.containerParentContainer.getContainerID()});
         }
     }
 
@@ -431,6 +445,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
             log.debug("Synchronize container child container {}...", new Object[]{container.getContainerID()});
             Edge owns = MappingDSGraphDB.createEdge(this.containerVertex, container.getElement(), MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
             owns.setProperty(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_CHILD_CONTAINER_KEY, true);
+            MappingDSGraphDB.autocommit();
         }
     }
 
@@ -441,7 +456,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 				NodeImpl aNode = iterCN.next();
 				synchronizeNodeToDB(aNode);
 			}
-		}		
+		}
 	}
 	
 	private void synchronizeNodeToDB(NodeImpl node) throws MappingDSGraphDBException {
@@ -459,6 +474,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 			log.debug("Synchronize container node {}...", new Object[]{node.getNodeID()});
 			Edge owns = MappingDSGraphDB.createEdge(this.containerVertex, node.getElement(), MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
 			owns.setProperty(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_NODE_KEY, true);
+            MappingDSGraphDB.autocommit();
 		}
 	}
 	
@@ -485,6 +501,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 			log.debug("Synchronize container gate {}...", new Object[]{gate.getNodeID()});
 			Edge owns = MappingDSGraphDB.createEdge(this.containerVertex, gate.getElement(), MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
 			owns.setProperty(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_GATE_KEY, true);
+            MappingDSGraphDB.autocommit();
 		}
 	}
 	
@@ -550,6 +567,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
         if (containerVertex != null) {
             log.debug("Remove container property {} from db...", new Object[]{key});
             MappingDSGraphDBObjectProps.removeObjectPropertyFromDB(containerVertex, key, MappingDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY);
+            MappingDSGraphDB.autocommit();
         }
     }
 
@@ -632,6 +650,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
                     MappingDSGraphDB.getDDgraph().removeEdge(edge);
                 }
             }
+            MappingDSGraphDB.autocommit();
         }
     }
 	
@@ -669,6 +688,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 					MappingDSGraphDB.getDDgraph().removeEdge(edge);
 				}						
 			}
+            MappingDSGraphDB.autocommit();
 		}
 	}
 
@@ -708,6 +728,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
                     MappingDSGraphDB.getDDgraph().removeEdge(edge);
                 }
             }
+            MappingDSGraphDB.autocommit();
         }
     }
 	

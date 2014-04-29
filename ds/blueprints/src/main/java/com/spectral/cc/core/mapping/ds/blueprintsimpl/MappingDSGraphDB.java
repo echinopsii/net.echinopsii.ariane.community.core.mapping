@@ -179,7 +179,7 @@ public class MappingDSGraphDB {
 
     public static synchronized void setAutocommit(boolean autocommit) {
         Long threadID = Thread.currentThread().getId();
-        log.debug("Autocommit mode is {} for thread {}", new Object[]{(autocommit ? "activated" : "deactivated"), Thread.currentThread().getName()});
+        log.error("Autocommit mode is {} for thread {}", new Object[]{(autocommit ? "activated" : "deactivated"), Thread.currentThread().getName()});
         MappingDSGraphDB.autocommit.put(threadID, autocommit);
     }
 
@@ -190,6 +190,7 @@ public class MappingDSGraphDB {
             if (autocommit.containsKey(threadID)) {
                 isThreadWithAutoCommitMode = autocommit.get(threadID);
             }
+            log.debug("Auto commit ({}) for thread {}", new Object[]{isThreadWithAutoCommitMode, threadID});
             if (isThreadWithAutoCommitMode) {
                 log.debug("Auto commit operation...");
                 ((TransactionalGraph) ccgraph).commit();
@@ -575,6 +576,7 @@ public class MappingDSGraphDB {
                     ret.synchronizeFromDB();
                 }
             }
+            autocommit();
         } else {
             log.debug("Entity returned from cache {}", new Object[]{ret.toString()});
         }
@@ -597,6 +599,7 @@ public class MappingDSGraphDB {
             log.debug("Add cluster {} to Set...", new Object[]{id});
             ret.add(tmp);
         }
+        autocommit();
         return ret;
     }
 
@@ -616,6 +619,7 @@ public class MappingDSGraphDB {
             log.debug("Add container {} to Set...", new Object[]{id});
             ret.add(tmp);
         }
+        autocommit();
         return ret;
     }
 
@@ -635,6 +639,20 @@ public class MappingDSGraphDB {
             log.debug("Add node {} to Set...", new Object[]{id});
             ret.add(tmp);
         }
+        for (Vertex vertex : ccgraph.getVertices(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY,
+                                                        MappingDSGraphPropertyNames.DD_TYPE_GATE_VALUE)) {
+            long id = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+            NodeImpl tmp = (NodeImpl) getVertexEntity(id);
+            if (tmp == null) {
+                tmp = new NodeImpl();
+                tmp.setElement(vertex);
+                MappingDSSimpleCache.putEntityToCache(tmp);
+                tmp.synchronizeFromDB();
+            }
+            log.debug("Add node {} to Set...", new Object[]{id});
+            ret.add(tmp);
+        }
+        autocommit();
         return ret;
     }
 
@@ -651,6 +669,17 @@ public class MappingDSGraphDB {
                 ret.add(tmp);
             }
         }
+        for (Vertex vertex : ccgraph.getVertices(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY,
+                                                        MappingDSGraphPropertyNames.DD_TYPE_GATE_VALUE)) {
+            long id = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+            NodeImpl tmp = (NodeImpl) getVertexEntity(id);
+            Object tmpValue = tmp.getNodeProperties().get(key);
+            if (tmpValue.equals(value)) {
+                log.debug("Add node {} to Set...", new Object[]{id});
+                ret.add(tmp);
+            }
+        }
+        autocommit();
         return ret;
     }
 
@@ -670,6 +699,7 @@ public class MappingDSGraphDB {
             log.debug("Add gate {} to Set...", new Object[]{id});
             ret.add(tmp);
         }
+        autocommit();
         return ret;
     }
 
@@ -686,6 +716,7 @@ public class MappingDSGraphDB {
                 ret.add(tmp);
             }
         }
+        autocommit();
         return ret;
     }
 
@@ -705,6 +736,7 @@ public class MappingDSGraphDB {
             log.debug("Add endpoint {} to Set...", new Object[]{id});
             ret.add(tmp);
         }
+        autocommit();
         return ret;
     }
 
@@ -721,6 +753,7 @@ public class MappingDSGraphDB {
                 ret.add(tmp);
             }
         }
+        autocommit();
         return ret;
     }
 
@@ -740,6 +773,7 @@ public class MappingDSGraphDB {
             log.debug("Add transport {} to Set...", new Object[]{id});
             ret.add(tmp);
         }
+        autocommit();
         return ret;
     }
 
@@ -764,6 +798,7 @@ public class MappingDSGraphDB {
                 }
             }
         }
+        autocommit();
         return (ClusterImpl) ret;
     }
 
@@ -786,6 +821,7 @@ public class MappingDSGraphDB {
                 ret.add(tmp);
             }
         }
+        autocommit();
         return ret;
     }
 
@@ -808,6 +844,7 @@ public class MappingDSGraphDB {
                     ret.synchronizeFromDB();
                 }
             }
+            autocommit();
         }
         return (EndpointImpl) ret;
     }
@@ -831,6 +868,7 @@ public class MappingDSGraphDB {
                     ret.synchronizeFromDB();
                 }
             }
+            autocommit();
         }
         return (TransportImpl) ret;
     }
@@ -846,6 +884,7 @@ public class MappingDSGraphDB {
                 MappingDSSimpleCache.putEntityToCache(ret);
                 ret.synchronizeFromDB();
             }
+            autocommit();
         }
         return ret;
     }
@@ -865,6 +904,7 @@ public class MappingDSGraphDB {
                 ret.add(tmp);
             }
         }
+        autocommit();
         return ret;
     }
 
@@ -876,6 +916,7 @@ public class MappingDSGraphDB {
         } else {
             addVertexFreeID(vertexID);
         }
+        autocommit();
     }
 
     private static void removeEdge(Edge edge) throws MappingDSGraphDBException {
@@ -886,6 +927,7 @@ public class MappingDSGraphDB {
         } else {
             addEdgeFreeID(edgeID);
         }
+        autocommit();
     }
 
     public static void deleteEntity(MappingDSCacheEntity entity) {

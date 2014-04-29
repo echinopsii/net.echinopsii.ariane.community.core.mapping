@@ -30,10 +30,7 @@ import com.spectral.cc.core.mapping.wat.rest.ToolBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
@@ -45,6 +42,7 @@ public class TransportEndpoint {
     @GET
     @Path("/{param}")
     public Response displayTransport(@PathParam("param") long id) {
+        log.debug("[{}] get transport : {}", new Object[]{Thread.currentThread().getId(), id});
         MappingSce mapping = MappingBootstrap.getMappingSce();
         Transport transport = (Transport) mapping.getTransportSce().getTransport(id);
         if (transport != null) {
@@ -69,6 +67,7 @@ public class TransportEndpoint {
         MappingSce mapping = MappingBootstrap.getMappingSce();
         String result = "";
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        log.debug("[{}] get transports", new Object[]{Thread.currentThread().getId()});
         try {
             TransportJSON.manyTransports2JSON((HashSet<Transport>) mapping.getTransportSce().getTransports(null), outStream);
             result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
@@ -83,7 +82,8 @@ public class TransportEndpoint {
 
     @GET
     @Path("/create")
-    public Response createTransport(@QueryParam("Name")String transportName) {
+    public Response createTransport(@QueryParam("name")String transportName) {
+        log.debug("[{}] create transport : {}", new Object[]{Thread.currentThread().getId(), transportName});
         MappingSce mapping  = MappingBootstrap.getMappingSce();
         Transport transport = (Transport) mapping.getTransportSce().createTransport(transportName);
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -102,6 +102,7 @@ public class TransportEndpoint {
     @GET
     @Path("/delete")
     public Response deleteTransport(@QueryParam("ID")long transportID) {
+        log.debug("[{}] delete transport : {}", new Object[]{Thread.currentThread().getId(), transportID});
         MappingSce mapping = MappingBootstrap.getMappingSce();
         try {
             mapping.getTransportSce().deleteTransport(transportID);
@@ -120,6 +121,7 @@ public class TransportEndpoint {
     @GET
     @Path("/update/name")
     public Response setTransportName(@QueryParam("ID")long id, @QueryParam("name")String name) {
+        log.debug("[{}] update transport name: ({},{})", new Object[]{Thread.currentThread().getId(), id, name});
         Transport transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(id);
         if (transport != null) {
             transport.setTransportName(name);
@@ -131,10 +133,21 @@ public class TransportEndpoint {
 
     @GET
     @Path("/update/properties/add")
-    public Response addTransportProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name, @QueryParam("propertyValue") String value) {
+    public Response addTransportProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name, @QueryParam("propertyValue") String value,
+                                         @DefaultValue("String") @QueryParam("propertyType") String type) {
+        log.debug("[{}] update transport by adding a property : ({},({},{},{}))", new Object[]{Thread.currentThread().getId(), id, name, value, type});
         Transport transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(id);
         if (transport != null) {
-            transport.addTransportProperty(name, value);
+            Object oValue;
+            try {
+                oValue = ToolBox.extractPropertyObjectValueFromString(value, type);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                e.printStackTrace();
+                String result = e.getMessage();
+                return Response.status(500).entity(result).build();
+            }
+            transport.addTransportProperty(name, oValue);
             return Response.status(200).entity("Property ("+name+","+value+") successfully added to transport "+id+".").build();
         } else {
             return Response.status(404).entity("Error while adding property "+name+" to transport "+id+" : transport " + id + " not found.").build();
@@ -144,6 +157,7 @@ public class TransportEndpoint {
     @GET
     @Path("/update/properties/delete")
     public Response deleteTransportProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name) {
+        log.debug("[{}] update transport by removing a property : ({},{})", new Object[]{Thread.currentThread().getId(), id, name});
         Transport transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(id);
         if (transport != null) {
             transport.removeTransportProperty(name);

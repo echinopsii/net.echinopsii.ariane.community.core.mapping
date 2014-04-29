@@ -30,10 +30,7 @@ import com.spectral.cc.core.mapping.wat.rest.ToolBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
@@ -45,6 +42,7 @@ public class NodeEndpoint {
     @GET
     @Path("/{param}")
     public Response displayNode(@PathParam("param") long id) {
+        log.debug("[{}] get node : {}", new Object[]{Thread.currentThread().getId(), id});
         Node node = (Node) MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
         if (node != null) {
             try {
@@ -67,6 +65,7 @@ public class NodeEndpoint {
     public Response displayAllNodes() {
         String result = "";
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        log.debug("[{}] get nodes", new Object[]{Thread.currentThread().getId()});
         try {
             NodeJSON.manyNodes2JSON((HashSet<Node>) MappingBootstrap.getMappingSce().getNodeSce().getNodes(null), outStream);
             result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
@@ -82,6 +81,7 @@ public class NodeEndpoint {
     @GET
     @Path("/create")
     public Response createNode(@QueryParam("name")String nodeName, @QueryParam("containerID")long containerID, @QueryParam("parentNodeID")long parentNodeID) {
+        log.debug("[{}] create node : ({},{},{},{})", new Object[]{Thread.currentThread().getId(), nodeName, containerID, parentNodeID});
         try {
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             Node node = MappingBootstrap.getMappingSce().getNodeSce().createNode(nodeName, containerID, parentNodeID);
@@ -106,6 +106,7 @@ public class NodeEndpoint {
     @GET
     @Path("/delete")
     public Response deleteNode(@QueryParam("ID")long nodeID) {
+        log.debug("[{}] delete node : ({})", new Object[]{Thread.currentThread().getId(), nodeID});
         MappingSce mapping = MappingBootstrap.getMappingSce();
         try {
             mapping.getNodeSce().deleteNode(nodeID);
@@ -127,6 +128,7 @@ public class NodeEndpoint {
     @GET
     @Path("/update/name")
     public Response setNodeName(@QueryParam("ID")long id, @QueryParam("name")String name) {
+        log.debug("[{}] update node name : ({},{})", new Object[]{Thread.currentThread().getId(), id, name});
         Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
         if (node != null) {
             node.setNodeName(name);
@@ -139,6 +141,7 @@ public class NodeEndpoint {
     @GET
     @Path("/update/container")
     public Response setNodeContainer(@QueryParam("ID")long id, @QueryParam("containerID")long containerID) {
+        log.debug("[{}] update node container : ({},{})", new Object[]{Thread.currentThread().getId(), id, containerID});
         Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
         if (node != null) {
             Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(containerID);
@@ -156,6 +159,7 @@ public class NodeEndpoint {
     @GET
     @Path("/update/parentNode")
     public Response setNodeParentNode(@QueryParam("ID")long id, @QueryParam("parentNodeID")long parentNodeID) {
+        log.debug("[{}] update node parent node : ({},{})", new Object[]{Thread.currentThread().getId(), id, parentNodeID});
         Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
         if (node != null) {
             Node parentNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
@@ -173,6 +177,7 @@ public class NodeEndpoint {
     @GET
     @Path("/update/childNodes/add")
     public Response addNodeChildNode(@QueryParam("ID")long id, @QueryParam("childNodeID") long childNodeID) {
+        log.debug("[{}] add node child node : ({},{})", new Object[]{Thread.currentThread().getId(), id, childNodeID});
         Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
         if (node != null) {
             Node childNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(childNodeID);
@@ -190,6 +195,7 @@ public class NodeEndpoint {
     @GET
     @Path("/update/childNodes/delete")
     public Response deleteNodeChildNode(@QueryParam("ID")long id, @QueryParam("childNodeID") long childNodeID) {
+        log.debug("[{}] delete node child node : ({},{})", new Object[]{Thread.currentThread().getId(), id, childNodeID});
         Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
         if (node != null) {
             Node childNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(childNodeID);
@@ -207,6 +213,7 @@ public class NodeEndpoint {
     @GET
     @Path("/update/twinNodes/add")
     public Response addNodeTwinNode(@QueryParam("ID")long id, @QueryParam("twinNodeID") long twinNodeID) {
+        log.debug("[{}] add node twin node : ({},{})", new Object[]{Thread.currentThread().getId(), id, twinNodeID});
         Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
         if (node != null) {
             Node twinNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(twinNodeID);
@@ -224,6 +231,7 @@ public class NodeEndpoint {
     @GET
     @Path("/update/twinNodes/delete")
     public Response deleteNodeTwinNode(@QueryParam("ID")long id, @QueryParam("twinNodeID") long twinNodeID) {
+        log.debug("[{}] delete node twin node : ({},{})", new Object[]{Thread.currentThread().getId(), id, twinNodeID});
         Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
         if (node != null) {
             Node twinNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(twinNodeID);
@@ -241,6 +249,7 @@ public class NodeEndpoint {
     @GET
     @Path("/update/endpoints/add")
     public Response addNodeEndpoint(@QueryParam("ID")long id, @QueryParam("endpointID") long endpointID) {
+        log.debug("[{}] add node endpoint : ({},{})", new Object[]{Thread.currentThread().getId(), id, endpointID});
         Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
         if (node != null) {
             Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(endpointID);
@@ -258,6 +267,7 @@ public class NodeEndpoint {
     @GET
     @Path("/update/endpoints/delete")
     public Response deleteNodeEndpoint(@QueryParam("ID")long id, @QueryParam("endpointID") long endpointID) {
+        log.debug("[{}] delete node endpoint : ({},{})", new Object[]{Thread.currentThread().getId(), id, endpointID});
         Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
         if (node != null) {
             Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(endpointID);
@@ -274,10 +284,21 @@ public class NodeEndpoint {
 
     @GET
     @Path("/update/properties/add")
-    public Response addNodeProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name, @QueryParam("propertyValue") String value) {
+    public Response addNodeProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name, @QueryParam("propertyValue") String value,
+                                    @DefaultValue("String") @QueryParam("propertyType") String type) {
+        log.debug("[{}] update node by adding a property : ({},({},{},{}))", new Object[]{Thread.currentThread().getId(), id, name, value, type});
         Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
         if (node != null) {
-            node.addNodeProperty(name,value);
+            Object oValue;
+            try {
+                oValue = ToolBox.extractPropertyObjectValueFromString(value, type);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                e.printStackTrace();
+                String result = e.getMessage();
+                return Response.status(500).entity(result).build();
+            }
+            node.addNodeProperty(name,oValue);
             return Response.status(200).entity("Property ("+name+","+value+") successfully added to node "+id+".").build();
         } else {
             return Response.status(404).entity("Error while adding property "+name+" to node "+id+" : node " + id + " not found.").build();
@@ -287,6 +308,7 @@ public class NodeEndpoint {
     @GET
     @Path("/update/properties/delete")
     public Response deleteNodeProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name) {
+        log.debug("[{}] update node by removing a property : ({},{})", new Object[]{Thread.currentThread().getId(), id, name});
         Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
         if (node != null) {
             node.removeNodeProperty(name);

@@ -153,18 +153,21 @@ public class LinkImpl implements Link, MappingDSCacheEntity {
     private void synchronizeSourceEndpointToDB() {
         if (this.linkEdge != null && this.linkEndpointSource != null) {
             this.linkEdge.setProperty(MappingDSGraphPropertyNames.DD_LINK_SOURCE_EP_KEY, this.linkEndpointSource.getEndpointID());
+            MappingDSGraphDB.autocommit();
         }
     }
 
     private void synchronizeTargetEndpointToDB() {
         if (this.linkEdge != null && this.linkEndpointTarget != null) {
             this.linkEdge.setProperty(MappingDSGraphPropertyNames.DD_LINK_TARGET_EP_KEY, this.linkEndpointTarget.getEndpointID());
+            MappingDSGraphDB.autocommit();
         }
     }
 
     private void synchronizeUpLinkToDB() {
         if (this.linkEdge != null && this.linkUpLink != null) {
             this.linkEdge.setProperty(MappingDSGraphPropertyNames.DD_LINK_UPLINK_KEY, this.linkUpLink.getLinkID());
+            MappingDSGraphDB.autocommit();
         }
     }
 
@@ -177,12 +180,14 @@ public class LinkImpl implements Link, MappingDSCacheEntity {
     private void synchronizeSubLinkToDB(LinkImpl subLink) {
         if (this.linkEdge != null && subLink.getLinkID() != 0) {
             this.linkEdge.setProperty(MappingDSGraphPropertyNames.DD_LINK_SUBLINKS_KEY + subLink.getLinkID(), subLink.getLinkID());
+            MappingDSGraphDB.autocommit();
         }
     }
 
     private void synchronizeTransportNameToDB() {
         if (this.linkEdge != null && this.linkTransport != null) {
             this.linkEdge.setProperty(MappingDSGraphPropertyNames.DD_LINK_TRANSPORT_KEY, this.linkTransport.getTransportID());
+            MappingDSGraphDB.autocommit();
         }
     }
 

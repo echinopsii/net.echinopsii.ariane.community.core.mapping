@@ -82,6 +82,7 @@ public class GateImpl extends NodeImpl implements Gate {
         if (super.getElement() != null && this.gatePrimaryAdminEndpoint != null) {
             log.debug("Synchronize gate primary endpoint to db...", new Object[]{this.gatePrimaryAdminEndpoint.getEndpointID()});
             super.getElement().setProperty(MappingDSGraphPropertyNames.DD_GATE_PAEP_KEY, this.gatePrimaryAdminEndpoint.getEndpointID());
+            MappingDSGraphDB.autocommit();
         }
     }
 

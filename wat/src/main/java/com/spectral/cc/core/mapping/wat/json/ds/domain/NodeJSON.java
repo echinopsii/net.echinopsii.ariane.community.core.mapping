@@ -43,11 +43,11 @@ public class NodeJSON {
     public final static String ND_ID_TOKEN = MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE+"ID";
     public final static String ND_NAME_TOKEN = MappingDSGraphPropertyNames.DD_NODE_NAME_KEY;
     public final static String ND_CONID_TOKEN = MappingDSGraphPropertyNames.DD_NODE_CONT_KEY+"ID";
+    public final static String ND_TWNID_TOKEN = MappingDSGraphPropertyNames.DD_NODE_EDGE_TWIN_KEY+"ID";
     public final static String ND_EPSID_TOKEN = MappingDSGraphPropertyNames.DD_NODE_EDGE_ENDPT_KEY+"ID";
     public final static String ND_PRP_TOKEN = MappingDSGraphPropertyNames.DD_NODE_PROPS_KEY;
 
-    private final static void nodeProps2JSON(Node node, JsonGenerator jgenerator)
-    throws JsonGenerationException, IOException {
+    private final static void nodeProps2JSON(Node node, JsonGenerator jgenerator) throws JsonGenerationException, IOException {
         if (node.getNodeProperties()!=null && node.getNodeProperties().size()!=0) {
             jgenerator.writeObjectFieldStart(ND_PRP_TOKEN);
             PropertiesJSON.propertiesToJSON(node.getNodeProperties(),jgenerator);
@@ -71,6 +71,14 @@ public class NodeJSON {
         jgenerator.writeStringField(ND_NAME_TOKEN, node.getNodeName());
         jgenerator.writeNumberField(ND_CONID_TOKEN, node.getNodeContainer().getContainerID());
 
+        jgenerator.writeArrayFieldStart(ND_TWNID_TOKEN);
+        Iterator<? extends Node> iterT = node.getTwinNodes().iterator();
+        while (iterT.hasNext()) {
+            Node twin = iterT.next();
+            jgenerator.writeNumber(twin.getNodeID());
+        }
+        jgenerator.writeEndArray();
+
         jgenerator.writeArrayFieldStart(ND_EPSID_TOKEN);
         Iterator<? extends Endpoint> iterE = node.getNodeEndpoints().iterator();
         while (iterE.hasNext()) {
@@ -78,6 +86,7 @@ public class NodeJSON {
             jgenerator.writeNumber(ep.getEndpointID());
         }
         jgenerator.writeEndArray();
+
         if (node.getNodeProperties() != null) {
             nodeProps2JSON(node, jgenerator);
         }

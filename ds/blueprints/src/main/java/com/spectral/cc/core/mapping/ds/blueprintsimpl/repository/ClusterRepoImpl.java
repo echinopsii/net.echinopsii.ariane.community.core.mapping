@@ -55,7 +55,7 @@ public class ClusterRepoImpl implements ClusterRepo<ClusterImpl> {
         MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity(id);
         if (entity != null) {
             if (entity instanceof ClusterImpl) {
-                ret = (ClusterImpl) ret;
+                ret = (ClusterImpl) entity;
             } else {
                 log.error("CONSISTENCY ERROR : entity {} is not a cluster.", entity.getElement().getId());
             }

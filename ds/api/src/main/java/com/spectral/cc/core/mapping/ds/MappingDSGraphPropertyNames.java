@@ -56,6 +56,7 @@ public final class MappingDSGraphPropertyNames {
     public static final String DD_NODE_CONT_KEY = "nodeContainer";
     public static final String DD_NODE_PNODE_KEY = "nodeParentNode";
     public static final String DD_NODE_EDGE_CHILD_KEY = "nodeChildNode";
+    public static final String DD_NODE_EDGE_TWIN_KEY = "nodeTwinNode";
     public static final String DD_NODE_EDGE_ENDPT_KEY = "nodeEndpoint";
 
     public static final String DD_TYPE_GATE_VALUE = "gate";
@@ -65,6 +66,7 @@ public final class MappingDSGraphPropertyNames {
     public static final String DD_ENDPOINT_URL_KEY = "endpointURL";
     public static final String DD_ENDPOINT_PROPS_KEY = "endpointProperties";
     public static final String DD_ENDPOINT_PNODE_KEY = "endpointParentNode";
+    public static final String DD_ENDPOINT_EDGE_TWIN_KEY = "endpointTwinEndpoint";
 
     public static final String DD_TYPE_TRANSPORT_VALUE = "transport";
     public static final String DD_TRANSPORT_NAME_KEY = "transportName";

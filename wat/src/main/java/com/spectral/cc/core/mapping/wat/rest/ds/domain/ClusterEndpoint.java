@@ -43,6 +43,7 @@ public class ClusterEndpoint {
     @GET
     @Path("/{param}")
     public Response displayCluster(@PathParam("param") long id) {
+        log.debug("[{}] get cluster : {}", new Object[]{Thread.currentThread().getId(), id});
         Cluster cluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(id);
         if (cluster != null) {
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -65,6 +66,7 @@ public class ClusterEndpoint {
     public Response displayAllClusters() {
         String result = "";
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        log.debug("[{}] get clusters : {}", new Object[]{Thread.currentThread().getId()});
         try {
             ClusterJSON.manyClusters2JSON((HashSet<Cluster>) MappingBootstrap.getMappingSce().getClusterSce().getClusters(null), outStream);
             result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
@@ -86,6 +88,7 @@ public class ClusterEndpoint {
     @GET
     @Path("/create")
     public Response createCluster(@QueryParam("name") String name) {
+        log.debug("[{}] create cluster : {}", new Object[]{Thread.currentThread().getId(), name});
         Cluster cluster = MappingBootstrap.getMappingSce().getClusterSce().createCluster(name);
         try {
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -93,7 +96,7 @@ public class ClusterEndpoint {
             String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
             return Response.status(200).entity(result).build();
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.debug(e.getMessage());
             e.printStackTrace();
             String result = e.getMessage();
             return Response.status(500).entity(result).build();
@@ -103,6 +106,7 @@ public class ClusterEndpoint {
     @GET
     @Path("/delete")
     public Response deleteCluster(@QueryParam("name") String name) {
+        log.debug("[{}] delete cluster : {}", new Object[]{Thread.currentThread().getId(), name});
         try {
             MappingBootstrap.getMappingSce().getClusterSce().deleteCluster(name);
             return Response.status(200).entity("Cluster (" + name + ") has been successfully deleted !").build();
@@ -114,6 +118,7 @@ public class ClusterEndpoint {
     @GET
     @Path("/update/name")
     public Response setClusterName(@QueryParam("ID")long id, @QueryParam("name")String name) {
+        log.debug("[{}] update cluster name: ({},{})", new Object[]{Thread.currentThread().getId(), id, name});
         Cluster cluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(id);
         if (cluster != null) {
             cluster.setClusterName(name);
@@ -124,8 +129,9 @@ public class ClusterEndpoint {
     }
 
     @GET
-    @Path("/update/container/add")
+    @Path("/update/containers/add")
     public Response addClusterContainer(@QueryParam("ID")long id, @QueryParam("containerID")long containerID) {
+        log.debug("[{}] add container to cluster : ({},{})", new Object[]{Thread.currentThread().getId(), id, containerID});
         Cluster cluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(id);
         if (cluster != null) {
             Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(containerID);
@@ -141,8 +147,9 @@ public class ClusterEndpoint {
     }
 
     @GET
-    @Path("/update/container/delete")
+    @Path("/update/containers/delete")
     public Response deleteClusterContainer(@QueryParam("ID")long id, @QueryParam("containerID")long containerID) {
+        log.debug("[{}] delete container from cluster : ({},{})", new Object[]{Thread.currentThread().getId(), id, containerID});
         Cluster cluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(id);
         if (cluster != null) {
             Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(containerID);

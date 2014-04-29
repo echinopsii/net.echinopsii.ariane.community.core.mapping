@@ -29,10 +29,7 @@ import com.spectral.cc.core.mapping.wat.rest.ToolBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
@@ -44,6 +41,7 @@ public class EndpointEndpoint {
     @GET
     @Path("/{param}")
     public Response displayEndpoint(@PathParam("param") long id) {
+        log.debug("[{}] get endpoint : {}", new Object[]{Thread.currentThread().getId(), id});
         Endpoint endpoint = (Endpoint) MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
         if (endpoint != null) {
             try {
@@ -66,6 +64,7 @@ public class EndpointEndpoint {
     public Response displayAllEndpoints() {
         String result = "";
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        log.debug("[{}] get endpoints", new Object[]{Thread.currentThread().getId()});
         try {
             EndpointJSON.manyEndpoints2JSON((HashSet<Endpoint>) MappingBootstrap.getMappingSce().getEndpointSce().getEndpoints(null), outStream);
             result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
@@ -81,6 +80,7 @@ public class EndpointEndpoint {
     @GET
     @Path("/create")
     public Response createEndpoint(@QueryParam("endpointURL")String url, @QueryParam("parentNodeID")long parentNodeID) {
+        log.debug("[{}] create endpoint : ({},{})", new Object[]{Thread.currentThread().getId(), url, parentNodeID});
         try {
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().createEndpoint(url, parentNodeID);
@@ -105,6 +105,7 @@ public class EndpointEndpoint {
     @GET
     @Path("/delete")
     public Response deleteEndpoint(@QueryParam("ID")long endpointID) {
+        log.debug("[{}] delete endpoint : ({})", new Object[]{Thread.currentThread().getId(), endpointID});
         try {
             MappingBootstrap.getMappingSce().getEndpointSce().deleteEndpoint(endpointID);
             return Response.status(200).entity("Endpoint (" + endpointID + ") successfully deleted.").build();
@@ -118,34 +119,36 @@ public class EndpointEndpoint {
 
     @GET
     @Path("/get")
-    public Response getEndpoint(@QueryParam("ID")long id) {
-        return displayEndpoint(id);
-    }
-
-    @GET
-    @Path("/get")
-    public Response getEndpoint(@QueryParam("URL")String URL) {
-        Endpoint endpoint = (Endpoint) MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(URL);
-        if (endpoint != null) {
-            try {
-                ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-                EndpointJSON.oneEndpoint2JSON(endpoint, outStream);
-                String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                return Response.status(200).entity(result).build();
-            } catch (Exception e) {
-                log.error(e.getMessage());
-                e.printStackTrace();
-                String result = e.getMessage();
-                return Response.status(500).entity(result).build();
+    public Response getEndpoint(@QueryParam("URL")String URL, @QueryParam("ID")long id) {
+        log.debug("[{}] get endpoint : {}|{}", new Object[]{Thread.currentThread().getId(), URL,id});
+        if (id!=0) {
+            return displayEndpoint(id);
+        } else if (URL!=null) {
+            Endpoint endpoint = (Endpoint) MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(URL);
+            if (endpoint != null) {
+                try {
+                    ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                    EndpointJSON.oneEndpoint2JSON(endpoint, outStream);
+                    String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                    return Response.status(200).entity(result).build();
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                    e.printStackTrace();
+                    String result = e.getMessage();
+                    return Response.status(500).entity(result).build();
+                }
+            } else {
+                return Response.status(404).entity("Endpoint with URL " + URL + " not found.").build();
             }
         } else {
-            return Response.status(404).entity("Endpoint with URL " + URL + " not found.").build();
+            return Response.status(500).entity("Request error: URL and id are not defined. You must define one of thes parameters").build();
         }
     }
 
     @GET
     @Path("/update/url")
     public Response setEndpointURL(@QueryParam("ID")long id, @QueryParam("URL") String url) {
+        log.debug("[{}] update endpoint url: ({},{})", new Object[]{Thread.currentThread().getId(), id, url});
         Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
         if (endpoint!=null) {
             endpoint.setEndpointURL(url);
@@ -158,6 +161,7 @@ public class EndpointEndpoint {
     @GET
     @Path("/update/parentNode")
     public Response setEndpointParentNode(@QueryParam("ID")long id, @QueryParam("parentNodeID") long parentNodeID) {
+        log.debug("[{}] update endpoint parent node: ({},{})", new Object[]{Thread.currentThread().getId(), id, parentNodeID});
         Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
         if (endpoint!=null) {
             Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(parentNodeID);
@@ -175,6 +179,7 @@ public class EndpointEndpoint {
     @GET
     @Path("/update/twinEndpoints/add")
     public Response addTwinEndpoint(@QueryParam("ID")long id, @QueryParam("twinEndpointID") long twinEndpointID) {
+        log.debug("[{}] update endpoint by adding twin endpoint: ({},{})", new Object[]{Thread.currentThread().getId(), id, twinEndpointID});
         Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
         if (endpoint!=null) {
             Endpoint twinEP = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(twinEndpointID);
@@ -192,6 +197,7 @@ public class EndpointEndpoint {
     @GET
     @Path("/update/twinEndpoints/delete")
     public Response deleteTwinEndpoint(@QueryParam("ID")long id, @QueryParam("twinEndpointID") long twinEndpointID) {
+        log.debug("[{}] update endpoint by deleting twin endpoint: ({},{})", new Object[]{Thread.currentThread().getId(), id, twinEndpointID});
         Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
         if (endpoint!=null) {
             Endpoint twinEP = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(twinEndpointID);
@@ -208,10 +214,21 @@ public class EndpointEndpoint {
 
     @GET
     @Path("/update/properties/add")
-    public Response addEndpointProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name, @QueryParam("propertyValue") String value) {
+    public Response addEndpointProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name, @QueryParam("propertyValue") String value,
+                                        @DefaultValue("String") @QueryParam("propertyType") String type) {
+        log.debug("[{}] update endpoint by adding a property : ({},({},{},{}))", new Object[]{Thread.currentThread().getId(), id, name, value, type});
         Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
         if (endpoint!=null) {
-            endpoint.addEndpointProperty(name, value);
+            Object oValue;
+            try {
+                oValue = ToolBox.extractPropertyObjectValueFromString(value, type);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                e.printStackTrace();
+                String result = e.getMessage();
+                return Response.status(500).entity(result).build();
+            }
+            endpoint.addEndpointProperty(name, oValue);
             return Response.status(200).entity("Property ("+name+","+value+") successfully added to endpoint "+id+".").build();
         } else {
             return Response.status(404).entity("Error while adding property " + name + " to endpoint (" + id + ") : endpoint " + id + " not found.").build();
@@ -221,6 +238,7 @@ public class EndpointEndpoint {
     @GET
     @Path("/update/properties/delete")
     public Response deleteEndpointProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name) {
+        log.debug("[{}] update endpoint by removing a property : ({},{})", new Object[]{Thread.currentThread().getId(), id, name});
         Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
         if (endpoint!=null) {
             endpoint.removeEndpointProperty(name);

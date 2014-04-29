@@ -42,6 +42,7 @@ public class EndpointJSON {
     public final static String EP_ID_TOKEN = MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE+"ID";
     public final static String EP_URL_TOKEN = MappingDSGraphPropertyNames.DD_ENDPOINT_URL_KEY;
     public final static String EP_PNODEID_TOKEN = MappingDSGraphPropertyNames.DD_ENDPOINT_PNODE_KEY+"ID";
+    public final static String EP_TWNEPID_TOKEN = MappingDSGraphPropertyNames.DD_ENDPOINT_EDGE_TWIN_KEY+"ID";
     public final static String EP_PRP_TOKEN = MappingDSGraphPropertyNames.DD_ENDPOINT_PROPS_KEY;
 
     private final static void endpointProps2JSON(Endpoint endpoint, JsonGenerator jgenerator)
@@ -60,6 +61,15 @@ public class EndpointJSON {
         jgenerator.writeNumberField(EP_ID_TOKEN, endpoint.getEndpointID());
         jgenerator.writeStringField(EP_URL_TOKEN, endpoint.getEndpointURL());
         jgenerator.writeNumberField(EP_PNODEID_TOKEN, endpoint.getEndpointParentNode().getNodeID());
+
+        jgenerator.writeArrayFieldStart(EP_TWNEPID_TOKEN);
+        Iterator<? extends Endpoint> iterE = endpoint.getTwinEndpoints().iterator();
+        while (iterE.hasNext()) {
+            Endpoint tep = iterE.next();
+            jgenerator.writeNumber(tep.getEndpointID());
+        }
+        jgenerator.writeEndArray();
+
         EndpointJSON.endpointProps2JSON(endpoint,jgenerator);
         jgenerator.writeEndObject();
     }

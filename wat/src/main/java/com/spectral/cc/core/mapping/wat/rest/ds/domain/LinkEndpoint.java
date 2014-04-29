@@ -45,6 +45,7 @@ public class LinkEndpoint {
     @GET
     @Path("/{param}")
     public Response displayLink(@PathParam("param") long id) {
+        log.debug("[{}] get link : {}", new Object[]{Thread.currentThread().getId(), id});
         Link link = (Link) MappingBootstrap.getMappingSce().getLinkSce().getLink(id);
         if (link != null) {
             try {
@@ -67,6 +68,7 @@ public class LinkEndpoint {
     public Response displayAllLinks() {
         String  result = "";
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        log.debug("[{}] get links", new Object[]{Thread.currentThread().getId()});
         try {
             LinkJSON.manyLinks2JSON((HashSet<Link>) MappingBootstrap.getMappingSce().getLinkSce().getLinks(null), outStream);
             result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
@@ -81,8 +83,9 @@ public class LinkEndpoint {
 
     @GET
     @Path("/create")
-    public Response createLink(long sourceEndpointID, long targetEndpointID,
-                               long transportID, long upLinkID) {
+    public Response createLink(@QueryParam("SEPID")long sourceEndpointID, @QueryParam("TEPID")long targetEndpointID,
+                               @QueryParam("transportID")long transportID, @QueryParam("UPLID") long upLinkID) {
+        log.debug("[{}] create link : ({},{},{},{})", new Object[]{Thread.currentThread().getId(), sourceEndpointID, targetEndpointID, transportID, upLinkID});
         try {
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             Link link = MappingBootstrap.getMappingSce().getLinkSce().createLink(sourceEndpointID, targetEndpointID, transportID, upLinkID);
@@ -106,7 +109,8 @@ public class LinkEndpoint {
 
     @GET
     @Path("/delete")
-    public Response deleteLink(long linkID) {
+    public Response deleteLink(@QueryParam("ID")long linkID) {
+        log.debug("[{}] delete link : ({})", new Object[]{Thread.currentThread().getId(), linkID});
         try {
             MappingBootstrap.getMappingSce().getLinkSce().deleteLink(linkID);
             return Response.status(200).entity("Link (" + linkID + ") successfully deleted.").build();
@@ -127,6 +131,7 @@ public class LinkEndpoint {
     @GET
     @Path("/update/transport")
     public Response setLinkTransport(@QueryParam("ID")long id, @QueryParam("transportID") long transportID) {
+        log.debug("[{}] update link transport : ({},{})", new Object[]{Thread.currentThread().getId(), id, transportID});
         Link link = MappingBootstrap.getMappingSce().getLinkSce().getLink(id);
         if (link!=null) {
             Transport transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(transportID);
@@ -144,6 +149,7 @@ public class LinkEndpoint {
     @GET
     @Path("/update/sourceEP")
     public Response setLinkEndpointSource(@QueryParam("ID")long id, @QueryParam("SEPID") long SEPID) {
+        log.debug("[{}] update link source endpoint : ({},{})", new Object[]{Thread.currentThread().getId(), id, SEPID});
         Link link = MappingBootstrap.getMappingSce().getLinkSce().getLink(id);
         if (link!=null) {
             Endpoint sourceEP = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(SEPID);
@@ -161,6 +167,7 @@ public class LinkEndpoint {
     @GET
     @Path("/update/targetEP")
     public Response setLinkEndpointTarget(@QueryParam("ID")long id, @QueryParam("TEPID") long TEPID) {
+        log.debug("[{}] update link target endpoint : ({},{})", new Object[]{Thread.currentThread().getId(), id, TEPID});
         Link link = MappingBootstrap.getMappingSce().getLinkSce().getLink(id);
         if (link!=null) {
             Endpoint targetEP = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(TEPID);

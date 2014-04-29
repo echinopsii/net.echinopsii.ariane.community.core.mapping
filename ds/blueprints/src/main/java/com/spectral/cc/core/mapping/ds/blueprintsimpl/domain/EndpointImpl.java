@@ -169,6 +169,7 @@ public class EndpointImpl implements Endpoint, MappingDSCacheEntity {
         if (endpointVertex != null && this.endpointURL != null) {
             log.debug("Synchronize endpoint URL {}...", new Object[]{this.endpointURL});
             endpointVertex.setProperty(MappingDSGraphPropertyNames.DD_ENDPOINT_URL_KEY, this.endpointURL);
+            MappingDSGraphDB.autocommit();
         }
     }
 
@@ -187,6 +188,7 @@ public class EndpointImpl implements Endpoint, MappingDSCacheEntity {
         if (endpointVertex != null && key != null && value != null) {
             log.debug("Synchronize property {}...", new Object[]{key});
             MappingDSGraphDBObjectProps.synchronizeObjectPropertyToDB(endpointVertex, key, value, MappingDSGraphPropertyNames.DD_ENDPOINT_PROPS_KEY);
+            MappingDSGraphDB.autocommit();
         }
     }
 
@@ -195,6 +197,7 @@ public class EndpointImpl implements Endpoint, MappingDSCacheEntity {
             log.debug("Synchronize parent node {}...", new Object[]{endpointParentNode.getNodeID()});
             endpointVertex.setProperty(MappingDSGraphPropertyNames.DD_ENDPOINT_PNODE_KEY,
                                               endpointParentNode.getElement().getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
+            MappingDSGraphDB.autocommit();
         }
     }
 
@@ -230,6 +233,7 @@ public class EndpointImpl implements Endpoint, MappingDSCacheEntity {
                     log.trace("Vertex {} property {}: {}", new Object[]{endpointVertex.toString(),propKey,endpointVertex.getProperty(propKey).toString()});
                 }
             }
+            MappingDSGraphDB.autocommit();
         }
     }
 
@@ -272,6 +276,7 @@ public class EndpointImpl implements Endpoint, MappingDSCacheEntity {
         if (endpointVertex != null) {
             log.debug("Remove endpoint property {} from db...", new Object[]{key});
             MappingDSGraphDBObjectProps.removeObjectPropertyFromDB(endpointVertex, key, MappingDSGraphPropertyNames.DD_ENDPOINT_PROPS_KEY);
+            MappingDSGraphDB.autocommit();
         }
     }
 
@@ -280,7 +285,6 @@ public class EndpointImpl implements Endpoint, MappingDSCacheEntity {
             Object parentNodeID = endpointVertex.getProperty(MappingDSGraphPropertyNames.DD_ENDPOINT_PNODE_KEY);
             if (parentNodeID != null) {
                 MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) parentNodeID);
-                ;
                 if (entity != null) {
                     if (entity instanceof NodeImpl || entity instanceof GateImpl) {
                         endpointParentNode = (NodeImpl) entity;
@@ -325,6 +329,7 @@ public class EndpointImpl implements Endpoint, MappingDSCacheEntity {
                     MappingDSGraphDB.getDDgraph().removeEdge(edge);
                 }
             }
+            MappingDSGraphDB.autocommit();
         }
     }
 

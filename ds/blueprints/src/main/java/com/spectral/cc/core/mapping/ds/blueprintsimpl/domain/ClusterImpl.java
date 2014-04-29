@@ -122,6 +122,7 @@ public class ClusterImpl implements Cluster, MappingDSCacheEntity {
     private void synchronizeNameToDB() {
         if (this.clusterVertex != null && this.clusterName != null) {
             this.clusterVertex.setProperty(MappingDSGraphPropertyNames.DD_CLUSTER_NAME_KEY, this.clusterName);
+            MappingDSGraphDB.autocommit();
         }
     }
 
@@ -144,6 +145,7 @@ public class ClusterImpl implements Cluster, MappingDSCacheEntity {
             }
             Edge owns = MappingDSGraphDB.createEdge(this.clusterVertex, cont.getElement(), MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
             owns.setProperty(MappingDSGraphPropertyNames.DD_CLUSTER_EDGE_CONT_KEY, true);
+            MappingDSGraphDB.autocommit();
         }
     }
 
@@ -204,6 +206,7 @@ public class ClusterImpl implements Cluster, MappingDSCacheEntity {
                     MappingDSGraphDB.getDDgraph().removeEdge(edge);
                 }
             }
+            MappingDSGraphDB.autocommit();
         }
     }
 
