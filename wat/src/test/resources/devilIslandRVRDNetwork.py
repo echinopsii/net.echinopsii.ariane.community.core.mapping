@@ -1102,7 +1102,7 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/twi
 ## TRANSPORT
 ## NOTE : si dans le nom du transport on a multicast => le graph render dessine un tube !
 
-transportParams = {"name": "multicast-udp-tibrv://;239.69.69.69"}
+transportParams = {"name": "multicast-udp-tibrv://devilsMind;239.69.69.69"}
 r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/transport/create', params=transportParams)
 transportID = r.json().get('transportID')
 
@@ -1299,7 +1299,7 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/pro
 
 transportParams = {"name": "tcp-tibrvrd://"}
 r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/transport/create', params=transportParams)
-transportID = r.json().get('transportID')
+tcpTransportID = r.json().get('transportID')
 
 
 
@@ -1307,10 +1307,10 @@ transportID = r.json().get('transportID')
 
 ## LINKS LAN TO MAN
 
-linkParams = {"SEPID":tcpSourceEndpoint1,"TEPID":tcpTargetEndpoint1,"transportID":transportID}
+linkParams = {"SEPID":tcpSourceEndpoint1,"TEPID":tcpTargetEndpoint1,"transportID":tcpTransportID}
 r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/link/create', params=linkParams);
 
-linkParams = {"SEPID":tcpSourceEndpoint2,"TEPID":tcpTargetEndpoint1,"transportID":transportID}
+linkParams = {"SEPID":tcpSourceEndpoint2,"TEPID":tcpTargetEndpoint1,"transportID":tcpTransportID}
 r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/link/create', params=linkParams);
 
 
@@ -1494,5 +1494,27 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/pro
 
 ## LINKS WAN TO LAN
 
-linkParams = {"SEPID":tcpSourceEndpoint3,"TEPID":tcpTargetEndpoint1,"transportID":transportID}
+linkParams = {"SEPID":tcpSourceEndpoint3,"TEPID":tcpTargetEndpoint1,"transportID":tcpTransportID}
 r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/link/create', params=linkParams);
+
+
+
+
+## LINK WAN PANAM TO WAN DEVILISLAND
+
+paramsRequest={"URL":"tcp-tibrvrd://tibrvrdwprd01.lab01.dev.dekatonshivr.echinopsii.net:6969"}
+r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/get', params=paramsRequest)
+if r.status_code == 200:
+    wanPanamEP = r.json().get('endpointID')
+    print("wanPanamEP:" + str(wanPanamEP))
+    paramsRequest = {"URL":"tcp-tibrvrd://tibrvrdw02prd01.lab02.dev.dekatonshivr.echinopsii.net:6969"}
+    r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/get', params=paramsRequest)
+    if r.status_code == 200:
+        wanDevilEP = r.json().get('endpointID')
+        print("wanDevilEP:" + str(wanDevilEP))
+        linkParams = {"SEPID":wanDevilEP,"TEPID":wanPanamEP,"transportID":tcpTransportID}
+        r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/link/create', params=linkParams);
+    else:
+        pass
+else:
+    pass

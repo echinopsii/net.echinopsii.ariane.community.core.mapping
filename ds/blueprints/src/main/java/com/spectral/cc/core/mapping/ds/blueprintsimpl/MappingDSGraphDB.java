@@ -179,7 +179,7 @@ public class MappingDSGraphDB {
 
     public static synchronized void setAutocommit(boolean autocommit) {
         Long threadID = Thread.currentThread().getId();
-        log.error("Autocommit mode is {} for thread {}", new Object[]{(autocommit ? "activated" : "deactivated"), Thread.currentThread().getName()});
+        log.debug("Autocommit mode is {} for thread {}", new Object[]{(autocommit ? "activated" : "deactivated"), Thread.currentThread().getName()});
         MappingDSGraphDB.autocommit.put(threadID, autocommit);
     }
 
