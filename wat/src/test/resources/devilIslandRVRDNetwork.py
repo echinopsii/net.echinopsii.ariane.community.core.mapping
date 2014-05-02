@@ -1,14 +1,18 @@
 #!/usr/bin/python3
+
+from getpass import getpass
 import requests
 import json
 #from pprint import pprint
 
-
+username = input("%-- >> Username : ")
+password = getpass.getpass("%-- >> Password : ")
+srvurl = input("%-- >> CC server url (like http://serverFQDN:6969/)")
 
 # CREATE REQUESTS SESSION
 
 s = requests.Session()
-s.auth = ('yoda','secret')
+s.auth = (username, password)
 
 
 
@@ -17,67 +21,67 @@ s.auth = ('yoda','secret')
 ## CREATE LAN RVRD 01
 
 containerParams = {'primaryAdminURL':'http://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net:7580', 'primaryAdminGateName':'webadmingate.tibrvrdl06prd01'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/create', params=containerParams)
+r = s.get(srvurl + 'CC/rest/domain/container/create', params=containerParams)
 containerID = r.json().get('containerID')
 clusterContainer1 = containerID
 
 # MANDATORY FOR GRAPH RENDER
 containerCompany = {'ID':containerID,'company':'Tibco'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/company', params=containerCompany)
+r = s.get(srvurl + 'CC/rest/domain/container/update/company', params=containerCompany)
 
 containerProduct = {'ID':containerID,'product':'Tibco Rendez Vous'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/product', params=containerProduct)
+r = s.get(srvurl + 'CC/rest/domain/container/update/product', params=containerProduct)
 
 containerType = {'ID':containerID,'type':'RV Router Daemon'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/type', params=containerType)
+r = s.get(srvurl + 'CC/rest/domain/container/update/type', params=containerType)
 
 datacenter = {"dc":["String","Somewhere in hell"], "gpsLng":["double",-52.582179], "address":["String","Devil's Island"], "gpsLat":["double",5.295366], "town":["String","Devil's Island"], "country":["String","France"]}
 containerProperty = {'ID':containerID,'propertyName':'Datacenter','propertyValue':json.dumps(datacenter),'propertyType':'map'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 network = {'subnetip':['String','192.168.44.0'], 'subnetmask':['String','255.255.255.0'], 'type':['String','LAN'], 'lan':['String','lab02.lan'], 'marea':['String',"devil's mind"]}
 containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 supportTeam = {"color":["String","1f7d4a"], "name":["String","MDW BUS"]}
 containerProperty = {'ID':containerID,'propertyName':'supportTeam','propertyValue':json.dumps(supportTeam),'propertyType':'map'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 server = { "os":["String","Fedora 18 - x86_64"], "hostname":["String","tibrvrdl06prd01"] }
 containerProperty = {'ID':containerID,'propertyName':'Server','propertyValue':json.dumps(server),'propertyType':'map'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 # OPTIONAL
 containerProperty = {'ID':containerID,'propertyName':'RVRD_PID','propertyValue':666}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 containerProperty = {'ID':containerID,'propertyName':'RVRD_PID'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/delete', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/delete', params=containerProperty)
 
 containerProperty = {'ID':containerID,'propertyName':'RVRD_PID','propertyValue':666}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 containerProperty = {'ID':containerID,'propertyName':'RVRD_HOSTNAME','propertyValue':'tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 containerProperty = {'ID':containerID,'propertyName':'RVRD_IPADDR','propertyValue':'192.168.44.8'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 containerProperty = {'ID':containerID,'propertyName':'RVRD_NAME','propertyValue':'rvrd'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 containerProperty = {'ID':containerID,'propertyName':'RVRD_INBOX_PORT','propertyValue':0}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 containerProperty = {'ID':containerID,'propertyName':'RVRD_LICENSE_TICKET','propertyValue':217318}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 containerProperty = {'ID':containerID,'propertyName':'RVRD_VERSION','propertyValue':'8.4.0'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 
 # getParams = {'ID':containerID}
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/get', params=getParams)
+# r = s.get(srvurl + 'CC/rest/domain/container/get', params=getParams)
 # pprint(r.json())
 # {'containerCompany': 'Tibco',
 #  'containerGatesID': [3],
@@ -108,7 +112,7 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/pr
 #                          'supportTeam': {'color': '1f7d4a',
 #                                          'name': 'MDW BUS'}},
 #  'containerType': 'RV Router Daemon'}
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container')
+# r = s.get(srvurl + 'CC/rest/domain/container')
 # pprint(r.json())
 # {'containers': [{'containerCompany': 'Tibco',
 #                  'containerGatesID': [3],
@@ -139,14 +143,14 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/pr
 #                                          'supportTeam': {'color': '1f7d4a',
 #                                                          'name': 'MDW BUS'}},
 #                  'containerType': 'RV Router Daemon'}]}
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node')
+# r = s.get(srvurl + 'CC/rest/domain/node')
 # pprint(r.json())
 # {'nodes': [{'nodeContainerID': 1,
 #             'nodeEndpointID': [2],
 #             'nodeID': 3,
 #             'nodeName': 'webadmingate.tibrvrdl06prd01',
 #             'nodeTwinNodeID': []}]}
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/gate')
+# r = s.get(srvurl + 'CC/rest/domain/gate')
 # pprint(r.json())
 # {'gates': [{'containerGatePrimaryAdminEndpointID': 2,
 #             'node': {'nodeContainerID': 1,
@@ -154,7 +158,7 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/pr
 #                      'nodeID': 3,
 #                      'nodeName': 'webadmingate.tibrvrdl06prd01',
 #	               'nodeTwinNodeID': []}}]}
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint')
+# r = s.get(srvurl + 'CC/rest/domain/endpoint')
 # pprint(r.json())
 # {'endpoints': [{'endpointID': 2,
 #                 'endpointParentNodeID': 3,
@@ -168,9 +172,9 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/pr
 ## ADD A GATE TO LAN RVRD 01
 
 gateParams = {"URL":"http://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net:7500", "name":"rvdgate.tibrvrdl06.prd01", "containerID":containerID, "isPrimaryAdmin":False}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/gate/create', params=gateParams)
+r = s.get(srvurl + 'CC/rest/domain/gate/create', params=gateParams)
 
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container')
+# r = s.get(srvurl + 'CC/rest/domain/container')
 # pprint(r.json())
 # {'containers': [{'containerCompany': 'Tibco',
 #                  'containerGatesID': [3, 5],
@@ -201,7 +205,7 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/gate/create', param
 #                                          'supportTeam': {'color': '1f7d4a',
 #                                                          'name': 'MDW BUS'}},
 #                  'containerType': 'RV Router Daemon'}]}
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node')
+# r = s.get(srvurl + 'CC/rest/domain/node')
 # pprint(r.json())
 # {'nodes': [{'nodeContainerID': 1,
 #             'nodeEndpointID': [2],
@@ -213,7 +217,7 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/gate/create', param
 #             'nodeID': 5,
 #             'nodeName': 'rvdgate.tibrvrdl06.prd01',
 #	      'nodeTwinNodeID': []}]}
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/gate')
+# r = s.get(srvurl + 'CC/rest/domain/gate')
 # pprint(r.json())
 # {'gates': [{'containerGatePrimaryAdminEndpointID': 2,
 #             'node': {'nodeContainerID': 1,
@@ -227,7 +231,7 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/gate/create', param
 #                      'nodeID': 5,
 #                      'nodeName': 'rvdgate.tibrvrdl06.prd01',
 #	               'nodeTwinNodeID': []}}]}
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint')
+# r = s.get(srvurl + 'CC/rest/domain/endpoint')
 # pprint(r.json())
 # {'endpoints': [{'endpointID': 2,
 #                 'endpointParentNodeID': 3,
@@ -245,12 +249,12 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/gate/create', param
 ## ADD A NODE TO LAN RVRD 01
 
 nodeParams = {"name":"APP6969.tibrvrdl06prd01", "containerID":containerID, "parentNodeID":0}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node/create', params=nodeParams)
+r = s.get(srvurl + 'CC/rest/domain/node/create', params=nodeParams)
 nodeID = r.json().get('nodeID')
 twinNode1 = nodeID
 
 
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container')
+# r = s.get(srvurl + 'CC/rest/domain/container')
 # pprint(r.json())
 # {'containers': [{'containerCompany': 'Tibco',
 #                  'containerGatesID': [3, 5],
@@ -281,7 +285,7 @@ twinNode1 = nodeID
 #                                          'supportTeam': {'color': '1f7d4a',
 #                                                          'name': 'MDW BUS'}},
 #                  'containerType': 'RV Router Daemon'}]}
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node')
+# r = s.get(srvurl + 'CC/rest/domain/node')
 # pprint(r.json())
 # {'nodes': [{'nodeContainerID': 1,
 #             'nodeEndpointID': [2],
@@ -298,7 +302,7 @@ twinNode1 = nodeID
 #             'nodeID': 6,
 #             'nodeName': 'APP6969.tibrvrdl06prd01',
 #	      'nodeTwinNodeID': []}]}
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/gate')
+# r = s.get(srvurl + 'CC/rest/domain/gate')
 # pprint(r.json())
 # {'gates': [{'containerGatePrimaryAdminEndpointID': 2,
 #             'node': {'nodeContainerID': 1,
@@ -312,7 +316,7 @@ twinNode1 = nodeID
 #                      'nodeID': 5,
 #                      'nodeName': 'rvdgate.tibrvrdl06.prd01',
 #	               'nodeTwinNodeID': []}}]}
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint')
+# r = s.get(srvurl + 'CC/rest/domain/endpoint')
 # pprint(r.json())
 # {'endpoints': [{'endpointID': 2,
 #                 'endpointParentNodeID': 3,
@@ -326,18 +330,18 @@ twinNode1 = nodeID
 
 #OPTIONAL NODE PROPERTIES (BUT USEFULL)
 nodeProperty = {'ID':nodeID,'propertyName':'RVRD_ROUTER_MAXBACKLOG','propertyValue':0}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node/update/properties/add', params=nodeProperty)
+r = s.get(srvurl + 'CC/rest/domain/node/update/properties/add', params=nodeProperty)
 
 nodeProperty = {'ID':nodeID,'propertyName':'busDescription','propertyValue':'APP FX prices diffusion'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node/update/properties/add', params=nodeProperty)
+r = s.get(srvurl + 'CC/rest/domain/node/update/properties/add', params=nodeProperty)
 
 primaryApp = {"color":["String","e8a25d"], "name":["String","APP"]}
 nodeProperty = {'ID':nodeID,'propertyName':'primaryApplication','propertyValue':json.dumps(primaryApp), 'propertyType':'map'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node/update/properties/add', params=nodeProperty)
+r = s.get(srvurl + 'CC/rest/domain/node/update/properties/add', params=nodeProperty)
 
 
 # getParams = {'ID':nodeID}
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node/get', params=getParams)
+# r = s.get(srvurl + 'CC/rest/domain/node/get', params=getParams)
 # pprint(r.json())
 # {'nodeContainerID': 1,
 #  'nodeEndpointID': [7, 8],
@@ -355,11 +359,11 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node/update/propert
 ## ADD ENDPOINTS TO PREVIOUS NODE
 
 endpointParams = {"endpointURL":"multicast-udp-tibrv://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969", "parentNodeID":nodeID}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/create', params=endpointParams)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/create', params=endpointParams)
 multicastSourceEndpoint1 = r.json().get('endpointID')
 
 # getParams = {'ID':nodeID}
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node/get', params=getParams)
+# r = s.get(srvurl + 'CC/rest/domain/node/get', params=getParams)
 # pprint(r.json())
 # {'nodeContainerID': 1,
 #  'nodeEndpointID': [7, 8],
@@ -369,7 +373,7 @@ multicastSourceEndpoint1 = r.json().get('endpointID')
 #                     'busDescription': 'APP FX prices diffusion',
 #                     'primaryApplication': {'color': 'e8a25d', 'name': 'APP'}},
 #  'nodeTwinNodeID': []}}
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint')
+# r = s.get(srvurl + 'CC/rest/domain/endpoint')
 # pprint(r.json())
 # {'endpoints': [{'endpointID': 2,
 #                 'endpointParentNodeID': 3,
@@ -386,30 +390,30 @@ multicastSourceEndpoint1 = r.json().get('endpointID')
 
 importSubjects = ["String",["FR.APP.>-weight:10","FR.BPP.>-weight:10"]]
 endpointProperty = {'ID':multicastSourceEndpoint1,'propertyName':'RVRD_LOCALNT_ISUB','propertyValue':json.dumps(importSubjects),'propertyType':'array'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 exportSubjects = ["String",["FR.APP.>","FR.BPP.>"]]
 endpointProperty = {'ID':multicastSourceEndpoint1,'propertyName':'RVRD_LOCALNT_ESUB','propertyValue':json.dumps(exportSubjects),'propertyType':'array'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':multicastSourceEndpoint1,'propertyName':'RVRD_LOCALNT_SERVICE','propertyValue':6969, 'propertyType':'int'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':multicastSourceEndpoint1,'propertyName':'RVRD_LOCALNT_NETWORK','propertyValue':';239.69.69.69'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':multicastSourceEndpoint1,'propertyName':'RVRD_LOCALNT_NAME','propertyValue':'APP6969.devilsMind'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':multicastSourceEndpoint1,'propertyName':'busDescription','propertyValue':'APP FX prices diffusion'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 primaryApp = {"color":["String","e8a25d"], "name":["String","APP"]}
 endpointProperty = {'ID':multicastSourceEndpoint1,'propertyName':'primaryApplication','propertyValue':json.dumps(primaryApp), 'propertyType':'map'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 # getParams = {'URL':'multicast-udp-tibrv://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969'}
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/get', params=getParams)
+# r = s.get(srvurl + 'CC/rest/domain/endpoint/get', params=getParams)
 # pprint(r.json())
 # {'endpointID': 7,
 #  'endpointParentNodeID': 6,
@@ -426,11 +430,11 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/pro
 #  'endpointURL': 'multicast-udp-tibrv://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969'}
 
 endpointParams = {"endpointURL":"tcp-tibrvrd://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net:6969", "parentNodeID":nodeID}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/create', params=endpointParams)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/create', params=endpointParams)
 tcpSourceEndpoint1 = r.json().get('endpointID')
 
 # getParams = {'ID':nodeID}
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node/get', params=getParams)
+# r = s.get(srvurl + 'CC/rest/domain/node/get', params=getParams)
 # pprint(r.json())
 # {'nodeContainerID': 1,
 #  'nodeEndpointID': [7, 8],
@@ -440,7 +444,7 @@ tcpSourceEndpoint1 = r.json().get('endpointID')
 #                     'busDescription': 'APP FX prices diffusion',
 #                     'primaryApplication': {'color': 'e8a25d', 'name': 'APP'}},
 #  'nodeTwinNodeID': []}
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint')
+# r = s.get(srvurl + 'CC/rest/domain/endpoint')
 # pprint(r.json())
 # {'endpoints': [{'endpointID': 2,
 #                 'endpointParentNodeID': 3,
@@ -469,42 +473,42 @@ tcpSourceEndpoint1 = r.json().get('endpointID')
 #                 'endpointURL': 'tcp-tibrvrd://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net:6969'}]}
 
 endpointProperty = {'ID':tcpSourceEndpoint1,'propertyName':'RVRD_NEIGHBD_COST','propertyValue':1, 'propertyType':'int'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint1,'propertyName':'RVRD_NEIGHBD_COMP','propertyValue':False, 'propertyType':'boolean'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint1,'propertyName':'RVRD_NEIGHBD_TYPE','propertyValue':2, 'propertyType':'int'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint1,'propertyName':'RVRD_NEIGHBD_LHOST','propertyValue':'tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint1,'propertyName':'RVRD_NEIGHBD_LPORT','propertyValue':6969, 'propertyType':'int'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint1,'propertyName':'RVRD_NEIGHBD_RPORT','propertyValue':6969, 'propertyType':'int'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint1,'propertyName':'RVRD_NEIGHBD_ENC','propertyValue':False, 'propertyType':'boolean'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint1,'propertyName':'RVRD_NEIGHBD_RHOST','propertyValue':'tibrvrdmprd02.lab02.deb.dekatonshivr.echinopsii.net'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint1,'propertyName':'RVRD_NEIGHBD_NNAME','propertyValue':'APP6969.tibrvrdmprd02'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint1,'propertyName':'busDescription','propertyValue':'APP FX prices diffusion'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 primaryApp = {"color":["String","e8a25d"], "name":["String","APP"]}
 endpointProperty = {'ID':tcpSourceEndpoint1,'propertyName':'primaryApplication','propertyValue':json.dumps(primaryApp), 'propertyType':'map'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 
 # getParams = {'ID':tcpSourceEndpoint1}
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/get', params=getParams)
+# r = s.get(srvurl + 'CC/rest/domain/endpoint/get', params=getParams)
 # pprint(r.json())
 # {'endpointID': 8,
 #  'endpointParentNodeID': 6,
@@ -530,66 +534,66 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/pro
 ## CREATE LAN RVRD 02
 
 containerParams = {'primaryAdminURL':'http://tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net:7580', 'primaryAdminGateName':'webadmingate.tibrvrdl07prd01'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/create', params=containerParams)
+r = s.get(srvurl + 'CC/rest/domain/container/create', params=containerParams)
 containerID = r.json().get('containerID')
 clusterContainer2 = containerID
 
 # MANDATORY FOR GRAPH RENDER
 containerCompany = {'ID':containerID,'company':'Tibco'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/company', params=containerCompany)
+r = s.get(srvurl + 'CC/rest/domain/container/update/company', params=containerCompany)
 
 containerProduct = {'ID':containerID,'product':'Tibco Rendez Vous'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/product', params=containerProduct)
+r = s.get(srvurl + 'CC/rest/domain/container/update/product', params=containerProduct)
 
 containerType = {'ID':containerID,'type':'RV Router Daemon'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/type', params=containerType)
+r = s.get(srvurl + 'CC/rest/domain/container/update/type', params=containerType)
 
 datacenter = {"dc":["String","Somewhere in hell"], "gpsLng":["double",-52.582179], "address":["String","Devil's Island"], "gpsLat":["double",5.295366], "town":["String","Devil's Island"], "country":["String","France"]}
 containerProperty = {'ID':containerID,'propertyName':'Datacenter','propertyValue':json.dumps(datacenter),'propertyType':'map'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 network = {'subnetip':['String','192.168.45.0'], 'subnetmask':['String','255.255.255.0'], 'type':['String','LAN'], 'lan':['String','lab02.lan2'], 'marea':['String',"devil's mind"]}
 containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 supportTeam = {"color":["String","1f7d4a"], "name":["String","MDW BUS"]}
 containerProperty = {'ID':containerID,'propertyName':'supportTeam','propertyValue':json.dumps(supportTeam),'propertyType':'map'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 server = { "os":["String","Fedora 18 - x86_64"], "hostname":["String","tibrvrdl07prd01"] }
 containerProperty = {'ID':containerID,'propertyName':'Server','propertyValue':json.dumps(server),'propertyType':'map'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 # OPTIONAL
 containerProperty = {'ID':containerID,'propertyName':'RVRD_PID','propertyValue':696}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 containerProperty = {'ID':containerID,'propertyName':'RVRD_PID'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/delete', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/delete', params=containerProperty)
 
 containerProperty = {'ID':containerID,'propertyName':'RVRD_PID','propertyValue':696}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 containerProperty = {'ID':containerID,'propertyName':'RVRD_HOSTNAME','propertyValue':'tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 containerProperty = {'ID':containerID,'propertyName':'RVRD_IPADDR','propertyValue':'192.168.45.8'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 containerProperty = {'ID':containerID,'propertyName':'RVRD_NAME','propertyValue':'rvrd'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 containerProperty = {'ID':containerID,'propertyName':'RVRD_INBOX_PORT','propertyValue':0}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 containerProperty = {'ID':containerID,'propertyName':'RVRD_LICENSE_TICKET','propertyValue':217318}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 containerProperty = {'ID':containerID,'propertyName':'RVRD_VERSION','propertyValue':'8.4.0'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container')
+# r = s.get(srvurl + 'CC/rest/domain/container')
 # pprint(r.json())
 # {'containers': [{'containerCompany': 'Tibco',
 #                  'containerGatesID': [3, 5],
@@ -649,7 +653,7 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/pr
 #                                          'supportTeam': {'color': '1f7d4a',
 #                                                          'name': 'MDW BUS'}},
 #                  'containerType': 'RV Router Daemon'}]}
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node')
+# r = s.get(srvurl + 'CC/rest/domain/node')
 # pprint(r.json())
 # {'nodes': [{'nodeContainerID': 1,
 #             'nodeEndpointID': [2],
@@ -683,11 +687,11 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/pr
 ## ADD A GATE TO LAN RVRD 02
 
 gateParams = {"URL":"http://tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net:7500", "name":"rvdgate.tibrvrdl07.prd01", "containerID":containerID, "isPrimaryAdmin":False}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/gate/create', params=gateParams)
+r = s.get(srvurl + 'CC/rest/domain/gate/create', params=gateParams)
 
 
 # getParams = {'primaryAdminURL':'http://tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net:7580'}
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/get', params=getParams)
+# r = s.get(srvurl + 'CC/rest/domain/container/get', params=getParams)
 # pprint(r.json())
 # {'containerCompany': 'Tibco',
 #  'containerGatesID': [11, 13],
@@ -718,7 +722,7 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/gate/create', param
 #                          'supportTeam': {'color': '1f7d4a',
 #                                          'name': 'MDW BUS'}},
 #  'containerType': 'RV Router Daemon'}
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/gate')
+# r = s.get(srvurl + 'CC/rest/domain/gate')
 # pprint(r.json())
 # {'gates': [{'containerGatePrimaryAdminEndpointID': 2,
 #             'node': {'nodeContainerID': 1,
@@ -744,7 +748,7 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/gate/create', param
 #                      'nodeID': 13,
 #                      'nodeName': 'rvdgate.tibrvrdl07.prd01',
 #	               'nodeTwinNodeID': []}}]}
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node')
+# r = s.get(srvurl + 'CC/rest/domain/node')
 # pprint(r.json())
 # {'nodes': [{'nodeContainerID': 1,
 #             'nodeEndpointID': [2],
@@ -774,7 +778,7 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/gate/create', param
 #             'nodeID': 13,
 #             'nodeName': 'rvdgate.tibrvrdl07.prd01',
 #	      'nodeTwinNodeID': []}]}
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint')
+# r = s.get(srvurl + 'CC/rest/domain/endpoint')
 # pprint(r.json())
 # {'endpoints': [{'endpointID': 2,
 #                 'endpointParentNodeID': 3,
@@ -830,24 +834,24 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/gate/create', param
 ## ADD A NODE TO LAN RVRD 02
 
 nodeParams = {"name":"APP6969.tibrvrdl07prd01", "containerID":containerID, "parentNodeID":0}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node/create', params=nodeParams)
+r = s.get(srvurl + 'CC/rest/domain/node/create', params=nodeParams)
 nodeID = r.json().get('nodeID')
 twinNode2 = nodeID
 
 # OPTIONAL NODE PROPERTIES (BUT USEFULL)
 nodeProperty = {'ID':nodeID,'propertyName':'RVRD_ROUTER_MAXBACKLOG','propertyValue':0}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node/update/properties/add', params=nodeProperty)
+r = s.get(srvurl + 'CC/rest/domain/node/update/properties/add', params=nodeProperty)
 
 nodeProperty = {'ID':nodeID,'propertyName':'busDescription','propertyValue':'APP FX prices diffusion'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node/update/properties/add', params=nodeProperty)
+r = s.get(srvurl + 'CC/rest/domain/node/update/properties/add', params=nodeProperty)
 
 primaryApp = {"color":["String","e8a25d"], "name":["String","APP"]}
 nodeProperty = {'ID':nodeID,'propertyName':'primaryApplication','propertyValue':json.dumps(primaryApp), 'propertyType':'map'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node/update/properties/add', params=nodeProperty)
+r = s.get(srvurl + 'CC/rest/domain/node/update/properties/add', params=nodeProperty)
 
 
 # getParams = {'ID':containerID}
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/get', params=getParams)
+# r = s.get(srvurl + 'CC/rest/domain/container/get', params=getParams)
 # pprint(r.json())
 # {'containerCompany': 'Tibco',
 #  'containerGatesID': [11, 13],
@@ -879,7 +883,7 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node/update/propert
 #                                          'name': 'MDW BUS'}},
 #  'containerType': 'RV Router Daemon'}
 # getParams = {'ID':nodeID}
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node/get', params=getParams)
+# r = s.get(srvurl + 'CC/rest/domain/node/get', params=getParams)
 # pprint(r.json())
 # {'nodeContainerID': 9,
 #  'nodeEndpointID': [],
@@ -897,35 +901,35 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node/update/propert
 ## ADD ENDPOINTS TO PREVIOUS NODE
 
 endpointParams = {"endpointURL":"multicast-udp-tibrv://tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969", "parentNodeID":nodeID}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/create', params=endpointParams)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/create', params=endpointParams)
 multicastSourceEndpoint2 = r.json().get('endpointID')
 
 importSubjects = ["String",["FR.APP.>-weight:10","FR.BPP.>-weight:10"]]
 endpointProperty = {'ID':multicastSourceEndpoint2,'propertyName':'RVRD_LOCALNT_ISUB','propertyValue':json.dumps(importSubjects),'propertyType':'array'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 exportSubjects = ["String",["FR.APP.>","FR.BPP.>"]]
 endpointProperty = {'ID':multicastSourceEndpoint2,'propertyName':'RVRD_LOCALNT_ESUB','propertyValue':json.dumps(exportSubjects),'propertyType':'array'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':multicastSourceEndpoint2,'propertyName':'RVRD_LOCALNT_SERVICE','propertyValue':6969, 'propertyType':'int'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':multicastSourceEndpoint2,'propertyName':'RVRD_LOCALNT_NETWORK','propertyValue':';239.69.69.69'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':multicastSourceEndpoint2,'propertyName':'RVRD_LOCALNT_NAME','propertyValue':'APP6969.devilsMind'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':multicastSourceEndpoint2,'propertyName':'busDescription','propertyValue':'APP FX prices diffusion'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 primaryApp = {"color":["String","e8a25d"], "name":["String","APP"]}
 endpointProperty = {'ID':multicastSourceEndpoint2,'propertyName':'primaryApplication','propertyValue':json.dumps(primaryApp), 'propertyType':'map'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 # getParams = {'ID':nodeID}
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node/get', params=getParams)
+# r = s.get(srvurl + 'CC/rest/domain/node/get', params=getParams)
 # pprint(r.json())
 # {'nodeContainerID': 9,
 #  'nodeEndpointID': [15],
@@ -936,7 +940,7 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/pro
 #                     'primaryApplication': {'color': 'e8a25d', 'name': 'APP'}},
 #  'nodeTwinNodeID': []}
 # getParams = {'ID':multicastSourceEndpoint2}
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/get', params=getParams)
+# r = s.get(srvurl + 'CC/rest/domain/endpoint/get', params=getParams)
 # pprint(r.json())
 # {'endpointID': 15,
 #  'endpointParentNodeID': 14,
@@ -953,45 +957,45 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/pro
 #  'endpointURL': 'multicast-udp-tibrv://tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969'}
 
 endpointParams = {"endpointURL":"tcp-tibrvrd://tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net:6969", "parentNodeID":nodeID}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/create', params=endpointParams)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/create', params=endpointParams)
 tcpSourceEndpoint2 = r.json().get('endpointID')
 
 endpointProperty = {'ID':tcpSourceEndpoint2,'propertyName':'RVRD_NEIGHBD_COST','propertyValue':1, 'propertyType':'int'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint2,'propertyName':'RVRD_NEIGHBD_COMP','propertyValue':False, 'propertyType':'boolean'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint2,'propertyName':'RVRD_NEIGHBD_TYPE','propertyValue':2, 'propertyType':'int'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint2,'propertyName':'RVRD_NEIGHBD_LHOST','propertyValue':'tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint2,'propertyName':'RVRD_NEIGHBD_LPORT','propertyValue':6969, 'propertyType':'int'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint2,'propertyName':'RVRD_NEIGHBD_RPORT','propertyValue':6969, 'propertyType':'int'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint2,'propertyName':'RVRD_NEIGHBD_ENC','propertyValue':False, 'propertyType':'boolean'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint2,'propertyName':'RVRD_NEIGHBD_RHOST','propertyValue':'tibrvrdmprd02.lab02.deb.dekatonshivr.echinopsii.net'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint2,'propertyName':'RVRD_NEIGHBD_NNAME','propertyValue':'APP6969.tibrvrdmprd02'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint2,'propertyName':'busDescription','propertyValue':'APP FX prices diffusion'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 primaryApp = {"color":["String","e8a25d"], "name":["String","APP"]}
 endpointProperty = {'ID':tcpSourceEndpoint2,'propertyName':'primaryApplication','propertyValue':json.dumps(primaryApp), 'propertyType':'map'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 # getParams = {'ID':nodeID}
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node/get', params=getParams)
+# r = s.get(srvurl + 'CC/rest/domain/node/get', params=getParams)
 # pprint(r.json())
 # {'nodeContainerID': 9,
 #  'nodeEndpointID': [16, 15],
@@ -1002,7 +1006,7 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/pro
 #                     'primaryApplication': {'color': 'e8a25d', 'name': 'APP'}},
 #  'nodeTwinNodeID': []}
 # getParams = {'ID':tcpSourceEndpoint2}
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/get', params=getParams)
+# r = s.get(srvurl + 'CC/rest/domain/endpoint/get', params=getParams)
 # pprint(r.json())
 # {'endpointID': 16,
 #  'endpointParentNodeID': 14,
@@ -1028,10 +1032,10 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/pro
 ## TWIN NODES
 
 twinNode = {'ID':twinNode1, 'twinNodeID':twinNode2}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node/update/twinNodes/add', params=twinNode)
+r = s.get(srvurl + 'CC/rest/domain/node/update/twinNodes/add', params=twinNode)
 
 # getParams = {'ID':twinNode1}
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node/get', params=getParams)
+# r = s.get(srvurl + 'CC/rest/domain/node/get', params=getParams)
 # pprint(r.json())
 # {'nodeContainerID': 1,
 #  'nodeEndpointID': [7, 8],
@@ -1042,7 +1046,7 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node/update/twinNod
 #                     'primaryApplication': {'color': 'e8a25d', 'name': 'APP'}},
 #  'nodeTwinNodeID': [6]}
 # getParams={'ID':twinNode2}
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node/get', params=getParams)
+# r = s.get(srvurl + 'CC/rest/domain/node/get', params=getParams)
 # pprint(r.json())
 # {'nodeContainerID': 9,
 #  'nodeEndpointID': [16, 15],
@@ -1060,10 +1064,10 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node/update/twinNod
 ## TWIN ENDPOINTS
 
 twinEP = {'ID':multicastSourceEndpoint1, 'twinEndpointID':multicastSourceEndpoint2}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/twinEndpoints/add', params=twinEP)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/twinEndpoints/add', params=twinEP)
 
 # getParams = {'ID':multicastSourceEndpoint1}
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/get', params=getParams)
+# r = s.get(srvurl + 'CC/rest/domain/endpoint/get', params=getParams)
 # pprint(r.json())
 # {'endpointID': 7,
 #  'endpointParentNodeID': 6,
@@ -1079,7 +1083,7 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/twi
 #  'endpointTwinEndpointID': [15],
 #  'endpointURL': 'multicast-udp-tibrv://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969'}
 # getParams = {'ID':multicastSourceEndpoint2}
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/get', params=getParams)
+# r = s.get(srvurl + 'CC/rest/domain/endpoint/get', params=getParams)
 # pprint(r.json())
 # {'endpointID': 15,
 #  'endpointParentNodeID': 14,
@@ -1103,17 +1107,17 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/twi
 ## NOTE : si dans le nom du transport on a multicast => le graph render dessine un tube !
 
 transportParams = {"name": "multicast-udp-tibrv://devilsMind;239.69.69.69"}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/transport/create', params=transportParams)
+r = s.get(srvurl + 'CC/rest/domain/transport/create', params=transportParams)
 transportID = r.json().get('transportID')
 
 transportProperty = {'ID':transportID,'propertyName':'busDescription','propertyValue':'APP FX prices diffusion'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/transport/update/properties/add', params=transportProperty)
+r = s.get(srvurl + 'CC/rest/domain/transport/update/properties/add', params=transportProperty)
 
 primaryApp = {"color":["String","e8a25d"], "name":["String","APP"]}
 transportProperty = {'ID':transportID,'propertyName':'primaryApplication','propertyValue':json.dumps(primaryApp), 'propertyType':'map'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/transport/update/properties/add', params=transportProperty)
+r = s.get(srvurl + 'CC/rest/domain/transport/update/properties/add', params=transportProperty)
 
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/transport')
+# r = s.get(srvurl + 'CC/rest/domain/transport')
 # pprint(r.json())
 # {'transports': [{'transportID': 17,
 #                  'transportName': 'multicast-udp-tibrv://;239.69.69.69',
@@ -1128,12 +1132,12 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/transport/update/pr
 ## LINK MULTICAST ENDPOINT TO MULTICAST TRANSPORT (ooOO)
 
 linkParams = {"SEPID":multicastSourceEndpoint1,"TEPID":0,"transportID":transportID}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/link/create', params=linkParams);
+r = s.get(srvurl + 'CC/rest/domain/link/create', params=linkParams);
 
 linkParams = {"SEPID":multicastSourceEndpoint2,"TEPID":0,"transportID":transportID}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/link/create', params=linkParams);
+r = s.get(srvurl + 'CC/rest/domain/link/create', params=linkParams);
 
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/link');
+# r = s.get(srvurl + 'CC/rest/domain/link');
 # pprint(r.json())
 # {'links': [{'linkID': 17, 'linkSEPID': 7, 'linkTRPID': 17},
 #            {'linkID': 18, 'linkSEPID': 15, 'linkTRPID': 17}]}
@@ -1145,16 +1149,16 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/link/create', param
 ## CREATE CLUSTER
 
 clusterParams = {"name":"CL000001"}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/cluster/create', params=clusterParams);
+r = s.get(srvurl + 'CC/rest/domain/cluster/create', params=clusterParams);
 clusterID = r.json().get("clusterID")
 
 clusterParams = {"ID":clusterID, "containerID":clusterContainer1}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/cluster/update/containers/add', params=clusterParams);
+r = s.get(srvurl + 'CC/rest/domain/cluster/update/containers/add', params=clusterParams);
 
 clusterParams = {"ID":clusterID, "containerID":clusterContainer2}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/cluster/update/containers/add', params=clusterParams);
+r = s.get(srvurl + 'CC/rest/domain/cluster/update/containers/add', params=clusterParams);
 
-# r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/cluster');
+# r = s.get(srvurl + 'CC/rest/domain/cluster');
 # pprint(r.json())
 # {'clusters': [{'clusterContainersID': [1, 9],
 #                'clusterID': 18,
@@ -1166,62 +1170,62 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/cluster/update/cont
 ## CREATE MAN RVRD
 
 containerParams = {'primaryAdminURL':'http://tibrvrdm02prd01.lab02.dev.dekatonshivr.echinopsii.net:7580', 'primaryAdminGateName':'webadmingate.tibrvrdm02prd01'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/create', params=containerParams)
+r = s.get(srvurl + 'CC/rest/domain/container/create', params=containerParams)
 containerID = r.json().get('containerID')
 
 # MANDATORY FOR GRAPH RENDER
 containerCompany = {'ID':containerID,'company':'Tibco'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/company', params=containerCompany)
+r = s.get(srvurl + 'CC/rest/domain/container/update/company', params=containerCompany)
 
 containerProduct = {'ID':containerID,'product':'Tibco Rendez Vous'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/product', params=containerProduct)
+r = s.get(srvurl + 'CC/rest/domain/container/update/product', params=containerProduct)
 
 containerType = {'ID':containerID,'type':'RV Router Daemon'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/type', params=containerType)
+r = s.get(srvurl + 'CC/rest/domain/container/update/type', params=containerType)
 
 datacenter = {"dc":["String","Somewhere in hell"], "gpsLng":["double",-52.582179], "address":["String","Devil's Island"], "gpsLat":["double",5.295366], "town":["String","Devil's Island"], "country":["String","France"]}
 containerProperty = {'ID':containerID,'propertyName':'Datacenter','propertyValue':json.dumps(datacenter),'propertyType':'map'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 network = {'subnetip':['String','192.168.45.0'], 'subnetmask':['String','255.255.255.0'], 'type':['String','MAN'], 'lan':['String','lab02.man']}
 containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 supportTeam = {"color":["String","1f7d4a"], "name":["String","MDW BUS"]}
 containerProperty = {'ID':containerID,'propertyName':'supportTeam','propertyValue':json.dumps(supportTeam),'propertyType':'map'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 server = { "os":["String","Fedora 18 - x86_64"], "hostname":["String","tibrvrdm02prd01"] }
 containerProperty = {'ID':containerID,'propertyName':'Server','propertyValue':json.dumps(server),'propertyType':'map'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 # OPTIONAL
 containerProperty = {'ID':containerID,'propertyName':'RVRD_PID','propertyValue':666}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 containerProperty = {'ID':containerID,'propertyName':'RVRD_PID'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/delete', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/delete', params=containerProperty)
 
 containerProperty = {'ID':containerID,'propertyName':'RVRD_PID','propertyValue':666}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 containerProperty = {'ID':containerID,'propertyName':'RVRD_HOSTNAME','propertyValue':'tibrvrdm02prd01.lab02.dev.dekatonshivr.echinopsii.net'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 containerProperty = {'ID':containerID,'propertyName':'RVRD_IPADDR','propertyValue':'192.168.45.8'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 containerProperty = {'ID':containerID,'propertyName':'RVRD_NAME','propertyValue':'rvrd'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 containerProperty = {'ID':containerID,'propertyName':'RVRD_INBOX_PORT','propertyValue':0}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 containerProperty = {'ID':containerID,'propertyName':'RVRD_LICENSE_TICKET','propertyValue':217318}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 containerProperty = {'ID':containerID,'propertyName':'RVRD_VERSION','propertyValue':'8.4.0'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 
 
@@ -1230,7 +1234,7 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/pr
 ## ADD A GATE TO MAN RVRD
 
 gateParams = {"URL":"http://tibrvrdm02prd01.lab02.dev.dekatonshivr.echinopsii.net:7500", "name":"rvdgate.tibrvrdm02.prd01", "containerID":containerID, "isPrimaryAdmin":False}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/gate/create', params=gateParams)
+r = s.get(srvurl + 'CC/rest/domain/gate/create', params=gateParams)
 
 
 
@@ -1239,19 +1243,19 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/gate/create', param
 ## ADD A NODE TO MAN RVRD
 
 nodeParams = {"name":"APP6969.tibrvrdlm02prd01", "containerID":containerID, "parentNodeID":0}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node/create', params=nodeParams)
+r = s.get(srvurl + 'CC/rest/domain/node/create', params=nodeParams)
 nodeID = r.json().get('nodeID')
 
 # OPTIONAL NODE PROPERTIES (BUT USEFULL)
 nodeProperty = {'ID':nodeID,'propertyName':'RVRD_ROUTER_MAXBACKLOG','propertyValue':0}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node/update/properties/add', params=nodeProperty)
+r = s.get(srvurl + 'CC/rest/domain/node/update/properties/add', params=nodeProperty)
 
 nodeProperty = {'ID':nodeID,'propertyName':'busDescription','propertyValue':'APP FX prices diffusion'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node/update/properties/add', params=nodeProperty)
+r = s.get(srvurl + 'CC/rest/domain/node/update/properties/add', params=nodeProperty)
 
 primaryApp = {"color":["String","e8a25d"], "name":["String","APP"]}
 nodeProperty = {'ID':nodeID,'propertyName':'primaryApplication','propertyValue':json.dumps(primaryApp), 'propertyType':'map'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node/update/properties/add', params=nodeProperty)
+r = s.get(srvurl + 'CC/rest/domain/node/update/properties/add', params=nodeProperty)
 
 
 
@@ -1260,36 +1264,36 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node/update/propert
 ## ADD ENDPOINTS TO PREVIOUS NODE
 
 endpointParams = {"endpointURL":"tcp-tibrvrd://tibrvrdm02prd01.lab02.dev.dekatonshivr.echinopsii.net:6969", "parentNodeID":nodeID}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/create', params=endpointParams)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/create', params=endpointParams)
 tcpTargetEndpoint1 = r.json().get('endpointID')
 
 endpointProperty = {'ID':tcpTargetEndpoint1,'propertyName':'RVRD_NEIGHBD_COST','propertyValue':1, 'propertyType':'int'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpTargetEndpoint1,'propertyName':'RVRD_NEIGHBD_COMP','propertyValue':False, 'propertyType':'boolean'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpTargetEndpoint1,'propertyName':'RVRD_NEIGHBD_TYPE','propertyValue':0, 'propertyType':'int'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpTargetEndpoint1,'propertyName':'RVRD_NEIGHBD_LHOST','propertyValue':'tibrvrdm02prd01.lab02.dev.dekatonshivr.echinopsii.net'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpTargetEndpoint1,'propertyName':'RVRD_NEIGHBD_LPORT','propertyValue':6969, 'propertyType':'int'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpTargetEndpoint1,'propertyName':'RVRD_NEIGHBD_RPORT','propertyValue':-1, 'propertyType':'int'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpTargetEndpoint1,'propertyName':'RVRD_NEIGHBD_ENC','propertyValue':False, 'propertyType':'boolean'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpTargetEndpoint1,'propertyName':'busDescription','propertyValue':'APP FX prices diffusion'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 primaryApp = {"color":["String","e8a25d"], "name":["String","APP"]}
 endpointProperty = {'ID':tcpTargetEndpoint1,'propertyName':'primaryApplication','propertyValue':json.dumps(primaryApp), 'propertyType':'map'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 
 
@@ -1298,7 +1302,7 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/pro
 ## TRANSPORT
 
 transportParams = {"name": "tcp-tibrvrd://"}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/transport/create', params=transportParams)
+r = s.get(srvurl + 'CC/rest/domain/transport/create', params=transportParams)
 tcpTransportID = r.json().get('transportID')
 
 
@@ -1308,10 +1312,10 @@ tcpTransportID = r.json().get('transportID')
 ## LINKS LAN TO MAN
 
 linkParams = {"SEPID":tcpSourceEndpoint1,"TEPID":tcpTargetEndpoint1,"transportID":tcpTransportID}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/link/create', params=linkParams);
+r = s.get(srvurl + 'CC/rest/domain/link/create', params=linkParams);
 
 linkParams = {"SEPID":tcpSourceEndpoint2,"TEPID":tcpTargetEndpoint1,"transportID":tcpTransportID}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/link/create', params=linkParams);
+r = s.get(srvurl + 'CC/rest/domain/link/create', params=linkParams);
 
 
 
@@ -1321,62 +1325,62 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/link/create', param
 ## CREATE WAN RVRD
 
 containerParams = {'primaryAdminURL':'http://tibrvrdw02prd01.lab02.dev.dekatonshivr.echinopsii.net:7580', 'primaryAdminGateName':'webadmingate.tibrvrdw02prd01'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/create', params=containerParams)
+r = s.get(srvurl + 'CC/rest/domain/container/create', params=containerParams)
 containerID = r.json().get('containerID')
 
 # MANDATORY FOR GRAPH RENDER
 containerCompany = {'ID':containerID,'company':'Tibco'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/company', params=containerCompany)
+r = s.get(srvurl + 'CC/rest/domain/container/update/company', params=containerCompany)
 
 containerProduct = {'ID':containerID,'product':'Tibco Rendez Vous'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/product', params=containerProduct)
+r = s.get(srvurl + 'CC/rest/domain/container/update/product', params=containerProduct)
 
 containerType = {'ID':containerID,'type':'RV Router Daemon'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/type', params=containerType)
+r = s.get(srvurl + 'CC/rest/domain/container/update/type', params=containerType)
 
 datacenter = {"dc":["String","Somewhere in hell"], "gpsLng":["double",-52.582179], "address":["String","Devil's Island"], "gpsLat":["double",5.295366], "town":["String","Devil's Island"], "country":["String","France"]}
 containerProperty = {'ID':containerID,'propertyName':'Datacenter','propertyValue':json.dumps(datacenter),'propertyType':'map'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 network = {'subnetip':['String','192.168.46.0'], 'subnetmask':['String','255.255.255.0'], 'type':['String','WAN'], 'lan':['String','lab02.wan']}
 containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 supportTeam = {"color":["String","1f7d4a"], "name":["String","MDW BUS"]}
 containerProperty = {'ID':containerID,'propertyName':'supportTeam','propertyValue':json.dumps(supportTeam),'propertyType':'map'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 server = { "os":["String","Fedora 18 - x86_64"], "hostname":["String","tibrvrdw02prd01"] }
 containerProperty = {'ID':containerID,'propertyName':'Server','propertyValue':json.dumps(server),'propertyType':'map'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 # OPTIONAL
 containerProperty = {'ID':containerID,'propertyName':'RVRD_PID','propertyValue':666}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 containerProperty = {'ID':containerID,'propertyName':'RVRD_PID'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/delete', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/delete', params=containerProperty)
 
 containerProperty = {'ID':containerID,'propertyName':'RVRD_PID','propertyValue':666}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 containerProperty = {'ID':containerID,'propertyName':'RVRD_HOSTNAME','propertyValue':'tibrvrdw02prd01.lab02.dev.dekatonshivr.echinopsii.net'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 containerProperty = {'ID':containerID,'propertyName':'RVRD_IPADDR','propertyValue':'192.168.46.8'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 containerProperty = {'ID':containerID,'propertyName':'RVRD_NAME','propertyValue':'rvrd'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 containerProperty = {'ID':containerID,'propertyName':'RVRD_INBOX_PORT','propertyValue':0}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 containerProperty = {'ID':containerID,'propertyName':'RVRD_LICENSE_TICKET','propertyValue':217318}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 containerProperty = {'ID':containerID,'propertyName':'RVRD_VERSION','propertyValue':'8.4.0'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/properties/add', params=containerProperty)
+r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 
 
@@ -1385,7 +1389,7 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/container/update/pr
 ## ADD A GATE TO WAN RVRD
 
 gateParams = {"URL":"http://tibrvrdw02prd01.lab02.dev.dekatonshivr.echinopsii.net:7500", "name":"rvdgate.tibrvrdw02.prd01", "containerID":containerID, "isPrimaryAdmin":False}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/gate/create', params=gateParams)
+r = s.get(srvurl + 'CC/rest/domain/gate/create', params=gateParams)
 
 
 
@@ -1394,19 +1398,19 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/gate/create', param
 ## ADD A NODE TO WAN RVRD
 
 nodeParams = {"name":"APP6969.tibrvrdlw02prd01", "containerID":containerID, "parentNodeID":0}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node/create', params=nodeParams)
+r = s.get(srvurl + 'CC/rest/domain/node/create', params=nodeParams)
 nodeID = r.json().get('nodeID')
 
 # OPTIONAL NODE PROPERTIES (BUT USEFULL)
 nodeProperty = {'ID':nodeID,'propertyName':'RVRD_ROUTER_MAXBACKLOG','propertyValue':0}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node/update/properties/add', params=nodeProperty)
+r = s.get(srvurl + 'CC/rest/domain/node/update/properties/add', params=nodeProperty)
 
 nodeProperty = {'ID':nodeID,'propertyName':'busDescription','propertyValue':'APP FX prices diffusion'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node/update/properties/add', params=nodeProperty)
+r = s.get(srvurl + 'CC/rest/domain/node/update/properties/add', params=nodeProperty)
 
 primaryApp = {"color":["String","e8a25d"], "name":["String","APP"]}
 nodeProperty = {'ID':nodeID,'propertyName':'primaryApplication','propertyValue':json.dumps(primaryApp), 'propertyType':'map'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node/update/properties/add', params=nodeProperty)
+r = s.get(srvurl + 'CC/rest/domain/node/update/properties/add', params=nodeProperty)
 
 
 
@@ -1415,77 +1419,77 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/node/update/propert
 ## ADD ENDPOINTS TO PREVIOUS NODE
 
 endpointParams = {"endpointURL":"tcp-tibrvrd://tibrvrdw02prd01.lab02.dev.dekatonshivr.echinopsii.net:16969", "parentNodeID":nodeID}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/create', params=endpointParams)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/create', params=endpointParams)
 tcpSourceEndpoint3 = r.json().get('endpointID')
 
 endpointProperty = {'ID':tcpSourceEndpoint3,'propertyName':'RVRD_NEIGHBD_COST','propertyValue':1, 'propertyType':'int'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint3,'propertyName':'RVRD_NEIGHBD_COMP','propertyValue':False, 'propertyType':'boolean'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint3,'propertyName':'RVRD_NEIGHBD_TYPE','propertyValue':2, 'propertyType':'int'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint3,'propertyName':'RVRD_NEIGHBD_LHOST','propertyValue':'tibrvrdw02prd01.lab02.dev.dekatonshivr.echinopsii.net'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint3,'propertyName':'RVRD_NEIGHBD_LPORT','propertyValue':16969, 'propertyType':'int'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint3,'propertyName':'RVRD_NEIGHBD_RPORT','propertyValue':6969, 'propertyType':'int'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint3,'propertyName':'RVRD_NEIGHBD_RHOST','propertyValue':'tibrvrdm02prd02.lab02.deb.dekatonshivr.echinopsii.net'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint3,'propertyName':'RVRD_NEIGHBD_ENC','propertyValue':False, 'propertyType':'boolean'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint3,'propertyName':'busDescription','propertyValue':'APP FX prices diffusion'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 primaryApp = {"color":["String","e8a25d"], "name":["String","APP"]}
 endpointProperty = {'ID':tcpSourceEndpoint3,'propertyName':'primaryApplication','propertyValue':json.dumps(primaryApp), 'propertyType':'map'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointParams = {"endpointURL":"tcp-tibrvrd://tibrvrdw02prd01.lab02.dev.dekatonshivr.echinopsii.net:6969", "parentNodeID":nodeID}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/create', params=endpointParams)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/create', params=endpointParams)
 tcpSourceEndpoint4 = r.json().get('endpointID')
 
 endpointProperty = {'ID':tcpSourceEndpoint4,'propertyName':'RVRD_NEIGHBD_COST','propertyValue':1, 'propertyType':'int'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint4,'propertyName':'RVRD_NEIGHBD_COMP','propertyValue':False, 'propertyType':'boolean'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint4,'propertyName':'RVRD_NEIGHBD_TYPE','propertyValue':2, 'propertyType':'int'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint4,'propertyName':'RVRD_NEIGHBD_LHOST','propertyValue':'tibrvrdw02prd01.lab02.dev.dekatonshivr.echinopsii.net'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint4,'propertyName':'RVRD_NEIGHBD_LPORT','propertyValue':6969, 'propertyType':'int'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint4,'propertyName':'RVRD_NEIGHBD_RPORT','propertyValue':6969, 'propertyType':'int'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint4,'propertyName':'RVRD_NEIGHBD_RHOST','propertyValue':'tibrvrdwprd01.lab01.deb.dekatonshivr.echinopsii.net'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint4,'propertyName':'RVRD_NEIGHBD_RPORT','propertyValue':6969, 'propertyType':'int'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint4,'propertyName':'RVRD_NEIGHBD_ENC','propertyValue':False, 'propertyType':'boolean'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 endpointProperty = {'ID':tcpSourceEndpoint4,'propertyName':'busDescription','propertyValue':'APP FX prices diffusion'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 primaryApp = {"color":["String","e8a25d"], "name":["String","APP"]}
 endpointProperty = {'ID':tcpSourceEndpoint4,'propertyName':'primaryApplication','propertyValue':json.dumps(primaryApp), 'propertyType':'map'}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/update/properties/add', params=endpointProperty)
 
 
 
@@ -1495,7 +1499,7 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/update/pro
 ## LINKS WAN TO LAN
 
 linkParams = {"SEPID":tcpSourceEndpoint3,"TEPID":tcpTargetEndpoint1,"transportID":tcpTransportID}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/link/create', params=linkParams);
+r = s.get(srvurl + 'CC/rest/domain/link/create', params=linkParams);
 
 
 
@@ -1503,17 +1507,17 @@ r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/link/create', param
 ## LINK WAN PANAM TO WAN DEVILISLAND
 
 paramsRequest={"URL":"tcp-tibrvrd://tibrvrdwprd01.lab01.dev.dekatonshivr.echinopsii.net:6969"}
-r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/get', params=paramsRequest)
+r = s.get(srvurl + 'CC/rest/domain/endpoint/get', params=paramsRequest)
 if r.status_code == 200:
     wanPanamEP = r.json().get('endpointID')
     print("wanPanamEP:" + str(wanPanamEP))
     paramsRequest = {"URL":"tcp-tibrvrd://tibrvrdw02prd01.lab02.dev.dekatonshivr.echinopsii.net:6969"}
-    r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/endpoint/get', params=paramsRequest)
+    r = s.get(srvurl + 'CC/rest/domain/endpoint/get', params=paramsRequest)
     if r.status_code == 200:
         wanDevilEP = r.json().get('endpointID')
         print("wanDevilEP:" + str(wanDevilEP))
         linkParams = {"SEPID":wanDevilEP,"TEPID":wanPanamEP,"transportID":tcpTransportID}
-        r = s.get('http://env-mffrench.lab01.dev:6969/CC/rest/domain/link/create', params=linkParams);
+        r = s.get(srvurl + 'CC/rest/domain/link/create', params=linkParams);
     else:
         pass
 else:

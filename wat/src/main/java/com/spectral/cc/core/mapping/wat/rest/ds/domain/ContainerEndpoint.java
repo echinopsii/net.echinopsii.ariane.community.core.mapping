@@ -25,8 +25,6 @@ import com.spectral.cc.core.mapping.ds.domain.Container;
 import com.spectral.cc.core.mapping.ds.domain.Gate;
 import com.spectral.cc.core.mapping.ds.domain.Node;
 import com.spectral.cc.core.mapping.wat.MappingBootstrap;
-import com.spectral.cc.core.mapping.wat.json.PropertiesException;
-import com.spectral.cc.core.mapping.wat.json.PropertiesJSON;
 import com.spectral.cc.core.mapping.wat.json.ds.domain.ContainerJSON;
 import com.spectral.cc.core.mapping.wat.rest.ToolBox;
 import org.slf4j.Logger;
@@ -35,7 +33,6 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.HashSet;
 
 @Path("/domain/container")

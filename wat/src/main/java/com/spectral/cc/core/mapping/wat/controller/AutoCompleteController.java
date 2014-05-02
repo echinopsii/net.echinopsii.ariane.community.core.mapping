@@ -22,8 +22,6 @@ package com.spectral.cc.core.mapping.wat.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
