@@ -79,7 +79,7 @@ public class NodeRepoImpl implements NodeRepo<NodeImpl> {
             if (entity instanceof NodeImpl) {
                 ret = (NodeImpl) entity;
             } else {
-                log.error("DAEDALUS CONSISTENCY ERROR : entity {} is not a node.", entity.getElement().getId());
+                log.error("CONSISTENCY ERROR : entity {} is not a node.", entity.getElement().getId());
             }
         }
         return ret;

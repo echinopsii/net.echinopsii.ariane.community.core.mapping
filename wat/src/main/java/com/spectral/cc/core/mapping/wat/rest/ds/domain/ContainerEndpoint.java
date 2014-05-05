@@ -81,7 +81,7 @@ public class ContainerEndpoint {
     @GET
     @Path("/get")
     public Response getContainer(@QueryParam("primaryAdminURL") String primaryAdminURL, @QueryParam("ID") long id) {
-        log.error("[{}] get container: {}|{}", new Object[]{Thread.currentThread().getId(), primaryAdminURL, id});
+        log.debug("[{}] get container: {}|{}", new Object[]{Thread.currentThread().getId(), primaryAdminURL, id});
         if (id!=0) {
             return displayContainer(id);
         } else if (primaryAdminURL != null) {

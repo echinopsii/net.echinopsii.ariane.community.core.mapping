@@ -121,8 +121,30 @@ public class NodeEndpoint {
 
     @GET
     @Path("/get")
-    public Response getNode(@QueryParam("ID")long id) {
-        return displayNode(id);
+    public Response getNode(@QueryParam("endpointURL") String endpointURL, @QueryParam("ID")long id) {
+        log.debug("[{}] get node: {}|{}", new Object[]{Thread.currentThread().getId(), endpointURL, id});
+        if (id != 0) {
+            return displayNode(id);
+        } else if (endpointURL!=null) {
+            Node node = (Node) MappingBootstrap.getMappingSce().getNodeSce().getNode(endpointURL);
+            if (node != null) {
+                try {
+                    ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                    NodeJSON.oneNode2JSON(node, outStream);
+                    String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                    return Response.status(200).entity(result).build();
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                    e.printStackTrace();
+                    String result = e.getMessage();
+                    return Response.status(500).entity(result).build();
+                }
+            } else {
+                return Response.status(404).entity("Node with id " + id + " not found.").build();
+            }
+        } else {
+            return Response.status(500).entity("Request error: name and id are not defined. You must define one of these parameters").build();
+        }
     }
 
     @GET

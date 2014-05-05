@@ -87,6 +87,11 @@ public class NodeSceImpl implements NodeSce<NodeImpl> {
     }
 
     @Override
+    public NodeImpl getNode(String endpointURL) {
+        return sce.getGlobalRepo().getNodeRepo().findNodeByEndpointURL(endpointURL);
+    }
+
+    @Override
     public Set<NodeImpl> getNodes(String key, Object value) {
         return sce.getGlobalRepo().getNodeRepo().findNodesByProperties(key, value);
     }

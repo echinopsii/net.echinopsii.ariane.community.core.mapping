@@ -1,13 +1,13 @@
 #!/usr/bin/python3
+import getpass
 
-from getpass import getpass
 import requests
 import json
 #from pprint import pprint
 
 username = input("%-- >> Username : ")
 password = getpass.getpass("%-- >> Password : ")
-srvurl = input("%-- >> CC server url (like http://serverFQDN:6969/)")
+srvurl = input("%-- >> CC server url (like http://serverFQDN:6969/) : ")
 
 # CREATE REQUESTS SESSION
 
@@ -35,15 +35,15 @@ r = s.get(srvurl + 'CC/rest/domain/container/update/product', params=containerPr
 containerType = {'ID':containerID,'type':'RV Router Daemon'}
 r = s.get(srvurl + 'CC/rest/domain/container/update/type', params=containerType)
 
-datacenter = {"dc":["String","Somewhere in hell"], "gpsLng":["double",-52.582179], "address":["String","Devil's Island"], "gpsLat":["double",5.295366], "town":["String","Devil's Island"], "country":["String","France"]}
+datacenter = {"dc":["String","Somewhere in hell [DR]"], "gpsLng":["double",-52.582179], "address":["String","Devil's Island"], "gpsLat":["double",5.295366], "town":["String","Devil's Island"], "country":["String","France"]}
 containerProperty = {'ID':containerID,'propertyName':'Datacenter','propertyValue':json.dumps(datacenter),'propertyType':'map'}
 r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
-network = {'subnetip':['String','192.168.44.0'], 'subnetmask':['String','255.255.255.0'], 'type':['String','LAN'], 'lan':['String','lab02.lan'], 'marea':['String',"devil's mind"]}
+network = {'subnetip':['String','192.168.43.0'], 'subnetmask':['String','255.255.255.0'], 'type':['String','LAN'], 'lan':['String','lab02.lan1'], 'marea':['String',"devil's mind"]}
 containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
 r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
-supportTeam = {"color":["String","1f7d4a"], "name":["String","MDW BUS"]}
+supportTeam = {"color":["String","11301f"], "name":["String","MDW BUS"]}
 containerProperty = {'ID':containerID,'propertyName':'supportTeam','propertyValue':json.dumps(supportTeam),'propertyType':'map'}
 r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
@@ -64,7 +64,7 @@ r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=cont
 containerProperty = {'ID':containerID,'propertyName':'RVRD_HOSTNAME','propertyValue':'tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net'}
 r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
-containerProperty = {'ID':containerID,'propertyName':'RVRD_IPADDR','propertyValue':'192.168.44.8'}
+containerProperty = {'ID':containerID,'propertyName':'RVRD_IPADDR','propertyValue':'192.168.43.8'}
 r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 containerProperty = {'ID':containerID,'propertyName':'RVRD_NAME','propertyValue':'rvrd'}
@@ -91,11 +91,11 @@ r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=cont
 #  'containerProduct': 'Tibco Rendez Vous',
 #  'containerProperties': {'Datacenter': {'address': "Devil's Island",
 #                                         'country': 'France',
-#                                         'dc': 'Somewhere in hell',
+#                                         'dc': 'Somewhere in hell [DR]',
 #                                         'gpsLat': 5.295366,
 #                                         'gpsLng': -52.582179,
 #                                         'town': "Devil's Island"},
-#                          'Network': {'lan': 'lab02.lan',
+#                          'Network': {'lan': 'lab02.lan1',
 #                                      'marea': "devil's mind",
 #                                      'subnetip': '192.168.44.0',
 #                                      'subnetmask': '255.255.255.0',
@@ -109,7 +109,7 @@ r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=cont
 #                          'RVRD_VERSION': '8.4.0',
 #                          'Server': {'hostname': 'tibrvrdl06prd01',
 #                                     'os': 'Fedora 18 - x86_64'},
-#                          'supportTeam': {'color': '1f7d4a',
+#                          'supportTeam': {'color': '11301f',
 #                                          'name': 'MDW BUS'}},
 #  'containerType': 'RV Router Daemon'}
 # r = s.get(srvurl + 'CC/rest/domain/container')
@@ -122,11 +122,11 @@ r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=cont
 #                  'containerProduct': 'Tibco Rendez Vous',
 #                  'containerProperties': {'Datacenter': {'address': "Devil's Island",
 #                                                         'country': 'France',
-#                                                         'dc': 'Somewhere in hell',
+#                                                         'dc': 'Somewhere in hell [DR]',
 #                                                         'gpsLat': 5.295366,
 #                                                         'gpsLng': -52.582179,
 #                                                         'town': "Devil's Island"},
-#                                          'Network': {'lan': 'lab02.lan',
+#                                          'Network': {'lan': 'lab02.lan1',
 #                                                      'marea': "devil's mind",
 #                                                      'subnetip': '192.168.44.0',
 #                                                      'subnetmask': '255.255.255.0',
@@ -140,7 +140,7 @@ r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=cont
 #                                          'RVRD_VERSION': '8.4.0',
 #                                          'Server': {'hostname': 'tibrvrdl06prd01',
 #                                                     'os': 'Fedora 18 - x86_64'},
-#                                          'supportTeam': {'color': '1f7d4a',
+#                                          'supportTeam': {'color': '11301f',
 #                                                          'name': 'MDW BUS'}},
 #                  'containerType': 'RV Router Daemon'}]}
 # r = s.get(srvurl + 'CC/rest/domain/node')
@@ -184,11 +184,11 @@ r = s.get(srvurl + 'CC/rest/domain/gate/create', params=gateParams)
 #                  'containerProduct': 'Tibco Rendez Vous',
 #                  'containerProperties': {'Datacenter': {'address': "Devil's Island",
 #                                                         'country': 'France',
-#                                                         'dc': 'Somewhere in hell',
+#                                                         'dc': 'Somewhere in hell [DR]',
 #                                                         'gpsLat': 5.295366,
 #                                                         'gpsLng': -52.582179,
 #                                                         'town': "Devil's Island"},
-#                                          'Network': {'lan': 'lab02.lan',
+#                                          'Network': {'lan': 'lab02.lan1',
 #                                                      'marea': "devil's mind",
 #                                                      'subnetip': '192.168.44.0',
 #                                                      'subnetmask': '255.255.255.0',
@@ -202,7 +202,7 @@ r = s.get(srvurl + 'CC/rest/domain/gate/create', params=gateParams)
 #                                          'RVRD_VERSION': '8.4.0',
 #                                          'Server': {'hostname': 'tibrvrdl06prd01',
 #                                                     'os': 'Fedora 18 - x86_64'},
-#                                          'supportTeam': {'color': '1f7d4a',
+#                                          'supportTeam': {'color': '11301f',
 #                                                          'name': 'MDW BUS'}},
 #                  'containerType': 'RV Router Daemon'}]}
 # r = s.get(srvurl + 'CC/rest/domain/node')
@@ -264,11 +264,11 @@ twinNode1 = nodeID
 #                  'containerProduct': 'Tibco Rendez Vous',
 #                  'containerProperties': {'Datacenter': {'address': "Devil's Island",
 #                                                         'country': 'France',
-#                                                         'dc': 'Somewhere in hell',
+#                                                         'dc': 'Somewhere in hell [DR]',
 #                                                         'gpsLat': 5.295366,
 #                                                         'gpsLng': -52.582179,
 #                                                         'town': "Devil's Island"},
-#                                          'Network': {'lan': 'lab02.lan',
+#                                          'Network': {'lan': 'lab02.lan1',
 #                                                      'marea': "devil's mind",
 #                                                      'subnetip': '192.168.44.0',
 #                                                      'subnetmask': '255.255.255.0',
@@ -282,7 +282,7 @@ twinNode1 = nodeID
 #                                          'RVRD_VERSION': '8.4.0',
 #                                          'Server': {'hostname': 'tibrvrdl06prd01',
 #                                                     'os': 'Fedora 18 - x86_64'},
-#                                          'supportTeam': {'color': '1f7d4a',
+#                                          'supportTeam': {'color': '11301f',
 #                                                          'name': 'MDW BUS'}},
 #                  'containerType': 'RV Router Daemon'}]}
 # r = s.get(srvurl + 'CC/rest/domain/node')
@@ -548,15 +548,15 @@ r = s.get(srvurl + 'CC/rest/domain/container/update/product', params=containerPr
 containerType = {'ID':containerID,'type':'RV Router Daemon'}
 r = s.get(srvurl + 'CC/rest/domain/container/update/type', params=containerType)
 
-datacenter = {"dc":["String","Somewhere in hell"], "gpsLng":["double",-52.582179], "address":["String","Devil's Island"], "gpsLat":["double",5.295366], "town":["String","Devil's Island"], "country":["String","France"]}
+datacenter = {"dc":["String","Somewhere in hell [DR]"], "gpsLng":["double",-52.582179], "address":["String","Devil's Island"], "gpsLat":["double",5.295366], "town":["String","Devil's Island"], "country":["String","France"]}
 containerProperty = {'ID':containerID,'propertyName':'Datacenter','propertyValue':json.dumps(datacenter),'propertyType':'map'}
 r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
-network = {'subnetip':['String','192.168.45.0'], 'subnetmask':['String','255.255.255.0'], 'type':['String','LAN'], 'lan':['String','lab02.lan2'], 'marea':['String',"devil's mind"]}
+network = {'subnetip':['String','192.168.44.0'], 'subnetmask':['String','255.255.255.0'], 'type':['String','LAN'], 'lan':['String','lab02.lan2'], 'marea':['String',"devil's mind"]}
 containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
 r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
-supportTeam = {"color":["String","1f7d4a"], "name":["String","MDW BUS"]}
+supportTeam = {"color":["String","11301f"], "name":["String","MDW BUS"]}
 containerProperty = {'ID':containerID,'propertyName':'supportTeam','propertyValue':json.dumps(supportTeam),'propertyType':'map'}
 r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
@@ -577,7 +577,7 @@ r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=cont
 containerProperty = {'ID':containerID,'propertyName':'RVRD_HOSTNAME','propertyValue':'tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net'}
 r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
-containerProperty = {'ID':containerID,'propertyName':'RVRD_IPADDR','propertyValue':'192.168.45.8'}
+containerProperty = {'ID':containerID,'propertyName':'RVRD_IPADDR','propertyValue':'192.168.44.8'}
 r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
 containerProperty = {'ID':containerID,'propertyName':'RVRD_NAME','propertyValue':'rvrd'}
@@ -603,11 +603,11 @@ r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=cont
 #                  'containerProduct': 'Tibco Rendez Vous',
 #                  'containerProperties': {'Datacenter': {'address': "Devil's Island",
 #                                                         'country': 'France',
-#                                                         'dc': 'Somewhere in hell',
+#                                                         'dc': 'Somewhere in hell [DR]',
 #                                                         'gpsLat': 5.295366,
 #                                                         'gpsLng': -52.582179,
 #                                                         'town': "Devil's Island"},
-#                                          'Network': {'lan': 'lab02.lan',
+#                                          'Network': {'lan': 'lab02.lan1',
 #                                                      'marea': "devil's mind",
 #                                                      'subnetip': '192.168.44.0',
 #                                                      'subnetmask': '255.255.255.0',
@@ -621,7 +621,7 @@ r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=cont
 #                                          'RVRD_VERSION': '8.4.0',
 #                                          'Server': {'hostname': 'tibrvrdl06prd01',
 #                                                     'os': 'Fedora 18 - x86_64'},
-#                                          'supportTeam': {'color': '1f7d4a',
+#                                          'supportTeam': {'color': '11301f',
 #                                                          'name': 'MDW BUS'}},
 #                  'containerType': 'RV Router Daemon'},
 #                 {'containerCompany': 'Tibco',
@@ -632,7 +632,7 @@ r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=cont
 #                  'containerProduct': 'Tibco Rendez Vous',
 #                  'containerProperties': {'Datacenter': {'address': "Devil's Island",
 #                                                         'country': 'France',
-#                                                         'dc': 'Somewhere in hell',
+#                                                         'dc': 'Somewhere in hell [DR]',
 #                                                         'gpsLat': 5.295366,
 #                                                         'gpsLng': -52.582179,
 #                                                         'town': "Devil's Island"},
@@ -650,7 +650,7 @@ r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=cont
 #                                          'RVRD_VERSION': '8.4.0',
 #                                          'Server': {'hostname': 'tibrvrdl07prd01',
 #                                                     'os': 'Fedora 18 - x86_64'},
-#                                          'supportTeam': {'color': '1f7d4a',
+#                                          'supportTeam': {'color': '11301f',
 #                                                          'name': 'MDW BUS'}},
 #                  'containerType': 'RV Router Daemon'}]}
 # r = s.get(srvurl + 'CC/rest/domain/node')
@@ -701,7 +701,7 @@ r = s.get(srvurl + 'CC/rest/domain/gate/create', params=gateParams)
 #  'containerProduct': 'Tibco Rendez Vous',
 #  'containerProperties': {'Datacenter': {'address': "Devil's Island",
 #                                         'country': 'France',
-#                                         'dc': 'Somewhere in hell',
+#                                         'dc': 'Somewhere in hell [DR]',
 #                                         'gpsLat': 5.295366,
 #                                         'gpsLng': -52.582179,
 #                                         'town': "Devil's Island"},
@@ -719,7 +719,7 @@ r = s.get(srvurl + 'CC/rest/domain/gate/create', params=gateParams)
 #                          'RVRD_VERSION': '8.4.0',
 #                          'Server': {'hostname': 'tibrvrdl07prd01',
 #                                     'os': 'Fedora 18 - x86_64'},
-#                          'supportTeam': {'color': '1f7d4a',
+#                          'supportTeam': {'color': '11301f',
 #                                          'name': 'MDW BUS'}},
 #  'containerType': 'RV Router Daemon'}
 # r = s.get(srvurl + 'CC/rest/domain/gate')
@@ -861,7 +861,7 @@ r = s.get(srvurl + 'CC/rest/domain/node/update/properties/add', params=nodePrope
 #  'containerProduct': 'Tibco Rendez Vous',
 #  'containerProperties': {'Datacenter': {'address': "Devil's Island",
 #                                         'country': 'France',
-#                                         'dc': 'Somewhere in hell',
+#                                         'dc': 'Somewhere in hell [DR]',
 #                                         'gpsLat': 5.295366,
 #                                         'gpsLng': -52.582179,
 #                                         'town': "Devil's Island"},
@@ -879,7 +879,7 @@ r = s.get(srvurl + 'CC/rest/domain/node/update/properties/add', params=nodePrope
 #                          'RVRD_VERSION': '8.4.0',
 #                          'Server': {'hostname': 'tibrvrdl07prd01',
 #                                     'os': 'Fedora 18 - x86_64'},
-#                          'supportTeam': {'color': '1f7d4a',
+#                          'supportTeam': {'color': '11301f',
 #                                          'name': 'MDW BUS'}},
 #  'containerType': 'RV Router Daemon'}
 # getParams = {'ID':nodeID}
@@ -1183,7 +1183,7 @@ r = s.get(srvurl + 'CC/rest/domain/container/update/product', params=containerPr
 containerType = {'ID':containerID,'type':'RV Router Daemon'}
 r = s.get(srvurl + 'CC/rest/domain/container/update/type', params=containerType)
 
-datacenter = {"dc":["String","Somewhere in hell"], "gpsLng":["double",-52.582179], "address":["String","Devil's Island"], "gpsLat":["double",5.295366], "town":["String","Devil's Island"], "country":["String","France"]}
+datacenter = {"dc":["String","Somewhere in hell [DR]"], "gpsLng":["double",-52.582179], "address":["String","Devil's Island"], "gpsLat":["double",5.295366], "town":["String","Devil's Island"], "country":["String","France"]}
 containerProperty = {'ID':containerID,'propertyName':'Datacenter','propertyValue':json.dumps(datacenter),'propertyType':'map'}
 r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
@@ -1191,7 +1191,7 @@ network = {'subnetip':['String','192.168.45.0'], 'subnetmask':['String','255.255
 containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
 r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
-supportTeam = {"color":["String","1f7d4a"], "name":["String","MDW BUS"]}
+supportTeam = {"color":["String","11301f"], "name":["String","MDW BUS"]}
 containerProperty = {'ID':containerID,'propertyName':'supportTeam','propertyValue':json.dumps(supportTeam),'propertyType':'map'}
 r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
@@ -1338,7 +1338,7 @@ r = s.get(srvurl + 'CC/rest/domain/container/update/product', params=containerPr
 containerType = {'ID':containerID,'type':'RV Router Daemon'}
 r = s.get(srvurl + 'CC/rest/domain/container/update/type', params=containerType)
 
-datacenter = {"dc":["String","Somewhere in hell"], "gpsLng":["double",-52.582179], "address":["String","Devil's Island"], "gpsLat":["double",5.295366], "town":["String","Devil's Island"], "country":["String","France"]}
+datacenter = {"dc":["String","Somewhere in hell [DR]"], "gpsLng":["double",-52.582179], "address":["String","Devil's Island"], "gpsLat":["double",5.295366], "town":["String","Devil's Island"], "country":["String","France"]}
 containerProperty = {'ID':containerID,'propertyName':'Datacenter','propertyValue':json.dumps(datacenter),'propertyType':'map'}
 r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
@@ -1346,7 +1346,7 @@ network = {'subnetip':['String','192.168.46.0'], 'subnetmask':['String','255.255
 containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
 r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
-supportTeam = {"color":["String","1f7d4a"], "name":["String","MDW BUS"]}
+supportTeam = {"color":["String","11301f"], "name":["String","MDW BUS"]}
 containerProperty = {'ID':containerID,'propertyName':'supportTeam','propertyValue':json.dumps(supportTeam),'propertyType':'map'}
 r = s.get(srvurl + 'CC/rest/domain/container/update/properties/add', params=containerProperty)
 
@@ -1510,12 +1510,12 @@ paramsRequest={"URL":"tcp-tibrvrd://tibrvrdwprd01.lab01.dev.dekatonshivr.echinop
 r = s.get(srvurl + 'CC/rest/domain/endpoint/get', params=paramsRequest)
 if r.status_code == 200:
     wanPanamEP = r.json().get('endpointID')
-    print("wanPanamEP:" + str(wanPanamEP))
+    #print("wanPanamEP:" + str(wanPanamEP))
     paramsRequest = {"URL":"tcp-tibrvrd://tibrvrdw02prd01.lab02.dev.dekatonshivr.echinopsii.net:6969"}
     r = s.get(srvurl + 'CC/rest/domain/endpoint/get', params=paramsRequest)
     if r.status_code == 200:
         wanDevilEP = r.json().get('endpointID')
-        print("wanDevilEP:" + str(wanDevilEP))
+        #print("wanDevilEP:" + str(wanDevilEP))
         linkParams = {"SEPID":wanDevilEP,"TEPID":wanPanamEP,"transportID":tcpTransportID}
         r = s.get(srvurl + 'CC/rest/domain/link/create', params=linkParams);
     else:
