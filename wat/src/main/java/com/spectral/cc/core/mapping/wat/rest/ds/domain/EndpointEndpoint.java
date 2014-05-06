@@ -34,7 +34,7 @@ import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
 
-@Path("/domain/endpoint")
+@Path("/mapping/domain/endpoints")
 public class EndpointEndpoint {
     private static final Logger log = LoggerFactory.getLogger(EndpointEndpoint.class);
 

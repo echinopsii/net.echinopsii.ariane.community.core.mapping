@@ -35,7 +35,7 @@ import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
 
-@Path("/domain/node")
+@Path("/mapping/domain/nodes")
 public class NodeEndpoint {
     private static final Logger log = LoggerFactory.getLogger(NodeEndpoint.class);
 

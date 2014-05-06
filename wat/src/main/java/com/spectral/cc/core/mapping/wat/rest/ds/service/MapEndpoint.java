@@ -36,7 +36,7 @@ import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
 
-@Path("/service/map")
+@Path("/mapping/service/map")
 public class MapEndpoint {
 
     private static final Logger log = LoggerFactory.getLogger(MapEndpoint.class);

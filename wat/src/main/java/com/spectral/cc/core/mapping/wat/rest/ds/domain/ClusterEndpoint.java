@@ -36,7 +36,7 @@ import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
 
-@Path("/domain/cluster")
+@Path("/mapping/domain/clusters")
 public class ClusterEndpoint {
     private static final Logger log = LoggerFactory.getLogger(ContainerEndpoint.class);
 

@@ -35,7 +35,7 @@ import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
 
-@Path("/domain/transport")
+@Path("/mapping/domain/transports")
 public class TransportEndpoint {
     private static final Logger log = LoggerFactory.getLogger(GateEndpoint.class);
 

@@ -37,7 +37,7 @@ import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
 
-@Path("/domain/gate")
+@Path("/mapping/domain/gates")
 public class GateEndpoint {
     private static final Logger log = LoggerFactory.getLogger(GateEndpoint.class);
 
