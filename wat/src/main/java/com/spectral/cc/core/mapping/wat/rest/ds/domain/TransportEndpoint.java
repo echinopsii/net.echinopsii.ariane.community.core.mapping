@@ -20,18 +20,19 @@
 package com.spectral.cc.core.mapping.wat.rest.ds.domain;
 
 import com.spectral.cc.core.mapping.ds.MappingDSException;
-import com.spectral.cc.core.mapping.ds.domain.Container;
 import com.spectral.cc.core.mapping.ds.domain.Transport;
 import com.spectral.cc.core.mapping.ds.service.MappingSce;
 import com.spectral.cc.core.mapping.wat.MappingBootstrap;
-import com.spectral.cc.core.mapping.wat.json.ds.domain.ContainerJSON;
 import com.spectral.cc.core.mapping.wat.json.ds.domain.TransportJSON;
 import com.spectral.cc.core.mapping.wat.rest.ToolBox;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
 
@@ -42,73 +43,55 @@ public class TransportEndpoint {
     @GET
     @Path("/{param}")
     public Response displayTransport(@PathParam("param") long id) {
-        log.debug("[{}] get transport : {}", new Object[]{Thread.currentThread().getId(), id});
-        MappingSce mapping = MappingBootstrap.getMappingSce();
-        Transport transport = (Transport) mapping.getTransportSce().getTransport(id);
-        if (transport != null) {
-            try {
-                ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-                TransportJSON.oneTransport2JSON(transport, outStream);
-                String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                return Response.status(200).entity(result).build();
-            } catch (Exception e) {
-                log.error(e.getMessage());
-                e.printStackTrace();
-                String result = e.getMessage();
-                return Response.status(500).entity(result).build();
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}-{}] get transport : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id});
+        if (subject.hasRole("ccmappingreader") || subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:read") ||
+            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        {
+            MappingSce mapping = MappingBootstrap.getMappingSce();
+            Transport transport = (Transport) mapping.getTransportSce().getTransport(id);
+            if (transport != null) {
+                try {
+                    ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                    TransportJSON.oneTransport2JSON(transport, outStream);
+                    String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                    return Response.status(Status.OK).entity(result).build();
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                    e.printStackTrace();
+                    String result = e.getMessage();
+                    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                }
+            } else {
+                return Response.status(Status.NOT_FOUND).entity("Transport with id " + id + " not found.").build();
             }
         } else {
-            return Response.status(404).entity("Transport with id " + id + " not found.").build();
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
         }
     }
 
     @GET
     public Response displayAllTransports() {
-        MappingSce mapping = MappingBootstrap.getMappingSce();
-        String result = "";
-        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-        log.debug("[{}] get transports", new Object[]{Thread.currentThread().getId()});
-        try {
-            TransportJSON.manyTransports2JSON((HashSet<Transport>) mapping.getTransportSce().getTransports(null), outStream);
-            result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-            return Response.status(200).entity(result).build();
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
-            result = e.getMessage();
-            return Response.status(500).entity(result).build();
-        }
-    }
-
-    @GET
-    @Path("/create")
-    public Response createTransport(@QueryParam("name")String transportName) {
-        log.debug("[{}] create transport : {}", new Object[]{Thread.currentThread().getId(), transportName});
-        MappingSce mapping  = MappingBootstrap.getMappingSce();
-        Transport transport = (Transport) mapping.getTransportSce().createTransport(transportName);
-        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-        try {
-            TransportJSON.oneTransport2JSON(transport, outStream);
-            String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-            return Response.status(200).entity(result).build();
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
-            String result = e.getMessage();
-            return Response.status(500).entity(result).build();
-        }
-    }
-
-    @GET
-    @Path("/delete")
-    public Response deleteTransport(@QueryParam("ID")long transportID) {
-        log.debug("[{}] delete transport : {}", new Object[]{Thread.currentThread().getId(), transportID});
-        MappingSce mapping = MappingBootstrap.getMappingSce();
-        try {
-            mapping.getTransportSce().deleteTransport(transportID);
-            return Response.status(200).entity("Transport (" + transportID + ") has been successfully deleted !").build();
-        } catch (MappingDSException e) {
-            return Response.status(404).entity("Error while deleting transport with id " + transportID).build();
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}-{}] get transports", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
+        if (subject.hasRole("ccmappingreader") || subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:read") ||
+            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        {
+            MappingSce mapping = MappingBootstrap.getMappingSce();
+            String result = "";
+            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+            try {
+                TransportJSON.manyTransports2JSON((HashSet<Transport>) mapping.getTransportSce().getTransports(null), outStream);
+                result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                return Response.status(Status.OK).entity(result).build();
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                e.printStackTrace();
+                result = e.getMessage();
+                return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+            }
+        } else {
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
         }
     }
 
@@ -119,15 +102,68 @@ public class TransportEndpoint {
     }
 
     @GET
+    @Path("/create")
+    public Response createTransport(@QueryParam("name")String transportName) {
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}-{}] create transport : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), transportName});
+        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        {
+            MappingSce mapping = MappingBootstrap.getMappingSce();
+            Transport transport = (Transport) mapping.getTransportSce().createTransport(transportName);
+            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+            try {
+                TransportJSON.oneTransport2JSON(transport, outStream);
+                String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                return Response.status(Status.OK).entity(result).build();
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                e.printStackTrace();
+                String result = e.getMessage();
+                return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+            }
+        } else {
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
+        }
+    }
+
+    @GET
+    @Path("/delete")
+    public Response deleteTransport(@QueryParam("ID")long transportID) {
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}-{}] delete transport : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), transportID});
+        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        {
+            MappingSce mapping = MappingBootstrap.getMappingSce();
+            try {
+                mapping.getTransportSce().deleteTransport(transportID);
+                return Response.status(Status.OK).entity("Transport (" + transportID + ") has been successfully deleted !").build();
+            } catch (MappingDSException e) {
+                return Response.status(Status.NOT_FOUND).entity("Error while deleting transport with id " + transportID).build();
+            }
+        } else {
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
+        }
+    }
+
+    @GET
     @Path("/update/name")
     public Response setTransportName(@QueryParam("ID")long id, @QueryParam("name")String name) {
-        log.debug("[{}] update transport name: ({},{})", new Object[]{Thread.currentThread().getId(), id, name});
-        Transport transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(id);
-        if (transport != null) {
-            transport.setTransportName(name);
-            return Response.status(200).entity("Transport ("+id+") name successfully updated to " + name + ".").build();
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}-{}] update transport name: ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name});
+        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        {
+            Transport transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(id);
+            if (transport != null) {
+                transport.setTransportName(name);
+                return Response.status(Status.OK).entity("Transport (" + id + ") name successfully updated to " + name + ".").build();
+            } else {
+                return Response.status(Status.NOT_FOUND).entity("Error while updating transport (" + id + ") name " + name + " : link " + id + " not found.").build();
+            }
         } else {
-            return Response.status(404).entity("Error while updating transport (" + id + ") name " + name + " : link " + id + " not found.").build();
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
         }
     }
 
@@ -135,35 +171,49 @@ public class TransportEndpoint {
     @Path("/update/properties/add")
     public Response addTransportProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name, @QueryParam("propertyValue") String value,
                                          @DefaultValue("String") @QueryParam("propertyType") String type) {
-        log.debug("[{}] update transport by adding a property : ({},({},{},{}))", new Object[]{Thread.currentThread().getId(), id, name, value, type});
-        Transport transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(id);
-        if (transport != null) {
-            Object oValue;
-            try {
-                oValue = ToolBox.extractPropertyObjectValueFromString(value, type);
-            } catch (Exception e) {
-                log.error(e.getMessage());
-                e.printStackTrace();
-                String result = e.getMessage();
-                return Response.status(500).entity(result).build();
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}-{}] update transport by adding a property : ({},({},{},{}))", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name, value, type});
+        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        {
+            Transport transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(id);
+            if (transport != null) {
+                Object oValue;
+                try {
+                    oValue = ToolBox.extractPropertyObjectValueFromString(value, type);
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                    e.printStackTrace();
+                    String result = e.getMessage();
+                    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                }
+                transport.addTransportProperty(name, oValue);
+                return Response.status(Status.OK).entity("Property (" + name + "," + value + ") successfully added to transport " + id + ".").build();
+            } else {
+                return Response.status(Status.NOT_FOUND).entity("Error while adding property " + name + " to transport " + id + " : transport " + id + " not found.").build();
             }
-            transport.addTransportProperty(name, oValue);
-            return Response.status(200).entity("Property ("+name+","+value+") successfully added to transport "+id+".").build();
         } else {
-            return Response.status(404).entity("Error while adding property "+name+" to transport "+id+" : transport " + id + " not found.").build();
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
         }
     }
 
     @GET
     @Path("/update/properties/delete")
     public Response deleteTransportProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name) {
+        Subject subject = SecurityUtils.getSubject();
         log.debug("[{}] update transport by removing a property : ({},{})", new Object[]{Thread.currentThread().getId(), id, name});
-        Transport transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(id);
-        if (transport != null) {
-            transport.removeTransportProperty(name);
-            return Response.status(200).entity("Property ("+name+") successfully deleted from transport "+id+".").build();
+        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        {
+            Transport transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(id);
+            if (transport != null) {
+                transport.removeTransportProperty(name);
+                return Response.status(Status.OK).entity("Property (" + name + ") successfully deleted from transport " + id + ".").build();
+            } else {
+                return Response.status(Status.NOT_FOUND).entity("Error while deleting property " + name + " from transport " + id + " : transport " + id + " not found.").build();
+            }
         } else {
-            return Response.status(404).entity("Error while deleting property "+name+" from transport "+id+" : transport " + id + " not found.").build();
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
         }
     }
 }

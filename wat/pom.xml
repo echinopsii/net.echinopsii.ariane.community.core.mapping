@@ -181,6 +181,8 @@
                             org.apache.commons.fileupload.portlet;version="${version.commons.fileupload}",
                             org.apache.commons.fileupload.servlet;version="${version.commons.fileupload}",
                             org.apache.commons.fileupload.util;version="${version.commons.fileupload}",
+                            org.apache.shiro;version="${version.org.apache.shiro}",
+                            org.apache.shiro.subject;version="${version.org.apache.shiro}",
                             org.apache.shiro.web.config;version="${version.org.apache.shiro}",
                             org.apache.shiro.web.env;version="${version.org.apache.shiro}",
                             org.apache.shiro.web.filter;version="${version.org.apache.shiro}",

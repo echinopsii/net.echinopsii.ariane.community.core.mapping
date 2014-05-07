@@ -27,11 +27,14 @@ import com.spectral.cc.core.mapping.ds.service.MappingSce;
 import com.spectral.cc.core.mapping.wat.MappingBootstrap;
 import com.spectral.cc.core.mapping.wat.json.ds.domain.NodeJSON;
 import com.spectral.cc.core.mapping.wat.rest.ToolBox;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
 
@@ -40,267 +43,364 @@ public class NodeEndpoint {
     private static final Logger log = LoggerFactory.getLogger(NodeEndpoint.class);
 
     @GET
-    @Path("/{param}")
+    @Path("/{param:[0-9][0-9]*}")
     public Response displayNode(@PathParam("param") long id) {
-        log.debug("[{}] get node : {}", new Object[]{Thread.currentThread().getId(), id});
-        Node node = (Node) MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
-        if (node != null) {
-            try {
-                ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-                NodeJSON.oneNode2JSON(node, outStream);
-                String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                return Response.status(200).entity(result).build();
-            } catch (Exception e) {
-                log.error(e.getMessage());
-                e.printStackTrace();
-                String result = e.getMessage();
-                return Response.status(500).entity(result).build();
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}-{}] get node : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id});
+        if (subject.hasRole("ccmappingreader") || subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:read") ||
+            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        {
+            Node node = (Node) MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
+            if (node != null) {
+                try {
+                    ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                    NodeJSON.oneNode2JSON(node, outStream);
+                    String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                    return Response.status(Status.OK).entity(result).build();
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                    e.printStackTrace();
+                    String result = e.getMessage();
+                    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                }
+            } else {
+                return Response.status(Status.NOT_FOUND).entity("Node with id " + id + " not found.").build();
             }
         } else {
-            return Response.status(404).entity("Node with id " + id + " not found.").build();
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
         }
     }
 
     @GET
     public Response displayAllNodes() {
-        String result = "";
-        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-        log.debug("[{}] get nodes", new Object[]{Thread.currentThread().getId()});
-        try {
-            NodeJSON.manyNodes2JSON((HashSet<Node>) MappingBootstrap.getMappingSce().getNodeSce().getNodes(null), outStream);
-            result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-            return Response.status(200).entity(result).build();
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
-            result = e.getMessage();
-            return Response.status(500).entity(result).build();
-        }
-    }
-
-    @GET
-    @Path("/create")
-    public Response createNode(@QueryParam("name")String nodeName, @QueryParam("containerID")long containerID, @QueryParam("parentNodeID")long parentNodeID) {
-        log.debug("[{}] create node : ({},{},{},{})", new Object[]{Thread.currentThread().getId(), nodeName, containerID, parentNodeID});
-        try {
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}-{}] get nodes", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
+        if (subject.hasRole("ccmappingreader") || subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:read") ||
+            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        {
+            String result = "";
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-            Node node = MappingBootstrap.getMappingSce().getNodeSce().createNode(nodeName, containerID, parentNodeID);
             try {
-                NodeJSON.oneNode2JSON(node, outStream);
-                String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                return Response.status(200).entity(result).build();
+                NodeJSON.manyNodes2JSON((HashSet<Node>) MappingBootstrap.getMappingSce().getNodeSce().getNodes(null), outStream);
+                result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                return Response.status(Status.OK).entity(result).build();
             } catch (Exception e) {
                 log.error(e.getMessage());
                 e.printStackTrace();
-                String result = e.getMessage();
-                return Response.status(500).entity(result).build();
+                result = e.getMessage();
+                return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
             }
-        } catch (MappingDSException e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
-            String result = e.getMessage();
-            return Response.status(500).entity(result).build();
-        }
-    }
-
-    @GET
-    @Path("/delete")
-    public Response deleteNode(@QueryParam("ID")long nodeID) {
-        log.debug("[{}] delete node : ({})", new Object[]{Thread.currentThread().getId(), nodeID});
-        MappingSce mapping = MappingBootstrap.getMappingSce();
-        try {
-            mapping.getNodeSce().deleteNode(nodeID);
-            return Response.status(200).entity("Node (" + nodeID + ") successfully deleted.").build();
-        } catch (MappingDSException e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
-            String result = e.getMessage();
-            return Response.status(500).entity(result).build();
+        } else {
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
         }
     }
 
     @GET
     @Path("/get")
     public Response getNode(@QueryParam("endpointURL") String endpointURL, @QueryParam("ID")long id) {
-        log.debug("[{}] get node: {}|{}", new Object[]{Thread.currentThread().getId(), endpointURL, id});
         if (id != 0) {
             return displayNode(id);
         } else if (endpointURL!=null) {
-            Node node = (Node) MappingBootstrap.getMappingSce().getNodeSce().getNode(endpointURL);
-            if (node != null) {
+            Subject subject = SecurityUtils.getSubject();
+            log.debug("[{}-{}] get node: {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), endpointURL});
+            if (subject.hasRole("ccmappingreader") || subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:read") ||
+                subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+            {
+                Node node = (Node) MappingBootstrap.getMappingSce().getNodeSce().getNode(endpointURL);
+                if (node != null) {
+                    try {
+                        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                        NodeJSON.oneNode2JSON(node, outStream);
+                        String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                        return Response.status(Status.OK).entity(result).build();
+                    } catch (Exception e) {
+                        log.error(e.getMessage());
+                        e.printStackTrace();
+                        String result = e.getMessage();
+                        return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                    }
+                } else {
+                    return Response.status(Status.NOT_FOUND).entity("Node with id " + id + " not found.").build();
+                }
+            } else {
+                return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
+            }
+        } else {
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Request error: name and id are not defined. You must define one of these parameters").build();
+        }
+    }
+
+    @GET
+    @Path("/create")
+    public Response createNode(@QueryParam("name")String nodeName, @QueryParam("containerID")long containerID, @QueryParam("parentNodeID")long parentNodeID) {
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}-{}] create node : ({},{},{},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), nodeName, containerID, parentNodeID});
+        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone")) {
+            try {
+                ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                Node node = MappingBootstrap.getMappingSce().getNodeSce().createNode(nodeName, containerID, parentNodeID);
                 try {
-                    ByteArrayOutputStream outStream = new ByteArrayOutputStream();
                     NodeJSON.oneNode2JSON(node, outStream);
                     String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                    return Response.status(200).entity(result).build();
+                    return Response.status(Status.OK).entity(result).build();
                 } catch (Exception e) {
                     log.error(e.getMessage());
                     e.printStackTrace();
                     String result = e.getMessage();
-                    return Response.status(500).entity(result).build();
+                    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
                 }
-            } else {
-                return Response.status(404).entity("Node with id " + id + " not found.").build();
+            } catch (MappingDSException e) {
+                log.error(e.getMessage());
+                e.printStackTrace();
+                String result = e.getMessage();
+                return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
             }
         } else {
-            return Response.status(500).entity("Request error: name and id are not defined. You must define one of these parameters").build();
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
+        }
+    }
+
+    @GET
+    @Path("/delete")
+    public Response deleteNode(@QueryParam("ID")long nodeID) {
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}-{}] delete node : ({})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), nodeID});
+        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        {
+            MappingSce mapping = MappingBootstrap.getMappingSce();
+            try {
+                mapping.getNodeSce().deleteNode(nodeID);
+                return Response.status(Status.OK).entity("Node (" + nodeID + ") successfully deleted.").build();
+            } catch (MappingDSException e) {
+                log.error(e.getMessage());
+                e.printStackTrace();
+                String result = e.getMessage();
+                return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+            }
+        } else {
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
         }
     }
 
     @GET
     @Path("/update/name")
     public Response setNodeName(@QueryParam("ID")long id, @QueryParam("name")String name) {
-        log.debug("[{}] update node name : ({},{})", new Object[]{Thread.currentThread().getId(), id, name});
-        Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
-        if (node != null) {
-            node.setNodeName(name);
-            return Response.status(200).entity("Node ("+id+") name successfully updated to " + name + ".").build();
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}-{}] update node name : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name});
+        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        {
+            Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
+            if (node != null) {
+                node.setNodeName(name);
+                return Response.status(Status.OK).entity("Node (" + id + ") name successfully updated to " + name + ".").build();
+            } else {
+                return Response.status(Status.NOT_FOUND).entity("Error while updating node (" + id + ") name " + name + " : node " + id + " not found.").build();
+            }
         } else {
-            return Response.status(404).entity("Error while updating node (" + id + ") name " + name + " : node " + id + " not found.").build();
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
         }
     }
 
     @GET
     @Path("/update/container")
     public Response setNodeContainer(@QueryParam("ID")long id, @QueryParam("containerID")long containerID) {
-        log.debug("[{}] update node container : ({},{})", new Object[]{Thread.currentThread().getId(), id, containerID});
-        Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
-        if (node != null) {
-            Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(containerID);
-            if (container != null) {
-                node.setNodeContainer(container);
-                return Response.status(200).entity("Node ("+id+") container successfully updated to " + containerID + ".").build();
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}-{}] update node container : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, containerID});
+        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        {
+            Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
+            if (node != null) {
+                Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(containerID);
+                if (container != null) {
+                    node.setNodeContainer(container);
+                    return Response.status(Status.OK).entity("Node (" + id + ") container successfully updated to " + containerID + ".").build();
+                } else {
+                    return Response.status(Status.NOT_FOUND).entity("Error while updating node (" + id + ") container " + containerID + " : container " + containerID + " not found.").build();
+                }
             } else {
-                return Response.status(404).entity("Error while updating node (" + id + ") container " + containerID + " : container " + containerID + " not found.").build();
+                return Response.status(Status.NOT_FOUND).entity("Error while updating node (" + id + ") container " + containerID + " : node " + id + " not found.").build();
             }
         } else {
-            return Response.status(404).entity("Error while updating node (" + id + ") container " + containerID + " : node " + id + " not found.").build();
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
         }
     }
 
     @GET
     @Path("/update/parentNode")
     public Response setNodeParentNode(@QueryParam("ID")long id, @QueryParam("parentNodeID")long parentNodeID) {
-        log.debug("[{}] update node parent node : ({},{})", new Object[]{Thread.currentThread().getId(), id, parentNodeID});
-        Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
-        if (node != null) {
-            Node parentNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
-            if (parentNode!=null) {
-                node.setNodeParentNode(parentNode);
-                return Response.status(200).entity("Node ("+parentNodeID+") parent node successfully updated to " + parentNodeID + ".").build();
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}-{}] update node parent node : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, parentNodeID});
+        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        {
+            Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
+            if (node != null) {
+                Node parentNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
+                if (parentNode != null) {
+                    node.setNodeParentNode(parentNode);
+                    return Response.status(Status.OK).entity("Node (" + parentNodeID + ") parent node successfully updated to " + parentNodeID + ".").build();
+                } else {
+                    return Response.status(Status.NOT_FOUND).entity("Error while updating node (" + id + ") parent node " + parentNodeID + " : parent node " + parentNodeID + " not found.").build();
+                }
             } else {
-                return Response.status(404).entity("Error while updating node (" + id + ") parent node " + parentNodeID + " : parent node " + parentNodeID + " not found.").build();
+                return Response.status(Status.NOT_FOUND).entity("Error while updating node (" + id + ") parent node " + parentNodeID + " : node " + id + " not found.").build();
             }
         } else {
-            return Response.status(404).entity("Error while updating node (" + id + ") parent node " + parentNodeID + " : node " + id + " not found.").build();
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
         }
     }
 
     @GET
     @Path("/update/childNodes/add")
     public Response addNodeChildNode(@QueryParam("ID")long id, @QueryParam("childNodeID") long childNodeID) {
-        log.debug("[{}] add node child node : ({},{})", new Object[]{Thread.currentThread().getId(), id, childNodeID});
-        Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
-        if (node != null) {
-            Node childNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(childNodeID);
-            if (childNode!=null) {
-                node.addNodeChildNode(childNode);
-                return Response.status(200).entity("Child node ("+childNodeID+") successfully added to node " + id + ".").build();
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}-{}] add node child node : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, childNodeID});
+        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        {
+            Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
+            if (node != null) {
+                Node childNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(childNodeID);
+                if (childNode != null) {
+                    node.addNodeChildNode(childNode);
+                    return Response.status(Status.OK).entity("Child node (" + childNodeID + ") successfully added to node " + id + ".").build();
+                } else {
+                    return Response.status(Status.NOT_FOUND).entity("Error while adding child node " + childNodeID + " to node " + id + " : child node " + childNodeID + " not found.").build();
+                }
             } else {
-                return Response.status(404).entity("Error while adding child node " + childNodeID + " to node " + id + " : child node " + childNodeID + " not found.").build();
+                return Response.status(Status.NOT_FOUND).entity("Error while adding child node " + childNodeID + " to node " + id + " : node " + id + " not found.").build();
             }
         } else {
-            return Response.status(404).entity("Error while adding child node " + childNodeID + " to node " + id + " : node " + id + " not found.").build();
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
         }
     }
 
     @GET
     @Path("/update/childNodes/delete")
     public Response deleteNodeChildNode(@QueryParam("ID")long id, @QueryParam("childNodeID") long childNodeID) {
-        log.debug("[{}] delete node child node : ({},{})", new Object[]{Thread.currentThread().getId(), id, childNodeID});
-        Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
-        if (node != null) {
-            Node childNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(childNodeID);
-            if (childNode!=null) {
-                node.removeNodeChildNode(childNode);
-                return Response.status(200).entity("Child node ("+childNodeID+") successfully deleted from node " + id + ".").build();
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}-{}] delete node child node : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, childNodeID});
+        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        {
+            Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
+            if (node != null) {
+                Node childNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(childNodeID);
+                if (childNode != null) {
+                    node.removeNodeChildNode(childNode);
+                    return Response.status(Status.OK).entity("Child node (" + childNodeID + ") successfully deleted from node " + id + ".").build();
+                } else {
+                    return Response.status(Status.NOT_FOUND).entity("Error while deleting child node " + childNodeID + " from node " + id + " : child node " + childNodeID + " not found.").build();
+                }
             } else {
-                return Response.status(404).entity("Error while deleting child node " + childNodeID + " from node " + id + " : child node " + childNodeID + " not found.").build();
+                return Response.status(Status.NOT_FOUND).entity("Error while deleting child node " + childNodeID + " from node " + id + " : node " + id + " not found.").build();
             }
         } else {
-            return Response.status(404).entity("Error while deleting child node " + childNodeID + " from node " + id + " : node " + id + " not found.").build();
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
         }
     }
 
     @GET
     @Path("/update/twinNodes/add")
     public Response addNodeTwinNode(@QueryParam("ID")long id, @QueryParam("twinNodeID") long twinNodeID) {
-        log.debug("[{}] add node twin node : ({},{})", new Object[]{Thread.currentThread().getId(), id, twinNodeID});
-        Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
-        if (node != null) {
-            Node twinNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(twinNodeID);
-            if (twinNode!=null) {
-                node.addTwinNode(twinNode);
-                return Response.status(200).entity("Twin node ("+twinNodeID+") successfully added to node " + id + ".").build();
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}-{}] add node twin node : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, twinNodeID});
+        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        {
+            Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
+            if (node != null) {
+                Node twinNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(twinNodeID);
+                if (twinNode != null) {
+                    node.addTwinNode(twinNode);
+                    return Response.status(Status.OK).entity("Twin node (" + twinNodeID + ") successfully added to node " + id + ".").build();
+                } else {
+                    return Response.status(Status.NOT_FOUND).entity("Error while adding twin node " + twinNodeID + " to node " + id + " : twin node " + twinNodeID + " not found.").build();
+                }
             } else {
-                return Response.status(404).entity("Error while adding twin node " + twinNodeID + " to node " + id + " : twin node " + twinNodeID + " not found.").build();
+                return Response.status(Status.NOT_FOUND).entity("Error while adding twin node " + twinNodeID + " to node " + id + " : node " + id + " not found.").build();
             }
         } else {
-            return Response.status(404).entity("Error while adding twin node " + twinNodeID + " to node " + id + " : node " + id + " not found.").build();
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
         }
     }
 
     @GET
     @Path("/update/twinNodes/delete")
     public Response deleteNodeTwinNode(@QueryParam("ID")long id, @QueryParam("twinNodeID") long twinNodeID) {
-        log.debug("[{}] delete node twin node : ({},{})", new Object[]{Thread.currentThread().getId(), id, twinNodeID});
-        Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
-        if (node != null) {
-            Node twinNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(twinNodeID);
-            if (twinNode!=null) {
-                node.removeTwinNode(twinNode);
-                return Response.status(200).entity("Twin node ("+twinNodeID+") successfully deleted from node " + id + ".").build();
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}-{}] delete node twin node : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, twinNodeID});
+        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        {
+            Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
+            if (node != null) {
+                Node twinNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(twinNodeID);
+                if (twinNode != null) {
+                    node.removeTwinNode(twinNode);
+                    return Response.status(Status.OK).entity("Twin node (" + twinNodeID + ") successfully deleted from node " + id + ".").build();
+                } else {
+                    return Response.status(Status.NOT_FOUND).entity("Error while deleting twin node " + twinNodeID + " from node " + id + " : twin node " + twinNodeID + " not found.").build();
+                }
             } else {
-                return Response.status(404).entity("Error while deleting twin node " + twinNodeID + " from node " + id + " : twin node " + twinNodeID + " not found.").build();
+                return Response.status(Status.NOT_FOUND).entity("Error while deleting twin node " + twinNodeID + " from node " + id + " : node " + id + " not found.").build();
             }
         } else {
-            return Response.status(404).entity("Error while deleting twin node "+twinNodeID+" from node "+id+" : node " + id + " not found.").build();
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
         }
     }
 
     @GET
     @Path("/update/endpoints/add")
     public Response addNodeEndpoint(@QueryParam("ID")long id, @QueryParam("endpointID") long endpointID) {
-        log.debug("[{}] add node endpoint : ({},{})", new Object[]{Thread.currentThread().getId(), id, endpointID});
-        Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
-        if (node != null) {
-            Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(endpointID);
-            if (endpoint != null) {
-                node.addEnpoint(endpoint);
-                return Response.status(200).entity("Endpoint ("+endpointID+") successfully added to node " + id + ".").build();
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}-{}] add node endpoint : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, endpointID});
+        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        {
+            Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
+            if (node != null) {
+                Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(endpointID);
+                if (endpoint != null) {
+                    node.addEnpoint(endpoint);
+                    return Response.status(Status.OK).entity("Endpoint (" + endpointID + ") successfully added to node " + id + ".").build();
+                } else {
+                    return Response.status(Status.NOT_FOUND).entity("Error while adding endpoint " + endpointID + " to node " + id + " : node " + id + " not found.").build();
+                }
             } else {
-                return Response.status(404).entity("Error while adding endpoint "+endpointID+" to node " + id + " : node " + id + " not found.").build();
+                return Response.status(Status.NOT_FOUND).entity("Error while adding endpoint " + endpointID + " to node " + id + " : node " + id + " not found.").build();
             }
         } else {
-            return Response.status(404).entity("Error while adding endpoint "+endpointID+" to node "+id+" : node " + id + " not found.").build();
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
         }
     }
 
     @GET
     @Path("/update/endpoints/delete")
     public Response deleteNodeEndpoint(@QueryParam("ID")long id, @QueryParam("endpointID") long endpointID) {
-        log.debug("[{}] delete node endpoint : ({},{})", new Object[]{Thread.currentThread().getId(), id, endpointID});
-        Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
-        if (node != null) {
-            Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(endpointID);
-            if (endpoint != null) {
-                node.removeEndpoint(endpoint);
-                return Response.status(200).entity("Endpoint ("+endpointID+") successfully deleted from node " + id + ".").build();
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}-{}] delete node endpoint : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, endpointID});
+        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        {
+            Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
+            if (node != null) {
+                Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(endpointID);
+                if (endpoint != null) {
+                    node.removeEndpoint(endpoint);
+                    return Response.status(Status.OK).entity("Endpoint (" + endpointID + ") successfully deleted from node " + id + ".").build();
+                } else {
+                    return Response.status(Status.NOT_FOUND).entity("Error while deleting endpoint " + endpointID + " from node " + id + " : node " + id + " not found.").build();
+                }
             } else {
-                return Response.status(404).entity("Error while deleting endpoint "+endpointID+" from node " + id + " : node " + id + " not found.").build();
+                return Response.status(Status.NOT_FOUND).entity("Error while deleting endpoint " + endpointID + " from node : node " + id + " not found.").build();
             }
         } else {
-            return Response.status(404).entity("Error while deleting endpoint "+endpointID+" from node : node " + id + " not found.").build();
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
         }
     }
 
@@ -308,35 +408,49 @@ public class NodeEndpoint {
     @Path("/update/properties/add")
     public Response addNodeProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name, @QueryParam("propertyValue") String value,
                                     @DefaultValue("String") @QueryParam("propertyType") String type) {
-        log.debug("[{}] update node by adding a property : ({},({},{},{}))", new Object[]{Thread.currentThread().getId(), id, name, value, type});
-        Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
-        if (node != null) {
-            Object oValue;
-            try {
-                oValue = ToolBox.extractPropertyObjectValueFromString(value, type);
-            } catch (Exception e) {
-                log.error(e.getMessage());
-                e.printStackTrace();
-                String result = e.getMessage();
-                return Response.status(500).entity(result).build();
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}-{}] update node by adding a property : ({},({},{},{}))", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name, value, type});
+        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        {
+            Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
+            if (node != null) {
+                Object oValue;
+                try {
+                    oValue = ToolBox.extractPropertyObjectValueFromString(value, type);
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                    e.printStackTrace();
+                    String result = e.getMessage();
+                    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                }
+                node.addNodeProperty(name, oValue);
+                return Response.status(Status.OK).entity("Property (" + name + "," + value + ") successfully added to node " + id + ".").build();
+            } else {
+                return Response.status(Status.NOT_FOUND).entity("Error while adding property " + name + " to node " + id + " : node " + id + " not found.").build();
             }
-            node.addNodeProperty(name,oValue);
-            return Response.status(200).entity("Property ("+name+","+value+") successfully added to node "+id+".").build();
         } else {
-            return Response.status(404).entity("Error while adding property "+name+" to node "+id+" : node " + id + " not found.").build();
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
         }
     }
 
     @GET
     @Path("/update/properties/delete")
     public Response deleteNodeProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name) {
-        log.debug("[{}] update node by removing a property : ({},{})", new Object[]{Thread.currentThread().getId(), id, name});
-        Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
-        if (node != null) {
-            node.removeNodeProperty(name);
-            return Response.status(200).entity("Property ("+name+") successfully deleted from node "+id+".").build();
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}-{}] update node by removing a property : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name});
+        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        {
+            Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
+            if (node != null) {
+                node.removeNodeProperty(name);
+                return Response.status(Status.OK).entity("Property (" + name + ") successfully deleted from node " + id + ".").build();
+            } else {
+                return Response.status(Status.NOT_FOUND).entity("Error while adding property " + name + " from node " + id + " : node " + id + " not found.").build();
+            }
         } else {
-            return Response.status(404).entity("Error while adding property "+name+" from node "+id+" : node " + id + " not found.").build();
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
         }
     }
 }

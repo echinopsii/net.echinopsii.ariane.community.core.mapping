@@ -23,10 +23,11 @@ import com.spectral.cc.core.mapping.ds.MappingDSException;
 import com.spectral.cc.core.mapping.ds.domain.Endpoint;
 import com.spectral.cc.core.mapping.ds.domain.Link;
 import com.spectral.cc.core.mapping.ds.domain.Transport;
-import com.spectral.cc.core.mapping.ds.service.MappingSce;
 import com.spectral.cc.core.mapping.wat.MappingBootstrap;
 import com.spectral.cc.core.mapping.wat.json.ds.domain.LinkJSON;
 import com.spectral.cc.core.mapping.wat.rest.ToolBox;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +36,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
 
@@ -43,82 +45,55 @@ public class LinkEndpoint {
     private static final Logger log = LoggerFactory.getLogger(GateEndpoint.class);
 
     @GET
-    @Path("/{param}")
+    @Path("/{param:[0-9][0-9]*}")
     public Response displayLink(@PathParam("param") long id) {
-        log.debug("[{}] get link : {}", new Object[]{Thread.currentThread().getId(), id});
-        Link link = (Link) MappingBootstrap.getMappingSce().getLinkSce().getLink(id);
-        if (link != null) {
-            try {
-                ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-                LinkJSON.oneLink2JSON(link, outStream);
-                String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                return Response.status(200).entity(result).build();
-            } catch (Exception e) {
-                log.error(e.getMessage());
-                e.printStackTrace();
-                String result = e.getMessage();
-                return Response.status(500).entity(result).build();
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}-{}] get link : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id});
+        if (subject.hasRole("ccmappingreader") || subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:read") ||
+            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        {
+            Link link = (Link) MappingBootstrap.getMappingSce().getLinkSce().getLink(id);
+            if (link != null) {
+                try {
+                    ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                    LinkJSON.oneLink2JSON(link, outStream);
+                    String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                    return Response.status(Status.OK).entity(result).build();
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                    e.printStackTrace();
+                    String result = e.getMessage();
+                    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                }
+            } else {
+                return Response.status(Status.NOT_FOUND).entity("Link with id " + id + " not found.").build();
             }
         } else {
-            return Response.status(404).entity("Link with id " + id + " not found.").build();
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
         }
     }
 
     @GET
     public Response displayAllLinks() {
-        String  result = "";
-        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-        log.debug("[{}] get links", new Object[]{Thread.currentThread().getId()});
-        try {
-            LinkJSON.manyLinks2JSON((HashSet<Link>) MappingBootstrap.getMappingSce().getLinkSce().getLinks(null), outStream);
-            result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-            return Response.status(200).entity(result).build();
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
-            result = e.getMessage();
-            return Response.status(500).entity(result).build();
-        }
-    }
-
-    @GET
-    @Path("/create")
-    public Response createLink(@QueryParam("SEPID")long sourceEndpointID, @QueryParam("TEPID")long targetEndpointID,
-                               @QueryParam("transportID")long transportID, @QueryParam("UPLID") long upLinkID) {
-        log.debug("[{}] create link : ({},{},{},{})", new Object[]{Thread.currentThread().getId(), sourceEndpointID, targetEndpointID, transportID, upLinkID});
-        try {
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}-{}] get links", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
+        if (subject.hasRole("ccmappingreader") || subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:read") ||
+            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        {
+            String result = "";
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-            Link link = MappingBootstrap.getMappingSce().getLinkSce().createLink(sourceEndpointID, targetEndpointID, transportID, upLinkID);
             try {
-                LinkJSON.oneLink2JSON(link, outStream);
-                String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                return Response.status(200).entity(result).build();
+                LinkJSON.manyLinks2JSON((HashSet<Link>) MappingBootstrap.getMappingSce().getLinkSce().getLinks(null), outStream);
+                result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                return Response.status(Status.OK).entity(result).build();
             } catch (Exception e) {
                 log.error(e.getMessage());
                 e.printStackTrace();
-                String result = e.getMessage();
-                return Response.status(500).entity(result).build();
+                result = e.getMessage();
+                return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
             }
-        } catch (MappingDSException e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
-            String result = e.getMessage();
-            return Response.status(500).entity(result).build();
-        }
-    }
-
-    @GET
-    @Path("/delete")
-    public Response deleteLink(@QueryParam("ID")long linkID) {
-        log.debug("[{}] delete link : ({})", new Object[]{Thread.currentThread().getId(), linkID});
-        try {
-            MappingBootstrap.getMappingSce().getLinkSce().deleteLink(linkID);
-            return Response.status(200).entity("Link (" + linkID + ") successfully deleted.").build();
-        } catch (MappingDSException e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
-            String result = e.getMessage();
-            return Response.status(500).entity(result).build();
+        } else {
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
         }
     }
 
@@ -129,56 +104,132 @@ public class LinkEndpoint {
     }
 
     @GET
-    @Path("/update/transport")
-    public Response setLinkTransport(@QueryParam("ID")long id, @QueryParam("transportID") long transportID) {
-        log.debug("[{}] update link transport : ({},{})", new Object[]{Thread.currentThread().getId(), id, transportID});
-        Link link = MappingBootstrap.getMappingSce().getLinkSce().getLink(id);
-        if (link!=null) {
-            Transport transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(transportID);
-            if (transport!=null) {
-                link.setLinkTransport(transport);
-                return Response.status(200).entity("Link ("+id+") transport successfully updated to " + transportID + ".").build();
-            } else {
-                return Response.status(404).entity("Error while updating link (" + id + ") transport " + transportID + " : transport " + id + " not found.").build();
+    @Path("/create")
+    public Response createLink(@QueryParam("SEPID")long sourceEndpointID, @QueryParam("TEPID")long targetEndpointID,
+                               @QueryParam("transportID")long transportID, @QueryParam("UPLID") long upLinkID) {
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}-{}] create link : ({},{},{},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), sourceEndpointID, targetEndpointID, transportID, upLinkID});
+        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        {
+            try {
+                ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                Link link = MappingBootstrap.getMappingSce().getLinkSce().createLink(sourceEndpointID, targetEndpointID, transportID, upLinkID);
+                try {
+                    LinkJSON.oneLink2JSON(link, outStream);
+                    String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                    return Response.status(Status.OK).entity(result).build();
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                    e.printStackTrace();
+                    String result = e.getMessage();
+                    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                }
+            } catch (MappingDSException e) {
+                log.error(e.getMessage());
+                e.printStackTrace();
+                String result = e.getMessage();
+                return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
             }
         } else {
-            return Response.status(404).entity("Error while updating link (" + id + ") transport " + transportID + " : link " + id + " not found.").build();
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
+        }
+    }
+
+    @GET
+    @Path("/delete")
+    public Response deleteLink(@QueryParam("ID")long linkID) {
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}-{}] delete link : ({})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), linkID});
+        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        {
+            try {
+                MappingBootstrap.getMappingSce().getLinkSce().deleteLink(linkID);
+                return Response.status(Status.OK).entity("Link (" + linkID + ") successfully deleted.").build();
+            } catch (MappingDSException e) {
+                log.error(e.getMessage());
+                e.printStackTrace();
+                String result = e.getMessage();
+                return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+            }
+        } else {
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
+        }
+    }
+
+    @GET
+    @Path("/update/transport")
+    public Response setLinkTransport(@QueryParam("ID")long id, @QueryParam("transportID") long transportID) {
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}] update link transport : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, transportID});
+        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        {
+            Link link = MappingBootstrap.getMappingSce().getLinkSce().getLink(id);
+            if (link != null) {
+                Transport transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(transportID);
+                if (transport != null) {
+                    link.setLinkTransport(transport);
+                    return Response.status(Status.OK).entity("Link (" + id + ") transport successfully updated to " + transportID + ".").build();
+                } else {
+                    return Response.status(Status.NOT_FOUND).entity("Error while updating link (" + id + ") transport " + transportID + " : transport " + id + " not found.").build();
+                }
+            } else {
+                return Response.status(Status.NOT_FOUND).entity("Error while updating link (" + id + ") transport " + transportID + " : link " + id + " not found.").build();
+            }
+        } else {
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
         }
     }
 
     @GET
     @Path("/update/sourceEP")
     public Response setLinkEndpointSource(@QueryParam("ID")long id, @QueryParam("SEPID") long SEPID) {
-        log.debug("[{}] update link source endpoint : ({},{})", new Object[]{Thread.currentThread().getId(), id, SEPID});
-        Link link = MappingBootstrap.getMappingSce().getLinkSce().getLink(id);
-        if (link!=null) {
-            Endpoint sourceEP = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(SEPID);
-            if (sourceEP!=null) {
-                link.setLinkEndpointSource(sourceEP);
-                return Response.status(200).entity("Link ("+id+") source endpoint successfully updated to " + SEPID + ".").build();
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}-{}] update link source endpoint : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, SEPID});
+        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        {
+            Link link = MappingBootstrap.getMappingSce().getLinkSce().getLink(id);
+            if (link != null) {
+                Endpoint sourceEP = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(SEPID);
+                if (sourceEP != null) {
+                    link.setLinkEndpointSource(sourceEP);
+                    return Response.status(Status.OK).entity("Link (" + id + ") source endpoint successfully updated to " + SEPID + ".").build();
+                } else {
+                    return Response.status(Status.NOT_FOUND).entity("Error while updating link (" + id + ") source endpoint " + SEPID + " : link " + id + " not found.").build();
+                }
             } else {
-                return Response.status(404).entity("Error while updating link (" + id + ") source endpoint " + SEPID + " : link " + id + " not found.").build();
+                return Response.status(Status.NOT_FOUND).entity("Error while updating link (" + id + ") source endpoint " + SEPID + " : link " + id + " not found.").build();
             }
         } else {
-            return Response.status(404).entity("Error while updating link (" + id + ") source endpoint " + SEPID + " : link " + id + " not found.").build();
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
         }
     }
 
     @GET
     @Path("/update/targetEP")
     public Response setLinkEndpointTarget(@QueryParam("ID")long id, @QueryParam("TEPID") long TEPID) {
-        log.debug("[{}] update link target endpoint : ({},{})", new Object[]{Thread.currentThread().getId(), id, TEPID});
-        Link link = MappingBootstrap.getMappingSce().getLinkSce().getLink(id);
-        if (link!=null) {
-            Endpoint targetEP = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(TEPID);
-            if (targetEP!=null) {
-                link.setLinkEndpointTarget(targetEP);
-                return Response.status(200).entity("Link ("+id+") target endpoint successfully updated to " + TEPID + ".").build();
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}-{}] update link target endpoint : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(),  id, TEPID});
+        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        {
+            Link link = MappingBootstrap.getMappingSce().getLinkSce().getLink(id);
+            if (link != null) {
+                Endpoint targetEP = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(TEPID);
+                if (targetEP != null) {
+                    link.setLinkEndpointTarget(targetEP);
+                    return Response.status(Status.OK).entity("Link (" + id + ") target endpoint successfully updated to " + TEPID + ".").build();
+                } else {
+                    return Response.status(Status.NOT_FOUND).entity("Error while updating link (" + id + ") target endpoint " + TEPID + " : link " + id + " not found.").build();
+                }
             } else {
-                return Response.status(404).entity("Error while updating link (" + id + ") target endpoint " + TEPID + " : link " + id + " not found.").build();
+                return Response.status(Status.NOT_FOUND).entity("Error while updating link (" + id + ") target endpoint " + TEPID + " : link " + id + " not found.").build();
             }
         } else {
-            return Response.status(404).entity("Error while updating link (" + id + ") target endpoint " + TEPID + " : link " + id + " not found.").build();
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
         }
     }
 }
