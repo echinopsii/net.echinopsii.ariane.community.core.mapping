@@ -19,13 +19,14 @@ from components.mapping.cuMappingNeo4JLoggingXMLProcessor import cuMappingNeo4JL
 from components.mapping.cuMappingNeo4JServerPropertiesProcessor import cuMappingNeo4JServerPropertiesProcessor, cpMappingNeo4JDirectory, cpMappingNeo4JRRDB, cpMappingNeo4JTuningPropsFile, cpMappingNeo4JLogConfigFile
 from components.mapping.cuMappingNeo4JTuningPropertiesProcessor import cuMappingNeo4JTuningPropertiesProcessor
 from components.mapping.cuMappingRimManagedServiceProcessor import cpMappingDirectory, cuMappingRimManagedServiceProcessor, cpMappingNeo4JConfigFile
+from components.mapping.dbIDMMySQLPopulator import dbIDMMySQLPopulator
 
 
 __author__ = 'mffrench'
 
 
 class mappingProcessor:
-    def __init__(self, homeDirPath):
+    def __init__(self, idmDBConfig, homeDirPath):
         print("\n%%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--\n")
         print("%-- CC mapping configuration : \n")
         self.homeDirPath = homeDirPath
@@ -34,6 +35,8 @@ class mappingProcessor:
         if not os.path.exists(kernelRepositoryDirPath):
             os.makedirs(kernelRepositoryDirPath, 0o755)
         self.mappingRimManagedServiceCUProcessor = cuMappingRimManagedServiceProcessor(kernelRepositoryDirPath)
+
+        self.mappingIDMSQLPopulator = dbIDMMySQLPopulator(idmDBConfig)
 
         neo4jConfDirPath = self.homeDirPath + "/CC/neo4j/conf"
         if not os.path.exists(neo4jConfDirPath):
@@ -45,6 +48,7 @@ class mappingProcessor:
     def process(self):
         self.mappingNeo4JLogginXMLCUProcessor.process()
         self.mappingNeo4JTunningPropertiesCUProcessor.process()
+        self.mappingIDMSQLPopulator.process()
 
         for key in self.mappingNeo4JServerPropertiesCUProcessor.getParamsKeysList():
             if key == cpMappingNeo4JDirectory.name:
