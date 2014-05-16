@@ -15,12 +15,10 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import os
-from components.mapping.cuMappingCache import mappingCacheSyringe
-from components.mapping.cuMappingCacheJGroups import mappingCacheJGroupsSyringe
 from components.mapping.cuMappingNeo4JLoggingXMLProcessor import cuMappingNeo4JLoggingXMLProcessor
 from components.mapping.cuMappingNeo4JServerPropertiesProcessor import cuMappingNeo4JServerPropertiesProcessor, cpMappingNeo4JDirectory, cpMappingNeo4JRRDB, cpMappingNeo4JTuningPropsFile, cpMappingNeo4JLogConfigFile
 from components.mapping.cuMappingNeo4JTuningPropertiesProcessor import cuMappingNeo4JTuningPropertiesProcessor
-from components.mapping.cuMappingRimManagedServiceProcessor import cpMappingDirectory, cuMappingRimManagedServiceProcessor, cpMappingNeo4JConfigFile, cpMappingCacheConfigFile
+from components.mapping.cuMappingRimManagedServiceProcessor import cpMappingDirectory, cuMappingRimManagedServiceProcessor, cpMappingNeo4JConfigFile
 from components.mapping.dbIDMMySQLPopulator import dbIDMMySQLPopulator
 
 
@@ -33,9 +31,6 @@ class mappingProcessor:
         print("%-- CC mapping configuration : \n")
         self.homeDirPath = homeDirPath
 
-        mappingCacheDirPath = self.homeDirPath + "/CC/cache/component/mapping/"
-        if not os.path.exists(mappingCacheDirPath):
-            os.makedirs(mappingCacheDirPath, 0o755)
         neo4jConfDirPath = self.homeDirPath + "/CC/neo4j/conf"
         if not os.path.exists(neo4jConfDirPath):
             os.makedirs(neo4jConfDirPath, 0o755)
@@ -44,18 +39,12 @@ class mappingProcessor:
             os.makedirs(kernelRepositoryDirPath, 0o755)
 
         self.mappingRimManagedServiceCUProcessor = cuMappingRimManagedServiceProcessor(kernelRepositoryDirPath)
-        self.mappingCacheJGroupsSyringe = mappingCacheJGroupsSyringe(mappingCacheDirPath, silent)
-        self.mappingCacheJGroupsSyringe.shootBuilder()
-        self.mappingCacheSyringe = mappingCacheSyringe(mappingCacheDirPath)
-        self.mappingCacheSyringe.shootBuilder()
         self.mappingIDMSQLPopulator = dbIDMMySQLPopulator(idmDBConfig)
         self.mappingNeo4JLogginXMLCUProcessor = cuMappingNeo4JLoggingXMLProcessor(neo4jConfDirPath)
         self.mappingNeo4JTunningPropertiesCUProcessor = cuMappingNeo4JTuningPropertiesProcessor(neo4jConfDirPath)
         self.mappingNeo4JServerPropertiesCUProcessor = cuMappingNeo4JServerPropertiesProcessor(neo4jConfDirPath)
 
     def process(self):
-        self.mappingCacheJGroupsSyringe.inject()
-        self.mappingCacheSyringe.inject()
         self.mappingNeo4JLogginXMLCUProcessor.process()
         self.mappingNeo4JTunningPropertiesCUProcessor.process()
         self.mappingIDMSQLPopulator.process()
@@ -85,7 +74,5 @@ class mappingProcessor:
                 self.mappingRimManagedServiceCUProcessor.setKeyParamValue(key, mapDirPath)
             elif key == cpMappingNeo4JConfigFile.name:
                 self.mappingRimManagedServiceCUProcessor.setKeyParamValue(key, self.homeDirPath + "/CC/neo4j/conf/neo4j-server.properties")
-            elif key == cpMappingCacheConfigFile.name:
-                self.mappingRimManagedServiceCUProcessor.setKeyParamValue(key, self.homeDirPath + "/CC/cache/component/mapping/infinispan.mapping.cache.xml")
         self.mappingRimManagedServiceCUProcessor.process()
         return self

@@ -1,7 +1,0 @@
-{
-    "##JGroupsTCPBindAddress": "127.0.0.1",
-    "##JGroupsTCPBindPort": "7800",
-    "##JGroupsMPINGBindAddress": "127.0.0.1",
-    "##JGroupsMPINGMulticastAddress":"228.2.4.6",
-    "##JGroupsMPINGMulticastPort":"43366"
-}

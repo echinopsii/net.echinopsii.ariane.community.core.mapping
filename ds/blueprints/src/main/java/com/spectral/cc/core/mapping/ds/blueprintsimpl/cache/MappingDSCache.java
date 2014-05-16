@@ -45,7 +45,7 @@ import java.util.Set;
 
 public class MappingDSCache {
     private static final Logger log = LoggerFactory.getLogger(MappingDSCache.class);
-    private static String MAPPING_INFINISPAN_CACHE_ID = "infinispan.mapping.cache";
+    private static String MAPPING_INFINISPAN_CACHE_ID = "cc.core.mapping.cache";
     private static String MAPPING_INFINISPAN_CACHE_NAME = "CC Mapping Cache";
 
     private static EmbeddedCacheManager manager;

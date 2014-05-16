@@ -61,26 +61,6 @@ class cpMappingNeo4JConfigFile(AConfParamNotNone):
                 return False
 
 
-class cpMappingCacheConfigFile(AConfParamNotNone):
-
-    name = "##mappingCacheConfigFile"
-    description = "CC mapping cache configuration file path"
-    hide = False
-
-    def __init__(self):
-        self.value = None
-
-    def isValid(self):
-        if not super().isValid:
-            return False
-        else:
-            if os.path.exists(self.value) and os.path.isfile(self.value):
-                return True
-            else:
-                print(self.description + " (" + self.value + ") is not valid. Check if it exists and it has good rights.")
-                return False
-
-
 class cuMappingRimManagedServiceProcessor(AConfUnit):
 
     def __init__(self, targetConfDir):
@@ -89,9 +69,7 @@ class cuMappingRimManagedServiceProcessor(AConfUnit):
         self.confFinalPath = targetConfDir + "com.spectral.cc.core.MappingRimManagedService.properties"
         mapDir = cpMappingDirectory()
         mapNeo4JConfFile = cpMappingNeo4JConfigFile()
-        mapCacheFile = cpMappingCacheConfigFile()
         self.paramsDictionary = {
             mapDir.name: mapDir,
-            mapNeo4JConfFile.name: mapNeo4JConfFile,
-            mapCacheFile.name: mapCacheFile
+            mapNeo4JConfFile.name: mapNeo4JConfFile
         }
