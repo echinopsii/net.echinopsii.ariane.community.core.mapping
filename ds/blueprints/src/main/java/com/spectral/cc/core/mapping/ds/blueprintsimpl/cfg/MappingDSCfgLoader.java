@@ -18,47 +18,24 @@
  */
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.cfg;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.Dictionary;
 
 public class MappingDSCfgLoader {
 
     private static final Logger log = LoggerFactory.getLogger(MappingDSCfgLoader.class);
 
-    private final static String MAPPING_DS_INTERNAL_DEFAULT_CONF_FILE       = "mapping.ds.blueprints.cfg.json";
-
-    private static final String MAPPING_DS_CFG_FROM_RIM_BLUEPRINTS_IMPL_KEY = "mapping.ds.blueprints.implementation";
-    private static final String MAPPING_DS_CFG_FROM_RIM_BLUEPRINTS_URL_KEY  = "mapping.ds.blueprints.url";
-    private static final String MAPPING_DS_CFG_FROM_RIM_BLUEPRINTS_USER_KEY = "mapping.ds.blueprints.user";
-    private static final String MAPPING_DS_CFG_FROM_RIM_BLUEPRINTS_PAWD_KEY = "mapping.ds.blueprints.password";
-    private static final String MAPPING_DS_CFG_FROM_RIM_BLUEPRINTS_GP_KEY = "mapping.ds.blueprints.graphpath";
+    private static final String MAPPING_DS_CFG_FROM_RIM_BLUEPRINTS_IMPL_KEY           = "mapping.ds.blueprints.implementation";
+    private static final String MAPPING_DS_CFG_FROM_RIM_BLUEPRINTS_URL_KEY            = "mapping.ds.blueprints.url";
+    private static final String MAPPING_DS_CFG_FROM_RIM_BLUEPRINTS_USER_KEY           = "mapping.ds.blueprints.user";
+    private static final String MAPPING_DS_CFG_FROM_RIM_BLUEPRINTS_PAWD_KEY           = "mapping.ds.blueprints.password";
+    private static final String MAPPING_DS_CFG_FROM_RIM_BLUEPRINTS_GP_KEY             = "mapping.ds.blueprints.graphpath";
     private static final String MAPPING_DS_CFG_FROM_RIM_BLUEPRINTS_NEO4J_CONFFILE_KEY = "mapping.ds.blueprints.neo4j.configfile";
-
-
-    private final static ObjectMapper jsonMapper = new ObjectMapper();
+    private static final String MAPPING_DS_CFG_FROM_RIM_CACHE_CONFFILE_KEY            = "mapping.ds.cache.configfile";
 
     private static MappingDSCfgEntity defaultCfgEntity = null;
-
-    public static boolean load() throws JsonParseException, JsonMappingException, IOException {
-        jsonMapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
-        defaultCfgEntity = jsonMapper.readValue(new MappingDSGraphDB().getClass().getResourceAsStream("/" + MAPPING_DS_INTERNAL_DEFAULT_CONF_FILE),
-                                                       MappingDSCfgEntity.class);
-        if (defaultCfgEntity != null) {
-            log.debug(defaultCfgEntity.toString());
-        } else {
-            log.error("no default cfg entity !!!");
-            return false;
-        }
-        return true;
-    }
 
     public static boolean load(Dictionary<Object, Object> properties) {
         Object oimpl = properties.get(MAPPING_DS_CFG_FROM_RIM_BLUEPRINTS_IMPL_KEY);
@@ -72,7 +49,9 @@ public class MappingDSCfgLoader {
         Object odir  = properties.get(MAPPING_DS_CFG_FROM_RIM_BLUEPRINTS_GP_KEY);
         String dir   = null;
         Object oncf  = properties.get(MAPPING_DS_CFG_FROM_RIM_BLUEPRINTS_NEO4J_CONFFILE_KEY);
-        String ncf = null;
+        String ncf   = null;
+        Object occf  = properties.get(MAPPING_DS_CFG_FROM_RIM_CACHE_CONFFILE_KEY);
+        String ccf   = null;
 
 
         if (oimpl != null && oimpl instanceof String) {
@@ -93,9 +72,13 @@ public class MappingDSCfgLoader {
         if (oncf != null && oncf instanceof String) {
             ncf = (String) oncf;
         }
+        if (occf != null && occf instanceof String) {
+            ccf = (String) occf;
+        }
 
         if (impl != null && (url != null || dir != null || ncf != null)) {
             defaultCfgEntity = new MappingDSCfgEntity();
+            defaultCfgEntity.setCacheConfigFile(ccf);
             defaultCfgEntity.setBlueprintsImplementation(impl);
             defaultCfgEntity.setBlueprintsURL(url);
             defaultCfgEntity.setBlueprintsUser(user);

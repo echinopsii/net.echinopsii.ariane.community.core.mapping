@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.spectral.cc.core.mapping.ds.blueprintsimpl;
+package com.spectral.cc.core.mapping.ds.blueprintsimpl.graphdb;
 
 import com.tinkerpop.blueprints.Vertex;
 import org.slf4j.Logger;

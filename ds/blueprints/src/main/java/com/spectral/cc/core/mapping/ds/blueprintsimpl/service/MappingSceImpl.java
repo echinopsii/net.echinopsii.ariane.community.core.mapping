@@ -19,7 +19,8 @@
 
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.service;
 
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDB;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.cache.MappingDSCache;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.*;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.repository.MappingRepoImpl;
 import com.spectral.cc.core.mapping.ds.domain.*;
@@ -59,7 +60,7 @@ public class MappingSceImpl implements MappingSce {
     @Override
     public boolean init(Dictionary<Object, Object> properties) {
         try {
-            return MappingDSGraphDB.init(properties);
+            return MappingDSCache.init(properties) && MappingDSGraphDB.init(properties);
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -69,7 +70,7 @@ public class MappingSceImpl implements MappingSce {
     @Override
     public boolean start() {
         try {
-            return MappingDSGraphDB.start();
+            return MappingDSCache.start() && MappingDSGraphDB.start();
         } catch (Exception e) {
             e.printStackTrace();
             return false;

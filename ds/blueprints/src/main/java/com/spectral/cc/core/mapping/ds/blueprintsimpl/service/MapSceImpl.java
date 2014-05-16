@@ -20,7 +20,7 @@
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.service;
 
 import com.spectral.cc.core.mapping.ds.MappingDSGraphPropertyNames;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDB;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import com.spectral.cc.core.mapping.ds.domain.*;
 import com.spectral.cc.core.mapping.ds.service.MapSce;
 import org.slf4j.Logger;

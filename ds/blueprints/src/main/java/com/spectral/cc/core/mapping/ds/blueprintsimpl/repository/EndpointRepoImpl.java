@@ -19,8 +19,8 @@
 
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.repository;
 
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSCacheEntity;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDB;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.cache.MappingDSCacheEntity;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.EndpointImpl;
 import com.spectral.cc.core.mapping.ds.repository.EndpointRepo;
 import org.slf4j.Logger;

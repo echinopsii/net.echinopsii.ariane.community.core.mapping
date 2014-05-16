@@ -17,12 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.spectral.cc.core.mapping.ds.blueprintsimpl;
+package com.spectral.cc.core.mapping.ds.blueprintsimpl.graphdb;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.orientechnologies.orient.core.config.OGlobalConfiguration;
 import com.spectral.cc.core.mapping.ds.MappingDSGraphPropertyNames;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.cache.MappingDSCache;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.cache.MappingDSCacheEntity;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.cfg.MappingDSCfgLoader;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.*;
 import com.spectral.cc.core.mapping.ds.dsl.MapperExecutor;
@@ -64,7 +66,7 @@ public class MappingDSGraphDB {
         if (properties != null) {
             return MappingDSCfgLoader.load(properties);
         } else {
-            return MappingDSCfgLoader.load();
+            return false;
         }
     }
 
@@ -161,9 +163,9 @@ public class MappingDSGraphDB {
 
     public static void stop() {
         try {
-            MappingDSSimpleCache.synchronizeToDB();
+            MappingDSCache.synchronizeToDB();
         } catch (MappingDSGraphDBException E) {
-            String msg = "Exception while synchronizing MappingDSSimpleCache...";
+            String msg = "Exception while synchronizing MappingDSCache...";
             E.printStackTrace();
             log.error(msg);
         } finally {
@@ -387,7 +389,7 @@ public class MappingDSGraphDB {
             entityV = ccgraph.addVertex(null);
             entityV.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID, id);
             entity.setElement(entityV);
-            MappingDSSimpleCache.putEntityToCache(entity);
+            MappingDSCache.putEntityToCache(entity);
             entity.synchronizeToDB();
             autocommit();
             log.debug("Vertex {} ({}:{}) has been saved on graph {}", new Object[]{entityV.toString(), MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID, id,
@@ -452,7 +454,7 @@ public class MappingDSGraphDB {
         try {
             Edge entityE = createEdge(source, destination, label);
             entity.setElement(entityE);
-            MappingDSSimpleCache.putEntityToCache(entity);
+            MappingDSCache.putEntityToCache(entity);
             entity.synchronizeToDB();
             autocommit();
         } catch (Exception E) {
@@ -465,12 +467,12 @@ public class MappingDSGraphDB {
 
     private static MappingDSCacheEntity getEdgeEntity(Edge edge) {
         long id = (long) edge.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID);
-        MappingDSCacheEntity ret = MappingDSSimpleCache.getCachedEntity("E" + id);
+        MappingDSCacheEntity ret = MappingDSCache.getCachedEntity("E" + id);
         if (ret == null) {
             if (edge.getLabel().equals(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY)) {
                 ret = new LinkImpl();
                 ret.setElement(edge);
-                MappingDSSimpleCache.putEntityToCache(ret);
+                MappingDSCache.putEntityToCache(ret);
                 ret.synchronizeFromDB();
             }
         }
@@ -479,14 +481,14 @@ public class MappingDSGraphDB {
 
     public static MappingDSCacheEntity getEdgeEntity(long id) {
         log.debug("Get cache entity {} if exists ...", new Object[]{"E"+id});
-        MappingDSCacheEntity ret = MappingDSSimpleCache.getCachedEntity("E" + id);
+        MappingDSCacheEntity ret = MappingDSCache.getCachedEntity("E" + id);
         if (ret == null) {
             Edge edge = (ccgraph.getEdges(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID,id).iterator().hasNext() ?
                                  ccgraph.getEdges(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID,id).iterator().next() : null);
             if (edge!=null && edge.getLabel().equals(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY)) {
                 ret = new LinkImpl();
                 ret.setElement(edge);
-                MappingDSSimpleCache.putEntityToCache(ret);
+                MappingDSCache.putEntityToCache(ret);
                 ret.synchronizeFromDB();
             }
         }
@@ -496,7 +498,7 @@ public class MappingDSGraphDB {
     private static MappingDSCacheEntity getVertexEntity(Vertex vertex) {
         long id = (long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
         String vertexType = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY);
-        MappingDSCacheEntity ret = MappingDSSimpleCache.getCachedEntity("V" + id);
+        MappingDSCacheEntity ret = MappingDSCache.getCachedEntity("V" + id);
         if (ret == null) {
             if (vertexType != null) {
                 switch (vertexType) {
@@ -524,7 +526,7 @@ public class MappingDSGraphDB {
             }
             if (ret != null) {
                 ret.setElement(vertex);
-                MappingDSSimpleCache.putEntityToCache(ret);
+                MappingDSCache.putEntityToCache(ret);
                 ret.synchronizeFromDB();
             }
         }
@@ -539,7 +541,7 @@ public class MappingDSGraphDB {
 
     public static MappingDSCacheEntity getVertexEntity(long id) {
         log.debug("Get cache entity {} if exists ...", new Object[]{"V"+id});
-        MappingDSCacheEntity ret = MappingDSSimpleCache.getCachedEntity("V" + id);
+        MappingDSCacheEntity ret = MappingDSCache.getCachedEntity("V" + id);
         if (ret == null) {
             log.debug("Get vertex {} from graph {}...", new Object[]{id, ccgraph.toString() + "(" + ccgraph.hashCode() + ")"});
             Vertex vertex = (ccgraph.getVertices(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID, id).iterator().hasNext() ?
@@ -572,7 +574,7 @@ public class MappingDSGraphDB {
                 }
                 if (ret != null) {
                     ret.setElement(vertex);
-                    MappingDSSimpleCache.putEntityToCache(ret);
+                    MappingDSCache.putEntityToCache(ret);
                     ret.synchronizeFromDB();
                 }
             }
@@ -593,7 +595,7 @@ public class MappingDSGraphDB {
             if (tmp == null) {
                 tmp = new ClusterImpl();
                 tmp.setElement(vertex);
-                MappingDSSimpleCache.putEntityToCache(tmp);
+                MappingDSCache.putEntityToCache(tmp);
                 tmp.synchronizeFromDB();
             }
             log.debug("Add cluster {} to Set...", new Object[]{id});
@@ -613,7 +615,7 @@ public class MappingDSGraphDB {
             if (tmp == null) {
                 tmp = new ContainerImpl();
                 tmp.setElement(vertex);
-                MappingDSSimpleCache.putEntityToCache(tmp);
+                MappingDSCache.putEntityToCache(tmp);
                 tmp.synchronizeFromDB();
             }
             log.debug("Add container {} to Set...", new Object[]{id});
@@ -633,7 +635,7 @@ public class MappingDSGraphDB {
             if (tmp == null) {
                 tmp = new NodeImpl();
                 tmp.setElement(vertex);
-                MappingDSSimpleCache.putEntityToCache(tmp);
+                MappingDSCache.putEntityToCache(tmp);
                 tmp.synchronizeFromDB();
             }
             log.debug("Add node {} to Set...", new Object[]{id});
@@ -646,7 +648,7 @@ public class MappingDSGraphDB {
             if (tmp == null) {
                 tmp = new NodeImpl();
                 tmp.setElement(vertex);
-                MappingDSSimpleCache.putEntityToCache(tmp);
+                MappingDSCache.putEntityToCache(tmp);
                 tmp.synchronizeFromDB();
             }
             log.debug("Add node {} to Set...", new Object[]{id});
@@ -693,7 +695,7 @@ public class MappingDSGraphDB {
             if (tmp == null) {
                 tmp = new GateImpl();
                 tmp.setElement(vertex);
-                MappingDSSimpleCache.putEntityToCache(tmp);
+                MappingDSCache.putEntityToCache(tmp);
                 tmp.synchronizeFromDB();
             }
             log.debug("Add gate {} to Set...", new Object[]{id});
@@ -730,7 +732,7 @@ public class MappingDSGraphDB {
             if (tmp == null) {
                 tmp = new EndpointImpl();
                 tmp.setElement(vertex);
-                MappingDSSimpleCache.putEntityToCache(tmp);
+                MappingDSCache.putEntityToCache(tmp);
                 tmp.synchronizeFromDB();
             }
             log.debug("Add endpoint {} to Set...", new Object[]{id});
@@ -767,7 +769,7 @@ public class MappingDSGraphDB {
             if (tmp == null) {
                 tmp = new TransportImpl();
                 tmp.setElement(vertex);
-                MappingDSSimpleCache.putEntityToCache(tmp);
+                MappingDSCache.putEntityToCache(tmp);
                 tmp.synchronizeFromDB();
             }
             log.debug("Add transport {} to Set...", new Object[]{id});
@@ -778,7 +780,7 @@ public class MappingDSGraphDB {
     }
 
     public static ClusterImpl getIndexedCluster(String clusterName) {
-        MappingDSCacheEntity ret = MappingDSSimpleCache.getClusterFromCache(clusterName);
+        MappingDSCacheEntity ret = MappingDSCache.getClusterFromCache(clusterName);
         if (ret == null) {
             Vertex vertex = ccgraph.getVertices(MappingDSGraphPropertyNames.DD_CLUSTER_NAME_KEY, clusterName).iterator().hasNext() ?
                                     ccgraph.getVertices(MappingDSGraphPropertyNames.DD_CLUSTER_NAME_KEY, clusterName).iterator().next() : null;
@@ -793,7 +795,7 @@ public class MappingDSGraphDB {
                 }
                 if (ret != null) {
                     ret.setElement(vertex);
-                    MappingDSSimpleCache.putEntityToCache(ret);
+                    MappingDSCache.putEntityToCache(ret);
                     ret.synchronizeFromDB();
                 }
             }
@@ -816,7 +818,7 @@ public class MappingDSGraphDB {
             }
             if (tmp != null) {
                 tmp.setElement(vertex);
-                MappingDSSimpleCache.putEntityToCache(tmp);
+                MappingDSCache.putEntityToCache(tmp);
                 tmp.synchronizeFromDB();
                 ret.add(tmp);
             }
@@ -826,7 +828,7 @@ public class MappingDSGraphDB {
     }
 
     public static EndpointImpl getIndexedEndpoint(String url) {
-        MappingDSCacheEntity ret = MappingDSSimpleCache.getEndpointFromCache(url);
+        MappingDSCacheEntity ret = MappingDSCache.getEndpointFromCache(url);
         if (ret == null && ccgraph != null) {
             Vertex vertex = ccgraph.getVertices(MappingDSGraphPropertyNames.DD_ENDPOINT_URL_KEY, url).iterator().hasNext() ?
                                     ccgraph.getVertices(MappingDSGraphPropertyNames.DD_ENDPOINT_URL_KEY, url).iterator().next() : null;
@@ -840,7 +842,7 @@ public class MappingDSGraphDB {
                 }
                 if (ret != null) {
                     ret.setElement(vertex);
-                    MappingDSSimpleCache.putEntityToCache(ret);
+                    MappingDSCache.putEntityToCache(ret);
                     ret.synchronizeFromDB();
                 }
             }
@@ -850,7 +852,7 @@ public class MappingDSGraphDB {
     }
 
     public static TransportImpl getIndexedTransport(String transportName) {
-        MappingDSCacheEntity ret = MappingDSSimpleCache.getTransportFromCache(transportName);
+        MappingDSCacheEntity ret = MappingDSCache.getTransportFromCache(transportName);
         if (ret == null && ccgraph != null) {
             Vertex vertex = ccgraph.getVertices(MappingDSGraphPropertyNames.DD_TRANSPORT_NAME_KEY, transportName).iterator().hasNext() ?
                                     ccgraph.getVertices(MappingDSGraphPropertyNames.DD_TRANSPORT_NAME_KEY, transportName).iterator().next() : null;
@@ -864,7 +866,7 @@ public class MappingDSGraphDB {
                 }
                 if (ret != null) {
                     ret.setElement(vertex);
-                    MappingDSSimpleCache.putEntityToCache(ret);
+                    MappingDSCache.putEntityToCache(ret);
                     ret.synchronizeFromDB();
                 }
             }
@@ -874,14 +876,14 @@ public class MappingDSGraphDB {
     }
 
     public static MappingDSCacheEntity getLink(long id) {
-        MappingDSCacheEntity ret = MappingDSSimpleCache.getCachedEntity("E" + id);
+        MappingDSCacheEntity ret = MappingDSCache.getCachedEntity("E" + id);
         if (ret == null && ccgraph != null) {
             Edge edge = ccgraph.getEdges(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID, id).iterator().hasNext() ?
                                 ccgraph.getEdges(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID, id).iterator().next() : null;
             if (edge != null && edge.getLabel().equals(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY)) {
                 ret = new LinkImpl();
                 ret.setElement(edge);
-                MappingDSSimpleCache.putEntityToCache(ret);
+                MappingDSCache.putEntityToCache(ret);
                 ret.synchronizeFromDB();
             }
             autocommit();
@@ -898,7 +900,7 @@ public class MappingDSGraphDB {
                 if (tmp == null) {
                     tmp = new LinkImpl();
                     tmp.setElement(edge);
-                    MappingDSSimpleCache.putEntityToCache(tmp);
+                    MappingDSCache.putEntityToCache(tmp);
                     tmp.synchronizeFromDB();
                 }
                 ret.add(tmp);
@@ -961,10 +963,10 @@ public class MappingDSGraphDB {
                     for (Edge edge : vertex.getEdges(Direction.BOTH, MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY))
                         deleteEntity(getEdgeEntity(edge));
 
-                    MappingDSSimpleCache.removeEntityFromCache(entity);
+                    MappingDSCache.removeEntityFromCache(entity);
                     removeVertex(vertex);
                 } else if (elem instanceof Edge) {
-                    MappingDSSimpleCache.removeEntityFromCache(entity);
+                    MappingDSCache.removeEntityFromCache(entity);
                     removeEdge((Edge) elem);
                 }
             }

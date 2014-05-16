@@ -9,7 +9,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Properties;
 
 import static org.junit.Assert.assertTrue;
 
@@ -31,8 +34,11 @@ public class MappingSceTest {
 	private static Link        link        = null;
 	
 	@BeforeClass
-	public static void testSetup() {
-		mappingSce.init(null);
+	public static void testSetup() throws IOException {
+        Properties prop = new Properties();
+        prop.load(MappingSceTest.class.getResourceAsStream("/com.spectral.cc.core.MappingRimManagedService.properties"));
+
+        mappingSce.init(prop);
 		mappingSce.start();
 		String urlLan       = "http://tibrvrdl03prd01.lab01.dev.dekatonshivr.echinopsii.net:7580";
 		String gateNameLan  = "webadmingate.tibrvrdl03prd01";

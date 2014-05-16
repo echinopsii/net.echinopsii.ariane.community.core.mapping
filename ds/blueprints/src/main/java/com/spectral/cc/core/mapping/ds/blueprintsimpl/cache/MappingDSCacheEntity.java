@@ -1,10 +1,8 @@
 /**
- * Mapping Graph Datastore Runtime Injectection Manager :
- * provide a Mapping graph DS configuration parser, factories and registry to inject
- * Mapping DS interface implementation dependancies.
- *   
+ * Mapping Datastore Blueprints Implementation :
+ * provide a Mapping DS domain, repository and service blueprints implementation
  * Copyright (C) 2013  Mathilde Ffrench
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -19,7 +17,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */ 
 
-{
-    "blueprintsImplementation" : "Neo4j",
-    "blueprintsGraphPath"      : "/tmp/neo4jtest"
+package com.spectral.cc.core.mapping.ds.blueprintsimpl.cache;
+
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDBException;
+import com.tinkerpop.blueprints.Element;
+
+public interface MappingDSCacheEntity {
+	public Element getElement();
+	public void    setElement(Element element); //element is a vertex or an edge
+	
+	public void   synchronizeToDB() throws MappingDSGraphDBException;
+	public void   synchronizeFromDB();
 }

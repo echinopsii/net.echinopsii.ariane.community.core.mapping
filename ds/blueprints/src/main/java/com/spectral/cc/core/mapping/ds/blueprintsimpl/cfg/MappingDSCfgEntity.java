@@ -20,7 +20,9 @@
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.cfg;
 
 public class MappingDSCfgEntity {
-	private String       blueprintsImplementation = null;
+    private String       cacheConfigFile          = null;
+
+    private String       blueprintsImplementation = null;
 
     private String       blueprintsGraphPath      = null;
     private String       blueprintsNeoConfigFile  = null;
@@ -35,30 +37,35 @@ public class MappingDSCfgEntity {
 	public void setBlueprintsImplementation(String blueprintsImplementation) {
 		this.blueprintsImplementation = blueprintsImplementation;
 	}
+
 	public String getBlueprintsURL() {
 		return blueprintsURL;
 	}
 	public void setBlueprintsURL(String blueprintsURL) {
 		this.blueprintsURL = blueprintsURL;
 	}	
+
 	public String getBlueprintsUser() {
 		return blueprintsUser;
 	}
 	public void setBlueprintsUser(String blueprintsUser) {
 		this.blueprintsUser = blueprintsUser;
 	}
+
 	public String getBlueprintsPassword() {
 		return blueprintsPassword;
 	}
 	public void setBlueprintsPassword(String blueprintsPassword) {
 		this.blueprintsPassword = blueprintsPassword;
 	}
+
     public String getBlueprintsGraphPath() {
         return blueprintsGraphPath;
     }
     public void setBlueprintsGraphPath(String blueprintsGraphPath) {
         this.blueprintsGraphPath = blueprintsGraphPath;
     }
+
     public String getBlueprintsNeoConfigFile() {
         return blueprintsNeoConfigFile;
     }
@@ -66,8 +73,17 @@ public class MappingDSCfgEntity {
         this.blueprintsNeoConfigFile = blueprintsNeoConfigFile;
     }
 
+    public String getCacheConfigFile() {
+        return cacheConfigFile;
+    }
+    public void setCacheConfigFile(String cacheConfigFile) {
+        this.cacheConfigFile = cacheConfigFile;
+    }
+
     public String toString() {
-		return "blueprintsConfiguration: \n\t" + blueprintsImplementation +
+		return "cacheConfig File: " + cacheConfigFile +
+               "\nblueprintsConfiguration:" +
+               "\n\t + blueprintsImplementation:" + blueprintsImplementation +
                " ; \n\tblueprintsGraphPath: " + blueprintsGraphPath +
                " ; \n\tblueprintsNeoConfigFile: " + blueprintsNeoConfigFile +
 			   " ; \n\tblueprintsURL: " + blueprintsURL + 

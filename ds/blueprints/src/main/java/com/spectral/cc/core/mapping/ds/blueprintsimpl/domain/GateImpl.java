@@ -19,9 +19,9 @@
 
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.domain;
 
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSCacheEntity;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDB;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDBException;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.cache.MappingDSCacheEntity;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDBException;
 import com.spectral.cc.core.mapping.ds.MappingDSGraphPropertyNames;
 import com.spectral.cc.core.mapping.ds.domain.Endpoint;
 import com.spectral.cc.core.mapping.ds.domain.Gate;

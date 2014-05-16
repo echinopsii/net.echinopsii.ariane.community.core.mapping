@@ -20,7 +20,6 @@
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.service;
 
 import com.spectral.cc.core.mapping.ds.MappingDSException;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDBException;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.ContainerImpl;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.GateImpl;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.repository.ContainerRepoImpl;

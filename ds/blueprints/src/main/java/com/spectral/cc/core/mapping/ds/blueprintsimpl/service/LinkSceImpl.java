@@ -20,7 +20,7 @@
 package com.spectral.cc.core.mapping.ds.blueprintsimpl.service;
 
 import com.spectral.cc.core.mapping.ds.MappingDSException;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDB;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.EndpointImpl;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.LinkImpl;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.domain.TransportImpl;

@@ -2,7 +2,7 @@ package com.spectral.cc.core.mapping.ds;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.spectral.cc.core.mapping.ds.blueprintsimpl.MappingDSGraphDB;
+import com.spectral.cc.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import com.spectral.cc.core.mapping.ds.blueprintsimpl.cfg.MappingDSCfgLoader;
 import com.tinkerpop.blueprints.Vertex;
 import org.apache.commons.io.FileUtils;
@@ -13,7 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Properties;
 
 import static org.junit.Assert.assertTrue;
 
@@ -24,16 +26,16 @@ public class MappingDSGraphDBTest {
     @BeforeClass
     public static void testSetup() {
         try {
-            MappingDSGraphDB.init(null);
+            Properties prop = new Properties();
+            prop.load(MappingDSGraphDBTest.class.getResourceAsStream("/com.spectral.cc.core.MappingRimManagedService.properties"));
+            MappingDSGraphDB.init(prop);
             MappingDSGraphDB.start();
         } catch (JsonParseException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (JsonMappingException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
