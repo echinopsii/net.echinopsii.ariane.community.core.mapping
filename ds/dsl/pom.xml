@@ -4,22 +4,22 @@
 
     <!-- Parent -->
     <parent>
-        <groupId>com.spectral.cc.core.mapping</groupId>
-        <artifactId>com.spectral.cc.core.mapping.ds</artifactId>
-        <version>0.4.0.RELEASE</version>
+        <groupId>net.echinopsii.ariane.core.mapping</groupId>
+        <artifactId>net.echinopsii.ariane.core.mapping.ds</artifactId>
+        <version>0.5.0-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
-    <groupId>com.spectral.cc.core.mapping.ds</groupId>
-    <artifactId>com.spectral.cc.core.mapping.ds.dsl</artifactId>
-    <name>CC Core Mapping DS Mapper DSL</name>
+    <groupId>net.echinopsii.ariane.core.mapping.ds</groupId>
+    <artifactId>net.echinopsii.ariane.core.mapping.ds.dsl</artifactId>
+    <name>Ariane Core Mapping DS Mapper DSL</name>
     <packaging>bundle</packaging>
 
     <dependencies>
         <!-- Internal -->
         <dependency>
-            <groupId>com.spectral.cc.core.mapping.ds</groupId>
-            <artifactId>com.spectral.cc.core.mapping.ds.api</artifactId>
+            <groupId>net.echinopsii.ariane.core.mapping.ds</groupId>
+            <artifactId>net.echinopsii.ariane.core.mapping.ds.api</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -101,7 +101,7 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            com.spectral.cc.core.mapping.ds.dsl;version=${project.version}
+                            net.echinopsii.ariane.core.mapping.ds.dsl;version=${project.version}
                         </Export-Package>
                     </instructions>
                 </configuration>

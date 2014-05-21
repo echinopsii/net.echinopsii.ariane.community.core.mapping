@@ -1,8 +1,8 @@
-com.spectral.cc.core.mapping.wat.rest.ds.domain.ClusterEndpoint
-com.spectral.cc.core.mapping.wat.rest.ds.domain.ContainerEndpoint
-com.spectral.cc.core.mapping.wat.rest.ds.domain.NodeEndpoint
-com.spectral.cc.core.mapping.wat.rest.ds.domain.GateEndpoint
-com.spectral.cc.core.mapping.wat.rest.ds.domain.EndpointEndpoint
-com.spectral.cc.core.mapping.wat.rest.ds.domain.LinkEndpoint
-com.spectral.cc.core.mapping.wat.rest.ds.domain.TransportEndpoint
-com.spectral.cc.core.mapping.wat.rest.ds.service.MapEndpoint
+net.echinopsii.ariane.core.mapping.wat.rest.ds.domain.ClusterEndpoint
+net.echinopsii.ariane.core.mapping.wat.rest.ds.domain.ContainerEndpoint
+net.echinopsii.ariane.core.mapping.wat.rest.ds.domain.NodeEndpoint
+net.echinopsii.ariane.core.mapping.wat.rest.ds.domain.GateEndpoint
+net.echinopsii.ariane.core.mapping.wat.rest.ds.domain.EndpointEndpoint
+net.echinopsii.ariane.core.mapping.wat.rest.ds.domain.LinkEndpoint
+net.echinopsii.ariane.core.mapping.wat.rest.ds.domain.TransportEndpoint
+net.echinopsii.ariane.core.mapping.wat.rest.ds.service.MapEndpoint

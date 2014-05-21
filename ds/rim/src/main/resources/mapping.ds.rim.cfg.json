@@ -2,6 +2,6 @@
  * <http\://www.gnu.org/licenses/lgpl-3.0.html>.
  */ 
 {
-	"bundleName"     : "com.spectral.cc.core.mapping.ds.blueprints",
+	"bundleName"     : "net.echinopsii.ariane.core.mapping.ds.blueprints",
 	"bundleCfgFile"  : "mapping.ds.rim.blueprints.json"
 }

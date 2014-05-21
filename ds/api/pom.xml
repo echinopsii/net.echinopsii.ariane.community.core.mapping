@@ -4,15 +4,15 @@
 
     <!-- Parent -->
     <parent>
-        <groupId>com.spectral.cc.core.mapping</groupId>
-        <artifactId>com.spectral.cc.core.mapping.ds</artifactId>
-        <version>0.4.0.RELEASE</version>
+        <groupId>net.echinopsii.ariane.core.mapping</groupId>
+        <artifactId>net.echinopsii.ariane.core.mapping.ds</artifactId>
+        <version>0.5.0-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
-    <groupId>com.spectral.cc.core.mapping.ds</groupId>
-    <artifactId>com.spectral.cc.core.mapping.ds.api</artifactId>
-    <name>CC Core Mapping DS API</name>
+    <groupId>net.echinopsii.ariane.core.mapping.ds</groupId>
+    <artifactId>net.echinopsii.ariane.core.mapping.ds.api</artifactId>
+    <name>Ariane Core Mapping DS API</name>
     <packaging>bundle</packaging>
 
     <build>
@@ -35,10 +35,10 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            com.spectral.cc.core.mapping.ds;version=${project.version},
-                            com.spectral.cc.core.mapping.ds.domain;version=${project.version},
-                            com.spectral.cc.core.mapping.ds.repository;version=${project.version},
-                            com.spectral.cc.core.mapping.ds.service;version=${project.version}
+                            net.echinopsii.ariane.core.mapping.ds;version=${project.version},
+                            net.echinopsii.ariane.core.mapping.ds.domain;version=${project.version},
+                            net.echinopsii.ariane.core.mapping.ds.repository;version=${project.version},
+                            net.echinopsii.ariane.core.mapping.ds.service;version=${project.version}
                         </Export-Package>
                     </instructions>
                 </configuration>

@@ -4,29 +4,29 @@
 
     <!-- Parent -->
     <parent>
-        <groupId>com.spectral.cc.core.mapping</groupId>
-        <artifactId>com.spectral.cc.core.mapping.ds</artifactId>
-        <version>0.4.0.RELEASE</version>
+        <groupId>net.echinopsii.ariane.core.mapping</groupId>
+        <artifactId>net.echinopsii.ariane.core.mapping.ds</artifactId>
+        <version>0.5.0-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
-    <groupId>com.spectral.cc.core.mapping.ds</groupId>
-    <artifactId>com.spectral.cc.core.mapping.ds.rim</artifactId>
-    <name>CC Core Mapping DS Runtime Injection Manager</name>
+    <groupId>net.echinopsii.ariane.core.mapping.ds</groupId>
+    <artifactId>net.echinopsii.ariane.core.mapping.ds.rim</artifactId>
+    <name>Ariane Core Mapping DS Runtime Injection Manager</name>
     <packaging>bundle</packaging>
 
     <dependencies>
         <dependency>
-            <groupId>com.spectral.cc.core.mapping.ds</groupId>
-            <artifactId>com.spectral.cc.core.mapping.ds.api</artifactId>
+            <groupId>net.echinopsii.ariane.core.mapping.ds</groupId>
+            <artifactId>net.echinopsii.ariane.core.mapping.ds.api</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <!-- Tests -->
         <dependency>
-            <groupId>com.spectral.cc.core.mapping.ds</groupId>
-            <artifactId>com.spectral.cc.core.mapping.ds.blueprints</artifactId>
+            <groupId>net.echinopsii.ariane.core.mapping.ds</groupId>
+            <artifactId>net.echinopsii.ariane.core.mapping.ds.blueprints</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
@@ -82,17 +82,17 @@
                             com.fasterxml.jackson.databind.ser.std;version="${version.com.fasterxml.jackson}",
                             com.fasterxml.jackson.databind.type;version="${version.com.fasterxml.jackson}",
                             com.fasterxml.jackson.databind.util;version="${version.com.fasterxml.jackson}",
-                            com.spectral.cc.core.mapping.ds.service;version=${project.version},
-                            com.spectral.cc.core.mapping.ds.blueprintsimpl.service;version="${project.version}";resolution:=optional,
+                            net.echinopsii.ariane.core.mapping.ds.service;version=${project.version},
+                            net.echinopsii.ariane.core.mapping.ds.blueprintsimpl.service;version="${project.version}";resolution:=optional,
                             org.osgi.framework;version="[${version.osgimin.org.osgi.framework},${version.osgimax.org.osgi.framework})",
                             org.slf4j;version="${version.org.slf4j}"
                         </Import-Package>
                         <Export-Package>
-                            com.spectral.cc.core.mapping.ds.rim.cfg;version=${project.version},
-                            com.spectral.cc.core.mapping.ds.rim.factory;version=${project.version},
-                            com.spectral.cc.core.mapping.ds.rim.factory.domain;version=${project.version},
-                            com.spectral.cc.core.mapping.ds.rim.factory.service;version=${project.version},
-                            com.spectral.cc.core.mapping.ds.rim.registry;version=${project.version}
+                            net.echinopsii.ariane.core.mapping.ds.rim.cfg;version=${project.version},
+                            net.echinopsii.ariane.core.mapping.ds.rim.factory;version=${project.version},
+                            net.echinopsii.ariane.core.mapping.ds.rim.factory.domain;version=${project.version},
+                            net.echinopsii.ariane.core.mapping.ds.rim.factory.service;version=${project.version},
+                            net.echinopsii.ariane.core.mapping.ds.rim.registry;version=${project.version}
                         </Export-Package>
                     </instructions>
                 </configuration>
