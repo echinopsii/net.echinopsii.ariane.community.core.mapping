@@ -1,4 +1,4 @@
-# CC installer neo4j logging configuration unit
+# installer neo4j logging configuration unit
 #
 # Copyright (C) 2014 Mathilde Ffrench
 #
@@ -23,7 +23,7 @@ __author__ = 'mffrench'
 
 class cuMappingNeo4JLoggingXMLProcessor(AConfUnit):
     def __init__(self, targetConfDir):
-        self.confUnitName = "CC mapping Neo4J logging configuration file"
+        self.confUnitName = "Mapping Neo4J logging configuration file"
         self.confTemplatePath = os.path.abspath("resources/templates/components/neo4j-http-logging.xml.tpl")
         self.confFinalPath = targetConfDir + "/neo4j-http-logging.xml"
         self.paramsDictionary = {}

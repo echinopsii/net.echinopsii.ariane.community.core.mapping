@@ -1,4 +1,4 @@
-mapping.ds.bundle.name                 = com.spectral.cc.core.mapping.ds.blueprints
+mapping.ds.bundle.name                 = net.echinopsii.ariane.core.mapping.ds.blueprints
 mapping.ds.blueprints.implementation   = Neo4j
 mapping.ds.blueprints.neo4j.configfile = ##mappingNeo4JConfigFile
 #mapping.ds.blueprints.directory       = ##mappingDirectory

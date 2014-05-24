@@ -1,4 +1,4 @@
-# CC installer idm MySQL db initiator
+# installer idm MySQL db initiator
 #
 # Copyright (C) 2014 Mathilde Ffrench
 #
@@ -27,4 +27,4 @@ class dbIDMMySQLPopulator(AMySQLdbInit):
         self.dbServerHost = dbConfig['host']
         self.dbServerPort = dbConfig['port']
         self.dbName = dbConfig['database']
-        self.sqlScriptFilePath = "resources/sqlscripts/components/cc_idm_mapping_insert.sql"
+        self.sqlScriptFilePath = "resources/sqlscripts/components/idm_mapping_insert.sql"

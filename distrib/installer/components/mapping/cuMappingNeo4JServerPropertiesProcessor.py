@@ -24,7 +24,7 @@ __author__ = 'mffrench'
 class cpMappingNeo4JDirectory(AConfParamNotNone):
 
     name = "##mappingNeo4JDirectory"
-    description = "CC mapping Neo4j DB path definition"
+    description = "Mapping Neo4j DB path definition"
     hide = False
 
     def __init__(self):
@@ -44,7 +44,7 @@ class cpMappingNeo4JDirectory(AConfParamNotNone):
 class cpMappingNeo4JRRDB(AConfParamNotNone):
 
     name = "##mappingNeo4JRRDB"
-    description = "CC mapping Neo4J RRDB path definition"
+    description = "Mapping Neo4J RRDB path definition"
     hide = False
 
     def __init__(self):
@@ -57,7 +57,7 @@ class cpMappingNeo4JRRDB(AConfParamNotNone):
 class cpMappingNeo4JTuningPropsFile(AConfParamNotNone):
 
     name = "##mappingNeo4JTuningPropsFile"
-    description = "CC mapping Neo4J Tunning properties path definition"
+    description = "Mapping Neo4J Tunning properties path definition"
     hide = False
 
     def __init__(self):
@@ -77,7 +77,7 @@ class cpMappingNeo4JTuningPropsFile(AConfParamNotNone):
 class cpMappingNeo4JLogConfigFile(AConfParamNotNone):
 
     name = "##mappingNeo4JLogConfigFile"
-    description = "CC mapping Neo4J log config file path definition"
+    description = "Mapping Neo4J log config file path definition"
     hide = False
 
     def __init__(self):
@@ -96,7 +96,7 @@ class cpMappingNeo4JLogConfigFile(AConfParamNotNone):
 
 class cuMappingNeo4JServerPropertiesProcessor(AConfUnit):
     def __init__(self, targetConfDir):
-        self.confUnitName = "CC mapping Neo4J server properties configuration file"
+        self.confUnitName = "Mapping Neo4J server properties configuration file"
         self.confTemplatePath = os.path.abspath("resources/templates/components/neo4j-server.properties.tpl")
         self.confFinalPath = targetConfDir + "/neo4j-server.properties"
 

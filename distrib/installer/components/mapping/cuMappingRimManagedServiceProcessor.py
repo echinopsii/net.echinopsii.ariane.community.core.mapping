@@ -1,4 +1,4 @@
-# CC installer mapping rim managed service configuration unit
+# installer mapping rim managed service configuration unit
 #
 # Copyright (C) 2014 Mathilde Ffrench
 #
@@ -24,7 +24,7 @@ __author__ = 'mffrench'
 class cpMappingDirectory(AConfParamNotNone):
 
     name = "##mappingDirectory"
-    description = "CC mapping DB path definition"
+    description = "Mapping DB path definition"
     hide = False
 
     def __init__(self):
@@ -44,7 +44,7 @@ class cpMappingDirectory(AConfParamNotNone):
 class cpMappingNeo4JConfigFile(AConfParamNotNone):
 
     name = "##mappingNeo4JConfigFile"
-    description = "CC mapping Neo4j configuration file path"
+    description = "Mapping Neo4j configuration file path"
     hide = False
 
     def __init__(self):
@@ -64,9 +64,9 @@ class cpMappingNeo4JConfigFile(AConfParamNotNone):
 class cuMappingRimManagedServiceProcessor(AConfUnit):
 
     def __init__(self, targetConfDir):
-        self.confUnitName = "CC mapping RIM managed service"
-        self.confTemplatePath = os.path.abspath("resources/templates/components/com.spectral.cc.core.MappingRimManagedService.properties.tpl")
-        self.confFinalPath = targetConfDir + "com.spectral.cc.core.MappingRimManagedService.properties"
+        self.confUnitName = "Mapping RIM managed service"
+        self.confTemplatePath = os.path.abspath("resources/templates/components/net.echinopsii.ariane.core.MappingRimManagedService.properties.tpl")
+        self.confFinalPath = targetConfDir + "net.echinopsii.ariane.core.MappingRimManagedService.properties"
         mapDir = cpMappingDirectory()
         mapNeo4JConfFile = cpMappingNeo4JConfigFile()
         self.paramsDictionary = {

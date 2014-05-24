@@ -1,4 +1,4 @@
-# CC installer mapping processor
+# installer mapping processor
 #
 # Copyright (C) 2014 Mathilde Ffrench
 #
@@ -28,13 +28,13 @@ __author__ = 'mffrench'
 class mappingProcessor:
     def __init__(self, idmDBConfig, homeDirPath, silent):
         print("\n%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--\n")
-        print("%-- CC mapping configuration : \n")
+        print("%-- Mapping configuration : \n")
         self.homeDirPath = homeDirPath
 
-        neo4jConfDirPath = self.homeDirPath + "/CC/neo4j/conf"
+        neo4jConfDirPath = self.homeDirPath + "/ariane/neo4j/conf"
         if not os.path.exists(neo4jConfDirPath):
             os.makedirs(neo4jConfDirPath, 0o755)
-        kernelRepositoryDirPath = self.homeDirPath + "/repository/cc-distrib/"
+        kernelRepositoryDirPath = self.homeDirPath + "/repository/ariane-distrib/"
         if not os.path.exists(kernelRepositoryDirPath):
             os.makedirs(kernelRepositoryDirPath, 0o755)
 
@@ -51,28 +51,28 @@ class mappingProcessor:
 
         for key in self.mappingNeo4JServerPropertiesCUProcessor.getParamsKeysList():
             if key == cpMappingNeo4JDirectory.name:
-                mapNeo4JDirPath = self.homeDirPath + "/CC/neo4j/graph"
+                mapNeo4JDirPath = self.homeDirPath + "/ariane/neo4j/graph"
                 if not os.path.exists(mapNeo4JDirPath):
                     os.makedirs(mapNeo4JDirPath, 0o755)
                 self.mappingNeo4JServerPropertiesCUProcessor.setKeyParamValue(key, mapNeo4JDirPath)
             elif key == cpMappingNeo4JRRDB.name:
-                mapNeo4JRRDBDirPath = self.homeDirPath + "/CC/neo4j/data"
+                mapNeo4JRRDBDirPath = self.homeDirPath + "/ariane/neo4j/data"
                 if not os.path.exists(mapNeo4JRRDBDirPath):
                     os.makedirs(mapNeo4JRRDBDirPath, 0o755)
                 self.mappingNeo4JServerPropertiesCUProcessor.setKeyParamValue(key, mapNeo4JRRDBDirPath+"/rrd")
             elif key == cpMappingNeo4JTuningPropsFile.name:
-                self.mappingNeo4JServerPropertiesCUProcessor.setKeyParamValue(key, self.homeDirPath + "/CC/neo4j/conf/neo4j.properties")
+                self.mappingNeo4JServerPropertiesCUProcessor.setKeyParamValue(key, self.homeDirPath + "/ariane/neo4j/conf/neo4j.properties")
             elif key == cpMappingNeo4JLogConfigFile.name:
-                self.mappingNeo4JServerPropertiesCUProcessor.setKeyParamValue(key, self.homeDirPath + "/CC/neo4j/conf/neo4j-http-logging.xml")
+                self.mappingNeo4JServerPropertiesCUProcessor.setKeyParamValue(key, self.homeDirPath + "/ariane/neo4j/conf/neo4j-http-logging.xml")
         self.mappingNeo4JServerPropertiesCUProcessor.process()
 
         for key in self.mappingRimManagedServiceCUProcessor.getParamsKeysList():
             if key == cpMappingDirectory.name:
-                mapDirPath = self.homeDirPath + "/CC/neo4j/graph"
+                mapDirPath = self.homeDirPath + "/ariane/neo4j/graph"
                 if not os.path.exists(mapDirPath):
                     os.makedirs(mapDirPath, 0o755)
                 self.mappingRimManagedServiceCUProcessor.setKeyParamValue(key, mapDirPath)
             elif key == cpMappingNeo4JConfigFile.name:
-                self.mappingRimManagedServiceCUProcessor.setKeyParamValue(key, self.homeDirPath + "/CC/neo4j/conf/neo4j-server.properties")
+                self.mappingRimManagedServiceCUProcessor.setKeyParamValue(key, self.homeDirPath + "/ariane/neo4j/conf/neo4j-server.properties")
         self.mappingRimManagedServiceCUProcessor.process()
         return self
