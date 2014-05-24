@@ -34,7 +34,7 @@ class mappingProcessor:
         neo4jConfDirPath = self.homeDirPath + "/ariane/neo4j/conf"
         if not os.path.exists(neo4jConfDirPath):
             os.makedirs(neo4jConfDirPath, 0o755)
-        kernelRepositoryDirPath = self.homeDirPath + "/repository/ariane-distrib/"
+        kernelRepositoryDirPath = self.homeDirPath + "/repository/ariane-core/"
         if not os.path.exists(kernelRepositoryDirPath):
             os.makedirs(kernelRepositoryDirPath, 0o755)
 
