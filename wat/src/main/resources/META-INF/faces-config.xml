@@ -5,13 +5,13 @@
               version="2.0">
     <managed-bean>
         <managed-bean-name>autoCompleteController</managed-bean-name>
-        <managed-bean-class>net.echinopsii.ariane.core.mapping.wat.controller.AutoCompleteController</managed-bean-class>
+        <managed-bean-class>net.echinopsii.ariane.community.core.mapping.wat.controller.AutoCompleteController</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
 
     <managed-bean>
         <managed-bean-name>notificationsController</managed-bean-name>
-        <managed-bean-class>net.echinopsii.ariane.core.mapping.wat.controller.NotificationsController</managed-bean-class>
+        <managed-bean-class>net.echinopsii.ariane.community.core.mapping.wat.controller.NotificationsController</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
 </faces-config>

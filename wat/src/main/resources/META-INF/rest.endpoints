@@ -1,8 +1,8 @@
-net.echinopsii.ariane.core.mapping.wat.rest.ds.domain.ClusterEndpoint
-net.echinopsii.ariane.core.mapping.wat.rest.ds.domain.ContainerEndpoint
-net.echinopsii.ariane.core.mapping.wat.rest.ds.domain.NodeEndpoint
-net.echinopsii.ariane.core.mapping.wat.rest.ds.domain.GateEndpoint
-net.echinopsii.ariane.core.mapping.wat.rest.ds.domain.EndpointEndpoint
-net.echinopsii.ariane.core.mapping.wat.rest.ds.domain.LinkEndpoint
-net.echinopsii.ariane.core.mapping.wat.rest.ds.domain.TransportEndpoint
-net.echinopsii.ariane.core.mapping.wat.rest.ds.service.MapEndpoint
+net.echinopsii.ariane.community.core.mapping.wat.rest.ds.domain.ClusterEndpoint
+net.echinopsii.ariane.community.core.mapping.wat.rest.ds.domain.ContainerEndpoint
+net.echinopsii.ariane.community.core.mapping.wat.rest.ds.domain.NodeEndpoint
+net.echinopsii.ariane.community.core.mapping.wat.rest.ds.domain.GateEndpoint
+net.echinopsii.ariane.community.core.mapping.wat.rest.ds.domain.EndpointEndpoint
+net.echinopsii.ariane.community.core.mapping.wat.rest.ds.domain.LinkEndpoint
+net.echinopsii.ariane.community.core.mapping.wat.rest.ds.domain.TransportEndpoint
+net.echinopsii.ariane.community.core.mapping.wat.rest.ds.service.MapEndpoint

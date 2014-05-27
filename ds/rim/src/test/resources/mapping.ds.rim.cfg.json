@@ -20,6 +20,6 @@
  */ 
  
 {
-	"bundleName"     : "net.echinopsii.ariane.core.mapping.ds.blueprints",
+	"bundleName"     : "net.echinopsii.ariane.community.core.mapping.ds.blueprints",
 	"bundleCfgFile"  : "mapping.ds.rim.blueprints.json"
 }

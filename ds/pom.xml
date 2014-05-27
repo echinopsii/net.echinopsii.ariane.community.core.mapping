@@ -4,15 +4,15 @@
 
     <!-- Parent -->
     <parent>
-        <groupId>net.echinopsii.ariane.core</groupId>
-        <artifactId>net.echinopsii.ariane.core.mapping</artifactId>
+        <groupId>net.echinopsii.ariane.community.core</groupId>
+        <artifactId>net.echinopsii.ariane.community.core.mapping</artifactId>
         <version>0.5.0-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
-    <groupId>net.echinopsii.ariane.core.mapping</groupId>
-    <artifactId>net.echinopsii.ariane.core.mapping.ds</artifactId>
-    <name>Ariane Core Mapping DS</name>
+    <groupId>net.echinopsii.ariane.community.core.mapping</groupId>
+    <artifactId>net.echinopsii.ariane.community.core.mapping.ds</artifactId>
+    <name>Ariane Community Core Mapping DS</name>
     <packaging>pom</packaging>
 
     <modules>

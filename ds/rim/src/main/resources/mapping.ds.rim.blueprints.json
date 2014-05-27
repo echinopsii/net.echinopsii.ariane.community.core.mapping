@@ -19,12 +19,12 @@
  */ 
  
 {
-  "clusterClass" : "net.echinopsii.ariane.core.mapping.ds.blueprintsimpl.domain.ClusterImpl",
-  "containerClass" : "net.echinopsii.ariane.core.mapping.ds.blueprintsimpl.domain.ContainerImpl",
-  "endpointClass" : "net.echinopsii.ariane.core.mapping.ds.blueprintsimpl.domain.EndpointImpl",
-  "gateClass" : "net.echinopsii.ariane.core.mapping.ds.blueprintsimpl.domain.GateImpl",
-  "linkClass" : "net.echinopsii.ariane.core.mapping.ds.blueprintsimpl.domain.LinkImpl",
-  "nodeClass" : "net.echinopsii.ariane.core.mapping.ds.blueprintsimpl.domain.NodeImpl",
-  "transportClass" : "net.echinopsii.ariane.core.mapping.ds.blueprintsimpl.domain.TransportImpl",
-  "mappingSceClass" : "net.echinopsii.ariane.core.mapping.ds.blueprintsimpl.service.MappingSceImpl"
+  "clusterClass" : "net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.ClusterImpl",
+  "containerClass" : "net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.ContainerImpl",
+  "endpointClass" : "net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.EndpointImpl",
+  "gateClass" : "net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.GateImpl",
+  "linkClass" : "net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.LinkImpl",
+  "nodeClass" : "net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.NodeImpl",
+  "transportClass" : "net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.TransportImpl",
+  "mappingSceClass" : "net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.MappingSceImpl"
  }
