@@ -20,6 +20,9 @@
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb;
 
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.kernel.logging.BufferingConsoleLogger;
+import org.neo4j.kernel.logging.DefaultLogging;
+import org.neo4j.kernel.logging.Logging;
 import org.neo4j.server.Bootstrapper;
 import org.neo4j.server.CommunityNeoServer;
 import org.neo4j.server.NeoServer;
@@ -44,9 +47,11 @@ public class MappingDSGraphDBNeo4jBootstrapper {
     public MappingDSGraphDBNeo4jBootstrapper start(String configFilePath) {
         File configFile = new File(configFilePath);
         log.debug("Create configuration from {}", configFilePath);
-        configurator = new PropertyFileConfigurator(new Validator(new DatabaseLocationMustBeSpecifiedRule()),configFile);
+        BufferingConsoleLogger console = new BufferingConsoleLogger();
+        configurator = new PropertyFileConfigurator(new Validator(new DatabaseLocationMustBeSpecifiedRule()),configFile,console);
+        Logging logging = DefaultLogging.createDefaultLogging(configurator.getDatabaseTuningProperties());
         log.debug("Create neo4j server");
-        server = new CommunityNeoServer(configurator);
+        server = new CommunityNeoServer(configurator, logging);
         log.debug("Start neo4j server");
         server.start();
 

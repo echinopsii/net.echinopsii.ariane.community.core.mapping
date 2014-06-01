@@ -95,6 +95,7 @@
                             org.neo4j.graphdb;version="${version.osgi.com.neo4j}";resolution:=optional,
                             org.neo4j.graphdb.factory;version="${version.osgi.com.neo4j}";resolution:=optional,
                             org.neo4j.kernel;version="${version.osgi.com.neo4j}";resolution:=optional,
+                            org.neo4j.kernel.logging;version="${version.osgi.com.neo4j}";resolution:=optional,
                             org.neo4j.server;version="${version.osgi.com.neo4j}";resolution:=optional,
                             org.neo4j.server.configuration;version="${version.osgi.com.neo4j}";resolution:=optional,
                             org.neo4j.server.configuration.validation;version="${version.osgi.com.neo4j}";resolution:=optional,
