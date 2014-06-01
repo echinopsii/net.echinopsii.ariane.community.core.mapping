@@ -28,6 +28,8 @@ public class MappingDSGraphDBTest {
         try {
             Properties prop = new Properties();
             prop.load(MappingDSGraphDBTest.class.getResourceAsStream("/net.echinopsii.ariane.community.core.MappingRimManagedService.properties"));
+            //randomize target graphdb directory to avoid test collapse
+            prop.setProperty("mapping.ds.blueprints.graphpath", ((String)prop.get("mapping.ds.blueprints.graphpath")) + 1 + (int)(Math.random() * ((100 - 1) + 1)));
             MappingDSGraphDB.init(prop);
             MappingDSGraphDB.start();
         } catch (JsonParseException e) {
