@@ -29,6 +29,17 @@
         </repository>
     </repositories>
 
+    <distributionManagement>
+        <repository>
+            <id>echinopsii.community</id>
+            <url>http://nexus.lab.prod.dekatonshivr.echinopsii.net:8081/nexus/content/repositories/echinopsii.community.releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>echinopsii.community</id>
+            <url>http://nexus.lab.prod.dekatonshivr.echinopsii.net:8081/nexus/content/repositories/echinopsii.community.snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <properties>
         <!-- Encoding -->
         <file.encoding>UTF-8</file.encoding>
