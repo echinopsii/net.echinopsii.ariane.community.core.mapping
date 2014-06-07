@@ -26,6 +26,8 @@ import net.echinopsii.ariane.community.core.idm.base.model.jpa.Permission;
 import net.echinopsii.ariane.community.core.idm.base.model.jpa.User;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -37,6 +39,8 @@ import java.util.Set;
 @XmlRootElement
 @Table(name="uxResourceRequest", uniqueConstraints = @UniqueConstraint(columnNames = {"requestName"}))
 public class MappingDSLRegistryRequest implements IUXResource<Permission>, Serializable, Comparable<IUXResource>  {
+
+    private static final Logger log = LoggerFactory.getLogger(MappingDSLRegistryRequest.class);
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -50,11 +54,11 @@ public class MappingDSLRegistryRequest implements IUXResource<Permission>, Seria
     @NotNull
     private String name;
 
-    @Column
+    @Column(columnDefinition="LONGTEXT")
     @NotNull
     private String request;
 
-    @Column
+    @Column(columnDefinition="LONGTEXT")
     private String description;
 
     @Column
@@ -263,10 +267,7 @@ public class MappingDSLRegistryRequest implements IUXResource<Permission>, Seria
 
     @Override
     public int hashCode() {
-        int result = id.hashCode();
-        result = 31 * result + version;
-        result = 31 * result + name.hashCode();
-        return result;
+        return name.hashCode();
     }
 
     @Override

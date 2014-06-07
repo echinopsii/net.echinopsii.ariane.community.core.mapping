@@ -16,7 +16,12 @@
     <packaging>bundle</packaging>
 
     <dependencies>
-        <!-- Internal -->
+        <dependency>
+            <groupId>net.echinopsii.ariane.community.core.idm</groupId>
+            <artifactId>net.echinopsii.ariane.community.core.idm.base</artifactId>
+            <version>${version.net.echinopsii.ariane.core.idm}</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>net.echinopsii.ariane.community.core.mapping.ds</groupId>
             <artifactId>net.echinopsii.ariane.community.core.mapping.ds.api</artifactId>
@@ -95,14 +100,44 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-ipojo-plugin</artifactId>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>ipojo-bundle</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <!-- This plugin takes care of packaging the artifact as an OSGi Bundle -->
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            net.echinopsii.ariane.community.core.mapping.ds.dsl;version=${project.version}
+                            net.echinopsii.ariane.community.core.mapping.ds.dsl;version=${project.version},
+                            net.echinopsii.ariane.community.core.mapping.ds.dsl.registry;version=${project.version},
+                            net.echinopsii.ariane.community.core.mapping.ds.dsl.registry.model;version=${project.version}
                         </Export-Package>
+                        <Import-Package>
+                            javassist.util.proxy,
+                            javax.persistence;version="[${version.osgimin.javax.persistence},${version.osgimax.javax.persistence})",
+                            javax.persistence.criteria;version="[${version.osgimin.javax.persistence},${version.osgimax.javax.persistence})",
+                            javax.persistence.spi;version="[${version.osgimin.javax.persistence},${version.osgimax.javax.persistence})",
+                            javax.transaction;version="${version.javax.transaction.jta}",
+                            org.h2;resolution:=optional,
+                            org.mariadb.jdbc;resolution:=optional,
+                            com.mysql.jdbc;resolution:=optional,
+                            org.hibernate.proxy;version="[${version.osgimin.hibernate},${version.osgimax.hibernate})",
+                            org.hibernate.jpa;version="[${version.osgimin.hibernate},${version.osgimax.hibernate})",
+                            org.hibernate.jpa.boot.internal;version="[${version.osgimin.hibernate},${version.osgimax.hibernate})",
+                            org.hibernate.jpa.boot.spi;version="[${version.osgimin.hibernate},${version.osgimax.hibernate})",
+                            org.osgi.framework;version="[${version.osgimin.org.osgi.framework},${version.osgimax.org.osgi.framework})",
+                            *
+                        </Import-Package>
                     </instructions>
                 </configuration>
             </plugin>

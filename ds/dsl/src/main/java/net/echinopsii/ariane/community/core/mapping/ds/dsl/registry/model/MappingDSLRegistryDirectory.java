@@ -26,17 +26,20 @@ import net.echinopsii.ariane.community.core.idm.base.model.jpa.Permission;
 import net.echinopsii.ariane.community.core.idm.base.model.jpa.User;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @XmlRootElement
 @Table(name="uxResourceDirectory",uniqueConstraints = @UniqueConstraint(columnNames = {"directoryName"}))
 public class MappingDSLRegistryDirectory implements IUXResource<Permission>, Serializable, Comparable<IUXResource> {
+
+    private static final Logger log = LoggerFactory.getLogger(MappingDSLRegistryRequest.class);
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -62,7 +65,7 @@ public class MappingDSLRegistryDirectory implements IUXResource<Permission>, Ser
 
     @OneToMany(mappedBy = "rootDirectory", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Fetch(FetchMode.SUBSELECT)
-    private Set<Request> requests;
+    private Set<MappingDSLRegistryRequest> requests;
 
     @ManyToOne(fetch = FetchType.EAGER)
     private User user;
@@ -225,17 +228,32 @@ public class MappingDSLRegistryDirectory implements IUXResource<Permission>, Ser
         return this;
     }
 
-    public Set<Request> getRequests() {
+    public Set<MappingDSLRegistryRequest> getRequests() {
         return requests;
     }
 
-    public void setRequests(Set<Request> requests) {
+    public void setRequests(Set<MappingDSLRegistryRequest> requests) {
         this.requests = requests;
     }
 
-    public MappingDSLRegistryDirectory setRequestsR(Set<Request> requests) {
+    public MappingDSLRegistryDirectory setRequestsR(Set<MappingDSLRegistryRequest> requests) {
         this.requests = requests;
         return this;
+    }
+
+    public String getFullPath() {
+        String ret = "";
+        if (rootDirectory != null)
+            ret = rootDirectory.getFullPath();
+        ret += "/" + name;
+        return ret;
+    }
+
+    public Set<IUXResource> getOrderedChildsList() {
+        TreeSet<IUXResource> ret = new TreeSet<>();
+        ret.addAll(this.subDirectories);
+        ret.addAll(this.requests);
+        return ret;
     }
 
     @Override
@@ -264,9 +282,7 @@ public class MappingDSLRegistryDirectory implements IUXResource<Permission>, Ser
 
     @Override
     public int hashCode() {
-        int result = id.hashCode();
-        result = 31 * result + version;
-        result = 31 * result + name.hashCode();
+        int result = name.hashCode();
         return result;
     }
 
