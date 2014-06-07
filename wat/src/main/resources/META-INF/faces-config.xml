@@ -14,4 +14,22 @@
         <managed-bean-class>net.echinopsii.ariane.community.core.mapping.wat.controller.NotificationsController</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>mdslRegistryController</managed-bean-name>
+        <managed-bean-class>net.echinopsii.ariane.community.core.mapping.wat.controller.MDSLRegistryController</managed-bean-class>
+        <managed-bean-scope>view</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>mdslrRequestController</managed-bean-name>
+        <managed-bean-class>net.echinopsii.ariane.community.core.mapping.wat.controller.MDSLRRequestController</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>sessionMDSLRRequestController</managed-bean-name>
+        <managed-bean-class>net.echinopsii.ariane.community.core.mapping.wat.controller.SessionMDSLRRequestController</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
 </faces-config>

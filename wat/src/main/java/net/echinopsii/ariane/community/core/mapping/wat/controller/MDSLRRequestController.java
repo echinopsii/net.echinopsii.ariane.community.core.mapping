@@ -31,14 +31,33 @@ import javax.persistence.EntityManager;
 
 public class MDSLRRequestController {
 
-    private static final Logger log = LoggerFactory.getLogger(MDSLRegistryController.class);
+    private static final Logger log = LoggerFactory.getLogger(MDSLRRequestController.class);
+    private Long      id;
     private String    name;
     private String    request;
     private String    description;
     private boolean   isTemplate;
     private MappingDSLRegistryDirectory rootDirectory;
 
+    public Long getId() {
+        Object selectedDirOrReqNode = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get(MDSLRegistryController.FACES_CONTEXT_APPMAP_SELECTED_NODE);
+        if (selectedDirOrReqNode instanceof MappingDSLRegistryRequest)
+            id = ((MappingDSLRegistryRequest) selectedDirOrReqNode).getId();
+        else
+            id = new Long(0);
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getName() {
+        Object selectedDirOrReqNode = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get(MDSLRegistryController.FACES_CONTEXT_APPMAP_SELECTED_NODE);
+        if (selectedDirOrReqNode instanceof MappingDSLRegistryRequest)
+            name = ((MappingDSLRegistryRequest) selectedDirOrReqNode).getName();
+        else
+            name = "";
         return name;
     }
 
@@ -47,6 +66,7 @@ public class MDSLRRequestController {
     }
 
     public String getRequest() {
+        request = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get(SessionMDSLRRequestController.FACES_CONTEXT_APPMAP_SESSION_REQ);
         return request;
     }
 
@@ -55,6 +75,9 @@ public class MDSLRRequestController {
     }
 
     public String getDescription() {
+        Object selectedDirOrReqNode = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get(MDSLRegistryController.FACES_CONTEXT_APPMAP_SELECTED_NODE);
+        if (selectedDirOrReqNode instanceof MappingDSLRegistryRequest)
+            description = ((MappingDSLRegistryRequest) selectedDirOrReqNode).getDescription();
         return description;
     }
 
@@ -71,6 +94,13 @@ public class MDSLRRequestController {
     }
 
     public MappingDSLRegistryDirectory getRootDirectory() {
+        Object selectedDirOrReqNode = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get(MDSLRegistryController.FACES_CONTEXT_APPMAP_SELECTED_NODE);
+        if (selectedDirOrReqNode instanceof MappingDSLRegistryDirectory)
+            rootDirectory = (MappingDSLRegistryDirectory) selectedDirOrReqNode;
+        else if (selectedDirOrReqNode instanceof MappingDSLRegistryRequest)
+            rootDirectory = ((MappingDSLRegistryRequest) selectedDirOrReqNode).getRootDirectory();
+        else
+            rootDirectory = null;
         return rootDirectory;
     }
 
@@ -78,18 +108,41 @@ public class MDSLRRequestController {
         this.rootDirectory = rootDirectory;
     }
 
+    public void clear() {
+        name=null;
+        request=null;
+        description=null;
+        request=null;
+        rootDirectory=null;
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove(MDSLRegistryController.FACES_CONTEXT_APPMAP_SELECTED_NODE);
+    }
+
     public void save() {
-        MappingDSLRegistryRequest tosave = new MappingDSLRegistryRequest().setNameR(this.name).setDescriptionR(this.description).setTemplateR(this.isTemplate).setRootDirectoryR(this.rootDirectory);
         EntityManager em = MappingDSLRegistryBootstrap.getIDMJPAProvider().createEM();
+        MappingDSLRegistryRequest entity = null;
         try {
             em.getTransaction().begin();
-            em.persist(tosave);
+            if (id == 0) {
+                entity = new MappingDSLRegistryRequest().setNameR(this.name).setDescriptionR(this.description).setRequestR(this.request).setTemplateR(false);
+                MappingDSLRegistryDirectory rootD = em.find(rootDirectory.getClass(), rootDirectory.getId());
+                entity.setRootDirectory(rootD);
+                rootD.getRequests().add(entity);
+                em.persist(entity);
+            } else {
+                entity = em.find(MappingDSLRegistryRequest.class, this.id);
+                entity.setNameR(this.name).setDescriptionR(this.description).setRequestR(this.request).setTemplate(this.isTemplate);
+                if (!entity.getRootDirectory().equals(this.rootDirectory)) {
+                    entity.getRootDirectory().getRequests().remove(entity);
+                    MappingDSLRegistryDirectory rootD = em.find(rootDirectory.getClass(), rootDirectory.getId());
+                    rootD.getRequests().add(entity);
+                }
+            }
             em.getTransaction().commit();
         } catch (Throwable t) {
             log.debug("Throwable catched !");
             t.printStackTrace();
             FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                                                "Throwable raised while creating mapping dsl request " + tosave.getName() + " !",
+                                                "Throwable raised while creating mapping dsl request " + ((entity!=null) ? entity.getName() : "null") + " !",
                                                 "Throwable message : " + t.getMessage());
             FacesContext.getCurrentInstance().addMessage(null, msg);
             if (em.getTransaction().isActive())

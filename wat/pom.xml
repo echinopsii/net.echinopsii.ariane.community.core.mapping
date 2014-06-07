@@ -19,13 +19,25 @@
         <dependency>
             <groupId>net.echinopsii.ariane.community.core.mapping.ds</groupId>
             <artifactId>net.echinopsii.ariane.community.core.mapping.ds.api</artifactId>
-            <version>${version.net.echinopsii.ariane.core.portal}</version>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.echinopsii.ariane.community.core.mapping.ds</groupId>
+            <artifactId>net.echinopsii.ariane.community.core.mapping.ds.dsl</artifactId>
+            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.echinopsii.ariane.community.core.mapping.ds</groupId>
             <artifactId>net.echinopsii.ariane.community.core.mapping.ds.rim</artifactId>
-            <version>${version.net.echinopsii.ariane.core.portal}</version>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.echinopsii.ariane.community.core.idm</groupId>
+            <artifactId>net.echinopsii.ariane.community.core.idm.base</artifactId>
+            <version>${version.net.echinopsii.ariane.core.idm}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -100,8 +112,7 @@
                             com.fasterxml.jackson.core.type;version="${version.com.fasterxml.jackson}",
                             com.fasterxml.jackson.core.util;version="${version.com.fasterxml.jackson}",
                             net.echinopsii.ariane.community.core.mapping*;version=${project.version},
-                            net.echinopsii.ariane.community.core.portal.base.model;version=${version.net.echinopsii.ariane.core.portal},
-                            net.echinopsii.ariane.community.core.portal.base.plugin;version=${version.net.echinopsii.ariane.core.portal},
+                            com.mysql.jdbc;resolution:=optional,
                             com.sun.el;version="${version.org.glassfish.web.el-impl}"
                             com.sun.faces;version="${version.javax.faces.api}",
                             com.sun.faces.application;version="${version.javax.faces.api}",
@@ -152,6 +163,8 @@
                             com.sun.faces.util;version="${version.javax.faces.api}",
                             com.sun.faces.vendor;version="${version.javax.faces.api}",
                             com.sun.faces.xhtml;version="${version.javax.faces.api}",
+                            javassist.util.proxy,
+                            javax.annotation;version="${version.javax.annotations.jsr250-api}",
                             javax.el;version="${version.javax.el}",
                             javax.servlet;version="[${version.osgimin.javax.servlet-api},${version.osgimax.javax.servlet-api})",
                             javax.faces;version="${version.javax.faces.api}",
@@ -172,10 +185,18 @@
                             javax.faces.view;version="${version.javax.faces.api}",
                             javax.faces.view.facelets;version="${version.javax.faces.api}",
                             javax.faces.webapp;version="${version.javax.faces.api}",
+                            javax.persistence;version="[${version.osgimin.javax.persistence},${version.osgimax.javax.persistence})",
+                            javax.persistence.criteria;version="[${version.osgimin.javax.persistence},${version.osgimax.javax.persistence})",
+                            javax.persistence.spi;version="[${version.osgimin.javax.persistence},${version.osgimax.javax.persistence})",
+                            javax.servlet.jsp.jstl.tlv;version="${version.javax.servlet.jstl}",
+                            javax.transaction;version="${version.javax.transaction.jta}",
                             javax.ws.rs;version="[${version.osgimin.org.jboss.resteasy},${version.osgimax.org.jboss.resteasy})",
                             javax.ws.rs.core;version="[${version.osgimin.org.jboss.resteasy},${version.osgimax.org.jboss.resteasy})",
                             javax.ws.rs.ext;version="[${version.osgimin.org.jboss.resteasy},${version.osgimax.org.jboss.resteasy})",
-                            javax.servlet.jsp.jstl.tlv;version="${version.javax.servlet.jstl}",
+                            net.echinopsii.ariane.community.core.idm*;version=${version.net.echinopsii.ariane.core.idm},
+                            net.echinopsii.ariane.community.core.portal.idm*;version=${version.net.echinopsii.ariane.core.portal},
+                            net.echinopsii.ariane.community.core.portal.base.model;version=${version.net.echinopsii.ariane.core.portal},
+                            net.echinopsii.ariane.community.core.portal.base.plugin;version=${version.net.echinopsii.ariane.core.portal},
                             org.apache.commons.fileupload;version="${version.commons.fileupload}",
                             org.apache.commons.fileupload.disk;version="${version.commons.fileupload}",
                             org.apache.commons.fileupload.portlet;version="${version.commons.fileupload}",
@@ -198,7 +219,13 @@
                             org.apache.shiro.web.subject.support;version="${version.org.apache.shiro}",
                             org.apache.shiro.web.tags;version="${version.org.apache.shiro}",
                             org.apache.shiro.web.util;version="${version.org.apache.shiro}",
+                            org.h2;resolution:=optional,
+                            org.hibernate.proxy;version="[${version.osgimin.hibernate},${version.osgimax.hibernate})",
+                            org.hibernate.jpa;version="[${version.osgimin.hibernate},${version.osgimax.hibernate})",
+                            org.hibernate.jpa.boot.internal;version="[${version.osgimin.hibernate},${version.osgimax.hibernate})",
+                            org.hibernate.jpa.boot.spi;version="[${version.osgimin.hibernate},${version.osgimax.hibernate})",
                             org.jboss.resteasy.plugins.server.servlet;version="[${version.osgimin.org.jboss.resteasy},${version.osgimax.org.jboss.resteasy})",
+                            org.mariadb.jdbc;resolution:=optional,
                             org.osgi.framework;version="[${version.osgimin.org.osgi.framework},${version.osgimax.org.osgi.framework})",
                             org.osgi.util.tracker;version="[${version.osgimin.org.osgi.util.tracker},${version.osgimax.org.osgi.util.tracker})",
                             org.primefaces;version="${version.org.primefaces.primefaces}",

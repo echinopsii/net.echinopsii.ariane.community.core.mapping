@@ -10,7 +10,7 @@
         <script data-main="#{request.contextPath}/javax.faces.resource/taitale.js.jsf?ln=js" src="#{request.contextPath}/javax.faces.resource/require/require.js.jsf?ln=js" type="text/javascript" charset="utf-8"/>
     </ui:define>
     <ui:define name="moduleContent">
-        <p:layout id="mappingLayout" widgetVar="mappingLW">
+        <p:layout widgetVar="mappingLW">
             <!--
             <p:layoutUnit id="mappingOuput" position="east" size="400" header="Mapping focus" resizable="true" collapsible="true" effect="fade" collapsed="true">
                 <h:outputText value="Layout for map object output (definition, monitoring ...)" /> <br/>
@@ -18,8 +18,8 @@
             </p:layoutUnit>
             -->
             <p:layoutUnit position="center" resizable="false">
-                <p:layout>
-                    <p:layoutUnit id="mappingTools" position="north" size="210" header="Mapping tools" resizable="false" collapsible="true">
+                <p:layout id="mappingLayout">
+                    <p:layoutUnit position="north" size="210" header="Mapping tools" resizable="false" collapsible="true">
                         <p:tabView id="mappingToolsView" activeIndex="1">
                             <!--
                             <p:tab id="mappingToolsExportTab" title="Export">
@@ -29,7 +29,7 @@
                                 <p:graphicImage value="#{request.contextPath}/javax.faces.resource/export/xml.png.jsf?ln=images" />
                             </p:tab>
                             -->
-                            <p:tab id="mappingToolsDisplayTab" title="Options">
+                            <p:tab id="mapToolsDisplayTab" title="Options">
                                 <h:panelGrid columns="4" cellpadding="5">
                                     <h:panelGroup>
                                         <span class="inputTitle">View</span><br/>
@@ -93,28 +93,142 @@
                                     </h:panelGrid>
                                 </div>
                             </p:tab>
-                            <p:tab id="mappingToolsQueryTab" title="Query" >
-                                <h:panelGrid columns="2" cellpadding="5">
-                                    <!--<p:inputTextarea id="mdslQuery" rows="6" cols="180" autoResize="false" widgetVar="mdslQuery"
-                                                     completeMethod="#{autoCompleteController.completeArea}" queryDelay="200" minQueryLength="4"/>-->
-                                    <p:inputTextarea id="mdslQuery" rows="6" cols="180" autoResize="false" widgetVar="mdslQuery"/>
-                                    <h:panelGroup>
-                                        <p:commandButton id="execQuery" widgetVar="execQuery" type="button" value="Execute query" title="Execute" icon="icon-play-circle icon-large" style="width:150px"/><br/>
-                                        <!--
-                                        <p:commandButton type="button" value="Load stored query" title="Load" icon="icon-upload icon-large" style="width:150px"/><br/>
-                                        <p:commandButton type="button" value="Save query" title="Save" icon="icon-download icon-large" style="width:150px"/>
-                                        -->
-                                    </h:panelGroup>
-                                </h:panelGrid>
+                            <p:tab id="mapToolsQueryTab" title="Query" >
+                                <h:form id="mapToolsQueryForm">
+                                    <h:panelGrid id="mapToolsQueryGrid" columns="2" cellpadding="5">
+                                        <!--<p:inputTextarea id="mdslQuery" rows="6" cols="180" autoResize="false" widgetVar="mdslQuery"
+                                                             completeMethod="#{autoCompleteController.completeArea}" queryDelay="200" minQueryLength="4"/>-->
+                                        <p:inputTextarea id="mdslQuery" rows="6" cols="180" autoResize="false" widgetVar="mdslQuery" var="mdslQuery"
+                                                         value="#{sessionMDSLRRequestController.sessionRequest}"/>
+                                        <h:panelGroup>
+                                            <p:commandButton id="execQuery" widgetVar="execQuery" type="button" value="Execute request" title="Execute"
+                                                             icon="icon-play-circle icon-large" style="width:150px"/><br/>
+                                            <p:commandButton type="button" value="Load request" title="Load" icon="icon-upload icon-large" style="width:150px"
+                                                             onclick="requestLoaderDialog.show()" update=":loadReqDirForm,:loadRequestDetail"/><br/>
+                                            <p:commandButton type="commandButton" value="Save request" title="Save" icon="icon-download icon-large" style="width:150px"
+                                                             onclick="requestSaveDialog.show()" actionListener="#{mdslrRequestController.clear}"
+                                                             update=":saveReqDirForm,:saveRequestDetail"/>
+                                        </h:panelGroup>
+                                    </h:panelGrid>
+                                </h:form>
                             </p:tab>
                         </p:tabView>
                     </p:layoutUnit>
-                    <p:layoutUnit id="mappyLayout" position="center" resizable="false">
+                    <p:layoutUnit position="center" resizable="false">
                         <div id="mappyCanvas" oncontextmenu="return false;"/>
                     </p:layoutUnit>
                 </p:layout>
             </p:layoutUnit>
         </p:layout>
+
+        <p:dialog header="Load request" widgetVar="requestLoaderDialog"
+                  width="1000" height="600" showEffect="fade" hideEffect="explode" resizable="false">
+                <p:layout style="min-width:980px;min-height:590px;">
+                    <p:layoutUnit position="west" size="240" header="NAVIGATION" resizable="false" style="border: 0px">
+                        <h:form id="loadReqDirForm">
+                            <p:tree value="#{mdslRegistryController.root}" var="node" animate="true" style="width: 230px; border: 0px"
+                                    selectionMode="single" selection="#{mdslRegistryController.selectedDirectoryOrRequestNode}" >
+                                <p:ajax event="select" update=":loadRequestDetail"/>
+                                <p:treeNode type="Folder" expandedIcon="icon-folder-open" collapsedIcon="icon-folder-close">
+                                    <h:outputText value="#{node.name}"/>
+                                </p:treeNode>
+                                <p:treeNode type="Request" icon="icon-file">
+                                    <h:outputText value="#{node.name}" />
+                                </p:treeNode>
+                                <p:treeNode type="Template" icon="icon-file">
+                                    <h:outputText value="#{node.name}" />
+                                </p:treeNode>
+                            </p:tree>
+                        </h:form>
+                    </p:layoutUnit>
+                    <p:layoutUnit position="center" resizable="false" header="REQUEST DETAILS" style="border: 0px">
+                        <h:panelGroup id="loadRequestDetail">
+                            <br/>
+                            <h:outputText value="Choose a target from navigation pane." rendered="#{mdslRegistryController.selectedRequestNode==null}"/>
+                            <h:form rendered="#{mdslRegistryController.selectedRequestNode!=null}">
+                                <br/>
+                                <p:fieldset legend="Request" style="width: 700px; height: 155px">
+                                    <p:scrollPanel style="width: 700px; height: 120px; border: 0px">
+<pre>
+#{mdslRegistryController.selectedRequestReq}
+</pre>
+                                    </p:scrollPanel>
+                                </p:fieldset>
+                                <br/>
+                                <p:fieldset legend="Description" style="width: 700px; height: 155px">
+                                    <p:scrollPanel style="width: 700px; height: 120px; border: 0px">
+                                        <h:outputText value="#{mdslRegistryController.selectedRequestDesc}"/>
+                                    </p:scrollPanel>
+                                </p:fieldset>
+                                <br/>
+                                <p:separator/>
+                                <br/>
+                                <p:commandButton value="Use that one !" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+                                                 oncomplete="requestLoaderDialog.hide();"
+                                                 update=":mappingToolsView:mapToolsQueryForm:mdslQuery"
+                                                 actionListener="#{sessionMDSLRRequestController.loadSelectedRequest}"/>
+                            </h:form>
+                        </h:panelGroup>
+                     </p:layoutUnit>
+                </p:layout>
+        </p:dialog>
+
+        <p:dialog header="Save request" widgetVar="requestSaveDialog"
+                  width="1000" height="600" showEffect="fade" hideEffect="explode" resizable="false">
+            <p:layout style="min-width:980px;min-height:590px;">
+                <p:layoutUnit position="west" size="240" header="NAVIGATION" resizable="false" style="border: 0px">
+                    <h:form id="saveReqDirForm">
+                        <p:tree value="#{mdslRegistryController.root}" var="node" animate="true" style="width: 230px; border: 0px"
+                                selectionMode="single" selection="#{mdslRegistryController.selectedDirectoryOrRequestNode}" >
+                            <p:ajax event="select" update=":saveRequestDetail" listener="#{mdslRegistryController.warnOnReadyToEraseExistingRequest}" />
+                            <p:treeNode type="Folder" expandedIcon="icon-folder-open" collapsedIcon="icon-folder-close">
+                                <h:outputText value="#{node.name}"/>
+                            </p:treeNode>
+                            <p:treeNode type="Request" icon="icon-file">
+                                <h:outputText value="#{node.name}" />
+                            </p:treeNode>
+                            <p:treeNode type="Template" icon="icon-file">
+                                <h:outputText value="#{node.name}" />
+                            </p:treeNode>
+                        </p:tree>
+                    </h:form>
+                </p:layoutUnit>
+                <p:layoutUnit position="center" resizable="false" header="REQUEST DETAILS" style="border: 0px">
+                    <h:panelGroup id="saveRequestDetail">
+                        <br/>
+                        <h:form>
+                            <h:panelGrid id="requestNewGrid" columns="2" cellpadding="5"
+                                         styleClass="ui-widget-content grid" style="border: 0px">
+                                <p:outputLabel value="Target directory : " styleClass="inputTitle"/>
+                                <h:panelGroup>
+                                    <h:outputText id="targetDirectory1" value="#{mdslrRequestController.rootDirectory.fullPath}" rendered="#{mdslrRequestController.rootDirectory!=null}"/>
+                                    <h:outputText id="targetDirectory2" value="Choose a target from navigation pane." rendered="#{mdslrRequestController.rootDirectory==null}"/>
+                                </h:panelGroup>
+
+                                <p:outputLabel for="name" value="Name : " styleClass="inputTitle" rendered="#{mdslrRequestController.rootDirectory!=null}"/>
+                                <p:inputText id="name" label="Name" required="true"
+                                             cols="80" value="#{mdslrRequestController.name}" rendered="#{mdslrRequestController.rootDirectory!=null}"/>
+
+                                <p:outputLabel for="request" value="Request : " styleClass="inputTitle" rendered="#{mdslrRequestController.rootDirectory!=null}"/>
+                                <p:inputTextarea id="request" label="Request" required="true"
+                                                 rows="10" cols="80" value="#{mdslrRequestController.request}" rendered="#{mdslrRequestController.rootDirectory!=null}"/>
+
+                                <p:outputLabel for="description" value="Description : " styleClass="inputTitle" rendered="#{mdslrRequestController.rootDirectory!=null}"/>
+                                <p:inputTextarea id="description" label="Description" required="true"
+                                                 rows="10" cols="80" value="#{mdslrRequestController.description}" rendered="#{mdslrRequestController.rootDirectory!=null}"/>
+                            </h:panelGrid>
+                            <h:inputHidden id="id" value="#{mdslrRequestController.id}" rendered="#{mdslrRequestController.rootDirectory!=null}"/>
+
+                            <p:separator/>
+                            <br/>
+                            <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+                            <p:commandButton value="Save" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+                                             oncomplete="requestSaveDialog.hide();" actionListener="#{mdslrRequestController.save}"/>
+                        </h:form>
+                    </h:panelGroup>
+                </p:layoutUnit>
+            </p:layout>
+        </p:dialog>
     </ui:define>
 </ui:composition>
 </html>

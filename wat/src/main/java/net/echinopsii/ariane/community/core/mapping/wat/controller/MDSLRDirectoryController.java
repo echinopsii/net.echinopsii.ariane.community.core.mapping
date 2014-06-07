@@ -19,5 +19,64 @@
 
 package net.echinopsii.ariane.community.core.mapping.wat.controller;
 
+import net.echinopsii.ariane.community.core.mapping.ds.dsl.registry.MappingDSLRegistryBootstrap;
+import net.echinopsii.ariane.community.core.mapping.ds.dsl.registry.model.MappingDSLRegistryDirectory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+import javax.persistence.EntityManager;
+
 public class MDSLRDirectoryController {
+
+    private static final Logger log = LoggerFactory.getLogger(MDSLRDirectoryController.class);
+    private String    name;
+    private String    description;
+    private MappingDSLRegistryDirectory rootDirectory;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public MappingDSLRegistryDirectory getRootDirectory() {
+        return rootDirectory;
+    }
+
+    public void setRootDirectory(MappingDSLRegistryDirectory rootDirectory) {
+        this.rootDirectory = rootDirectory;
+    }
+
+    public void save() {
+        MappingDSLRegistryDirectory tosave = new MappingDSLRegistryDirectory().setNameR(this.name).setDescriptionR(this.description).setRootDirectoryR(this.rootDirectory);
+        EntityManager em = MappingDSLRegistryBootstrap.getIDMJPAProvider().createEM();
+        try {
+            em.getTransaction().begin();
+            em.persist(tosave);
+            em.getTransaction().commit();
+        } catch (Throwable t) {
+            log.debug("Throwable catched !");
+            t.printStackTrace();
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                                                       "Throwable raised while creating mapping dsl registry directory " + tosave.getName() + " !",
+                                                       "Throwable message : " + t.getMessage());
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+            if (em.getTransaction().isActive())
+                em.getTransaction().rollback();
+        } finally {
+            em.close();
+        }
+    }
 }
