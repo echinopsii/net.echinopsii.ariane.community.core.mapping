@@ -48,6 +48,7 @@ public class MDSLRegistryController {
     private TreeNode selectedRequestNode;
     private String   selectedRequestReq;
     private String   selectedRequestDesc;
+    private String   selectedFolderDesc;
 
     public final static String FACES_CONTEXT_APPMAP_SELECTED_REQ  = "MAPPING_SELECTED_REQUEST";
     public final static String FACES_CONTEXT_APPMAP_SELECTED_NODE = "MAPPING_SELECTED_NODE";
@@ -109,12 +110,14 @@ public class MDSLRegistryController {
             this.selectedRequestNode = selectedDirectoryOrRequestNode;
             this.selectedRequestReq  = ((MappingDSLRegistryRequest)this.selectedRequestNode.getData()).getRequest();
             this.selectedRequestDesc = ((MappingDSLRegistryRequest)this.selectedRequestNode.getData()).getDescription();
+            this.selectedFolderDesc  = ((MappingDSLRegistryRequest)this.selectedRequestNode.getData()).getRootDirectory().getDescription();
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put(FACES_CONTEXT_APPMAP_SELECTED_REQ, this.selectedRequestReq);
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put(FACES_CONTEXT_APPMAP_SELECTED_NODE, this.selectedDirectoryOrRequestNode.getData());
         } else {
             this.selectedRequestNode = null;
             this.selectedRequestReq  = "";
             this.selectedRequestDesc = "";
+            this.selectedFolderDesc  = ((MappingDSLRegistryDirectory)this.selectedDirectoryOrRequestNode.getData()).getDescription();
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put(FACES_CONTEXT_APPMAP_SELECTED_REQ, this.selectedRequestReq);
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put(FACES_CONTEXT_APPMAP_SELECTED_NODE, this.selectedDirectoryOrRequestNode.getData());
         }
@@ -130,6 +133,10 @@ public class MDSLRegistryController {
 
     public String getSelectedRequestDesc() {
         return selectedRequestDesc;
+    }
+
+    public String getSelectedFolderDesc() {
+        return selectedFolderDesc;
     }
 
     public void warnOnReadyToEraseExistingRequest() {

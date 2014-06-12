@@ -131,6 +131,10 @@ public class MappingBootstrap implements FaceletsResourceResolverService {
         mappingSce = null;
     }
 
+    public static final String MAPPING_USER_PREF_LAYOUT = "mappingDisplayLayout";
+    public static final String MAPPING_USER_PREF_VIEW   = "mappingDisplayView";
+    public static final String MAPPING_USER_PREF_MODE   = "mappingDisplayMode";
+
     @Validate
     public void validate() throws Exception {
         restResourceRegistry.registerPluginRestEndpoints(MappingBootstrap.class.getResource(REST_EP_FILE_PATH));
@@ -151,20 +155,20 @@ public class MappingBootstrap implements FaceletsResourceResolverService {
         UserPreferenceSection mappingDisplay = new UserPreferenceSection("mappingDisplay",
                                                                          "Define your mapping preferences",
                                                                          UserPreferenceSectionType.TYPE_USR_PREF_SECTION_MAP).
-                                                                         addEntity(new UserPreferenceEntity("mappingDisplayLayout",
+                                                                         addEntity(new UserPreferenceEntity(MAPPING_USER_PREF_LAYOUT,
                                                                                                             UserPreferenceEntityType.TYPE_USR_PREF_ENTITY_ONEBUTTON_SELECT,
                                                                                                             "Define your prefered layout").
                                                                                                             addSelectValue("Tree").
                                                                                                             addSelectValue("Network")./*addSelectValue("Random").*/
                                                                                                             setFieldDefault("Tree")).
-                                                                         addEntity(new UserPreferenceEntity("mappingDisplayView",
+                                                                         addEntity(new UserPreferenceEntity(MAPPING_USER_PREF_VIEW,
                                                                                                             UserPreferenceEntityType.TYPE_USR_PREF_ENTITY_ONEBUTTON_SELECT,
                                                                                                             "Define your prefered view").
                                                                                                             addSelectValue("Component").
                                                                                                             addSelectValue("Cluster").
                                                                                                             addSelectValue("Application").
                                                                                                             setFieldDefault("Component")).
-                                                                         addEntity(new UserPreferenceEntity("mappingDisplayMode",
+                                                                         addEntity(new UserPreferenceEntity(MAPPING_USER_PREF_MODE,
                                                                                                             UserPreferenceEntityType.TYPE_USR_PREF_ENTITY_ONEBUTTON_SELECT,
                                                                                                             "Define your prefered mode").
                                                                                                             addSelectValue("Navigation").

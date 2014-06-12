@@ -19,24 +19,33 @@
  */
 package net.echinopsii.ariane.community.core.mapping.wat.controller;
 
+import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
+import javax.faces.context.FacesContext;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NotificationsController implements Serializable {
+public class MappingToolsDisplayTabController implements Serializable {
     private static final long serialVersionUID = 1L;
-    private static final Logger log = LoggerFactory.getLogger(NotificationsController.class);
+    private static final Logger log = LoggerFactory.getLogger(MappingToolsDisplayTabController.class);
 
     private List<String> defaultNotifications = new ArrayList<String>();
+    private String mappingLayout = null;
+    private String mappingView   = null;
+    private String mappingMode   = null;
 
     @PostConstruct
     public void init() {
         defaultNotifications.add("notifyInfos");
         defaultNotifications.add("notifyErrs");
+
+        mappingLayout = (String)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get(MappingBootstrap.MAPPING_USER_PREF_LAYOUT);
+        mappingMode = (String)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get(MappingBootstrap.MAPPING_USER_PREF_MODE);
+        mappingView = (String)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get(MappingBootstrap.MAPPING_USER_PREF_VIEW);
     }
 
     public List<String> getDefaultNotifications() {
@@ -47,4 +56,27 @@ public class NotificationsController implements Serializable {
         this.defaultNotifications = defaultNotifications;
     }
 
+    public String getMappingLayout() {
+        return mappingLayout;
+    }
+
+    public void setMappingLayout(String mappingLayout) {
+        this.mappingLayout = mappingLayout;
+    }
+
+    public String getMappingView() {
+        return mappingView;
+    }
+
+    public void setMappingView(String mappingView) {
+        this.mappingView = mappingView;
+    }
+
+    public String getMappingMode() {
+        return mappingMode;
+    }
+
+    public void setMappingMode(String mappingMode) {
+        this.mappingMode = mappingMode;
+    }
 }

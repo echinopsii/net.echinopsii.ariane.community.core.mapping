@@ -1,0 +1,33 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<ui:composition>
+    <h:panelGrid id="requestNewGrid" columns="2" cellpadding="5"
+                 styleClass="ui-widget-content grid" style="border: 0px">
+        <p:outputLabel value="Folder : " styleClass="inputTitle"/>
+        <h:panelGroup>
+            <h:outputText id="targetDirectory1" value="#{mdslrRequestController.rootDirectory.fullPath}" rendered="#{mdslrRequestController.rootDirectory!=null}"/>
+            <h:outputText id="targetDirectory2" value="Choose a target from navigation pane." rendered="#{mdslrRequestController.rootDirectory==null}"/>
+        </h:panelGroup>
+
+        <p:outputLabel value="Folder description : " styleClass="inputTitle" rendered="#{mdslrRequestController.rootDirectory!=null}"/>
+        <h:outputText value="#{mdslRegistryController.selectedFolderDesc}" rendered="#{mdslrRequestController.rootDirectory!=null}"/>
+
+        <p:outputLabel for="name" value="Name : " styleClass="inputTitle" rendered="#{mdslrRequestController.rootDirectory!=null}"/>
+        <p:inputText id="name" label="Name" required="true"
+                     cols="80" value="#{mdslrRequestController.name}" rendered="#{mdslrRequestController.rootDirectory!=null}"/>
+
+        <p:outputLabel for="request" value="Request : " styleClass="inputTitle" rendered="#{mdslrRequestController.rootDirectory!=null}"/>
+        <p:inputTextarea id="request" label="Request" required="true"
+                         rows="10" cols="80" value="#{mdslrRequestController.request}" rendered="#{mdslrRequestController.rootDirectory!=null}"/>
+
+        <p:outputLabel for="description" value="Description : " styleClass="inputTitle" rendered="#{mdslrRequestController.rootDirectory!=null}"/>
+        <p:inputTextarea id="description" label="Description" required="true"
+                         rows="10" cols="80" value="#{mdslrRequestController.description}" rendered="#{mdslrRequestController.rootDirectory!=null}"/>
+    </h:panelGrid>
+    <h:inputHidden id="id" value="#{mdslrRequestController.id}" rendered="#{mdslrRequestController.rootDirectory!=null}"/>
+
+</ui:composition>
+</html>

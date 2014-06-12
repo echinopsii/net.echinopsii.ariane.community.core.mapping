@@ -24,8 +24,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.faces.context.FacesContext;
 
-public class SessionMDSLRRequestController {
-    private static final Logger log = LoggerFactory.getLogger(SessionMDSLRRequestController.class);
+public class MDSLRSessionRequestController {
+    private static final Logger log = LoggerFactory.getLogger(MDSLRSessionRequestController.class);
     private String sessionRequest ="Define your Mapping DSL request here...";
 
     public final static String FACES_CONTEXT_APPMAP_SESSION_REQ = "MAPPING_SESSION_REQUEST";

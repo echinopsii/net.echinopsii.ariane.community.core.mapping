@@ -66,7 +66,13 @@ public class MDSLRRequestController {
     }
 
     public String getRequest() {
-        request = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get(SessionMDSLRRequestController.FACES_CONTEXT_APPMAP_SESSION_REQ);
+        request = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get(MDSLRSessionRequestController.FACES_CONTEXT_APPMAP_SESSION_REQ);
+        if (request==null || request.equals("")) {
+            Object selectedDirOrReqNode = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get(MDSLRegistryController.FACES_CONTEXT_APPMAP_SELECTED_NODE);
+            if (selectedDirOrReqNode instanceof MappingDSLRegistryRequest) {
+                request = ((MappingDSLRegistryRequest) selectedDirOrReqNode).getRequest();
+            }
+        }
         return request;
     }
 
@@ -138,12 +144,44 @@ public class MDSLRRequestController {
                 }
             }
             em.getTransaction().commit();
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,
+                                                       "Mapping DSL request created successfully !",
+                                                       "Mapping DSL request name : " + entity.getName());
+            FacesContext.getCurrentInstance().addMessage(null, msg);
         } catch (Throwable t) {
             log.debug("Throwable catched !");
             t.printStackTrace();
             FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
                                                 "Throwable raised while creating mapping dsl request " + ((entity!=null) ? entity.getName() : "null") + " !",
                                                 "Throwable message : " + t.getMessage());
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+            if (em.getTransaction().isActive())
+                em.getTransaction().rollback();
+        } finally {
+            em.close();
+        }
+    }
+
+    public void delete() {
+        EntityManager em = MappingDSLRegistryBootstrap.getIDMJPAProvider().createEM();
+        MappingDSLRegistryRequest entity = null;
+        try {
+            em.getTransaction().begin();
+            entity = em.find(MappingDSLRegistryRequest.class, this.id);
+            entity.getRootDirectory().getRequests().remove(entity);
+            em.remove(entity);
+            em.getTransaction().commit();
+
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,
+                                                       "Mapping DSL request deleted successfully !",
+                                                       "Mapping DSL request name : " + entity.getName());
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+        }  catch (Throwable t) {
+            log.debug("Throwable catched !");
+            t.printStackTrace();
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                                                       "Throwable raised while deleting mapping dsl request " + ((entity!=null) ? entity.getName() : "null") + " !",
+                                                       "Throwable message : " + t.getMessage());
             FacesContext.getCurrentInstance().addMessage(null, msg);
             if (em.getTransaction().isActive())
                 em.getTransaction().rollback();

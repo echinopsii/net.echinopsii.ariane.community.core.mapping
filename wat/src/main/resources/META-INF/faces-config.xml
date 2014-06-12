@@ -10,8 +10,8 @@
     </managed-bean>
 
     <managed-bean>
-        <managed-bean-name>notificationsController</managed-bean-name>
-        <managed-bean-class>net.echinopsii.ariane.community.core.mapping.wat.controller.NotificationsController</managed-bean-class>
+        <managed-bean-name>mappingToolsDisplayController</managed-bean-name>
+        <managed-bean-class>net.echinopsii.ariane.community.core.mapping.wat.controller.MappingToolsDisplayTabController</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
 
@@ -28,8 +28,8 @@
     </managed-bean>
 
     <managed-bean>
-        <managed-bean-name>sessionMDSLRRequestController</managed-bean-name>
-        <managed-bean-class>net.echinopsii.ariane.community.core.mapping.wat.controller.SessionMDSLRRequestController</managed-bean-class>
+        <managed-bean-name>mdslrSessionRequestController</managed-bean-name>
+        <managed-bean-class>net.echinopsii.ariane.community.core.mapping.wat.controller.MDSLRSessionRequestController</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 </faces-config>
