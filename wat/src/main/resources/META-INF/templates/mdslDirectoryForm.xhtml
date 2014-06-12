@@ -1,0 +1,29 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<ui:composition>
+    <h:panelGrid id="directoryNewGrid" columns="2" cellpadding="5"
+                 styleClass="ui-widget-content grid" style="border: 0px">
+        <p:outputLabel value="Root folder : " styleClass="inputTitle"/>
+        <h:panelGroup>
+            <h:outputText id="targetDirectory1" value="#{mdslrDirectoryController.rootDirectory.fullPath}" rendered="#{mdslrDirectoryController.rootDirectory!=null}"/>
+            <h:outputText id="targetDirectory2" value="Choose a target from navigation pane." rendered="#{mdslrDirectoryController.rootDirectory==null}"/>
+        </h:panelGroup>
+
+        <p:outputLabel value="Root folder description : " styleClass="inputTitle" rendered="#{mdslrDirectoryController.rootDirectory!=null}"/>
+        <h:outputText value="#{mdslRegistryController.selectedFolderDesc}" rendered="#{mdslrDirectoryController.rootDirectory!=null}"/>
+
+        <p:outputLabel for="name" value="New folder name : " styleClass="inputTitle" rendered="#{mdslrDirectoryController.rootDirectory!=null}"/>
+        <p:inputText id="name" label="Name" required="true"
+                     cols="80" value="#{mdslrDirectoryController.name}" rendered="#{mdslrDirectoryController.rootDirectory!=null}"/>
+
+        <p:outputLabel for="description" value="New folder description : " styleClass="inputTitle" rendered="#{mdslrDirectoryController.rootDirectory!=null}"/>
+        <p:inputTextarea id="description" label="Description" required="true"
+                         rows="10" cols="80" value="#{mdslrDirectoryController.description}" rendered="#{mdslrDirectoryController.rootDirectory!=null}"/>
+    </h:panelGrid>
+    <h:inputHidden id="id" value="#{mdslrDirectoryController.id}" rendered="#{mdslrDirectoryController.rootDirectory!=null}"/>
+
+</ui:composition>
+</html>

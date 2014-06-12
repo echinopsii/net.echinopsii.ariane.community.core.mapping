@@ -28,6 +28,12 @@
     </managed-bean>
 
     <managed-bean>
+        <managed-bean-name>mdslrDirectoryController</managed-bean-name>
+        <managed-bean-class>net.echinopsii.ariane.community.core.mapping.wat.controller.MDSLRDirectoryController</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
         <managed-bean-name>mdslrSessionRequestController</managed-bean-name>
         <managed-bean-class>net.echinopsii.ariane.community.core.mapping.wat.controller.MDSLRSessionRequestController</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>

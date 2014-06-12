@@ -251,6 +251,69 @@
             <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}" update=":saveReqDirForm,:loadReqDirForm"/>
         </p:dialog>
 
+        <p:dialog header="Create new folder" widgetVar="folderNewDialog"
+                  width="800" height="600" showEffect="fade" hideEffect="explode" resizable="false">
+            <h:panelGroup id="createFolder">
+                <h:form>
+                    <ui:insert name="createDirectory" >
+                        <ui:include src="/templates/mdslDirectoryForm.xhtml" />
+                    </ui:insert>
+                    <h:panelGroup rendered="#{mdslRegistryController.selectedDirectoryOrRequestNode!=null}">
+                        <p:separator/>
+                        <br/>
+                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+                        <p:commandButton value="Create this folder" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+                                         oncomplete="folderNewDialog.hide();" actionListener="#{mdslrDirectoryController.save}"
+                                         update=":mappingToolsView:mapToolsQueryForm:requestMessages"/>
+                    </h:panelGroup>
+                </h:form>
+            </h:panelGroup>
+
+            <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}" update=":saveReqDirForm,:loadReqDirForm,:loadRequestDetail,:saveRequestDetail"/>
+        </p:dialog>
+
+        <p:dialog header="Update folder" widgetVar="folderUpdateDialog"
+                  width="800" height="600" showEffect="fade" hideEffect="explode" resizable="false">
+            <h:panelGroup id="updateFolder">
+                <h:form>
+                    <ui:insert name="updateDirectory" >
+                        <ui:include src="/templates/mdslDirectoryForm.xhtml" />
+                    </ui:insert>
+                    <h:panelGroup rendered="#{mdslRegistryController.selectedDirectoryOrRequestNode!=null}">
+                        <p:separator/>
+                        <br/>
+                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+                        <p:commandButton value="Update this folder" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+                                         oncomplete="folderUpdateDialog.hide();" actionListener="#{mdslrDirectoryController.save}"
+                                         update=":mappingToolsView:mapToolsQueryForm:requestMessages"/>
+                    </h:panelGroup>
+                </h:form>
+            </h:panelGroup>
+
+            <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}" update=":saveReqDirForm,:loadReqDirForm,:loadRequestDetail,:saveRequestDetail"/>
+        </p:dialog>
+
+        <p:dialog header="Delete folder" widgetVar="folderDeleteDialog"
+                  width="400" height="100" showEffect="fade" hideEffect="explode" resizable="false">
+            <h:panelGroup id="deleteFolderConfirm">
+                <h:outputText value="Are you sure you want to delete following folder with its contents ?"/><br/><br/>
+                <h:outputText value="Folder name : #{mdslrDirectoryController.name}"/><br/><br/>
+                <h:form>
+                    <h:inputHidden id="id" value="#{mdslrDirectoryController.id}" rendered="#{mdslrDirectoryController.rootDirectory!=null}"/>
+                    <h:panelGrid id="requestDeleteGrid" columns="2" cellpadding="5"
+                                 styleClass="ui-widget-content-grid" style="border: 0px">
+                        <p:commandButton value="Yes" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+                                         oncomplete="folderDeleteDialog.hide();" actionListener="#{mdslrDirectoryController.delete}"
+                                         update=":mappingToolsView:mapToolsQueryForm:requestMessages"/>
+                        <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-check"
+                                         oncomplete="folderDeleteDialog.hide();"/>
+                    </h:panelGrid>
+                </h:form>
+            </h:panelGroup>
+
+            <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}" update=":saveReqDirForm,:loadReqDirForm,:loadRequestDetail,:saveRequestDetail"/>
+        </p:dialog>
+
     </ui:define>
 </ui:composition>
 </html>

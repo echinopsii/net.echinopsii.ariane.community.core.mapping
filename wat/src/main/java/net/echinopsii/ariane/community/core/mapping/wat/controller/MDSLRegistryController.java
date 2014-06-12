@@ -50,8 +50,9 @@ public class MDSLRegistryController {
     private String   selectedRequestDesc;
     private String   selectedFolderDesc;
 
-    public final static String FACES_CONTEXT_APPMAP_SELECTED_REQ  = "MAPPING_SELECTED_REQUEST";
-    public final static String FACES_CONTEXT_APPMAP_SELECTED_NODE = "MAPPING_SELECTED_NODE";
+    public final static String FACES_CONTEXT_APPMAP_SELECTED_REQ  = "MAPPING_REGISTRY_SELECTED_REQUEST";
+    public final static String FACES_CONTEXT_APPMAP_SELECTED_NODE = "MAPPING_REGISTRY_SELECTED_NODE";
+    public final static String FACES_CONTEXT_APPMAP_OPS_ON_FOLDER = "MAPPING_REGISTRY_OPS_ON_FOLDER";
 
     private void buildTree(MappingDSLRegistryDirectory rootDir, TreeNode rootNode) {
         for (IUXResource child : rootDir.getOrderedChildsList()) {
@@ -94,6 +95,12 @@ public class MDSLRegistryController {
         root = new DefaultTreeNode(rootD, null);
         buildTree(rootD, root);
         em.close();
+        this.selectedRequestNode = null;
+        this.selectedRequestReq  = "";
+        this.selectedRequestDesc = "";
+        this.selectedFolderDesc  = "";
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put(FACES_CONTEXT_APPMAP_SELECTED_REQ, null);
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put(FACES_CONTEXT_APPMAP_SELECTED_NODE, null);
     }
 
     public TreeNode getRoot() {
@@ -137,6 +144,14 @@ public class MDSLRegistryController {
 
     public String getSelectedFolderDesc() {
         return selectedFolderDesc;
+    }
+
+    public void createNewFolder() {
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put(FACES_CONTEXT_APPMAP_OPS_ON_FOLDER, false);
+    }
+
+    public void operationOnSelectedFolder() {
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put(FACES_CONTEXT_APPMAP_OPS_ON_FOLDER, true);
     }
 
     public void warnOnReadyToEraseExistingRequest() {

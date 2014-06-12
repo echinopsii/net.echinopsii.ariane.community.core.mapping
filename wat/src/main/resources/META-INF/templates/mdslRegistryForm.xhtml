@@ -18,9 +18,12 @@
         </p:treeNode>
     </p:tree>
     <p:contextMenu for="reqTree" nodeType="Folder">
-        <p:menuitem value="Create subfolder" icon="icon-plus-sign" />
-        <p:menuitem value="Delete" icon="icon-remove-sign"/>
-        <p:menuitem value="Modify" icon="icon-pencil"/>
+        <p:menuitem value="Create subfolder" icon="icon-plus-sign" onclick="folderNewDialog.show()"
+                    update=":createFolder" actionListener="#{mdslRegistryController.createNewFolder}"/>
+        <p:menuitem value="Delete" icon="icon-remove-sign" onclick="folderDeleteDialog.show()"
+                    update=":deleteFolderConfirm" actionListener="#{mdslRegistryController.operationOnSelectedFolder}"/>
+        <p:menuitem value="Modify" icon="icon-pencil" onclick="folderUpdateDialog.show()"
+                    update=":updateFolder" actionListener="#{mdslRegistryController.operationOnSelectedFolder}"/>
     </p:contextMenu>
     <p:contextMenu for="reqTree" nodeType="Request">
         <p:menuitem value="Delete" icon="icon-remove-sign" onclick="requestDeleteDialog.show()"
@@ -29,8 +32,10 @@
                     update=":updateRequest"/>
     </p:contextMenu>
     <p:contextMenu for="reqTree" nodeType="Template">
-        <p:menuitem value="Delete" icon="icon-remove-sign"/>
-        <p:menuitem value="Modify" icon="icon-pencil"/>
+        <p:menuitem value="Delete" icon="icon-remove-sign" onclick="requestDeleteDialog.show()"
+                    update=":deleteRequestConfirm"/>
+        <p:menuitem value="Modify" icon="icon-pencil" onclick="requestModificationDialog.show()"
+                    update=":updateRequest"/>
     </p:contextMenu>
 </ui:composition>
 </html>
