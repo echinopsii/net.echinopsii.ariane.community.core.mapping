@@ -160,7 +160,8 @@ public class MappingBootstrap implements FaceletsResourceResolverService {
                                                                                                             "Define your prefered layout").
                                                                                                             addSelectValue("Tree").
                                                                                                             addSelectValue("Network")./*addSelectValue("Random").*/
-                                                                                                            setFieldDefault("Tree")).
+                                                                                                            setFieldDefault("Tree"));
+        /*.
                                                                          addEntity(new UserPreferenceEntity(MAPPING_USER_PREF_VIEW,
                                                                                                             UserPreferenceEntityType.TYPE_USR_PREF_ENTITY_ONEBUTTON_SELECT,
                                                                                                             "Define your prefered view").
@@ -173,7 +174,7 @@ public class MappingBootstrap implements FaceletsResourceResolverService {
                                                                                                             "Define your prefered mode").
                                                                                                             addSelectValue("Navigation").
                                                                                                             addSelectValue("Edition").
-                                                                                                            setFieldDefault("Navigation"));
+                                                                                                            setFieldDefault("Navigation"));*/
 
         userPreferencesRegistry.registerUserPreferenceSection(mappingDisplay);
         /*

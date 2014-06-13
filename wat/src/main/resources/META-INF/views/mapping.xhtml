@@ -31,6 +31,7 @@
                             -->
                             <p:tab id="mapToolsDisplayTab" title="Options">
                                 <h:panelGrid columns="4" cellpadding="5">
+                                    <!--
                                     <h:panelGroup>
                                         <span class="inputTitle">View</span><br/>
                                         <p:selectOneButton id="viewSelector" value="#{mappingToolsDisplayController.mappingView}">
@@ -39,6 +40,7 @@
                                             <f:selectItem itemLabel="Application" itemValue="Application" />
                                         </p:selectOneButton>
                                     </h:panelGroup>
+                                    -->
                                     <h:panelGroup>
                                         <span class="inputTitle">Layout</span><br/>
                                         <p:selectOneButton id="layoutSelector" widgetVar="layoutSelector" value="#{mappingToolsDisplayController.mappingLayout}">
@@ -46,6 +48,7 @@
                                             <f:selectItem itemLabel="Network" itemValue="Network" />
                                         </p:selectOneButton>
                                     </h:panelGroup>
+                                    <!--
                                     <h:panelGroup>
                                         <span class="inputTitle">Mode</span>
                                         <p:selectOneButton id="modeSelector" widgetVar="modeSelector" value="#{mappingToolsDisplayController.mappingMode}">
@@ -53,6 +56,7 @@
                                             <f:selectItem itemLabel="Edition" itemValue="Edition" />
                                         </p:selectOneButton>
                                     </h:panelGroup>
+                                    -->
                                     <h:panelGroup>
                                         <span class="inputTitle">Notifications options</span>
                                         <p:selectManyButton id="notificationsOptions" widgetVar="notificationsOptions" value="#{mappingToolsDisplayController.defaultNotifications}">
@@ -118,6 +122,12 @@
                         </p:tabView>
                     </p:layoutUnit>
                     <p:layoutUnit id="mappingCanvas" position="center" resizable="false">
+                        <div id="mappyLoading"  style="display:none; text-align: center">
+                            <br/><br/><br/>
+                            <h:outputText value="The map is being computed... Please wait ... :)" styleClass="inputTitle"/>
+                            <br/><br/><br/>
+                            <i class = "icon-spinner icon-spin icon-7x"/>
+                        </div>
                         <div id="mappyCanvas" oncontextmenu="return false;"/>
                     </p:layoutUnit>
                 </p:layout>
