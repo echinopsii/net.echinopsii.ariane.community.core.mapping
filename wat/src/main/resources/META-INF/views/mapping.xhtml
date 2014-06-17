@@ -240,8 +240,8 @@
             <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}" update=":saveReqDirForm,:loadReqDirForm"/>
         </p:dialog>
 
-        <p:dialog header="Modify request" widgetVar="requestModificationDialog"
-                  width="800" height="600" showEffect="fade" hideEffect="explode" resizable="false">
+        <p:dialog header="Update request properties" widgetVar="requestModificationDialog"
+                  width="800" height="500" showEffect="fade" hideEffect="explode" resizable="false">
             <h:panelGroup id="updateRequest">
                 <h:form>
                     <ui:insert name="updateRequest" >
@@ -262,7 +262,7 @@
         </p:dialog>
 
         <p:dialog header="Create new folder" widgetVar="folderNewDialog"
-                  width="800" height="600" showEffect="fade" hideEffect="explode" resizable="false">
+                  width="800" height="400" showEffect="fade" hideEffect="explode" resizable="false">
             <h:panelGroup id="createFolder">
                 <h:form>
                     <ui:insert name="createDirectory" >
@@ -282,8 +282,8 @@
             <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}" update=":saveReqDirForm,:loadReqDirForm,:loadRequestDetail,:saveRequestDetail"/>
         </p:dialog>
 
-        <p:dialog header="Update folder" widgetVar="folderUpdateDialog"
-                  width="800" height="600" showEffect="fade" hideEffect="explode" resizable="false">
+        <p:dialog header="Update folder properties" widgetVar="folderUpdateDialog"
+                  width="800" height="350" showEffect="fade" hideEffect="explode" resizable="false">
             <h:panelGroup id="updateFolder">
                 <h:form>
                     <ui:insert name="updateDirectory" >
@@ -318,6 +318,48 @@
                         <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-check"
                                          oncomplete="folderDeleteDialog.hide();"/>
                     </h:panelGrid>
+                </h:form>
+            </h:panelGroup>
+
+            <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}" update=":saveReqDirForm,:loadReqDirForm,:loadRequestDetail,:saveRequestDetail"/>
+        </p:dialog>
+
+        <p:dialog header="Update request permissions" widgetVar="requestPermissionCHDialog"
+                  width="450" heigh="750" showEffect="fade" hideEffect="explode" resizable="false">
+            <h:panelGroup id="chRequestPerm">
+                <h:form>
+                    <ui:insert name="changeRequestPerm">
+                        <ui:include src="/templates/mdslRequestPermsForm.xhtml" />
+                    </ui:insert>
+                    <h:panelGroup rendered="#{mdslRegistryController.selectedDirectoryOrRequestNode!=null}">
+                        <p:separator/>
+                        <br/>
+                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+                        <p:commandButton value="Update request permissions" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+                                         oncomplete="requestPermissionCHDialog.hide();" actionListener="#{mdslrRequestController.save}"
+                                         update=":mappingToolsView:mapToolsQueryForm:requestMessages"/>
+                    </h:panelGroup>
+                </h:form>
+            </h:panelGroup>
+
+            <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}" update=":saveReqDirForm,:loadReqDirForm,:loadRequestDetail,:saveRequestDetail"/>
+        </p:dialog>
+
+        <p:dialog header="Update folder permissions" widgetVar="folderPermissionCHDialog"
+                  width="450" heigh="750" showEffect="fade" hideEffect="explode" resizable="false">
+            <h:panelGroup id="chFolderPerm">
+                <h:form>
+                    <ui:insert name="changeFolderPerm">
+                        <ui:include src="/templates/mdslDirectoryPermsForm.xhtml" />
+                    </ui:insert>
+                    <h:panelGroup rendered="#{mdslRegistryController.selectedDirectoryOrRequestNode!=null}">
+                        <p:separator/>
+                        <br/>
+                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+                        <p:commandButton value="Update folder permissions" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+                                         oncomplete="folderPermissionCHDialog.hide();" actionListener="#{mdslrDirectoryController.save}"
+                                         update=":mappingToolsView:mapToolsQueryForm:requestMessages"/>
+                    </h:panelGroup>
                 </h:form>
             </h:panelGroup>
 

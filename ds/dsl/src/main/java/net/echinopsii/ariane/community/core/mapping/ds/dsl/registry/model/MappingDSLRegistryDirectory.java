@@ -22,7 +22,7 @@ package net.echinopsii.ariane.community.core.mapping.ds.dsl.registry.model;
 import javax.validation.constraints.NotNull;
 import net.echinopsii.ariane.community.core.idm.base.model.IUXResource;
 import net.echinopsii.ariane.community.core.idm.base.model.jpa.Group;
-import net.echinopsii.ariane.community.core.idm.base.model.jpa.Permission;
+import net.echinopsii.ariane.community.core.idm.base.model.jpa.UXPermission;
 import net.echinopsii.ariane.community.core.idm.base.model.jpa.User;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -37,7 +37,7 @@ import java.util.*;
 @Entity
 @XmlRootElement
 @Table(name="uxResourceDirectory",uniqueConstraints = @UniqueConstraint(columnNames = {"directoryName"}))
-public class MappingDSLRegistryDirectory implements IUXResource<Permission>, Serializable, Comparable<IUXResource> {
+public class MappingDSLRegistryDirectory implements IUXResource<UXPermission>, Serializable, Comparable<IUXResource> {
 
     private static final Logger log = LoggerFactory.getLogger(MappingDSLRegistryRequest.class);
 
@@ -75,15 +75,7 @@ public class MappingDSLRegistryDirectory implements IUXResource<Permission>, Ser
 
     @ManyToMany(fetch = FetchType.LAZY)
     @Fetch(FetchMode.SUBSELECT)
-    private Set<Permission> userPermissions;
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @Fetch(FetchMode.SUBSELECT)
-    private Set<Permission> groupPermissions;
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @Fetch(FetchMode.SUBSELECT)
-    private Set<Permission> otherPermissions;
+    private Set<UXPermission> uxPermissions;
 
     public Long getId() {
         return id;
@@ -150,42 +142,16 @@ public class MappingDSLRegistryDirectory implements IUXResource<Permission>, Ser
         return this;
     }
 
-    public Set<Permission> getUserPermissions() {
-        return userPermissions;
+    public Set<UXPermission> getUxPermissions() {
+        return uxPermissions;
     }
 
-    public void setUserPermissions(Set<Permission> userPermissions) {
-        this.userPermissions = userPermissions;
+    public void setUxPermissions(Set<UXPermission> uxPermissions) {
+        this.uxPermissions = uxPermissions;
     }
 
-    public MappingDSLRegistryDirectory setUserPermissionsR(Set<Permission> userPermissions) {
-        this.userPermissions = userPermissions;
-        return this;
-    }
-
-    public Set<Permission> getGroupPermissions() {
-        return groupPermissions;
-    }
-
-    public void setGroupPermissions(Set<Permission> groupPermissions) {
-        this.groupPermissions = groupPermissions;
-    }
-
-    public MappingDSLRegistryDirectory setGroupPermissionsR(Set<Permission> groupPermissions) {
-        this.groupPermissions = groupPermissions;
-        return this;
-    }
-
-    public Set<Permission> getOtherPermissions() {
-        return otherPermissions;
-    }
-
-    public void setOtherPermissions(Set<Permission> otherPermissions) {
-        this.otherPermissions = otherPermissions;
-    }
-
-    public MappingDSLRegistryDirectory setOtherPermissionsR(Set<Permission> otherPermissions) {
-        this.otherPermissions = otherPermissions;
+    public MappingDSLRegistryDirectory setUxPermissionsR(Set<UXPermission> uxPermissions) {
+        this.uxPermissions = uxPermissions;
         return this;
     }
 
@@ -295,9 +261,8 @@ public class MappingDSLRegistryDirectory implements IUXResource<Permission>, Ser
 
     public MappingDSLRegistryDirectory clone() {
         return new MappingDSLRegistryDirectory().setIdR(this.id).setVersionR(this.version).setNameR(this.name).setDescriptionR(this.description).setRootDirectoryR(rootDirectory).
-                               setSubDirectoriesR(new HashSet<MappingDSLRegistryDirectory>(this.subDirectories)).setUserR(this.user).setUserPermissionsR(new HashSet(this.userPermissions)).
-                               setGroupR(this.group).setGroupPermissionsR(new HashSet(this.groupPermissions)).setOtherPermissionsR(new HashSet(this.otherPermissions)).
-                               setRequestsR(new HashSet(this.requests));
+                               setSubDirectoriesR(new HashSet<MappingDSLRegistryDirectory>(this.subDirectories)).setUserR(this.user).setUxPermissionsR(new HashSet(this.uxPermissions)).
+                               setGroupR(this.group).setRequestsR(new HashSet(this.requests));
     }
 
     @Override

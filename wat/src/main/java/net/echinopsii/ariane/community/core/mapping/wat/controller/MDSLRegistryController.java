@@ -95,6 +95,7 @@ public class MDSLRegistryController {
         root = new DefaultTreeNode(rootD, null);
         buildTree(rootD, root);
         em.close();
+        this.selectedDirectoryOrRequestNode = null;
         this.selectedRequestNode = null;
         this.selectedRequestReq  = "";
         this.selectedRequestDesc = "";

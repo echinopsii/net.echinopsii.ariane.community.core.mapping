@@ -1,0 +1,43 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<ui:composition>
+    <h:panelGrid id="directoryPermsGrid" columns="2" cellpadding="5" columnClasses="colStyle40,colStyle60"
+                 styleClass="ui-widget-content grid" style="border: 0px">
+        <p:outputLabel for="ownerDir" value="Owner : " styleClass="inputTitle"/>
+        <p:selectOneMenu id="ownerDir" label="Owner" value="#{mdslrDirectoryController.userName}">
+            <f:selectItem itemLabel="" itemValue=""/>
+            <f:selectItems value="#{usersListController.getAll()}"  var="user"
+                           itemLabel="#{user.userName}" itemValue="#{user.userName}"/>
+        </p:selectOneMenu>
+
+        <p:outputLabel for="groupDir" value="Group : " styleClass="inputTitle"/>
+        <p:selectOneMenu id="groupDir" label="Group" value="#{mdslrDirectoryController.groupName}">
+            <f:selectItem itemLabel="" itemValue=""/>
+            <f:selectItems value="#{groupsListController.getAll()}"  var="group"
+                           itemLabel="#{group.name}" itemValue="#{group.name}"/>
+        </p:selectOneMenu>
+
+        <p:outputLabel for="ownerPermsDir" value="Owner permissions : " styleClass="inputTitle"/>
+        <p:selectManyButton id="ownerPermsDir" label="Owner permissions" value="#{mdslrDirectoryController.userSelectedPermissions}">
+            <f:selectItems value="#{mdslrDirectoryController.UXresourcesLikePermissions}" var="perm"
+                           itemLabel="#{perm}" itemValue="#{perm}"/>
+        </p:selectManyButton>
+
+        <p:outputLabel for="groupPermsDir" value="Group permissions : " styleClass="inputTitle"/>
+        <p:selectManyButton id="groupPermsDir" label="Group permissions" value="#{mdslrDirectoryController.groupSelectedPermissions}">
+            <f:selectItems value="#{mdslrDirectoryController.UXresourcesLikePermissions}" var="perm"
+                           itemLabel="#{perm}" itemValue="#{perm}"/>
+        </p:selectManyButton>
+
+        <p:outputLabel for="otherPermsDir" value="Other permissions : " styleClass="inputTitle"/>
+        <p:selectManyButton id="otherPermsDir" label="Other permissions" value="#{mdslrDirectoryController.otherSelectedPermissions}">
+            <f:selectItems value="#{mdslrDirectoryController.UXresourcesLikePermissions}" var="perm"
+                           itemLabel="#{perm}" itemValue="#{perm}"/>
+        </p:selectManyButton>
+    </h:panelGrid>
+    <h:inputHidden id="id" value="#{mdslrDirectoryController.id}"/>
+</ui:composition>
+</html>

@@ -22,19 +22,25 @@
                     update=":createFolder" actionListener="#{mdslRegistryController.createNewFolder}"/>
         <p:menuitem value="Delete" icon="icon-remove-sign" onclick="folderDeleteDialog.show()"
                     update=":deleteFolderConfirm" actionListener="#{mdslRegistryController.operationOnSelectedFolder}"/>
-        <p:menuitem value="Modify" icon="icon-pencil" onclick="folderUpdateDialog.show()"
+        <p:menuitem value="Edit permissions" icon="icon-pencil" onclick="folderPermissionCHDialog.show()"
+                    update=":chFolderPerm" actionListener="#{mdslRegistryController.operationOnSelectedFolder}"/>
+        <p:menuitem value="Edit properties" icon="icon-pencil" onclick="folderUpdateDialog.show()"
                     update=":updateFolder" actionListener="#{mdslRegistryController.operationOnSelectedFolder}"/>
     </p:contextMenu>
     <p:contextMenu for="reqTree" nodeType="Request">
         <p:menuitem value="Delete" icon="icon-remove-sign" onclick="requestDeleteDialog.show()"
                     update=":deleteRequestConfirm"/>
-        <p:menuitem value="Modify" icon="icon-pencil" onclick="requestModificationDialog.show()"
+        <p:menuitem value="Edit permissions" icon="icon-pencil" onclick="requestPermissionCHDialog.show()"
+                    update=":chRequestPerm" actionListener="#{mdslRegistryController.operationOnSelectedFolder}"/>
+        <p:menuitem value="Edit properties" icon="icon-pencil" onclick="requestModificationDialog.show()"
                     update=":updateRequest"/>
     </p:contextMenu>
     <p:contextMenu for="reqTree" nodeType="Template">
         <p:menuitem value="Delete" icon="icon-remove-sign" onclick="requestDeleteDialog.show()"
                     update=":deleteRequestConfirm"/>
-        <p:menuitem value="Modify" icon="icon-pencil" onclick="requestModificationDialog.show()"
+        <p:menuitem value="Edit permissions" icon="icon-pencil" onclick="requestPermissionCHDialog.show()"
+                    update=":chRequestPerm" actionListener="#{mdslRegistryController.operationOnSelectedFolder}"/>
+        <p:menuitem value="Edit properties" icon="icon-pencil" onclick="requestModificationDialog.show()"
                     update=":updateRequest"/>
     </p:contextMenu>
 </ui:composition>

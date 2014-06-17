@@ -19,9 +19,14 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.dsl.registry;
 
+import net.echinopsii.ariane.community.core.idm.base.model.jpa.Group;
+import net.echinopsii.ariane.community.core.idm.base.model.jpa.UXPermission;
+import net.echinopsii.ariane.community.core.idm.base.model.jpa.User;
 import net.echinopsii.ariane.community.core.idm.base.proxy.IDMJPAProvider;
 import net.echinopsii.ariane.community.core.mapping.ds.dsl.registry.model.MappingDSLRegistryDirectory;
 import net.echinopsii.ariane.community.core.mapping.ds.dsl.registry.model.MappingDSLRegistryRequest;
+import net.echinopsii.ariane.community.core.portal.idmwat.controller.group.GroupsListController;
+import net.echinopsii.ariane.community.core.portal.idmwat.controller.user.UsersListController;
 import org.apache.felix.ipojo.annotations.*;
 import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
@@ -32,6 +37,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.util.HashSet;
+import java.util.Set;
 
 @Component
 @Instantiate
@@ -75,31 +81,51 @@ public class MappingDSLRegistryBootstrap {
         int rowCount = (int) (long) em.createQuery(countCriteria).getSingleResult();
 
         if (rowCount == 0) {
+            User usryoda = UsersListController.getUserByUserName(em, "yoda");
+            Group grpyoda = GroupsListController.getGroupByName(em,"yoda");
+            Set<UXPermission> uxDefaultPermissions = new HashSet<UXPermission>();
+            uxDefaultPermissions.add(MappingDSLRegistryBootstrap.getIDMJPAProvider().getUXLikeResourcesPermissionsFromName(UXPermission.UX_LIKE_RD_PERM, UXPermission.UX_LIKE_U_ACTOR_TYPE));
+            uxDefaultPermissions.add(MappingDSLRegistryBootstrap.getIDMJPAProvider().getUXLikeResourcesPermissionsFromName(UXPermission.UX_LIKE_WR_PERM, UXPermission.UX_LIKE_U_ACTOR_TYPE));
+            uxDefaultPermissions.add(MappingDSLRegistryBootstrap.getIDMJPAProvider().getUXLikeResourcesPermissionsFromName(UXPermission.UX_LIKE_CH_PERM, UXPermission.UX_LIKE_U_ACTOR_TYPE));
+            uxDefaultPermissions.add(MappingDSLRegistryBootstrap.getIDMJPAProvider().getUXLikeResourcesPermissionsFromName(UXPermission.UX_LIKE_RD_PERM, UXPermission.UX_LIKE_G_ACTOR_TYPE));
+            uxDefaultPermissions.add(MappingDSLRegistryBootstrap.getIDMJPAProvider().getUXLikeResourcesPermissionsFromName(UXPermission.UX_LIKE_WR_PERM, UXPermission.UX_LIKE_G_ACTOR_TYPE));
+            uxDefaultPermissions.add(MappingDSLRegistryBootstrap.getIDMJPAProvider().getUXLikeResourcesPermissionsFromName(UXPermission.UX_LIKE_RD_PERM, UXPermission.UX_LIKE_O_ACTOR_TYPE));
+
             MappingDSLRegistryDirectory rootDir = new MappingDSLRegistryDirectory().setNameR(MAPPING_DSL_REGISTRY_ROOT_DIR_NAME).
                                                                                     setDescriptionR("The Mapping DSL Root Registry Directory").
                                                                                     setSubDirectoriesR(new HashSet<MappingDSLRegistryDirectory>()).
-                                                                                    setRequestsR(new HashSet<MappingDSLRegistryRequest>());
+                                                                                    setRequestsR(new HashSet<MappingDSLRegistryRequest>()).
+                                                                                    setUserR(usryoda).
+                                                                                    setGroupR(grpyoda).
+                                                                                    setUxPermissionsR(uxDefaultPermissions);
             em.getTransaction().begin();
             em.persist(rootDir);
 
-            MappingDSLRegistryDirectory reqDir  = new MappingDSLRegistryDirectory().setNameR("Requests").
-                                                                                    setDescriptionR("The Mapping DSL Requests Directory").
+            MappingDSLRegistryDirectory reqDir  = new MappingDSLRegistryDirectory().setNameR("Samples").
+                                                                                    setDescriptionR("The Mapping DSL Samples Directory").
                                                                                     setRootDirectoryR(rootDir).
                                                                                     setSubDirectoriesR(new HashSet<MappingDSLRegistryDirectory>()).
-                                                                                    setRequestsR(new HashSet<MappingDSLRegistryRequest>());
+                                                                                    setRequestsR(new HashSet<MappingDSLRegistryRequest>()).
+                                                                                    setUserR(usryoda).
+                                                                                    setGroupR(grpyoda).
+                                                                                    setUxPermissionsR(uxDefaultPermissions);
             rootDir.getSubDirectories().add(reqDir);
             em.persist(reqDir);
 
-            MappingDSLRegistryDirectory tplDir  = new MappingDSLRegistryDirectory().setNameR("Templates").
-                                                                                    setDescriptionR("The Mapping DSL Templates Directory").
+            MappingDSLRegistryDirectory tplDir  = new MappingDSLRegistryDirectory().setNameR("Users").
+                                                                                    setDescriptionR("The Mapping DSL Users Directory").
                                                                                     setRootDirectoryR(rootDir).
                                                                                     setSubDirectoriesR(new HashSet<MappingDSLRegistryDirectory>()).
-                                                                                    setRequestsR(new HashSet<MappingDSLRegistryRequest>());
+                                                                                    setRequestsR(new HashSet<MappingDSLRegistryRequest>()).
+                                                                                    setUserR(usryoda).
+                                                                                    setGroupR(grpyoda).
+                                                                                    setUxPermissionsR(uxDefaultPermissions);
             rootDir.getSubDirectories().add(tplDir);
             em.persist(tplDir);
 
             em.getTransaction().commit();
         }
+
         em.close();
         log.info("{} is started", MAPPING_DSL_REGISTRY);
     }
