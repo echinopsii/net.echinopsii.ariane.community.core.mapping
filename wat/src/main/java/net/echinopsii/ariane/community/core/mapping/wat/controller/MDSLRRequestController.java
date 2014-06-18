@@ -289,6 +289,7 @@ public class MDSLRRequestController {
     }
 
     public void clear() {
+        id=null;
         name=null;
         request=null;
         description=null;

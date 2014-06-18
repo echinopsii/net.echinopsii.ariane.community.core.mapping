@@ -1,23 +1,40 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:f="http://java.sun.com/jsf/core"
       xmlns:p="http://primefaces.org/ui">
 <ui:composition>
     <p:tree id="reqTree" value="#{mdslRegistryController.root}" var="node" animate="true" style="width: 230px; border: 0px"
             selectionMode="single" selection="#{mdslRegistryController.selectedDirectoryOrRequestNode}" >
-        <p:ajax event="select" update=":loadRequestDetail,:saveRequestDetail" listener="#{mdslRegistryController.warnOnReadyToEraseExistingRequest}"/>
+        <p:ajax event="select" update=":loadRequestDetail,:saveRequestDetail" listener="#{mdslRegistryController.warnOnSave}"/>
+        <p:treeNode type="FolderRWCH" expandedIcon="icon-folder-open" collapsedIcon="icon-folder-close">
+            <h:outputText value="#{node.name}"/>
+        </p:treeNode>
+        <p:treeNode type="FolderRW" expandedIcon="icon-folder-open" collapsedIcon="icon-folder-close">
+            <h:outputText value="#{node.name}"/>
+        </p:treeNode>
         <p:treeNode type="Folder" expandedIcon="icon-folder-open" collapsedIcon="icon-folder-close">
             <h:outputText value="#{node.name}"/>
         </p:treeNode>
+        <p:treeNode type="RequestRWCH" icon="icon-file">
+            <h:outputText value="#{node.name}" />
+        </p:treeNode>
+        <p:treeNode type="RequestRW" icon="icon-file">
+            <h:outputText value="#{node.name}" />
+        </p:treeNode>
         <p:treeNode type="Request" icon="icon-file">
+            <h:outputText value="#{node.name}" />
+        </p:treeNode>
+        <p:treeNode type="TemplateRWCH" icon="icon-file">
+            <h:outputText value="#{node.name}" />
+        </p:treeNode>
+        <p:treeNode type="TemplateRW" icon="icon-file">
             <h:outputText value="#{node.name}" />
         </p:treeNode>
         <p:treeNode type="Template" icon="icon-file">
             <h:outputText value="#{node.name}" />
         </p:treeNode>
     </p:tree>
-    <p:contextMenu for="reqTree" nodeType="Folder">
+    <p:contextMenu for="reqTree" nodeType="FolderRWCH">
         <p:menuitem value="Create subfolder" icon="icon-plus-sign" onclick="folderNewDialog.show()"
                     update=":createFolder" actionListener="#{mdslRegistryController.createNewFolder}"/>
         <p:menuitem value="Delete" icon="icon-remove-sign" onclick="folderDeleteDialog.show()"
@@ -27,7 +44,15 @@
         <p:menuitem value="Edit properties" icon="icon-pencil" onclick="folderUpdateDialog.show()"
                     update=":updateFolder" actionListener="#{mdslRegistryController.operationOnSelectedFolder}"/>
     </p:contextMenu>
-    <p:contextMenu for="reqTree" nodeType="Request">
+    <p:contextMenu for="reqTree" nodeType="FolderRW">
+        <p:menuitem value="Create subfolder" icon="icon-plus-sign" onclick="folderNewDialog.show()"
+                    update=":createFolder" actionListener="#{mdslRegistryController.createNewFolder}"/>
+        <p:menuitem value="Delete" icon="icon-remove-sign" onclick="folderDeleteDialog.show()"
+                    update=":deleteFolderConfirm" actionListener="#{mdslRegistryController.operationOnSelectedFolder}"/>
+        <p:menuitem value="Edit properties" icon="icon-pencil" onclick="folderUpdateDialog.show()"
+                    update=":updateFolder" actionListener="#{mdslRegistryController.operationOnSelectedFolder}"/>
+    </p:contextMenu>
+    <p:contextMenu for="reqTree" nodeType="RequestRWCH">
         <p:menuitem value="Delete" icon="icon-remove-sign" onclick="requestDeleteDialog.show()"
                     update=":deleteRequestConfirm"/>
         <p:menuitem value="Edit permissions" icon="icon-pencil" onclick="requestPermissionCHDialog.show()"
@@ -35,11 +60,23 @@
         <p:menuitem value="Edit properties" icon="icon-pencil" onclick="requestModificationDialog.show()"
                     update=":updateRequest"/>
     </p:contextMenu>
-    <p:contextMenu for="reqTree" nodeType="Template">
+    <p:contextMenu for="reqTree" nodeType="RequestRW">
+        <p:menuitem value="Delete" icon="icon-remove-sign" onclick="requestDeleteDialog.show()"
+                    update=":deleteRequestConfirm"/>
+        <p:menuitem value="Edit properties" icon="icon-pencil" onclick="requestModificationDialog.show()"
+                    update=":updateRequest"/>
+    </p:contextMenu>
+    <p:contextMenu for="reqTree" nodeType="TemplateRWCH">
         <p:menuitem value="Delete" icon="icon-remove-sign" onclick="requestDeleteDialog.show()"
                     update=":deleteRequestConfirm"/>
         <p:menuitem value="Edit permissions" icon="icon-pencil" onclick="requestPermissionCHDialog.show()"
                     update=":chRequestPerm" actionListener="#{mdslRegistryController.operationOnSelectedFolder}"/>
+        <p:menuitem value="Edit properties" icon="icon-pencil" onclick="requestModificationDialog.show()"
+                    update=":updateRequest"/>
+    </p:contextMenu>
+    <p:contextMenu for="reqTree" nodeType="TemplateRW">
+        <p:menuitem value="Delete" icon="icon-remove-sign" onclick="requestDeleteDialog.show()"
+                    update=":deleteRequestConfirm"/>
         <p:menuitem value="Edit properties" icon="icon-pencil" onclick="requestModificationDialog.show()"
                     update=":updateRequest"/>
     </p:contextMenu>

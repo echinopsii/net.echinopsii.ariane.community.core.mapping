@@ -122,7 +122,7 @@
                         </p:tabView>
                     </p:layoutUnit>
                     <p:layoutUnit id="mappingCanvas" position="center" resizable="false">
-                        <div id="mappyLoading"  style="display:none; text-align: center">
+                        <div id="mappyLoading"  style="display:none; text-align: center;">
                             <br/><br/><br/>
                             <h:outputText value="The map is being computed... Please wait ... :)" styleClass="inputTitle"/>
                             <br/><br/><br/>
@@ -201,13 +201,12 @@
                     <h:panelGroup id="saveRequestDetail">
                         <br/>
                         <h:form>
-                            <ui:insert name="createRequest" >
-                                <ui:include src="/templates/mdslRequestForm.xhtml" />
-                            </ui:insert>
-                            <h:panelGroup rendered="#{mdslRegistryController.selectedDirectoryOrRequestNode!=null}">
+                            <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+                            <h:panelGroup rendered="#{mdslRegistryController.selectedDirectoryOrRequestNode!=null and mdslRegistryController.hasWriteAccess()}">
+                                <ui:insert name="createRequest" >
+                                    <ui:include src="/templates/mdslRequestForm.xhtml" />
+                                </ui:insert>
                                 <p:separator/>
-                                <br/>
-                                <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
                                 <p:commandButton value="Save" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
                                                  oncomplete="requestSaveDialog.hide();" actionListener="#{mdslrRequestController.save}"
                                                  update=":mappingToolsView:mapToolsQueryForm:requestMessages"/>
@@ -220,7 +219,7 @@
         </p:dialog>
 
         <p:dialog header="Delete request" widgetVar="requestDeleteDialog"
-                  width="350" height="100" showEffect="fade" hideEffect="explode" resizable="false">
+                  width="350" height="110" showEffect="fade" hideEffect="explode" resizable="false">
             <h:panelGroup id="deleteRequestConfirm">
                 <h:outputText value="Are you sure you want to delete following request ?"/><br/><br/>
                 <h:outputText value="Request name : #{mdslrRequestController.name}"/><br/><br/>
@@ -237,7 +236,7 @@
                 </h:form>
             </h:panelGroup>
 
-            <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}" update=":saveReqDirForm,:loadReqDirForm"/>
+            <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}" update=":saveReqDirForm,:saveRequestDetail,:loadReqDirForm,:loadRequestDetail"/>
         </p:dialog>
 
         <p:dialog header="Update request properties" widgetVar="requestModificationDialog"
@@ -271,7 +270,6 @@
                     <h:panelGroup rendered="#{mdslRegistryController.selectedDirectoryOrRequestNode!=null}">
                         <p:separator/>
                         <br/>
-                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
                         <p:commandButton value="Create this folder" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
                                          oncomplete="folderNewDialog.hide();" actionListener="#{mdslrDirectoryController.save}"
                                          update=":mappingToolsView:mapToolsQueryForm:requestMessages"/>
@@ -292,7 +290,6 @@
                     <h:panelGroup rendered="#{mdslRegistryController.selectedDirectoryOrRequestNode!=null}">
                         <p:separator/>
                         <br/>
-                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
                         <p:commandButton value="Update this folder" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
                                          oncomplete="folderUpdateDialog.hide();" actionListener="#{mdslrDirectoryController.save}"
                                          update=":mappingToolsView:mapToolsQueryForm:requestMessages"/>
@@ -334,7 +331,6 @@
                     <h:panelGroup rendered="#{mdslRegistryController.selectedDirectoryOrRequestNode!=null}">
                         <p:separator/>
                         <br/>
-                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
                         <p:commandButton value="Update request permissions" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
                                          oncomplete="requestPermissionCHDialog.hide();" actionListener="#{mdslrRequestController.save}"
                                          update=":mappingToolsView:mapToolsQueryForm:requestMessages"/>
@@ -355,7 +351,6 @@
                     <h:panelGroup rendered="#{mdslRegistryController.selectedDirectoryOrRequestNode!=null}">
                         <p:separator/>
                         <br/>
-                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
                         <p:commandButton value="Update folder permissions" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
                                          oncomplete="folderPermissionCHDialog.hide();" actionListener="#{mdslrDirectoryController.save}"
                                          update=":mappingToolsView:mapToolsQueryForm:requestMessages"/>
