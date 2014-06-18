@@ -143,8 +143,8 @@ public class MappingBootstrap implements FaceletsResourceResolverService {
 
         try {
             MainMenuEntity entity = new MainMenuEntity("mappingMItem", "Mapping", MAIN_MENU_MAPPING_CONTEXT+"views/mapping.jsf", MenuEntityType.TYPE_MENU_ITEM, MAIN_MENU_MAP_RANK, "icon-sitemap icon-large");
-            entity.getDisplayRoles().add("ccmappingreader");
-            entity.getDisplayPermissions().add("ccMapping:read");
+            entity.getDisplayRoles().add("mappingreader");
+            entity.getDisplayPermissions().add("mappingDB:read");
             mappingMainMenuEntityList.add(entity);
             mainMenuEntityRegistry.registerMainMenuEntity(entity);
             log.debug("{} has registered its main menu items", new Object[]{MAPPING_COMPONENT});
