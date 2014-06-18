@@ -73,7 +73,7 @@ public class MappingDSLRegistryRequest implements IUXResource<UXPermission>, Ser
     @ManyToOne(fetch = FetchType.EAGER)
     private Group group;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     @Fetch(FetchMode.SUBSELECT)
     private Set<UXPermission> uxPermissions;
 
