@@ -49,8 +49,8 @@ public class LinkEndpoint {
     public Response displayLink(@PathParam("param") long id) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get link : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id});
-        if (subject.hasRole("ccmappingreader") || subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:read") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             Link link = (Link) MappingBootstrap.getMappingSce().getLinkSce().getLink(id);
             if (link != null) {
@@ -77,8 +77,8 @@ public class LinkEndpoint {
     public Response displayAllLinks() {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get links", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
-        if (subject.hasRole("ccmappingreader") || subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:read") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             String result = "";
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -109,8 +109,8 @@ public class LinkEndpoint {
                                @QueryParam("transportID")long transportID, @QueryParam("UPLID") long upLinkID) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create link : ({},{},{},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), sourceEndpointID, targetEndpointID, transportID, upLinkID});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             try {
                 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -141,8 +141,8 @@ public class LinkEndpoint {
     public Response deleteLink(@QueryParam("ID")long linkID) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] delete link : ({})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), linkID});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             try {
                 MappingBootstrap.getMappingSce().getLinkSce().deleteLink(linkID);
@@ -163,8 +163,8 @@ public class LinkEndpoint {
     public Response setLinkTransport(@QueryParam("ID")long id, @QueryParam("transportID") long transportID) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}] update link transport : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, transportID});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             Link link = MappingBootstrap.getMappingSce().getLinkSce().getLink(id);
             if (link != null) {
@@ -188,8 +188,8 @@ public class LinkEndpoint {
     public Response setLinkEndpointSource(@QueryParam("ID")long id, @QueryParam("SEPID") long SEPID) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update link source endpoint : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, SEPID});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             Link link = MappingBootstrap.getMappingSce().getLinkSce().getLink(id);
             if (link != null) {
@@ -213,8 +213,8 @@ public class LinkEndpoint {
     public Response setLinkEndpointTarget(@QueryParam("ID")long id, @QueryParam("TEPID") long TEPID) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update link target endpoint : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(),  id, TEPID});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             Link link = MappingBootstrap.getMappingSce().getLinkSce().getLink(id);
             if (link != null) {

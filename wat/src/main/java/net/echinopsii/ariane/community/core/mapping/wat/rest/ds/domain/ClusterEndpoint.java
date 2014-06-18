@@ -48,8 +48,8 @@ public class ClusterEndpoint {
     public Response displayCluster(@PathParam("param") long id) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get cluster : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(),id});
-        if (subject.hasRole("ccmappingreader") || subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:read") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             Cluster cluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(id);
             if (cluster != null) {
@@ -76,8 +76,8 @@ public class ClusterEndpoint {
     public Response displayAllClusters() {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get clusters", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
-        if (subject.hasRole("ccmappingreader") || subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:read") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             String result = "";
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -107,8 +107,8 @@ public class ClusterEndpoint {
     public Response createCluster(@QueryParam("name") String name) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create cluster : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), name});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             Cluster cluster = MappingBootstrap.getMappingSce().getClusterSce().createCluster(name);
             try {
@@ -132,8 +132,8 @@ public class ClusterEndpoint {
     public Response deleteCluster(@QueryParam("name") String name) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] delete cluster : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), name});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             try {
                 MappingBootstrap.getMappingSce().getClusterSce().deleteCluster(name);
@@ -151,8 +151,8 @@ public class ClusterEndpoint {
     public Response setClusterName(@QueryParam("ID")long id, @QueryParam("name")String name) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update cluster name: ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             Cluster cluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(id);
             if (cluster != null) {
@@ -171,8 +171,8 @@ public class ClusterEndpoint {
     public Response addClusterContainer(@QueryParam("ID")long id, @QueryParam("containerID")long containerID) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] add container to cluster : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, containerID});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone")) {
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone")) {
             Cluster cluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(id);
             if (cluster != null) {
                 Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(containerID);
@@ -195,8 +195,8 @@ public class ClusterEndpoint {
     public Response deleteClusterContainer(@QueryParam("ID")long id, @QueryParam("containerID")long containerID) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] delete container from cluster : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, containerID});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone")) {
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone")) {
             Cluster cluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(id);
             if (cluster != null) {
                 Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(containerID);

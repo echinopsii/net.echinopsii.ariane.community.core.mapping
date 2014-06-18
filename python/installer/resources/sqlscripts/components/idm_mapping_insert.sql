@@ -4,7 +4,7 @@
 
 LOCK TABLES `resource` WRITE;
 INSERT IGNORE INTO `resource` (description, resourceName, version) VALUES
-    ('CC Mapping DB','ccMapping',1);
+    ('Mapping DB','mappingDB',1);
 UNLOCK TABLES;
 
 
@@ -15,9 +15,9 @@ UNLOCK TABLES;
 
 LOCK TABLES `permission` WRITE,`resource` WRITE;
 INSERT IGNORE INTO `permission` (description, permissionName, version, resource_id)
-SELECT 'can write CC Mapping DB', 'ccMapping:write', 1, id FROM resource WHERE resourceName='ccMapping';
+SELECT 'can write Mapping DB', 'mappingDB:write', 1, id FROM resource WHERE resourceName='mappingDB';
 INSERT IGNORE INTO `permission` (description, permissionName, version, resource_id)
-SELECT 'can read CC Mapping DB', 'ccMapping:read', 1, id FROM resource WHERE resourceName='ccMapping';
+SELECT 'can read Mapping DB', 'mappingDB:read', 1, id FROM resource WHERE resourceName='mappingDB';
 UNLOCK TABLES;
 
 
@@ -28,9 +28,9 @@ UNLOCK TABLES;
 
 LOCK TABLES `resource_permission` WRITE,`permission` AS p WRITE,`resource` AS r WRITE ;
 INSERT IGNORE INTO `resource_permission` (resource_id, permissions_id)
-SELECT r.id, p.id FROM resource AS r, permission AS p WHERE r.resourceName='ccMapping' AND p.permissionName='ccMapping:write';
+SELECT r.id, p.id FROM resource AS r, permission AS p WHERE r.resourceName='mappingDB' AND p.permissionName='mappingDB:write';
 INSERT IGNORE INTO `resource_permission` (resource_id, permissions_id)
-SELECT r.id, p.id FROM resource AS r, permission AS p WHERE r.resourceName='ccMapping' AND p.permissionName='ccMapping:read';
+SELECT r.id, p.id FROM resource AS r, permission AS p WHERE r.resourceName='mappingDB' AND p.permissionName='mappingDB:read';
 UNLOCK TABLES;
 
 
@@ -41,8 +41,8 @@ UNLOCK TABLES;
 
 LOCK TABLES `role` WRITE;
 INSERT IGNORE INTO `role` (description, roleName, version) VALUES
-    ('CC mapping injector role','ccmappinginjector',1),
-    ('CC mapping reader role','ccmappingreader',1);
+    ('mapping injector role','mappinginjector',1),
+    ('mapping reader role','mappingreader',1);
 UNLOCK TABLES;
 
 
@@ -53,16 +53,16 @@ UNLOCK TABLES;
 
 LOCK TABLES `permission_role` WRITE,`permission` AS p WRITE,`role` AS r WRITE;
 INSERT IGNORE INTO `permission_role` (permission_id, roles_id)
-SELECT p.id, r.id FROM permission AS p, role AS r WHERE p.permissionName='ccMapping:write' AND r.roleName='Jedi';
+SELECT p.id, r.id FROM permission AS p, role AS r WHERE p.permissionName='mappingDB:write' AND r.roleName='Jedi';
 INSERT IGNORE INTO `permission_role` (permission_id, roles_id)
-SELECT p.id, r.id FROM permission AS p, role AS r WHERE p.permissionName='ccMapping:write' AND r.roleName='ccmappinginjector';
+SELECT p.id, r.id FROM permission AS p, role AS r WHERE p.permissionName='mappingDB:write' AND r.roleName='mappinginjector';
 
 INSERT IGNORE INTO `permission_role` (permission_id, roles_id)
-SELECT p.id, r.id FROM permission AS p, role AS r WHERE p.permissionName='ccMapping:read' AND r.roleName='Jedi';
+SELECT p.id, r.id FROM permission AS p, role AS r WHERE p.permissionName='mappingDB:read' AND r.roleName='Jedi';
 INSERT IGNORE INTO `permission_role` (permission_id, roles_id)
-SELECT p.id, r.id FROM permission AS p, role AS r WHERE p.permissionName='ccMapping:read' AND r.roleName='ccmappinginjector';
+SELECT p.id, r.id FROM permission AS p, role AS r WHERE p.permissionName='mappingDB:read' AND r.roleName='mappinginjector';
 INSERT IGNORE INTO `permission_role` (permission_id, roles_id)
-SELECT p.id, r.id FROM permission AS p, role AS r WHERE p.permissionName='ccMapping:read' AND r.roleName='ccmappingreader';
+SELECT p.id, r.id FROM permission AS p, role AS r WHERE p.permissionName='mappingDB:read' AND r.roleName='mappingreader';
 UNLOCK TABLES;
 
 
@@ -73,15 +73,15 @@ UNLOCK TABLES;
 
 LOCK TABLES `role_permission` WRITE,`permission` AS p WRITE,`role` AS r WRITE;
 INSERT IGNORE INTO `role_permission` (role_id, permissions_id)
-SELECT r.id, p.id FROM permission AS p, role AS r WHERE p.permissionName='ccMapping:write' AND r.roleName='Jedi';
+SELECT r.id, p.id FROM permission AS p, role AS r WHERE p.permissionName='mappingDB:write' AND r.roleName='Jedi';
 INSERT IGNORE INTO `role_permission` (role_id, permissions_id)
-SELECT r.id, p.id FROM permission AS p, role AS r WHERE p.permissionName='ccMapping:read' AND r.roleName='Jedi';
+SELECT r.id, p.id FROM permission AS p, role AS r WHERE p.permissionName='mappingDB:read' AND r.roleName='Jedi';
 
 INSERT IGNORE INTO `role_permission` (role_id, permissions_id)
-SELECT r.id, p.id FROM permission AS p, role AS r WHERE p.permissionName='ccMapping:write' AND r.roleName='ccmappinginjector';
+SELECT r.id, p.id FROM permission AS p, role AS r WHERE p.permissionName='mappingDB:write' AND r.roleName='mappinginjector';
 INSERT IGNORE INTO `role_permission` (role_id, permissions_id)
-SELECT r.id, p.id FROM permission AS p, role AS r WHERE p.permissionName='ccMapping:read' AND r.roleName='ccmappinginjector';
+SELECT r.id, p.id FROM permission AS p, role AS r WHERE p.permissionName='mappingDB:read' AND r.roleName='mappinginjector';
 
 INSERT IGNORE INTO `role_permission` (role_id, permissions_id)
-SELECT r.id, p.id FROM permission AS p, role AS r WHERE p.permissionName='ccMapping:read' AND r.roleName='ccmappingreader';
+SELECT r.id, p.id FROM permission AS p, role AS r WHERE p.permissionName='mappingDB:read' AND r.roleName='mappingreader';
 UNLOCK TABLES;

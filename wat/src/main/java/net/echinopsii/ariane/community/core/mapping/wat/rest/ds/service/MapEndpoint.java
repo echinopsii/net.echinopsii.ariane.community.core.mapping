@@ -48,8 +48,8 @@ public class MapEndpoint {
     @Path("/all")
     public Response printAllMapJSON() {
         Subject subject = SecurityUtils.getSubject();
-        if (subject.hasRole("ccmappingreader") || subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:read") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             MappingSce mapping = MappingBootstrap.getMappingSce();
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -76,8 +76,8 @@ public class MapEndpoint {
     @Path("/query")
     public Response printMapFromQueryJSON(@QueryParam("mdsl") String query) {
         Subject subject = SecurityUtils.getSubject();
-        if (subject.hasRole("ccmappingreader") || subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:read") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             MappingSce mapping = MappingBootstrap.getMappingSce();
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();

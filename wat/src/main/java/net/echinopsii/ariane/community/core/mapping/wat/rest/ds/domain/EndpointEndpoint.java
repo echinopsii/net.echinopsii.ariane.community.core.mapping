@@ -45,8 +45,8 @@ public class EndpointEndpoint {
     public Response displayEndpoint(@PathParam("param") long id) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get endpoint : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id});
-        if (subject.hasRole("ccmappingreader") || subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:read") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             Endpoint endpoint = (Endpoint) MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
             if (endpoint != null) {
@@ -73,8 +73,8 @@ public class EndpointEndpoint {
     public Response displayAllEndpoints() {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get endpoints", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
-        if (subject.hasRole("ccmappingreader") || subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:read") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             String result = "";
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -101,8 +101,8 @@ public class EndpointEndpoint {
         } else if (URL!=null) {
             Subject subject = SecurityUtils.getSubject();
             log.debug("[{}-{}] get endpoint : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), URL});
-            if (subject.hasRole("ccmappingreader") || subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:read") ||
-                subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+            if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
+                subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
             {
                 Endpoint endpoint = (Endpoint) MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(URL);
                 if (endpoint != null) {
@@ -133,8 +133,8 @@ public class EndpointEndpoint {
     public Response createEndpoint(@QueryParam("endpointURL")String url, @QueryParam("parentNodeID")long parentNodeID) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create endpoint : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), url, parentNodeID});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             try {
                 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -165,8 +165,8 @@ public class EndpointEndpoint {
     public Response deleteEndpoint(@QueryParam("ID")long endpointID) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] delete endpoint : ({})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), endpointID});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             try {
                 MappingBootstrap.getMappingSce().getEndpointSce().deleteEndpoint(endpointID);
@@ -187,8 +187,8 @@ public class EndpointEndpoint {
     public Response setEndpointURL(@QueryParam("ID")long id, @QueryParam("URL") String url) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update endpoint url: ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, url});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
             if (endpoint != null) {
@@ -207,8 +207,8 @@ public class EndpointEndpoint {
     public Response setEndpointParentNode(@QueryParam("ID")long id, @QueryParam("parentNodeID") long parentNodeID) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update endpoint parent node: ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, parentNodeID});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
             if (endpoint != null) {
@@ -232,8 +232,8 @@ public class EndpointEndpoint {
     public Response addTwinEndpoint(@QueryParam("ID")long id, @QueryParam("twinEndpointID") long twinEndpointID) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update endpoint by adding twin endpoint: ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, twinEndpointID});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
             if (endpoint != null) {
@@ -257,8 +257,8 @@ public class EndpointEndpoint {
     public Response deleteTwinEndpoint(@QueryParam("ID")long id, @QueryParam("twinEndpointID") long twinEndpointID) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update endpoint by deleting twin endpoint: ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, twinEndpointID});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
             if (endpoint != null) {
@@ -283,8 +283,8 @@ public class EndpointEndpoint {
                                         @DefaultValue("String") @QueryParam("propertyType") String type) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update endpoint by adding a property : ({},({},{},{}))", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name, value, type});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
             if (endpoint != null) {
@@ -312,8 +312,8 @@ public class EndpointEndpoint {
     public Response deleteEndpointProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update endpoint by removing a property : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-                    subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone")) {
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+                    subject.hasRole("Jedi") || subject.isPermitted("universe:zeone")) {
             Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
             if (endpoint != null) {
                 endpoint.removeEndpointProperty(name);

@@ -47,8 +47,8 @@ public class ContainerEndpoint {
     public Response displayContainer(@PathParam("param") long id) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get container : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id});
-        if (subject.hasRole("ccmappingreader") || subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:read") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             Container cont = (Container) MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
             if (cont != null) {
@@ -75,8 +75,8 @@ public class ContainerEndpoint {
     public Response displayAllContainers() {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get containers", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
-        if (subject.hasRole("ccmappingreader") || subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:read") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             String result = "";
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -103,8 +103,8 @@ public class ContainerEndpoint {
         } else if (primaryAdminURL != null) {
             Subject subject = SecurityUtils.getSubject();
             log.debug("[{}-{}] get container: {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), primaryAdminURL});
-            if (subject.hasRole("ccmappingreader") || subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:read") ||
-                subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+            if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
+                subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
             {
                 Container cont = (Container) MappingBootstrap.getMappingSce().getContainerSce().getContainer(primaryAdminURL);
                 if (cont != null) {
@@ -136,8 +136,8 @@ public class ContainerEndpoint {
         try {
             Subject subject = SecurityUtils.getSubject();
             log.debug("[{}-{}] create container : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), primaryAdminURL, primaryAdminGateName});
-            if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-                subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+            if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+                subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
             {
                 Container cont = (Container) MappingBootstrap.getMappingSce().getContainerSce().createContainer(primaryAdminURL, primaryAdminGateName);
                 try {
@@ -168,8 +168,8 @@ public class ContainerEndpoint {
         try {
             Subject subject = SecurityUtils.getSubject();
             log.debug("[{}-{}] delete container : ({})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), primaryAdminURL});
-            if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-                subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+            if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+                subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
             {
                 MappingBootstrap.getMappingSce().getContainerSce().deleteContainer(primaryAdminURL);
                 return Response.status(Status.OK).entity("Container (" + primaryAdminURL + ") has been successfully deleted !").build();
@@ -186,8 +186,8 @@ public class ContainerEndpoint {
     public Response setContainerCompany(@QueryParam("ID") long id, @QueryParam("company") String company) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container company : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, company});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
             if (container != null) {
@@ -206,8 +206,8 @@ public class ContainerEndpoint {
     public Response setContainerProduct(@QueryParam("ID") long id, @QueryParam("product") String product) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container product : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, product});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
             if (container != null) {
@@ -226,8 +226,8 @@ public class ContainerEndpoint {
     public Response setContainerType(@QueryParam("ID") long id, @QueryParam("type") String type) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container type : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, type});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
             if (container != null) {
@@ -246,8 +246,8 @@ public class ContainerEndpoint {
     public Response setContainerPrimaryAdminGate(@QueryParam("ID") long id, @QueryParam("paGateID") long paGateID) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container primary admin gate : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, paGateID});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
             if (container != null) {
@@ -271,8 +271,8 @@ public class ContainerEndpoint {
     public Response setContainerCluster(@QueryParam("ID") long id, @QueryParam("clusterID") long clusterID) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container cluster : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, clusterID});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
             if (container != null) {
@@ -296,8 +296,8 @@ public class ContainerEndpoint {
     public Response setContainerParentContainer(@QueryParam("ID") long id, @QueryParam("parentContainerID") long parentContainerID) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container parent container : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, parentContainerID});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
             if (container != null) {
@@ -321,8 +321,8 @@ public class ContainerEndpoint {
     public Response addContainerChildContainer(@QueryParam("ID") long id, @QueryParam("childContainerID") long childContainerID) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container by adding child container : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, childContainerID});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
             if (container != null) {
@@ -346,8 +346,8 @@ public class ContainerEndpoint {
     public Response deleteContainerChildContainer(@QueryParam("ID") long id, @QueryParam("childContainerID") long childContainerID) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container by removing child container : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, childContainerID});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
             if (container != null) {
@@ -371,8 +371,8 @@ public class ContainerEndpoint {
     public Response addContainerNode(@QueryParam("ID") long id, @QueryParam("nodeID") long nodeID) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container by adding node : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, nodeID});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
             if (container != null) {
@@ -396,8 +396,8 @@ public class ContainerEndpoint {
     public Response deleteContainerNode(@QueryParam("ID") long id, @QueryParam("nodeID") long nodeID) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container by removing node : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, nodeID});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
             if (container != null) {
@@ -421,8 +421,8 @@ public class ContainerEndpoint {
     public Response addContainerGate(@QueryParam("ID") long id, @QueryParam("gateID") long gateID) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container by adding gate : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, gateID});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
             if (container != null) {
@@ -446,8 +446,8 @@ public class ContainerEndpoint {
     public Response deleteContainerGate(@QueryParam("ID") long id, @QueryParam("nodeID") long gateID) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}] update container by removing gate : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, gateID});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
             if (container != null) {
@@ -472,8 +472,8 @@ public class ContainerEndpoint {
                                          @DefaultValue("String") @QueryParam("propertyType") String type) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}] update container by adding a property : ({},({},{},{}))", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name, value, type});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
             if (container != null) {
@@ -501,8 +501,8 @@ public class ContainerEndpoint {
     public Response deleteContainerProperty(@QueryParam("ID") long id, @QueryParam("propertyName") String name) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container by removing a property : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-                    subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone")) {
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+                    subject.hasRole("Jedi") || subject.isPermitted("universe:zeone")) {
             Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
             if (container != null) {
                 container.removeContainerProperty(name);

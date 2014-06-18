@@ -45,8 +45,8 @@ public class TransportEndpoint {
     public Response displayTransport(@PathParam("param") long id) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get transport : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id});
-        if (subject.hasRole("ccmappingreader") || subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:read") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             MappingSce mapping = MappingBootstrap.getMappingSce();
             Transport transport = (Transport) mapping.getTransportSce().getTransport(id);
@@ -74,8 +74,8 @@ public class TransportEndpoint {
     public Response displayAllTransports() {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get transports", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
-        if (subject.hasRole("ccmappingreader") || subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:read") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             MappingSce mapping = MappingBootstrap.getMappingSce();
             String result = "";
@@ -106,8 +106,8 @@ public class TransportEndpoint {
     public Response createTransport(@QueryParam("name")String transportName) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create transport : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), transportName});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             MappingSce mapping = MappingBootstrap.getMappingSce();
             Transport transport = (Transport) mapping.getTransportSce().createTransport(transportName);
@@ -132,8 +132,8 @@ public class TransportEndpoint {
     public Response deleteTransport(@QueryParam("ID")long transportID) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] delete transport : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), transportID});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             MappingSce mapping = MappingBootstrap.getMappingSce();
             try {
@@ -152,8 +152,8 @@ public class TransportEndpoint {
     public Response setTransportName(@QueryParam("ID")long id, @QueryParam("name")String name) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update transport name: ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             Transport transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(id);
             if (transport != null) {
@@ -173,8 +173,8 @@ public class TransportEndpoint {
                                          @DefaultValue("String") @QueryParam("propertyType") String type) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update transport by adding a property : ({},({},{},{}))", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name, value, type});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             Transport transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(id);
             if (transport != null) {
@@ -202,8 +202,8 @@ public class TransportEndpoint {
     public Response deleteTransportProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}] update transport by removing a property : ({},{})", new Object[]{Thread.currentThread().getId(), id, name});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             Transport transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(id);
             if (transport != null) {

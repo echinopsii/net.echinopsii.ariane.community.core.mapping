@@ -48,8 +48,8 @@ public class GateEndpoint {
     public Response displayGate(@PathParam("param") long id) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get gate : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id});
-        if (subject.hasRole("ccmappingreader") || subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:read") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             Gate gate = (Gate) MappingBootstrap.getMappingSce().getGateSce().getGate(id);
             if (gate != null) {
@@ -76,8 +76,8 @@ public class GateEndpoint {
     public Response displayAllGates() {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get gates", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
-        if (subject.hasRole("ccmappingreader") || subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:read") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             String result = "";
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -108,8 +108,8 @@ public class GateEndpoint {
                                @QueryParam("containerID")long containerID, @QueryParam("isPrimaryAdmin")boolean isPrimaryAdmin) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create gate : ({},{},{},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), url, name, containerID, isPrimaryAdmin});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             try {
                 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -140,8 +140,8 @@ public class GateEndpoint {
     public Response deleteGate(@QueryParam("ID")long nodeID) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] delete gate : ({})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), nodeID});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             try {
                 MappingBootstrap.getMappingSce().getGateSce().deleteGate(nodeID);
@@ -162,8 +162,8 @@ public class GateEndpoint {
     public Response setPrimaryEndpoint(@QueryParam("ID")long id, @QueryParam("endpointID")long endpointID) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}] update primary admin endpoint : ({},{})", new Object[]{Thread.currentThread().getId(), id, endpointID});
-        if (subject.hasRole("ccmappinginjector") || subject.isPermitted("ccMapping:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("ccuniverse:zeone"))
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             Gate gate = MappingBootstrap.getMappingSce().getGateSce().getGate(id);
             if (gate != null) {
