@@ -11,6 +11,7 @@
 
     <modules>
         <module>ds</module>
+        <module>taitale</module>
         <module>wat</module>
     </modules>
 
