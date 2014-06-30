@@ -5,9 +5,9 @@
       xmlns:p="http://primefaces.org/ui">
 <ui:composition template="/templates/mainLayout.xhtml">
     <ui:define name="moduleHeader">
-        <h:outputStylesheet library="css" name="mapping.css" />
-        <h:outputStylesheet library="css/primeui" name="primeui-0.9.6.css" />
-        <script data-main="#{request.contextPath}/javax.faces.resource/taitale.js.jsf?ln=js" src="#{request.contextPath}/javax.faces.resource/require/require.js.jsf?ln=js" type="text/javascript" charset="utf-8"/>
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/primeui/primeui-0.9.6.css" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/mapping.css" />
+        <script data-main="#{request.contextPath}/js/taitale.js" src="#{request.contextPath}/js/require/require.js" type="text/javascript" charset="utf-8"/>
     </ui:define>
     <ui:define name="moduleContent">
         <p:layout widgetVar="mappingLW">
