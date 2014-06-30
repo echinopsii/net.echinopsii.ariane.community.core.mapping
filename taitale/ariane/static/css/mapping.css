@@ -1,0 +1,17 @@
+#mappingToolsView {
+    border: 0px;
+}
+
+#mappingToolsView .ui-tabs-nav {
+    background-color: transparent;
+}
+
+#mappingLayout,
+#mappingCanvas,
+#mappyCanvas {
+    height: 100% !important;
+    max-height: 100% !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+}

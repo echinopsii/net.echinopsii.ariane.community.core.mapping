@@ -1,0 +1,179 @@
+{
+    "containers":[
+        {
+            "containerID":17,
+            "containerCompany":"Tibco",
+            "containerProduct":"Tibco Rendez Vous",
+            "containerType":"RV Router Daemon",
+            "containerGateURI":"http://tibrvrdl03prd01.lab01.dev.dekatonshivr.echinopsii.net:7580",
+            "containerProperties":{
+                "RVRD_HOSTNAME":"tibrvrdl03prd01.lab01.dev.dekatonshivr.echinopsii.net",
+                "Network":{
+                    "subnetmask":"255.255.255.0",
+                    "lan":"lab01.lan",
+                    "marea":"lab01.marea",
+                    "type":"LAN",
+                    "subnetip":"192.168.33.0"
+                },
+                "Datacenter":{
+                    "dc":"lab.dekatonshivr.echinopsii.net",
+                    "gpsLng":2.246621,
+                    "address":"26 rue de Belfort",
+                    "gpsLat":48.895308,
+                    "town":"Courbevoie",
+                    "country":"France"
+                },
+                "RVRD_PID":"489",
+                "RVRD_IPADDR":"192.168.33.7",
+                "RVRD_NAME":"rvrd",
+                "RVRD_LICENSE_TICKET":"217318",
+                "RVRD_INBOX_PORT":"0",
+                "supportTeam":{
+                    "color":"1f7d4a",
+                    "name":"MDW BUS"
+                },
+                "Server":{
+                    "os":"Fedora 18 - x86_64",
+                    "hostname":"tibrvrdl03prd01"
+                },
+                "RVRD_VERSION":"8.4.0"
+            }
+        },
+        {
+            "containerID":25,
+            "containerCompany":"Tibco",
+            "containerProduct":"Tibco Rendez Vous",
+            "containerType":"RV Router Daemon",
+            "containerGateURI":"http://tibrvrdl05prd01.lab01.dev.dekatonshivr.echinopsii.net:7580",
+            "containerProperties":{
+                "RVRD_HOSTNAME":"tibrvrdl05prd01.lab01.dev.dekatonshivr.echinopsii.net",
+                "Network":{
+                    "subnetmask":"255.255.255.0",
+                    "lan":"lab01.lan",
+                    "marea":"lab01.marea",
+                    "type":"LAN",
+                    "subnetip":"192.168.33.0"
+                },
+                "Datacenter":{
+                    "dc":"lab.dekatonshivr.echinopsii.net",
+                    "gpsLng":2.246621,
+                    "address":"26 rue de Belfort",
+                    "gpsLat":48.895308,
+                    "town":"Courbevoie",
+                    "country":"France"
+                },
+                "RVRD_PID":"479",
+                "RVRD_IPADDR":"192.168.33.8",
+                "RVRD_NAME":"rvrd",
+                "RVRD_LICENSE_TICKET":"217318",
+                "RVRD_INBOX_PORT":"0",
+                "supportTeam":{
+                    "color":"1f7d4a",
+                    "name":"MDW BUS"
+                },
+                "Server":{
+                    "os":"Fedora 18 - x86_64",
+                    "hostname":"tibrvrdl05prd01"
+                },
+                "RVRD_VERSION":"8.4.0"
+            }
+        }
+    ],
+    "nodes":[
+        {
+            "nodeID":22,
+            "nodeName":"APP6969.tibrvrdl03prd01",
+            "nodeContainerID":17,
+            "nodeProperties":{
+                "primaryApplication":{
+                    "color":"e8a25d",
+                    "name":"APP"
+                },
+                "RVRD_ROUTER_MAXBACKLOG":0,
+                "busDescription":"APP FX prices diffusion"
+            }
+        },
+        {
+            "nodeID":30,
+            "nodeName":"APP6969.tibrvrdl05prd01",
+            "nodeContainerID":25,
+            "nodeProperties":{
+                "primaryApplication":{
+                    "color":"e8a25d",
+                    "name":"APP"
+                },
+                "RVRD_ROUTER_MAXBACKLOG":0,
+                "busDescription":"APP FX prices diffusion"
+            }
+        }
+    ],
+    "endpoints":[
+        {
+            "endpointID":23,
+            "endpointURL":"multicast-udp-tibrv://tibrvrdl03prd01.lab01.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969",
+            "endpointParentNodeID":22,
+            "endpointProperties":{
+                "RVRD_LOCALNT_ESUB":[
+                    "FR.APP.>"
+                ],
+                "primaryApplication":{
+                    "color":"e8a25d",
+                    "name":"APP"
+                },
+                "RVRD_LOCALNT_SERVICE":6969,
+                "RVRD_LOCALNT_NETWORK":";239.69.69.69",
+                "RVRD_LOCALNT_ISUB":[
+                    "FR.APP.>-weight:10"
+                ],
+                "busDescription":"APP FX prices diffusion",
+                "RVRD_LOCALNT_NAME":"APP6969.devlab01"
+            }
+        },
+        {
+            "endpointID":31,
+            "endpointURL":"multicast-udp-tibrv://tibrvrdl05prd01.lab01.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969",
+            "endpointParentNodeID":30,
+            "endpointProperties":{
+                "RVRD_LOCALNT_ESUB":[
+                    "FR.APP.>"
+                ],
+                "primaryApplication":{
+                    "color":"e8a25d",
+                    "name":"APP"
+                },
+                "RVRD_LOCALNT_SERVICE":6969,
+                "RVRD_LOCALNT_NETWORK":";239.69.69.69",
+                "RVRD_LOCALNT_ISUB":[
+                    "FR.APP.>-weight:10"
+                ],
+                "busDescription":"APP FX prices diffusion",
+                "RVRD_LOCALNT_NAME":"APP6969.devlab01"
+            }
+        }
+    ],
+    "links":[
+        {
+            "linkID":35,
+            "linkSEPID":31,
+            "linkTRPID":34
+        },
+        {
+            "linkID":36,
+            "linkSEPID":23,
+            "linkTRPID":34
+        }
+    ],
+    "transports":[
+        {
+            "transportID":34,
+            "transportName":"multicast-udp-tibrv://;239.69.69.69",
+            "transportProperties":{
+                "primaryApplication":{
+                    "color":"e8a25d",
+                    "name":"APP"
+                },
+                "busDescription":"APP FX prices diffusion"
+            }
+        }
+    ]
+}
