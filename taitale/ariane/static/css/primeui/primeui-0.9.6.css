@@ -541,7 +541,7 @@ button.pui-button::-moz-focus-inner {
     margin:0;
     padding:0;
     display: block;
-    background: url("../../images/primeui/messages.png") no-repeat;
+    background: url("../../aimages/primeui/messages.png") no-repeat;
 }
 
 .pui-growl-image-info {
@@ -611,7 +611,7 @@ button.pui-button::-moz-focus-inner {
 }
 
 .pui-lightbox-loading {
-    background: url("../../images/primeui/loading.gif") #000000 center center no-repeat;
+    background: url("../../aimages/primeui/loading.gif") #000000 center center no-repeat;
 }
 
 .pui-lightbox-caption {
@@ -1167,7 +1167,7 @@ button.pui-button::-moz-focus-inner {
 
 .pui-password-panel .pui-password-meter { 
     height: 10px; 
-    background:transparent url("../../images/primeui/password-meter.png") no-repeat left top;
+    background:transparent url("../../aimages/primeui/password-meter.png") no-repeat left top;
     padding: 0;
     margin: 0;
 }
@@ -1232,7 +1232,7 @@ button.pui-button::-moz-focus-inner {
     width: 16px;
     height: 15px;
     display: block;
-    background: url("../../images/primeui/rating.png") no-repeat 0 0;
+    background: url("../../aimages/primeui/rating.png") no-repeat 0 0;
 }
 
 .pui-rating-star a {
