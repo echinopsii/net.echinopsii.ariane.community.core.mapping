@@ -20,6 +20,7 @@ from components.mapping.cuMappingNeo4JServerPropertiesProcessor import cuMapping
 from components.mapping.cuMappingNeo4JTuningPropertiesProcessor import cuMappingNeo4JTuningPropertiesProcessor
 from components.mapping.cuMappingRimManagedServiceProcessor import cpMappingDirectory, cuMappingRimManagedServiceProcessor, cpMappingNeo4JConfigFile
 from components.mapping.dbIDMMySQLPopulator import dbIDMMySQLPopulator
+from components.mapping.dbIDMMySQLInitiator import dbIDMMySQLInitiator
 
 
 __author__ = 'mffrench'
@@ -39,6 +40,7 @@ class mappingProcessor:
             os.makedirs(kernelRepositoryDirPath, 0o755)
 
         self.mappingRimManagedServiceCUProcessor = cuMappingRimManagedServiceProcessor(kernelRepositoryDirPath)
+        self.mappingIDMSQLInitiator = dbIDMMySQLInitiator(idmDBConfig)
         self.mappingIDMSQLPopulator = dbIDMMySQLPopulator(idmDBConfig)
         self.mappingNeo4JLogginXMLCUProcessor = cuMappingNeo4JLoggingXMLProcessor(neo4jConfDirPath)
         self.mappingNeo4JTunningPropertiesCUProcessor = cuMappingNeo4JTuningPropertiesProcessor(neo4jConfDirPath)
@@ -47,6 +49,7 @@ class mappingProcessor:
     def process(self):
         self.mappingNeo4JLogginXMLCUProcessor.process()
         self.mappingNeo4JTunningPropertiesCUProcessor.process()
+        self.mappingIDMSQLInitiator.process()
         self.mappingIDMSQLPopulator.process()
 
         for key in self.mappingNeo4JServerPropertiesCUProcessor.getParamsKeysList():
