@@ -48,11 +48,11 @@ define(
             mwdelta      = 0.05,
             me = null;
 
-        function logOnFirbugConsole(stringToLog) {
-            if (typeof console != "undefined") {
-                console.log(stringToLog);
-            }
-        }
+        //function logOnFirbugConsole(stringToLog) {
+        //    if (typeof console != "undefined") {
+        //        console.log(stringToLog);
+        //    }
+        //}
 
         this.RaphaelZPD = function(raphaelPaper, o, map) {
             function supportsSVG() {
@@ -182,7 +182,7 @@ define(
             this.ZPDScaleTo = function(delta, svgDoc, pt) {
                 var dfactor = 1;
 
-                logOnFirbugConsole("delta : " + delta);
+                //logOnFirbugConsole("delta : " + delta);
                 if (delta > 0) {
                     if (me.opts.zoomThreshold)
                         if (me.opts.zoomThreshold[1] <= me.zoomCurrent) return;
@@ -205,8 +205,8 @@ define(
                     }
                 }
 
-                logOnFirbugConsole("dfactor: " + dfactor);
-                logOnFirbugConsole("delta:" + delta + " ; zoomCurrent:" + me.zoomCurrent);
+                //logOnFirbugConsole("dfactor: " + dfactor);
+                //logOnFirbugConsole("delta:" + delta + " ; zoomCurrent:" + me.zoomCurrent);
 
                 //logOnFirbugConsole("[RaphaelZPD.zoomer] zoom:"+me.zoomCurrent);
                 var z = 1 + delta; // delta on mousewheel : +/- 0.05
@@ -519,14 +519,14 @@ define(
 
         Raphael.fn.ZPDNormalSize = function(x, y) {
             var delta;
-            logOnFirbugConsole("zoomCurrent : " + me.zoomCurrent);
+            //logOnFirbugConsole("zoomCurrent : " + me.zoomCurrent);
             if (me.zoomCurrent > 0)
                 delta = Math.exp(me.zoomCurrent*Math.log(1+mwdelta))  - 1;
             else if (me.zoomCurrent < 0)
                 delta = 1 - Math.exp(me.zoomCurrent*Math.log(1-mwdelta));
             else
                 delta = 0;
-            logOnFirbugConsole("delta : " + delta);
+            //logOnFirbugConsole("delta : " + delta);
             if (delta!=0)
                 this.ZPDScaleTo(-delta, x, y);
         };

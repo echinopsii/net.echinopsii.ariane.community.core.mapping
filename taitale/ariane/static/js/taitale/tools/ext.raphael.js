@@ -27,9 +27,10 @@ define(
     function (Raphael, helper, params) {
 
         var helper_ = new helper();
-            tokenRegex = /\{([^\}]+)\}/g,
-            objNotationRegex = /(?:(?:^|\.)(.+?)(?=\[|\.|$|\()|\[('|")(.+?)\2\])(\(\))?/g, // matches .xxxxx or ["xxxxx"] to run over object properties
-            replacer = function (all, key, obj) {
+        var tokenRegex = /\{([^\}]+)\}/g;
+        var objNotationRegex = /(?:(?:^|\.)(.+?)(?=\[|\.|$|\()|\[('|")(.+?)\2\])(\(\))?/g; // matches .xxxxx or ["xxxxx"] to run over object properties
+
+        var replacer = function (all, key, obj) {
                 var res = obj;
                 key.replace(objNotationRegex, function (all, name, quote, quotedName, isFunc) {
                     name = name || quotedName;
@@ -42,8 +43,8 @@ define(
                 });
                 res = (res == null || res == obj ? all : res) + "";
                 return res;
-            },
-            fill = function (str, obj) {
+            };
+        var fill = function (str, obj) {
                 return String(str).replace(tokenRegex, function (all, key) {
                     return replacer(all, key, obj);
                 });
@@ -147,9 +148,9 @@ define(
             return out;
         };
 
-        Raphael.fn.menu = function (X, Y, set) {
+        Raphael.fn.menu = function (X, Y, sett) {
             var r = 5,
-                bb = set.getBBox(),
+                bb = sett.getBBox(),
                 w = bb.width,
                 h = bb.height,
                 x = bb.x - r,
@@ -203,13 +204,14 @@ define(
                     h: h,
                     gap: gap
                 }][1];
-            var //dx  = 0,
+            //var //dx  = 0,
                 //dy  = 0,
-                out = this.path(fill(shape, mask)).insertBefore(set);
+            //    out = this.path(fill(shape, mask)).insertBefore(sett);
             //dx = X - (x + r + mask.left + gap);
             //dy = Y - (y + r + h + r + gap);
             //out.translate(dx, dy);
-            return out;
+            //return out;
+            return this.path(fill(shape, mask)).insertBefore(sett)
         };
 
         var displayMainMenu = true;
@@ -370,12 +372,13 @@ define(
                         rect.attr('cursor','default');
                 }
             }
-        }
+        };
 
-        Raphael.fn.link = function (obj1, obj2, line, bg) {
+        //noinspection FunctionWithInconsistentReturnsJS
+        Raphael.fn.link = function(obj1, obj2, line, bg) {
 
             if (obj1==null)
-                return
+                return null;
             else if (obj1.line && obj1.from && obj1.to && typeof obj1.line == "string" ) {
                 line = obj1;
                 obj1 = line.from;
@@ -772,7 +775,6 @@ define(
                     dcsOnMove.push(object);
 
                     mtxS = object.dcmatrix.getWanMtxSize();
-                    var area;
                     for (i = 0, ii =  mtxS; i < ii; i++) {
                         area = object.dcmatrix.getAreaFromWanMtx(i);
                         area.r.drag(area, "area");
@@ -815,7 +817,7 @@ define(
             var transform = "t" + dx + "," + dy;
             //helper_.debug(transform);
 
-            var j, jj, i, k, kk, link, toUp;
+            var j, jj, i, k, kk, link, up, toUp;
 
             moveSet.transform(transform);
 
@@ -865,7 +867,7 @@ define(
                         }
                         if (toUp) {
                             link.getEpSource().chooseMulticastTargetBindingPointAndCalcPoz(bus.bindedLinks[i]);
-                            var up = bus.r.link(link.toCompute());
+                            up = bus.r.link(link.toCompute());
                             if (typeof up != 'undefined')
                                 link.toUpdate(up);
                         }
@@ -915,7 +917,7 @@ define(
                                 if (link.getMulticastBus()!=null) {
                                     endpoint.chooseMulticastTargetBindingPointAndCalcPoz(link);
                                 }
-                                var up = endpoint.r.link(link.toCompute());
+                                up = endpoint.r.link(link.toCompute());
                                 if (typeof up != 'undefined') {
                                     //helper_.debug(up);
                                     link.toUpdate(up);
@@ -1015,6 +1017,7 @@ define(
                         area.rect.animate({"fill-opacity": area.oUnselected}, 500);
                     area.isMoving = false;
                 }
+                //noinspection JSUnusedAssignment
                 dragOnArea = false;
                 areasOnMove = null;
             }
@@ -1045,6 +1048,7 @@ define(
                         lan.rect.animate({"fill-opacity": lan.oUnselected}, 500);
                     lan.isMoving = false;
                 }
+                //noinspection JSUnusedAssignment
                 dragOnLan = false;
                 lansOnMove = null;
             }
@@ -1124,6 +1128,8 @@ define(
             if (linksOnMove!=null) linksOnMove = null;
             if (linksToUp!=null) linksToUp = null;
 
-            dragOnLan  = false, dragOnArea = false, dragOnDC   = false;
+            dragOnLan  = false;
+            dragOnArea = false;
+            dragOnDC   = false;
         }
     });

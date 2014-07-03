@@ -111,10 +111,10 @@ define(
                     mappyCenterX  = (mappyTopLeftX + mappyWidth)/2,
                     mappyCenterY  = (mappyTopLeftY + mappyHeight)/2;
 
-                helper_.debug("=>normal size");
+                //helper_.debug("=>normal size");
                 r.ZPDNormalSize(mapCanvasCenterX, mapCanvasCenterY);
 
-                helper_.debug("=>pan");
+                //helper_.debug("=>pan");
                 var transX = mapCanvasCenterX-mappyCenterX,
                     transY = mapCanvasCenterY-mappyCenterY;
                 r.ZPDPanTo(transX,transY);
@@ -138,7 +138,7 @@ define(
                 /**
                  * scale
                  */
-                helper_.debug("=>scale to center");
+                //helper_.debug("=>scale to center");
                 var deltaX = mapCanvasWidth/mappyWidth,
                     deltaY = mapCanvasHeight/mappyHeight;
                 if (deltaX < 1 || deltaY < 1) {
