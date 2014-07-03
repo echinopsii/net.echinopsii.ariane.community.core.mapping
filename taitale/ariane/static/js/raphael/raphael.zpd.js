@@ -44,7 +44,9 @@ define(
         var raphaelZPDId = 0,
             zpdOffsetX   = 0,
             zpdOffsetY   = 0,
-            currentZoom  = 1;
+            currentZoom  = 0,
+            mwdelta      = 0.05,
+            me = null;
 
         function logOnFirbugConsole(stringToLog) {
             if (typeof console != "undefined") {
@@ -58,10 +60,11 @@ define(
             }
 
             if (!supportsSVG()) {
+                //noinspection JSConstructorReturnsPrimitive
                 return null;
             }
 
-            var me = this;
+            me = this;
 
             me.initialized = false;
             me.opts = {
@@ -108,6 +111,7 @@ define(
 
                 var p = me.getEventPoint(evt);
 
+                //noinspection JSUnresolvedFunction
                 p = p.matrixTransform(g.getCTM().inverse());
 
                 evt.zoomedX = p.x;
@@ -121,7 +125,7 @@ define(
             events.forEach(function(eventName) {
                 var oldFunc = Raphael.el[eventName];
                 Raphael.el[eventName] = function(fn, scope) {
-                    if (fn === undefined) return;
+                    if (fn === undefined) return null;
                     var wrap = function(evt) {
                         return fn.apply(this, [transformEvent(evt)]);
                     };
@@ -129,14 +133,14 @@ define(
                 }
             });
 
-            this.clearEvents = function () {
+            this.ZPDClearEvents = function () {
                 events.forEach(function(eventName) {
                     me.root.removeEventListener(eventName, me.handleMouseWheel, false);
                 });
                 raphaelZPDId--;
                 zpdOffsetX=0;
                 zpdOffsetY=0;
-                currentZoom=1;
+                currentZoom=0;
             };
 
             this.ZPDRefreshLastOffset = function(x, y) {
@@ -144,8 +148,78 @@ define(
                 var g = svgDoc.getElementById("viewport"+me.id);
                 zpdOffsetX = x;
                 zpdOffsetY = y;
+                //noinspection JSUnresolvedFunction
                 me.stateTf = g.getCTM().inverse();
                 me.setCTM(g, me.stateTf.inverse().translate(x, y));
+            };
+
+            var scale = function(z, pt, svgDoc) {
+                var g = svgDoc.getElementById("viewport"+me.id);
+                //noinspection JSUnresolvedFunction
+                var p = pt.matrixTransform(g.getCTM().inverse());
+
+                if (!me.isEditionMode()){
+                    //noinspection JSUnresolvedFunction
+                    var k = me.root.createSVGMatrix().translate(p.x, p.y).scale(z).translate(-p.x, -p.y);
+                }
+                /*
+                 else {
+                 var k = me.root.createSVGMatrix().scale(z);
+                 }
+                 */
+                //noinspection JSUnresolvedFunction
+                me.setCTM(g, g.getCTM().multiply(k));
+
+                if (!me.stateTf)
+                { //noinspection JSUnresolvedFunction
+                    me.stateTf = g.getCTM().inverse();
+                }
+
+                //noinspection JSUnresolvedFunction
+                me.stateTf = me.stateTf.multiply(k.inverse());
+            };
+
+            this.ZPDScaleTo = function(delta, svgDoc, pt) {
+                var dfactor = 1;
+
+                logOnFirbugConsole("delta : " + delta);
+                if (delta > 0) {
+                    if (me.opts.zoomThreshold)
+                        if (me.opts.zoomThreshold[1] <= me.zoomCurrent) return;
+                    if (delta != mwdelta) {
+                        dfactor = Math.round(Math.log(1+delta)/Math.log(1+mwdelta));
+                        me.zoomCurrent += dfactor;
+                        delta = mwdelta;
+                    } else {
+                        me.zoomCurrent++;
+                    }
+                } else {
+                    if (me.opts.zoomThreshold)
+                        if (me.opts.zoomThreshold[0] >= me.zoomCurrent) return;
+                    if (delta != -mwdelta) {
+                        dfactor = Math.round(Math.log(1+delta)/Math.log(1-mwdelta));
+                        me.zoomCurrent -= dfactor;
+                        delta = -mwdelta;
+                    } else {
+                        me.zoomCurrent--;
+                    }
+                }
+
+                logOnFirbugConsole("dfactor: " + dfactor);
+                logOnFirbugConsole("delta:" + delta + " ; zoomCurrent:" + me.zoomCurrent);
+
+                //logOnFirbugConsole("[RaphaelZPD.zoomer] zoom:"+me.zoomCurrent);
+                var z = 1 + delta; // delta on mousewheel : +/- 0.05
+                currentZoom += delta;
+                currentZoom = Math.round(currentZoom*100)/100;
+                //logOnFirbugConsole("[RaphaelZPD.zoomer]zoom factor:"+currentZoom+","+z);
+
+                if (dfactor > 1)
+                    for (var i = 0, ii = dfactor; i < ii; i++)
+                        scale(z,pt,svgDoc);
+                else
+                    scale(z,pt,svgDoc);
+
             };
 
             me.state = 'none';
@@ -156,7 +230,9 @@ define(
 
             if (o) {
                 for (var key in o) {
+                    //noinspection JSUnfilteredForInLoop
                     if (me.opts[key] !== undefined) {
+                        //noinspection JSUnfilteredForInLoop
                         me.opts[key] = o[key];
                     }
                 }
@@ -182,6 +258,7 @@ define(
              * Instance an SVGPoint object with given event coordinates.
              */
             me.getEventPoint = function(evt) {
+                //noinspection JSUnresolvedFunction
                 var p = me.root.createSVGPoint();
 
                 p.x = evt.clientX;
@@ -219,7 +296,9 @@ define(
              */
             me.setAttributes = function(element, attributes) {
                 for (var i in attributes)
-                    element.setAttributeNS(null, i, attributes[i]);
+                    { //noinspection JSUnfilteredForInLoop
+                        element.setAttributeNS(null, i, attributes[i]);
+                    }
             };
 
             var zoomer = function(evt,delta) {
@@ -230,37 +309,11 @@ define(
 
                 var svgDoc = evt.target.ownerDocument;
 
-                if (delta > 0) {
-                    if (me.opts.zoomThreshold)
-                        if (me.opts.zoomThreshold[1] <= me.zoomCurrent) return;
-                    me.zoomCurrent++;
-                } else {
-                    if (me.opts.zoomThreshold)
-                        if (me.opts.zoomThreshold[0] >= me.zoomCurrent) return;
-                    me.zoomCurrent--;
-                }
-                //logOnFirbugConsole("[RaphaelZPD.zoomer] zoom:"+me.zoomCurrent);
-
-                var z = 1 + delta; // Zoom factor: 0.7/1.3
-                currentZoom += delta;
-                currentZoom = Math.round(currentZoom*100)/100;
-                //logOnFirbugConsole("[RaphaelZPD.zoomer]zoom factor:"+currentZoom+","+z);
-                var g = svgDoc.getElementById("viewport"+me.id);
                 var pt = me.getEventPoint(evt);
-                var p = pt.matrixTransform(g.getCTM().inverse());
+                //noinspection JSUnresolvedFunction
 
-                if (!me.isEditionMode()){
-                    var k = me.root.createSVGMatrix().translate(p.x, p.y).scale(z).translate(-p.x, -p.y);
-                }/* else {
-                 var k = me.root.createSVGMatrix().scale(z);
-                 }*/
-                me.setCTM(g, g.getCTM().multiply(k));
-
-                if (!me.stateTf)
-                    me.stateTf = g.getCTM().inverse();
-
-                me.stateTf = me.stateTf.multiply(k.inverse());
-            }
+                me.ZPDScaleTo(delta, svgDoc, pt);
+            };
 
             /**
              * Handle mouse wheel event.
@@ -272,15 +325,15 @@ define(
 
                 if (evt.wheelDelta) {
                     if (evt.wheelDelta<0)
-                        delta = -0.05;
+                        delta = -mwdelta;
                     else
-                        delta = 0.05;
+                        delta = mwdelta;
                 }
                 else {
                     if (evt.detail<0)
-                        delta = 0.05;
+                        delta = mwdelta;
                     else
-                        delta = -0.05;
+                        delta = -mwdelta;
                 }
                 //logOnFirbugConsole("[RaphaelZPD.me.handleMouseWheel]delta:"+delta);
 
@@ -310,13 +363,16 @@ define(
 
                 var g = svgDoc.getElementById("viewport"+me.id);
 
+                var p;
+
                 if (me.state == 'pan') {
                     // Pan mode
                     if (!me.opts.pan) return;
                     //logOnFirbugConsole("[RaphaelZPD.me.handleMouseMove]MouseMove => PAN");
                     if (!me.isMapObjectMoving()) {
                         var pt = me.getEventPoint(evt);
-                        var p = pt.matrixTransform(me.stateTf);
+                        //noinspection JSUnresolvedFunction
+                        p = pt.matrixTransform(me.stateTf);
                         me.setCTM(g, me.stateTf.inverse().translate(p.x - me.stateOrigin.x, p.y - me.stateOrigin.y));
                         me.moveX = p.x - me.stateOrigin.x;
                         me.moveY = p.y - me.stateOrigin.y;
@@ -328,8 +384,10 @@ define(
 
                     //logOnFirbugConsole("[RaphaelZPD.me.handleMouseMove]MouseMove => MOVE");
 
-                    var p = me.getEventPoint(evt).matrixTransform(g.getCTM().inverse());
+                    //noinspection JSUnresolvedFunction
+                    p = me.getEventPoint(evt).matrixTransform(g.getCTM().inverse());
 
+                    //noinspection JSUnresolvedFunction
                     me.setCTM(me.stateTarget, me.root.createSVGMatrix().translate(p.x - me.stateOrigin.x, p.y - me.stateOrigin.y).multiply(g.getCTM().inverse()).multiply(me.stateTarget.getCTM()));
 
                     me.stateOrigin = p;
@@ -357,8 +415,10 @@ define(
 
                     me.state = 'pan';
 
+                    //noinspection JSUnresolvedFunction
                     me.stateTf = g.getCTM().inverse();
 
+                    //noinspection JSUnresolvedFunction
                     me.stateOrigin = me.getEventPoint(evt).matrixTransform(me.stateTf);
                 } else {
                     // Move mode
@@ -370,8 +430,10 @@ define(
 
                     me.stateTarget = evt.target;
 
+                    //noinspection JSUnresolvedFunction
                     me.stateTf = g.getCTM().inverse();
 
+                    //noinspection JSUnresolvedFunction
                     me.stateOrigin = me.getEventPoint(evt).matrixTransform(me.stateTf);
                 }
             };
@@ -385,7 +447,7 @@ define(
 
                 evt.returnValue = false;
 
-                var svgDoc = evt.target.ownerDocument;
+                //var svgDoc = evt.target.ownerDocument;
 
                 if ((me.state == 'pan' && me.opts.pan) || (me.state == 'move' && me.opts.drag)) {
                     // Quit pan mode
@@ -405,24 +467,26 @@ define(
         };
 
         Raphael.fn.ZPDPanTo = function(x, y) {
-            var me = this;
-
+            //noinspection JSUnresolvedFunction
             if (me.gelem == null || me.gelem.getCTM() == null) {
                 alert('failed');
-                return null;
             }
 
+            //noinspection JSUnresolvedFunction
             var stateTf = me.gelem.getCTM().inverse();
 
             var svg = document.getElementsByTagName("svg")[0];
 
+            //noinspection JSUnresolvedVariable
             if (!svg.createSVGPoint) alert("no svg");
 
+            //noinspection JSUnresolvedFunction
             var p = svg.createSVGPoint();
 
             p.x = x;
             p.y = y;
 
+            //noinspection JSUnresolvedFunction
             p = p.matrixTransform(stateTf);
 
             var element = me.gelem;
@@ -431,8 +495,40 @@ define(
             var s = "matrix(" + matrix.a + "," + matrix.b + "," + matrix.c + "," + matrix.d + "," + matrix.e + "," + matrix.f + ")";
 
             element.setAttribute("transform", s);
+        };
 
-            return me;
+        Raphael.fn.ZPDScaleTo = function(delta,x,y) {
+            //noinspection JSUnresolvedFunction
+            if (me.gelem == null || me.gelem.getCTM() == null) {
+                alert('failed');
+            }
+
+            var svg = document.getElementsByTagName("svg")[0];
+
+            //noinspection JSUnresolvedVariable
+            if (!svg.createSVGPoint) alert("no svg");
+
+            //noinspection JSUnresolvedFunction
+            var pt = svg.createSVGPoint();
+
+            pt.x = x;
+            pt.y = y;
+
+            me.ZPDScaleTo(delta, svg, pt);
+        };
+
+        Raphael.fn.ZPDNormalSize = function(x, y) {
+            var delta;
+            logOnFirbugConsole("zoomCurrent : " + me.zoomCurrent);
+            if (me.zoomCurrent > 0)
+                delta = Math.exp(me.zoomCurrent*Math.log(1+mwdelta))  - 1;
+            else if (me.zoomCurrent < 0)
+                delta = 1 - Math.exp(me.zoomCurrent*Math.log(1-mwdelta));
+            else
+                delta = 0;
+            logOnFirbugConsole("delta : " + delta);
+            if (delta!=0)
+                this.ZPDScaleTo(-delta, x, y);
         };
 
         Raphael.fn.getZPDoffsets = function() {

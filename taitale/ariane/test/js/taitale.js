@@ -97,20 +97,35 @@ requirejs (
 
         helper_.initGrowlMsgs('#mapGrowl');
 
-        $('#test').change([loader_, dic], function(){
-            options.setURI(homeURI + "/js/taitale.samples/json/sample.taitale.input."+$('#test').val()+".json");
+        var test = $('#test'),
+            layout = $('#layout'),
+            mode = $('#mode'),
+            notifyI = $('#notifyInfo'),
+            notifyW = $('#notifyWarn'),
+            notifyE = $('#notifyErrs'),
+            reload = $('#reload'),
+            nsize = $('#nsize'),
+            center = $('#center'),
+            displayDC = $("#displayDC"),
+            displayArea = $("#displayArea"),
+            displayLan = $("#displayLan"),
+            rootTreeSorting = $('#rootTreeSorting'),
+            subTreesSorting = $('#subTreesSorting');
+
+        test.change([loader_, dic], function(){
+            options.setURI(homeURI + "/js/taitale.samples/json/sample.taitale.input."+test.val()+".json");
             try {
                 loader_.reloadMap(options);
-                loader_.displayDC($("#displayDC")[0].checked);
-                loader_.displayArea($("#displayArea")[0].checked);
-                loader_.displayLan($("#displayLan")[0].checked);
+                loader_.displayDC(displayDC[0].checked);
+                loader_.displayArea(displayArea[0].checked);
+                loader_.displayLan(displayLan[0].checked);
             } catch (e) {
                 helper_.addMsgToGrowl(e);
                 helper_.growlMsgs(
                     {
                         severity: 'error',
                         summary: 'Failed to load map',
-                        detail: 'Name: '+$('#test').val()+'<br>Layout: '+options.getLayout()+"<br>Mode: "+options.getMode(),
+                        detail: 'Name: '+test.val()+'<br>Layout: '+options.getLayout()+"<br>Mode: "+options.getMode(),
                         sticky: true
                     }
                 );
@@ -118,8 +133,8 @@ requirejs (
             }
         });
 
-        $('#layout').change([loader_, dic], function() {
-            options.setLayout($('#layout').val());
+        layout.change([loader_, dic], function() {
+            options.setLayout(layout.val());
             try {
                 if (options.getLayout()===dic.mapLayout.NTWWW) {
                     document.getElementById('networkOptions').style.display = "";
@@ -132,16 +147,16 @@ requirejs (
                     document.getElementById('treeOptions').style.display    = "none";
                 }
                 loader_.reloadMap(options);
-                loader_.displayDC($("#displayDC")[0].checked);
-                loader_.displayArea($("#displayArea")[0].checked);
-                loader_.displayLan($("#displayLan")[0].checked);
+                loader_.displayDC(displayDC[0].checked);
+                loader_.displayArea(displayArea[0].checked);
+                loader_.displayLan(displayLan[0].checked);
             } catch (e) {
                 helper_.addMsgToGrowl(e);
                 helper_.growlMsgs(
                     {
                         severity: 'error',
                         summary: 'Failed to load map',
-                        detail: 'Name: '+$('#test').val()+'<br>Layout: '+options.getLayout()+"<br>Mode: "+options.getMode(),
+                        detail: 'Name: '+test.val()+'<br>Layout: '+options.getLayout()+"<br>Mode: "+options.getMode(),
                         sticky: true
                     }
                 );
@@ -149,20 +164,20 @@ requirejs (
             }
         });
 
-        $('#mode').change([loader_, dic], function() {
-            options.setMode($('#mode').val());
+        mode.change([loader_, dic], function() {
+            options.setMode(mode.val());
             try {
                 loader_.refreshMap();
-                loader_.displayDC($("#displayDC")[0].checked);
-                loader_.displayArea($("#displayArea")[0].checked);
-                loader_.displayLan($("#displayLan")[0].checked);
+                loader_.displayDC(displayDC[0].checked);
+                loader_.displayArea(displayArea[0].checked);
+                loader_.displayLan(displayLan[0].checked);
             } catch (e) {
                 helper_.addMsgToGrowl(e);
                 helper_.growlMsgs(
                     {
                         severity: 'error',
                         summary: 'Failed to refresh map',
-                        detail: 'Name: '+$('#test').val()+'<br>Layout: '+options.getLayout()+"<br>Mode: "+options.getMode(),
+                        detail: 'Name: '+test.val()+'<br>Layout: '+options.getLayout()+"<br>Mode: "+options.getMode(),
                         sticky: true
                     }
                 );
@@ -170,24 +185,58 @@ requirejs (
             }
         });
 
-        $('#notifyInfo').change(function() {
-            helper_.setNotifyInfo($("#notifyInfo")[0].checked);
+        notifyI.change(function() {
+            helper_.setNotifyInfo(notifyI[0].checked);
         });
 
-        $('#notifyWarn').change(function() {
-            helper_.setNotifyWarn($("#notifyWarn")[0].checked);
+        notifyW.change(function() {
+            helper_.setNotifyWarn(notifyW[0].checked);
         });
 
-        $('#notifyErrs').change(function() {
-            helper_.setNotifyErrs($("#notifyErrs")[0].checked);
+        notifyE.change(function() {
+            helper_.setNotifyErrs(notifyE[0].checked);
         });
 
-        $('#reload').click([loader_, dic], function() {
+        nsize.click([loader_, dic], function() {
+            try {
+                loader_.normalSize();
+            } catch (e) {
+                helper_.addMsgToGrowl(e);
+                helper_.growlMsgs(
+                    {
+                        severity: 'error',
+                        summary: 'Failed to center map',
+                        detail: 'Check the console log to know more...',
+                        sticky: true
+                    }
+                );
+                console.log(e.stack);
+            }
+        });
+
+        center.click([loader_, dic], function() {
+            try {
+                loader_.centerMappy();
+            } catch (e) {
+                helper_.addMsgToGrowl(e);
+                helper_.growlMsgs(
+                    {
+                        severity: 'error',
+                        summary: 'Failed to center map',
+                        detail: 'Check the console log to know more...',
+                        sticky: true
+                    }
+                );
+                console.log(e.stack);
+            }
+        });
+
+        reload.click([loader_, dic], function() {
             try {
                 loader_.reloadMap(options);
-                loader_.displayDC($("#displayDC")[0].checked);
-                loader_.displayArea($("#displayArea")[0].checked);
-                loader_.displayLan($("#displayLan")[0].checked);
+                loader_.displayDC(displayDC[0].checked);
+                loader_.displayArea(displayArea[0].checked);
+                loader_.displayLan(displayLan[0].checked);
             } catch (e) {
                 helper_.addMsgToGrowl(e);
                 helper_.growlMsgs(
@@ -202,10 +251,9 @@ requirejs (
             }
         });
 
-
-        $('#displayDC').change([loader_, dic], function() {
+        displayDC.change([loader_, dic], function() {
             try {
-                loader_.displayDC($("#displayDC")[0].checked);
+                loader_.displayDC(displayDC[0].checked);
             } catch (e) {
                 helper_.addMsgToGrowl(e);
                 helper_.growlMsgs(
@@ -220,9 +268,9 @@ requirejs (
             }
         });
 
-        $('#displayArea').change([loader_, dic], function() {
+        displayArea.change([loader_, dic], function() {
             try {
-                loader_.displayArea($("#displayArea")[0].checked);
+                loader_.displayArea(displayArea[0].checked);
             } catch (e) {
                 helper_.addMsgToGrowl(e);
                 helper_.growlMsgs(
@@ -237,9 +285,9 @@ requirejs (
             }
         });
 
-        $('#displayLan').change([loader_, dic], function() {
+        displayLan.change([loader_, dic], function() {
             try {
-                loader_.displayLan($("#displayLan")[0].checked);
+                loader_.displayLan(displayLan[0].checked);
             } catch (e) {
                 helper_.addMsgToGrowl(e);
                 helper_.growlMsgs(
@@ -254,12 +302,12 @@ requirejs (
             }
         });
 
-        $('#rootTreeSorting').change([loader_, dic], function() {
+        rootTreeSorting.change([loader_, dic], function() {
             try {
-                options.setRootTreeSorting($('#rootTreeSorting').val());
-                loader_.sortRootTree($('#rootTreeSorting').val());
+                options.setRootTreeSorting(rootTreeSorting.val());
+                loader_.sortRootTree(rootTreeSorting.val());
                 loader_.rebuildMapTreeLayout();
-                loader_.refreshMap();
+                loader_.refreshMap(options);
             } catch (e) {
                 helper_.addMsgToGrowl(e);
                 helper_.growlMsgs(
@@ -274,12 +322,12 @@ requirejs (
             }
         });
 
-        $('#subTreesSorting').change([loader_, dic], function() {
+        subTreesSorting.change([loader_, dic], function() {
             try {
-                options.setSubTreesSorting($('#subTreesSorting').val());
+                options.setSubTreesSorting(subTreesSorting.val());
                 loader_.sortSubTrees(options.getSubTreesSorting());
                 loader_.rebuildMapTreeLayout();
-                loader_.refreshMap();
+                loader_.refreshMap(options);
             } catch (e) {
                 helper_.addMsgToGrowl(e);
                 helper_.growlMsgs(
@@ -295,13 +343,13 @@ requirejs (
         });
 
         try {
-            $("#notifyInfo")[0].checked=helper_.getNotifyInfo();
-            $("#notifyWarn")[0].checked=helper_.getNotifyWarn();
-            $("#notifyErrs")[0].checked=helper_.getNotifyErrs();
+            notifyI[0].checked=helper_.getNotifyInfo();
+            notifyW[0].checked=helper_.getNotifyWarn();
+            notifyE[0].checked=helper_.getNotifyErrs();
 
-            options.setLayout($('#layout').val());
-            options.setMode($('#mode').val());
-            options.setURI(homeURI + "/js/taitale.samples/json/sample.taitale.input."+$('#test').val()+".json");
+            options.setLayout(layout.val());
+            options.setMode(mode.val());
+            options.setURI(homeURI + "/js/taitale.samples/json/sample.taitale.input."+test.val()+".json");
             if (options.getLayout()===dic.mapLayout.NTWWW) {
                 document.getElementById('networkOptions').style.display = "";
                 document.getElementById('treeOptions').style.display    = "none";
@@ -313,18 +361,18 @@ requirejs (
                 document.getElementById('treeOptions').style.display    = "none";
             }
             loader_.loadMap(options);
-            loader_.displayDC($("#displayDC")[0].checked);
-            loader_.displayArea($("#displayArea")[0].checked);
-            loader_.displayLan($("#displayLan")[0].checked);
+            loader_.displayDC(displayDC[0].checked);
+            loader_.displayArea(displayArea[0].checked);
+            loader_.displayLan(displayLan[0].checked);
         } catch (e) {
             helper_.addMsgToGrowl(e);
             helper_.growlMsgs(
                 {
                     severity: 'error',
                     summary: 'Failed to load map',
-                    detail: 'Name: '+$('#test').val()+'<br>Layout: '+options.getLayout()+"<br>Mode: "+options.getMode(),
+                    detail: 'Name: '+test.val()+'<br>Layout: '+options.getLayout()+"<br>Mode: "+options.getMode(),
                     sticky: true
                 });
             console.log(e.stack);
-        };
+        }
     });

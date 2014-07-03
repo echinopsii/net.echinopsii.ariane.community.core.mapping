@@ -28,21 +28,23 @@ define(
     function($,helper,vertex,container) {
         function tree() {
             var vertexRegistry    = [] ,
-                maxTreeFloor      = 0  ,
+                //maxTreeFloor      = 0  ,
                 treeWidth         = 0  ,
                 treeHeight        = 0  ,
                 treeCenterX       = 0  ,
-                treeCenterY       = 0  ,
-                helper_           = new helper();
+                treeCenterY       = 0  ;
+             //var helper_           = new helper();
 
             this.findVertexByID = function(vertexID) {
                 for (var i = 0, ii = vertexRegistry.length; i < ii ; i++) {
                     if (vertexRegistry[i].getVertexID()==vertexID)
                         return vertexRegistry[i];
                 }
+                return null;
             };
 
             this.addVertex = function(treeObject) {
+                var i, ii, j, jj, linkedVertex;
                 var rvertex;
                 if (!treeObject.isInserted) {
                     rvertex = new vertex(treeObject);
@@ -59,14 +61,14 @@ define(
                 var linkedContainers  = ((treeObject instanceof container) ? treeObject.getLinkedContainers():treeObject.linkedTreeObjects),
                     idFromRoot        = 0,
                     childMulticastBus = ((linkedContainers.length == 0 && rvertex.getFloor()==0) ? ((treeObject instanceof container) ? treeObject.getLinkedBus() : []):[]);
-                for (var i = 0, ii = linkedContainers.length; i<ii; i++) {
+                for (i = 0, ii = linkedContainers.length; i<ii; i++) {
                     var linkedContainer = linkedContainers[i];
                     if (!linkedContainer.isInserted) {
-                        var linkedVertex = new vertex(linkedContainer);
+                        linkedVertex = new vertex(linkedContainer);
                         linkedVertex.setRootV(rvertex);
                         linkedVertex.setIdFromRoot(idFromRoot++);
                         linkedVertex.setFloor(rvertex.getFloor()+1);
-                        linkedVertex.incrementRepulsionFactor(linkedContainer.getLinkedTreeObjectsCount())
+                        linkedVertex.incrementRepulsionFactor(linkedContainer.getLinkedTreeObjectsCount());
                         vertexRegistry.push(linkedVertex);
                         rvertex.pushLinkedVertex(linkedVertex);
                         linkedContainer.isInserted = true;
@@ -79,13 +81,13 @@ define(
                     }
                 }
 
-                for (var i = 0, ii = childMulticastBus.length; i<ii; i++) {
+                for (i = 0, ii = childMulticastBus.length; i<ii; i++) {
                     var childBus = childMulticastBus[i];
                     if (!childBus.isInserted) {
                         var busVertex     = new vertex(childBus),
                             linkedObjects = childBus.linkedTreeObjects;
-                        for (var j= 0, jj = linkedObjects.length; j<jj; j++) {
-                            var linkedVertex = this.findVertexByID(childBus.linkedTreeObjects[j].ID)
+                        for (j= 0, jj = linkedObjects.length; j<jj; j++) {
+                            linkedVertex = this.findVertexByID(childBus.linkedTreeObjects[j].ID);
                             if (linkedVertex!=null) {
                                 if (!childBus.isInserted) {
                                     busVertex.setRootV(linkedVertex);
@@ -105,21 +107,22 @@ define(
                     }
                 }
 
-                for (var i = 0, ii = childMulticastBus.length; i<ii ;i++)
+                for (i = 0, ii = childMulticastBus.length; i<ii ;i++)
                     this.addVertex(childMulticastBus[i])
 
                 return ((treeObject instanceof container) ? treeObject.getLinkedBus() : []);
             };
 
             this.definePoz = function() {
-                for (var i = 0, ii = vertexRegistry.length; i < ii ; i++) {
+                var i, ii;
+                for (i = 0, ii = vertexRegistry.length; i < ii ; i++) {
                     vertexRegistry[i].defineRelativePoz();
                 }
 
                 var minX=0,	maxX=0,
                     minY=0, maxY=0;
 
-                for (var i = 0, ii = vertexRegistry.length; i < ii ; i++) {
+                for (i = 0, ii = vertexRegistry.length; i < ii ; i++) {
                     var relX = vertexRegistry[i].getRelX(),
                         relY = vertexRegistry[i].getRelY();
                     if (relX > maxX)
@@ -137,9 +140,8 @@ define(
                 treeCenterX = treeWidth/2;
                 treeCenterY = treeHeight/2;
 
-                for (var i = 0, ii = vertexRegistry.length; i < ii ; i++) {
+                for (i = 0, ii = vertexRegistry.length; i < ii ; i++)
                     vertexRegistry[i].defineAbsolutePoz(treeCenterX,treeCenterY);
-                }
             };
 
             this.loadTree = function(treeRoot) {
@@ -150,7 +152,7 @@ define(
                     if (vertexRegistry[i].getFloor()!=0) {
                         vertexRegistry[i].pushLinkedVertex(vertexRegistry[i].getRootV());
                     }
-                };
+                }
             };
 
             this.reloadTree = function(treeRoot) {
@@ -160,6 +162,6 @@ define(
                 vertexRegistry = [];
                 this.loadTree(treeRoot);
             };
-        };
+        }
         return tree;
     });

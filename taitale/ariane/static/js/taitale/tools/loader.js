@@ -95,9 +95,66 @@ define(
                 }
             };
 
+            this.normalSize = function() {
+                var mapLayoutDivHeight = helper_.getMappyLayoutDivSize().height,
+                    mapCanvasWidth     = helper_.getMappyCanvasDivSize().width,
+                    mapCanvasHeight    = mapLayoutDivHeight + helper_.getMappyCanvasDivSize().height,
+                    mapCanvasCenterX   = mapCanvasWidth/ 2,
+                    mapCanvasCenterY   = mapCanvasHeight/2;
+
+                mappy.updateSize();
+
+                var mappyWidth    = mappy.getMapSize().width,
+                    mappyHeight   = mappy.getMapSize().height,
+                    mappyTopLeftX = mappy.getTopLeftCoords().topLeftX,
+                    mappyTopLeftY = mappy.getTopLeftCoords().topLeftY,
+                    mappyCenterX  = (mappyTopLeftX + mappyWidth)/2,
+                    mappyCenterY  = (mappyTopLeftY + mappyHeight)/2;
+
+                helper_.debug("=>normal size");
+                r.ZPDNormalSize(mapCanvasCenterX, mapCanvasCenterY);
+
+                helper_.debug("=>pan");
+                var transX = mapCanvasCenterX-mappyCenterX,
+                    transY = mapCanvasCenterY-mappyCenterY;
+                r.ZPDPanTo(transX,transY);
+            };
+
+            this.centerMappy = function() {
+                var mapLayoutDivHeight = helper_.getMappyLayoutDivSize().height,
+                    mapCanvasWidth     = helper_.getMappyCanvasDivSize().width,
+                    mapCanvasHeight    = mapLayoutDivHeight + helper_.getMappyCanvasDivSize().height,
+                    mapCanvasCenterX   = mapCanvasWidth/ 2,
+                    mapCanvasCenterY   = mapCanvasHeight/2;
+
+                /**
+                 * normale size and center
+                 */
+                this.normalSize();
+
+                var mappyWidth    = mappy.getMapSize().width,
+                    mappyHeight   = mappy.getMapSize().height;
+
+                /**
+                 * scale
+                 */
+                helper_.debug("=>scale to center");
+                var deltaX = mapCanvasWidth/mappyWidth,
+                    deltaY = mapCanvasHeight/mappyHeight;
+                if (deltaX < 1 || deltaY < 1) {
+                    var delta = Math.min(deltaX,deltaY) - 1;
+                    //helper_.debug(deltaX + "," + deltaY + "," + delta);
+                    r.ZPDScaleTo(delta, mapCanvasCenterX, mapCanvasCenterY);
+                }
+            };
+
             this.loadMappy = function() {
+                var mapLayoutDivHeight = helper_.getMappyLayoutDivSize().height,
+                    mapCanvasWidth     = helper_.getMappyCanvasDivSize().width,
+                    mapCanvasHeight    = mapLayoutDivHeight + helper_.getMappyCanvasDivSize().height;
+
                 document.getElementById("mappyCanvas").innerHTML = "";
-                r = Raphael("mappyCanvas", mappy.getMapSize().width, mappy.getMapSize().height);
+                r = Raphael("mappyCanvas", mapCanvasWidth, mapCanvasHeight);
 
                 /**
                  * Init raphael JS object outside ZPD
@@ -116,6 +173,8 @@ define(
                 if (refreshZPDOffset!=null) {
                     zpd.ZPDRefreshLastOffset(refreshZPDOffset.x,refreshZPDOffset.y);
                 }
+
+                this.centerMappy();
             };
 
             var httpJSONmap = null;
@@ -124,20 +183,6 @@ define(
                 mappy       = new map(options);
                 mappy.parseJSON(httpJSONmap);
                 mappy.buildMap();
-
-                var mappyLayoutDivHeight = helper_.getMappyLayoutDivSize().height;
-                var mappyCanvasDivSize = helper_.getMappyCanvasDivSize();
-                var totalMinHeight   = mappyCanvasDivSize.height+mappyLayoutDivHeight;
-                var mappyWidth  = mappy.getMapSize().width,
-                    mappyHeight = mappy.getMapSize().height;
-
-                if (mappyWidth<mappyCanvasDivSize.width)
-                    mappyWidth=mappyCanvasDivSize.width;
-                if (mappyHeight<totalMinHeight)
-                    mappyHeight=totalMinHeight;
-
-                mappy.setMapWidth(mappyWidth);
-                mappy.setMapHeight(mappyHeight);
 
                 this.loadMappy();
 
@@ -151,7 +196,6 @@ define(
             };
 
             this.loadMap = function(options) {
-                //jsonStrinfy = JSON.stringify(JSONmap);
                 document.getElementById('mappyLoading').style.display = "";
                 document.getElementById('mappyCanvas').style.display = "none";
                 $.ajax({
@@ -199,7 +243,7 @@ define(
 
             this.reloadMap = function(options) {
                 if (zpd!=null)
-                    zpd.clearEvents();
+                    zpd.ZPDClearEvents();
                 if (r!=null) {
                     //r.raphael.unmousedown(mainMouseDown);
                     r.clear();
@@ -210,7 +254,7 @@ define(
 
             this.rebuildMap = function(options) {
                 if (zpd!=null)
-                    zpd.clearEvents();
+                    zpd.ZPDClearEvents();
                 if (r!=null) {
                     //r.raphael.unmousedown(mainMouseDown);
                     r.clear();
@@ -224,7 +268,7 @@ define(
                     if (r!=null) {
                         refreshZPDOffset = r.getZPDoffsets();
                     }
-                    zpd.clearEvents();
+                    zpd.ZPDClearEvents();
                 }
                 if (r!=null) {
                     //r.raphael.unmousedown(mainMouseDown);

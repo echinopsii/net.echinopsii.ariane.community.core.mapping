@@ -37,6 +37,10 @@ define(
         function map(options) {
             var mapWidth  = 0,
                 mapHeight = 0,
+                mapTopLeftX = 0,
+                mapTopLeftY = 0,
+                mapBottomRightX = 0,
+                mapBottomRightY = 0,
                 mapmatrix = new mapMatrix(options),
                 mbrdSpan  = params.map_mbrdSpan,
                 zoneSpan  = params.map_zoneSpan,
@@ -60,13 +64,17 @@ define(
 
             this.addContainer = function(JSONContainerDesc) {
                 var x=0, y=0;
+                //noinspection JSUnresolvedVariable
                 if (JSONContainerDesc.containerProperties!=null && JSONContainerDesc.containerProperties.manualCoord!=null) {
+                    //noinspection JSUnresolvedVariable
                     x=JSONContainerDesc.containerProperties.manualCoord.x;
+                    //noinspection JSUnresolvedVariable
                     y=JSONContainerDesc.containerProperties.manualCoord.y;
                 }
                 containerRegistry.push(new container(JSONContainerDesc, x, y));
             };
 
+            /*
             this.findContainerByID = function(containerID) {
                 for (var i = 0, ii = containerRegistry.length; i < ii; i++ ) {
                     if (containerRegistry[i].getID()==containerID) {
@@ -74,11 +82,13 @@ define(
                     }
                 }
             };
+            */
 
             this.addNode = function(JSONNodeDesc) {
                 var container = null;
                 for (var i = 0, ii = containerRegistry.length; i < ii; i++ ) {
                     var tmpContainer = containerRegistry[i];
+                    //noinspection JSUnresolvedVariable
                     if (tmpContainer.ID === JSONNodeDesc.nodeContainerID) {
                         container = tmpContainer;
                         break;
@@ -87,6 +97,7 @@ define(
                 if (container != null) {
                     nodeRegistry.push(new node(JSONNodeDesc, container));
                 } else {
+                    //noinspection JSUnresolvedVariable
                     helper_.addMsgToGrowl(
                         {
                             severity: 'warn',
@@ -101,6 +112,7 @@ define(
                 var node = null;
                 for (var i = 0, ii = nodeRegistry.length; i < ii; i++ ) {
                     var tmpNode = nodeRegistry[i];
+                    //noinspection JSUnresolvedVariable
                     if (tmpNode.ID === JSONEndpointDesc.endpointParentNodeID) {
                         node = tmpNode;
                         break;
@@ -109,6 +121,7 @@ define(
                 if (node != null) {
                     endpointRegistry.push(new endpoint(JSONEndpointDesc,node));
                 } else {
+                    //noinspection JSUnresolvedVariable
                     helper_.addMsgToGrowl(
                         {
                             severity: 'warn',
@@ -121,23 +134,28 @@ define(
 
             this.addTransport = function(JSONTransportDesc) {
                 transportRegistry.push(new transport(JSONTransportDesc));
-            }
+            };
 
             this.addLink = function (JSONLinkDesc) {
+                var i, ii;
                 var sEP = null, dEP = null, TR = null;
-                for (var i = 0, ii = endpointRegistry.length; i < ii ; i++) {
+                for (i = 0, ii = endpointRegistry.length; i < ii ; i++) {
                     var tmpEP = endpointRegistry[i];
+                    //noinspection JSUnresolvedVariable
                     if (tmpEP.epID === JSONLinkDesc.linkSEPID)
                         sEP = tmpEP;
-                    else if (tmpEP.epID === JSONLinkDesc.linkTEPID)
-                        dEP = tmpEP;
+                    else { //noinspection JSUnresolvedVariable
+                        if (tmpEP.epID === JSONLinkDesc.linkTEPID)
+                                                dEP = tmpEP;
+                    }
 
                     if (sEP!=null && dEP!=null)
                         break;
                 }
 
-                for (var i = 0, ii = transportRegistry.length; i < ii; i++) {
+                for (i = 0, ii = transportRegistry.length; i < ii; i++) {
                     var tmpTR = transportRegistry[i];
+                    //noinspection JSUnresolvedVariable
                     if (tmpTR.getID() === JSONLinkDesc.linkTRPID) {
                         TR = tmpTR;
                         break;
@@ -145,11 +163,14 @@ define(
                 }
 
                 if (sEP!=null && dEP!=null /*UP JSON TESTS FIRST - && TR!=null*/) {
+                    //noinspection JSUnresolvedVariable
                     linkRegistry.push(new link(JSONLinkDesc.linkID, sEP, dEP, TR, linkColor, linkBckg));
                 } else if (sEP!=null && TR!=null && TR.isMulticast()){
+                    //noinspection JSUnresolvedVariable
                     linkRegistry.push(new link(JSONLinkDesc.linkID, sEP, null, TR, linkColor, linkBckg));
                 } else {
                     if (TR==null) {
+                        //noinspection JSUnresolvedVariable
                         helper_.addMsgToGrowl(
                             {
                                 severity: 'warn',
@@ -158,6 +179,7 @@ define(
                                 sticky: true
                             });
                     } else if (TR.isMulticast() && sEP==null) {
+                        //noinspection JSUnresolvedVariable
                         helper_.addMsgToGrowl(
                             {
                                 severity: 'warn',
@@ -166,6 +188,7 @@ define(
                                 sticky: true
                             });
                     } else if (!TR.isMulticast() && (sEP==null || dEP==null)) {
+                        //noinspection JSUnresolvedVariable
                         helper_.addMsgToGrowl(
                             {
                                 severity: 'warn',
@@ -179,36 +202,43 @@ define(
             };
 
             this.parseJSON = function(JSONmapDesc) {
-                for (var i = 0, ii = JSONmapDesc.containers.length; i < ii; i++ ) {
+                var i, ii;
+                for (i = 0, ii = JSONmapDesc.containers.length; i < ii; i++ ) {
                     this.addContainer(JSONmapDesc.containers[i]);
                 }
 
-                for (var i = 0, ii = JSONmapDesc.nodes.length; i < ii; i++ ) {
+                for (i = 0, ii = JSONmapDesc.nodes.length; i < ii; i++ ) {
                     this.addNode(JSONmapDesc.nodes[i]);
                 }
 
-                for (var i = 0, ii = JSONmapDesc.endpoints.length; i < ii; i++ ) {
+                //noinspection JSUnresolvedVariable
+                for (i = 0, ii = JSONmapDesc.endpoints.length; i < ii; i++ ) {
+                    //noinspection JSUnresolvedVariable
                     this.addEndpoint(JSONmapDesc.endpoints[i]);
                 }
 
+                //noinspection JSUnresolvedVariable
                 if (JSONmapDesc.transports!=null) {
-                    for (var i = 0, ii = JSONmapDesc.transports.length; i < ii; i++) {
+                    //noinspection JSUnresolvedVariable
+                    for (i = 0, ii = JSONmapDesc.transports.length; i < ii; i++) {
+                        //noinspection JSUnresolvedVariable
                         this.addTransport(JSONmapDesc.transports[i]);
                     }
                 }
 
-                for (var i = 0, ii = JSONmapDesc.links.length; i < ii; i++ ) {
+                for (i = 0, ii = JSONmapDesc.links.length; i < ii; i++ ) {
                     this.addLink(JSONmapDesc.links[i]);
                 }
             };
 
             this.buildMap = function() {
+                var i, ii, j, jj;
                 // first : place nodes in container
-                for (var j = 0, jj = nodeRegistry.length; j < jj; j++) {
+                for (j = 0, jj = nodeRegistry.length; j < jj; j++) {
                     nodeRegistry[j].placeInContainer();
                 }
                 // second : define container size & max size
-                for (var j = 0, jj = containerRegistry.length; j < jj; j++) {
+                for (j = 0, jj = containerRegistry.length; j < jj; j++) {
                     containerRegistry[j].setSize();
                     containerRegistry[j].setMaxSize();
                 }
@@ -216,28 +246,31 @@ define(
                 switch (layout) {
                     case dic.mapLayout.NTWWW:
                         // third 0 : populate DC, Area and Lan registries and enrich the objects
-                        for (var j = 0, jj = containerRegistry.length; j < jj; j++) {
+                        for (j = 0, jj = containerRegistry.length; j < jj; j++) {
                             mapmatrix.populateLayoutRegistries(containerRegistry[j]);
                         }
                         // third 1 : place container and the linked bus into the map matrix
-                        for (var j = 0, jj = containerRegistry.length; j < jj; j++) {
+                        for (j = 0, jj = containerRegistry.length; j < jj; j++) {
                             mapmatrix.addContainerZone(containerRegistry[j]);
                         }
                         // third 2 : define map objects size and position
-                        this.defineSize();
-                        this.definePoz();
+                        //this.updateSize();
+                        mapmatrix.defineMtxZoneSize();
+                        mapmatrix.defineMapContentSize();
+                        //this.definePoz();
+                        mapmatrix.defineMtxZonePoz(mbrdSpan, zoneSpan);
                         break;
                     case dic.mapLayout.MANUAL:
                         mapWidth  = 1800;
                         mapHeight = 800;
-                        for (var j = 0, jj = containerRegistry.length; j < jj; j++) {
+                        for (j = 0, jj = containerRegistry.length; j < jj; j++) {
                             containerRegistry[j].definedNodesPoz();
                         }
                         break;
                     case dic.mapLayout.TREE:
                         // third 0 : sort all tree lists
                         sortOrdering = options.getRootTreeSorting();
-                        for (var i = 0, ii = treeObjects.length; i<ii; i++) {
+                        for (i = 0, ii = treeObjects.length; i<ii; i++) {
                             treeObjects[i].setSortOrdering(options.getSubTreesSorting());
                             treeObjects[i].sortLinkedTreeObjects();
                         }
@@ -251,21 +284,50 @@ define(
                         break;
                 }
                 // fourth : define the links
-                for (var i = 0, ii = linkRegistry.length; i < ii; i++) {
+                for (i = 0, ii = linkRegistry.length; i < ii; i++) {
                     linkRegistry[i].linkEp();
+                }
+
+                this.updateSize();
+            };
+
+            this.updateSize = function () {
+                var layout = options.getLayout();
+                //noinspection FallthroughInSwitchStatementJS
+                switch (layout) {
+                    case dic.mapLayout.NTWWW:
+                        mapWidth = mbrdSpan*2 + mapmatrix.getMapContentSize().width + mapmatrix.getMtxSize().x*(zoneSpan-1);
+                        mapHeight = mbrdSpan*2 + mapmatrix.getMapContentSize().height + mapmatrix.getMtxSize().y*(zoneSpan-1);
+                        break;
+                    case dic.mapLayout.MANUAL:
+                    case dic.mapLayout.TREE:
+                        var i, ii;
+                        if (containerRegistry.length > 0) {
+                            mapTopLeftX = containerRegistry[0].rectTopLeftX;
+                            mapTopLeftY = containerRegistry[0].rectTopLeftY;
+                            mapBottomRightX = containerRegistry[0].rectBottomRightX;
+                            mapBottomRightY = containerRegistry[0].rectBottomRightY;
+                            for (i = 1, ii=containerRegistry.length; i < ii; i++) {
+                                var container = containerRegistry[i];
+                                if (container.rectTopLeftX < mapTopLeftX)
+                                    mapTopLeftX = container.rectTopLeftX;
+                                if (container.rectTopLeftY < mapTopLeftY)
+                                    mapTopLeftY = container.rectTopLeftY;
+                                if (container.rectBottomRightX > mapBottomRightX)
+                                    mapBottomRightX = container.rectBottomRightX;
+                                if (container.rectBottomRightY > mapBottomRightY)
+                                    mapBottomRightY = container.rectBottomRightY;
+                            }
+                        }
+                        mapWidth = mapBottomRightX - mapTopLeftX;
+                        mapHeight = mapBottomRightY - mapTopLeftY;
+                        break;
                 }
             };
 
-            this.defineSize = function () {
-                mapmatrix.defineMtxZoneSize();
-                mapmatrix.defineMapContentSize();
-                mapWidth = mbrdSpan*2 + mapmatrix.getMapContentSize().width + mapmatrix.getMtxSize().x*(zoneSpan-1);
-                mapHeight = mbrdSpan*2 + mapmatrix.getMapContentSize().height + mapmatrix.getMtxSize().y*(zoneSpan-1);
-            };
-
-            this.definePoz = function () {
-                mapmatrix.defineMtxZonePoz(mbrdSpan, zoneSpan);
-            };
+            //this.definePoz = function () {
+            //    mapmatrix.defineMtxZonePoz(mbrdSpan, zoneSpan);
+            //};
 
             this.getMapSize = function () {
                 return {
@@ -274,16 +336,24 @@ define(
                 };
             };
 
-            this.setMapWidth = function(width) {
-                mapWidth = width;
+            this.getTopLeftCoords = function() {
+                return {
+                    topLeftX: mapTopLeftX,
+                    topLeftY: mapTopLeftY
+                }
             };
 
-            this.setMapHeight = function(height) {
-                mapHeight = height;
-            };
+            //this.setMapWidth = function(width) {
+            //    mapWidth = width;
+            //};
+
+            //this.setMapHeight = function(height) {
+            //    mapHeight = height;
+            //};
 
             this.isMapElementMoving = function () {
-                for (var i = 0, ii = containerRegistry.length; i < ii; i++) {
+                var i, ii;
+                for (i = 0, ii = containerRegistry.length; i < ii; i++) {
                     if (containerRegistry[i].isMoving)
                         return true;
                     var linkedBus = containerRegistry[i].getLinkedBus();
@@ -292,11 +362,11 @@ define(
                             return true;
                     }
                 }
-                for (var i = 0, ii = nodeRegistry.length; i < ii; i++) {
+                for (i = 0, ii = nodeRegistry.length; i < ii; i++) {
                     if (nodeRegistry[i].isMoving)
                         return true;
                 }
-                for (var i = 0, ii = endpointRegistry.length; i < ii; i++) {
+                for (i = 0, ii = endpointRegistry.length; i < ii; i++) {
                     if (endpointRegistry[i].isMoving)
                         return true;
                 }
@@ -308,37 +378,38 @@ define(
             };
 
             this.print = function (r) {
+                var i, ii, j, jj;
                 if (options.getLayout()===dic.mapLayout.NTWWW)
                     mapmatrix.printMtx(r);
 
-                for (var i = 0, ii = containerRegistry.length; i < ii; i++) {
+                for (i = 0, ii = containerRegistry.length; i < ii; i++) {
                     containerRegistry[i].print(r);
                     var linkedBus = containerRegistry[i].getLinkedBus();
-                    for (var j = 0, jj = linkedBus.length; j<jj; j++)
+                    for (j = 0, jj = linkedBus.length; j<jj; j++)
                         linkedBus[j].print(r);
                 }
 
-                for (var i = 0, ii = nodeRegistry.length; i < ii; i++) {
+                for (i = 0, ii = nodeRegistry.length; i < ii; i++) {
                     nodeRegistry[i].print(r);
                 }
 
-                for (var i = 0, ii = endpointRegistry.length; i < ii; i++) {
+                for (i = 0, ii = endpointRegistry.length; i < ii; i++) {
                     endpointRegistry[i].print(r);
                 }
 
-                for (var i = 0, ii = linkRegistry.length; i < ii; i++) {
+                for (i = 0, ii = linkRegistry.length; i < ii; i++) {
                     linkRegistry[i].print(r);
                 }
 
-                for (var i = 0, ii = containerRegistry.length; i < ii; i++) {
+                for (i = 0, ii = containerRegistry.length; i < ii; i++) {
                     containerRegistry[i].toFront();
                 }
 
-                for (var i = 0, ii = nodeRegistry.length; i < ii; i++) {
+                for (i = 0, ii = nodeRegistry.length; i < ii; i++) {
                     nodeRegistry[i].toFront();
                 }
 
-                for (var i = 0, ii = endpointRegistry.length; i < ii; i++) {
+                for (i = 0, ii = endpointRegistry.length; i < ii; i++) {
                     endpointRegistry[i].toFront();
                 }
             };
@@ -356,12 +427,13 @@ define(
             };
 
             this.rebuildMapTreeLayout = function() {
+                var i, ii;
                 lTree.reloadTree(containerRegistry[0]);
                 lTree.definePoz();
-                for (var i = 0, ii = endpointRegistry.length; i < ii; i++) {
+                for (i = 0, ii = endpointRegistry.length; i < ii; i++) {
                     endpointRegistry[i].resetPoz();
                 }
-                for (var i = 0, ii = linkRegistry.length; i < ii; i++) {
+                for (i = 0, ii = linkRegistry.length; i < ii; i++) {
                     linkRegistry[i].linkEp();
                 }
             };
@@ -377,7 +449,7 @@ define(
                     containerRegistry[i].sortLinkedTreeObjects();
                 }
             };
-        };
+        }
 
         return map;
     });
