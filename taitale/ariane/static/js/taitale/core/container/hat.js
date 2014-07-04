@@ -247,9 +247,9 @@ define(
             this.move = function(r,newX,newY) {
                 this.hatSet.remove();
                 this.print(r,newX,newY,this.color);
-            }
+            };
 
-            this.print = function (r,x,y,color_) {
+            this.print = function (r,x,y,color_, mouseDown, containerMove, containerDragger, containerUP) {
                 this.color = color_;
                 this.textSet = r.set();
                 this.hatSet = r.set();
@@ -260,19 +260,33 @@ define(
                 if (product != null) {
                     var productTxt = r.text(x-this.width/3+logo.logoWidth+product.width(txtFont)/2,
                                             y+((logo.logoHeight/3<10)?10:logo.logoHeight/3), product).attr(txtFont);
+                    productTxt.mousedown(mouseDown);
+                    productTxt.drag(containerMove, containerDragger, containerUP);
                     this.textSet.push(productTxt);
                 }
                 if (component != null) {
                     var componentTxt = r.text(x-this.width/3+logo.logoWidth+component.width(txtFont)/2,
                                               y+((logo.logoHeight/3<10)?10:logo.logoHeight/3)+(product ? product.height(txtFont):0), component).attr(txtFont);
+                    componentTxt.mousedown(mouseDown);
+                    componentTxt.drag(containerMove, containerDragger, containerUP);
                     this.textSet.push(componentTxt);
                 }
 
                 this.textSet.attr({fill:this.color})
                 this.hatSet.push(this.textSet)
                 this.hatSet.attr({stroke:'none','stroke-width':'1','stroke-opacity':'1'});
-            }
-        };
+            };
+
+            this.mousedown = function(callback) {
+                this.textSet.mousedown(callback);
+                this.hatSet.mousedown(callback);
+            };
+
+            this.drag = function(mvcb, drgcb, upcb) {
+                this.textSet.drag(mvcb, drgcb, upcb);
+                this.hatSet.drag(mvcb, drgcb, upcb);
+            };
+        }
 
         return hat;
     }

@@ -27,11 +27,14 @@ define(
     ],
     function(Raphael, helper, params){
         function endpoint(JSONEndpointDesc, Node_) {
-            var helper_    = new helper();
+            //var helper_    = new helper();
 
             this.r          = null;
+            //noinspection JSUnresolvedVariable
             this.epURL      = JSONEndpointDesc.endpointURL;
+            //noinspection JSUnresolvedVariable
             this.epID       = JSONEndpointDesc.endpointID;
+            //noinspection JSUnresolvedVariable
             this.properties = JSONEndpointDesc.endpointProperties;
             this.epLinks    = [];
             this.epNode     = Node_;
@@ -40,6 +43,7 @@ define(
             this.linkAvgY   = 0;
             this.linkAvgT   = 0;
             this.circle     = null;
+            //noinspection JSUnresolvedVariable
             this.color      = ((this.properties!=null && this.properties.primaryApplication!=null && this.properties.primaryApplication.color!=null) ?
                                         "#" + this.properties.primaryApplication.color :(this.epNode!=null) ? this.epNode.color : Raphael.getColor());
             this.txt12      = params.endpoint_txtBxURLTitle;
@@ -64,12 +68,12 @@ define(
 
             this.menu              = null;
             this.menuSet           = null;
-            this.menuFillColor     = params.endpoint_menuFillColor
-            this.menuStrokeColor   = params.endpoint_menuStrokeColor;
+            this.menuFillColor     = params.endpoint_menuFillColor;
+            //this.menuStrokeColor   = params.endpoint_menuStrokeColor;
             this.menuOpacity       = params.endpoint_menuOpacity;
             this.menuStrokeWidth   = params.endpoint_menuStrokeWidth;
-            this.menuMainTitleTXT  = params.endpoint_menuMainTitle;
-            this.menuFieldTXT      = params.endpoint_menuFields;
+            //this.menuMainTitleTXT  = params.endpoint_menuMainTitle;
+            //this.menuFieldTXT      = params.endpoint_menuFields;
             this.menuHided         = true;
 
             this.mvx        = 0;
@@ -217,13 +221,13 @@ define(
                             epRef.menuSet.mousedown(menuMouseDown);
                             for (var i = 0, ii = epRef.menuSet.length ; i < ii ; i++) {
                                 if (i==0)
-                                    epRef.menuSet[i].attr({"x": epRef.circle.attr("cx"), "y": epRef.circle.attr("cy") +10, fill: epRef.color});
+                                    epRef.menuSet[i].attr({"x": epRef.circle.attr("cx"), "y": epRef.circle.attr("cy") +10, fill: "#fff"});
                                 else if (i==1)
                                     epRef.menuSet[i].attr({"x": epRef.circle.attr("cx"), "y": epRef.circle.attr("cy") + 30});
                                 else
                                     epRef.menuSet[i].attr({"x": epRef.circle.attr("cx"), "y": epRef.circle.attr("cy") + 30 + (i-1)*15});
                             }
-                            epRef.menu = epRef.r.menu(epRef.circle.attr("cx"),epRef.circle.attr("cy")+10,epRef.menuSet).attr({fill: epRef.menuFillColor, stroke: epRef.menuStrokeColor, "stroke-width": epRef.menuStrokeWidth, "fill-opacity": epRef.menuOpacity});
+                            epRef.menu = epRef.r.menu(epRef.circle.attr("cx"),epRef.circle.attr("cy")+10,epRef.menuSet).attr({fill:epRef.menuFillColor, stroke: epRef.color, "stroke-width": epRef.menuStrokeWidth, "fill-opacity": epRef.menuOpacity});
                             epRef.menu.mousedown(menuMouseDown);
                             epRef.menu.toFront();
                             epRef.menuSet.toFront();
@@ -321,7 +325,7 @@ define(
 
                 if (epRef.labelHided==true) {
                     epRef.circle.attr("r",epRef.rSelected);
-                    epRef.label[0].attr({"x": labelX, "y": labelY, fill: epRef.color});
+                    epRef.label[0].attr({"x": labelX, "y": labelY, fill: "#fff"});
                     epRef.label[1].attr({"x": labelX, "y": labelY+15});
                     epRef.label.toFront();
                     epRef.label.show();
@@ -334,7 +338,7 @@ define(
                 }
 
                 if (epRef.frameHided==true) {
-                    epRef.frame = epRef.r.popup(epRef.circle.x, epRef.circle.y, epRef.label, popupOrientation).attr({fill: "#000", stroke: "#666", "stroke-width": 2, "fill-opacity": .7});
+                    epRef.frame = epRef.r.popup(epRef.circle.x, epRef.circle.y, epRef.label, popupOrientation).attr({fill: "#000", stroke: epRef.color, "stroke-width": 2, "fill-opacity": .7});
                     epRef.frame.show();
                     epRef.frameHided = false;
                 } else {
@@ -409,17 +413,17 @@ define(
             };
 
             this.setPoz = function(x_,y_) {
-                var ray = this.rUnselected,
-                    topLeftX = this.epNode.getRectCornerPoints().topLeftX,
-                    topLeftY     = this.epNode.getRectCornerPoints().topLeftY,
-                    bottomRightX = this.epNode.getRectCornerPoints().bottomRightX,
-                    bottomRightY = this.epNode.getRectCornerPoints().bottomRightY,
+                var //ray = this.rUnselected,
+                    //topLeftX = this.epNode.getRectCornerPoints().topLeftX,
+                    //topLeftY     = this.epNode.getRectCornerPoints().topLeftY,
+                    //bottomRightX = this.epNode.getRectCornerPoints().bottomRightX,
+                    //bottomRightY = this.epNode.getRectCornerPoints().bottomRightY,
                     topLeftRadX  = this.epNode.getRectCornerPoints().TopLeftRadX,
                     topLeftRadY  = this.epNode.getRectCornerPoints().TopLeftRadY,
                     bottomRightRadX = this.epNode.getRectCornerPoints().BottomRightRadX,
                     bottomRightRadY = this.epNode.getRectCornerPoints().BottomRightRadY,
-                    middleX = this.epNode.getRectMiddlePoint().x,
-                    middleY = this.epNode.getRectMiddlePoint().y,
+                    //middleX = this.epNode.getRectMiddlePoint().x,
+                    //middleY = this.epNode.getRectMiddlePoint().y,
                     cornerRad = this.epNode.cornerRad;
 
                 var dist = null;
@@ -483,7 +487,8 @@ define(
                 this.label.toBack();
                 this.label.hide();
 
-                this.frame = this.r.popup(this.circle.x, this.circle.y, this.label, "right").attr({fill: this.frmFillColor, stroke: this.frmStrokeColor, "stroke-width": this.strokeWidth, "fill-opacity": this.frmOpacity});
+                this.frame = this.r.popup(this.circle.x, this.circle.y, this.label, "right").
+                    attr({fill: this.frmFillColor, stroke: this.frmStrokeColor, "stroke-width": this.strokeWidth, "fill-opacity": this.frmOpacity});
                 this.frame.toBack();
                 this.frame.hide();
             };

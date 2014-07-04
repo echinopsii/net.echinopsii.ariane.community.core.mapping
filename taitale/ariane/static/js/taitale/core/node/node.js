@@ -27,21 +27,25 @@ define(
     ],
     function(Raphael, helper, params){
         function node(JSONNodeDesc, container_) {
-            var helper_       = new helper();
+            //var helper_       = new helper();
 
+            //noinspection JSUnresolvedVariable
             this.ID            = JSONNodeDesc.nodeID;
             this.name          = JSONNodeDesc.nodeName;
-            this.cID           = JSONNodeDesc.nodeContainerID;
+            //noinspection JSUnresolvedVariable
+            //this.cID           = JSONNodeDesc.nodeContainerID;
+            //noinspection JSUnresolvedVariable
             this.properties    = JSONNodeDesc.nodeProperties;
 
             this.r             = null;
             this.nodeContainer = container_;
+            //noinspection JSUnresolvedVariable
             this.color         = ((this.properties != null && this.properties.primaryApplication != null && this.properties.primaryApplication.color != null) ?
                                             "#"+this.properties.primaryApplication.color :
                                             (this.nodeContainer!=null) ? this.nodeContainer.color : Raphael.getColor());
             this.nodeName      = null;
-            this.nodeDesc      = null;
-            this.nodeR         = null;
+            //this.nodeDesc      = null;
+            //this.nodeR         = null;
             this.rect          = null;
 
             this.isMoving       = false;
@@ -56,7 +60,7 @@ define(
 
             this.titleHeight   = params.node_titleHeight;
             this.txtTitleFont  = params.node_txtTitle;
-            this.txtDescFont   = params.node_txtDesc;
+            //this.txtDescFont   = params.node_txtDesc;
 
             this.rectWidth  = params.node_minWidth;
             this.rectHeight = params.node_minHeight;
@@ -64,16 +68,16 @@ define(
             this.menu              = null;
             this.menuSet           = null;
             this.menuFillColor     = params.node_menuFillColor;
-            this.menuStrokeColor   = params.node_menuStrokeColor;
+            //this.menuStrokeColor   = params.node_menuStrokeColor;
             this.menuOpacity       = params.node_menuOpacity;
             this.menuStrokeWidth   = params.node_menuStrokeWidth;
-            this.menuMainTitleTXT  = params.node_menuMainTitle;
-            this.menuFieldTXT      = params.node_menuFields;
+            //this.menuMainTitleTXT  = params.node_menuMainTitle;
+            //this.menuFieldTXT      = params.node_menuFields;
             this.menuHided         = true;
 
-            this.oUnselected = params.node_opacUnselec,
-            this.oSelected   = params.node_opacSelec,
-            this.cornerRad   = params.node_cornerRad,
+            this.oUnselected = params.node_opacUnselec;
+            this.oSelected   = params.node_opacSelec;
+            this.cornerRad   = params.node_cornerRad;
             this.strokeWidth = params.node_strokeWidth;
 
             // coord top left point
@@ -104,14 +108,14 @@ define(
             this.rectTopRightRadX = 0;
             this.rectTopRightRadY = 0;
             // coord middle left point
-            this.rectMiddleLeftX = 0;
+            //this.rectMiddleLeftX = 0;
             this.rectMiddleLeftY = 0;
             // coord rect middle point
             this.rectMiddleX = 0;
             this.rectMiddleY = 0;
             // coord middle right point
-            this.rectMiddleRightX = 0;
-            this.rectMiddleRightY = 0;
+            //this.rectMiddleRightX = 0;
+            //this.rectMiddleRightY = 0;
             //coord bottom left point
             this.rectBottomLeftX = 0;
             this.rectBottomLeftY = 0;
@@ -125,8 +129,8 @@ define(
             this.rectBottomLeftRadX = 0;
             this.rectBottomLeftRadY = 0;
             //coord bottom middle point,
-            this.rectBottomMiddleX = 0;
-            this.rectBottomMiddleY = 0;
+            //this.rectBottomMiddleX = 0;
+            //this.rectBottomMiddleY = 0;
             //coord bottom right point,
             this.rectBottomRightX = 0;
             this.rectBottomRightY = 0;
@@ -247,14 +251,14 @@ define(
                             nodeRef.menuSet.mousedown(menuMouseDown);
                             for (var i = 0, ii = nodeRef.menuSet.length ; i < ii ; i++) {
                                 if (i==0)
-                                    nodeRef.menuSet[i].attr({"x": nodeRef.rectTopMiddleX, "y": nodeRef.rectTopMiddleY +10, fill: nodeRef.color});
+                                    nodeRef.menuSet[i].attr({"x": nodeRef.rectTopMiddleX, "y": nodeRef.rectTopMiddleY +10, fill: "#fff"});
                                 else if (i==1)
                                     nodeRef.menuSet[i].attr({"x": nodeRef.rectTopMiddleX, "y": nodeRef.rectTopMiddleY+30});
                                 else
                                     nodeRef.menuSet[i].attr({"x": nodeRef.rectTopMiddleX, "y": nodeRef.rectTopMiddleY+30+(i-1)*15});
                             }
                             nodeRef.menu = nodeRef.r.menu(nodeRef.rectTopMiddleX,nodeRef.rectTopMiddleY+10,nodeRef.menuSet).
-                                attr({fill: nodeRef.menuFillColor, stroke: nodeRef.menuStrokeColor, "stroke-width": nodeRef.menuStrokeWidth, "fill-opacity": nodeRef.menuOpacity});
+                                attr({fill: nodeRef.menuFillColor, stroke: nodeRef.color, "stroke-width": nodeRef.menuStrokeWidth, "fill-opacity": nodeRef.menuOpacity});
                             nodeRef.menu.mousedown(menuMouseDown);
                             nodeRef.menu.toFront();
                             nodeRef.menuSet.toFront();
@@ -460,11 +464,14 @@ define(
                 this.nodeName = this.r.text(0, 0, this.name).attr(this.txtTitleFont);
                 this.r.FitText(this.nodeName, this.rectWidth-1, 1);
                 this.nodeName.attr({x: this.rectTopLeftX + (this.rectWidth/2), y: this.rectTopLeftY + (this.titleHeight/2)});
+                this.nodeName.mousedown(mouseDown)
+                this.nodeName.drag(nodeMove, nodeDragger, nodeUP);
 
                 this.rect = this.r.rect(this.rectTopLeftX, this.rectTopLeftY, this.rectWidth, this.rectHeight, this.cornerRad);
                 this.rect.attr({fill: this.color, stroke: this.color, "fill-opacity": this.oUnselected, "stroke-width": this.strokeWidth});
                 this.rect.mousedown(mouseDown);
                 this.rect.drag(nodeMove, nodeDragger, nodeUP);
+
             };
 
             this.toFront = function() {

@@ -163,7 +163,7 @@ define(
                 r.setContainerMenuSet();
                 r.setNodeMenuSet();
                 r.setEndpointMenuSet();
-                r.raphael.mousedown(mainMouseDown);
+                //r.raphael.mousedown(mainMouseDown);
                 r.raphael.getColor.reset();
 
                 menuSet = r.getMainMenuSet();

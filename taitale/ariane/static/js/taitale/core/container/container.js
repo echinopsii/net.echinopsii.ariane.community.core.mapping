@@ -34,15 +34,22 @@ define(
             var helper_      = new helper(),
                 prototypes_  = new prototypes();
 
+            //noinspection JSUnresolvedVariable
             this.ID       	  = JSONContainerDesc.containerID;
+            //noinspection JSUnresolvedVariable
             this.company      = JSONContainerDesc.containerCompany;
+            //noinspection JSUnresolvedVariable
             this.product      = JSONContainerDesc.containerProduct;
             this.type         = JSONContainerDesc.containerType;
+            //noinspection JSUnresolvedVariable
             this.gateURI      = JSONContainerDesc.containerGateURI;
+            //noinspection JSUnresolvedVariable
             this.name         = JSONContainerDesc.containerGateURI;
+            //noinspection JSUnresolvedVariable
             this.properties   = JSONContainerDesc.containerProperties;
             this.localisation = null;
 
+            //noinspection JSUnresolvedVariable
             var tmpDatacenter = this.properties.Datacenter,
                 tmpNetwork    = this.properties.Network;
             if (tmpDatacenter != null && tmpNetwork != null) {
@@ -59,6 +66,7 @@ define(
             this.layoutData        = null;
 
             this.r                 = null;
+            //noinspection JSUnresolvedVariable
             this.color             = (this.properties.supportTeam!=null && this.properties.supportTeam.color!=null) ? "#"+this.properties.supportTeam.color : Raphael.getColor();
             this.txtFont           = params.container_txtTitle;
             this.X                 = x_;
@@ -72,11 +80,11 @@ define(
             this.menu              = null;
             this.menuSet           = null;
             this.menuFillColor     = params.container_menuFillColor;
-            this.menuStrokeColor   = params.container_menuStrokeColor;
+            //this.menuStrokeColor   = params.container_menuStrokeColor;
             this.menuOpacity       = params.container_menuOpacity;
             this.menuStrokeWidth   = params.container_menuStrokeWidth;
-            this.menuMainTitleTXT  = params.container_menuMainTitle;
-            this.menuFieldTXT      = params.container_menuFields;
+            //this.menuMainTitleTXT  = params.container_menuMainTitle;
+            //this.menuFieldTXT      = params.container_menuFields;
             this.menuHided         = true;
 
             this.containerNodes    = new containerMatrix();
@@ -85,17 +93,13 @@ define(
             this.linkedTreeObjects                  = [];
             this.sortOrdering                       = 1;
 
-            var minMaxLinkedTreedObjectsComparator = function(linkedObject1, linkedObject2) {
-                    return (linkedObject2.getLinkedTreeObjectsCount() - linkedObject1.getLinkedTreeObjectsCount())*this.sortOrdering;
-                };
-
             this.linkedBus         = [];
             this.linkedContainers  = [];
 
             this.interSpan         = params.container_interSpan;
             this.titleWidth        = null;
             this.titleHeight       = null;
-            this.titleFont         = null;
+            //this.titleFont         = null;
             this.fitTitleMinFont   = params.container_fitTxtTitleMinFont;
             this.fitTextPadding    = params.container_fitTextPadding;
             this.cornerRad         = params.container_cornerRad;
@@ -125,20 +129,20 @@ define(
             this.rectTopRightX     = 0;
             this.rectTopRightY     = 0;
             // coord middle left point
-            this.rectMiddleLeftX   = 0;
+            //this.rectMiddleLeftX   = 0;
             this.rectMiddleLeftY   = 0;
             // coord rect middle point
             this.rectMiddleX       = 0;
             this.rectMiddleY       = 0;
             // coord middle right point
-            this.rectMiddleRightX  = 0;
-            this.rectMiddleRightY  = 0;
+            //this.rectMiddleRightX  = 0;
+            //this.rectMiddleRightY  = 0;
             //coord bottom left point
             this.rectBottomLeftX   = 0;
             this.rectBottomLeftY   = 0;
             //coord bottom middle point
-            this.rectBottomMiddleX = 0;
-            this.rectBottomMiddleY = 0
+            //this.rectBottomMiddleX = 0;
+            //this.rectBottomMiddleY = 0
             //coord bottom right point
             this.rectBottomRightX  = 0;
             this.rectBottomRightY  = 0;
@@ -150,6 +154,10 @@ define(
             this.mvy = 0;
 
             var containerRef = this;
+
+            var minMaxLinkedTreedObjectsComparator = function(linkedObject1, linkedObject2) {
+                return (linkedObject2.getLinkedTreeObjectsCount() - linkedObject1.getLinkedTreeObjectsCount())*containerRef.sortOrdering;
+            };
 
             /**
              * x = abs of containerR[0], y = ord of containerR[0]
@@ -205,15 +213,17 @@ define(
                 };
 
             var containerDragger = function() {
-                    if (!containerRef.rightClick) {
+                    //helper_.debug("drag: " + containerRef.rightClick);
+                    if (!containerRef.rightClick)
                         containerRef.r.drag(containerRef,"container");
-                    }
                 },
                 containerMove = function(dx,dy) {
+                    //helper_.debug("move: " + containerRef.rightClick);
                     if (!containerRef.rightClick)
                         cMove(dx,dy);
                 },
                 containerUP =  function() {
+                    //helper_.debug("up: " + containerRef.rightClick);
                     if (!containerRef.rightClick)
                         containerRef.r.up();
                 },
@@ -224,14 +234,14 @@ define(
                             containerRef.menuSet.mousedown(menuMouseDown);
                             for (var i = 0, ii = containerRef.menuSet.length ; i < ii ; i++) {
                                 if (i==0)
-                                    containerRef.menuSet[i].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY +10, fill: containerRef.color});
+                                    containerRef.menuSet[i].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY +10, fill: "#fff"});
                                 else if (i==1)
                                     containerRef.menuSet[i].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY+30});
                                 else
                                     containerRef.menuSet[i].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY+30+(i-1)*15});
                             }
                             containerRef.menu = containerRef.r.menu(containerRef.rectTopMiddleX,containerRef.rectTopMiddleY+10,containerRef.menuSet).
-                                attr({fill: containerRef.menuFillColor, stroke: containerRef.menuStrokeColor, "stroke-width": containerRef.menuStrokeWidth, "fill-opacity": containerRef.menuOpacity});
+                                attr({fill: containerRef.menuFillColor, stroke: containerRef.color, "stroke-width": containerRef.menuStrokeWidth, "fill-opacity": containerRef.menuOpacity});
                             containerRef.menu.mousedown(menuMouseDown);
                             containerRef.menu.toFront();
                             containerRef.menuSet.toFront();
@@ -277,12 +287,14 @@ define(
                 };
             };
 
+            /*
             this.getRectSize = function() {
                 return {
                     width  : this.rectWidth,
                     height : this.rectHeight
                 };
             };
+            */
 
             this.getMaxRectSize = function() {
                 return {
@@ -311,12 +323,14 @@ define(
                 };
             };
 
+            /*
             this.getContainerCoords = function() {
                 return {
                     x: this.rectTopLeftX,
                     y: this.rectTopLeftY
                 }
             };
+            */
 
             var getMaxWidth = function(firstWidth) {
                 var fontSize = containerRef.txtFont["font-size"];
@@ -359,7 +373,7 @@ define(
             this.definedNodesPoz = function() {
                 var mtxX        = this.containerNodes.getMtxSize().x,
                     mtxY        = this.containerNodes.getMtxSize().y;
-                var i = 0, ii = 0, j = 0, jj = 0;
+                var i, ii, j, jj;
 
                 for (i = 0, ii = mtxX; i < ii; i++) {
                     for (j = 0, jj = mtxY; j < jj; j++) {
@@ -431,9 +445,15 @@ define(
 
             this.print = function(r_) {
                 this.r = r_;
-                this.containerHat_.print(this.r,this.rectTopLeftX + (this.rectWidth/2),this.rectTopLeftY,this.color);
+                this.containerHat_.print(this.r,this.rectTopLeftX + (this.rectWidth/2),this.rectTopLeftY,this.color,
+                    mouseDown, containerMove, containerDragger, containerUP);
+                this.containerHat_.mousedown(mouseDown);
+                this.containerHat_.drag(containerMove, containerDragger, containerUP);
+
                 this.containerName = this.r.text(0, 0, this.name).attr(this.txtFont).attr({'fill':this.color});
                 this.containerName.attr({x: this.rectTopLeftX + (this.rectWidth/2), y: this.rectTopLeftY + this.containerHat_.height + this.titleHeight});
+                this.containerName.mousedown(mouseDown);
+                this.containerName.drag(containerMove, containerDragger, containerUP);
 
                 this.rect = this.r.rect(this.rectTopLeftX, this.rectTopLeftY, this.rectWidth, this.rectHeight, this.cornerRad);
                 this.rect.attr({fill: this.color, stroke: this.color, "fill-opacity": containerRef.oUnselected, "stroke-width": this.strokeWidth});

@@ -103,7 +103,7 @@ define({
     node_txtDesc     : {'font-size': '12px', 'font-family': 'Arial', fill: '#000'},
 
     endpoint_menuFillColor   : "#000",
-    endpoint_menuStrokeColor : "#666",
+    //endpoint_menuStrokeColor : "#666",
     endpoint_menuOpacity     : 0.5,
     endpoint_menuStrokeWidth : 1,
     endpoint_menuMainTitle   : {'font-size': '12px', 'font-family': 'Arial', 'font-weight': 'bold', fill: "#fff"},
