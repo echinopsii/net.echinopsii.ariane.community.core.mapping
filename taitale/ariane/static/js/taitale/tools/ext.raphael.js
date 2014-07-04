@@ -239,61 +239,6 @@ define(
             return mainMenuSet;
         };
 
-        var containerMenuSet,
-            containerMainTitleTXT  = params.container_menuMainTitle,
-            containerFieldTXT      = params.container_menuFields;
-        Raphael.fn.setContainerMenuSet = function() {
-            containerMenuSet = this.set();
-            containerMenuSet.push(this.text(0,10,"Container menu").attr(containerMainTitleTXT));
-            containerMenuSet.push(this.text(0,10,"Display all properties").attr(containerFieldTXT));
-            containerMenuSet.push(this.text(0,30,"Highlight cluster").attr(containerFieldTXT));
-            containerMenuSet.push(this.text(0,45,"Show gates").attr(containerFieldTXT));
-            containerMenuSet.push(this.text(0,60,"Hide gates").attr(containerFieldTXT));
-            containerMenuSet.toBack();
-            containerMenuSet.hide();
-        };
-        Raphael.fn.getContainerMenuSet = function() {
-            var clonedMenuSet = containerMenuSet.clone();
-            clonedMenuSet.toBack();
-            clonedMenuSet.hide();
-            return clonedMenuSet ;
-        };
-
-        var nodeMenuSet;
-            //nodeMainTitleTXT  = params.node_menuMainTitle,
-            //nodeFieldTXT      = params.node_menuFields;
-        Raphael.fn.setNodeMenuSet = function() {
-            nodeMenuSet = this.set();
-            nodeMenuSet.push(this.text(0,10,"Node menu").attr(containerMainTitleTXT));
-            nodeMenuSet.push(this.text(0,10,"Display all properties").attr(containerFieldTXT));
-            nodeMenuSet.toBack();
-            nodeMenuSet.hide();
-        };
-        Raphael.fn.getNodeMenuSet = function() {
-            var clonedMenuSet = nodeMenuSet.clone();
-            clonedMenuSet.toBack();
-            clonedMenuSet.hide();
-            return clonedMenuSet ;
-        };
-
-        var endpointMenuSet;
-            //endpointMainTitleTXT  = params.node_menuMainTitle,
-            //endpointFieldTXT      = params.node_menuFields;
-
-        Raphael.fn.setEndpointMenuSet = function() {
-            endpointMenuSet = this.set();
-            endpointMenuSet.push(this.text(0,10,"Endpoint menu").attr(containerMainTitleTXT));
-            endpointMenuSet.push(this.text(0,10,"Display all properties").attr(containerFieldTXT));
-            endpointMenuSet.toBack();
-            endpointMenuSet.hide();
-        };
-        Raphael.fn.getEndpointMenuSet = function() {
-            var clonedMenuSet = endpointMenuSet.clone();
-            clonedMenuSet.toBack();
-            clonedMenuSet.hide();
-            return clonedMenuSet ;
-        };
-
         Raphael.fn.FitText = function (rText, containerWidth, compressor, min) {
             var maxFontSize = rText.attr('font-size').split("px")[0],
                 minFontSize = parseFloat(-1/0),
@@ -560,8 +505,10 @@ define(
                     object.cy = object.circle.attr("cy");
 
                     if (!object.menuHided) {
-                        object.menu.remove();
-                        object.menuSet.remove();
+                        object.menu.toBack();
+                        object.menuSet.toBack();
+                        object.menu.hide();
+                        object.menuSet.hide();
                         object.menuHided=true;
                         if (object.r.getDisplayMainMenu())
                             object.r.setDisplayMainMenu(false);
@@ -600,8 +547,10 @@ define(
                     object.extt0y = object.nodeName.attr("y");
 
                     if (!object.menuHided) {
-                        object.menu.remove();
-                        object.menuSet.remove();
+                        object.menu.toBack();
+                        object.menuSet.toBack();
+                        object.menu.hide();
+                        object.menuSet.hide();
                         object.menuHided=true;
                         if (object.r.getDisplayMainMenu())
                             object.r.setDisplayMainMenu(false);
@@ -637,8 +586,10 @@ define(
                     object.extt0y = object.containerName.attr("y");
 
                     if (!object.menuHided) {
-                        object.menu.remove();
-                        object.menuSet.remove();
+                        object.menu.toBack();
+                        object.menuSet.toBack();
+                        object.menu.hide();
+                        object.menuSet.hide();
                         object.menuHided=true;
                         if (object.r.getDisplayMainMenu())
                             object.r.setDisplayMainMenu(false);
@@ -1092,6 +1043,7 @@ define(
 
                     container.setTopLeftCoord(container.rect.attr("x"),container.rect.attr("y"));
                     container.rect.animate({"fill-opacity": container.oUnselected}, 500);
+                    container.toFront();
                     container.isMoving = false;
                 }
                 containersOnMove = null;

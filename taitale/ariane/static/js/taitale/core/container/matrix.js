@@ -36,7 +36,7 @@ define(function() {
 
         this.getMtxCount = function() {
             return count;
-        }
+        };
 
         this.getNodeFromMtx = function (x,y) {
             return rows[y][x];
@@ -71,7 +71,15 @@ define(function() {
             }
             count++;
         };
-    };
+
+        this.toFront = function() {
+            for (var i = 0, ii = nbLines; i < ii; i++) {
+                for (var j = 0, jj = nbColumns; j < jj; j++) {
+                    rows[i][j].toFront();
+                }
+            }
+        }
+    }
 
     return containerMatrix;
 });

@@ -81,6 +81,15 @@ define(
             this.lmvx       = 0;
             this.lmvy       = 0;
 
+            this.endpointMenuSet = null;
+            this.endpointMenuTitle = null;
+            this.endpointMenuProperties = null;
+            this.endpointMenuPropertiesRect = null;
+
+            this.endpointMainTitleTXT  = params.endpoint_menuMainTitle;
+            this.endpointFieldTXT      = params.endpoint_menuFields;
+            this.endpointFieldTXTOver  = params.endpoint_menuFieldsOver;
+
             var epRef = this;
 
             var calcLinkAvgT = function() {
@@ -217,25 +226,40 @@ define(
                 mouseDown = function(e){
                     if (e.which == 3) {
                         if (epRef.menuHided) {
-                            epRef.menuSet = epRef.r.getEndpointMenuSet();
+                            epRef.menuSet = epRef.endpointMenuSet;
                             epRef.menuSet.mousedown(menuMouseDown);
+                            var fieldRect, fieldRectWidth, fieldRectHeight;
                             for (var i = 0, ii = epRef.menuSet.length ; i < ii ; i++) {
                                 if (i==0)
                                     epRef.menuSet[i].attr({"x": epRef.circle.attr("cx"), "y": epRef.circle.attr("cy") +10, fill: "#fff"});
-                                else if (i==1)
-                                    epRef.menuSet[i].attr({"x": epRef.circle.attr("cx"), "y": epRef.circle.attr("cy") + 30});
-                                else
-                                    epRef.menuSet[i].attr({"x": epRef.circle.attr("cx"), "y": epRef.circle.attr("cy") + 30 + (i-1)*15});
+                                else if (i==1) {
+                                    fieldRect = epRef.menuSet[i];
+                                    fieldRectWidth = fieldRect.attr("width");
+                                    fieldRectHeight = fieldRect.attr("height");
+                                    fieldRect.attr({"x": epRef.circle.attr("cx") - fieldRectWidth/2, "y": epRef.circle.attr("cy")+30 - fieldRectHeight/2});
+                                    epRef.menuSet[i+1].attr({"x": epRef.circle.attr("cx"), "y": epRef.circle.attr("cy")+30});
+                                    i++;
+                                } else {
+                                    fieldRect = epRef.menuSet[i];
+                                    fieldRectWidth = fieldRect.attr("width");
+                                    fieldRectHeight = fieldRect.attr("height");
+                                    fieldRect.attr({"x": epRef.circle.attr("cx"), "y": epRef.circle.attr("cy")+30+(i-1)*15});
+                                    epRef.menuSet[i+1].attr({"x": epRef.circle.attr("cx"), "y": epRef.circle.attr("cy")+30+(i-1)*15});
+                                    i++;
+                                }
                             }
-                            epRef.menu = epRef.r.menu(epRef.circle.attr("cx"),epRef.circle.attr("cy")+10,epRef.menuSet).attr({fill:epRef.menuFillColor, stroke: epRef.color, "stroke-width": epRef.menuStrokeWidth, "fill-opacity": epRef.menuOpacity});
+                            epRef.menu = epRef.r.menu(epRef.circle.attr("cx"),epRef.circle.attr("cy")+10,epRef.menuSet).
+                                attr({fill:epRef.menuFillColor, stroke: epRef.color, "stroke-width": epRef.menuStrokeWidth, "fill-opacity": epRef.menuOpacity});
                             epRef.menu.mousedown(menuMouseDown);
                             epRef.menu.toFront();
                             epRef.menuSet.toFront();
                             epRef.menuSet.show();
                             epRef.menuHided=false;
                         } else {
-                            epRef.menu.remove();
-                            epRef.menuSet.remove();
+                            epRef.menu.toBack();
+                            epRef.menuSet.toBack();
+                            epRef.menu.hide();
+                            epRef.menuSet.hide();
                             epRef.menuHided=true;
                         }
                         epRef.rightClick=true;
@@ -247,8 +271,10 @@ define(
                 },
                 menuMouseDown = function(e) {
                     if (e.which == 3) {
-                        epRef.menu.remove();
-                        epRef.menuSet.remove();
+                        epRef.menu.toBack();
+                        epRef.menuSet.toBack();
+                        epRef.menu.hide();
+                        epRef.menuSet.hide();
                         epRef.menuHided=true;
                         epRef.rightClick=true;
                         if (epRef.r.getDisplayMainMenu())
@@ -256,7 +282,16 @@ define(
                     } else if (e.which == 1) {
                         epRef.rightClick=false;
                     }
-                };
+                },
+                menuFieldOver = function() {
+                    this.attr(epRef.endpointFieldTXTOver);
+                },
+                menuFieldOut = function() {
+                    this.attr(epRef.endpointFieldTXT);
+                }/*,
+                menuFieldPropertyClick = function() {
+
+                }*/;
 
             var epDragger = function () {
                     if(!epRef.rightClick) {
@@ -491,6 +526,24 @@ define(
                     attr({fill: this.frmFillColor, stroke: this.frmStrokeColor, "stroke-width": this.strokeWidth, "fill-opacity": this.frmOpacity});
                 this.frame.toBack();
                 this.frame.hide();
+
+                this.endpointMenuTitle = this.r.text(0,10,"Endpoint menu").attr(this.endpointMainTitleTXT);
+                var fieldTitle = "Display all properties";
+                this.endpointMenuPropertiesRect = this.r.rect(0,10,fieldTitle.width(this.endpointFieldTXT),fieldTitle.height(this.endpointFieldTXT));
+                this.endpointMenuPropertiesRect.attr({fill: this.color, stroke: this.color, "fill-opacity": 0, "stroke-width": 0});
+                this.endpointMenuPropertiesRect.mouseover(menuFieldOver);
+                this.endpointMenuPropertiesRect.mouseout(menuFieldOut);
+                this.endpointMenuProperties = this.r.text(0,10,fieldTitle).attr(this.endpointFieldTXT);
+                this.endpointMenuProperties.mouseover(menuFieldOver);
+                this.endpointMenuProperties.mouseout(menuFieldOut);
+
+                this.endpointMenuSet = this.r.set();
+                this.endpointMenuSet.push(this.endpointMenuTitle);
+                this.endpointMenuSet.push(this.endpointMenuPropertiesRect);
+                this.endpointMenuSet.push(this.endpointMenuProperties);
+                this.endpointMenuSet.toBack();
+                this.endpointMenuSet.hide();
+
             };
 
             this.toFront = function() {

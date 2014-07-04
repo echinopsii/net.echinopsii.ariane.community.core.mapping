@@ -249,7 +249,7 @@ define(
                 this.print(r,newX,newY,this.color);
             };
 
-            this.print = function (r,x,y,color_, mouseDown, containerMove, containerDragger, containerUP) {
+            this.print = function (r,x,y,color_) {
                 this.color = color_;
                 this.textSet = r.set();
                 this.hatSet = r.set();
@@ -260,15 +260,11 @@ define(
                 if (product != null) {
                     var productTxt = r.text(x-this.width/3+logo.logoWidth+product.width(txtFont)/2,
                                             y+((logo.logoHeight/3<10)?10:logo.logoHeight/3), product).attr(txtFont);
-                    productTxt.mousedown(mouseDown);
-                    productTxt.drag(containerMove, containerDragger, containerUP);
                     this.textSet.push(productTxt);
                 }
                 if (component != null) {
                     var componentTxt = r.text(x-this.width/3+logo.logoWidth+component.width(txtFont)/2,
                                               y+((logo.logoHeight/3<10)?10:logo.logoHeight/3)+(product ? product.height(txtFont):0), component).attr(txtFont);
-                    componentTxt.mousedown(mouseDown);
-                    componentTxt.drag(containerMove, containerDragger, containerUP);
                     this.textSet.push(componentTxt);
                 }
 
@@ -286,6 +282,16 @@ define(
                 this.textSet.drag(mvcb, drgcb, upcb);
                 this.hatSet.drag(mvcb, drgcb, upcb);
             };
+
+            this.toFront = function() {
+                this.textSet.toFront();
+                this.hatSet.toFront();
+            };
+
+            this.toBack = function() {
+                this.textSet.toBack();
+                this.hatSet.toBack();
+            }
         }
 
         return hat;

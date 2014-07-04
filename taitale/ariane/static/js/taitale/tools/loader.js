@@ -160,9 +160,7 @@ define(
                  * Init raphael JS object outside ZPD
                  */
                 r.setMainMenuSet();
-                r.setContainerMenuSet();
-                r.setNodeMenuSet();
-                r.setEndpointMenuSet();
+                //r.setEndpointMenuSet();
                 //r.raphael.mousedown(mainMouseDown);
                 r.raphael.getColor.reset();
 

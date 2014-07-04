@@ -42,7 +42,7 @@ define(
             this.product      = JSONContainerDesc.containerProduct;
             this.type         = JSONContainerDesc.containerType;
             //noinspection JSUnresolvedVariable
-            this.gateURI      = JSONContainerDesc.containerGateURI;
+            //this.gateURI      = JSONContainerDesc.containerGateURI;
             //noinspection JSUnresolvedVariable
             this.name         = JSONContainerDesc.containerGateURI;
             //noinspection JSUnresolvedVariable
@@ -153,6 +153,14 @@ define(
             this.mvx = 0;
             this.mvy = 0;
 
+            this.containerMenuSet = null;
+            this.containerMenuProperties = null;
+            this.containerMenuPropertiesRect = null;
+
+            this.containerMainTitleTXT  = params.container_menuMainTitle;
+            this.containerFieldTXT      = params.container_menuFields;
+            this.containerFieldTXTOver  = params.container_menuFieldsOver;
+
             var containerRef = this;
 
             var minMaxLinkedTreedObjectsComparator = function(linkedObject1, linkedObject2) {
@@ -230,26 +238,42 @@ define(
                 mouseDown = function(e) {
                     if (e.which == 3) {
                         if (containerRef.menuHided) {
-                            containerRef.menuSet = containerRef.r.getContainerMenuSet();
+                            containerRef.menuSet = containerRef.containerMenuSet;
                             containerRef.menuSet.mousedown(menuMouseDown);
+                            var fieldRect, fieldRectWidth, fieldRectHeight;
                             for (var i = 0, ii = containerRef.menuSet.length ; i < ii ; i++) {
                                 if (i==0)
                                     containerRef.menuSet[i].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY +10, fill: "#fff"});
-                                else if (i==1)
-                                    containerRef.menuSet[i].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY+30});
-                                else
-                                    containerRef.menuSet[i].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY+30+(i-1)*15});
+                                else if (i==1) {
+                                    fieldRect = containerRef.menuSet[i];
+                                    fieldRectWidth = fieldRect.attr("width");
+                                    fieldRectHeight = fieldRect.attr("height");
+                                    fieldRect.attr({"x": containerRef.rectTopMiddleX - fieldRectWidth/2, "y": containerRef.rectTopMiddleY+30 - fieldRectHeight/2});
+                                    containerRef.menuSet[i+1].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY+30});
+                                    i++;
+                                }
+                                else {
+                                    fieldRect = containerRef.menuSet[i];
+                                    fieldRectWidth = fieldRect.attr("width");
+                                    fieldRectHeight = fieldRect.attr("height");
+                                    fieldRect.attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY+30+(i-1)*15});
+                                    containerRef.menuSet[i+1].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY+30+(i-1)*15});
+                                    i++;
+                                }
                             }
                             containerRef.menu = containerRef.r.menu(containerRef.rectTopMiddleX,containerRef.rectTopMiddleY+10,containerRef.menuSet).
-                                attr({fill: containerRef.menuFillColor, stroke: containerRef.color, "stroke-width": containerRef.menuStrokeWidth, "fill-opacity": containerRef.menuOpacity});
+                                attr({fill: containerRef.menuFillColor, stroke: containerRef.color, "stroke-width": containerRef.menuStrokeWidth,
+                                     "fill-opacity": containerRef.menuOpacity});
                             containerRef.menu.mousedown(menuMouseDown);
                             containerRef.menu.toFront();
                             containerRef.menuSet.toFront();
                             containerRef.menuSet.show();
                             containerRef.menuHided=false;
                         } else {
-                            containerRef.menu.remove();
-                            containerRef.menuSet.remove();
+                            containerRef.menu.toBack();
+                            containerRef.menuSet.toBack();
+                            containerRef.menu.hide();
+                            containerRef.menuSet.hide();
                             containerRef.menuHided=true;
                         }
                         containerRef.rightClick=true;
@@ -261,8 +285,10 @@ define(
                 },
                 menuMouseDown = function(e) {
                     if (e.which == 3) {
-                        containerRef.menu.remove();
-                        containerRef.menuSet.remove();
+                        containerRef.menu.toBack();
+                        containerRef.menuSet.toBack();
+                        containerRef.menu.hide();
+                        containerRef.menuSet.hide();
                         containerRef.menuHided=true;
                         containerRef.rightClick=true;
                         if (containerRef.r.getDisplayMainMenu())
@@ -270,7 +296,16 @@ define(
                     } else if (e.which == 1) {
                         containerRef.rightClick=false;
                     }
-                };
+                },
+                menuFieldOver = function() {
+                    this.attr(containerRef.containerFieldTXTOver);
+                },
+                menuFieldOut = function() {
+                    this.attr(containerRef.containerFieldTXT);
+                }/*,
+                menuFieldPropertyClick = function() {
+
+                }*/;
 
             this.toString = function() {
                 return "{\n Container " + this.containerName + " : ("+this.rectMiddleX+","+this.rectMiddleY+")\n}";
@@ -445,8 +480,7 @@ define(
 
             this.print = function(r_) {
                 this.r = r_;
-                this.containerHat_.print(this.r,this.rectTopLeftX + (this.rectWidth/2),this.rectTopLeftY,this.color,
-                    mouseDown, containerMove, containerDragger, containerUP);
+                this.containerHat_.print(this.r,this.rectTopLeftX + (this.rectWidth/2),this.rectTopLeftY,this.color);
                 this.containerHat_.mousedown(mouseDown);
                 this.containerHat_.drag(containerMove, containerDragger, containerUP);
 
@@ -459,11 +493,34 @@ define(
                 this.rect.attr({fill: this.color, stroke: this.color, "fill-opacity": containerRef.oUnselected, "stroke-width": this.strokeWidth});
                 this.rect.mousedown(mouseDown);
                 this.rect.drag(containerMove, containerDragger, containerUP);
+
+
+                this.containerMenuTitle = this.r.text(0,10,"Container menu").attr(this.containerMainTitleTXT);
+                var fieldTitle = "Display all properties";
+                this.containerMenuPropertiesRect = this.r.rect(0,10,fieldTitle.width(this.containerFieldTXT),fieldTitle.height(this.containerFieldTXT));
+                this.containerMenuPropertiesRect.attr({fill: this.color, stroke: this.color, "fill-opacity": 0, "stroke-width": 0});
+                this.containerMenuPropertiesRect.mouseover(menuFieldOver);
+                this.containerMenuPropertiesRect.mouseout(menuFieldOut);
+                this.containerMenuProperties = this.r.text(0,10,fieldTitle).attr(this.containerFieldTXT);
+                this.containerMenuProperties.mouseover(menuFieldOver);
+                this.containerMenuProperties.mouseout(menuFieldOut);
+
+                this.containerMenuSet = this.r.set();
+                this.containerMenuSet.push(this.containerMenuTitle);
+                this.containerMenuSet.push(this.containerMenuPropertiesRect);
+                this.containerMenuSet.push(this.containerMenuProperties);
+                //containerMenuSet.push(this.text(0,30,"Highlight cluster").attr(containerFieldTXT));
+                //containerMenuSet.push(this.text(0,45,"Show gates").attr(containerFieldTXT));
+                //containerMenuSet.push(this.text(0,60,"Hide gates").attr(containerFieldTXT));
+                this.containerMenuSet.toBack();
+                this.containerMenuSet.hide();
             };
 
             this.toFront = function() {
+                this.containerHat_.toFront();
                 this.containerName.toFront();
                 this.rect.toFront();
+                this.containerNodes.toFront();
             };
 
             this.name  = this.name.split("://")[1].split(":")[0];
