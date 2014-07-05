@@ -27,7 +27,7 @@ define(
     ],
     function(Raphael, helper, params){
         function endpoint(JSONEndpointDesc, Node_) {
-            //var helper_    = new helper();
+            var helper_    = new helper();
 
             this.r          = null;
             //noinspection JSUnresolvedVariable
@@ -288,10 +288,30 @@ define(
                 },
                 menuFieldOut = function() {
                     this.attr(epRef.endpointFieldTXT);
-                }/*,
-                menuFieldPropertyClick = function() {
+                },
+                menuFieldPropertyClick = function(e) {
+                    if (e.which != 3) {
+                        //noinspection JSUnresolvedVariable
+                        var details = "<br/> <b>URL</b> : " + epRef.epURL +
+                            "<br/>" +
+                            ((epRef.properties!=null && epRef.properties.primaryApplication!=null) ? "<br/> <b>Primary application</b> : " + epRef.properties.primaryApplication.name + "<br/>": "");
 
-                }*/;
+                        var sortedKeys = [];
+
+                        for (var key in epRef.properties)
+                            if (key !== "primaryApplication")
+                                if (epRef.properties.hasOwnProperty(key))
+                                    sortedKeys.push(key);
+                        sortedKeys.sort();
+
+                        for (var i = 0, ii = sortedKeys.length; i < ii; i++)
+                            details += "<br/> <b>"+ sortedKeys[i] + "</b> : " + epRef.properties[sortedKeys[i]];
+
+                        details += "<br/>";
+
+                        helper_.dialogOpen("epDetail"+ epRef.epNode.cID + "_" + epRef.epNode.ID + "_" + epRef.epID, "Details of " + epRef.epURL, details);
+                    }
+                };
 
             var epDragger = function () {
                     if(!epRef.rightClick) {
@@ -533,9 +553,11 @@ define(
                 this.endpointMenuPropertiesRect.attr({fill: this.color, stroke: this.color, "fill-opacity": 0, "stroke-width": 0});
                 this.endpointMenuPropertiesRect.mouseover(menuFieldOver);
                 this.endpointMenuPropertiesRect.mouseout(menuFieldOut);
+                this.endpointMenuPropertiesRect.mousedown(menuFieldPropertyClick);
                 this.endpointMenuProperties = this.r.text(0,10,fieldTitle).attr(this.endpointFieldTXT);
                 this.endpointMenuProperties.mouseover(menuFieldOver);
                 this.endpointMenuProperties.mouseout(menuFieldOut);
+                this.endpointMenuProperties.mousedown(menuFieldPropertyClick);
 
                 this.endpointMenuSet = this.r.set();
                 this.endpointMenuSet.push(this.endpointMenuTitle);

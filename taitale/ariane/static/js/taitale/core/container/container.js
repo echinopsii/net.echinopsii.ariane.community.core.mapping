@@ -42,7 +42,7 @@ define(
             this.product      = JSONContainerDesc.containerProduct;
             this.type         = JSONContainerDesc.containerType;
             //noinspection JSUnresolvedVariable
-            //this.gateURI      = JSONContainerDesc.containerGateURI;
+            this.gateURI      = JSONContainerDesc.containerGateURI;
             //noinspection JSUnresolvedVariable
             this.name         = JSONContainerDesc.containerGateURI;
             //noinspection JSUnresolvedVariable
@@ -302,10 +302,46 @@ define(
                 },
                 menuFieldOut = function() {
                     this.attr(containerRef.containerFieldTXT);
-                }/*,
-                menuFieldPropertyClick = function() {
+                },
+                menuFieldPropertyClick = function(e) {
+                    if (e.which != 3) {
+                        //noinspection JSUnresolvedVariable
+                        var details = "<br/> <b>Name</b> : " + containerRef.name +
+                            "<br/> <b>Primary Gate</b> : <a href=\"" + containerRef.gateURI + "\" target=\"_blank\">" + containerRef.gateURI + "</a>" +
+                            "<br/>" +
+                            "<br/> <b>Company</b> : " + containerRef.company +
+                            "<br/> <b>Product</b> : " + containerRef.product +
+                            "<br/> <b>Type</b> : " + containerRef.type +
+                            "<br/>" +
+                            ((containerRef.properties.supportTeam!=null) ? "<br/> <b>Support team</b> : " + containerRef.properties.supportTeam.name + "<br/>": "") +
+                            ((containerRef.properties.Server!=null) ? "<br/> <b>OS instance hostname</b> : " + containerRef.properties.Server.hostname +
+                                "<br/> <b>OS instance type</b> : " + containerRef.properties.Server.os + "<br/>": "") +
+                            ((containerRef.properties.Network!=null) ? "<br/> <b>Network ID</b> : " + containerRef.properties.Network.lan +
+                                "<br/> <b>Network type</b> : " + containerRef.properties.Network.type +
+                                "<br/> <b>Network subnet IP</b> : " + containerRef.properties.Network.subnetip +
+                                "<br/> <b>Network subnet mask</b> : " + containerRef.properties.Network.subnetmask +
+                                "<br/> <b>Network multicast area</b> : " + ((containerRef.properties.Network.marea!=null) ? containerRef.properties.Network.marea + "<br/>": "no multicast<br/>") :  "") +
+                            ((containerRef.properties.Datacenter!=null) ? "<br> <b>Datacenter ID </b> : " + containerRef.properties.Datacenter.dc +
+                                "<br/> <b>Datacenter address</b> : " + containerRef.properties.Datacenter.address +
+                                "<br/> <b>Datacenter town</b> : " + containerRef.properties.Datacenter.town +
+                                "<br/> <b>Datacenter country</b> : " + containerRef.properties.Datacenter.country + "<br/>": "");
 
-                }*/;
+                        var sortedKeys = [];
+
+                        for (var key in containerRef.properties)
+                            if (key !== "supportTeam" && key !== "Server" && key != "Network" && key != "Datacenter" && key != "manualCoord")
+                                if (containerRef.properties.hasOwnProperty(key))
+                                    sortedKeys.push(key);
+                        sortedKeys.sort();
+
+                        for (var i = 0, ii = sortedKeys.length; i < ii; i++)
+                            details += "<br/> <b>"+ sortedKeys[i] + "</b> : " + containerRef.properties[sortedKeys[i]];
+
+                        details += "<br/>";
+
+                        helper_.dialogOpen("containerDetail"+containerRef.ID, "Details of " + containerRef.name, details);
+                    }
+                };
 
             this.toString = function() {
                 return "{\n Container " + this.containerName + " : ("+this.rectMiddleX+","+this.rectMiddleY+")\n}";
@@ -501,9 +537,11 @@ define(
                 this.containerMenuPropertiesRect.attr({fill: this.color, stroke: this.color, "fill-opacity": 0, "stroke-width": 0});
                 this.containerMenuPropertiesRect.mouseover(menuFieldOver);
                 this.containerMenuPropertiesRect.mouseout(menuFieldOut);
+                this.containerMenuPropertiesRect.mousedown(menuFieldPropertyClick);
                 this.containerMenuProperties = this.r.text(0,10,fieldTitle).attr(this.containerFieldTXT);
                 this.containerMenuProperties.mouseover(menuFieldOver);
                 this.containerMenuProperties.mouseout(menuFieldOut);
+                this.containerMenuProperties.mousedown(menuFieldPropertyClick);
 
                 this.containerMenuSet = this.r.set();
                 this.containerMenuSet.push(this.containerMenuTitle);

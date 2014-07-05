@@ -212,7 +212,8 @@ define(
                             "stroke-linejoin": 'round',"stroke-miterlimit": '4',"stroke-dashoffset": '0',"stroke-opacity": '1'
                         });
                     this.cylinder.transform(this.translateForm);
-                    this.titleTxt   = this.r.text(this.ctrX, this.ctrY-this.diameter, this.title_).attr({'font-size': '14px', 'font-weight': 'bold', 'font-family': 'Arial', fill: strokeColor});
+                    this.titleTxt   = this.r.text(this.ctrX, this.ctrY-this.diameter, this.title_).
+                        attr({'font-size': '14px', 'font-weight': 'bold', 'font-family': 'Arial', fill: strokeColor, 'cursor': 'default'});
                     this.titleTxt.transform(this.translateForm);
                     this.bindingPt1 = this.r.circle(this.bindingPt1X,this.bindingPt1Y,0);
                     this.bindingPt2 = this.r.circle(this.bindingPt2X,this.bindingPt2Y,0);

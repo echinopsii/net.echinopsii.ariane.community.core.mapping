@@ -106,6 +106,7 @@ requirejs (
             reload = $('#reload'),
             nsize = $('#nsize'),
             center = $('#center'),
+            details = $('#details'),
             displayDC = $("#displayDC"),
             displayArea = $("#displayArea"),
             displayLan = $("#displayLan"),
@@ -229,6 +230,10 @@ requirejs (
                 );
                 console.log(e.stack);
             }
+        });
+
+        details.click([loader_,dic], function() {
+            $('#mapObjectDetails').puidialog('show');
         });
 
         reload.click([loader_, dic], function() {

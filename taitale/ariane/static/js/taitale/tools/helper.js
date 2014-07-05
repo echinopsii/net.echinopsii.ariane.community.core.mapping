@@ -49,13 +49,30 @@ define(
                 }
             };
 
+            this.dialogOpen = function(id, title, contents) {
+                $('#mappingCanvas').append("<div id=\"dialog"+ id + "\" title=\"" + title + "\">"+contents+"</div>");
+                $("#dialog"+id).puidialog({
+                    showEffect: 'fade',
+                    hideEffect: 'fade',
+                    minimizable: true,
+                    maximizable: false,
+                    resizable: false,
+                    afterHide: function(event) {
+                        $("#dialog"+id).remove();
+                    },
+                    width: 'auto',
+                    modal: false
+                });
+                $("#dialog"+id).puidialog('show');
+            };
+
             this.getMappyLayoutDivSize = function() {
                 var mappyLayoutDiv = document.getElementById("mappyLayout");
                 if (mappyLayoutDiv!=null)
                     return {
-                        width:mappyLayoutDiv.clientHeight,
+                        width:mappyLayoutDiv.clientWidth,
                         height:mappyLayoutDiv.clientHeight
-                    }
+                    };
                 else
                     return {
                         width:0,
@@ -94,7 +111,7 @@ define(
                     else if (notifyInfo && msg.severity==="info")
                         msgsToGrowl.push(msg);
                 }
-            }
+            };
 
             this.growlMsgs = function(msg) {
                 pushMsgToGrowl(msg);
@@ -129,7 +146,7 @@ define(
             this.getNotifyErrs = function() {
                 return notifyErrs;
             };
-        };
+        }
         return helper;
     }
 );

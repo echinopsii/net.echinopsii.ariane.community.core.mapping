@@ -26,7 +26,7 @@ define(
     ],
     function (Raphael, helper, params) {
 
-        var helper_ = new helper();
+        //var helper_ = new helper();
         var tokenRegex = /\{([^\}]+)\}/g;
         var objNotationRegex = /(?:(?:^|\.)(.+?)(?=\[|\.|$|\()|\[('|")(.+?)\2\])(\(\))?/g; // matches .xxxxx or ["xxxxx"] to run over object properties
 
@@ -204,8 +204,8 @@ define(
                     h: h,
                     gap: gap
                 }][1];
-            //var //dx  = 0,
-                //dy  = 0,
+            //var dx  = 0,
+            //    dy  = 0,
             //    out = this.path(fill(shape, mask)).insertBefore(sett);
             //dx = X - (x + r + mask.left + gap);
             //dy = Y - (y + r + h + r + gap);
@@ -1083,5 +1083,5 @@ define(
             dragOnLan  = false;
             dragOnArea = false;
             dragOnDC   = false;
-        }
+        };
     });

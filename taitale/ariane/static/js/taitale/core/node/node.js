@@ -27,13 +27,13 @@ define(
     ],
     function(Raphael, helper, params){
         function node(JSONNodeDesc, container_) {
-            //var helper_       = new helper();
+            var helper_       = new helper();
 
             //noinspection JSUnresolvedVariable
             this.ID            = JSONNodeDesc.nodeID;
             this.name          = JSONNodeDesc.nodeName;
             //noinspection JSUnresolvedVariable
-            //this.cID           = JSONNodeDesc.nodeContainerID;
+            this.cID           = JSONNodeDesc.nodeContainerID;
             //noinspection JSUnresolvedVariable
             this.properties    = JSONNodeDesc.nodeProperties;
 
@@ -318,10 +318,30 @@ define(
                 },
                 menuFieldOut = function() {
                     this.attr(nodeRef.nodeFieldTXT);
-                }/*,
-                menuFieldPropertyClick = function() {
+                },
+                menuFieldPropertyClick = function(e) {
+                    if (e.which != 3) {
+                        //noinspection JSUnresolvedVariable
+                        var details = "<br/> <b>Name</b> : " + nodeRef.name +
+                            "<br/>" +
+                            ((nodeRef.properties.primaryApplication!=null) ? "<br/> <b>Primary application</b> : " + nodeRef.properties.primaryApplication.name + "<br/>": "");
 
-                }*/;
+                        var sortedKeys = [];
+
+                        for (var key in nodeRef.properties)
+                            if (key !== "primaryApplication")
+                                if (nodeRef.properties.hasOwnProperty(key))
+                                    sortedKeys.push(key);
+                        sortedKeys.sort();
+
+                        for (var i = 0, ii = sortedKeys.length; i < ii; i++)
+                            details += "<br/> <b>"+ sortedKeys[i] + "</b> : " + nodeRef.properties[sortedKeys[i]];
+
+                        details += "<br/>";
+
+                        helper_.dialogOpen("nodeDetail"+ nodeRef.cID + "_" + nodeRef.ID, "Details of " + nodeRef.name, details);
+                    }
+                };
 
             var nodeDragger = function () {
                     if (!nodeRef.rightClick)
@@ -512,9 +532,11 @@ define(
                 this.nodeMenuPropertiesRect.attr({fill: this.color, stroke: this.color, "fill-opacity": 0, "stroke-width": 0});
                 this.nodeMenuPropertiesRect.mouseover(menuFieldOver);
                 this.nodeMenuPropertiesRect.mouseout(menuFieldOut);
+                this.nodeMenuPropertiesRect.mousedown(menuFieldPropertyClick);
                 this.nodeMenuProperties = this.r.text(0,10,fieldTitle).attr(this.nodeFieldTXT);
                 this.nodeMenuProperties.mouseover(menuFieldOver);
                 this.nodeMenuProperties.mouseout(menuFieldOut);
+                this.nodeMenuProperties.mousedown(menuFieldPropertyClick);
 
                 this.nodeMenuSet = this.r.set();
                 this.nodeMenuSet.push(this.nodeMenuTitle);
