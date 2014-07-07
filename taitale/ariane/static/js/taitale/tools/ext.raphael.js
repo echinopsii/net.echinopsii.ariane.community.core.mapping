@@ -793,34 +793,36 @@ define(
             if (bussOnMove!=null) {
                 for (j = 0, jj = bussOnMove.length; j < jj; j++) {
                     var bus = bussOnMove[j];
-                    bus.mvx=dx; bus.mvy=dy;
+                    bus.lmvx = bus.mvx; bus.lmvy = bus.mvy;
+                    bus.mvx = dx; bus.mvy = dy;
+                    if ((bus.mvx!=bus.lmvx) || (bus.mvy!=bus.lmvy)) {
+                        bus.cylinder.transform(transform+bus.translateForm);
+                        bus.titleTxt.transform(transform+bus.translateForm);
 
-                    bus.cylinder.transform(transform+bus.translateForm);
-                    bus.titleTxt.transform(transform+bus.translateForm);
-
-                    for (i = bus.bindedLinks.length; i--;) {
-                        link = bus.bindedLinks[i];
-                        toUp = false;
-                        if (linksToUp.length <= linksOnMove.length) {
+                        for (i = bus.bindedLinks.length; i--;) {
+                            link = bus.bindedLinks[i];
                             toUp = false;
-                            for (k = 0, kk = linksToUp.length; k < kk; k++)
-                                if (linksToUp[k].id === link.id) {
-                                    toUp = true;
-                                    break;
-                                }
-                        } else {
-                            toUp = true;
-                            for (k = 0, kk = linksOnMove.length; k < kk; k++)
-                                if (linksOnMove[k].id === link.id) {
-                                    toUp = false;
-                                    break;
-                                }
-                        }
-                        if (toUp) {
-                            link.getEpSource().chooseMulticastTargetBindingPointAndCalcPoz(bus.bindedLinks[i]);
-                            up = bus.r.link(link.toCompute());
-                            if (typeof up != 'undefined')
-                                link.toUpdate(up);
+                            if (linksToUp.length <= linksOnMove.length) {
+                                toUp = false;
+                                for (k = 0, kk = linksToUp.length; k < kk; k++)
+                                    if (linksToUp[k].id === link.id) {
+                                        toUp = true;
+                                        break;
+                                    }
+                            } else {
+                                toUp = true;
+                                for (k = 0, kk = linksOnMove.length; k < kk; k++)
+                                    if (linksOnMove[k].id === link.id) {
+                                        toUp = false;
+                                        break;
+                                    }
+                            }
+                            if (toUp) {
+                                link.getEpSource().chooseMulticastTargetBindingPointAndCalcPoz(bus.bindedLinks[i]);
+                                up = bus.r.link(link.toCompute());
+                                if (typeof up != 'undefined')
+                                    link.toUpdate(up);
+                            }
                         }
                     }
                 }

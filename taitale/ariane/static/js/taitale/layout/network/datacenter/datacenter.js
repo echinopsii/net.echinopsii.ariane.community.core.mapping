@@ -29,15 +29,16 @@ define(
     ],
     function (params,dictionary,datacenterMatrix,datacenterSplitter,helper) {
         function datacenter(geoDCLoc_, mapSplitter, registries, options) {
+            //noinspection JSUnusedLocalSymbols
+            var helper_     = new helper();
             this.r          = null;
-            //var helper_    = new helper();
             this.topLeftX   = 0;
             this.topLeftY   = 0;
             this.dcwidth    = 0;
             this.dcheight   = 0;
             this.areaSpan   = params.dc_areaSpan;
             this.dbrdSpan   = params.dc_dbrdSpan;
-            this.dbrdResz   = params.dc_dbrdResz;
+            //this.dbrdResz   = params.dc_dbrdResz;
             this.geoDCLoc   = geoDCLoc_;
             this.dic        = new dictionary();
             this.msplitter  = mapSplitter;
@@ -73,23 +74,25 @@ define(
                 };
 
             var dcDragg = function () {
+                    dcRef.isMoving = true;
                     dcRef.r.drag(dcRef, "dc");
                 },
                 dcMove = function (dx, dy) {
                     dMove(dx,dy);
                 },
                 dcUP = function () {
+                    dcRef.isMoving = false;
                     dcRef.r.up();
                 },
                 dcOver = function () {
-                    if (!dcRef.dispDC) {
+                    if (!dcRef.dispDC && !dcRef.isMoving) {
                         this.animate({"fill-opacity": dcRef.oUnselected, "stroke-width": dcRef.sWidth}, 1);
                         dcRef.dcR.show();
                         dcRef.dcsplitter.show();
                     }
                 },
                 dcOut  = function () {
-                    if (!dcRef.dispDC) {
+                    if (!dcRef.dispDC && !dcRef.isMoving) {
                         this.animate({"fill-opacity": dcRef.oUnselected, "stroke-width": 0}, 1);
                         dcRef.dcR.hide();
                         dcRef.dcsplitter.hide();
@@ -101,9 +104,9 @@ define(
             };
 
             this.show = function() {
-                dcRef.rect.animate({"fill-opacity": this.oUnselected, "stroke-width": this.sWidth}, 1);
-                dcRef.dcR.show();
-                dcRef.dcsplitter.show();
+                this.rect.animate({"fill-opacity": this.oUnselected, "stroke-width": this.sWidth}, 1);
+                this.dcR.show();
+                this.dcsplitter.show();
             };
 
             this.pushContainerArea = function(container) {
@@ -159,6 +162,7 @@ define(
                 this.r      = r_;
                 this.dcR    = this.r.set();
                 this.dcName = this.r.text(this.topLeftX + (this.dcwidth/2), this.topLeftY + this.dbrdSpan/2, this.geoDCLoc.dc);
+                //noinspection JSUnresolvedVariable
                 this.dcTown = this.r.text(this.topLeftX + (this.dcwidth/2), this.topLeftY + this.dcheight - this.dbrdSpan/2, this.geoDCLoc.town);
                 this.rect   = this.r.rect(this.topLeftX, this.topLeftY, this.dcwidth, this.dcheight, 0);
 

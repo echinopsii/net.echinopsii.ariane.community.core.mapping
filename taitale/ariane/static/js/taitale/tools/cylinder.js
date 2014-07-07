@@ -55,7 +55,6 @@ define(
             this.cylinder   = null;
             this.titleTxt   = null;
             this.cylinderR  = null;
-            this.ft         = null;
             this.boundary   = null;
 
             this.bindedLinks = [];
@@ -86,7 +85,10 @@ define(
             this.mvx = 0;
             this.mvy = 0;
 
-            var isJailed  = false;
+            this.lmvx = 0;
+            this.lvmy = 0;
+
+            this.isJailed  = false;
 
             var cylinderRef = this;
 
@@ -94,6 +96,17 @@ define(
                     cylinderRef.r.drag(cylinderRef, "bus");
                 },
                 cyMove = function(dx,dy) {
+                    if (cylinderRef.isJailed) {
+                        if (cylinderRef.extox1+dx<cylinderRef.boundary.minX)
+                            dx=cylinderRef.boundary.minX-cylinderRef.extox1;
+                        else if (cylinderRef.extox3+dx>cylinderRef.boundary.maxX)
+                            dx=cylinderRef.boundary.maxX-cylinderRef.extox3;
+                        if (cylinderRef.extoy1+dy>cylinderRef.boundary.maxY)
+                            dy=cylinderRef.boundary.maxY-cylinderRef.extoy1;
+                        else if (cylinderRef.extoy3+dy<cylinderRef.boundary.minY)
+                            dy=cylinderRef.boundary.minY-cylinderRef.extoy3;
+                    }
+
                     cylinderRef.r.move(dx,dy);
                 },
                 cyUP   = function() {
@@ -106,7 +119,7 @@ define(
 
             this.setMoveJail = function(minX, minY, maxX, maxY) {
                 this.boundary = {minX:minX,minY:minY,maxX:maxX,maxY:maxY};
-                isJailed=true;
+                this.isJailed=true;
             };
 
             this.getBindingPoints = function() {
@@ -138,27 +151,6 @@ define(
                     return null;
             };
 
-            /*
-             this.getCylinderPath = function() {
-             return cylinder;
-             };
-
-             this.getFreeTransform = function() {
-             return ft;
-             };
-
-             this.plugFreeTransform = function() {
-             ft = r.freeTransform(cylinderR,{},ftCallback);
-             ft.setOpts({boundary: boundary});
-             ft.hideHandles({undrag: false})
-             };
-
-             this.unplugFreeTransform = function() {
-             if (ft!=null)
-             ft.unplug();
-             };
-             */
-
             this.getTopLeftCoords = function() {
                 return {x:this.bindingPt4X,y:this.bindingPt4Y};
             };
@@ -168,38 +160,6 @@ define(
                 while (hexStr.length < 6) { hexStr = '0' + hexStr; } // Zero pad.
                 return hexStr;
             }
-
-            this.updateCylinder = function() {
-                this.vcpath    =
-                    [
-                        ["M", this.x, this.y],
-                        ["C", this.x+this.diameter/8, this.y, this.x+this.diameter/5, this.y-this.diameter/4, this.x+this.diameter/5, this.y-this.diameter/2],
-                        ["C", this.x+this.diameter/5, this.y-3*this.diameter/4, this.x+this.diameter/8, this.y-this.diameter, this.x, this.y-this.diameter],
-                        ["C", this.x-this.diameter/8, this.y-this.diameter, this.x-this.diameter/5, this.y-3*this.diameter/4, this.x-this.diameter/5, this.y-this.diameter/2],
-                        ["C", this.x-this.diameter/5, this.y-this.diameter/5, this.x-this.diameter/8, this.y, this.x, this.y],
-                        ["Z"],
-                        ["M", this.x, this.y],
-                        ["L", this.x+this.height, this.y],
-                        ["C", this.x+this.height+this.diameter/8, this.y, this.x+this.height+this.diameter/5, this.y-this.diameter/4, this.x+this.height+this.diameter/5, this.y-this.diameter/2],
-                        ["C", this.x+this.height+this.diameter/5, this.y-3*this.diameter/4, this.x+this.height+this.diameter/8, this.y-this.diameter, this.x+this.height, this.y-this.diameter],
-                        ["L", this.x, this.y-this.diameter]
-                    ];
-
-                var fillColor   = "#"+this.color,
-                    strokeColor = "#" + delHexColor("fff000", this.color);
-
-                this.cylinder = this.r.path(this.vcpath).attr(
-                    {
-                        fill: fillColor,"fill-opacity": '0.7',"fill-rule": 'evenodd',stroke:strokeColor,"stroke-width": '2',"stroke-linecap": 'butt',
-                        "stroke-linejoin": 'round',"stroke-miterlimit": '4',"stroke-dashoffset": '0',"stroke-opacity": '1'
-                    });
-                this.titleTxt   = this.r.text(this.ctrX, this.ctrY-this.diameter, this.title_).attr({'font-size': '14px', 'font-weight': 'bold', 'font-family': 'Arial', fill: strokeColor});
-
-                this.cylinderR.remove();
-                this.cylinderR  = this.r.set().push(this.titleTxt).push(this.cylinder).push(this.bindingPt1).push(this.bindingPt2).
-                    push(this.bindingPt3).push(this.bindingPt4).push(this.bindingPt5).push(this.bindingPt6);
-                this.cylinderR.drag(cyMove, cyDragger, cyUP);
-            };
 
             this.print = function(r_) {
                 if (this.r == null || (this.r != null && r_!=this.r)) {
@@ -224,7 +184,6 @@ define(
                     this.cylinderR  = this.r.set().push(this.titleTxt).push(this.cylinder).push(this.bindingPt1).push(this.bindingPt2).
                         push(this.bindingPt3).push(this.bindingPt4).push(this.bindingPt5).push(this.bindingPt6);
                     this.cylinderR.drag(cyMove, cyDragger, cyUP);
-                    //this.plugFreeTransform();
                 }
             };
         }
