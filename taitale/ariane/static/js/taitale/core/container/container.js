@@ -77,16 +77,6 @@ define(
             this.isMoving          = false;
             this.isInserted        = false;
 
-            this.menu              = null;
-            this.menuSet           = null;
-            this.menuFillColor     = params.container_menuFillColor;
-            //this.menuStrokeColor   = params.container_menuStrokeColor;
-            this.menuOpacity       = params.container_menuOpacity;
-            this.menuStrokeWidth   = params.container_menuStrokeWidth;
-            //this.menuMainTitleTXT  = params.container_menuMainTitle;
-            //this.menuFieldTXT      = params.container_menuFields;
-            this.menuHided         = true;
-
             this.containerNodes    = new containerMatrix();
             this.containerHat_     = new containerHat(this.company,this.product,this.type);
 
@@ -153,6 +143,13 @@ define(
             this.mvx = 0;
             this.mvy = 0;
 
+
+            this.menu              = null;
+            this.menuFillColor     = params.container_menuFillColor;
+            this.menuOpacity       = params.container_menuOpacity;
+            this.menuStrokeWidth   = params.container_menuStrokeWidth;
+            this.menuHided         = true;
+
             this.containerMenuSet = null;
             this.containerMenuProperties = null;
             this.containerMenuPropertiesRect = null;
@@ -199,81 +196,55 @@ define(
                 containerRef.rectMiddleY = containerRef.rectMiddleLeftY;
             };
 
-            var cMove = function (dx, dy) {
-                    var rx = containerRef.extrx,
-                        ry = containerRef.extry;
+            var getMaxWidth = function(firstWidth) {
+                var fontSize = containerRef.txtFont["font-size"];
+                fontSize = helper_.fitText(fontSize,containerRef.rectWidth-containerRef.fitTextPadding,1.5,containerRef.fitTitleMinFont);
+                containerRef.txtFont["font-size"]=fontSize;
+                containerRef.titleWidth  = containerRef.name.width(containerRef.txtFont);
+                containerRef.titleHeight = containerRef.name.height(containerRef.txtFont);
 
-                    if (!containerRef.rightClick) {
-                        if (containerRef.isJailed) {
-                            if (containerRef.minTopLeftX > rx + dx)
-                                dx = containerRef.minTopLeftX - rx;
-                            if (containerRef.minTopLeftY > ry + dy)
-                                dy = containerRef.minTopLeftY - ry;
-                            if (containerRef.maxTopLeftX < rx + dx)
-                                dx = containerRef.maxTopLeftX - rx;
-                            if (containerRef.maxTopLeftY < ry + dy)
-                                dy = containerRef.maxTopLeftY - ry;
-                        }
+                return Math.max(firstWidth,containerRef.titleWidth+containerRef.fitTextPadding);
+            };
 
-                        containerRef.r.move(dx, dy);
-                        containerRef.r.safari();
-                    }
-                };
-
-            var containerDragger = function() {
-                    //helper_.debug("drag: " + containerRef.rightClick);
-                    if (!containerRef.rightClick)
-                        containerRef.r.drag(containerRef,"container");
-                },
-                containerMove = function(dx,dy) {
-                    //helper_.debug("move: " + containerRef.rightClick);
-                    if (!containerRef.rightClick)
-                        cMove(dx,dy);
-                },
-                containerUP =  function() {
-                    //helper_.debug("up: " + containerRef.rightClick);
-                    if (!containerRef.rightClick)
-                        containerRef.r.up();
-                },
-                mouseDown = function(e) {
+            var mouseDown = function(e) {
                     if (e.which == 3) {
                         if (containerRef.menuHided) {
-                            containerRef.menuSet = containerRef.containerMenuSet;
-                            containerRef.menuSet.mousedown(menuMouseDown);
+                            containerRef.containerMenuSet.mousedown(menuMouseDown);
                             var fieldRect, fieldRectWidth, fieldRectHeight;
-                            for (var i = 0, ii = containerRef.menuSet.length ; i < ii ; i++) {
+                            for (var i = 0, ii = containerRef.containerMenuSet.length ; i < ii ; i++) {
                                 if (i==0)
-                                    containerRef.menuSet[i].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY +10, fill: "#fff"});
+                                    containerRef.containerMenuSet[i].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY +10, fill: "#fff"});
                                 else if (i==1) {
-                                    fieldRect = containerRef.menuSet[i];
+                                    fieldRect = containerRef.containerMenuSet[i];
                                     fieldRectWidth = fieldRect.attr("width");
                                     fieldRectHeight = fieldRect.attr("height");
                                     fieldRect.attr({"x": containerRef.rectTopMiddleX - fieldRectWidth/2, "y": containerRef.rectTopMiddleY+30 - fieldRectHeight/2});
-                                    containerRef.menuSet[i+1].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY+30});
+                                    containerRef.containerMenuSet[i+1].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY+30});
                                     i++;
-                                }
-                                else {
-                                    fieldRect = containerRef.menuSet[i];
+                                } else {
+                                    fieldRect = containerRef.containerMenuSet[i];
                                     fieldRectWidth = fieldRect.attr("width");
                                     fieldRectHeight = fieldRect.attr("height");
                                     fieldRect.attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY+30+(i-1)*15});
-                                    containerRef.menuSet[i+1].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY+30+(i-1)*15});
+                                    containerRef.containerMenuSet[i+1].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY+30+(i-1)*15});
                                     i++;
                                 }
                             }
-                            containerRef.menu = containerRef.r.menu(containerRef.rectTopMiddleX,containerRef.rectTopMiddleY+10,containerRef.menuSet).
+                            if (containerRef.menu != null)
+                                containerRef.menu.remove();
+                            containerRef.menu = containerRef.r.menu(containerRef.rectTopMiddleX,containerRef.rectTopMiddleY+10,containerRef.containerMenuSet).
                                 attr({fill: containerRef.menuFillColor, stroke: containerRef.color, "stroke-width": containerRef.menuStrokeWidth,
-                                     "fill-opacity": containerRef.menuOpacity});
+                                    "fill-opacity": containerRef.menuOpacity});
                             containerRef.menu.mousedown(menuMouseDown);
                             containerRef.menu.toFront();
-                            containerRef.menuSet.toFront();
-                            containerRef.menuSet.show();
+                            containerRef.containerMenuSet.toFront();
+                            containerRef.containerMenuSet.show();
                             containerRef.menuHided=false;
                         } else {
                             containerRef.menu.toBack();
-                            containerRef.menuSet.toBack();
+                            containerRef.containerMenuSet.toBack();
                             containerRef.menu.hide();
-                            containerRef.menuSet.hide();
+                            containerRef.containerMenuSet.hide();
                             containerRef.menuHided=true;
                         }
                         containerRef.rightClick=true;
@@ -286,9 +257,9 @@ define(
                 menuMouseDown = function(e) {
                     if (e.which == 3) {
                         containerRef.menu.toBack();
-                        containerRef.menuSet.toBack();
+                        containerRef.containerMenuSet.toBack();
                         containerRef.menu.hide();
-                        containerRef.menuSet.hide();
+                        containerRef.containerMenuSet.hide();
                         containerRef.menuHided=true;
                         containerRef.rightClick=true;
                         if (containerRef.r.getDisplayMainMenu())
@@ -341,6 +312,40 @@ define(
 
                         helper_.dialogOpen("containerDetail"+containerRef.ID, "Details of " + containerRef.name, details);
                     }
+                };
+
+            var containerDragger = function() {
+                    //helper_.debug("drag: " + containerRef.rightClick);
+                    if (!containerRef.rightClick)
+                        containerRef.moveInit();
+                },
+                containerMove = function(dx,dy) {
+                    //helper_.debug("move: " + containerRef.rightClick);
+                    if (!containerRef.rightClick) {
+                        var rx = containerRef.extrx,
+                            ry = containerRef.extry;
+
+                        if (!containerRef.rightClick) {
+                            if (containerRef.isJailed) {
+                                if (containerRef.minTopLeftX > rx + dx)
+                                    dx = containerRef.minTopLeftX - rx;
+                                if (containerRef.minTopLeftY > ry + dy)
+                                    dy = containerRef.minTopLeftY - ry;
+                                if (containerRef.maxTopLeftX < rx + dx)
+                                    dx = containerRef.maxTopLeftX - rx;
+                                if (containerRef.maxTopLeftY < ry + dy)
+                                    dy = containerRef.maxTopLeftY - ry;
+                            }
+
+                            containerRef.r.move(dx, dy);
+                            containerRef.r.safari();
+                        }
+                    }
+                },
+                containerUP =  function() {
+                    //helper_.debug("up: " + containerRef.rightClick);
+                    if (!containerRef.rightClick)
+                        containerRef.r.up();
                 };
 
             this.toString = function() {
@@ -402,16 +407,6 @@ define(
                 }
             };
             */
-
-            var getMaxWidth = function(firstWidth) {
-                var fontSize = containerRef.txtFont["font-size"];
-                fontSize = helper_.fitText(fontSize,containerRef.rectWidth-containerRef.fitTextPadding,1.5,containerRef.fitTitleMinFont);
-                containerRef.txtFont["font-size"]=fontSize;
-                containerRef.titleWidth  = containerRef.name.width(containerRef.txtFont);
-                containerRef.titleHeight = containerRef.name.height(containerRef.txtFont);
-
-                return Math.max(firstWidth,containerRef.titleWidth+containerRef.fitTextPadding);
-            };
 
             this.setSize = function () {
                 var mtxX        = this.containerNodes.getMtxSize().x,
@@ -559,6 +554,57 @@ define(
                 this.containerName.toFront();
                 this.rect.toFront();
                 this.containerNodes.toFront();
+            };
+
+            this.moveInit = function() {
+                var i, ii, j, jj;
+                var mtxX        = this.containerNodes.getMtxSize().x,
+                    mtxY        = this.containerNodes.getMtxSize().y;
+
+                this.r.containersOnMovePush(this);
+                this.r.moveSetPush(this.containerName);
+                this.r.moveSetPush(this.rect);
+
+                for (i = 0, ii = mtxX; i < ii; i++)
+                    for (j = 0, jj = mtxY; j < jj; j++)
+                        this.containerNodes.getNodeFromMtx(i, j).moveInit();
+
+                this.extrx = this.rect.attr("x");
+                this.extry = this.rect.attr("y");
+                this.extt0x = this.containerName.attr("x");
+                this.extt0y = this.containerName.attr("y");
+
+                if (!this.menuHided) {
+                    this.menu.toBack();
+                    this.menuSet.toBack();
+                    this.menu.hide();
+                    this.menuSet.hide();
+                    this.menuHided=true;
+                    if (this.r.getDisplayMainMenu())
+                        this.r.setDisplayMainMenu(false);
+                }
+
+                this.isMoving = true;
+                this.rect.animate({"fill-opacity": this.oSelected}, 500);
+            };
+
+            this.moveAction = function(dx, dy) {
+                this.mvx = dx; this.mvy = dy;
+                this.containerHat_.move(this.r, this.extrx + (this.rectWidth/2) + dx, this.extry + dy);
+            };
+
+            this.moveUp = function() {
+                var attrect  = {x: this.extrx + this.mvx, y: this.extry + this.mvy},
+                    attrtxt0 = {x: this.extt0x + this.mvx, y: this.extt0y + this.mvy};
+
+                this.mvx=0; this.mvy=0;
+                this.rect.attr(attrect);
+                this.containerName.attr(attrtxt0);
+
+                this.setTopLeftCoord(this.rect.attr("x"),this.rect.attr("y"));
+                this.rect.animate({"fill-opacity": this.oUnselected}, 500);
+                this.toFront();
+                this.isMoving = false;
             };
 
             this.name  = this.name.split("://")[1].split(":")[0];

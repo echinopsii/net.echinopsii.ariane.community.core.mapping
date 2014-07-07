@@ -71,7 +71,7 @@ define({
     lan_strokeWidthShow : 1,
 
     container_menuFillColor   : "#000",
-    container_menuOpacity     : 0.5,
+    container_menuOpacity     : 0.7,
     container_menuStrokeWidth : 1,
     container_menuMainTitle   : {'font-size': '12px', 'font-family': 'Arial', 'font-weight': 'bold', 'cursor': 'default', fill: "#fff"},
     container_menuFields      : {'font-size': '10px', 'font-family': 'Arial', 'font-weight': 'normal', 'cursor': 'default', fill: "#fff"},
@@ -87,7 +87,7 @@ define({
     containerHat_txtFont      : {'font-size': '11px', 'font-family': 'Arial', 'font-weight': 'bold'},
 
     node_menuFillColor   : "#000",
-    node_menuOpacity     : 0.5,
+    node_menuOpacity     : 0.7,
     node_menuStrokeWidth : 1,
     node_menuMainTitle   : {'font-size': '12px', 'font-family': 'Arial', 'font-weight': 'bold', 'cursor': 'default', fill: "#fff"},
     node_menuFields      : {'font-size': '10px', 'font-family': 'Arial', 'font-weight': 'normal', 'cursor': 'default', fill: "#fff"},
@@ -103,7 +103,7 @@ define({
     node_txtDesc     : {'font-size': '12px', 'font-family': 'Arial', fill: '#000'},
 
     endpoint_menuFillColor   : "#000",
-    endpoint_menuOpacity     : 0.5,
+    endpoint_menuOpacity     : 0.7,
     endpoint_menuStrokeWidth : 1,
     endpoint_menuMainTitle   : {'font-size': '12px', 'font-family': 'Arial', 'font-weight': 'bold', 'cursor': 'default', fill: "#fff"},
     endpoint_menuFields      : {'font-size': '10px', 'font-family': 'Arial', 'font-weight': 'normal', 'cursor': 'default', fill: "#fff"},

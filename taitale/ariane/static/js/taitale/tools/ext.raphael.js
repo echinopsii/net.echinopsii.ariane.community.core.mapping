@@ -419,6 +419,24 @@ define(
 
         var moveSet = null;
 
+        Raphael.fn.moveSetPush = function(object) {
+            if (moveSet == null)
+                moveSet = this.set();
+            moveSet.push(object);
+        };
+
+        Raphael.fn.containersOnMovePush = function(object) {
+            if (containersOnMove == null)
+                containersOnMove = [];
+            containersOnMove.push(object);
+        };
+
+        Raphael.fn.nodesOnMovePush = function(object) {
+            if (nodesOnMove == null)
+                nodesOnMove = [];
+            nodesOnMove.push(object);
+        };
+
         Raphael.fn.drag = function(object, type) {
             var i, ii, j, jj, area;
             var mtxX, mtxY, mtxS;
@@ -530,74 +548,8 @@ define(
 
 
                 case "node":
-                    if (nodesOnMove == null)
-                        nodesOnMove = [];
-                    if (moveSet == null)
-                        moveSet = this.set();
-
-                    nodesOnMove.push(object);
-                    for (i = 0, ii = object.nodeEndpoints.length; i < ii; i++)
-                        object.nodeEndpoints[i].r.drag(object.nodeEndpoints[i],"endpoint");
-                    moveSet.push(object.nodeName);
-                    moveSet.push(object.rect);
-
-                    object.extrx  = object.rect.attr("x");
-                    object.extry  = object.rect.attr("y");
-                    object.extt0x = object.nodeName.attr("x");
-                    object.extt0y = object.nodeName.attr("y");
-
-                    if (!object.menuHided) {
-                        object.menu.toBack();
-                        object.menuSet.toBack();
-                        object.menu.hide();
-                        object.menuSet.hide();
-                        object.menuHided=true;
-                        if (object.r.getDisplayMainMenu())
-                            object.r.setDisplayMainMenu(false);
-                    }
-
-                    object.isMoving = true;
-
-                    object.rect.animate({"fill-opacity": object.oSelected}, 500);
-
-                    break;
-
-
                 case "container":
-                    if (containersOnMove == null)
-                        containersOnMove = [];
-                    if (moveSet == null)
-                        moveSet = this.set();
-
-                    containersOnMove.push(object);
-                    mtxX        = object.containerNodes.getMtxSize().x;
-                    mtxY        = object.containerNodes.getMtxSize().y;
-                    for (i = 0, ii = mtxX; i < ii; i++)
-                        for (j = 0, jj = mtxY; j < jj; j++) {
-                            var node = object.containerNodes.getNodeFromMtx(i, j);
-                            node.r.drag(node,"node");
-                        }
-                    moveSet.push(object.containerName);
-                    moveSet.push(object.rect);
-
-                    object.extrx = object.rect.attr("x");
-                    object.extry = object.rect.attr("y");
-                    object.extt0x = object.containerName.attr("x");
-                    object.extt0y = object.containerName.attr("y");
-
-                    if (!object.menuHided) {
-                        object.menu.toBack();
-                        object.menuSet.toBack();
-                        object.menu.hide();
-                        object.menuSet.hide();
-                        object.menuHided=true;
-                        if (object.r.getDisplayMainMenu())
-                            object.r.setDisplayMainMenu(false);
-                    }
-
-                    object.isMoving = true;
-                    object.rect.animate({"fill-opacity": object.oSelected}, 500);
-
+                    object.moveInit();
                     break;
 
                 case "bus":
@@ -629,6 +581,16 @@ define(
                     object.extoy5 = object.bindingPt5.attr("cy");
                     object.extox6 = object.bindingPt6.attr("cx");
                     object.extoy6 = object.bindingPt6.attr("cy");
+
+                    if (!object.root.menuHided) {
+                        object.root.menu.toBack();
+                        object.root.menuSet.toBack();
+                        object.root.menu.hide();
+                        object.root.menuSet.hide();
+                        object.root.  menuHided=true;
+                        if (object.r.getDisplayMainMenu())
+                            object.r.setDisplayMainMenu(false);
+                    }
 
                     object.isMoving=true;
                     object.root.isMoving=true;
@@ -827,19 +789,12 @@ define(
                     }
                 }
             }
-            if (containersOnMove!=null) {
-                for (j = 0, jj = containersOnMove.length; j < jj; j++) {
-                    var container = containersOnMove[j];
-                    container.mvx = dx; container.mvy = dy;
-                    container.containerHat_.move(this, container.extrx + (container.rectWidth/2) + dx, container.extry + dy);
-                }
-            }
-            if (nodesOnMove!=null) {
-                for (j = 0, jj = nodesOnMove.length; j < jj; j++) {
-                    var node = nodesOnMove[j];
-                    node.mvx = dx; node.mvy = dy;
-                }
-            }
+            if (containersOnMove!=null)
+                for (j = 0, jj = containersOnMove.length; j < jj; j++)
+                    containersOnMove[j].moveAction(dx,dy);
+            if (nodesOnMove!=null)
+                for (j = 0, jj = nodesOnMove.length; j < jj; j++)
+                    nodesOnMove[j].moveAction(dx,dy);
             if (endpointsOnMove!=null) {
                 for (j = 0, jj = endpointsOnMove.length; j < jj; j++) {
                     var endpoint = endpointsOnMove[j];
@@ -1034,36 +989,13 @@ define(
                 bussOnMove = null;
             }
             if (containersOnMove!=null) {
-                for (i = 0, ii = containersOnMove.length; i < ii; i++) {
-                    var container = containersOnMove[i];
-                    attrect  = {x: container.extrx + container.mvx, y: container.extry + container.mvy};
-                    attrtxt0 = {x: container.extt0x + container.mvx, y: container.extt0y + container.mvy};
-
-                    container.mvx=0; container.mvy=0;
-                    container.rect.attr(attrect);
-                    container.containerName.attr(attrtxt0);
-
-                    container.setTopLeftCoord(container.rect.attr("x"),container.rect.attr("y"));
-                    container.rect.animate({"fill-opacity": container.oUnselected}, 500);
-                    container.toFront();
-                    container.isMoving = false;
-                }
+                for (i = 0, ii = containersOnMove.length; i < ii; i++)
+                    containersOnMove[i].moveUp();
                 containersOnMove = null;
             }
             if (nodesOnMove!=null) {
-                for (i = 0, ii = nodesOnMove.length; i < ii; i++) {
-                    var node = nodesOnMove[i];
-                    attrect  = {x: node.extrx + node.mvx, y: node.extry + node.mvy};
-                    attrtxt0 = {x: node.extt0x + node.mvx, y: node.extt0y + node.mvy};
-
-                    node.mvx=0; node.mvy=0;
-                    node.rect.attr(attrect);
-                    node.nodeName.attr(attrtxt0);
-
-                    node.setPoz(node.nodeName.attr("x")-(node.rectWidth/2), node.nodeName.attr("y")-(node.titleHeight/2));
-                    node.rect.animate({"fill-opacity": node.oUnselected}, 500);
-                    node.isMoving = false;
-                }
+                for (i = 0, ii = nodesOnMove.length; i < ii; i++)
+                    nodesOnMove[i].moveUp();
                 nodesOnMove = null;
             }
             if (endpointsOnMove!=null) {

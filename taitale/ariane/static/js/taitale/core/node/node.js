@@ -225,35 +225,66 @@ define(
 
                 nodeRef.rectMiddleX = nodeRef.rectTopMiddleX;
                 nodeRef.rectMiddleY = nodeRef.rectMiddleLeftY;
+            },
+            defineEndpointsPoz = function(endpoint) {
+                nodeRef.nodeEpAvgLinksT.push(endpoint);
+                nodeRef.nodeEpAvgLinksT.sort(function(a,b){
+                    var at = a.getLinkAvgPoz().t,
+                        bt = b.getLinkAvgPoz().t;
+                    return at-bt;
+                });
+
+                for (var i = 0, ii = nodeRef.nodeEpAvgLinksT.length; i < ii; i++) {
+                    var epX=0,epY=0;
+                    //helper_.debug("EP : " + nodeRef.nodeEpAvgLinksT[i].toString());
+                    var avgTeta = nodeRef.nodeEpAvgLinksT[i].getLinkAvgPoz().t;
+
+                    if (avgTeta >= 0 && avgTeta <(Math.PI/4)) {
+                        epX = nodeRef.rectTopRightX;
+                        epY = nodeRef.rectMiddleY - ((epX-nodeRef.rectMiddleX)/Math.cos(avgTeta))*Math.sqrt(1-Math.cos(avgTeta)*Math.cos(avgTeta));
+                        //helper_.debug(epX+","+epY+","+avgTeta);
+
+                    } else if (avgTeta >= (Math.PI/4) && avgTeta < (Math.PI/2)) {
+                        epY = nodeRef.rectTopRightY;
+                        epX = nodeRef.rectMiddleX + ((epY-nodeRef.rectMiddleY)/Math.sin(avgTeta))*Math.sqrt(1-Math.sin(avgTeta)*Math.sin(avgTeta));
+                        //helper_.debug(epX+","+epY+","+avgTeta);
+
+                    } else if (avgTeta >= (Math.PI/2) && avgTeta < (3*Math.PI/4)) {
+                        epY = nodeRef.rectTopRightY;
+                        epX = nodeRef.rectMiddleX - ((epY-nodeRef.rectMiddleY)/Math.sin(avgTeta))*Math.sqrt(1-Math.sin(avgTeta)*Math.sin(avgTeta));
+                        //helper_.debug(epX+","+epY+","+avgTeta);
+
+                    } else if (avgTeta >= (3*Math.PI/4) && avgTeta < (Math.PI)) {
+                        epX = nodeRef.rectBottomLeftX;
+                        epY = nodeRef.rectMiddleY - ((epX-nodeRef.rectMiddleX)/Math.cos(avgTeta))*Math.sqrt(1-Math.cos(avgTeta)*Math.cos(avgTeta));
+                        //helper_.debug(epX+","+epY+","+avgTeta);
+
+                    } else if (avgTeta >= (Math.PI) && avgTeta < (5*Math.PI/4)) {
+                        epX = nodeRef.rectBottomLeftX;
+                        epY = nodeRef.rectMiddleY + ((epX-nodeRef.rectMiddleX)/Math.cos(avgTeta))*Math.sqrt(1-Math.cos(avgTeta)*Math.cos(avgTeta));
+                        //helper_.debug(epX+","+epY+","+avgTeta);
+
+                    } else if (avgTeta >= (5*Math.PI/4) && avgTeta < (3*Math.PI/2)) {
+                        epY = nodeRef.rectBottomLeftY;
+                        epX = nodeRef.rectMiddleX - ((epY-nodeRef.rectMiddleY)/Math.sin(avgTeta))*Math.sqrt(1-Math.sin(avgTeta)*Math.sin(avgTeta));
+                        //helper_.debug(epX+","+epY+","+avgTeta);
+
+                    } else if (avgTeta >= (3*Math.PI/2) && avgTeta < (7*Math.PI/4)) {
+                        epY = nodeRef.rectBottomLeftY;
+                        epX = nodeRef.rectMiddleX + ((epY-nodeRef.rectMiddleY)/Math.sin(avgTeta))*Math.sqrt(1-Math.sin(avgTeta)*Math.sin(avgTeta));
+                        //helper_.debug(epX+","+epY+","+avgTeta);
+
+                    } else if (avgTeta >= (7*Math.PI/4) && avgTeta <= (2*Math.PI)) {
+                        epX = nodeRef.rectBottomRightX;
+                        epY = nodeRef.rectMiddleY + ((epX-nodeRef.rectMiddleX)/Math.cos(avgTeta))*Math.sqrt(1-Math.cos(avgTeta)*Math.cos(avgTeta));
+                        //helper_.debug(epX+","+epY+","+avgTeta);
+
+                    }
+                    nodeRef.nodeEpAvgLinksT[i].setPoz(epX,epY);
+                }
             };
 
-            var nMove = function (dx, dy) {
-                    var rx = nodeRef.extrx,
-                        ry = nodeRef.extry;
-
-                    if (nodeRef.nodeContainer!=null && !nodeRef.nodeContainer.isMoving) {
-                        var minX = nodeRef.nodeContainer.getRectCornerPoints().topLeftX,
-                            minY = nodeRef.nodeContainer.getRectCornerPoints().topLeftY +
-                                   nodeRef.nodeContainer.name.height(params.container_txtTitle["font-size"]) +
-                                   nodeRef.nodeContainer.containerHat_.height + params.container_interSpan,
-                            maxX = nodeRef.nodeContainer.getRectCornerPoints().bottomRightX - nodeRef.rectWidth,
-                            maxY = nodeRef.nodeContainer.getRectCornerPoints().bottomRightY - nodeRef.rectHeight;
-
-                        if (minX > rx + dx)
-                            dx = minX - rx;
-                        if (minY > ry + dy)
-                            dy = minY - ry;
-                        if (maxX < rx + dx)
-                            dx = maxX - rx;
-                        if (maxY < ry + dy)
-                            dy = maxY - ry;
-                    }
-
-                    nodeRef.mvx=dx; nodeRef.mvy=dy;
-                    nodeRef.r.move(nodeRef.mvx, nodeRef.mvy);
-                    nodeRef.r.safari();
-                },
-                mouseDown = function(e){
+            var mouseDown = function(e){
                     if (e.which == 3) {
                         if (nodeRef.menuHided) {
                             nodeRef.menuSet = nodeRef.nodeMenuSet;
@@ -345,74 +376,40 @@ define(
 
             var nodeDragger = function () {
                     if (!nodeRef.rightClick)
-                        nodeRef.r.drag(nodeRef,"node");
+                        nodeRef.moveInit();
                 },
                 nodeMove = function (dx, dy) {
-                    if (!nodeRef.rightClick)
-                        nMove(dx,dy);
+                    if (!nodeRef.rightClick) {
+                        var rx = nodeRef.extrx,
+                            ry = nodeRef.extry;
+
+                        if (nodeRef.nodeContainer!=null && !nodeRef.nodeContainer.isMoving) {
+                            var minX = nodeRef.nodeContainer.getRectCornerPoints().topLeftX,
+                                minY = nodeRef.nodeContainer.getRectCornerPoints().topLeftY +
+                                    nodeRef.nodeContainer.name.height(params.container_txtTitle["font-size"]) +
+                                    nodeRef.nodeContainer.containerHat_.height + params.container_interSpan,
+                                maxX = nodeRef.nodeContainer.getRectCornerPoints().bottomRightX - nodeRef.rectWidth,
+                                maxY = nodeRef.nodeContainer.getRectCornerPoints().bottomRightY - nodeRef.rectHeight;
+
+                            if (minX > rx + dx)
+                                dx = minX - rx;
+                            if (minY > ry + dy)
+                                dy = minY - ry;
+                            if (maxX < rx + dx)
+                                dx = maxX - rx;
+                            if (maxY < ry + dy)
+                                dy = maxY - ry;
+                        }
+
+                        nodeRef.mvx=dx; nodeRef.mvy=dy;
+                        nodeRef.r.move(nodeRef.mvx, nodeRef.mvy);
+                        nodeRef.r.safari();
+                    }
                 },
                 nodeUP = function () {
                     if (!nodeRef.rightClick)
                         nodeRef.r.up()
                 };
-
-            var defineEndpointsPoz = function(endpoint) {
-                nodeRef.nodeEpAvgLinksT.push(endpoint);
-                nodeRef.nodeEpAvgLinksT.sort(function(a,b){
-                    var at = a.getLinkAvgPoz().t,
-                        bt = b.getLinkAvgPoz().t;
-                    return at-bt;
-                });
-
-                for (var i = 0, ii = nodeRef.nodeEpAvgLinksT.length; i < ii; i++) {
-                    var epX=0,epY=0;
-                    //helper_.debug("EP : " + nodeRef.nodeEpAvgLinksT[i].toString());
-                    var avgTeta = nodeRef.nodeEpAvgLinksT[i].getLinkAvgPoz().t;
-
-                    if (avgTeta >= 0 && avgTeta <(Math.PI/4)) {
-                        epX = nodeRef.rectTopRightX;
-                        epY = nodeRef.rectMiddleY - ((epX-nodeRef.rectMiddleX)/Math.cos(avgTeta))*Math.sqrt(1-Math.cos(avgTeta)*Math.cos(avgTeta));
-                        //helper_.debug(epX+","+epY+","+avgTeta);
-
-                    } else if (avgTeta >= (Math.PI/4) && avgTeta < (Math.PI/2)) {
-                        epY = nodeRef.rectTopRightY;
-                        epX = nodeRef.rectMiddleX + ((epY-nodeRef.rectMiddleY)/Math.sin(avgTeta))*Math.sqrt(1-Math.sin(avgTeta)*Math.sin(avgTeta));
-                        //helper_.debug(epX+","+epY+","+avgTeta);
-
-                    } else if (avgTeta >= (Math.PI/2) && avgTeta < (3*Math.PI/4)) {
-                        epY = nodeRef.rectTopRightY;
-                        epX = nodeRef.rectMiddleX - ((epY-nodeRef.rectMiddleY)/Math.sin(avgTeta))*Math.sqrt(1-Math.sin(avgTeta)*Math.sin(avgTeta));
-                        //helper_.debug(epX+","+epY+","+avgTeta);
-
-                    } else if (avgTeta >= (3*Math.PI/4) && avgTeta < (Math.PI)) {
-                        epX = nodeRef.rectBottomLeftX;
-                        epY = nodeRef.rectMiddleY - ((epX-nodeRef.rectMiddleX)/Math.cos(avgTeta))*Math.sqrt(1-Math.cos(avgTeta)*Math.cos(avgTeta));
-                        //helper_.debug(epX+","+epY+","+avgTeta);
-
-                    } else if (avgTeta >= (Math.PI) && avgTeta < (5*Math.PI/4)) {
-                        epX = nodeRef.rectBottomLeftX;
-                        epY = nodeRef.rectMiddleY + ((epX-nodeRef.rectMiddleX)/Math.cos(avgTeta))*Math.sqrt(1-Math.cos(avgTeta)*Math.cos(avgTeta));
-                        //helper_.debug(epX+","+epY+","+avgTeta);
-
-                    } else if (avgTeta >= (5*Math.PI/4) && avgTeta < (3*Math.PI/2)) {
-                        epY = nodeRef.rectBottomLeftY;
-                        epX = nodeRef.rectMiddleX - ((epY-nodeRef.rectMiddleY)/Math.sin(avgTeta))*Math.sqrt(1-Math.sin(avgTeta)*Math.sin(avgTeta));
-                        //helper_.debug(epX+","+epY+","+avgTeta);
-
-                    } else if (avgTeta >= (3*Math.PI/2) && avgTeta < (7*Math.PI/4)) {
-                        epY = nodeRef.rectBottomLeftY;
-                        epX = nodeRef.rectMiddleX + ((epY-nodeRef.rectMiddleY)/Math.sin(avgTeta))*Math.sqrt(1-Math.sin(avgTeta)*Math.sin(avgTeta));
-                        //helper_.debug(epX+","+epY+","+avgTeta);
-
-                    } else if (avgTeta >= (7*Math.PI/4) && avgTeta <= (2*Math.PI)) {
-                        epX = nodeRef.rectBottomRightX;
-                        epY = nodeRef.rectMiddleY + ((epX-nodeRef.rectMiddleX)/Math.cos(avgTeta))*Math.sqrt(1-Math.cos(avgTeta)*Math.cos(avgTeta));
-                        //helper_.debug(epX+","+epY+","+avgTeta);
-
-                    }
-                    nodeRef.nodeEpAvgLinksT[i].setPoz(epX,epY);
-                }
-            };
 
             this.toString = function() {
                 return "{\n Node " + this.name + " : ("+nodeRef.rectTopLeftX+","+nodeRef.rectTopLeftY+")\n}";
@@ -552,6 +549,53 @@ define(
                 this.nodeName.toFront();
                 for (var i = 0, ii = this.nodeEndpoints.length; i < ii; i++)
                     this.nodeEndpoints[i].toFront();
+            };
+
+            this.moveInit = function() {
+                var i, ii;
+
+                this.r.nodesOnMovePush(this);
+                this.r.moveSetPush(this.rect);
+                this.r.moveSetPush(this.nodeName);
+
+                for (i = 0, ii = this.nodeEndpoints.length; i < ii; i++)
+                    this.nodeEndpoints[i].r.drag(this.nodeEndpoints[i],"endpoint");
+
+                this.extrx  = this.rect.attr("x");
+                this.extry  = this.rect.attr("y");
+                this.extt0x = this.nodeName.attr("x");
+                this.extt0y = this.nodeName.attr("y");
+
+                if (!this.menuHided) {
+                    this.menu.toBack();
+                    this.menuSet.toBack();
+                    this.menu.hide();
+                    this.menuSet.hide();
+                    this.menuHided=true;
+                    if (this.r.getDisplayMainMenu())
+                        this.r.setDisplayMainMenu(false);
+                }
+
+                this.isMoving = true;
+
+                this.rect.animate({"fill-opacity": this.oSelected}, 500);
+            };
+
+            this.moveAction = function(dx,dy) {
+                this.mvx = dx; this.mvy = dy;
+            };
+
+            this.moveUp = function() {
+                var attrect  = {x: this.extrx + this.mvx, y: this.extry + this.mvy},
+                    attrtxt0 = {x: this.extt0x + this.mvx, y: this.extt0y + this.mvy};
+
+                this.mvx=0; this.mvy=0;
+                this.rect.attr(attrect);
+                this.nodeName.attr(attrtxt0);
+
+                this.setPoz(this.nodeName.attr("x")-(this.rectWidth/2), this.nodeName.attr("y")-(this.titleHeight/2));
+                this.rect.animate({"fill-opacity": this.oUnselected}, 500);
+                this.isMoving = false;
             };
         }
 

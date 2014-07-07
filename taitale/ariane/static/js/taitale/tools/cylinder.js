@@ -80,7 +80,7 @@ define(
 
             this.root          = parent;
             this.root.isMoving = false;
-            this.isMoving = false;
+            this.isMoving      = false;
 
             this.mvx = 0;
             this.mvy = 0;
@@ -88,30 +88,104 @@ define(
             this.lmvx = 0;
             this.lvmy = 0;
 
-            this.isJailed  = false;
+            this.isJailed = false;
 
             var cylinderRef = this;
 
             var cyDragger = function() {
-                    cylinderRef.r.drag(cylinderRef, "bus");
+                    if (!cylinderRef.root.rightClick)
+                        cylinderRef.r.drag(cylinderRef, "bus");
                 },
                 cyMove = function(dx,dy) {
-                    if (cylinderRef.isJailed) {
-                        if (cylinderRef.extox1+dx<cylinderRef.boundary.minX)
-                            dx=cylinderRef.boundary.minX-cylinderRef.extox1;
-                        else if (cylinderRef.extox3+dx>cylinderRef.boundary.maxX)
-                            dx=cylinderRef.boundary.maxX-cylinderRef.extox3;
-                        if (cylinderRef.extoy1+dy>cylinderRef.boundary.maxY)
-                            dy=cylinderRef.boundary.maxY-cylinderRef.extoy1;
-                        else if (cylinderRef.extoy3+dy<cylinderRef.boundary.minY)
-                            dy=cylinderRef.boundary.minY-cylinderRef.extoy3;
+                    if (!cylinderRef.root.rightClick) {
+                        if (cylinderRef.isJailed) {
+                            if (cylinderRef.extox1+dx<cylinderRef.boundary.minX)
+                                dx=cylinderRef.boundary.minX-cylinderRef.extox1;
+                            else if (cylinderRef.extox3+dx>cylinderRef.boundary.maxX)
+                                dx=cylinderRef.boundary.maxX-cylinderRef.extox3;
+                            if (cylinderRef.extoy1+dy>cylinderRef.boundary.maxY)
+                                dy=cylinderRef.boundary.maxY-cylinderRef.extoy1;
+                            else if (cylinderRef.extoy3+dy<cylinderRef.boundary.minY)
+                                dy=cylinderRef.boundary.minY-cylinderRef.extoy3;
+                        }
+                        cylinderRef.r.move(dx,dy);
                     }
-
-                    cylinderRef.r.move(dx,dy);
                 },
-                cyUP   = function() {
-                    cylinderRef.r.up();
+                cyUP = function(e) {
+                    if (!cylinderRef.root.rightClick)
+                        cylinderRef.r.up();
+                },
+                mouseDown = function(e) {
+                    if (e.which == 3) {
+                        if (cylinderRef.root.menuHided) {
+                            cylinderRef.root.menuSet.mousedown(menuMouseDown);
+                            var fieldRect, fieldRectWidth, fieldRectHeight;
+                            for (var i = 0, ii = cylinderRef.root.menuSet.length ; i < ii ; i++) {
+                                if (i==0)
+                                    cylinderRef.root.menuSet[i].attr({"x": cylinderRef.bindingPt6X, "y": cylinderRef.bindingPt6Y +10, fill: "#fff"});
+                                else if (i==1) {
+                                    fieldRect = cylinderRef.root.menuSet[i];
+                                    fieldRectWidth = fieldRect.attr("width");
+                                    fieldRectHeight = fieldRect.attr("height");
+                                    fieldRect.attr({"x": cylinderRef.bindingPt6X - fieldRectWidth/2, "y": cylinderRef.bindingPt6Y+30 - fieldRectHeight/2});
+                                    cylinderRef.root.menuSet[i+1].attr({"x": cylinderRef.bindingPt6X, "y": cylinderRef.bindingPt6Y+30});
+                                    i++;
+                                }
+                                else {
+                                    fieldRect = cylinderRef.root.menuSet[i];
+                                    fieldRectWidth = fieldRect.attr("width");
+                                    fieldRectHeight = fieldRect.attr("height");
+                                    fieldRect.attr({"x": cylinderRef.bindingPt6X, "y": cylinderRef.bindingPt6Y+30+(i-1)*15});
+                                    cylinderRef.root.menuSet[i+1].attr({"x": cylinderRef.bindingPt6X, "y": cylinderRef.bindingPt6Y+30+(i-1)*15});
+                                    i++;
+                                }
+                            }
+                            if (cylinderRef.root.menu != null)
+                                cylinderRef.root.menu.remove();
+                            cylinderRef.root.menu = cylinderRef.root.r.menu(cylinderRef.bindingPt6X,cylinderRef.bindingPt6Y+10,cylinderRef.root.menuSet).
+                                attr({fill: cylinderRef.root.menuFillColor, stroke: cylinderRef.root.color, "stroke-width": cylinderRef.root.menuStrokeWidth,
+                                    "fill-opacity": cylinderRef.root.menuOpacity});
+                            cylinderRef.root.menu.mousedown(menuMouseDown);
+                            cylinderRef.root.menu.toFront();
+                            cylinderRef.root.menuSet.toFront();
+                            cylinderRef.root.menuSet.show();
+                            cylinderRef.root.menuHided=false;
+                        } else {
+                            cylinderRef.root.menu.toBack();
+                            cylinderRef.root.menuSet.toBack();
+                            cylinderRef.root.menu.hide();
+                            cylinderRef.root.menuSet.hide();
+                            cylinderRef.root.menuHided=true;
+                        }
+                        cylinderRef.root.rightClick=true;
+                        if (cylinderRef.root.r.getDisplayMainMenu())
+                            cylinderRef.root.r.setDisplayMainMenu(false);
+                    } else if (e.which == 1) {
+                        cylinderRef.root.rightClick=false;
+                    }
+                },
+                menuMouseDown = function(e) {
+                    if (e.which == 3) {
+                        cylinderRef.root.menu.toBack();
+                        cylinderRef.root.menuSet.toBack();
+                        cylinderRef.root.menu.hide();
+                        cylinderRef.root.menuSet.hide();
+                        cylinderRef.root.menuHided=true;
+                        cylinderRef.root.rightClick=true;
+                    } else if (e.which == 1) {
+                        cylinderRef.root.rightClick=false;
+                    }
                 };
+
+            this.menuFieldOver = function() {
+                this.attr(cylinderRef.root.menuFieldTXTOver);
+            };
+            this.menuFieldOut = function() {
+                this.attr(cylinderRef.root.menuFieldTXT);
+            };
+            this.menuFieldEditClick = function() {
+                cylinderRef.helper_.debug("fieldEditClick");
+            };
 
             this.pushBindedLink = function(link) {
                 cylinderRef.bindedLinks.push(link);
@@ -164,7 +238,7 @@ define(
             this.print = function(r_) {
                 if (this.r == null || (this.r != null && r_!=this.r)) {
                     this.r = r_;
-                    var fillColor   = "#"+this.color,
+                    var fillColor   = "#" + this.color,
                         strokeColor = "#" + delHexColor("fff000", this.color);
                     this.cylinder  = this.r.path(this.vcpath).attr(
                         {
@@ -183,11 +257,11 @@ define(
                     this.bindingPt6 = this.r.circle(this.bindingPt6X,this.bindingPt6Y,0);
                     this.cylinderR  = this.r.set().push(this.titleTxt).push(this.cylinder).push(this.bindingPt1).push(this.bindingPt2).
                         push(this.bindingPt3).push(this.bindingPt4).push(this.bindingPt5).push(this.bindingPt6);
+                    this.cylinderR.mousedown(mouseDown);
                     this.cylinderR.drag(cyMove, cyDragger, cyUP);
                 }
             };
         }
-
 
         return cylinder;
     });
