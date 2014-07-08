@@ -86,7 +86,7 @@ define(
             this.mvy = 0;
 
             this.lmvx = 0;
-            this.lvmy = 0;
+            this.lmvy = 0;
 
             this.isJailed = false;
 
@@ -94,7 +94,7 @@ define(
 
             var cyDragger = function() {
                     if (!cylinderRef.root.rightClick)
-                        cylinderRef.r.drag(cylinderRef, "bus");
+                        cylinderRef.moveInit();
                 },
                 cyMove = function(dx,dy) {
                     if (!cylinderRef.root.rightClick) {
@@ -111,11 +111,12 @@ define(
                         cylinderRef.r.move(dx,dy);
                     }
                 },
-                cyUP = function(e) {
+                cyUP = function() {
                     if (!cylinderRef.root.rightClick)
                         cylinderRef.r.up();
-                },
-                mouseDown = function(e) {
+                };
+
+             var mouseDown = function(e) {
                     if (e.which == 3) {
                         if (cylinderRef.root.menuHided) {
                             cylinderRef.root.menuSet.mousedown(menuMouseDown);
@@ -260,6 +261,89 @@ define(
                     this.cylinderR.mousedown(mouseDown);
                     this.cylinderR.drag(cyMove, cyDragger, cyUP);
                 }
+            };
+
+            this.moveInit = function() {
+                var i;
+                this.r.busOnMovePush(this);
+                this.r.moveSetPush(this.bindingPt1);
+                this.r.moveSetPush(this.bindingPt2);
+                this.r.moveSetPush(this.bindingPt3);
+                this.r.moveSetPush(this.bindingPt4);
+                this.r.moveSetPush(this.bindingPt5);
+                this.r.moveSetPush(this.bindingPt6);
+
+                for (i = this.bindedLinks.length; i--;)
+                    this.bindedLinks[i].moveInit();
+
+                this.exttX  = this.cylinder.attr("transform").toString();
+                this.extox1 = this.bindingPt1.attr("cx");
+                this.extoy1 = this.bindingPt1.attr("cy");
+                this.extox2 = this.bindingPt2.attr("cx");
+                this.extoy2 = this.bindingPt2.attr("cy");
+                this.extox3 = this.bindingPt3.attr("cx");
+                this.extoy3 = this.bindingPt3.attr("cy");
+                this.extox4 = this.bindingPt4.attr("cx");
+                this.extoy4 = this.bindingPt4.attr("cy");
+                this.extox5 = this.bindingPt5.attr("cx");
+                this.extoy5 = this.bindingPt5.attr("cy");
+                this.extox6 = this.bindingPt6.attr("cx");
+                this.extoy6 = this.bindingPt6.attr("cy");
+
+                if (!this.root.menuHided) {
+                    this.root.menu.toBack();
+                    this.root.menuSet.toBack();
+                    this.root.menu.hide();
+                    this.root.menuSet.hide();
+                    this.root.  menuHided=true;
+                    if (this.r.getDisplayMainMenu())
+                        this.r.setDisplayMainMenu(false);
+                }
+
+                this.isMoving=true;
+                this.root.isMoving=true;
+            };
+            this.moveAction = function(dx,dy) {
+                var transform = "t" + dx + "," + dy, i, link, up;
+                this.lmvx = this.mvx; this.lmvy = this.mvy;
+                this.mvx = dx; this.mvy = dy;
+                if ((this.mvx!=this.lmvx) || (this.mvy!=this.lmvy)) {
+                    this.cylinder.transform(transform+this.translateForm);
+                    this.titleTxt.transform(transform+this.translateForm);
+
+                    for (i = this.bindedLinks.length; i--;) {
+                        link = this.bindedLinks[i];
+                        if (this.r.isLinkToUp(i)) {
+                            link.getEpSource().chooseMulticastTargetBindingPointAndCalcPoz(this.bindedLinks[i]);
+                            up = this.r.link(link.toCompute());
+                            if (typeof up != 'undefined')
+                                link.toUpdate(up);
+                        }
+                    }
+                }
+            };
+            this.moveUp = function() {
+                this.ctrX += this.mvx; this.ctrY+=this.mvy; this.x=this.ctrX - this.height/ 2; this.y=this.ctrY - this.diameter/ 2;
+                this.translateForm = this.exttX+"T"+this.mvx+","+this.mvy;
+                this.bindingPt1X = this.extox1+this.mvx; this.bindingPt1Y = this.extoy1+this.mvy;
+                this.bindingPt2X = this.extox2+this.mvx; this.bindingPt2Y = this.extoy2+this.mvy;
+                this.bindingPt3X = this.extox3+this.mvx; this.bindingPt3Y = this.extoy3+this.mvy;
+                this.bindingPt4X = this.extox4+this.mvx; this.bindingPt4Y = this.extoy4+this.mvy;
+                this.bindingPt5X = this.extox5+this.mvx; this.bindingPt5Y = this.extoy5+this.mvy;
+                this.bindingPt6X = this.extox6+this.mvx; this.bindingPt6Y = this.extoy6+this.mvy;
+
+                this.mvx=0; this.mvy=0;
+                this.cylinder.transform(this.translateForm);
+                this.titleTxt.transform(this.translateForm);
+                this.bindingPt1.attr({cx:this.bindingPt1X,cy:this.bindingPt1Y});
+                this.bindingPt2.attr({cx:this.bindingPt2X,cy:this.bindingPt2Y});
+                this.bindingPt3.attr({cx:this.bindingPt3X,cy:this.bindingPt3Y});
+                this.bindingPt4.attr({cx:this.bindingPt4X,cy:this.bindingPt4Y});
+                this.bindingPt5.attr({cx:this.bindingPt5X,cy:this.bindingPt5Y});
+                this.bindingPt6.attr({cx:this.bindingPt6X,cy:this.bindingPt6Y});
+
+                this.root.isMoving=false;
+                this.isMoving=false;
             };
         }
 

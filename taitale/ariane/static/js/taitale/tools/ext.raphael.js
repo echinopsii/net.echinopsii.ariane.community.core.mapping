@@ -413,16 +413,36 @@ define(
             areasOnMove      = null,
             dcsOnMove        = null;
 
-        var dragOnLan  = false,
-            dragOnArea = false,
-            dragOnDC   = false;
-
         var moveSet = null;
 
         Raphael.fn.moveSetPush = function(object) {
             if (moveSet == null)
                 moveSet = this.set();
             moveSet.push(object);
+        };
+
+        Raphael.fn.dcsOnMovePush = function(object) {
+            if (dcsOnMove == null)
+                dcsOnMove = [];
+            dcsOnMove.push(object);
+        };
+
+        Raphael.fn.areasOnMovePush = function(object) {
+            if (areasOnMove == null)
+                areasOnMove = [];
+            areasOnMove.push(object);
+        };
+
+        Raphael.fn.lansOnMovePush = function(object) {
+            if (lansOnMove == null)
+                lansOnMove = [];
+            lansOnMove.push(object);
+        };
+
+        Raphael.fn.busOnMovePush = function(object) {
+            if (bussOnMove == null)
+                bussOnMove = [];
+            bussOnMove.push(object);
         };
 
         Raphael.fn.containersOnMovePush = function(object) {
@@ -437,555 +457,149 @@ define(
             nodesOnMove.push(object);
         };
 
-        Raphael.fn.drag = function(object, type) {
-            var i, ii, j, jj, area;
-            var mtxX, mtxY, mtxS;
-            switch (type) {
-                case "link":
-                    if (linksToUp == null)
-                        linksToUp = [];
-                    if (linksOnMove == null)
-                        linksOnMove = [];
-                    if (moveSet == null)
-                        moveSet = this.set();
+        Raphael.fn.endpointsOnMovePush = function(object) {
+            if (endpointsOnMove == null)
+                endpointsOnMove = [];
+            endpointsOnMove.push(object);
+        };
 
-                    if (dragOnLan || dragOnArea || dragOnDC) {
-
-                        var sourceLan  = object.getEpSource().epNode.nodeContainer.localisation.lan,
-                            sourceArea = object.getEpSource().epNode.nodeContainer.localisation.marea,
-                            sourceDC   = object.getEpSource().epNode.nodeContainer.localisation.dcproto.dc;
-
-                        var targetLan, targetArea, targetDC;
-                        if (object.getEpTarget()!=null) {
-                            targetLan = object.getEpTarget().epNode.nodeContainer.localisation.lan;
-                            targetArea = object.getEpTarget().epNode.nodeContainer.localisation.marea;
-                            targetDC = object.getEpTarget().epNode.nodeContainer.localisation.dcproto.dc;
-                        } else {
-                            targetLan = null;
-                            targetArea = object.getMulticastBus().areaName;
-                            targetDC = object.getMulticastBus().dcName;
-                        }
-
-                        var isOnMove = false;
-
-                        if (dragOnDC) {
-                            for (i = 0, ii = dcsOnMove.length; i < ii; i++) {
-                                var dc = dcsOnMove[i];
-                                if (sourceDC === dc.dcName && targetDC === dc.dcName) {
-                                    linksOnMove.push(object);
-                                    moveSet.push(object.line);
-                                    isOnMove=true;
-                                }
-                            }
-                            if (!isOnMove)
-                                linksToUp.push(object);
-                        } else if (dragOnArea) {
-                            for (i = 0, ii = areasOnMove.length; i < ii; i++) {
-                                area = areasOnMove[i];
-                                if (sourceArea === area.areaName && targetArea === area.areaName) {
-                                    linksOnMove.push(object);
-                                    moveSet.push(object.line);
-                                    isOnMove=true;
-                                }
-                            }
-                            if (!isOnMove)
-                                linksToUp.push(object);
-                        } else if (dragOnLan) {
-                            for (i = 0, ii = lansOnMove.length; i < ii; i++) {
-                                var lan = lansOnMove[i];
-                                if (sourceLan === lan.lanName && targetLan === lan.lanName) {
-                                    moveSet.push(object.line);
-                                    linksOnMove.push(object);
-                                    isOnMove=true;
-                                }
-                            }
-                            if (!isOnMove)
-                                linksToUp.push(object);
-                        }
-                    } else {
-                        linksToUp.push(object);
+        Raphael.fn.isLinkToUp = function(link) {
+            var k, kk,  toUp;
+            if (linksToUp.length <= linksOnMove.length) {
+                toUp = false;
+                for (k = 0, kk = linksToUp.length; k < kk; k++)
+                    if (linksToUp[k].id === link.id) {
+                        toUp = true;
+                        break;
                     }
-
-                    break;
-
-                case "endpoint":
-                    if (endpointsOnMove == null)
-                        endpointsOnMove = [];
-                    if (moveSet == null)
-                        moveSet = this.set();
-
-                    endpointsOnMove.push(object);
-                    for (i = 0, ii = object.epLinks.length; i < ii; i++)
-                        object.r.drag(object.epLinks[i], "link");
-                    moveSet.push(object.circle);
-
-                    object.cx = object.circle.attr("cx");
-                    object.cy = object.circle.attr("cy");
-
-                    if (!object.menuHided) {
-                        object.menu.toBack();
-                        object.menuSet.toBack();
-                        object.menu.hide();
-                        object.menuSet.hide();
-                        object.menuHided=true;
-                        if (object.r.getDisplayMainMenu())
-                            object.r.setDisplayMainMenu(false);
+            } else {
+                toUp = true;
+                for (k = 0, kk = linksOnMove.length; k < kk; k++)
+                    if (linksOnMove[k].id === link.id) {
+                        toUp = false;
+                        break;
                     }
-                    if (object.labelHided==false) {
-                        object.label.hide();
-                        object.circle.attr("r",object.rUnselected);
-                        object.labelHided=true;
-                    }
-                    if (object.frameHided==false) {
-                        object.frame.hide();
-                        object.frameHided = true;
-                    }
-                    object.isMoving = true;
-
-                    object.circle.animate({"fill-opacity": object.oSelected}, 500);
-
-                    break;
-
-
-                case "node":
-                case "container":
-                    object.moveInit();
-                    break;
-
-                case "bus":
-                    if (bussOnMove == null)
-                        bussOnMove = [];
-                    if (moveSet == null)
-                        moveSet = this.set();
-
-                    bussOnMove.push(object);
-                    for (i = object.bindedLinks.length; i--;)
-                        object.r.drag(object.bindedLinks[i], "link");
-                    moveSet.push(object.bindingPt1);
-                    moveSet.push(object.bindingPt2);
-                    moveSet.push(object.bindingPt3);
-                    moveSet.push(object.bindingPt4);
-                    moveSet.push(object.bindingPt5);
-                    moveSet.push(object.bindingPt6);
-
-                    object.exttX  = object.cylinder.attr("transform").toString();
-                    object.extox1 = object.bindingPt1.attr("cx");
-                    object.extoy1 = object.bindingPt1.attr("cy");
-                    object.extox2 = object.bindingPt2.attr("cx");
-                    object.extoy2 = object.bindingPt2.attr("cy");
-                    object.extox3 = object.bindingPt3.attr("cx");
-                    object.extoy3 = object.bindingPt3.attr("cy");
-                    object.extox4 = object.bindingPt4.attr("cx");
-                    object.extoy4 = object.bindingPt4.attr("cy");
-                    object.extox5 = object.bindingPt5.attr("cx");
-                    object.extoy5 = object.bindingPt5.attr("cy");
-                    object.extox6 = object.bindingPt6.attr("cx");
-                    object.extoy6 = object.bindingPt6.attr("cy");
-
-                    if (!object.root.menuHided) {
-                        object.root.menu.toBack();
-                        object.root.menuSet.toBack();
-                        object.root.menu.hide();
-                        object.root.menuSet.hide();
-                        object.root.  menuHided=true;
-                        if (object.r.getDisplayMainMenu())
-                            object.r.setDisplayMainMenu(false);
-                    }
-
-                    object.isMoving=true;
-                    object.root.isMoving=true;
-
-                    break;
-
-                case "lan":
-                    if (!dragOnDC && !dragOnArea)
-                        dragOnLan = true;
-                    if (lansOnMove == null)
-                        lansOnMove = [];
-                    if (moveSet == null)
-                        moveSet = this.set();
-
-                    lansOnMove.push(object);
-                    mtxX = object.lanmatrix.getMtxSize().x;
-                    mtxY = object.lanmatrix.getMtxSize().y;
-                    for (i = 0, ii =  mtxX; i < ii; i++)
-                        for (j = 0, jj =  mtxY; j < jj; j++) {
-                            var container = object.lanmatrix.getContainerFromMtx(i, j);
-                            container.r.drag(container, "container");
-                        }
-                    moveSet.push(object.lanName);
-                    moveSet.push(object.rect);
-
-                    object.extrx  = object.rect.attr("x");
-                    object.extry  = object.rect.attr("y");
-                    object.extrw  = object.rect.attr("width");
-                    object.extrh  = object.rect.attr("height");
-                    object.extt0x = object.lanR[0].attr("x");
-                    object.extt0y = object.lanR[0].attr("y");
-                    object.minTopLeftX = object.minJailX;
-                    object.minTopLeftY = object.minJailY;
-                    object.maxTopLeftX = object.maxJailX - object.lanwidth;
-                    object.maxTopLeftY = object.maxJailY - object.lanheight;
-
-                    object.isMoving = true;
-
-                    if (dragOnLan)
-                        object.rect.animate({"fill-opacity": object.oSelected}, 500);
-
-                    break;
-
-                case "area":
-                    if (!dragOnDC)
-                        dragOnArea = true;
-
-                    if (areasOnMove == null)
-                        areasOnMove = [];
-                    if (moveSet == null)
-                        moveSet = this.set();
-
-                    areasOnMove.push(object);
-                    mtxX = object.armatrix.getMtxSize().x;
-                    mtxY = object.armatrix.getMtxSize().y;
-                    for (i = 0, ii =  mtxX; i < ii; i++)
-                        for (j = 0, jj =  mtxY; j < jj; j++) {
-                            var areaObj = object.armatrix.getObjFromMtx(i,j);
-                            var areaObjType = object.armatrix.getObjTypeFromMtx(i,j);
-                            if (areaObjType==="LAN") {
-                                areaObj.r.drag(areaObj,"lan");
-                            } else if (areaObjType==="BUS") {
-                                areaObj.r.drag(areaObj.mbus,"bus");
-                            }
-                        }
-                    moveSet.push(object.areaName);
-                    moveSet.push(object.rect);
-
-                    object.extrx  = object.rect.attr("x");
-                    object.extry  = object.rect.attr("y");
-                    object.extrw  = object.rect.attr("width");
-                    object.extrh  = object.rect.attr("height");
-                    object.extt0x = object.areaName.attr("x");
-                    object.extt0y = object.areaName.attr("y");
-                    object.minTopLeftX = object.minJailX;
-                    object.minTopLeftY = object.minJailY;
-                    object.maxTopLeftX = object.maxJailX - object.areawidth;
-                    object.maxTopLeftY = object.maxJailY - object.areaheight;
-
-                    object.isMoving = true;
-
-                    if (dragOnArea)
-                        object.rect.animate({"fill-opacity": object.oSelected}, 500);
-
-                    break;
-
-                case "dc":
-                    dragOnDC = true;
-
-                    if (dcsOnMove == null)
-                        dcsOnMove = [];
-                    if (moveSet == null)
-                        moveSet = this.set();
-
-                    dcsOnMove.push(object);
-
-                    mtxS = object.dcmatrix.getWanMtxSize();
-                    for (i = 0, ii =  mtxS; i < ii; i++) {
-                        area = object.dcmatrix.getAreaFromWanMtx(i);
-                        area.r.drag(area, "area");
-                    }
-                    mtxS = object.dcmatrix.getManMtxSize();
-                    for (i = 0, ii =  mtxS; i < ii; i++) {
-                        area = object.dcmatrix.getAreaFromManMtx(i);
-                        area.r.drag(area, "area");
-                    }
-                    mtxS = object.dcmatrix.getLanMtxSize();
-                    for (i = 0, ii =  mtxS; i < ii; i++) {
-                        area = object.dcmatrix.getAreaFromLanMtx(i);
-                        area.r.drag(area, "area");
-                    }
-                    moveSet.push(object.dcName);
-                    moveSet.push(object.dcTown);
-                    moveSet.push(object.rect);
-
-                    object.extrx = object.rect.attr("x");
-                    object.extry = object.rect.attr("y");
-                    object.extrw = object.rect.attr("width");
-                    object.extrh = object.rect.attr("height");
-                    object.extt0x = object.dcName.attr("x");
-                    object.extt0y = object.dcName.attr("y");
-                    object.extt1x = object.dcTown.attr("x");
-                    object.extt1y = object.dcTown.attr("y");
-
-                    object.isMoving = true;
-                    object.rect.animate({"fill-opacity": object.oSelected}, 500);
-                    object.dcsplitter.hide();
-
-                    break;
-
-                default:
-                    break;
             }
+            return toUp;
+        };
+
+        Raphael.fn.setLinkToUpOrMove = function(link) {
+            var isOnMove = false, i, ii, dc, area, lan;
+
+            if (linksToUp == null)
+                linksToUp = [];
+            if (linksOnMove == null)
+                linksOnMove = [];
+            if (moveSet == null)
+                moveSet = this.set();
+
+            var sourceLan  = link.getEpSource().epNode.nodeContainer.localisation.lan,
+                sourceArea = link.getEpSource().epNode.nodeContainer.localisation.marea,
+                sourceDC   = link.getEpSource().epNode.nodeContainer.localisation.dcproto.dc;
+
+            var targetLan, targetArea, targetDC;
+            if (link.getEpTarget()!=null) {
+                targetLan  = link.getEpTarget().epNode.nodeContainer.localisation.lan;
+                targetArea = link.getEpTarget().epNode.nodeContainer.localisation.marea;
+                targetDC   = link.getEpTarget().epNode.nodeContainer.localisation.dcproto.dc;
+            } else {
+                targetLan  = null;
+                targetArea = link.getMulticastBus().areaName;
+                targetDC   = link.getMulticastBus().dcName;
+            }
+
+            if (!isOnMove && dcsOnMove!=null) {
+                for (i = 0, ii = dcsOnMove.length; i < ii; i++) {
+                    dc = dcsOnMove[i];
+                    if (sourceDC === dc.dcName && targetDC === dc.dcName) {
+                        linksOnMove.push(link);
+                        moveSet.push(link.line);
+                        isOnMove=true;
+                        break;
+                    }
+                }
+            }
+            if (!isOnMove && areasOnMove!=null) {
+                for (i = 0, ii = areasOnMove.length; i < ii; i++) {
+                    area = areasOnMove[i];
+                    if (sourceArea === area.areaName && targetArea === area.areaName) {
+                        linksOnMove.push(link);
+                        moveSet.push(link.line);
+                        isOnMove=true;
+                        break;
+                    }
+                }
+            }
+            if (!isOnMove && lansOnMove!=null) {
+                for (i = 0, ii = lansOnMove.length; i < ii; i++) {
+                    lan = lansOnMove[i];
+                    if (sourceLan === lan.lanName && targetLan === lan.lanName) {
+                        moveSet.push(link.line);
+                        linksOnMove.push(link);
+                        isOnMove=true;
+                        break;
+                    }
+                }
+            }
+            if (!isOnMove)
+                linksToUp.push(link);
+
         };
 
         Raphael.fn.move = function(dx, dy) {
             var transform = "t" + dx + "," + dy;
             //helper_.debug(transform);
-
-            var j, jj, i, k, kk, link, up, toUp;
+            var j, jj;
 
             moveSet.transform(transform);
 
-            if (dcsOnMove!=null) {
-                for (j = 0, jj = dcsOnMove.length; j < jj; j++) {
-                    var dc = dcsOnMove[j];
-                    dc.mvx = dx; dc.mvy = dy;
-                }
-            }
-            if (areasOnMove!=null) {
-                for (j = 0, jj = areasOnMove.length; j < jj; j++) {
-                    var area = areasOnMove[j];
-                    area.mvx = dx; area.mvy = dy;
-                }
-            }
-            if (lansOnMove!=null) {
-                for (j = 0, jj = lansOnMove.length; j < jj; j++) {
-                    var lan = lansOnMove[j];
-                    lan.mvx = dx; lan.mvy = dy;
-                }
-            }
-            if (bussOnMove!=null) {
-                for (j = 0, jj = bussOnMove.length; j < jj; j++) {
-                    var bus = bussOnMove[j];
-                    bus.lmvx = bus.mvx; bus.lmvy = bus.mvy;
-                    bus.mvx = dx; bus.mvy = dy;
-                    if ((bus.mvx!=bus.lmvx) || (bus.mvy!=bus.lmvy)) {
-                        bus.cylinder.transform(transform+bus.translateForm);
-                        bus.titleTxt.transform(transform+bus.translateForm);
-
-                        for (i = bus.bindedLinks.length; i--;) {
-                            link = bus.bindedLinks[i];
-                            toUp = false;
-                            if (linksToUp.length <= linksOnMove.length) {
-                                toUp = false;
-                                for (k = 0, kk = linksToUp.length; k < kk; k++)
-                                    if (linksToUp[k].id === link.id) {
-                                        toUp = true;
-                                        break;
-                                    }
-                            } else {
-                                toUp = true;
-                                for (k = 0, kk = linksOnMove.length; k < kk; k++)
-                                    if (linksOnMove[k].id === link.id) {
-                                        toUp = false;
-                                        break;
-                                    }
-                            }
-                            if (toUp) {
-                                link.getEpSource().chooseMulticastTargetBindingPointAndCalcPoz(bus.bindedLinks[i]);
-                                up = bus.r.link(link.toCompute());
-                                if (typeof up != 'undefined')
-                                    link.toUpdate(up);
-                            }
-                        }
-                    }
-                }
-            }
+            if (dcsOnMove!=null)
+                for (j = 0, jj = dcsOnMove.length; j < jj; j++)
+                    dcsOnMove[j].moveAction(dx, dy);
+            if (areasOnMove!=null)
+                for (j = 0, jj = areasOnMove.length; j < jj; j++)
+                    areasOnMove[j].moveAction(dx,dy);
+            if (lansOnMove!=null)
+                for (j = 0, jj = lansOnMove.length; j < jj; j++)
+                    lansOnMove[j].moveAction(dx,dy);
+            if (bussOnMove!=null)
+                for (j = 0, jj = bussOnMove.length; j < jj; j++)
+                    bussOnMove[j].moveAction(dx,dy);
             if (containersOnMove!=null)
                 for (j = 0, jj = containersOnMove.length; j < jj; j++)
                     containersOnMove[j].moveAction(dx,dy);
             if (nodesOnMove!=null)
                 for (j = 0, jj = nodesOnMove.length; j < jj; j++)
                     nodesOnMove[j].moveAction(dx,dy);
-            if (endpointsOnMove!=null) {
-                for (j = 0, jj = endpointsOnMove.length; j < jj; j++) {
-                    var endpoint = endpointsOnMove[j];
-                    endpoint.lmvx = endpoint.mvx; endpoint.lmvy = endpoint.mvy;
-                    endpoint.mvx = dx; endpoint.mvy = dy;
-                    if ((endpoint.mvx!=endpoint.lmvx) || (endpoint.mvy!=endpoint.lmvy)) {
-                        for (i = endpoint.epLinks.length; i--;) {
-                            link = endpoint.epLinks[i];
-                            toUp = false;
-
-                            if (linksToUp.length <= linksOnMove.length) {
-                                toUp = false;
-                                for (k = 0, kk = linksToUp.length; k < kk; k++)
-                                    if (linksToUp[k].id === link.id) {
-                                        toUp = true;
-                                        break;
-                                    }
-                            } else {
-                                toUp = true;
-                                for (k = 0, kk = linksOnMove.length; k < kk; k++)
-                                    if (linksOnMove[k].id === link.id) {
-                                        toUp = false;
-                                        break;
-                                    }
-                            }
-
-                            if (toUp) {
-                                if (link.getMulticastBus()!=null) {
-                                    endpoint.chooseMulticastTargetBindingPointAndCalcPoz(link);
-                                }
-                                up = endpoint.r.link(link.toCompute());
-                                if (typeof up != 'undefined') {
-                                    //helper_.debug(up);
-                                    link.toUpdate(up);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            if (endpointsOnMove!=null)
+                for (j = 0, jj = endpointsOnMove.length; j < jj; j++)
+                    endpointsOnMove[j].moveAction(dx,dy);
         };
 
         Raphael.fn.up = function() {
-            var i, ii, j, jj, k, kk;
-            var attrect, attrtxt0, attrtxt1;
+            var i, ii;
             if (moveSet!=null) {
                 moveSet.transform("");
                 moveSet = null;
             }
             if (dcsOnMove!=null) {
-                for (i = 0, ii = dcsOnMove.length; i < ii; i++) {
-                    var dc = dcsOnMove[i];
-                    attrect  = {x: dc.extrx + dc.mvx, y: dc.extry + dc.mvy};
-                    attrtxt0 = {x: dc.extt0x + dc.mvx, y: dc.extt0y + dc.mvy};
-                    attrtxt1 = {x: dc.extt1x + dc.mvx, y: dc.extt1y + dc.mvy};
-
-                    dc.mvx = 0; dc.mvy = 0;
-
-                    dc.rect.attr(attrect);
-                    dc.dcName.attr(attrtxt0);
-                    dc.dcTown.attr(attrtxt1);
-
-                    dc.setTopLeftCoord(dc.rect.attr("x"),dc.rect.attr("y"));
-                    if (dc.dcmatrix.getWanMtxSize()!=0) {
-                        dc.dcsplitter.wanLineTopY = dc.topLeftY+dc.dbrdSpan;
-                        dc.dcsplitter.manLineTopY = dc.dcsplitter.wanLineTopY+dc.dcsplitter.wanLineHeight;
-                        dc.dcsplitter.lanLineTopY = dc.dcsplitter.manLineTopY+dc.dcsplitter.manLineHeight;
-                    } else if (dc.dcmatrix.getManMtxSize()!=0) {
-                        dc.dcsplitter.manLineTopY = dc.topLeftY+dc.dbrdSpan;
-                        dc.dcsplitter.lanLineTopY = dc.dcsplitter.manLineTopY+dc.dcsplitter.manLineHeight;
-                    } else
-                        dc.dcsplitter.lanLineTopY = dc.topLeftY+dc.dbrdSpan;
-                    dc.dcsplitter.lanLineBdrY = dc.topLeftY+dc.dcheight-dc.dbrdSpan;
-
-                    dc.dcsplitter.move(dc.r);
-                    dc.dcsplitter.show();
-
-                    var mtxS = dc.dcmatrix.getWanMtxSize();
-                    for (i = 0, ii =  mtxS; i < ii; i++) {
-                        dc.dcmatrix.getAreaFromWanMtx(i).setMoveJail(dc.topLeftX+dc.dbrdSpan,dc.dcsplitter.wanLineTopY,
-                            dc.topLeftX+dc.dcwidth-dc.dbrdSpan,dc.dcsplitter.manLineTopY);
-                    }
-
-                    mtxS = dc.dcmatrix.getManMtxSize();
-                    for (i = 0, ii =  mtxS; i < ii; i++) {
-                        dc.dcmatrix.getAreaFromManMtx(i).setMoveJail(dc.topLeftX+dc.dbrdSpan,dc.dcsplitter.manLineTopY,
-                            dc.topLeftX+dc.dcwidth-dc.dbrdSpan,dc.dcsplitter.lanLineTopY);
-                    }
-
-                    mtxS = dc.dcmatrix.getLanMtxSize();
-                    for (i = 0, ii =  mtxS; i < ii; i++) {
-                        dc.dcmatrix.getAreaFromLanMtx(i).setMoveJail(dc.topLeftX+dc.dbrdSpan,dc.dcsplitter.lanLineTopY,
-                            dc.topLeftX+dc.dcwidth-dc.dbrdSpan,dc.dcsplitter.lanLineBdrY);
-                    }
-
-                    dc.rect.animate({"fill-opacity": dc.oUnselected}, 500);
-                    dc.isMoving = false;
-                }
+                for (i = 0, ii = dcsOnMove.length; i < ii; i++)
+                    dcsOnMove[i].moveUp();
                 dcsOnMove = null;
             }
             if (areasOnMove!=null) {
-                for (i = 0, ii = areasOnMove.length; i < ii; i++) {
-                    var area = areasOnMove[i];
-                    attrect = {x: area.extrx + area.mvx, y: area.extry + area.mvy};
-                    attrtxt0 = {x: area.extt0x + area.mvx, y: area.extt0y + area.mvy};
-
-                    area.mvx=0; area.mvy=0;
-                    area.rect.attr(attrect);
-                    area.areaName.attr(attrtxt0);
-
-                    mtxX        = area.armatrix.getMtxSize().x;
-                    mtxY        = area.armatrix.getMtxSize().y;
-                    area.setTopLeftCoord(area.rect.attr("x"),area.rect.attr("y"));
-                    for (j = 0, jj = mtxX; j < jj; j++) {
-                        for (k = 0, kk = mtxY; k < kk; k++) {
-                            var obj = area.armatrix.getObjFromMtx(j,k);
-                            if (obj!=null)
-                                obj.setMoveJail(
-                                    area.topLeftX+area.abrdSpan,
-                                    area.topLeftY + area.abrdSpan,
-                                    area.topLeftX+area.areawidth - area.abrdSpan,
-                                    area.topLeftY+area.areaheight-area.abrdSpan
-                                );
-                        }
-                    }
-
-                    if (dragOnArea)
-                        area.rect.animate({"fill-opacity": area.oUnselected}, 500);
-                    area.isMoving = false;
-                }
-                //noinspection JSUnusedAssignment
-                dragOnArea = false;
+                for (i = 0, ii = areasOnMove.length; i < ii; i++)
+                    areasOnMove[i].moveUp();
                 areasOnMove = null;
             }
             if (lansOnMove!=null) {
-                for (i = 0, ii = lansOnMove.length; i < ii; i++) {
-                    var lan = lansOnMove[i];
-                    attrect  = {x: lan.extrx + lan.mvx, y: lan.extry + lan.mvy};
-                    attrtxt0 = {x: lan.extt0x + lan.mvx, y: lan.extt0y + lan.mvy};
-
-                    lan.mvx=0; lan.mvy=0;
-                    lan.rect.attr(attrect);
-                    lan.lanName.attr(attrtxt0);
-
-                    var mtxX = lan.lanmatrix.getMtxSize().x,
-                        mtxY = lan.lanmatrix.getMtxSize().y;
-                    lan.setTopLeftCoord(lan.rect.attr("x"),lan.rect.attr("y"));
-                    for (j = 0, jj = mtxX; j < jj; j++)
-                        for (k = 0, kk = mtxY; k < kk; k++) {
-                            lan.lanmatrix.getContainerFromMtx(j, k).setMoveJail(
-                                lan.topLeftX,
-                                lan.topLeftY+lan.lbrdSpan,
-                                lan.topLeftX+lan.lanwidth,
-                                lan.topLeftY+lan.lanheight
-                            );
-                        }
-
-                    if (dragOnLan)
-                        lan.rect.animate({"fill-opacity": lan.oUnselected}, 500);
-                    lan.isMoving = false;
-                }
-                //noinspection JSUnusedAssignment
-                dragOnLan = false;
+                for (i = 0, ii = lansOnMove.length; i < ii; i++)
+                    lansOnMove[i].moveUp();
                 lansOnMove = null;
             }
             if (bussOnMove!=null) {
-                for (i = 0, ii = bussOnMove.length; i < ii; i++) {
-                    var bus = bussOnMove[i];
-
-                    bus.ctrX += bus.mvx; bus.ctrY+=bus.mvy; bus.x=bus.ctrX - bus.height/ 2; bus.y=bus.ctrY - bus.diameter/ 2;
-                    bus.translateForm = bus.exttX+"T"+bus.mvx+","+bus.mvy;
-                    bus.bindingPt1X = bus.extox1+bus.mvx; bus.bindingPt1Y = bus.extoy1+bus.mvy;
-                    bus.bindingPt2X = bus.extox2+bus.mvx; bus.bindingPt2Y = bus.extoy2+bus.mvy;
-                    bus.bindingPt3X = bus.extox3+bus.mvx; bus.bindingPt3Y = bus.extoy3+bus.mvy;
-                    bus.bindingPt4X = bus.extox4+bus.mvx; bus.bindingPt4Y = bus.extoy4+bus.mvy;
-                    bus.bindingPt5X = bus.extox5+bus.mvx; bus.bindingPt5Y = bus.extoy5+bus.mvy;
-                    bus.bindingPt6X = bus.extox6+bus.mvx; bus.bindingPt6Y = bus.extoy6+bus.mvy;
-
-                    bus.mvx=0; bus.mvy=0;
-                    bus.cylinder.transform(bus.translateForm);
-                    bus.titleTxt.transform(bus.translateForm);
-                    bus.bindingPt1.attr({cx:bus.bindingPt1X,cy:bus.bindingPt1Y});
-                    bus.bindingPt2.attr({cx:bus.bindingPt2X,cy:bus.bindingPt2Y});
-                    bus.bindingPt3.attr({cx:bus.bindingPt3X,cy:bus.bindingPt3Y});
-                    bus.bindingPt4.attr({cx:bus.bindingPt4X,cy:bus.bindingPt4Y});
-                    bus.bindingPt5.attr({cx:bus.bindingPt5X,cy:bus.bindingPt5Y});
-                    bus.bindingPt6.attr({cx:bus.bindingPt6X,cy:bus.bindingPt6Y});
-
-                    bus.root.isMoving=false;
-                    bus.isMoving=false;
-                }
+                for (i = 0, ii = bussOnMove.length; i < ii; i++)
+                    bussOnMove[i].moveUp();
                 bussOnMove = null;
             }
             if (containersOnMove!=null) {
@@ -999,23 +613,11 @@ define(
                 nodesOnMove = null;
             }
             if (endpointsOnMove!=null) {
-                for (i = 0, ii = endpointsOnMove.length; i < ii; i++) {
-                    var endpoint = endpointsOnMove[i];
-                    var att = {cx: endpoint.circle.attr("cx") + endpoint.mvx, cy: endpoint.circle.attr("cy") + endpoint.mvy};
-                    endpoint.mvx = 0 ; endpoint.mvy = 0;
-                    endpoint.circle.attr(att);
-                    endpoint.circle.animate({"fill-opacity": endpoint.oUnselected}, 500);
-                    endpoint.x = endpoint.circle.attr("cx");
-                    endpoint.y = endpoint.circle.attr("cy");
-                    endpoint.isMoving = false;
-                }
+                for (i = 0, ii = endpointsOnMove.length; i < ii; i++)
+                    endpointsOnMove[i].moveUp();
                 endpointsOnMove = null;
             }
             if (linksOnMove!=null) linksOnMove = null;
             if (linksToUp!=null) linksToUp = null;
-
-            dragOnLan  = false;
-            dragOnArea = false;
-            dragOnDC   = false;
         };
     });

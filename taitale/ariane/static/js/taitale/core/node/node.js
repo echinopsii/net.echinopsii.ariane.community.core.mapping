@@ -559,7 +559,7 @@ define(
                 this.r.moveSetPush(this.nodeName);
 
                 for (i = 0, ii = this.nodeEndpoints.length; i < ii; i++)
-                    this.nodeEndpoints[i].r.drag(this.nodeEndpoints[i],"endpoint");
+                    this.nodeEndpoints[i].moveInit();
 
                 this.extrx  = this.rect.attr("x");
                 this.extry  = this.rect.attr("y");

@@ -34,7 +34,7 @@ define(
             this.lanheight  = 0;
             this.contSpan   = params.lan_contSpan; /*space between 2 container*/
             this.lbrdSpan   = params.lan_lbrdSpan; /*space between 1 container and lan border*/
-            this.lbrdResz   = params.lan_lbrdResz;
+            //this.lbrdResz   = params.lan_lbrdResz;
             this.lanmatrix  = new lanMatrix();
             this.lanDef     = lanDef_;
             this.dic        = new dictionary();
@@ -71,7 +71,11 @@ define(
                     //helper_.debug("[lan.reDefineRectPoints] { topLeftX: ".concat(topLeftX).concat(", topLeftY: ").concat(topLeftY).concat(" }"));
                 };
 
-            var lMove = function(dx, dy) {
+            var lanDragg = function () {
+                    lanRef.moveInit();
+                    lanRef.rect.animate({"fill-opacity": lanRef.oSelected}, 500);
+                },
+                lanMove = function (dx, dy) {
                     var rx  = lanRef.extrx,
                         ry  = lanRef.extry;
                     var minTopLeftX = lanRef.minTopLeftX,
@@ -95,16 +99,10 @@ define(
                     }
                     lanRef.r.move(dx,dy);
                     lanRef.r.safari();
-                };
-
-            var lanDragg = function () {
-                    lanRef.r.drag(lanRef,"lan");
-                },
-                lanMove = function (dx, dy) {
-                    lMove(dx,dy);
                 },
                 lanUP = function () {
                     lanRef.r.up()
+                    lanRef.rect.animate({"fill-opacity": lanRef.oUnselected}, 500);
                 },
                 lanOver = function () {
                     if (!lanRef.dispLan) {
@@ -219,6 +217,62 @@ define(
                     this.lanR.hide();
                 }
             };
+
+            this.moveInit = function() {
+                var i, ii, j, jj;
+                var mtxX = this.lanmatrix.getMtxSize().x,
+                    mtxY = this.lanmatrix.getMtxSize().y;
+
+                this.r.lansOnMovePush(this);
+                this.r.moveSetPush(this.lanName);
+                this.r.moveSetPush(this.rect);
+
+                for (i = 0, ii =  mtxX; i < ii; i++)
+                    for (j = 0, jj =  mtxY; j < jj; j++)
+                        this.lanmatrix.getContainerFromMtx(i, j).moveInit();
+
+                this.extrx  = this.rect.attr("x");
+                this.extry  = this.rect.attr("y");
+                this.extrw  = this.rect.attr("width");
+                this.extrh  = this.rect.attr("height");
+                this.extt0x = this.lanR[0].attr("x");
+                this.extt0y = this.lanR[0].attr("y");
+                this.minTopLeftX = this.minJailX;
+                this.minTopLeftY = this.minJailY;
+                this.maxTopLeftX = this.maxJailX - this.lanwidth;
+                this.maxTopLeftY = this.maxJailY - this.lanheight;
+
+                this.isMoving = true;
+            };
+
+            this.moveAction = function(dx,dy) {
+                this.mvx = dx; this.mvy = dy;
+            };
+
+            this.moveUp = function() {
+                var j, jj, k, kk;
+                var attrect  = {x: this.extrx + this.mvx, y: this.extry + this.mvy},
+                    attrtxt0 = {x: this.extt0x + this.mvx, y: this.extt0y + this.mvy};
+
+                var mtxX = this.lanmatrix.getMtxSize().x,
+                    mtxY = this.lanmatrix.getMtxSize().y;
+
+                this.mvx=0; this.mvy=0;
+                this.rect.attr(attrect);
+                this.lanName.attr(attrtxt0);
+
+                this.setTopLeftCoord(this.rect.attr("x"),this.rect.attr("y"));
+                for (j = 0, jj = mtxX; j < jj; j++)
+                    for (k = 0, kk = mtxY; k < kk; k++) {
+                        this.lanmatrix.getContainerFromMtx(j, k).setMoveJail(
+                            this.topLeftX,
+                            this.topLeftY+this.lbrdSpan,
+                            this.topLeftX+this.lanwidth,
+                            this.topLeftY+this.lanheight
+                        );
+                    }
+                this.isMoving = false;
+            }
         }
         return lan;
     });

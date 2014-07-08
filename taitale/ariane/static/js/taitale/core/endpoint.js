@@ -121,109 +121,7 @@ define(
                 }
             };
 
-            var move = function(dx, dy) {
-                    var att = {cx: epRef.cx + dx, cy: epRef.cy + dy};//,
-                    //ray = epRef.circle.attr("r");
-                    //helper_.debug("cx:"+ att.cx + "; cy:" + att.cy + "; r:" + ray);
-
-                    if (epRef.epNode!=null && !epRef.epNode.isMoving) {
-                        var topLeftX     = epRef.epNode.getRectCornerPoints().topLeftX,
-                            topLeftY     = epRef.epNode.getRectCornerPoints().topLeftY,
-                            bottomRightX = epRef.epNode.getRectCornerPoints().bottomRightX,
-                            bottomRightY = epRef.epNode.getRectCornerPoints().bottomRightY,
-                            topLeftRadX  = epRef.epNode.getRectCornerPoints().TopLeftRadX,
-                            topLeftRadY  = epRef.epNode.getRectCornerPoints().TopLeftRadY,
-                            bottomRightRadX = epRef.epNode.getRectCornerPoints().BottomRightRadX,
-                            bottomRightRadY = epRef.epNode.getRectCornerPoints().BottomRightRadY,
-                            //middleX = epRef.epNode.getRectMiddlePoint().x,
-                            middleY = epRef.epNode.getRectMiddlePoint().y,
-                            cornerRad = epRef.epNode.cornerRad;
-
-                        /*
-                         * is in the node
-                         */
-                        if ((att.cx > topLeftX) && (att.cx < bottomRightX ) && (att.cy > topLeftY) && (att.cy < bottomRightY)) {
-                            var teta=null;
-                            if (att.cx > topLeftRadX && att.cx < bottomRightRadX && att.cy > topLeftY && att.cy <= middleY) {
-                                att.cy = topLeftY;
-                                //helper_.debug("01 cx:"+ att.cx + "; cy:" + att.cy);
-                            } else if (att.cx > topLeftRadX && att.cx < bottomRightRadX && att.cy > middleY && att.cy < bottomRightY) {
-                                att.cy = bottomRightY;
-                                //helper_.debug("02 cx:"+ att.cx + "; cy:" + att.cy);
-                            } else if (att.cx < topLeftRadX && att.cy < topLeftRadY) {
-                                teta = Math.atan((topLeftRadX-att.cx)/(topLeftRadY-att.cy));
-                                att.cx = topLeftRadX - cornerRad*Math.sin(teta);
-                                att.cy = topLeftRadY - cornerRad*Math.cos(teta);
-                                //helper_.debug("03 cx:"+ att.cx + "; cy:" + att.cy);
-                            } else if (att.cx < topLeftRadX && att.cy > bottomRightRadY) {
-                                teta = Math.atan((att.cy-bottomRightRadY)/(topLeftRadX-att.cx));
-                                att.cx = topLeftRadX - cornerRad*Math.cos(teta);
-                                att.cy = bottomRightRadY + cornerRad*Math.sin(teta);
-                                //helper_.debug("04 cx:"+ att.cx + "; cy:" + att.cy);
-                            } else if (att.cx > bottomRightRadX && att.cy < topLeftRadY) {
-                                teta = Math.atan((topLeftRadY-att.cy)/(att.cx - bottomRightRadX));
-                                att.cx = bottomRightRadX + cornerRad*Math.cos(teta);
-                                att.cy = topLeftRadY - cornerRad*Math.sin(teta);
-                                //helper_.debug("05 cx:"+ att.cx + "; cy:" + att.cy);
-                            } else if (att.cx > bottomRightRadX && att.cy > bottomRightRadY) {
-                                teta = Math.atan((att.cy-bottomRightRadY)/(att.cx - bottomRightRadX));
-                                att.cx = bottomRightRadX + cornerRad*Math.cos(teta);
-                                att.cy = bottomRightRadY + cornerRad*Math.sin(teta);
-                                //helper_.debug("06 cx:"+ att.cx + "; cy:" + att.cy);
-                            } else if (att.cx < topLeftRadX && att.cy > topLeftRadY && att.cy < bottomRightRadY) {
-                                att.cx = topLeftX;
-                                att.cy = middleY;
-                                //helper_.debug("07 cx:"+ att.cx + "; cy:" + att.cy);
-                            } else if (att.cx > bottomRightRadX && att.cy > topLeftRadY && att.cy < bottomRightRadY) {
-                                att.cx = bottomRightX;
-                                att.cy = middleY;
-                                //helper_.debug("08 cx:"+ att.cx + "; cy:" + att.cy);
-                            }  else {
-                                //helper_.debug("09 I'm lost !");
-                            }
-                        } else {
-                            /*
-                             * is outside the node
-                             */
-                            var dist = null;
-                            if (att.cx > topLeftRadX && att.cx < bottomRightRadX && att.cy < topLeftY) {
-                                att.cy = topLeftY;
-                                //helper_.debug("10 bis cx:"+ att.cx + "; cy:" + att.cy);
-                            } else if (att.cx > topLeftRadX && att.cx < bottomRightRadX && att.cy > bottomRightY) {
-                                att.cy = bottomRightY;
-                                //helper_.debug("10 cx:"+ att.cx + "; cy:" + att.cy);
-                            } else if (att.cx < topLeftRadX && att.cy < topLeftRadY) {
-                                dist = Math.sqrt((att.cx-topLeftRadX)*(att.cx-topLeftRadX) + (att.cy-topLeftRadY)*(att.cy-topLeftRadY));
-                                att.cx=(att.cx-topLeftRadX)*cornerRad/dist + topLeftRadX;
-                                att.cy=(att.cy-topLeftRadY)*cornerRad/dist + topLeftRadY;
-                                //helper_.debug("11 cx:"+ att.cx + "; cy:" + att.cy);
-                            } else if (att.cx < topLeftRadX && att.cy > bottomRightRadY) {
-                                dist = Math.sqrt((att.cx-topLeftRadX)*(att.cx-topLeftRadX) + (att.cy-bottomRightRadY)*(att.cy-bottomRightRadY));
-                                att.cx=(att.cx-topLeftRadX)*cornerRad/dist + topLeftRadX;
-                                att.cy=(att.cy-bottomRightRadY)*cornerRad/dist + bottomRightRadY;
-                                //helper_.debug("12 cx:"+ att.cx + "; cy:" + att.cy);
-                            } else if (att.cx >= bottomRightRadX && att.cy <= topLeftRadY) {
-                                dist = Math.sqrt((att.cx-bottomRightRadX)*(att.cx-bottomRightRadX)+(att.cy-topLeftRadY)*(att.cy-topLeftRadY));
-                                //helper_.debug("dist:" + dist + "; " + " rad:" + cornerRad);
-                                att.cx=(att.cx-bottomRightRadX)*cornerRad/dist + bottomRightRadX;
-                                att.cy=topLeftRadY - (-att.cy+topLeftRadY)*cornerRad/dist;
-                                //helper_.debug("13 cx:"+ att.cx + "; cy:" + att.cy);
-                            } else if (att.cx >= bottomRightRadX && att.cy >= bottomRightRadY){
-                                //helper_.debug("14 cx:"+ att.cx + "; cy:" + att.cy);
-                                dist = Math.sqrt((att.cx-bottomRightRadX)*(att.cx-bottomRightRadX) + (att.cy-bottomRightRadY)*(att.cy-bottomRightRadY));
-                                att.cx=(att.cx-bottomRightRadX)*cornerRad/dist + bottomRightRadX;
-                                att.cy=(att.cy-bottomRightRadY)*cornerRad/dist + bottomRightRadY;
-                                //helper_.debug("11 cx:"+ att.cx + "; cy:" + att.cy);
-                            } else {
-                                //helper_.debug("12 I'm lost !");
-                            }
-                        }
-                    }
-
-                    epRef.r.move(att.cx-epRef.cx, att.cy-epRef.cy);
-                    epRef.r.safari();
-                },
-                mouseDown = function(e){
+            var mouseDown = function(e){
                     if (e.which == 3) {
                         if (epRef.menuHided) {
                             epRef.menuSet = epRef.endpointMenuSet;
@@ -314,13 +212,112 @@ define(
                 };
 
             var epDragger = function () {
-                    if(!epRef.rightClick) {
-                        epRef.r.drag(epRef,"endpoint");
-                    }
+                    if(!epRef.rightClick)
+                        epRef.moveInit();
                 },
                 epMove = function (dx, dy) {
-                    if (!epRef.rightClick)
-                        move(dx,dy);
+                    if (!epRef.rightClick) {
+                        var att = {cx: epRef.cx + dx, cy: epRef.cy + dy};//,
+                        //ray = epRef.circle.attr("r");
+                        //helper_.debug("cx:"+ att.cx + "; cy:" + att.cy + "; r:" + ray);
+
+                        if (epRef.epNode!=null && !epRef.epNode.isMoving) {
+                            var topLeftX     = epRef.epNode.getRectCornerPoints().topLeftX,
+                                topLeftY     = epRef.epNode.getRectCornerPoints().topLeftY,
+                                bottomRightX = epRef.epNode.getRectCornerPoints().bottomRightX,
+                                bottomRightY = epRef.epNode.getRectCornerPoints().bottomRightY,
+                                topLeftRadX  = epRef.epNode.getRectCornerPoints().TopLeftRadX,
+                                topLeftRadY  = epRef.epNode.getRectCornerPoints().TopLeftRadY,
+                                bottomRightRadX = epRef.epNode.getRectCornerPoints().BottomRightRadX,
+                                bottomRightRadY = epRef.epNode.getRectCornerPoints().BottomRightRadY,
+                            //middleX = epRef.epNode.getRectMiddlePoint().x,
+                                middleY = epRef.epNode.getRectMiddlePoint().y,
+                                cornerRad = epRef.epNode.cornerRad;
+
+                            /*
+                             * is in the node
+                             */
+                            if ((att.cx > topLeftX) && (att.cx < bottomRightX ) && (att.cy > topLeftY) && (att.cy < bottomRightY)) {
+                                var teta=null;
+                                if (att.cx > topLeftRadX && att.cx < bottomRightRadX && att.cy > topLeftY && att.cy <= middleY) {
+                                    att.cy = topLeftY;
+                                    //helper_.debug("01 cx:"+ att.cx + "; cy:" + att.cy);
+                                } else if (att.cx > topLeftRadX && att.cx < bottomRightRadX && att.cy > middleY && att.cy < bottomRightY) {
+                                    att.cy = bottomRightY;
+                                    //helper_.debug("02 cx:"+ att.cx + "; cy:" + att.cy);
+                                } else if (att.cx < topLeftRadX && att.cy < topLeftRadY) {
+                                    teta = Math.atan((topLeftRadX-att.cx)/(topLeftRadY-att.cy));
+                                    att.cx = topLeftRadX - cornerRad*Math.sin(teta);
+                                    att.cy = topLeftRadY - cornerRad*Math.cos(teta);
+                                    //helper_.debug("03 cx:"+ att.cx + "; cy:" + att.cy);
+                                } else if (att.cx < topLeftRadX && att.cy > bottomRightRadY) {
+                                    teta = Math.atan((att.cy-bottomRightRadY)/(topLeftRadX-att.cx));
+                                    att.cx = topLeftRadX - cornerRad*Math.cos(teta);
+                                    att.cy = bottomRightRadY + cornerRad*Math.sin(teta);
+                                    //helper_.debug("04 cx:"+ att.cx + "; cy:" + att.cy);
+                                } else if (att.cx > bottomRightRadX && att.cy < topLeftRadY) {
+                                    teta = Math.atan((topLeftRadY-att.cy)/(att.cx - bottomRightRadX));
+                                    att.cx = bottomRightRadX + cornerRad*Math.cos(teta);
+                                    att.cy = topLeftRadY - cornerRad*Math.sin(teta);
+                                    //helper_.debug("05 cx:"+ att.cx + "; cy:" + att.cy);
+                                } else if (att.cx > bottomRightRadX && att.cy > bottomRightRadY) {
+                                    teta = Math.atan((att.cy-bottomRightRadY)/(att.cx - bottomRightRadX));
+                                    att.cx = bottomRightRadX + cornerRad*Math.cos(teta);
+                                    att.cy = bottomRightRadY + cornerRad*Math.sin(teta);
+                                    //helper_.debug("06 cx:"+ att.cx + "; cy:" + att.cy);
+                                } else if (att.cx < topLeftRadX && att.cy > topLeftRadY && att.cy < bottomRightRadY) {
+                                    att.cx = topLeftX;
+                                    att.cy = middleY;
+                                    //helper_.debug("07 cx:"+ att.cx + "; cy:" + att.cy);
+                                } else if (att.cx > bottomRightRadX && att.cy > topLeftRadY && att.cy < bottomRightRadY) {
+                                    att.cx = bottomRightX;
+                                    att.cy = middleY;
+                                    //helper_.debug("08 cx:"+ att.cx + "; cy:" + att.cy);
+                                }  else {
+                                    //helper_.debug("09 I'm lost !");
+                                }
+                            } else {
+                                /*
+                                 * is outside the node
+                                 */
+                                var dist = null;
+                                if (att.cx > topLeftRadX && att.cx < bottomRightRadX && att.cy < topLeftY) {
+                                    att.cy = topLeftY;
+                                    //helper_.debug("10 bis cx:"+ att.cx + "; cy:" + att.cy);
+                                } else if (att.cx > topLeftRadX && att.cx < bottomRightRadX && att.cy > bottomRightY) {
+                                    att.cy = bottomRightY;
+                                    //helper_.debug("10 cx:"+ att.cx + "; cy:" + att.cy);
+                                } else if (att.cx < topLeftRadX && att.cy < topLeftRadY) {
+                                    dist = Math.sqrt((att.cx-topLeftRadX)*(att.cx-topLeftRadX) + (att.cy-topLeftRadY)*(att.cy-topLeftRadY));
+                                    att.cx=(att.cx-topLeftRadX)*cornerRad/dist + topLeftRadX;
+                                    att.cy=(att.cy-topLeftRadY)*cornerRad/dist + topLeftRadY;
+                                    //helper_.debug("11 cx:"+ att.cx + "; cy:" + att.cy);
+                                } else if (att.cx < topLeftRadX && att.cy > bottomRightRadY) {
+                                    dist = Math.sqrt((att.cx-topLeftRadX)*(att.cx-topLeftRadX) + (att.cy-bottomRightRadY)*(att.cy-bottomRightRadY));
+                                    att.cx=(att.cx-topLeftRadX)*cornerRad/dist + topLeftRadX;
+                                    att.cy=(att.cy-bottomRightRadY)*cornerRad/dist + bottomRightRadY;
+                                    //helper_.debug("12 cx:"+ att.cx + "; cy:" + att.cy);
+                                } else if (att.cx >= bottomRightRadX && att.cy <= topLeftRadY) {
+                                    dist = Math.sqrt((att.cx-bottomRightRadX)*(att.cx-bottomRightRadX)+(att.cy-topLeftRadY)*(att.cy-topLeftRadY));
+                                    //helper_.debug("dist:" + dist + "; " + " rad:" + cornerRad);
+                                    att.cx=(att.cx-bottomRightRadX)*cornerRad/dist + bottomRightRadX;
+                                    att.cy=topLeftRadY - (-att.cy+topLeftRadY)*cornerRad/dist;
+                                    //helper_.debug("13 cx:"+ att.cx + "; cy:" + att.cy);
+                                } else if (att.cx >= bottomRightRadX && att.cy >= bottomRightRadY){
+                                    //helper_.debug("14 cx:"+ att.cx + "; cy:" + att.cy);
+                                    dist = Math.sqrt((att.cx-bottomRightRadX)*(att.cx-bottomRightRadX) + (att.cy-bottomRightRadY)*(att.cy-bottomRightRadY));
+                                    att.cx=(att.cx-bottomRightRadX)*cornerRad/dist + bottomRightRadX;
+                                    att.cy=(att.cy-bottomRightRadY)*cornerRad/dist + bottomRightRadY;
+                                    //helper_.debug("11 cx:"+ att.cx + "; cy:" + att.cy);
+                                } else {
+                                    //helper_.debug("12 I'm lost !");
+                                }
+                            }
+                        }
+
+                        epRef.r.move(att.cx-epRef.cx, att.cy-epRef.cy);
+                        epRef.r.safari();
+                    }
                 },
                 epUP = function () {
                     if (!epRef.rightClick) {
@@ -570,6 +567,71 @@ define(
 
             this.toFront = function() {
                 this.circle.toFront();
+            };
+
+            this.moveInit = function() {
+                var i, ii;
+                this.r.endpointsOnMovePush(this);
+                this.r.moveSetPush(this.circle);
+                for (i = 0, ii = this.epLinks.length; i < ii; i++)
+                    this.epLinks[i].moveInit();
+
+
+                this.cx = this.circle.attr("cx");
+                this.cy = this.circle.attr("cy");
+
+                if (!this.menuHided) {
+                    this.menu.toBack();
+                    this.menuSet.toBack();
+                    this.menu.hide();
+                    this.menuSet.hide();
+                    this.menuHided=true;
+                    if (this.r.getDisplayMainMenu())
+                        this.r.setDisplayMainMenu(false);
+                }
+                if (this.labelHided==false) {
+                    this.label.hide();
+                    this.circle.attr("r",this.rUnselected);
+                    this.labelHided=true;
+                }
+                if (this.frameHided==false) {
+                    this.frame.hide();
+                    this.frameHided = true;
+                }
+                this.isMoving = true;
+
+                this.circle.animate({"fill-opacity": this.oSelected}, 500);
+            };
+
+            this.moveAction = function(dx,dy) {
+                var i, link, up;
+                this.lmvx = this.mvx; this.lmvy = this.mvy;
+                this.mvx = dx; this.mvy = dy;
+                if ((this.mvx!=this.lmvx) || (this.mvy!=this.lmvy)) {
+                    for (i = this.epLinks.length; i--;) {
+                        link = this.epLinks[i];
+
+                        if (this.r.isLinkToUp(i)) {
+                            if (link.getMulticastBus()!=null) {
+                                this.chooseMulticastTargetBindingPointAndCalcPoz(link);
+                            }
+                            up = this.r.link(link.toCompute());
+                            if (typeof up != 'undefined') {
+                                link.toUpdate(up);
+                            }
+                        }
+                    }
+                }
+            };
+
+            this.moveUp = function() {
+                var att = {cx: this.circle.attr("cx") + this.mvx, cy: this.circle.attr("cy") + this.mvy};
+                this.mvx = 0 ; this.mvy = 0;
+                this.circle.attr(att);
+                this.circle.animate({"fill-opacity": this.oUnselected}, 500);
+                this.x = this.circle.attr("cx");
+                this.y = this.circle.attr("cy");
+                this.isMoving = false;
             };
         }
 

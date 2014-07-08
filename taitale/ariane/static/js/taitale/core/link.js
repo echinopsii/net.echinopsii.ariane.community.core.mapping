@@ -27,6 +27,7 @@ define(
 
         function link(id_, epS_, epT_, transport_, line_, bg_) {
             this.helper       = new helper();
+            this.r            = null;
             this.id           = id_;
             this.epSource     = epS_;
             this.epTarget     = epT_;
@@ -151,17 +152,18 @@ define(
                 }
             };
 
-            this.print = function(r) {
+            this.print = function(r_) {
                 /*
                  * reinit line for map refresh
                  */
+                this.r    = r_;
                 this.line = this.lineColor;
                 this.bg = this.bgColor;
 
                 /*
                  * print
                  */
-                var up = r.link(this.toCompute());
+                var up = this.r.link(this.toCompute());
                 if (typeof up != 'undefined') {
                     //this.helper.debug(up);
                     this.toUpdate(up);
@@ -194,6 +196,10 @@ define(
                         sticky: true
                     };
                 }
+            };
+
+            this.moveInit = function() {
+                this.r.setLinkToUpOrMove(this)
             };
 
             //this.helper.debug("[link]NEW : " + this.toString());

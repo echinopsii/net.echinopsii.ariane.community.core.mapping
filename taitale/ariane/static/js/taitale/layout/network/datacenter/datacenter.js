@@ -66,22 +66,14 @@ define(
 
             var dcRef = this;
 
-            var dMove = function (dx, dy) {
-                    //helper_.debug("[datacenter.dMove] { cursor: ".concat(rect.attr('cursor')).concat(", isMoving:").concat(isMoving).concat(", isResizing:").concat(isResizing).concat(" }"));
-                    //helper_.debug("[datacenter.dMove] { rx: ".concat(rx).concat(", ry: ").concat(ry).concat(", rw: ").concat(rw).concat(", rh: ").concat(rh).concat(", dx: ").concat(dx).concat(", dy: ").concat(dy).concat(" }"));
-                    dcRef.r.move(dx,dy);
-                    dcRef.r.safari();
-                };
-
             var dcDragg = function () {
-                    dcRef.isMoving = true;
-                    dcRef.r.drag(dcRef, "dc");
+                    dcRef.moveInit();
                 },
                 dcMove = function (dx, dy) {
-                    dMove(dx,dy);
+                    dcRef.r.move(dx,dy);
+                    dcRef.r.safari();
                 },
                 dcUP = function () {
-                    dcRef.isMoving = false;
                     dcRef.r.up();
                 },
                 dcOver = function () {
@@ -200,6 +192,90 @@ define(
 
             this.displayLan = function(display) {
                 this.dcmatrix.displayLan(display);
+            };
+
+            this.moveInit = function() {
+                var mtxS, i, ii;
+                this.r.dcsOnMovePush(this);
+                this.r.moveSetPush(this.dcName);
+                this.r.moveSetPush(this.dcTown);
+                this.r.moveSetPush(this.rect);
+
+                mtxS = this.dcmatrix.getWanMtxSize();
+                for (i = 0, ii =  mtxS; i < ii; i++)
+                    this.dcmatrix.getAreaFromWanMtx(i).moveInit();
+                mtxS = this.dcmatrix.getManMtxSize();
+                for (i = 0, ii =  mtxS; i < ii; i++)
+                    this.dcmatrix.getAreaFromManMtx(i).moveInit();
+                mtxS = this.dcmatrix.getLanMtxSize();
+                for (i = 0, ii =  mtxS; i < ii; i++)
+                    this.dcmatrix.getAreaFromLanMtx(i).moveInit();
+
+                this.extrx = this.rect.attr("x");
+                this.extry = this.rect.attr("y");
+                this.extrw = this.rect.attr("width");
+                this.extrh = this.rect.attr("height");
+                this.extt0x = this.dcName.attr("x");
+                this.extt0y = this.dcName.attr("y");
+                this.extt1x = this.dcTown.attr("x");
+                this.extt1y = this.dcTown.attr("y");
+
+                this.isMoving = true;
+                this.rect.animate({"fill-opacity": this.oSelected}, 500);
+                this.dcsplitter.hide();
+            };
+
+            this.moveAction = function(dx, dy) {
+                this.mvx = dx; this.mvy = dy;
+            };
+
+            this.moveUp = function() {
+                var i, ii;
+                var attrect  = {x: this.extrx + this.mvx, y: this.extry + this.mvy},
+                    attrtxt0 = {x: this.extt0x + this.mvx, y: this.extt0y + this.mvy},
+                    attrtxt1 = {x: this.extt1x + this.mvx, y: this.extt1y + this.mvy};
+
+                this.mvx = 0; this.mvy = 0;
+
+                this.rect.attr(attrect);
+                this.dcName.attr(attrtxt0);
+                this.dcTown.attr(attrtxt1);
+
+                this.setTopLeftCoord(this.rect.attr("x"),this.rect.attr("y"));
+                if (this.dcmatrix.getWanMtxSize()!=0) {
+                    this.dcsplitter.wanLineTopY = this.topLeftY + this.dbrdSpan;
+                    this.dcsplitter.manLineTopY = this.dcsplitter.wanLineTopY+this.dcsplitter.wanLineHeight;
+                    this.dcsplitter.lanLineTopY = this.dcsplitter.manLineTopY+this.dcsplitter.manLineHeight;
+                } else if (this.dcmatrix.getManMtxSize()!=0) {
+                    this.dcsplitter.manLineTopY = this.topLeftY + this.dbrdSpan;
+                    this.dcsplitter.lanLineTopY = this.dcsplitter.manLineTopY+this.dcsplitter.manLineHeight;
+                } else
+                    this.dcsplitter.lanLineTopY = this.topLeftY + this.dbrdSpan;
+                this.dcsplitter.lanLineBdrY = this.topLeftY+this.dcheight-this.dbrdSpan;
+
+                this.dcsplitter.move(this.r);
+                this.dcsplitter.show();
+
+                var mtxS = this.dcmatrix.getWanMtxSize();
+                for (i = 0, ii =  mtxS; i < ii; i++) {
+                    this.dcmatrix.getAreaFromWanMtx(i).setMoveJail(this.topLeftX+this.dbrdSpan,this.dcsplitter.wanLineTopY,
+                        this.topLeftX+this.dcwidth-this.dbrdSpan,this.dcsplitter.manLineTopY);
+                }
+
+                mtxS = this.dcmatrix.getManMtxSize();
+                for (i = 0, ii =  mtxS; i < ii; i++) {
+                    this.dcmatrix.getAreaFromManMtx(i).setMoveJail(this.topLeftX+this.dbrdSpan,this.dcsplitter.manLineTopY,
+                        this.topLeftX+this.dcwidth-this.dbrdSpan,this.dcsplitter.lanLineTopY);
+                }
+
+                mtxS = this.dcmatrix.getLanMtxSize();
+                for (i = 0, ii =  mtxS; i < ii; i++) {
+                    this.dcmatrix.getAreaFromLanMtx(i).setMoveJail(this.topLeftX+this.dbrdSpan,this.dcsplitter.lanLineTopY,
+                        this.topLeftX+this.dcwidth-this.dbrdSpan,this.dcsplitter.lanLineBdrY);
+                }
+
+                this.rect.animate({"fill-opacity": this.oUnselected}, 500);
+                this.isMoving = false;
             };
         }
 
