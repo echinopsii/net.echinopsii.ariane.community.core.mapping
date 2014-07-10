@@ -144,8 +144,8 @@ define(
                                     fieldRect = cylinderRef.root.menuSet[i];
                                     fieldRectWidth = fieldRect.attr("width");
                                     fieldRectHeight = fieldRect.attr("height");
-                                    fieldRect.attr({"x": cylinderRef.bindingPt6X, "y": cylinderRef.bindingPt6Y+30+(i-1)*15});
-                                    cylinderRef.root.menuSet[i+1].attr({"x": cylinderRef.bindingPt6X, "y": cylinderRef.bindingPt6Y+30+(i-1)*15});
+                                    fieldRect.attr({"x": cylinderRef.bindingPt6X, "y": cylinderRef.bindingPt6Y+30+(i-2)*15});
+                                    cylinderRef.root.menuSet[i+1].attr({"x": cylinderRef.bindingPt6X, "y": cylinderRef.bindingPt6Y+30+(i-2)*15});
                                     i++;
                                 }
                             }
@@ -312,7 +312,7 @@ define(
 
             this.moveInit = function() {
                 if (this.root.isEditing)
-                    this.r.scaleDone();
+                    this.r.scaleDone(this);
 
                 this.r.busOnMovePush(this);
                 this.r.moveSetPush(this.bindingPt1);
@@ -388,7 +388,7 @@ define(
                     cylinderRef.r.scaleInit(cylinderRef);
                     cylinderRef.root.isEditing = true;
                 } else {
-                    cylinderRef.r.scaleDone();
+                    cylinderRef.r.scaleDone(cylinderRef);
                     cylinderRef.root.isEditing = false;
                 }
             };

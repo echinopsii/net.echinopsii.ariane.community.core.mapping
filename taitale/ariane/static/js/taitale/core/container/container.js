@@ -75,6 +75,7 @@ define(
             this.rect              = null;
             this.rightClick        = false;
             this.isMoving          = false;
+            this.isEditing         = false;
             this.isInserted        = false;
 
             this.containerNodes    = new containerMatrix();
@@ -158,6 +159,8 @@ define(
             this.containerFieldTXT      = params.container_menuFields;
             this.containerFieldTXTOver  = params.container_menuFieldsOver;
 
+            this.menuEditionMode     = null;
+            this.menuEditionModeRect = null;
             this.menuFieldStartEditTitle  = "Edition mode ON";
             this.menuFieldStopEditTitle   = "Edition mode OFF";
 
@@ -223,13 +226,15 @@ define(
                                     fieldRectHeight = fieldRect.attr("height");
                                     fieldRect.attr({"x": containerRef.rectTopMiddleX - fieldRectWidth/2, "y": containerRef.rectTopMiddleY+30 - fieldRectHeight/2});
                                     containerRef.containerMenuSet[i+1].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY+30});
+                                    if (containerRef.isEditing) containerRef.containerMenuSet[i+1].attr({text: containerRef.menuFieldStopEditTitle});
+                                    else containerRef.containerMenuSet[i+1].attr({text: containerRef.menuFieldStartEditTitle});
                                     i++;
                                 } else {
                                     fieldRect = containerRef.containerMenuSet[i];
                                     fieldRectWidth = fieldRect.attr("width");
                                     fieldRectHeight = fieldRect.attr("height");
-                                    fieldRect.attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY+30+(i-1)*15});
-                                    containerRef.containerMenuSet[i+1].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY+30+(i-1)*15});
+                                    fieldRect.attr({"x": containerRef.rectTopMiddleX - fieldRectWidth/2, "y": containerRef.rectTopMiddleY+30+(i-2)*15 - fieldRectHeight/2});
+                                    containerRef.containerMenuSet[i+1].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY+30+(i-2)*15});
                                     i++;
                                 }
                             }
@@ -531,6 +536,15 @@ define(
 
                 this.containerMenuTitle = this.r.text(0,10,"Container menu").attr(this.containerMainTitleTXT);
                 var fieldTitle = "Display all properties";
+                this.menuEditionModeRect = this.r.rect(0,10,this.menuFieldStartEditTitle.width(this.containerFieldTXT),this.menuFieldStartEditTitle.height(this.containerFieldTXT));
+                this.menuEditionModeRect.attr({fill: this.color, stroke: this.color, "fill-opacity": 0, "stroke-width": 0});
+                this.menuEditionModeRect.mouseover(menuFieldOver);
+                this.menuEditionModeRect.mouseout(menuFieldOut);
+                this.menuEditionModeRect.mousedown(this.menuFieldEditClick);
+                this.menuEditionMode = this.r.text(0,10,this.menuFieldStartEditTitle).attr(this.containerFieldTXT);
+                this.menuEditionMode.mouseover(menuFieldOver);
+                this.menuEditionMode.mouseout(menuFieldOut);
+                this.menuEditionMode.mousedown(this.menuFieldEditClick);
                 this.containerMenuPropertiesRect = this.r.rect(0,10,fieldTitle.width(this.containerFieldTXT),fieldTitle.height(this.containerFieldTXT));
                 this.containerMenuPropertiesRect.attr({fill: this.color, stroke: this.color, "fill-opacity": 0, "stroke-width": 0});
                 this.containerMenuPropertiesRect.mouseover(menuFieldOver);
@@ -543,6 +557,8 @@ define(
 
                 this.containerMenuSet = this.r.set();
                 this.containerMenuSet.push(this.containerMenuTitle);
+                this.containerMenuSet.push(this.menuEditionModeRect);
+                this.containerMenuSet.push(this.menuEditionMode);
                 this.containerMenuSet.push(this.containerMenuPropertiesRect);
                 this.containerMenuSet.push(this.containerMenuProperties);
                 //containerMenuSet.push(this.text(0,30,"Highlight cluster").attr(containerFieldTXT));
@@ -585,6 +601,9 @@ define(
             // MOVEABLE
 
             this.moveInit = function() {
+                if (this.isEditing)
+                    this.r.scaleDone(this);
+
                 var i, ii, j, jj;
                 var mtxX        = this.containerNodes.getMtxSize().x,
                     mtxY        = this.containerNodes.getMtxSize().y;
@@ -616,6 +635,8 @@ define(
                 this.containerName.attr(attrtxt0);
 
                 this.setTopLeftCoord(this.rect.attr("x"),this.rect.attr("y"));
+                if (this.isEditing)
+                    this.r.scaleInit(this);
                 this.rect.animate({"fill-opacity": this.oUnselected}, 500);
                 this.toFront();
 
@@ -624,7 +645,33 @@ define(
 
             // EDITABLE
 
+            this.menuFieldEditClick = function() {
+                containerRef.menu.toBack();
+                containerRef.containerMenuSet.toBack();
+                containerRef.menu.hide();
+                containerRef.containerMenuSet.hide();
+                containerRef.menuHided=true;
 
+                if (!containerRef.isEditing) {
+                    containerRef.r.scaleInit(containerRef);
+                    containerRef.isEditing = true;
+                } else {
+                    containerRef.r.scaleDone(containerRef);
+                    containerRef.isEditing = false;
+                }
+            };
+
+            this.getBBox = function() {
+                return this.rect.getBBox();
+            };
+
+            this.getMinBBox = function() {
+                return null;
+            };
+
+            this.getMaxBBox = function() {
+                return null;
+            };
 
 
             this.name  = this.name.split("://")[1].split(":")[0];

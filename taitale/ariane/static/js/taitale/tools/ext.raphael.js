@@ -634,12 +634,9 @@ define(
 
                     //helper_.debug("dx : " + dx + "; dy : " + dy);
                     this.object.bboxLine.remove();
-                    for (i = 0, ii = this.object.scaleHandles.length; i < ii; i++) {
-                        if (i != this.idx) {
+                    for (i = 0, ii = this.object.scaleHandles.length; i < ii; i++)
+                        if (i != this.idx)
                             this.object.scaleHandles[i].element.remove();
-                            //this.object.scaleHandles[i].text.remove();
-                        }
-                    }
 
                     switch(this.idx) {
                         case 0:
@@ -872,7 +869,6 @@ define(
                             handle.element.idx = i;
                             handle.element.minBBox = this.minBBox;
                             handle.element.maxBBox = this.maxBBox;
-                            //handle.text = this.text(bbxCorners[i].x-8, bbxCorners[i].y-8, i);
                         }
                     }
 
@@ -890,7 +886,6 @@ define(
                             handle.element.idx = i+4;
                             handle.element.minBBox = this.minBBox;
                             handle.element.maxBBox = this.maxBBox;
-                            //handle.text = this.text(mdlPoints[i].x-8, mdlPoints[i].y-8, i+4);
                         }
                     }
                 }
@@ -898,10 +893,8 @@ define(
                 this.object.editAction(this, dx, dy);
 
                 this.object.bboxLine.toFront();
-                for (i = 0, ii = this.object.scaleHandles.length; i < ii; i++) {
+                for (i = 0, ii = this.object.scaleHandles.length; i < ii; i++)
                     this.object.scaleHandles[i].element.toFront();
-                    //this.object.scaleHandles[i].text.remove();
-                }
             },
             onmovestart = function() {
                 if (this.scaleDir[0] > 0 && this.scaleDir[1] > 0)
@@ -953,7 +946,6 @@ define(
                 this.object.editUp();
             };
 
-        var scaleObject;
         Raphael.fn.scaleInit = function(object) {
             var obbox      = object.getBBox(),
                 bbxCorners = [
@@ -974,11 +966,9 @@ define(
                 ],
                 i, ii;
 
-            scaleObject = object;
-
-            scaleObject.bbxCorners = bbxCorners;
-            scaleObject.mdlPoints  = mdlPoints;
-            scaleObject.bboxLine = this.path()
+            object.bbxCorners = bbxCorners;
+            object.mdlPoints  = mdlPoints;
+            object.bboxLine = this.path()
                 .attr({path: [
                         [ 'M', bbxCorners[0].x, bbxCorners[0].y ],
                         [ 'L', bbxCorners[1].x, bbxCorners[1].y ],
@@ -991,7 +981,7 @@ define(
                     opacity: .5
                 });
 
-            scaleObject.scaleHandles = [];
+            object.scaleHandles = [];
             var handle;
             for (i = 0, ii = bbxCorners.length; i < ii; i++) {
                 handle = {};
@@ -1002,13 +992,12 @@ define(
                     onmovestart,
                     onmoveend
                 );
-                handle.element.object = scaleObject;
+                handle.element.object = object;
                 handle.element.scaleDir = scaleDir[i];
                 handle.element.idx = i;
-                handle.element.minBBox = scaleObject.getMinBBox();
-                handle.element.maxBBox = scaleObject.getMaxBBox();
-                //handle.text = this.text(bbxCorners[i].x-8, bbxCorners[i].y-8, i);
-                scaleObject.scaleHandles[i] = handle;
+                handle.element.minBBox = object.getMinBBox();
+                handle.element.maxBBox = object.getMaxBBox();
+                object.scaleHandles[i] = handle;
             }
 
             for (i = 0, ii = mdlPoints.length; i < ii; i++) {
@@ -1020,26 +1009,20 @@ define(
                     onmovestart,
                     onmoveend
                 );
-                handle.element.object = scaleObject;
+                handle.element.object = object;
                 handle.element.scaleDir = scaleDir[i+4];
                 handle.element.idx = i+4;
-                handle.element.minBBox = scaleObject.getMinBBox();
-                handle.element.maxBBox = scaleObject.getMaxBBox();
-                //handle.text = this.text(mdlPoints[i].x-8, mdlPoints[i].y-8, i+4);
-                scaleObject.scaleHandles[i+4] = handle;
+                handle.element.minBBox = object.getMinBBox();
+                handle.element.maxBBox = object.getMaxBBox();
+                object.scaleHandles[i+4] = handle;
             }
-        };
-
-        Raphael.fn.scaleAction = function() {
 
         };
 
-        Raphael.fn.scaleDone = function() {
+        Raphael.fn.scaleDone = function(object) {
             var i, ii;
-            scaleObject.bboxLine.remove();
-            for (i = 0, ii = scaleObject.scaleHandles.length; i < ii; i++) {
-                scaleObject.scaleHandles[i].element.remove();
-                //scaleObject.scaleHandles[i].text.remove();
-            }
+            object.bboxLine.remove();
+            for (i = 0, ii = object.scaleHandles.length; i < ii; i++)
+                object.scaleHandles[i].element.remove();
         };
     });
