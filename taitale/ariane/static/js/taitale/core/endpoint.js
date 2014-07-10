@@ -576,7 +576,6 @@ define(
                 for (i = 0, ii = this.epLinks.length; i < ii; i++)
                     this.epLinks[i].moveInit();
 
-
                 this.cx = this.circle.attr("cx");
                 this.cy = this.circle.attr("cy");
 

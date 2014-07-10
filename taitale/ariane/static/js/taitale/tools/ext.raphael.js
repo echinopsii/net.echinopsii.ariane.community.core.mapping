@@ -26,7 +26,8 @@ define(
     ],
     function (Raphael, helper, params) {
 
-        //var helper_ = new helper();
+        //noinspection JSUnusedLocalSymbols
+        var helper_ = new helper();
         var tokenRegex = /\{([^\}]+)\}/g;
         var objNotationRegex = /(?:(?:^|\.)(.+?)(?=\[|\.|$|\()|\[('|")(.+?)\2\])(\(\))?/g; // matches .xxxxx or ["xxxxx"] to run over object properties
 
@@ -244,7 +245,7 @@ define(
                 minFontSize = parseFloat(-1/0),
                 compress    = compressor || 1,
                 newFontSize = Math.max(Math.min(containerWidth / (compress*10), maxFontSize), minFontSize) ;
-            if (newFontSize<min)
+            if (newFontSize < min)
                 newFontSize = min + ' px';
             else
                 newFontSize = newFontSize + ' px';
@@ -619,5 +620,420 @@ define(
             }
             if (linksOnMove!=null) linksOnMove = null;
             if (linksToUp!=null) linksToUp = null;
+        };
+
+
+        // OBJECTS RESIZING
+
+        var onmove = function(dx,dy) {
+                if (this.scaleDir[0] == 0) dx = 0;
+                if (this.scaleDir[1] == 0) dy = 0;
+
+                if (dx != 0 || dy != 0) {
+                    var i, ii;
+
+                    //helper_.debug("dx : " + dx + "; dy : " + dy);
+                    this.object.bboxLine.remove();
+                    for (i = 0, ii = this.object.scaleHandles.length; i < ii; i++) {
+                        if (i != this.idx) {
+                            this.object.scaleHandles[i].element.remove();
+                            //this.object.scaleHandles[i].text.remove();
+                        }
+                    }
+
+                    switch(this.idx) {
+                        case 0:
+                            if (this.object.bbxCorners[0].x + dx >= this.object.bbxCorners[1].x)
+                                dx = this.object.bbxCorners[1].x - this.object.bbxCorners[0].x;
+                            if (this.object.bbxCorners[0].y + dy >= this.object.bbxCorners[3].y)
+                                dy = this.object.bbxCorners[3].y - this.object.bbxCorners[0].y;
+                            if (this.maxBBox!=null) {
+
+                            }
+                            if (this.minBBox!=null) {
+                                if (this.object.bbxCorners[0].x + dx >= this.minBBox.x)
+                                    dx = this.minBBox.x - this.object.bbxCorners[0].x;
+                                if (this.object.bbxCorners[0].y + dy >= this.minBBox.y)
+                                    dy = this.minBBox.y - this.object.bbxCorners[0].y;
+                            }
+
+                            this.ibbxCorners[0].x = this.object.bbxCorners[0].x+dx;
+                            this.ibbxCorners[0].y = this.object.bbxCorners[0].y+dy;
+                            this.ibbxCorners[1].y = this.object.bbxCorners[1].y+dy;
+                            this.ibbxCorners[3].x = this.object.bbxCorners[3].x+dx;
+
+                            this.imdlPoints[0].x = this.object.mdlPoints[0].x+dx/2;
+                            this.imdlPoints[0].y = this.object.mdlPoints[0].y+dy;
+                            this.imdlPoints[1].y = this.object.mdlPoints[1].y+dy/2;
+                            this.imdlPoints[2].x = this.object.mdlPoints[2].x+dx/2;
+                            this.imdlPoints[3].x = this.object.mdlPoints[3].x+dx;
+                            this.imdlPoints[3].y = this.object.mdlPoints[3].y+dy/2;
+
+                            break;
+
+                        case 1:
+                            if (this.object.bbxCorners[1].x + dx <= this.object.bbxCorners[0].x)
+                                dx = this.object.bbxCorners[0].x - this.object.bbxCorners[1].x;
+                            if (this.object.bbxCorners[1].y + dy >= this.object.bbxCorners[3].y)
+                                dy = this.object.bbxCorners[3].y - this.object.bbxCorners[1].y;
+                            if (this.maxBBox!=null) {
+
+                            }
+                            if (this.minBBox!=null) {
+                                if (this.object.bbxCorners[1].x + dx <= this.minBBox.x2)
+                                    dx = this.minBBox.x2 - this.object.bbxCorners[1].x;
+                                if (this.object.bbxCorners[1].y + dy >= this.minBBox.y)
+                                    dy = this.minBBox.y - this.object.bbxCorners[1].y;
+                            }
+
+                            this.ibbxCorners[0].y = this.object.bbxCorners[0].y+dy;
+                            this.ibbxCorners[1].x = this.object.bbxCorners[1].x+dx;
+                            this.ibbxCorners[1].y = this.object.bbxCorners[1].y+dy;
+                            this.ibbxCorners[2].x = this.object.bbxCorners[2].x+dx;
+
+                            this.imdlPoints[0].x = this.object.mdlPoints[0].x+dx/2;
+                            this.imdlPoints[0].y = this.object.mdlPoints[0].y+dy;
+                            this.imdlPoints[1].x = this.object.mdlPoints[1].x+dx;
+                            this.imdlPoints[1].y = this.object.mdlPoints[1].y+dy/2;
+                            this.imdlPoints[2].x = this.object.mdlPoints[2].x+dx/2;
+                            this.imdlPoints[3].y = this.object.mdlPoints[3].y+dy/2;
+
+                            break;
+
+                        case 2:
+                            if (this.object.bbxCorners[2].x + dx <= this.object.bbxCorners[0].x)
+                                dx = this.object.bbxCorners[0].x -this.object.bbxCorners[2].x;
+                            if (this.object.bbxCorners[2].y + dy <= this.object.bbxCorners[0].y)
+                                dy = this.object.bbxCorners[0].y - this.object.bbxCorners[2].y;
+                            if (this.maxBBox!=null) {
+
+                            }
+                            if (this.minBBox!=null) {
+                                if (this.object.bbxCorners[2].x + dx <= this.minBBox.x2)
+                                    dx = this.minBBox.x2 - this.object.bbxCorners[2].x;
+                                if (this.object.bbxCorners[2].y + dy <= this.minBBox.y2)
+                                    dy = this.minBBox.y2 - this.object.bbxCorners[2].y;
+                            }
+
+                            this.ibbxCorners[1].x = this.object.bbxCorners[1].x+dx;
+                            this.ibbxCorners[2].x = this.object.bbxCorners[2].x+dx;
+                            this.ibbxCorners[2].y = this.object.bbxCorners[2].y+dy;
+                            this.ibbxCorners[3].y = this.object.bbxCorners[3].y+dy;
+
+                            this.imdlPoints[0].x = this.object.mdlPoints[0].x+dx/2;
+                            this.imdlPoints[1].x = this.object.mdlPoints[1].x+dx;
+                            this.imdlPoints[1].y = this.object.mdlPoints[1].y+dy/2;
+                            this.imdlPoints[2].x = this.object.mdlPoints[2].x+dx/2;
+                            this.imdlPoints[2].y = this.object.mdlPoints[2].y+dy;
+                            this.imdlPoints[3].y = this.object.mdlPoints[3].y+dy/2;
+
+                            break;
+
+                        case 3:
+                            if (this.object.bbxCorners[3].x + dx >= this.object.bbxCorners[1].x)
+                                dx = this.object.bbxCorners[1].x - this.object.bbxCorners[3].x;
+                            if (this.object.bbxCorners[3].y + dy <= this.object.bbxCorners[0].y)
+                                dy = this.object.bbxCorners[0].y - this.object.bbxCorners[3].y;
+                            if (this.maxBBox!=null) {
+
+                            }
+                            if (this.minBBox!=null) {
+                                if (this.object.bbxCorners[3].x + dx >= this.minBBox.x)
+                                    dx = this.minBBox.x - this.object.bbxCorners[3].x;
+                                if (this.object.bbxCorners[3].y + dy <= this.minBBox.y2)
+                                    dy = this.minBBox.y2 - this.object.bbxCorners[3].y;
+                            }
+
+                            this.ibbxCorners[0].x = this.object.bbxCorners[0].x+dx;
+                            this.ibbxCorners[2].y = this.object.bbxCorners[2].y+dy;
+                            this.ibbxCorners[3].x = this.object.bbxCorners[3].x+dx;
+                            this.ibbxCorners[3].y = this.object.bbxCorners[3].y+dy;
+
+                            this.imdlPoints[0].x = this.object.mdlPoints[0].x+dx/2;
+                            this.imdlPoints[1].y = this.object.mdlPoints[1].y+dy/2;
+                            this.imdlPoints[2].x = this.object.mdlPoints[2].x+dx/2;
+                            this.imdlPoints[2].y = this.object.mdlPoints[2].y+dy;
+                            this.imdlPoints[3].x = this.object.mdlPoints[3].x+dx;
+                            this.imdlPoints[3].y = this.object.mdlPoints[3].y+dy/2;
+
+                            break;
+
+                        case 4:
+                            if (this.object.mdlPoints[0].y + dy >= this.object.mdlPoints[2].y)
+                                dy = this.object.mdlPoints[2].y - this.object.mdlPoints[0].y;
+                            if (this.maxBBox!=null) {
+
+                            }
+                            if (this.minBBox!=null) {
+                                if (this.object.mdlPoints[0].y + dy >= this.minBBox.y)
+                                    dy = this.minBBox.y - this.object.mdlPoints[0].y
+                            }
+
+                            this.ibbxCorners[0].y = this.object.bbxCorners[0].y+dy;
+                            this.ibbxCorners[1].y = this.object.bbxCorners[1].y+dy;
+
+                            this.imdlPoints[0].y = this.object.mdlPoints[0].y+dy;
+                            this.imdlPoints[1].y = this.object.mdlPoints[1].y+dy/2;
+                            this.imdlPoints[3].y = this.object.mdlPoints[3].y+dy/2;
+
+                            break;
+
+                        case 5:
+                            if (this.object.mdlPoints[1].x + dx <= this.object.mdlPoints[3].x)
+                                dx = this.object.mdlPoints[3].x - this.object.mdlPoints[1].x;
+                            if (this.maxBBox!=null) {
+
+                            }
+                            if (this.minBBox!=null) {
+                                if (this.object.mdlPoints[1].x + dx <= this.minBBox.x2)
+                                    dx = this.minBBox.x2 - this.object.mdlPoints[1].x
+                            }
+
+                            this.ibbxCorners[1].x = this.object.bbxCorners[1].x+dx;
+                            this.ibbxCorners[2].x = this.object.bbxCorners[2].x+dx;
+
+                            this.imdlPoints[0].x = this.object.mdlPoints[0].x+dx/2;
+                            this.imdlPoints[1].x = this.object.mdlPoints[1].x+dx;
+                            this.imdlPoints[2].x = this.object.mdlPoints[2].x+dx/2;
+
+                            break;
+
+                        case 6:
+                            if (this.object.mdlPoints[2].y + dy <= this.object.mdlPoints[0].y)
+                                dy = this.object.mdlPoints[0].y - this.object.mdlPoints[2].y;
+                            if (this.maxBBox!=null) {
+
+                            }
+                            if (this.minBBox!=null) {
+                                if (this.object.mdlPoints[2].y + dy <= this.minBBox.y2)
+                                    dy = this.minBBox.y2 - this.object.mdlPoints[2].y
+                            }
+
+                            this.ibbxCorners[2].y = this.object.bbxCorners[2].y+dy;
+                            this.ibbxCorners[3].y = this.object.bbxCorners[3].y+dy;
+
+                            this.imdlPoints[1].y = this.object.mdlPoints[1].y+dy/2;
+                            this.imdlPoints[2].y = this.object.mdlPoints[2].y+dy;
+                            this.imdlPoints[3].y = this.object.mdlPoints[3].y+dy/2;
+
+                            break;
+
+                        case 7:
+                            if (this.object.mdlPoints[3].x + dx >= this.object.mdlPoints[1].x)
+                                dx = this.object.mdlPoints[1].x - this.object.mdlPoints[3].x;
+                            if (this.maxBBox!=null) {
+
+                            }
+                            if (this.minBBox!=null) {
+                                if (this.object.mdlPoints[3].x + dx >= this.minBBox.x)
+                                    dx = this.minBBox.x - this.object.mdlPoints[3].x
+                            }
+
+                            this.ibbxCorners[0].x = this.object.bbxCorners[0].x+dx;
+                            this.ibbxCorners[3].x = this.object.bbxCorners[3].x+dx;
+
+                            this.imdlPoints[0].x = this.object.mdlPoints[0].x+dx/2;
+                            this.imdlPoints[2].x = this.object.mdlPoints[2].x+dx/2;
+                            this.imdlPoints[3].x = this.object.mdlPoints[3].x+dx;
+                            break;
+
+                        default:
+                            break;
+                    }
+
+                    var attrect = {x: this.ix + dx, y: this.iy + dy};
+
+                    this.attr(attrect);
+                    this.object.bboxLine = this.object.r.path()
+                        .attr({path: [
+                                        [ 'M', this.ibbxCorners[0].x, this.ibbxCorners[0].y ],
+                                        [ 'L', this.ibbxCorners[1].x, this.ibbxCorners[1].y ],
+                                        [ 'L', this.ibbxCorners[2].x, this.ibbxCorners[2].y ],
+                                        [ 'L', this.ibbxCorners[3].x, this.ibbxCorners[3].y ],
+                                        [ 'L', this.ibbxCorners[0].x, this.ibbxCorners[0].y ]
+                                     ],
+                                     'stroke-width': 3,
+                                     'stroke-dasharray': '- ',
+                                     opacity: .5
+                        });
+
+                    var handle;
+                    for (i = 0, ii = this.ibbxCorners.length; i < ii; i++) {
+                        if (this.idx != i) {
+                            handle = this.object.scaleHandles[i];
+                            handle.element = this.object.r.rect(this.ibbxCorners[i].x-5, this.ibbxCorners[i].y-5, 10, 10).attr({fill: "#000"});
+                            handle.element.drag(
+                                onmove,
+                                onmovestart,
+                                onmoveend
+                            );
+                            handle.element.object = this.object;
+                            handle.element.scaleDir = handle.scaleDir;
+                            handle.element.idx = i;
+                            handle.element.minBBox = this.minBBox;
+                            handle.element.maxBBox = this.maxBBox;
+                            //handle.text = this.text(bbxCorners[i].x-8, bbxCorners[i].y-8, i);
+                        }
+                    }
+
+                    for (i = 0, ii = this.imdlPoints.length; i < ii; i++) {
+                        if (this.idx != i+4) {
+                            handle = this.object.scaleHandles[i+4];
+                            handle.element = this.object.r.rect(this.imdlPoints[i].x-5, this.imdlPoints[i].y-5, 10, 10).attr({fill: "#000"});
+                            handle.element.drag(
+                                onmove,
+                                onmovestart,
+                                onmoveend
+                            );
+                            handle.element.object = this.object;
+                            handle.element.scaleDir = handle.scaleDir;
+                            handle.element.idx = i+4;
+                            handle.element.minBBox = this.minBBox;
+                            handle.element.maxBBox = this.maxBBox;
+                            //handle.text = this.text(mdlPoints[i].x-8, mdlPoints[i].y-8, i+4);
+                        }
+                    }
+                }
+
+                this.object.editAction(this, dx, dy);
+            },
+            onmovestart = function() {
+                if (this.scaleDir[0] > 0 && this.scaleDir[1] > 0)
+                    this.attr('cursor','se-resize');
+                if (this.scaleDir[0] == 0 && this.scaleDir[1] > 0)
+                    this.attr('cursor','s-resize');
+                if (this.scaleDir[0] < 0 && this.scaleDir[1] > 0)
+                    this.attr('cursor','sw-resize');
+                if (this.scaleDir[0] > 0 && this.scaleDir[1] < 0)
+                    this.attr('cursor','ne-resize');
+                if (this.scaleDir[0] == 0 && this.scaleDir[1] < 0)
+                    this.attr('cursor','n-resize');
+                if (this.scaleDir[0] < 0 && this.scaleDir[1] < 0)
+                    this.attr('cursor','nw-resize');
+                if (this.scaleDir[0] > 0 && this.scaleDir[1] == 0)
+                    this.attr('cursor','e-resize');
+                if (this.scaleDir[0] < 0 && this.scaleDir[1] == 0)
+                    this.attr('cursor','w-resize');
+
+                this.ix = this.attr("x"); this.iy = this.attr("y");
+                this.ibbxCorners = [
+                                            {x:this.object.bbxCorners[0].x, y:this.object.bbxCorners[0].y},
+                                            {x:this.object.bbxCorners[1].x, y:this.object.bbxCorners[1].y},
+                                            {x:this.object.bbxCorners[2].x, y:this.object.bbxCorners[2].y},
+                                            {x:this.object.bbxCorners[3].x, y:this.object.bbxCorners[3].y}
+                                   ];
+                this.imdlPoints  = [
+                                            {x:this.object.mdlPoints[0].x, y:this.object.mdlPoints[0].y},
+                                            {x:this.object.mdlPoints[1].x, y:this.object.mdlPoints[1].y},
+                                            {x:this.object.mdlPoints[2].x, y:this.object.mdlPoints[2].y},
+                                            {x:this.object.mdlPoints[3].x, y:this.object.mdlPoints[3].y}
+                                   ];
+                this.object.editInit();
+            },
+            onmoveend = function() {
+                this.attr('cursor','default');
+                this.object.bbxCorners = [
+                    {x:this.ibbxCorners[0].x, y:this.ibbxCorners[0].y},
+                    {x:this.ibbxCorners[1].x, y:this.ibbxCorners[1].y},
+                    {x:this.ibbxCorners[2].x, y:this.ibbxCorners[2].y},
+                    {x:this.ibbxCorners[3].x, y:this.ibbxCorners[3].y}
+                ];
+                this.object.mdlPoints = [
+                    {x:this.imdlPoints[0].x, y:this.imdlPoints[0].y},
+                    {x:this.imdlPoints[1].x, y:this.imdlPoints[1].y},
+                    {x:this.imdlPoints[2].x, y:this.imdlPoints[2].y},
+                    {x:this.imdlPoints[3].x, y:this.imdlPoints[3].y}
+                ];
+                this.object.editUp();
+            };
+
+        var scaleObject;
+        Raphael.fn.scaleInit = function(object) {
+            var obbox      = object.getBBox(),
+                bbxCorners = [
+                                {x:obbox.x, y:obbox.y},
+                                {x:obbox.x + obbox.width, y:obbox.y},
+                                {x:obbox.x2, y:obbox.y2},
+                                {x:obbox.x2 - obbox.width, y:obbox.y2}
+                ],
+                mdlPoints  = [
+                                {x:obbox.x + obbox.width/2,y:obbox.y},
+                                {x:obbox.x2, y:obbox.y+obbox.height/2},
+                                {x:obbox.x + obbox.width/2,y:obbox.y2},
+                                {x:obbox.x, y:obbox.y + obbox.height/2}
+                ],
+                scaleDir   = [
+                    [-1,-1],[1,-1],[1,1],[-1,1],
+                    [0,-1],[1,0],[0,1],[-1,0]
+                ],
+                i, ii;
+
+            scaleObject = object;
+
+            scaleObject.bbxCorners = bbxCorners;
+            scaleObject.mdlPoints  = mdlPoints;
+            scaleObject.bboxLine = this.path()
+                .attr({path: [
+                        [ 'M', bbxCorners[0].x, bbxCorners[0].y ],
+                        [ 'L', bbxCorners[1].x, bbxCorners[1].y ],
+                        [ 'L', bbxCorners[2].x, bbxCorners[2].y ],
+                        [ 'L', bbxCorners[3].x, bbxCorners[3].y ],
+                        [ 'L', bbxCorners[0].x, bbxCorners[0].y ]
+                    ],
+                    'stroke-width': 3,
+                    'stroke-dasharray': '- ',
+                    opacity: .5
+                });
+
+            scaleObject.scaleHandles = [];
+            var handle;
+            for (i = 0, ii = bbxCorners.length; i < ii; i++) {
+                handle = {};
+                handle.scaleDir = scaleDir[i];
+                handle.element = this.rect(bbxCorners[i].x-5, bbxCorners[i].y-5, 10, 10).attr({fill: "#000"});
+                handle.element.drag(
+                    onmove,
+                    onmovestart,
+                    onmoveend
+                );
+                handle.element.object = scaleObject;
+                handle.element.scaleDir = scaleDir[i];
+                handle.element.idx = i;
+                handle.element.minBBox = scaleObject.getMinBBox();
+                handle.element.maxBBox = scaleObject.getMaxBBox();
+                //handle.text = this.text(bbxCorners[i].x-8, bbxCorners[i].y-8, i);
+                scaleObject.scaleHandles[i] = handle;
+            }
+
+            for (i = 0, ii = mdlPoints.length; i < ii; i++) {
+                handle = {};
+                handle.scaleDir = scaleDir[i+4];
+                handle.element = this.rect(mdlPoints[i].x-5, mdlPoints[i].y-5, 10, 10).attr({fill: "#000"});
+                handle.element.drag(
+                    onmove,
+                    onmovestart,
+                    onmoveend
+                );
+                handle.element.object = scaleObject;
+                handle.element.scaleDir = scaleDir[i+4];
+                handle.element.idx = i+4;
+                handle.element.minBBox = scaleObject.getMinBBox();
+                handle.element.maxBBox = scaleObject.getMaxBBox();
+                //handle.text = this.text(mdlPoints[i].x-8, mdlPoints[i].y-8, i+4);
+                scaleObject.scaleHandles[i+4] = handle;
+            }
+        };
+
+        Raphael.fn.scaleAction = function() {
+
+        };
+
+        Raphael.fn.scaleDone = function() {
+            var i, ii;
+            scaleObject.bboxLine.remove();
+            for (i = 0, ii = scaleObject.scaleHandles.length; i < ii; i++) {
+                scaleObject.scaleHandles[i].element.remove();
+                //scaleObject.scaleHandles[i].text.remove();
+            }
         };
     });

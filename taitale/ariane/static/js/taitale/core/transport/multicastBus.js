@@ -51,12 +51,13 @@ define(
             this.menuMainTitleTXT  = {'font-size': '12px', 'font-family': 'Arial', 'font-weight': 'bold',   'cursor': 'default', fill: "#fff"};
             this.menuFieldTXT      = {'font-size': '10px', 'font-family': 'Arial', 'font-weight': 'normal', 'cursor': 'default', fill: "#fff"};
             this.menuFieldTXTOver  = {'font-size': '10px', 'font-family': 'Arial', 'font-weight': 'bold',   'cursor': 'default', fill: "#fff"};
-            this.menuHided          = true;
-            this.menuProperties     = null;
-            this.menuPropertiesRect = null;
-            this.menuTitle          = null;
-            this.menuTitleTxt       = "Multicast bus menu";
-            this.menuFieldEditTitle = "Edit";
+            this.menuHided         = true;
+            this.menuEditionMode     = null;
+            this.menuEditionModeRect = null;
+            this.menuTitle           = null;
+            this.menuTitleTxt        = "Multicast bus menu";
+            this.menuFieldStartEditTitle  = "Resizing mode ON";
+            this.menuFieldStopEditTitle   = "Resizing mode OFF";
 
             this.rightClick = false;
 
@@ -137,20 +138,20 @@ define(
                 this.r = r;
 
                 this.menuTitle = this.r.text(0,10,this.menuTitleTxt).attr(this.menuMainTitleTXT);
-                this.menuPropertiesRect = this.r.rect(0,10,this.menuFieldEditTitle.width(this.menuFieldTXT),this.menuFieldEditTitle.height(this.menuFieldTXT));
-                this.menuPropertiesRect.attr({fill: this.color, stroke: this.color, "fill-opacity": 0, "stroke-width": 0});
-                this.menuPropertiesRect.mouseover(this.mbus.menuFieldOver);
-                this.menuPropertiesRect.mouseout(this.mbus.menuFieldOut);
-                this.menuPropertiesRect.mousedown(this.mbus.menuFieldEditClick);
-                this.menuProperties = this.r.text(0,10,this.menuFieldEditTitle).attr(this.menuFieldTXT);
-                this.menuProperties.mouseover(this.mbus.menuFieldOver);
-                this.menuProperties.mouseout(this.mbus.menuFieldOut);
-                this.menuProperties.mousedown(this.mbus.menuFieldEditClick);
+                this.menuEditionModeRect = this.r.rect(0,10,this.menuFieldStartEditTitle.width(this.menuFieldTXT),this.menuFieldStartEditTitle.height(this.menuFieldTXT));
+                this.menuEditionModeRect.attr({fill: this.color, stroke: this.color, "fill-opacity": 0, "stroke-width": 0});
+                this.menuEditionModeRect.mouseover(this.mbus.menuFieldOver);
+                this.menuEditionModeRect.mouseout(this.mbus.menuFieldOut);
+                this.menuEditionModeRect.mousedown(this.mbus.menuFieldEditClick);
+                this.menuEditionMode = this.r.text(0,10,this.menuFieldStartEditTitle).attr(this.menuFieldTXT);
+                this.menuEditionMode.mouseover(this.mbus.menuFieldOver);
+                this.menuEditionMode.mouseout(this.mbus.menuFieldOut);
+                this.menuEditionMode.mousedown(this.mbus.menuFieldEditClick);
 
                 this.menuSet = this.r.set();
                 this.menuSet.push(this.menuTitle);
-                this.menuSet.push(this.menuPropertiesRect);
-                this.menuSet.push(this.menuProperties);
+                this.menuSet.push(this.menuEditionModeRect);
+                this.menuSet.push(this.menuEditionMode);
                 //containerMenuSet.push(this.text(0,30,"Highlight cluster").attr(containerFieldTXT));
                 //containerMenuSet.push(this.text(0,45,"Show gates").attr(containerFieldTXT));
                 //containerMenuSet.push(this.text(0,60,"Hide gates").attr(containerFieldTXT));

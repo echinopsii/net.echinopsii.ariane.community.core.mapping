@@ -36,19 +36,19 @@ define(
             this.title_    = title;
             this.color     = color_;
             this.vcpath    =
-                    [
-                        ["M", this.x, this.y],
-                        ["C", this.x+this.diameter/8, this.y, this.x+this.diameter/5, this.y-this.diameter/4, this.x+this.diameter/5, this.y-this.diameter/2],
-                        ["C", this.x+this.diameter/5, this.y-3*this.diameter/4, this.x+this.diameter/8, this.y-this.diameter, this.x, this.y-this.diameter],
-                        ["C", this.x-this.diameter/8, this.y-this.diameter, this.x-this.diameter/5, this.y-3*this.diameter/4, this.x-this.diameter/5, this.y-this.diameter/2],
-                        ["C", this.x-this.diameter/5, this.y-this.diameter/5, this.x-this.diameter/8, this.y, this.x, this.y],
-                        ["Z"],
-                        ["M", this.x, this.y],
-                        ["L", this.x+this.height, this.y],
-                        ["C", this.x+this.height+this.diameter/8, this.y, this.x+this.height+this.diameter/5, this.y-this.diameter/4, this.x+this.height+this.diameter/5, this.y-this.diameter/2],
-                        ["C", this.x+this.height+this.diameter/5, this.y-3*this.diameter/4, this.x+this.height+this.diameter/8, this.y-this.diameter, this.x+this.height, this.y-this.diameter],
-                        ["L", this.x, this.y-this.diameter]
-                    ];
+                [
+                    ["M", this.x, this.y],
+                    ["C", this.x+this.diameter/8, this.y, this.x+this.diameter/5, this.y-this.diameter/4, this.x+this.diameter/5, this.y-this.diameter/2],
+                    ["C", this.x+this.diameter/5, this.y-3*this.diameter/4, this.x+this.diameter/8, this.y-this.diameter, this.x, this.y-this.diameter],
+                    ["C", this.x-this.diameter/8, this.y-this.diameter, this.x-this.diameter/5, this.y-3*this.diameter/4, this.x-this.diameter/5, this.y-this.diameter/2],
+                    ["C", this.x-this.diameter/5, this.y-this.diameter/5, this.x-this.diameter/8, this.y, this.x, this.y],
+                    ["Z"],
+                    ["M", this.x, this.y],
+                    ["L", this.x+this.height, this.y],
+                    ["C", this.x+this.height+this.diameter/8, this.y, this.x+this.height+this.diameter/5, this.y-this.diameter/4, this.x+this.height+this.diameter/5, this.y-this.diameter/2],
+                    ["C", this.x+this.height+this.diameter/5, this.y-3*this.diameter/4, this.x+this.height+this.diameter/8, this.y-this.diameter, this.x+this.height, this.y-this.diameter],
+                    ["L", this.x, this.y-this.diameter]
+                ];
             this.translateForm="";
             this.helper_ = new helper();
 
@@ -60,27 +60,30 @@ define(
             this.bindedLinks = [];
 
             this.bindingPt1 = null;
+            this.bindingPt2 = null;
+            this.bindingPt3 = null;
+            this.bindingPt4 = null;
+            this.bindingPt5 = null;
+            this.bindingPt6 = null;
+
             this.bindingPt1X = this.x;
             this.bindingPt1Y = this.y;
-            this.bindingPt2 = null;
             this.bindingPt2X = this.x+this.height;
             this.bindingPt2Y = this.y;
-            this.bindingPt3 = null;
             this.bindingPt3X = this.x+this.height;
             this.bindingPt3Y = this.y-d;
-            this.bindingPt4 = null;
             this.bindingPt4X = this.x;
             this.bindingPt4Y = this.y-d;
-            this.bindingPt5 = null;
             this.bindingPt5X = this.x+this.height/2;
             this.bindingPt5Y = this.y;
-            this.bindingPt6 = null;
             this.bindingPt6X = this.x+this.height/2;
             this.bindingPt6Y = this.y-d;
 
             this.root          = parent;
             this.root.isMoving = false;
             this.isMoving      = false;
+
+            this.root.isEditing = false;
 
             this.mvx = 0;
             this.mvy = 0;
@@ -116,7 +119,7 @@ define(
                         cylinderRef.r.up();
                 };
 
-             var mouseDown = function(e) {
+            var mouseDown = function(e) {
                     if (e.which == 3) {
                         if (cylinderRef.root.menuHided) {
                             cylinderRef.root.menuSet.mousedown(menuMouseDown);
@@ -130,6 +133,11 @@ define(
                                     fieldRectHeight = fieldRect.attr("height");
                                     fieldRect.attr({"x": cylinderRef.bindingPt6X - fieldRectWidth/2, "y": cylinderRef.bindingPt6Y+30 - fieldRectHeight/2});
                                     cylinderRef.root.menuSet[i+1].attr({"x": cylinderRef.bindingPt6X, "y": cylinderRef.bindingPt6Y+30});
+                                    if (cylinderRef.root.isEditing) {
+                                        cylinderRef.root.menuSet[i+1].attr({text: cylinderRef.root.menuFieldStopEditTitle});
+                                    } else {
+                                        cylinderRef.root.menuSet[i+1].attr({text: cylinderRef.root.menuFieldStartEditTitle});
+                                    }
                                     i++;
                                 }
                                 else {
@@ -144,8 +152,13 @@ define(
                             if (cylinderRef.root.menu != null)
                                 cylinderRef.root.menu.remove();
                             cylinderRef.root.menu = cylinderRef.root.r.menu(cylinderRef.bindingPt6X,cylinderRef.bindingPt6Y+10,cylinderRef.root.menuSet).
-                                attr({fill: cylinderRef.root.menuFillColor, stroke: cylinderRef.root.color, "stroke-width": cylinderRef.root.menuStrokeWidth,
-                                    "fill-opacity": cylinderRef.root.menuOpacity});
+                                attr(
+                                    {
+                                        fill: cylinderRef.root.menuFillColor,
+                                        stroke: cylinderRef.root.color,
+                                        "stroke-width": cylinderRef.root.menuStrokeWidth,
+                                        "fill-opacity": cylinderRef.root.menuOpacity
+                                    });
                             cylinderRef.root.menu.mousedown(menuMouseDown);
                             cylinderRef.root.menu.toFront();
                             cylinderRef.root.menuSet.toFront();
@@ -183,9 +196,6 @@ define(
             };
             this.menuFieldOut = function() {
                 this.attr(cylinderRef.root.menuFieldTXT);
-            };
-            this.menuFieldEditClick = function() {
-                cylinderRef.helper_.debug("fieldEditClick");
             };
 
             this.pushBindedLink = function(link) {
@@ -250,32 +260,21 @@ define(
                     this.titleTxt   = this.r.text(this.ctrX, this.ctrY-this.diameter, this.title_).
                         attr({'font-size': '14px', 'font-weight': 'bold', 'font-family': 'Arial', fill: strokeColor, 'cursor': 'default'});
                     this.titleTxt.transform(this.translateForm);
-                    this.bindingPt1 = this.r.circle(this.bindingPt1X,this.bindingPt1Y,0);
-                    this.bindingPt2 = this.r.circle(this.bindingPt2X,this.bindingPt2Y,0);
-                    this.bindingPt3 = this.r.circle(this.bindingPt3X,this.bindingPt3Y,0);
-                    this.bindingPt4 = this.r.circle(this.bindingPt4X,this.bindingPt4Y,0);
-                    this.bindingPt5 = this.r.circle(this.bindingPt5X,this.bindingPt5Y,0);
-                    this.bindingPt6 = this.r.circle(this.bindingPt6X,this.bindingPt6Y,0);
-                    this.cylinderR  = this.r.set().push(this.titleTxt).push(this.cylinder).push(this.bindingPt1).push(this.bindingPt2).
+                    this.bindingPt1 = this.r.circle(this.bindingPt1X, this.bindingPt1Y, 0);
+                    this.bindingPt2 = this.r.circle(this.bindingPt2X, this.bindingPt2Y, 0);
+                    this.bindingPt3 = this.r.circle(this.bindingPt3X, this.bindingPt3Y, 0);
+                    this.bindingPt4 = this.r.circle(this.bindingPt4X, this.bindingPt4Y, 0);
+                    this.bindingPt5 = this.r.circle(this.bindingPt5X, this.bindingPt5Y, 0);
+                    this.bindingPt6 = this.r.circle(this.bindingPt6X, this.bindingPt6Y, 0);
+                    this.cylinderR  = this.r.set().
+                        push(this.titleTxt).push(this.cylinder).push(this.bindingPt1).push(this.bindingPt2).
                         push(this.bindingPt3).push(this.bindingPt4).push(this.bindingPt5).push(this.bindingPt6);
                     this.cylinderR.mousedown(mouseDown);
                     this.cylinderR.drag(cyMove, cyDragger, cyUP);
                 }
             };
 
-            this.moveInit = function() {
-                var i;
-                this.r.busOnMovePush(this);
-                this.r.moveSetPush(this.bindingPt1);
-                this.r.moveSetPush(this.bindingPt2);
-                this.r.moveSetPush(this.bindingPt3);
-                this.r.moveSetPush(this.bindingPt4);
-                this.r.moveSetPush(this.bindingPt5);
-                this.r.moveSetPush(this.bindingPt6);
-
-                for (i = this.bindedLinks.length; i--;)
-                    this.bindedLinks[i].moveInit();
-
+            this.changeInit = function() {
                 this.exttX  = this.cylinder.attr("transform").toString();
                 this.extox1 = this.bindingPt1.attr("cx");
                 this.extoy1 = this.bindingPt1.attr("cy");
@@ -302,6 +301,32 @@ define(
 
                 this.isMoving=true;
                 this.root.isMoving=true;
+            };
+
+            this.changeUp = function() {
+                this.root.isMoving=false;
+                this.isMoving=false;
+            };
+
+            // MOVEABLE
+
+            this.moveInit = function() {
+                if (this.root.isEditing)
+                    this.r.scaleDone();
+
+                this.r.busOnMovePush(this);
+                this.r.moveSetPush(this.bindingPt1);
+                this.r.moveSetPush(this.bindingPt2);
+                this.r.moveSetPush(this.bindingPt3);
+                this.r.moveSetPush(this.bindingPt4);
+                this.r.moveSetPush(this.bindingPt5);
+                this.r.moveSetPush(this.bindingPt6);
+
+                for (var i = this.bindedLinks.length; i--;)
+                    this.bindedLinks[i].moveInit();
+
+                this.changeInit();
+                this.cylinderR.animate({"fill-opacity": 1}, 500);
             };
             this.moveAction = function(dx,dy) {
                 var transform = "t" + dx + "," + dy, i, link, up;
@@ -342,9 +367,210 @@ define(
                 this.bindingPt5.attr({cx:this.bindingPt5X,cy:this.bindingPt5Y});
                 this.bindingPt6.attr({cx:this.bindingPt6X,cy:this.bindingPt6Y});
 
-                this.root.isMoving=false;
-                this.isMoving=false;
+                this.changeUp();
+
+                if (this.root.isEditing)
+                    this.r.scaleInit(this);
+                this.cylinderR.animate({"fill-opacity": 0.8}, 500);
             };
+
+
+            //EDITABLE
+
+            this.menuFieldEditClick = function() {
+                cylinderRef.root.menu.toBack();
+                cylinderRef.root.menuSet.toBack();
+                cylinderRef.root.menu.hide();
+                cylinderRef.root.menuSet.hide();
+                cylinderRef.root.menuHided=true;
+
+                if (!cylinderRef.root.isEditing) {
+                    cylinderRef.r.scaleInit(cylinderRef);
+                    cylinderRef.root.isEditing = true;
+                } else {
+                    cylinderRef.r.scaleDone();
+                    cylinderRef.root.isEditing = false;
+                }
+            };
+
+            this.getBBox = function() {
+                //noinspection JSSuspiciousNameCombination
+                return {
+                    x: this.bindingPt4X,
+                    y: this.bindingPt4Y,
+                    x2: this.bindingPt2X,
+                    y2: this.bindingPt2Y,
+                    width: this.height,
+                    height: this.diameter
+                }
+            };
+
+            this.getMinBBox = function() {
+                return this.titleTxt.getBBox();
+            };
+
+            this.getMaxBBox = function() {
+                if (this.isJailed) {
+                    return {
+                        x:      this.boundary.minX,
+                        y:      this.boundary.minY,
+                        x2:     this.boundary.maxX,
+                        y2:     this.boundary.maxY,
+                        width:  this.boundary.maxX - this.boundary.minX,
+                        height: this.boundary.maxY - this.boundary.maxY
+                    }
+                } else {
+                    return null;
+                }
+            };
+
+            this.editInit = function() {
+                this.extctrX     = this.ctrX;
+                this.extctrY     = this.ctrY;
+                this.extX        = this.x;
+                this.extY        = this.y;
+                this.extheight   = this.height;
+                this.extdiameter = this.diameter;
+                this.extvcpath   = this.vcpath;
+
+                this.changeInit();
+            };
+
+            this.editAction = function(elem, dx, dy) {
+
+                switch(elem.idx) {
+                    case 0:
+                        this.extX = this.x + dx;
+                        this.extheight   = this.height - dx;
+                        this.extdiameter = this.diameter - dy;
+                        break;
+                    case 1:
+                        this.extheight = this.height + dx;
+                        this.extdiameter = this.diameter - dy;
+                        break;
+                    case 2:
+                        this.extY = this.y + dy;
+                        this.extheight = this.height + dx;
+                        this.extdiameter = this.diameter + dy;
+                        break;
+                    case 3:
+                        this.extX = this.x + dx;
+                        this.extY = this.y + dy;
+                        this.extheight = this.height - dx;
+                        this.extdiameter = this.diameter + dy;
+                        break;
+                    case 4:
+                        this.extdiameter = this.diameter - dy;
+                        break;
+                    case 5:
+                        this.extheight = this.height + dx;
+                        break;
+                    case 6:
+                        this.extY = this.y + dy;
+                        this.extdiameter = this.diameter + dy;
+                        break;
+                    case 7:
+                        this.extX = this.x + dx;
+                        this.extheight = this.height - dx;
+                        break;
+                    default:
+                        break;
+                }
+
+                this.extctrX = this.extX + this.extheight/2;
+                this.extctrY = this.extY + this.extdiameter/2;
+
+                this.extox1 = this.extX;
+                this.extoy1 = this.extY;
+                this.extox2 = this.extX+this.extheight;
+                this.extoy2 = this.extY;
+                this.extox3 = this.extX+this.extheight;
+                this.extoy3 = this.extY-this.extdiameter;
+                this.extox4 = this.extX;
+                this.extoy4 = this.extY-this.extdiameter;
+                this.extox5 = this.extX+this.extheight/2;
+                this.extoy5 = this.extY;
+                this.extox6 = this.extX+this.extheight/2;
+                this.extoy6 = this.extY-this.extdiameter;
+
+                this.extvcpath    =
+                    [
+                        ["M", this.extX, this.extY],
+                        ["C", this.extX+this.extdiameter/8, this.extY, this.extX+this.extdiameter/5, this.extY-this.extdiameter/4, this.extX+this.extdiameter/5, this.extY-this.extdiameter/2],
+                        ["C", this.extX+this.extdiameter/5, this.extY-3*this.extdiameter/4, this.extX+this.extdiameter/8, this.extY-this.extdiameter, this.extX, this.extY-this.extdiameter],
+                        ["C", this.extX-this.extdiameter/8, this.extY-this.extdiameter, this.extX-this.extdiameter/5, this.extY-3*this.extdiameter/4, this.extX-this.extdiameter/5, this.extY-this.extdiameter/2],
+                        ["C", this.extX-this.extdiameter/5, this.extY-this.extdiameter/5, this.extX-this.extdiameter/8, this.extY, this.extX, this.extY],
+                        ["Z"],
+                        ["M", this.extX, this.extY],
+                        ["L", this.extX+this.extheight, this.extY],
+                        ["C", this.extX+this.extheight+this.extdiameter/8, this.extY, this.extX+this.extheight+this.extdiameter/5, this.extY-this.extdiameter/4, this.extX+this.extheight+this.extdiameter/5, this.extY-this.extdiameter/2],
+                        ["C", this.extX+this.extheight+this.extdiameter/5, this.extY-3*this.extdiameter/4, this.extX+this.extheight+this.extdiameter/8, this.extY-this.extdiameter, this.extX+this.extheight, this.extY-this.extdiameter],
+                        ["L", this.extX, this.extY-this.extdiameter]
+                    ];
+
+
+                this.cylinderR.pop(this.cylinder);
+                this.cylinderR.pop(this.titleTxt);
+                this.cylinder.remove();
+                this.titleTxt.remove();
+
+                var fillColor   = "#" + this.color,
+                    strokeColor = "#" + delHexColor("fff000", this.color);
+                this.cylinder  = this.r.path(this.extvcpath).attr(
+                    {
+                        fill: fillColor,"fill-opacity": '0.7',"fill-rule": 'evenodd',stroke:strokeColor,"stroke-width": '2',"stroke-linecap": 'butt',
+                        "stroke-linejoin": 'round',"stroke-miterlimit": '4',"stroke-dashoffset": '0',"stroke-opacity": '1'
+                    });
+                this.titleTxt   = this.r.text(this.extctrX, this.extctrY-this.extdiameter, this.title_).
+                    attr({'font-size': '14px', 'font-weight': 'bold', 'font-family': 'Arial', fill: strokeColor, 'cursor': 'default'});
+                this.cylinder.toBack();
+
+                this.bindingPt1.attr({cx:this.extox1,cy:this.extoy1});
+                this.bindingPt2.attr({cx:this.extox2,cy:this.extoy2});
+                this.bindingPt3.attr({cx:this.extox3,cy:this.extoy3});
+                this.bindingPt4.attr({cx:this.extox4,cy:this.extoy4});
+                this.bindingPt5.attr({cx:this.extox5,cy:this.extoy5});
+                this.bindingPt6.attr({cx:this.extox6,cy:this.extoy6});
+
+                for (var i = this.bindedLinks.length; i--;) {
+                    var link = this.bindedLinks[i];
+                    link.getEpSource().chooseMulticastTargetBindingPointAndCalcPoz(this.bindedLinks[i]);
+                    var up = this.r.link(link.toCompute());
+                    if (typeof up != 'undefined')
+                        link.toUpdate(up);
+                }
+
+                this.cylinderR.push(this.cylinder);
+                this.cylinderR.push(this.titleTxt);
+                this.cylinderR.mousedown(mouseDown);
+                this.cylinderR.drag(cyMove, cyDragger, cyUP);
+            };
+
+            this.editUp = function() {
+                this.x = this.extX;
+                this.y = this.extY;
+                this.diameter = this.extdiameter;
+                this.height = this.extheight;
+                this.ctrX = this.x + this.height/2;
+                this.ctrY = this.y + this.diameter/2;
+                this.vcpath = this.extvcpath;
+                this.translateForm=""
+
+                this.bindingPt1X = this.x;
+                this.bindingPt1Y = this.y;
+                this.bindingPt2X = this.x+this.height;
+                this.bindingPt2Y = this.y;
+                this.bindingPt3X = this.x+this.height;
+                this.bindingPt3Y = this.y-this.diameter;
+                this.bindingPt4X = this.x;
+                this.bindingPt4Y = this.y-this.diameter;
+                this.bindingPt5X = this.x+this.height/2;
+                this.bindingPt5Y = this.y;
+                this.bindingPt6X = this.x+this.height/2;
+                this.bindingPt6Y = this.y-this.diameter;
+                this.changeUp();
+            }
+
         }
 
         return cylinder;
