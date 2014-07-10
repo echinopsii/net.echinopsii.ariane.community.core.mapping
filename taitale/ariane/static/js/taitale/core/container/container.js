@@ -158,6 +158,9 @@ define(
             this.containerFieldTXT      = params.container_menuFields;
             this.containerFieldTXTOver  = params.container_menuFieldsOver;
 
+            this.menuFieldStartEditTitle  = "Edition mode ON";
+            this.menuFieldStopEditTitle   = "Edition mode OFF";
+
             var containerRef = this;
 
             var minMaxLinkedTreedObjectsComparator = function(linkedObject1, linkedObject2) {
@@ -556,19 +559,7 @@ define(
                 this.containerNodes.toFront();
             };
 
-            this.moveInit = function() {
-                var i, ii, j, jj;
-                var mtxX        = this.containerNodes.getMtxSize().x,
-                    mtxY        = this.containerNodes.getMtxSize().y;
-
-                this.r.containersOnMovePush(this);
-                this.r.moveSetPush(this.containerName);
-                this.r.moveSetPush(this.rect);
-
-                for (i = 0, ii = mtxX; i < ii; i++)
-                    for (j = 0, jj = mtxY; j < jj; j++)
-                        this.containerNodes.getNodeFromMtx(i, j).moveInit();
-
+            this.changeInit = function() {
                 this.extrx = this.rect.attr("x");
                 this.extry = this.rect.attr("y");
                 this.extt0x = this.containerName.attr("x");
@@ -585,6 +576,29 @@ define(
                 }
 
                 this.isMoving = true;
+            };
+
+            this.changeUp = function() {
+                this.isMoving = false;
+            };
+
+            // MOVEABLE
+
+            this.moveInit = function() {
+                var i, ii, j, jj;
+                var mtxX        = this.containerNodes.getMtxSize().x,
+                    mtxY        = this.containerNodes.getMtxSize().y;
+
+                this.r.containersOnMovePush(this);
+                this.r.moveSetPush(this.containerName);
+                this.r.moveSetPush(this.rect);
+
+                for (i = 0, ii = mtxX; i < ii; i++)
+                    for (j = 0, jj = mtxY; j < jj; j++)
+                        this.containerNodes.getNodeFromMtx(i, j).moveInit();
+
+                this.changeInit();
+
                 this.rect.animate({"fill-opacity": this.oSelected}, 500);
             };
 
@@ -604,8 +618,14 @@ define(
                 this.setTopLeftCoord(this.rect.attr("x"),this.rect.attr("y"));
                 this.rect.animate({"fill-opacity": this.oUnselected}, 500);
                 this.toFront();
-                this.isMoving = false;
+
+                this.changeUp();
             };
+
+            // EDITABLE
+
+
+
 
             this.name  = this.name.split("://")[1].split(":")[0];
             var tmp1 = this.name.split(".")[0], tmp2 = this.name.split(".")[1].split(".")[0];

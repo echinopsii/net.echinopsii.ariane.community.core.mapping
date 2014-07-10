@@ -375,7 +375,7 @@ define(
             };
 
 
-            //EDITABLE
+            // EDITABLE
 
             this.menuFieldEditClick = function() {
                 cylinderRef.root.menu.toBack();
@@ -523,7 +523,6 @@ define(
                     });
                 this.titleTxt   = this.r.text(this.extctrX, this.extctrY-this.extdiameter, this.title_).
                     attr({'font-size': '14px', 'font-weight': 'bold', 'font-family': 'Arial', fill: strokeColor, 'cursor': 'default'});
-                this.cylinder.toBack();
 
                 this.bindingPt1.attr({cx:this.extox1,cy:this.extoy1});
                 this.bindingPt2.attr({cx:this.extox2,cy:this.extoy2});

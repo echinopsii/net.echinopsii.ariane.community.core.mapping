@@ -56,8 +56,8 @@ define(
             this.menuEditionModeRect = null;
             this.menuTitle           = null;
             this.menuTitleTxt        = "Multicast bus menu";
-            this.menuFieldStartEditTitle  = "Resizing mode ON";
-            this.menuFieldStopEditTitle   = "Resizing mode OFF";
+            this.menuFieldStartEditTitle  = "Edition mode ON";
+            this.menuFieldStopEditTitle   = "Edition mode OFF";
 
             this.rightClick = false;
 

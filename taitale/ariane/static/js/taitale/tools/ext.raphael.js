@@ -896,6 +896,12 @@ define(
                 }
 
                 this.object.editAction(this, dx, dy);
+
+                this.object.bboxLine.toFront();
+                for (i = 0, ii = this.object.scaleHandles.length; i < ii; i++) {
+                    this.object.scaleHandles[i].element.toFront();
+                    //this.object.scaleHandles[i].text.remove();
+                }
             },
             onmovestart = function() {
                 if (this.scaleDir[0] > 0 && this.scaleDir[1] > 0)
