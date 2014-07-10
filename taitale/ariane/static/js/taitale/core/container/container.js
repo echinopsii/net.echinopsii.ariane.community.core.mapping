@@ -583,9 +583,9 @@ define(
 
                 if (!this.menuHided) {
                     this.menu.toBack();
-                    this.menuSet.toBack();
+                    this.containerMenuSet.toBack();
                     this.menu.hide();
-                    this.menuSet.hide();
+                    this.containerMenuSet.hide();
                     this.menuHided=true;
                     if (this.r.getDisplayMainMenu())
                         this.r.setDisplayMainMenu(false);
