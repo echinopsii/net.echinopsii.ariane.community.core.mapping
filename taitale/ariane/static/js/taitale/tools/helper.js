@@ -50,6 +50,7 @@ define(
             };
 
             this.dialogOpen = function(id, title, contents) {
+                //style=\"background-color: rgba(0, 0, 0, 0.2)\"
                 $('#mappingCanvas').append("<div id=\"dialog"+ id + "\" title=\"" + title + "\">"+contents+"</div>");
                 $("#dialog"+id).puidialog({
                     showEffect: 'fade',

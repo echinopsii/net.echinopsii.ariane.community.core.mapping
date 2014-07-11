@@ -927,6 +927,8 @@ define(
                                             {x:this.object.mdlPoints[2].x, y:this.object.mdlPoints[2].y},
                                             {x:this.object.mdlPoints[3].x, y:this.object.mdlPoints[3].y}
                                    ];
+                this.minBBox = this.object.getMinBBox();
+                this.maxBBox = this.object.getMaxBBox();
                 this.object.editInit();
             },
             onmoveend = function() {
@@ -944,6 +946,9 @@ define(
                     {x:this.imdlPoints[3].x, y:this.imdlPoints[3].y}
                 ];
                 this.object.editUp();
+                this.object.bboxLine.toFront();
+                for (var i = 0, ii = this.object.scaleHandles.length; i < ii; i++)
+                    this.object.scaleHandles[i].element.toFront();
             };
 
         Raphael.fn.scaleInit = function(object) {

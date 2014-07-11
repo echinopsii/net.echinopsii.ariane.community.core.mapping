@@ -595,6 +595,8 @@ define(
             };
 
             this.changeUp = function() {
+                this.toFront();
+                this.setTopLeftCoord(this.rect.attr("x"),this.rect.attr("y"));
                 this.isMoving = false;
             };
 
@@ -634,13 +636,10 @@ define(
                 this.rect.attr(attrect);
                 this.containerName.attr(attrtxt0);
 
-                this.setTopLeftCoord(this.rect.attr("x"),this.rect.attr("y"));
+                this.rect.animate({"fill-opacity": this.oUnselected}, 500);
+                this.changeUp();
                 if (this.isEditing)
                     this.r.scaleInit(this);
-                this.rect.animate({"fill-opacity": this.oUnselected}, 500);
-                this.toFront();
-
-                this.changeUp();
             };
 
             // EDITABLE
@@ -666,6 +665,26 @@ define(
             };
 
             this.getMinBBox = function() {
+                var i, ii, j, jj;
+                var mtxX        = this.containerNodes.getMtxSize().x,
+                    mtxY        = this.containerNodes.getMtxSize().y;
+
+                var nodeSet = this.r.set();
+                for (i = 0, ii = mtxX; i < ii; i++)
+                    for (j = 0, jj = mtxY; j < jj; j++)
+                        nodeSet.push(this.containerNodes.getNodeFromMtx(i, j).rect);
+
+                var nodeBBox = nodeSet.getBBox();
+
+                return {
+                    x: nodeBBox.x - this.interSpan,
+                    y: nodeBBox.y - (this.containerHat_.height + this.titleHeight + this.interSpan),
+                    x2: nodeBBox.x2 + this.interSpan,
+                    y2: nodeBBox.y2 + this.interSpan,
+                    width: nodeBBox.width + 2*this.interSpan,
+                    height: nodeBBox.height + (this.containerHat_.height + this.titleHeight + this.interSpan)
+                }
+
                 return null;
             };
 
@@ -673,6 +692,82 @@ define(
                 return null;
             };
 
+            this.editInit = function() {
+                this.extwidth  = this.rectWidth;
+                this.extheight = this.rectHeight;
+                this.changeInit();
+            };
+
+            this.editAction = function(elem, dx, dy) {
+                switch(elem.idx) {
+                    case 0:
+                        this.extrx = this.rectTopLeftX + dx;
+                        this.extry = this.rectTopLeftY + dy;
+                        this.extwidth = this.rectWidth - dx;
+                        this.extheight = this.rectHeight - dy;
+                        break;
+
+                    case 1:
+                        this.extry = this.rectTopLeftY + dy;
+                        this.extwidth = this.rectWidth + dx;
+                        this.extheight = this.rectHeight - dy;
+                        break;
+
+                    case 2:
+                        this.extwidth = this.rectWidth + dx;
+                        this.extheight = this.rectHeight + dy;
+                        break;
+
+                    case 3:
+                        this.extrx = this.rectTopLeftX + dx;
+                        this.extwidth = this.rectWidth - dx;
+                        this.extheight = this.rectHeight + dy;
+                        break;
+
+                    case 4:
+                        this.extry = this.rectTopLeftY + dy;
+                        this.extheight = this.rectHeight - dy;
+                        break;
+
+                    case 5:
+                        this.extwidth = this.rectWidth + dx;
+                        break;
+
+                    case 6:
+                        this.extheight = this.rectHeight + dy;
+                        break;
+
+                    case 7:
+                        this.extrx = this.rectTopLeftX + dx;
+                        this.extwidth = this.rectWidth - dx;
+                        break;
+
+                    default:
+                        break;
+                }
+
+                this.containerName.remove();
+                this.rect.remove();
+
+                this.containerHat_.move(this.r, this.extrx + (this.extwidth/2), this.extry);
+
+                this.containerName = this.r.text(0, 0, this.name).attr(this.txtFont).attr({'fill':this.color});
+                this.containerName.attr({x: this.extrx + (this.extwidth/2), y: this.extry + this.containerHat_.height + this.titleHeight});
+                this.containerName.mousedown(mouseDown);
+                this.containerName.drag(containerMove, containerDragger, containerUP);
+
+                this.rect = this.r.rect(this.extrx, this.extry, this.extwidth, this.extheight, this.cornerRad);
+                this.rect.attr({fill: this.color, stroke: this.color, "fill-opacity": containerRef.oUnselected, "stroke-width": this.strokeWidth});
+                this.rect.mousedown(mouseDown);
+                this.rect.drag(containerMove, containerDragger, containerUP);
+                this.toFront();
+            };
+
+            this.editUp = function() {
+                this.rectWidth = this.extwidth;
+                this.rectHeight = this.extheight;
+                this.changeUp();
+            };
 
             this.name  = this.name.split("://")[1].split(":")[0];
             var tmp1 = this.name.split(".")[0], tmp2 = this.name.split(".")[1].split(".")[0];
