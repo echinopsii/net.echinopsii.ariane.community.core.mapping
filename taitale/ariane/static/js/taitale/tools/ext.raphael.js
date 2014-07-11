@@ -645,7 +645,10 @@ define(
                             if (this.object.bbxCorners[0].y + dy >= this.object.bbxCorners[3].y)
                                 dy = this.object.bbxCorners[3].y - this.object.bbxCorners[0].y;
                             if (this.maxBBox!=null) {
-
+                                if (this.object.bbxCorners[0].x + dx <= this.maxBBox.x)
+                                    dx = this.maxBBox.x - this.object.bbxCorners[0].x;
+                                if (this.object.bbxCorners[0].y + dy <= this.maxBBox.y)
+                                    dy = this.maxBBox.y - this.object.bbxCorners[0].y;
                             }
                             if (this.minBBox!=null) {
                                 if (this.object.bbxCorners[0].x + dx >= this.minBBox.x)
@@ -674,7 +677,10 @@ define(
                             if (this.object.bbxCorners[1].y + dy >= this.object.bbxCorners[3].y)
                                 dy = this.object.bbxCorners[3].y - this.object.bbxCorners[1].y;
                             if (this.maxBBox!=null) {
-
+                                if (this.object.bbxCorners[1].x + dx >= this.maxBBox.x2)
+                                    dx = this.maxBBox.x2 - this.object.bbxCorners[1].x;
+                                if (this.object.bbxCorners[1].y + dy <= this.maxBBox.y)
+                                    dy = this.maxBBox.y - this.object.bbxCorners[1].y;
                             }
                             if (this.minBBox!=null) {
                                 if (this.object.bbxCorners[1].x + dx <= this.minBBox.x2)
@@ -703,7 +709,10 @@ define(
                             if (this.object.bbxCorners[2].y + dy <= this.object.bbxCorners[0].y)
                                 dy = this.object.bbxCorners[0].y - this.object.bbxCorners[2].y;
                             if (this.maxBBox!=null) {
-
+                                if (this.object.bbxCorners[2].x + dx >= this.maxBBox.x2)
+                                    dx = this.maxBBox.x2 - this.object.bbxCorners[2].x;
+                                if (this.object.bbxCorners[2].y + dy >= this.maxBBox.y2)
+                                    dy = this.maxBBox.y2 - this.object.bbxCorners[2].y;
                             }
                             if (this.minBBox!=null) {
                                 if (this.object.bbxCorners[2].x + dx <= this.minBBox.x2)
@@ -732,7 +741,10 @@ define(
                             if (this.object.bbxCorners[3].y + dy <= this.object.bbxCorners[0].y)
                                 dy = this.object.bbxCorners[0].y - this.object.bbxCorners[3].y;
                             if (this.maxBBox!=null) {
-
+                                if (this.object.bbxCorners[3].x + dx <= this.maxBBox.x)
+                                    dx = this.maxBBox.x - this.object.bbxCorners[3].x;
+                                if (this.object.bbxCorners[3].y + dy >= this.maxBBox.y2)
+                                    dy = this.maxBBox.y2 - this.object.bbxCorners[3].y;
                             }
                             if (this.minBBox!=null) {
                                 if (this.object.bbxCorners[3].x + dx >= this.minBBox.x)
@@ -759,7 +771,8 @@ define(
                             if (this.object.mdlPoints[0].y + dy >= this.object.mdlPoints[2].y)
                                 dy = this.object.mdlPoints[2].y - this.object.mdlPoints[0].y;
                             if (this.maxBBox!=null) {
-
+                                if (this.object.mdlPoints[0].y + dy <= this.maxBBox.y)
+                                    dy = this.maxBBox.y - this.object.mdlPoints[0].y;
                             }
                             if (this.minBBox!=null) {
                                 if (this.object.mdlPoints[0].y + dy >= this.minBBox.y)
@@ -779,7 +792,8 @@ define(
                             if (this.object.mdlPoints[1].x + dx <= this.object.mdlPoints[3].x)
                                 dx = this.object.mdlPoints[3].x - this.object.mdlPoints[1].x;
                             if (this.maxBBox!=null) {
-
+                                if (this.object.mdlPoints[1].x + dx >= this.maxBBox.x2)
+                                    dx = this.maxBBox.x2 - this.object.mdlPoints[1].x;
                             }
                             if (this.minBBox!=null) {
                                 if (this.object.mdlPoints[1].x + dx <= this.minBBox.x2)
@@ -799,7 +813,8 @@ define(
                             if (this.object.mdlPoints[2].y + dy <= this.object.mdlPoints[0].y)
                                 dy = this.object.mdlPoints[0].y - this.object.mdlPoints[2].y;
                             if (this.maxBBox!=null) {
-
+                                if (this.object.mdlPoints[2].y + dy >= this.maxBBox.y2)
+                                    dy = this.maxBBox.y2 - this.object.mdlPoints[2].y
                             }
                             if (this.minBBox!=null) {
                                 if (this.object.mdlPoints[2].y + dy <= this.minBBox.y2)
@@ -819,7 +834,8 @@ define(
                             if (this.object.mdlPoints[3].x + dx >= this.object.mdlPoints[1].x)
                                 dx = this.object.mdlPoints[1].x - this.object.mdlPoints[3].x;
                             if (this.maxBBox!=null) {
-
+                                if (this.object.mdlPoints[3].x + dx <= this.maxBBox.x)
+                                    dx = this.maxBBox.x - this.object.mdlPoints[3].x
                             }
                             if (this.minBBox!=null) {
                                 if (this.object.mdlPoints[3].x + dx >= this.minBBox.x)
@@ -858,7 +874,7 @@ define(
                     for (i = 0, ii = this.ibbxCorners.length; i < ii; i++) {
                         if (this.idx != i) {
                             handle = this.object.scaleHandles[i];
-                            handle.element = this.object.r.rect(this.ibbxCorners[i].x-5, this.ibbxCorners[i].y-5, 10, 10).attr({fill: "#000"});
+                            handle.element = this.object.r.rect(this.ibbxCorners[i].x-5, this.ibbxCorners[i].y-5, 10, 10).attr({fill: "#000",cursor: "crosshair"});
                             handle.element.drag(
                                 onmove,
                                 onmovestart,
@@ -875,7 +891,7 @@ define(
                     for (i = 0, ii = this.imdlPoints.length; i < ii; i++) {
                         if (this.idx != i+4) {
                             handle = this.object.scaleHandles[i+4];
-                            handle.element = this.object.r.rect(this.imdlPoints[i].x-5, this.imdlPoints[i].y-5, 10, 10).attr({fill: "#000"});
+                            handle.element = this.object.r.rect(this.imdlPoints[i].x-5, this.imdlPoints[i].y-5, 10, 10).attr({fill: "#000",cursor: "crosshair"});
                             handle.element.drag(
                                 onmove,
                                 onmovestart,
@@ -898,21 +914,21 @@ define(
             },
             onmovestart = function() {
                 if (this.scaleDir[0] > 0 && this.scaleDir[1] > 0)
-                    this.attr('cursor','se-resize');
+                    this.attr('cursor','nwse-resize');
                 if (this.scaleDir[0] == 0 && this.scaleDir[1] > 0)
-                    this.attr('cursor','s-resize');
+                    this.attr('cursor','ns-resize');
                 if (this.scaleDir[0] < 0 && this.scaleDir[1] > 0)
-                    this.attr('cursor','sw-resize');
+                    this.attr('cursor','nesw-resize');
                 if (this.scaleDir[0] > 0 && this.scaleDir[1] < 0)
-                    this.attr('cursor','ne-resize');
+                    this.attr('cursor','nesw-resize');
                 if (this.scaleDir[0] == 0 && this.scaleDir[1] < 0)
-                    this.attr('cursor','n-resize');
+                    this.attr('cursor','ns-resize');
                 if (this.scaleDir[0] < 0 && this.scaleDir[1] < 0)
-                    this.attr('cursor','nw-resize');
+                    this.attr('cursor','nwse-resize');
                 if (this.scaleDir[0] > 0 && this.scaleDir[1] == 0)
-                    this.attr('cursor','e-resize');
+                    this.attr('cursor','ew-resize');
                 if (this.scaleDir[0] < 0 && this.scaleDir[1] == 0)
-                    this.attr('cursor','w-resize');
+                    this.attr('cursor','ew-resize');
 
                 this.ix = this.attr("x"); this.iy = this.attr("y");
                 this.ibbxCorners = [
@@ -932,7 +948,7 @@ define(
                 this.object.editInit();
             },
             onmoveend = function() {
-                this.attr('cursor','default');
+                this.attr('cursor','crosshair');
                 this.object.bbxCorners = [
                     {x:this.ibbxCorners[0].x, y:this.ibbxCorners[0].y},
                     {x:this.ibbxCorners[1].x, y:this.ibbxCorners[1].y},
@@ -991,7 +1007,7 @@ define(
             for (i = 0, ii = bbxCorners.length; i < ii; i++) {
                 handle = {};
                 handle.scaleDir = scaleDir[i];
-                handle.element = this.rect(bbxCorners[i].x-5, bbxCorners[i].y-5, 10, 10).attr({fill: "#000"});
+                handle.element = this.rect(bbxCorners[i].x-5, bbxCorners[i].y-5, 10, 10).attr({fill: "#000", cursor: "crosshair"});
                 handle.element.drag(
                     onmove,
                     onmovestart,
@@ -1008,7 +1024,7 @@ define(
             for (i = 0, ii = mdlPoints.length; i < ii; i++) {
                 handle = {};
                 handle.scaleDir = scaleDir[i+4];
-                handle.element = this.rect(mdlPoints[i].x-5, mdlPoints[i].y-5, 10, 10).attr({fill: "#000"});
+                handle.element = this.rect(mdlPoints[i].x-5, mdlPoints[i].y-5, 10, 10).attr({fill: "#000", cursor: "crosshair"});
                 handle.element.drag(
                     onmove,
                     onmovestart,

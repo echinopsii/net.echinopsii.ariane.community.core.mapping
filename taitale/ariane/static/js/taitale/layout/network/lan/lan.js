@@ -101,7 +101,7 @@ define(
                     lanRef.r.safari();
                 },
                 lanUP = function () {
-                    lanRef.r.up()
+                    lanRef.r.up();
                     lanRef.rect.animate({"fill-opacity": lanRef.oUnselected}, 500);
                 },
                 lanOver = function () {
@@ -208,8 +208,8 @@ define(
             };
 
             this.displayLan = function(display) {
-                this.disLan=display;
-                if (this.disLan) {
+                this.dispLan=display;
+                if (this.dispLan) {
                     this.rect.animate({"fill-opacity": this.oUnselected, "stroke-width": params.lan_strokeWidthShow}, 1);
                     this.lanR.show();
                 } else {

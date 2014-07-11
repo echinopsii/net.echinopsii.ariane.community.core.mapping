@@ -683,13 +683,22 @@ define(
                     y2: nodeBBox.y2 + this.interSpan,
                     width: nodeBBox.width + 2*this.interSpan,
                     height: nodeBBox.height + (this.containerHat_.height + this.titleHeight + this.interSpan)
-                }
-
-                return null;
+                };
             };
 
             this.getMaxBBox = function() {
-                return null;
+                if (this.isJailed) {
+                    return {
+                        x: this.minTopLeftX,
+                        y: this.minTopLeftY,
+                        x2: this.maxTopLeftX + this.rectWidth,
+                        y2: this.maxTopLeftY + this.rectHeight,
+                        width: this.maxTopLeftX + this.rectWidth - this.minTopLeftX,
+                        height: this.maxTopLeftY + this.rectHeight - this.minTopLeftY
+                    }
+                } else {
+                    return null;
+                }
             };
 
             this.editInit = function() {
@@ -764,8 +773,11 @@ define(
             };
 
             this.editUp = function() {
+                this.maxTopLeftX = this.maxTopLeftX + this.rectWidth - this.extwidth;
+                this.maxTopLeftY = this.maxTopLeftY + this.rectHeight - this.extheight;
                 this.rectWidth = this.extwidth;
                 this.rectHeight = this.extheight;
+
                 this.changeUp();
             };
 
