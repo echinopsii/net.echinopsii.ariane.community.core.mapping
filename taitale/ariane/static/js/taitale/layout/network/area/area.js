@@ -55,15 +55,119 @@ define(
             this.maxJailY    = 0;
             this.isJailed    = false;
             this.isMoving    = false;
+            this.isEditing   = false;
+            this.rightClick  = false;
 
             this.oUnselected = params.area_opacUnselec;
             this.oSelected   = params.area_opacSelec;
             this.sDasharray  = params.area_strokeDasharray;
 
+            this.menu              = null;
+            this.menuSet           = null;
+            this.menuFillColor     = params.area_menuFillColor;
+            this.menuOpacity       = params.area_menuOpacity;
+            this.menuStrokeWidth   = params.area_menuStrokeWidth;
+            this.menuHided         = true;
+
+            this.menuMainTitleTXT  = params.area_menuMainTitle;
+            this.menuFieldTXT      = params.area_menuFields;
+            this.menuFieldTXTOver  = params.area_menuFieldsOver;
+
+            this.menuEditionMode     = null;
+            this.menuEditionModeRect = null;
+            this.menuFieldStartEditTitle  = "Edition mode ON";
+            this.menuFieldStopEditTitle   = "Edition mode OFF";
+
             this.mvx = 0;
             this.mvy = 0;
 
             var areaRef = this ;
+
+            var mouseDown = function(e) {
+                    if (e.which == 3) {
+                        if (areaRef.menuHided) {
+                            areaRef.rect.animate({"stroke-width": params.area_strokeWidthShow}, 1);
+                            areaRef.areaR.show();
+                            areaRef.dispArea = true;
+                            areaRef.rectTopMiddleX = areaRef.topLeftX + areaRef.areawidth/2;
+                            areaRef.rectTopMiddleY = areaRef.topLeftY;
+                            areaRef.menuSet.mousedown(menuMouseDown);
+                            var fieldRect, fieldRectWidth, fieldRectHeight;
+                            for (var i = 0, ii = areaRef.menuSet.length ; i < ii ; i++) {
+                                if (i==0)
+                                    areaRef.menuSet[i].attr({"x": areaRef.rectTopMiddleX, "y": areaRef.rectTopMiddleY +10, fill: "#fff"});
+                                else if (i==1) {
+                                    fieldRect = areaRef.menuSet[i];
+                                    fieldRectWidth = fieldRect.attr("width");
+                                    fieldRectHeight = fieldRect.attr("height");
+                                    fieldRect.attr({"x": areaRef.rectTopMiddleX - fieldRectWidth/2, "y": areaRef.rectTopMiddleY+30 - fieldRectHeight/2});
+                                    areaRef.menuSet[i+1].attr({"x": areaRef.rectTopMiddleX, "y": areaRef.rectTopMiddleY+30});
+                                    if (areaRef.isEditing) areaRef.menuSet[i+1].attr({text: areaRef.menuFieldStopEditTitle});
+                                    else areaRef.menuSet[i+1].attr({text: areaRef.menuFieldStartEditTitle});
+                                    i++;
+                                } else {
+                                    fieldRect = areaRef.menuSet[i];
+                                    fieldRectWidth = fieldRect.attr("width");
+                                    fieldRectHeight = fieldRect.attr("height");
+                                    fieldRect.attr({"x": areaRef.rectTopMiddleX - fieldRectWidth/2, "y": areaRef.rectTopMiddleY+30+(i-2)*15 - fieldRectHeight/2});
+                                    areaRef.menuSet[i+1].attr({"x": areaRef.rectTopMiddleX, "y": areaRef.rectTopMiddleY+30+(i-2)*15});
+                                    i++;
+                                }
+                            }
+                            if (areaRef.menu != null)
+                                areaRef.menu.remove();
+                            areaRef.menu = areaRef.r.menu(areaRef.rectTopMiddleX,areaRef.rectTopMiddleY+10,areaRef.menuSet).
+                                attr({fill: areaRef.menuFillColor, stroke: areaRef.color, "stroke-width": areaRef.menuStrokeWidth,
+                                    "fill-opacity": areaRef.menuOpacity});
+                            areaRef.menu.mousedown(menuMouseDown);
+                            areaRef.menu.toFront();
+                            areaRef.menuSet.toFront();
+                            areaRef.menuSet.show();
+                            areaRef.menuHided=false;
+                        } else {
+                            if (!areaRef.isEditing) {
+                                areaRef.rect.animate({"stroke-width": 0}, 0);
+                                areaRef.areaR.hide();
+                                areaRef.dispArea = false;
+                            }
+                            areaRef.menu.toBack();
+                            areaRef.menuSet.toBack();
+                            areaRef.menu.hide();
+                            areaRef.menuSet.hide();
+                            areaRef.menuHided=true;
+                        }
+                        areaRef.rightClick=true;
+                        if (areaRef.r.getDisplayMainMenu())
+                            areaRef.r.setDisplayMainMenu(false);
+                    } else if (e.which == 1) {
+                        areaRef.rightClick=false;
+                    }
+                },
+                menuMouseDown = function(e) {
+                    if (e.which == 3) {
+                        if (!areaRef.isEditing) {
+                            areaRef.rect.animate({"stroke-width": 0}, 0);
+                            areaRef.areaR.hide();
+                            areaRef.dispArea = false;
+                        }
+                        areaRef.menu.toBack();
+                        areaRef.menuSet.toBack();
+                        areaRef.menu.hide();
+                        areaRef.menuSet.hide();
+                        areaRef.menuHided=true;
+                        areaRef.rightClick=true;
+                        if (areaRef.r.getDisplayMainMenu())
+                            areaRef.r.setDisplayMainMenu(false);
+                    } else if (e.which == 1) {
+                        areaRef.rightClick=false;
+                    }
+                },
+                menuFieldOver = function() {
+                    this.attr(areaRef.menuFieldTXTOver);
+                },
+                menuFieldOut = function() {
+                    this.attr(areaRef.menuFieldTXT);
+                };
 
             var areaDragg = function () {
                     areaRef.moveInit();
@@ -105,13 +209,13 @@ define(
                     areaRef.rect.animate({"fill-opacity": areaRef.oUnselected}, 500);
                 },
                 areaOver = function () {
-                    if (!areaRef.dispArea) {
+                    if (!areaRef.dispArea && !areaRef.isMoving && !areaRef.isEditing) {
                         this.animate({"stroke-width": params.area_strokeWidthShow}, 1);
                         areaRef.areaR.show();
                     }
                 },
                 areaOut = function () {
-                    if (!areaRef.dispArea) {
+                    if (!areaRef.dispArea && !areaRef.isMoving && !areaRef.isEditing) {
                         this.animate({"stroke-width": 0}, 1);
                         areaRef.areaR.hide();
                     }
@@ -187,6 +291,7 @@ define(
                 this.isJailed = true;
             };
 
+            /*
             this.isMoving = function() {
                 var mtxX        = this.armatrix.getMtxSize().x,
                     mtxY        = this.armatrix.getMtxSize().y;
@@ -200,6 +305,7 @@ define(
                 }
                 return this.isMoving;
             };
+            */
 
             this.print = function(r_) {
                 this.r = r_;
@@ -210,15 +316,37 @@ define(
                 this.rect     = this.r.rect(this.topLeftX, this.topLeftY, this.areawidth, this.areaheight, 0);
 
                 this.areaName.attr(params.area_txtTitle).attr({'fill':params.area_color});
+                this.areaName.mousedown(mouseDown);
                 this.areaR.push(this.areaName);
 
                 this.rect.attr({fill: params.area_color, stroke: params.area_color, "stroke-dasharray": this.sDasharray, "fill-opacity": this.oUnselected, "stroke-width": 0});
                 this.rect.drag(areaMove, areaDragg, areaUP);
                 this.rect.mouseover(areaOver);
                 this.rect.mouseout(areaOut);
+                this.rect.mousedown(mouseDown);
 
                 this.areaR.hide();
                 this.armatrix.printMtx(this.r);
+
+                this.menuTitle = this.r.text(0,10,"Area menu").attr(this.menuMainTitleTXT);
+
+                this.menuEditionModeRect = this.r.rect(0,10,this.menuFieldStartEditTitle.width(this.menuFieldTXT),this.menuFieldStartEditTitle.height(this.menuFieldTXT));
+                this.menuEditionModeRect.attr({fill: this.color, stroke: this.color, "fill-opacity": 0, "stroke-width": 0});
+                this.menuEditionModeRect.mouseover(menuFieldOver);
+                this.menuEditionModeRect.mouseout(menuFieldOut);
+                this.menuEditionModeRect.mousedown(this.menuFieldEditClick);
+                this.menuEditionMode = this.r.text(0,10,this.menuFieldStartEditTitle).attr(this.menuFieldTXT);
+                this.menuEditionMode.mouseover(menuFieldOver);
+                this.menuEditionMode.mouseout(menuFieldOut);
+                this.menuEditionMode.mousedown(this.menuFieldEditClick);
+
+                this.menuSet = this.r.set();
+                this.menuSet.push(this.menuTitle);
+                this.menuSet.push(this.menuEditionModeRect);
+                this.menuSet.push(this.menuEditionMode);
+
+                this.menuSet.toBack();
+                this.menuSet.hide();
             };
 
             this.displayArea = function(display) {
@@ -236,13 +364,53 @@ define(
                 this.armatrix.displayLan(display);
             };
 
+            this.changeInit = function() {
+                this.extrx  = this.rect.attr("x");
+                this.extry  = this.rect.attr("y");
+                this.extrw  = this.rect.attr("width");
+                this.extrh  = this.rect.attr("height");
+                this.extt0x = this.areaName.attr("x");
+                this.extt0y = this.areaName.attr("y");
+                this.minTopLeftX = this.minJailX;
+                this.minTopLeftY = this.minJailY;
+                this.maxTopLeftX = this.maxJailX - this.areawidth;
+                this.maxTopLeftY = this.maxJailY - this.areaheight;
+            };
+
+            this.changeUp = function() {
+                var j, jj, k, kk, mtxX, mtxY;
+
+                this.setTopLeftCoord(this.rect.attr("x"),this.rect.attr("y"));
+
+                mtxX = this.armatrix.getMtxSize().x;
+                mtxY = this.armatrix.getMtxSize().y;
+
+                for (j = 0, jj = mtxX; j < jj; j++) {
+                    for (k = 0, kk = mtxY; k < kk; k++) {
+                        var obj = this.armatrix.getObjFromMtx(j,k);
+                        if (obj!=null)
+                            obj.setMoveJail(
+                                    this.topLeftX + this.abrdSpan,
+                                    this.topLeftY + this.abrdSpan,
+                                    this.topLeftX + this.areawidth  - this.abrdSpan,
+                                    this.topLeftY + this.areaheight - this.abrdSpan
+                            );
+                    }
+                }
+
+            };
+
+            //MOVEABLE
+
             this.moveInit = function() {
-                var mtxX, mtxY, i, ii, j, jj;
+                if (this.isEditing)
+                    this.r.scaleDone(this);
 
                 this.r.areasOnMovePush(this);
                 this.r.moveSetPush(this.areaName);
                 this.r.moveSetPush(this.rect);
 
+                var mtxX, mtxY, i, ii, j, jj;
                 mtxX = this.armatrix.getMtxSize().x;
                 mtxY = this.armatrix.getMtxSize().y;
                 for (i = 0, ii =  mtxX; i < ii; i++)
@@ -255,17 +423,9 @@ define(
                             areaObj.mbus.moveInit();
                     }
 
-                this.extrx  = this.rect.attr("x");
-                this.extry  = this.rect.attr("y");
-                this.extrw  = this.rect.attr("width");
-                this.extrh  = this.rect.attr("height");
-                this.extt0x = this.areaName.attr("x");
-                this.extt0y = this.areaName.attr("y");
-                this.minTopLeftX = this.minJailX;
-                this.minTopLeftY = this.minJailY;
-                this.maxTopLeftX = this.maxJailX - this.areawidth;
-                this.maxTopLeftY = this.maxJailY - this.areaheight;
-
+                this.changeInit();
+                areaRef.rect.animate({"stroke-width": params.area_strokeWidthShow}, 1);
+                areaRef.areaR.show();
                 this.isMoving = true;
             };
 
@@ -284,21 +444,174 @@ define(
                 this.rect.attr(attrect);
                 this.areaName.attr(attrtxt0);
 
-                this.setTopLeftCoord(this.rect.attr("x"),this.rect.attr("y"));
-                for (j = 0, jj = mtxX; j < jj; j++) {
-                    for (k = 0, kk = mtxY; k < kk; k++) {
-                        var obj = this.armatrix.getObjFromMtx(j,k);
-                        if (obj!=null)
-                            obj.setMoveJail(
-                                this.topLeftX + this.abrdSpan,
-                                this.topLeftY + this.abrdSpan,
-                                this.topLeftX + this.areawidth  - this.abrdSpan,
-                                this.topLeftY + this.areaheight - this.abrdSpan
-                            );
-                    }
-                }
+                this.changeUp();
                 this.isMoving = false;
+                if (this.isEditing)
+                    this.r.scaleInit(this)
             };
+
+            //EDITABLE
+
+            this.menuFieldEditClick = function() {
+                areaRef.menu.toBack();
+                areaRef.menuSet.toBack();
+                areaRef.menu.hide();
+                areaRef.menuSet.hide();
+                areaRef.menuHided=true;
+
+                if (!areaRef.isEditing) {
+                    areaRef.r.scaleInit(areaRef);
+                    areaRef.isEditing = true;
+                } else {
+                    areaRef.r.scaleDone(areaRef);
+                    areaRef.isEditing = false;
+                    areaRef.rect.animate({"fill-opacity": areaRef.oUnselected, "stroke-width": 0}, 0);
+                    areaRef.areaR.hide();
+                    areaRef.dispArea = false;
+                }
+            };
+
+            this.getBBox = function() {
+                return this.rect.getBBox();
+            };
+
+            var areaObjSet;
+            this.getMinBBox = function() {
+                var mtxX, mtxY, i, ii, j, jj;
+
+                areaObjSet = this.r.set();
+
+                mtxX = this.armatrix.getMtxSize().x;
+                mtxY = this.armatrix.getMtxSize().y;
+                for (i = 0, ii =  mtxX; i < ii; i++)
+                    for (j = 0, jj =  mtxY; j < jj; j++) {
+                        var areaObj = this.armatrix.getObjFromMtx(i,j);
+                        var areaObjType = this.armatrix.getObjTypeFromMtx(i,j);
+                        if (areaObjType==="LAN")
+                            areaObjSet.push(areaObj.rect);
+                    }
+
+                var areaMinBBox = areaObjSet.getBBox();
+
+                return {
+                    x: areaMinBBox.x - this.abrdSpan,
+                    y: areaMinBBox.y - this.abrdSpan,
+                    x2: areaMinBBox.x2 + this.abrdSpan,
+                    y2: areaMinBBox.y2 + this.abrdSpan,
+                    width: areaMinBBox.width + 2*this.abrdSpan,
+                    height: areaMinBBox.height + 2*this.abrdSpan
+                };
+            };
+
+            this.getMaxBBox = function() {
+                if (this.isJailed) {
+                    return {
+                        x: this.minJailX,
+                        y: this.minJailY,
+                        x2: this.maxJailX,
+                        y2: this.maxJailY,
+                        width: this.maxJailX - this.minJailX,
+                        height: this.maxJailY - this.minJailY
+                    }
+                } else {
+                    return null;
+                }
+            };
+
+            this.editInit = function() {
+                this.extwidth  = this.areawidth;
+                this.extheight = this.areaheight;
+                this.changeInit();
+                this.isMoving = true;
+            };
+
+            this.editAction = function(elem, dx, dy) {
+                switch(elem.idx) {
+                    case 0:
+                        this.extrx = this.topLeftX + dx;
+                        this.extry = this.topLeftY + dy;
+                        this.extwidth = this.areawidth - dx;
+                        this.extheight = this.areaheight - dy;
+                        break;
+
+                    case 1:
+                        this.extry = this.topLeftY + dy;
+                        this.extwidth = this.areawidth + dx;
+                        this.extheight = this.areaheight - dy;
+                        break;
+
+                    case 2:
+                        this.extwidth = this.areawidth + dx;
+                        this.extheight = this.areaheight + dy;
+                        break;
+
+                    case 3:
+                        this.extrx = this.topLeftX + dx;
+                        this.extwidth = this.areawidth - dx;
+                        this.extheight = this.areaheight + dy;
+                        break;
+
+                    case 4:
+                        this.extry = this.topLeftY + dy;
+                        this.extheight = this.areaheight - dy;
+                        break;
+
+                    case 5:
+                        this.extwidth = this.areawidth + dx;
+                        break;
+
+                    case 6:
+                        this.extheight = this.areaheight + dy;
+                        break;
+
+                    case 7:
+                        this.extrx = this.topLeftX + dx;
+                        this.extwidth = this.areawidth - dx;
+                        break;
+
+                    default:
+                        break;
+                }
+
+                this.areaR.pop(this.areaName);
+                this.areaName.remove();
+                this.rect.remove();
+
+                var title    = this.areaDef.type + " area | " + ((this.areaDef.marea != null) ? this.areaDef.marea : "no multicast area");
+                this.areaName = this.r.text(this.extrx + (this.extwidth/2), this.extry + this.abrdSpan/2, title);
+                this.rect     = this.r.rect(this.extrx, this.extry, this.extwidth, this.extheight, 0);
+
+                this.areaName.attr(params.area_txtTitle).attr({'fill':params.area_color});
+                this.areaName.mousedown(mouseDown);
+                this.areaR.push(this.areaName);
+
+                this.rect.attr({fill: params.area_color, stroke: params.area_color, "stroke-dasharray": this.sDasharray, "fill-opacity": this.oUnselected, "stroke-width": 1});
+                this.rect.drag(areaMove, areaDragg, areaUP);
+                this.rect.mouseover(areaOver);
+                this.rect.mouseout(areaOut);
+                this.rect.mousedown(mouseDown);
+
+                var mtxX, mtxY, i, ii, j, jj;
+                mtxX = this.armatrix.getMtxSize().x;
+                mtxY = this.armatrix.getMtxSize().y;
+                for (i = 0, ii =  mtxX; i < ii; i++)
+                    for (j = 0, jj =  mtxY; j < jj; j++) {
+                        var areaObj = this.armatrix.getObjFromMtx(i,j);
+                        var areaObjType = this.armatrix.getObjTypeFromMtx(i,j);
+                        if (areaObjType==="LAN")
+                            areaObj.toFront();
+                        else if (areaObjType==="BUS")
+                            areaObj.mbus.toFront();
+                    }
+            };
+
+            this.editUp = function() {
+                this.areawidth = this.extwidth;
+                this.areaheight = this.extheight;
+                this.isMoving = false;
+                this.changeUp();
+            };
+
         }
 
         return area;

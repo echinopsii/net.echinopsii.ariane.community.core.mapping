@@ -146,18 +146,18 @@ define(
 
 
             this.menu              = null;
+            this.menuSet           = null;
             this.menuFillColor     = params.container_menuFillColor;
             this.menuOpacity       = params.container_menuOpacity;
             this.menuStrokeWidth   = params.container_menuStrokeWidth;
             this.menuHided         = true;
 
-            this.containerMenuSet = null;
-            this.containerMenuProperties = null;
-            this.containerMenuPropertiesRect = null;
+            this.menuProperties     = null;
+            this.menuPropertiesRect = null;
 
-            this.containerMainTitleTXT  = params.container_menuMainTitle;
-            this.containerFieldTXT      = params.container_menuFields;
-            this.containerFieldTXTOver  = params.container_menuFieldsOver;
+            this.menuMainTitleTXT  = params.container_menuMainTitle;
+            this.menuFieldTXT      = params.container_menuFields;
+            this.menuFieldTXTOver  = params.container_menuFieldsOver;
 
             this.menuEditionMode     = null;
             this.menuEditionModeRect = null;
@@ -215,44 +215,44 @@ define(
             var mouseDown = function(e) {
                     if (e.which == 3) {
                         if (containerRef.menuHided) {
-                            containerRef.containerMenuSet.mousedown(menuMouseDown);
+                            containerRef.menuSet.mousedown(menuMouseDown);
                             var fieldRect, fieldRectWidth, fieldRectHeight;
-                            for (var i = 0, ii = containerRef.containerMenuSet.length ; i < ii ; i++) {
+                            for (var i = 0, ii = containerRef.menuSet.length ; i < ii ; i++) {
                                 if (i==0)
-                                    containerRef.containerMenuSet[i].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY +10, fill: "#fff"});
+                                    containerRef.menuSet[i].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY +10, fill: "#fff"});
                                 else if (i==1) {
-                                    fieldRect = containerRef.containerMenuSet[i];
+                                    fieldRect = containerRef.menuSet[i];
                                     fieldRectWidth = fieldRect.attr("width");
                                     fieldRectHeight = fieldRect.attr("height");
                                     fieldRect.attr({"x": containerRef.rectTopMiddleX - fieldRectWidth/2, "y": containerRef.rectTopMiddleY+30 - fieldRectHeight/2});
-                                    containerRef.containerMenuSet[i+1].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY+30});
-                                    if (containerRef.isEditing) containerRef.containerMenuSet[i+1].attr({text: containerRef.menuFieldStopEditTitle});
-                                    else containerRef.containerMenuSet[i+1].attr({text: containerRef.menuFieldStartEditTitle});
+                                    containerRef.menuSet[i+1].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY+30});
+                                    if (containerRef.isEditing) containerRef.menuSet[i+1].attr({text: containerRef.menuFieldStopEditTitle});
+                                    else containerRef.menuSet[i+1].attr({text: containerRef.menuFieldStartEditTitle});
                                     i++;
                                 } else {
-                                    fieldRect = containerRef.containerMenuSet[i];
+                                    fieldRect = containerRef.menuSet[i];
                                     fieldRectWidth = fieldRect.attr("width");
                                     fieldRectHeight = fieldRect.attr("height");
                                     fieldRect.attr({"x": containerRef.rectTopMiddleX - fieldRectWidth/2, "y": containerRef.rectTopMiddleY+30+(i-2)*15 - fieldRectHeight/2});
-                                    containerRef.containerMenuSet[i+1].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY+30+(i-2)*15});
+                                    containerRef.menuSet[i+1].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY+30+(i-2)*15});
                                     i++;
                                 }
                             }
                             if (containerRef.menu != null)
                                 containerRef.menu.remove();
-                            containerRef.menu = containerRef.r.menu(containerRef.rectTopMiddleX,containerRef.rectTopMiddleY+10,containerRef.containerMenuSet).
+                            containerRef.menu = containerRef.r.menu(containerRef.rectTopMiddleX,containerRef.rectTopMiddleY+10,containerRef.menuSet).
                                 attr({fill: containerRef.menuFillColor, stroke: containerRef.color, "stroke-width": containerRef.menuStrokeWidth,
                                     "fill-opacity": containerRef.menuOpacity});
                             containerRef.menu.mousedown(menuMouseDown);
                             containerRef.menu.toFront();
-                            containerRef.containerMenuSet.toFront();
-                            containerRef.containerMenuSet.show();
+                            containerRef.menuSet.toFront();
+                            containerRef.menuSet.show();
                             containerRef.menuHided=false;
                         } else {
                             containerRef.menu.toBack();
-                            containerRef.containerMenuSet.toBack();
+                            containerRef.menuSet.toBack();
                             containerRef.menu.hide();
-                            containerRef.containerMenuSet.hide();
+                            containerRef.menuSet.hide();
                             containerRef.menuHided=true;
                         }
                         containerRef.rightClick=true;
@@ -265,9 +265,9 @@ define(
                 menuMouseDown = function(e) {
                     if (e.which == 3) {
                         containerRef.menu.toBack();
-                        containerRef.containerMenuSet.toBack();
+                        containerRef.menuSet.toBack();
                         containerRef.menu.hide();
-                        containerRef.containerMenuSet.hide();
+                        containerRef.menuSet.hide();
                         containerRef.menuHided=true;
                         containerRef.rightClick=true;
                         if (containerRef.r.getDisplayMainMenu())
@@ -277,10 +277,10 @@ define(
                     }
                 },
                 menuFieldOver = function() {
-                    this.attr(containerRef.containerFieldTXTOver);
+                    this.attr(containerRef.menuFieldTXTOver);
                 },
                 menuFieldOut = function() {
-                    this.attr(containerRef.containerFieldTXT);
+                    this.attr(containerRef.menuFieldTXT);
                 },
                 menuFieldPropertyClick = function(e) {
                     if (e.which != 3) {
@@ -534,38 +534,40 @@ define(
                 this.rect.drag(containerMove, containerDragger, containerUP);
 
 
-                this.containerMenuTitle = this.r.text(0,10,"Container menu").attr(this.containerMainTitleTXT);
-                var fieldTitle = "Display all properties";
-                this.menuEditionModeRect = this.r.rect(0,10,this.menuFieldStartEditTitle.width(this.containerFieldTXT),this.menuFieldStartEditTitle.height(this.containerFieldTXT));
+                this.menuTitle = this.r.text(0,10,"Container menu").attr(this.menuMainTitleTXT);
+
+                this.menuEditionModeRect = this.r.rect(0,10,this.menuFieldStartEditTitle.width(this.menuFieldTXT),this.menuFieldStartEditTitle.height(this.menuFieldTXT));
                 this.menuEditionModeRect.attr({fill: this.color, stroke: this.color, "fill-opacity": 0, "stroke-width": 0});
                 this.menuEditionModeRect.mouseover(menuFieldOver);
                 this.menuEditionModeRect.mouseout(menuFieldOut);
                 this.menuEditionModeRect.mousedown(this.menuFieldEditClick);
-                this.menuEditionMode = this.r.text(0,10,this.menuFieldStartEditTitle).attr(this.containerFieldTXT);
+                this.menuEditionMode = this.r.text(0,10,this.menuFieldStartEditTitle).attr(this.menuFieldTXT);
                 this.menuEditionMode.mouseover(menuFieldOver);
                 this.menuEditionMode.mouseout(menuFieldOut);
                 this.menuEditionMode.mousedown(this.menuFieldEditClick);
-                this.containerMenuPropertiesRect = this.r.rect(0,10,fieldTitle.width(this.containerFieldTXT),fieldTitle.height(this.containerFieldTXT));
-                this.containerMenuPropertiesRect.attr({fill: this.color, stroke: this.color, "fill-opacity": 0, "stroke-width": 0});
-                this.containerMenuPropertiesRect.mouseover(menuFieldOver);
-                this.containerMenuPropertiesRect.mouseout(menuFieldOut);
-                this.containerMenuPropertiesRect.mousedown(menuFieldPropertyClick);
-                this.containerMenuProperties = this.r.text(0,10,fieldTitle).attr(this.containerFieldTXT);
-                this.containerMenuProperties.mouseover(menuFieldOver);
-                this.containerMenuProperties.mouseout(menuFieldOut);
-                this.containerMenuProperties.mousedown(menuFieldPropertyClick);
 
-                this.containerMenuSet = this.r.set();
-                this.containerMenuSet.push(this.containerMenuTitle);
-                this.containerMenuSet.push(this.menuEditionModeRect);
-                this.containerMenuSet.push(this.menuEditionMode);
-                this.containerMenuSet.push(this.containerMenuPropertiesRect);
-                this.containerMenuSet.push(this.containerMenuProperties);
-                //containerMenuSet.push(this.text(0,30,"Highlight cluster").attr(containerFieldTXT));
-                //containerMenuSet.push(this.text(0,45,"Show gates").attr(containerFieldTXT));
-                //containerMenuSet.push(this.text(0,60,"Hide gates").attr(containerFieldTXT));
-                this.containerMenuSet.toBack();
-                this.containerMenuSet.hide();
+                var fieldTitle = "Display all properties";
+                this.menuPropertiesRect = this.r.rect(0,10,fieldTitle.width(this.menuFieldTXT),fieldTitle.height(this.menuFieldTXT));
+                this.menuPropertiesRect.attr({fill: this.color, stroke: this.color, "fill-opacity": 0, "stroke-width": 0});
+                this.menuPropertiesRect.mouseover(menuFieldOver);
+                this.menuPropertiesRect.mouseout(menuFieldOut);
+                this.menuPropertiesRect.mousedown(menuFieldPropertyClick);
+                this.menuProperties = this.r.text(0,10,fieldTitle).attr(this.menuFieldTXT);
+                this.menuProperties.mouseover(menuFieldOver);
+                this.menuProperties.mouseout(menuFieldOut);
+                this.menuProperties.mousedown(menuFieldPropertyClick);
+
+                this.menuSet = this.r.set();
+                this.menuSet.push(this.menuTitle);
+                this.menuSet.push(this.menuEditionModeRect);
+                this.menuSet.push(this.menuEditionMode);
+                this.menuSet.push(this.menuPropertiesRect);
+                this.menuSet.push(this.menuProperties);
+                //menuSet.push(this.text(0,30,"Highlight cluster").attr(menuFieldTXT));
+                //menuSet.push(this.text(0,45,"Show gates").attr(menuFieldTXT));
+                //menuSet.push(this.text(0,60,"Hide gates").attr(menuFieldTXT));
+                this.menuSet.toBack();
+                this.menuSet.hide();
             };
 
             this.toFront = function() {
@@ -583,9 +585,9 @@ define(
 
                 if (!this.menuHided) {
                     this.menu.toBack();
-                    this.containerMenuSet.toBack();
+                    this.menuSet.toBack();
                     this.menu.hide();
-                    this.containerMenuSet.hide();
+                    this.menuSet.hide();
                     this.menuHided=true;
                     if (this.r.getDisplayMainMenu())
                         this.r.setDisplayMainMenu(false);
@@ -646,9 +648,9 @@ define(
 
             this.menuFieldEditClick = function() {
                 containerRef.menu.toBack();
-                containerRef.containerMenuSet.toBack();
+                containerRef.menuSet.toBack();
                 containerRef.menu.hide();
-                containerRef.containerMenuSet.hide();
+                containerRef.menuSet.hide();
                 containerRef.menuHided=true;
 
                 if (!containerRef.isEditing) {
@@ -664,12 +666,13 @@ define(
                 return this.rect.getBBox();
             };
 
+            var nodeSet;
             this.getMinBBox = function() {
                 var i, ii, j, jj;
                 var mtxX        = this.containerNodes.getMtxSize().x,
                     mtxY        = this.containerNodes.getMtxSize().y;
 
-                var nodeSet = this.r.set();
+                nodeSet = this.r.set();
                 for (i = 0, ii = mtxX; i < ii; i++)
                     for (j = 0, jj = mtxY; j < jj; j++)
                         nodeSet.push(this.containerNodes.getNodeFromMtx(i, j).rect);

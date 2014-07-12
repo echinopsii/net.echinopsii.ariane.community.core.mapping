@@ -54,6 +54,8 @@ define(
             this.maxJailY       = 0;
             this.isJailed       = false;
             this.isMoving       = false;
+            this.isEditing      = false;
+            this.rightClick     = false;
 
             this.oUnselected = params.lan_opacUnselec;
             this.oSelected   = params.lan_opacSelec;
@@ -63,12 +65,101 @@ define(
             this.mvx = 0;
             this.mvy = 0;
 
+            this.menu              = null;
+            this.menuSet           = null;
+            this.menuFillColor     = params.lan_menuFillColor;
+            this.menuOpacity       = params.lan_menuOpacity;
+            this.menuStrokeWidth   = params.lan_menuStrokeWidth;
+            this.menuHided         = true;
+
+            this.menuMainTitleTXT  = params.lan_menuMainTitle;
+            this.menuFieldTXT      = params.lan_menuFields;
+            this.menuFieldTXTOver  = params.lan_menuFieldsOver;
+
+            this.menuEditionMode     = null;
+            this.menuEditionModeRect = null;
+            this.menuFieldStartEditTitle  = "Edition mode ON";
+            this.menuFieldStopEditTitle   = "Edition mode OFF";
+
             var lanRef = this;
 
             var reDefineRectPoints = function(x, y) {
                     lanRef.topLeftX = x;
                     lanRef.topLeftY = y;
                     //helper_.debug("[lan.reDefineRectPoints] { topLeftX: ".concat(topLeftX).concat(", topLeftY: ").concat(topLeftY).concat(" }"));
+                };
+
+            var mouseDown = function(e) {
+                    if (e.which == 3) {
+                        if (lanRef.menuHided) {
+                            lanRef.rectTopMiddleX = lanRef.topLeftX + lanRef.lanwidth/2;
+                            lanRef.rectTopMiddleY = lanRef.topLeftY;
+                            lanRef.menuSet.mousedown(menuMouseDown);
+                            var fieldRect, fieldRectWidth, fieldRectHeight;
+                            for (var i = 0, ii = lanRef.menuSet.length ; i < ii ; i++) {
+                                if (i==0)
+                                    lanRef.menuSet[i].attr({"x": lanRef.rectTopMiddleX, "y": lanRef.rectTopMiddleY +10, fill: "#fff"});
+                                else if (i==1) {
+                                    fieldRect = lanRef.menuSet[i];
+                                    fieldRectWidth = fieldRect.attr("width");
+                                    fieldRectHeight = fieldRect.attr("height");
+                                    fieldRect.attr({"x": lanRef.rectTopMiddleX - fieldRectWidth/2, "y": lanRef.rectTopMiddleY+30 - fieldRectHeight/2});
+                                    lanRef.menuSet[i+1].attr({"x": lanRef.rectTopMiddleX, "y": lanRef.rectTopMiddleY+30});
+                                    if (lanRef.isEditing) lanRef.menuSet[i+1].attr({text: lanRef.menuFieldStopEditTitle});
+                                    else lanRef.menuSet[i+1].attr({text: lanRef.menuFieldStartEditTitle});
+                                    i++;
+                                } else {
+                                    fieldRect = lanRef.menuSet[i];
+                                    fieldRectWidth = fieldRect.attr("width");
+                                    fieldRectHeight = fieldRect.attr("height");
+                                    fieldRect.attr({"x": lanRef.rectTopMiddleX - fieldRectWidth/2, "y": lanRef.rectTopMiddleY+30+(i-2)*15 - fieldRectHeight/2});
+                                    lanRef.menuSet[i+1].attr({"x": lanRef.rectTopMiddleX, "y": lanRef.rectTopMiddleY+30+(i-2)*15});
+                                    i++;
+                                }
+                            }
+                            if (lanRef.menu != null)
+                                lanRef.menu.remove();
+                            lanRef.menu = lanRef.r.menu(lanRef.rectTopMiddleX,lanRef.rectTopMiddleY+10,lanRef.menuSet).
+                                attr({fill: lanRef.menuFillColor, stroke: lanRef.color, "stroke-width": lanRef.menuStrokeWidth,
+                                    "fill-opacity": lanRef.menuOpacity});
+                            lanRef.menu.mousedown(menuMouseDown);
+                            lanRef.menu.toFront();
+                            lanRef.menuSet.toFront();
+                            lanRef.menuSet.show();
+                            lanRef.menuHided=false;
+                        } else {
+                            lanRef.menu.toBack();
+                            lanRef.menuSet.toBack();
+                            lanRef.menu.hide();
+                            lanRef.menuSet.hide();
+                            lanRef.menuHided=true;
+                        }
+                        lanRef.rightClick=true;
+                        if (lanRef.r.getDisplayMainMenu())
+                            lanRef.r.setDisplayMainMenu(false);
+                    } else if (e.which == 1) {
+                        lanRef.rightClick=false;
+                    }
+                },
+                menuMouseDown = function(e) {
+                    if (e.which == 3) {
+                        lanRef.menu.toBack();
+                        lanRef.menuSet.toBack();
+                        lanRef.menu.hide();
+                        lanRef.menuSet.hide();
+                        lanRef.menuHided=true;
+                        lanRef.rightClick=true;
+                        if (lanRef.r.getDisplayMainMenu())
+                            lanRef.r.setDisplayMainMenu(false);
+                    } else if (e.which == 1) {
+                        lanRef.rightClick=false;
+                    }
+                },
+                menuFieldOver = function() {
+                    this.attr(lanRef.menuFieldTXTOver);
+                },
+                menuFieldOut = function() {
+                    this.attr(lanRef.menuFieldTXT);
                 };
 
             var lanDragg = function () {
@@ -198,13 +289,48 @@ define(
                 this.rect    = this.r.rect(this.topLeftX, this.topLeftY, this.lanwidth, this.lanheight, 0);
 
                 this.lanName.attr(params.lan_txtTitle);
+                this.lanName.mousedown(mouseDown);
                 this.lanR.push(this.lanName);
                 this.lanR.hide();
 
                 this.rect.attr({fill: this.color, stroke: this.color, "stroke-dasharray": this.sDasharray, "fill-opacity": this.oUnselected, "stroke-width": 0});
                 this.rect.drag(lanMove, lanDragg, lanUP);
+                this.rect.mousedown(mouseDown);
                 this.rect.mouseover(lanOver);
                 this.rect.mouseout(lanOut);
+
+                this.menuTitle = this.r.text(0,10,"Lan menu").attr(this.menuMainTitleTXT);
+
+                this.menuEditionModeRect = this.r.rect(0,10,this.menuFieldStartEditTitle.width(this.menuFieldTXT),this.menuFieldStartEditTitle.height(this.menuFieldTXT));
+                this.menuEditionModeRect.attr({fill: this.color, stroke: this.color, "fill-opacity": 0, "stroke-width": 0});
+                this.menuEditionModeRect.mouseover(menuFieldOver);
+                this.menuEditionModeRect.mouseout(menuFieldOut);
+                this.menuEditionModeRect.mousedown(this.menuFieldEditClick);
+                this.menuEditionMode = this.r.text(0,10,this.menuFieldStartEditTitle).attr(this.menuFieldTXT);
+                this.menuEditionMode.mouseover(menuFieldOver);
+                this.menuEditionMode.mouseout(menuFieldOut);
+                this.menuEditionMode.mousedown(this.menuFieldEditClick);
+
+                this.menuSet = this.r.set();
+                this.menuSet.push(this.menuTitle);
+                this.menuSet.push(this.menuEditionModeRect);
+                this.menuSet.push(this.menuEditionMode);
+
+                this.menuSet.toBack();
+                this.menuSet.hide();
+            };
+
+            this.toFront = function() {
+                this.rect.toFront();
+                this.lanR.toFront();
+
+                var i, ii, j, jj;
+                var mtxX = this.lanmatrix.getMtxSize().x,
+                    mtxY = this.lanmatrix.getMtxSize().y;
+
+                for (i = 0, ii =  mtxX; i < ii; i++)
+                    for (j = 0, jj =  mtxY; j < jj; j++)
+                        this.lanmatrix.getContainerFromMtx(i, j).toFront();
             };
 
             this.displayLan = function(display) {

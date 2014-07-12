@@ -54,6 +54,8 @@ define(
             this.rect   = null;
 
             this.isMoving   = false;
+            this.isEditing  = false;
+            this.rightClick = false;
 
             this.oUnselected = params.dc_opacUnselec;
             this.oSelected   = params.dc_opacSelec;
@@ -61,10 +63,116 @@ define(
             this.sWidth      = params.dc_strokeWidthShow;
             this.color       = params.dc_color;
 
+            this.menu              = null;
+            this.menuSet           = null;
+            this.menuFillColor     = params.dc_menuFillColor;
+            this.menuOpacity       = params.dc_menuOpacity;
+            this.menuStrokeWidth   = params.dc_menuStrokeWidth;
+            this.menuHided         = true;
+
+            this.menuMainTitleTXT  = params.dc_menuMainTitle;
+            this.menuFieldTXT      = params.dc_menuFields;
+            this.menuFieldTXTOver  = params.dc_menuFieldsOver;
+
+            this.menuEditionMode         = null;
+            this.menuEditionModeRect     = null;
+            this.menuFieldStartEditTitle = "Edition mode ON";
+            this.menuFieldStopEditTitle  = "Edition mode OFF";
+
             this.mvx = 0;
             this.mvy = 0;
 
             var dcRef = this;
+
+            var mouseDown = function(e) {
+                    if (e.which == 3) {
+                        if (dcRef.menuHided) {
+                            dcRef.rect.animate({"fill-opacity": dcRef.oUnselected, "stroke-width": dcRef.sWidth}, 1);
+                            dcRef.dcR.show();
+                            dcRef.dcsplitter.show();
+                            dcRef.dispDC = true;
+
+                            dcRef.rectTopMiddleX = dcRef.topLeftX + dcRef.dcwidth/2;
+                            dcRef.rectTopMiddleY = dcRef.topLeftY;
+                            dcRef.menuSet.mousedown(menuMouseDown);
+                            var fieldRect, fieldRectWidth, fieldRectHeight;
+                            for (var i = 0, ii = dcRef.menuSet.length ; i < ii ; i++) {
+                                if (i==0)
+                                    dcRef.menuSet[i].attr({"x": dcRef.rectTopMiddleX, "y": dcRef.rectTopMiddleY +10, fill: "#fff"});
+                                else if (i==1) {
+                                    fieldRect = dcRef.menuSet[i];
+                                    fieldRectWidth = fieldRect.attr("width");
+                                    fieldRectHeight = fieldRect.attr("height");
+                                    fieldRect.attr({"x": dcRef.rectTopMiddleX - fieldRectWidth/2, "y": dcRef.rectTopMiddleY+30 - fieldRectHeight/2});
+                                    dcRef.menuSet[i+1].attr({"x": dcRef.rectTopMiddleX, "y": dcRef.rectTopMiddleY+30});
+                                    if (dcRef.isEditing) dcRef.menuSet[i+1].attr({text: dcRef.menuFieldStopEditTitle});
+                                    else dcRef.menuSet[i+1].attr({text: dcRef.menuFieldStartEditTitle});
+                                    i++;
+                                } else {
+                                    fieldRect = dcRef.menuSet[i];
+                                    fieldRectWidth = fieldRect.attr("width");
+                                    fieldRectHeight = fieldRect.attr("height");
+                                    fieldRect.attr({"x": dcRef.rectTopMiddleX - fieldRectWidth/2, "y": dcRef.rectTopMiddleY+30+(i-2)*15 - fieldRectHeight/2});
+                                    dcRef.menuSet[i+1].attr({"x": dcRef.rectTopMiddleX, "y": dcRef.rectTopMiddleY+30+(i-2)*15});
+                                    i++;
+                                }
+                            }
+                            if (dcRef.menu != null)
+                                dcRef.menu.remove();
+                            dcRef.menu = dcRef.r.menu(dcRef.rectTopMiddleX,dcRef.rectTopMiddleY+10,dcRef.menuSet).
+                                attr({fill: dcRef.menuFillColor, stroke: dcRef.color, "stroke-width": dcRef.menuStrokeWidth,
+                                    "fill-opacity": dcRef.menuOpacity});
+                            dcRef.menu.mousedown(menuMouseDown);
+                            dcRef.menu.toFront();
+                            dcRef.menuSet.toFront();
+                            dcRef.menuSet.show();
+                            dcRef.menuHided=false;
+                        } else {
+                            if (!dcRef.isEditing) {
+                                dcRef.rect.animate({"fill-opacity": dcRef.oUnselected, "stroke-width": 0}, 0);
+                                dcRef.dcR.hide();
+                                dcRef.dcsplitter.hide();
+                                dcRef.dispDC = false;
+                            }
+                            dcRef.menu.toBack();
+                            dcRef.menuSet.toBack();
+                            dcRef.menu.hide();
+                            dcRef.menuSet.hide();
+                            dcRef.menuHided=true;
+                        }
+                        dcRef.rightClick=true;
+                        if (dcRef.r.getDisplayMainMenu())
+                            dcRef.r.setDisplayMainMenu(false);
+                    } else if (e.which == 1) {
+                        dcRef.rightClick=false;
+                    }
+                },
+                menuMouseDown = function(e) {
+                    if (e.which == 3) {
+                        if (!dcRef.isEditing) {
+                            dcRef.rect.animate({"fill-opacity": dcRef.oUnselected, "stroke-width": 0}, 0);
+                            dcRef.dcR.hide();
+                            dcRef.dcsplitter.hide();
+                            dcRef.dispDC = false;
+                        }
+                        dcRef.menu.toBack();
+                        dcRef.menuSet.toBack();
+                        dcRef.menu.hide();
+                        dcRef.menuSet.hide();
+                        dcRef.menuHided=true;
+                        dcRef.rightClick=true;
+                        if (dcRef.r.getDisplayMainMenu())
+                            dcRef.r.setDisplayMainMenu(false);
+                    } else if (e.which == 1) {
+                        dcRef.rightClick=false;
+                    }
+                },
+                menuFieldOver = function() {
+                    this.attr(dcRef.menuFieldTXTOver);
+                },
+                menuFieldOut = function() {
+                    this.attr(dcRef.menuFieldTXT);
+                };
 
             var dcDragg = function () {
                     dcRef.moveInit();
@@ -77,14 +185,14 @@ define(
                     dcRef.r.up();
                 },
                 dcOver = function () {
-                    if (!dcRef.dispDC && !dcRef.isMoving) {
+                    if (!dcRef.dispDC && !dcRef.isMoving && !dcRef.isEditing) {
                         this.animate({"fill-opacity": dcRef.oUnselected, "stroke-width": dcRef.sWidth}, 1);
                         dcRef.dcR.show();
                         dcRef.dcsplitter.show();
                     }
                 },
                 dcOut  = function () {
-                    if (!dcRef.dispDC && !dcRef.isMoving) {
+                    if (!dcRef.dispDC && !dcRef.isMoving && !dcRef.isEditing) {
                         this.animate({"fill-opacity": dcRef.oUnselected, "stroke-width": 0}, 1);
                         dcRef.dcR.hide();
                         dcRef.dcsplitter.hide();
@@ -159,18 +267,41 @@ define(
                 this.rect   = this.r.rect(this.topLeftX, this.topLeftY, this.dcwidth, this.dcheight, 0);
 
                 this.dcName.attr(params.dc_txtTitle).attr({'fill':this.color});
+                this.dcName.mousedown(mouseDown);
                 this.dcTown.attr(params.dc_txtTitle).attr({'fill':this.color});
+                this.dcTown.mousedown(mouseDown);
                 this.dcR.push(this.dcName);
                 this.dcR.push(this.dcTown);
                 this.dcR.hide();
 
                 this.rect.attr({fill: this.color, stroke: this.color, "stroke-dasharray": this.sDasharray, "fill-opacity": this.oUnselected, "stroke-width": 0});
+                this.rect.mousedown(mouseDown);
                 this.rect.drag(dcMove, dcDragg, dcUP);
                 this.rect.mouseover(dcOver);
                 this.rect.mouseout(dcOut);
 
                 this.dcmatrix.printMtx(this.r);
                 this.dcsplitter.print(this.r);
+
+                this.menuTitle = this.r.text(0,10,"Datacenter menu").attr(this.menuMainTitleTXT);
+
+                this.menuEditionModeRect = this.r.rect(0,10,this.menuFieldStartEditTitle.width(this.menuFieldTXT),this.menuFieldStartEditTitle.height(this.menuFieldTXT));
+                this.menuEditionModeRect.attr({fill: this.color, stroke: this.color, "fill-opacity": 0, "stroke-width": 0});
+                this.menuEditionModeRect.mouseover(menuFieldOver);
+                this.menuEditionModeRect.mouseout(menuFieldOut);
+                this.menuEditionModeRect.mousedown(this.menuFieldEditClick);
+                this.menuEditionMode = this.r.text(0,10,this.menuFieldStartEditTitle).attr(this.menuFieldTXT);
+                this.menuEditionMode.mouseover(menuFieldOver);
+                this.menuEditionMode.mouseout(menuFieldOut);
+                this.menuEditionMode.mousedown(this.menuFieldEditClick);
+
+                this.menuSet = this.r.set();
+                this.menuSet.push(this.menuTitle);
+                this.menuSet.push(this.menuEditionModeRect);
+                this.menuSet.push(this.menuEditionMode);
+
+                this.menuSet.toBack();
+                this.menuSet.hide();
             };
 
             this.displayDC = function(display) {
@@ -194,22 +325,16 @@ define(
                 this.dcmatrix.displayLan(display);
             };
 
-            this.moveInit = function() {
-                var mtxS, i, ii;
-                this.r.dcsOnMovePush(this);
-                this.r.moveSetPush(this.dcName);
-                this.r.moveSetPush(this.dcTown);
-                this.r.moveSetPush(this.rect);
-
-                mtxS = this.dcmatrix.getWanMtxSize();
-                for (i = 0, ii =  mtxS; i < ii; i++)
-                    this.dcmatrix.getAreaFromWanMtx(i).moveInit();
-                mtxS = this.dcmatrix.getManMtxSize();
-                for (i = 0, ii =  mtxS; i < ii; i++)
-                    this.dcmatrix.getAreaFromManMtx(i).moveInit();
-                mtxS = this.dcmatrix.getLanMtxSize();
-                for (i = 0, ii =  mtxS; i < ii; i++)
-                    this.dcmatrix.getAreaFromLanMtx(i).moveInit();
+            this.changeInit = function() {
+                if (!this.menuHided && !this.isMoving) {
+                    this.menu.toBack();
+                    this.menuSet.toBack();
+                    this.menu.hide();
+                    this.menuSet.hide();
+                    this.menuHided=true;
+                    if (this.r.getDisplayMainMenu())
+                        this.r.setDisplayMainMenu(false);
+                }
 
                 this.extrx = this.rect.attr("x");
                 this.extry = this.rect.attr("y");
@@ -219,27 +344,11 @@ define(
                 this.extt0y = this.dcName.attr("y");
                 this.extt1x = this.dcTown.attr("x");
                 this.extt1y = this.dcTown.attr("y");
-
-                this.isMoving = true;
-                this.rect.animate({"fill-opacity": this.oSelected}, 500);
-                this.dcsplitter.hide();
             };
 
-            this.moveAction = function(dx, dy) {
-                this.mvx = dx; this.mvy = dy;
-            };
-
-            this.moveUp = function() {
-                var i, ii;
-                var attrect  = {x: this.extrx + this.mvx, y: this.extry + this.mvy},
-                    attrtxt0 = {x: this.extt0x + this.mvx, y: this.extt0y + this.mvy},
-                    attrtxt1 = {x: this.extt1x + this.mvx, y: this.extt1y + this.mvy};
-
+            this.changeUp = function() {
+                var mtxS, i, ii;
                 this.mvx = 0; this.mvy = 0;
-
-                this.rect.attr(attrect);
-                this.dcName.attr(attrtxt0);
-                this.dcTown.attr(attrtxt1);
 
                 this.setTopLeftCoord(this.rect.attr("x"),this.rect.attr("y"));
                 if (this.dcmatrix.getWanMtxSize()!=0) {
@@ -253,8 +362,8 @@ define(
                     this.dcsplitter.lanLineTopY = this.topLeftY + this.dbrdSpan;
                 this.dcsplitter.lanLineBdrY = this.topLeftY+this.dcheight-this.dbrdSpan;
 
+
                 this.dcsplitter.move(this.r);
-                this.dcsplitter.show();
 
                 var mtxS = this.dcmatrix.getWanMtxSize();
                 for (i = 0, ii =  mtxS; i < ii; i++) {
@@ -274,8 +383,219 @@ define(
                         this.topLeftX+this.dcwidth-this.dbrdSpan,this.dcsplitter.lanLineBdrY);
                 }
 
-                this.rect.animate({"fill-opacity": this.oUnselected}, 500);
+            };
+
+            //MOVEABLE
+
+            this.moveInit = function() {
+                if (!this.rightClick) {
+                    if (this.isEditing)
+                        this.r.scaleDone(this);
+
+                    var mtxS, i, ii;
+
+                    this.r.dcsOnMovePush(this);
+                    this.r.moveSetPush(this.dcName);
+                    this.r.moveSetPush(this.dcTown);
+                    this.r.moveSetPush(this.rect);
+
+                    mtxS = this.dcmatrix.getWanMtxSize();
+                    for (i = 0, ii =  mtxS; i < ii; i++)
+                        this.dcmatrix.getAreaFromWanMtx(i).moveInit();
+                    mtxS = this.dcmatrix.getManMtxSize();
+                    for (i = 0, ii =  mtxS; i < ii; i++)
+                        this.dcmatrix.getAreaFromManMtx(i).moveInit();
+                    mtxS = this.dcmatrix.getLanMtxSize();
+                    for (i = 0, ii =  mtxS; i < ii; i++)
+                        this.dcmatrix.getAreaFromLanMtx(i).moveInit();
+
+                    this.changeInit();
+
+                    this.isMoving = true;
+                    dcRef.rect.animate({"fill-opacity": dcRef.oUnselected, "stroke-width": dcRef.sWidth}, 1);
+                    dcRef.dcR.show();
+                    this.dcsplitter.hide();
+                    this.rect.animate({"fill-opacity": this.oSelected}, 500);
+                }
+            };
+
+            this.moveAction = function(dx, dy) {
+                this.mvx = dx; this.mvy = dy;
+            };
+
+            this.moveUp = function() {
+                if (!this.rightClick) {
+                    var attrect  = {x: this.extrx + this.mvx, y: this.extry + this.mvy},
+                        attrtxt0 = {x: this.extt0x + this.mvx, y: this.extt0y + this.mvy},
+                        attrtxt1 = {x: this.extt1x + this.mvx, y: this.extt1y + this.mvy};
+
+                    this.rect.attr(attrect);
+                    this.dcName.attr(attrtxt0);
+                    this.dcTown.attr(attrtxt1);
+
+                    this.changeUp();
+
+                    this.dcsplitter.show();
+                    this.rect.animate({"fill-opacity": this.oUnselected}, 500);
+                    this.isMoving = false;
+
+                    if (this.isEditing)
+                        this.r.scaleInit(this);
+                }
+            };
+
+            //EDITABLE
+
+            this.menuFieldEditClick = function() {
+                dcRef.menu.toBack();
+                dcRef.menuSet.toBack();
+                dcRef.menu.hide();
+                dcRef.menuSet.hide();
+                dcRef.menuHided=true;
+
+                if (!dcRef.isEditing) {
+                    dcRef.r.scaleInit(dcRef);
+                    dcRef.isEditing = true;
+                } else {
+                    dcRef.r.scaleDone(dcRef);
+                    dcRef.isEditing = false;
+                    dcRef.rect.animate({"fill-opacity": dcRef.oUnselected, "stroke-width": 0}, 0);
+                    dcRef.dcR.hide();
+                    dcRef.dcsplitter.hide();
+                    dcRef.dispDC = false;
+                }
+            };
+
+            this.getBBox = function() {
+                return this.rect.getBBox();
+            };
+
+            var areaSet;
+            this.getMinBBox = function() {
+                var i, ii;
+                var mtxS = this.dcmatrix.getWanMtxSize();
+
+                var nameHeight = this.geoDCLoc.dc.height(params.dc_txtTitle),
+                    townHeight = this.geoDCLoc.town.height(params.dc_txtTitle);
+
+                areaSet = this.r.set();
+
+                mtxS = this.dcmatrix.getWanMtxSize();
+                for (i = 0, ii =  mtxS; i < ii; i++)
+                    areaSet.push(this.dcmatrix.getAreaFromWanMtx(i).rect);
+                mtxS = this.dcmatrix.getManMtxSize();
+                for (i = 0, ii =  mtxS; i < ii; i++)
+                    areaSet.push(this.dcmatrix.getAreaFromManMtx(i).rect);
+                mtxS = this.dcmatrix.getLanMtxSize();
+                for (i = 0, ii =  mtxS; i < ii; i++)
+                    areaSet.push(this.dcmatrix.getAreaFromLanMtx(i).rect);
+
+                var areaBBox = areaSet.getBBox();
+
+                return {
+                    x: areaBBox.x - this.dbrdSpan ,
+                    y: areaBBox.y - (nameHeight + this.areaSpan),
+                    x2: areaBBox.x2 + this.dbrdSpan,
+                    y2: areaBBox.y2  + townHeight + this.areaSpan,
+                    width: areaBBox.width + 2*this.dbrdSpan,
+                    height: areaBBox.height + (nameHeight + this.areaSpan)
+                };
+            };
+
+            this.getMaxBBox = function() {
+                return null
+            };
+
+            this.editInit = function() {
+                this.extwidth  = this.dcwidth;
+                this.extheight = this.dcheight;
+                this.dcsplitter.hide();
+                this.changeInit();
+                this.isMoving = true;
+            };
+
+            this.editAction = function(elem, dx, dy) {
+                switch(elem.idx) {
+                    case 0:
+                        this.extrx = this.topLeftX + dx;
+                        this.extry = this.topLeftY + dy;
+                        this.extwidth = this.dcwidth - dx;
+                        this.extheight = this.dcheight - dy;
+                        break;
+
+                    case 1:
+                        this.extry = this.topLeftY + dy;
+                        this.extwidth = this.dcwidth + dx;
+                        this.extheight = this.dcheight - dy;
+                        break;
+
+                    case 2:
+                        this.extwidth = this.dcwidth + dx;
+                        this.extheight = this.dcheight + dy;
+                        break;
+
+                    case 3:
+                        this.extrx = this.topLeftX + dx;
+                        this.extwidth = this.dcwidth - dx;
+                        this.extheight = this.dcheight + dy;
+                        break;
+
+                    case 4:
+                        this.extry = this.topLeftY + dy;
+                        this.extheight = this.dcheight - dy;
+                        break;
+
+                    case 5:
+                        this.extwidth = this.dcwidth + dx;
+                        break;
+
+                    case 6:
+                        this.extheight = this.dcheight + dy;
+                        break;
+
+                    case 7:
+                        this.extrx = this.topLeftX + dx;
+                        this.extwidth = this.dcwidth - dx;
+                        break;
+
+                    default:
+                        break;
+                }
+
+                this.dcR.pop(this.dcName);
+                this.dcR.pop(this.dcTown);
+
+                this.dcName.remove();
+                this.dcTown.remove();
+                this.rect.remove();
+
+                this.dcName = this.r.text(this.extrx + (this.extwidth/2), this.extry + this.dbrdSpan/2, this.geoDCLoc.dc);
+                //noinspection JSUnresolvedVariable
+                this.dcTown = this.r.text(this.extrx + (this.extwidth/2), this.extry + this.extheight - this.dbrdSpan/2, this.geoDCLoc.town);
+                this.rect   = this.r.rect(this.extrx, this.extry, this.extwidth, this.extheight, 0);
+
+                this.dcName.attr(params.dc_txtTitle).attr({'fill':this.color});
+                this.dcName.mousedown(mouseDown);
+                this.dcTown.attr(params.dc_txtTitle).attr({'fill':this.color});
+                this.dcTown.mousedown(mouseDown);
+                this.dcR.push(this.dcName);
+                this.dcR.push(this.dcTown);
+                this.dcR.toBack();
+
+                this.rect.attr({fill: this.color, stroke: this.color, "stroke-dasharray": this.sDasharray, "fill-opacity": this.oUnselected, "stroke-width": this.sWidth});
+                this.rect.drag(dcMove, dcDragg, dcUP);
+                this.rect.mouseover(dcOver);
+                this.rect.mouseout(dcOut);
+                this.rect.mousedown(mouseDown);
+                this.rect.toBack();
+            };
+
+            this.editUp = function() {
+                this.dcwidth = this.extwidth;
+                this.dcheight = this.extheight;
+                this.dcsplitter.show();
                 this.isMoving = false;
+                this.changeUp();
             };
         }
 

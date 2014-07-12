@@ -267,11 +267,15 @@ define(
                     this.bindingPt5 = this.r.circle(this.bindingPt5X, this.bindingPt5Y, 0);
                     this.bindingPt6 = this.r.circle(this.bindingPt6X, this.bindingPt6Y, 0);
                     this.cylinderR  = this.r.set().
-                        push(this.titleTxt).push(this.cylinder).push(this.bindingPt1).push(this.bindingPt2).
+                        push(this.cylinder).push(this.titleTxt).push(this.bindingPt1).push(this.bindingPt2).
                         push(this.bindingPt3).push(this.bindingPt4).push(this.bindingPt5).push(this.bindingPt6);
                     this.cylinderR.mousedown(mouseDown);
                     this.cylinderR.drag(cyMove, cyDragger, cyUP);
                 }
+            };
+
+            this.toFront = function() {
+                this.cylinderR.toFront();
             };
 
             this.changeInit = function() {

@@ -32,6 +32,12 @@ define({
     map_linkColor       : '#fff',
     map_linkBckg        : '#000|1.5',
 
+    dc_menuFillColor   : "#000",
+    dc_menuOpacity     : 0.7,
+    dc_menuStrokeWidth : 1,
+    dc_menuMainTitle   : {'font-size': '12px', 'font-family': 'Arial', 'font-weight': 'bold', 'cursor': 'default', fill: "#fff"},
+    dc_menuFields      : {'font-size': '10px', 'font-family': 'Arial', 'font-weight': 'normal', 'cursor': 'default', fill: "#fff"},
+    dc_menuFieldsOver  : {'font-size': '10px', 'font-family': 'Arial', 'font-weight': 'bold', 'cursor': 'default', fill: "#fff"},
     dc_areaSpan          : 0,  /*space between 2 area*/
     dc_dbrdSpan          : 20, /*space between 1 area and DC border*/
     dc_dbrdResz          : 10, /*resizing border*/
@@ -50,6 +56,12 @@ define({
     dc_split_moverOUnsel : 0,
     dc_split_title       : {font: '13px Helvetica, Arial', 'font-weight': 'bold', fill: "#000"},
 
+    area_menuFillColor   : "#000",
+    area_menuOpacity     : 0.7,
+    area_menuStrokeWidth : 1,
+    area_menuMainTitle   : {'font-size': '12px', 'font-family': 'Arial', 'font-weight': 'bold', 'cursor': 'default', fill: "#fff"},
+    area_menuFields      : {'font-size': '10px', 'font-family': 'Arial', 'font-weight': 'normal', 'cursor': 'default', fill: "#fff"},
+    area_menuFieldsOver  : {'font-size': '10px', 'font-family': 'Arial', 'font-weight': 'bold', 'cursor': 'default', fill: "#fff"},
     area_lanSpan         : 0,  /*space between 2 lan*/
     area_abrdSpan        : 20, /*space between 1 lan and area border*/
     area_abrdResz        : 10,
@@ -60,6 +72,12 @@ define({
     area_color           : "#000",
     area_strokeWidthShow : 1.5,
 
+    lan_menuFillColor   : "#000",
+    lan_menuOpacity     : 0.7,
+    lan_menuStrokeWidth : 1,
+    lan_menuMainTitle   : {'font-size': '12px', 'font-family': 'Arial', 'font-weight': 'bold', 'cursor': 'default', fill: "#fff"},
+    lan_menuFields      : {'font-size': '10px', 'font-family': 'Arial', 'font-weight': 'normal', 'cursor': 'default', fill: "#fff"},
+    lan_menuFieldsOver  : {'font-size': '10px', 'font-family': 'Arial', 'font-weight': 'bold', 'cursor': 'default', fill: "#fff"},
     lan_contSpan        : 5,  /*space between 2 container*/
     lan_lbrdSpan        : 20, /*space between 1 container and lan border*/
     lan_lbrdResz        : 10,
