@@ -291,8 +291,7 @@ define(
                 this.isJailed = true;
             };
 
-            /*
-            this.isMoving = function() {
+            this.isElemMoving = function() {
                 var mtxX        = this.armatrix.getMtxSize().x,
                     mtxY        = this.armatrix.getMtxSize().y;
                 var i, ii, j, jj;
@@ -305,7 +304,6 @@ define(
                 }
                 return this.isMoving;
             };
-            */
 
             this.print = function(r_) {
                 this.r = r_;
@@ -320,10 +318,10 @@ define(
                 this.areaR.push(this.areaName);
 
                 this.rect.attr({fill: params.area_color, stroke: params.area_color, "stroke-dasharray": this.sDasharray, "fill-opacity": this.oUnselected, "stroke-width": 0});
+                this.rect.mousedown(mouseDown);
                 this.rect.drag(areaMove, areaDragg, areaUP);
                 this.rect.mouseover(areaOver);
                 this.rect.mouseout(areaOut);
-                this.rect.mousedown(mouseDown);
 
                 this.areaR.hide();
                 this.armatrix.printMtx(this.r);
@@ -424,8 +422,6 @@ define(
                     }
 
                 this.changeInit();
-                areaRef.rect.animate({"stroke-width": params.area_strokeWidthShow}, 1);
-                areaRef.areaR.show();
                 this.isMoving = true;
             };
 
@@ -434,11 +430,8 @@ define(
             };
 
             this.moveUp = function() {
-                var j, jj, k, kk;
                 var attrect  = {x: this.extrx + this.mvx, y: this.extry + this.mvy},
                     attrtxt0 = {x: this.extt0x + this.mvx, y: this.extt0y + this.mvy};
-                var mtxX     = this.armatrix.getMtxSize().x,
-                    mtxY     = this.armatrix.getMtxSize().y;
 
                 this.mvx=0; this.mvy=0;
                 this.rect.attr(attrect);

@@ -60,6 +60,18 @@ define(
                 }
             };
 
+            this.displayArea = function(display) {
+                for (var i = 0, ii = rows[3][0]; i < ii ; i++ ) {
+                    rows[0][i].displayArea(display);
+                }
+                for (var i = 0, ii = rows[3][1]; i < ii ; i++ ) {
+                    rows[1][i].displayArea(display);
+                }
+                for (var i = 0, ii = rows[3][2]; i < ii ; i++ ) {
+                    rows[2][i].displayArea(display);
+                }
+            };
+
             this.displayLan = function(display) {
                 for (var i = 0, ii = rows[3][0]; i < ii ; i++ ) {
                     rows[0][i].displayLan(display);
@@ -69,6 +81,18 @@ define(
                 }
                 for (var i = 0, ii = rows[3][2]; i < ii ; i++ ) {
                     rows[2][i].displayLan(display);
+                }
+            };
+
+            this.isElemMoving = function() {
+                for (var i = 0, ii = rows[3][0]; i < ii ; i++ ) {
+                    rows[0][i].isElemMoving();
+                }
+                for (var i = 0, ii = rows[3][1]; i < ii ; i++ ) {
+                    rows[1][i].isElemMoving();
+                }
+                for (var i = 0, ii = rows[3][2]; i < ii ; i++ ) {
+                    rows[2][i].isElemMoving();
                 }
             };
 

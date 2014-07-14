@@ -92,6 +92,10 @@ define(
             var mouseDown = function(e) {
                     if (e.which == 3) {
                         if (lanRef.menuHided) {
+                            lanRef.rect.animate({"fill-opacity": this.oUnselected, "stroke-width": params.lan_strokeWidthShow}, 1);
+                            lanRef.lanR.show();
+                            lanRef.dispLan = true;
+
                             lanRef.rectTopMiddleX = lanRef.topLeftX + lanRef.lanwidth/2;
                             lanRef.rectTopMiddleY = lanRef.topLeftY;
                             lanRef.menuSet.mousedown(menuMouseDown);
@@ -128,6 +132,9 @@ define(
                             lanRef.menuSet.show();
                             lanRef.menuHided=false;
                         } else {
+                            lanRef.rect.animate({"fill-opacity": this.oUnselected, "stroke-width": 0}, 1);
+                            lanRef.lanR.hide();
+                            lanRef.dispLan = false;
                             lanRef.menu.toBack();
                             lanRef.menuSet.toBack();
                             lanRef.menu.hide();
@@ -143,6 +150,9 @@ define(
                 },
                 menuMouseDown = function(e) {
                     if (e.which == 3) {
+                        lanRef.rect.animate({"fill-opacity": this.oUnselected, "stroke-width": 0}, 1);
+                        lanRef.lanR.hide();
+                        lanRef.dispLan = false;
                         lanRef.menu.toBack();
                         lanRef.menuSet.toBack();
                         lanRef.menu.hide();
@@ -196,13 +206,13 @@ define(
                     lanRef.rect.animate({"fill-opacity": lanRef.oUnselected}, 500);
                 },
                 lanOver = function () {
-                    if (!lanRef.dispLan) {
+                    if (!lanRef.dispLan  && !lanRef.isMoving && !lanRef.isEditing) {
                         lanRef.rect.animate({"fill-opacity": lanRef.oUnselected, "stroke-width": params.lan_strokeWidthShow}, 1);
                         lanRef.lanR.show();
                     }
                 },
                 lanOut  = function () {
-                    if (!lanRef.dispLan) {
+                    if (!lanRef.dispLan && !lanRef.isMoving && !lanRef.isEditing) {
                         lanRef.rect.animate({"fill-opacity": lanRef.oUnselected, "stroke-width": 0}, 1);
                         lanRef.lanR.hide();
                     }
@@ -294,8 +304,8 @@ define(
                 this.lanR.hide();
 
                 this.rect.attr({fill: this.color, stroke: this.color, "stroke-dasharray": this.sDasharray, "fill-opacity": this.oUnselected, "stroke-width": 0});
-                this.rect.drag(lanMove, lanDragg, lanUP);
                 this.rect.mousedown(mouseDown);
+                this.rect.drag(lanMove, lanDragg, lanUP);
                 this.rect.mouseover(lanOver);
                 this.rect.mouseout(lanOut);
 
@@ -344,22 +354,12 @@ define(
                 }
             };
 
-            this.moveInit = function() {
-                var i, ii, j, jj;
-                var mtxX = this.lanmatrix.getMtxSize().x,
-                    mtxY = this.lanmatrix.getMtxSize().y;
-
-                this.r.lansOnMovePush(this);
-                this.r.moveSetPush(this.lanName);
-                this.r.moveSetPush(this.rect);
-
-                for (i = 0, ii =  mtxX; i < ii; i++)
-                    for (j = 0, jj =  mtxY; j < jj; j++)
-                        this.lanmatrix.getContainerFromMtx(i, j).moveInit();
-
+            this.changeInit = function() {
                 this.extrx  = this.rect.attr("x");
                 this.extry  = this.rect.attr("y");
+                //noinspection JSUnusedGlobalSymbols
                 this.extrw  = this.rect.attr("width");
+                //noinspection JSUnusedGlobalSymbols
                 this.extrh  = this.rect.attr("height");
                 this.extt0x = this.lanR[0].attr("x");
                 this.extt0y = this.lanR[0].attr("y");
@@ -371,23 +371,14 @@ define(
                 this.isMoving = true;
             };
 
-            this.moveAction = function(dx,dy) {
-                this.mvx = dx; this.mvy = dy;
-            };
-
-            this.moveUp = function() {
+            this.changeUp = function() {
                 var j, jj, k, kk;
-                var attrect  = {x: this.extrx + this.mvx, y: this.extry + this.mvy},
-                    attrtxt0 = {x: this.extt0x + this.mvx, y: this.extt0y + this.mvy};
 
                 var mtxX = this.lanmatrix.getMtxSize().x,
                     mtxY = this.lanmatrix.getMtxSize().y;
 
-                this.mvx=0; this.mvy=0;
-                this.rect.attr(attrect);
-                this.lanName.attr(attrtxt0);
-
                 this.setTopLeftCoord(this.rect.attr("x"),this.rect.attr("y"));
+
                 for (j = 0, jj = mtxX; j < jj; j++)
                     for (k = 0, kk = mtxY; k < kk; k++) {
                         this.lanmatrix.getContainerFromMtx(j, k).setMoveJail(
@@ -397,8 +388,200 @@ define(
                             this.topLeftY+this.lanheight
                         );
                     }
+            };
+
+            //MOVEABLE
+
+            this.moveInit = function() {
+                if (!this.rightClick) {
+                    if (this.isEditing)
+                        this.r.scaleDone(this);
+
+                    var i, ii, j, jj;
+                    var mtxX = this.lanmatrix.getMtxSize().x,
+                        mtxY = this.lanmatrix.getMtxSize().y;
+
+                    this.r.lansOnMovePush(this);
+                    this.r.moveSetPush(this.lanName);
+                    this.r.moveSetPush(this.rect);
+
+                    for (i = 0, ii =  mtxX; i < ii; i++)
+                        for (j = 0, jj =  mtxY; j < jj; j++)
+                            this.lanmatrix.getContainerFromMtx(i, j).moveInit();
+
+                    this.changeInit();
+                }
+            };
+
+            this.moveAction = function(dx,dy) {
+                this.mvx = dx; this.mvy = dy;
+            };
+
+            this.moveUp = function() {
+                if (!this.rightClick) {
+                    var attrect  = {x: this.extrx + this.mvx, y: this.extry + this.mvy},
+                        attrtxt0 = {x: this.extt0x + this.mvx, y: this.extt0y + this.mvy};
+
+                    this.mvx=0; this.mvy=0;
+                    this.rect.attr(attrect);
+                    this.lanName.attr(attrtxt0);
+
+                    this.changeUp();
+                    this.isMoving = false;
+
+                    if (this.isEditing)
+                        this.r.scaleInit(this);
+                }
+            };
+
+            //EDITABLE
+
+            this.menuFieldEditClick = function() {
+                lanRef.menu.toBack();
+                lanRef.menuSet.toBack();
+                lanRef.menu.hide();
+                lanRef.menuSet.hide();
+                lanRef.menuHided=true;
+
+                if (!lanRef.isEditing) {
+                    lanRef.r.scaleInit(lanRef);
+                    lanRef.isEditing = true;
+                } else {
+                    lanRef.r.scaleDone(lanRef);
+                    lanRef.isEditing = false;
+                    lanRef.rect.animate({"fill-opacity": this.oUnselected, "stroke-width": 0}, 1);
+                    lanRef.lanR.hide();
+                    lanRef.dispLan = false;
+                }
+            };
+
+            this.getBBox = function() {
+                return this.rect.getBBox();
+            };
+
+            var lanObjSet;
+            this.getMinBBox = function() {
+                var j, jj, k, kk;
+
+                var mtxX = this.lanmatrix.getMtxSize().x,
+                    mtxY = this.lanmatrix.getMtxSize().y;
+
+                lanObjSet = this.r.set();
+
+                for (j = 0, jj = mtxX; j < jj; j++)
+                    for (k = 0, kk = mtxY; k < kk; k++)
+                        lanObjSet.push(this.lanmatrix.getContainerFromMtx(j, k).rect);
+
+                var lanMinBBox = lanObjSet.getBBox();
+
+                return {
+                    x: lanMinBBox.x - this.lbrdSpan,
+                    y: lanMinBBox.y - this.lbrdSpan,
+                    x2: lanMinBBox.x2 + this.lbrdSpan,
+                    y2: lanMinBBox.y2 + this.lbrdSpan,
+                    width: lanMinBBox.width + 2*this.lbrdSpan,
+                    height: lanMinBBox.height + 2*this.lbrdSpan
+                };
+            };
+
+            this.getMaxBBox = function() {
+                if (this.isJailed) {
+                    return {
+                        x: this.minJailX,
+                        y: this.minJailY,
+                        x2: this.maxJailX,
+                        y2: this.maxJailY,
+                        width: this.maxJailX - this.minJailX,
+                        height: this.maxJailY - this.minJailY
+                    }
+                } else {
+                    return null;
+                }
+            };
+
+            this.editInit = function() {
+                this.extwidth  = this.lanwidth;
+                this.extheight = this.lanheight;
+                this.changeInit();
+                this.isMoving = true;
+            };
+
+            this.editAction = function(elem, dx, dy) {
+                switch(elem.idx) {
+                    case 0:
+                        this.extrx = this.topLeftX + dx;
+                        this.extry = this.topLeftY + dy;
+                        this.extwidth = this.lanwidth - dx;
+                        this.extheight = this.lanheight - dy;
+                        break;
+
+                    case 1:
+                        this.extry = this.topLeftY + dy;
+                        this.extwidth = this.lanwidth + dx;
+                        this.extheight = this.lanheight - dy;
+                        break;
+
+                    case 2:
+                        this.extwidth = this.lanwidth + dx;
+                        this.extheight = this.lanheight + dy;
+                        break;
+
+                    case 3:
+                        this.extrx = this.topLeftX + dx;
+                        this.extwidth = this.lanwidth - dx;
+                        this.extheight = this.lanheight + dy;
+                        break;
+
+                    case 4:
+                        this.extry = this.topLeftY + dy;
+                        this.extheight = this.lanheight - dy;
+                        break;
+
+                    case 5:
+                        this.extwidth = this.lanwidth + dx;
+                        break;
+
+                    case 6:
+                        this.extheight = this.lanheight + dy;
+                        break;
+
+                    case 7:
+                        this.extrx = this.topLeftX + dx;
+                        this.extwidth = this.lanwidth - dx;
+                        break;
+
+                    default:
+                        break;
+                }
+
+                this.lanR.pop(this.lanName);
+                this.lanName.remove();
+                this.rect.remove();
+
+                var lanTitle = "Lan " + this.lanDef.lan + " - " + this.lanDef.subnetip + "/" + this.lanDef.subnetmask;
+
+                this.lanName = this.r.text(this.extrx + (this.extwidth/2), this.extry + this.lbrdSpan/2, lanTitle);
+                this.rect    = this.r.rect(this.extrx, this.extry, this.extwidth, this.extheight, 0);
+
+                this.lanName.attr(params.lan_txtTitle);
+                this.lanName.mousedown(mouseDown);
+                this.lanR.push(this.lanName);
+
+                this.rect.attr({fill: this.color, stroke: this.color, "stroke-dasharray": this.sDasharray, "fill-opacity": this.oUnselected, "stroke-width": params.lan_strokeWidthShow});
+                this.rect.mousedown(mouseDown);
+                this.rect.drag(lanMove, lanDragg, lanUP);
+                this.rect.mouseover(lanOver);
+                this.rect.mouseout(lanOut);
+
+                this.toFront();
+            };
+
+            this.editUp = function() {
+                this.lanwidth = this.extwidth;
+                this.lanheight = this.extheight;
                 this.isMoving = false;
-            }
+                this.changeUp();
+            };
         }
         return lan;
     });

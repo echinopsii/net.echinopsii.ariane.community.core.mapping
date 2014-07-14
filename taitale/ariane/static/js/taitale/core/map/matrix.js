@@ -61,7 +61,7 @@ define(
             this.isMoving = function() {
                 for (var i = 0, ii = nbColumns; i < ii ; i++) {
                     for (var j = 0, jj = nbLines; j < jj ; j++ ) {
-                        if (rows[j][i].isMoving)
+                        if (rows[j][i].isElemMoving())
                             return true;
                     }
                 }
@@ -114,7 +114,7 @@ define(
                     for (var j = 0, jj = nbLines; j < jj; j++) {
                         rows[j][i].setTopLeftCoord(borderSpan+zoneSpan*i+cursorWidth,borderSpan+zoneSpan*j+cursorHeight);
                         rows[j][i].definePoz();
-                        cursorHeigth = cursorHeight + rows[j][i].getZoneSize().height;
+                        cursorHeight = cursorHeight + rows[j][i].getZoneSize().height;
                     }
                     cursorWidth = cursorWidth + rows[0][i].getZoneSize().width;
                 }

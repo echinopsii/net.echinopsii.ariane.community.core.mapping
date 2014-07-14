@@ -26,9 +26,10 @@ define(
     ],
     function (params, helper) {
         function dcSplitter(dc) {
+            //noinspection JSUnusedLocalSymbols
+            var helper_    = new helper();
 
             this.datacenter = dc;
-            //var helper_    = new helper();
             this.r          = null;
 
             this.wanLineTopY   = 0;
@@ -75,7 +76,7 @@ define(
                     this.cy    = splitterRef.manLineTopY;
                     this.xlong = splitterRef.datacenter.getZoneCoord().x+splitterRef.datacenter.getZoneSize().width;
                     this.animate({"fill-opacity": splitterRef.moverOSelected}, 1);
-                    splitterRef.datacenter.setIsMoving(true);
+                    splitterRef.datacenter.isMoving = true;
 
                     this.minY = null;
                     this.maxY = null;
@@ -161,7 +162,7 @@ define(
                 wmbUP = function() {
                     var i, ii;
                     this.animate({"fill-opacity": splitterRef.moverOUnselected}, 1);
-                    splitterRef.datacenter.setIsMoving(false);
+                    splitterRef.datacenter.isMoving = false;
 
                     var mtxS = this.dcmatrix.getWanMtxSize();
                     for (i = 0, ii =  mtxS; i < ii; i++) {
@@ -175,7 +176,7 @@ define(
                     splitterRef.wanLineHeight = splitterRef.manLineTopY - splitterRef.wanLineTopY;
                     splitterRef.manLineHeight = splitterRef.lanLineTopY - splitterRef.manLineTopY;
                 },
-                wmbMouseMove = function(e) {
+                wmbMouseMove = function() {
                     this.attr('cursor','move');
                     splitterRef.datacenter.show();
                     //helper_.debug("wan man line cursor: ".concat(this.attr("cursor")));
@@ -186,7 +187,7 @@ define(
                     this.cy    = splitterRef.lanLineTopY;
                     this.xlong = splitterRef.datacenter.getZoneCoord().x+splitterRef.datacenter.getZoneSize().width;
                     this.animate({"fill-opacity": splitterRef.moverOSelected}, 1);
-                    splitterRef.datacenter.setIsMoving(true);
+                    splitterRef.datacenter.isMoving = true;
 
                     this.minY = null;
                     this.maxY = null;
@@ -272,7 +273,7 @@ define(
                 },
                 mlbUP = function() {
                     this.animate({"fill-opacity": splitterRef.moverOUnselected}, 1);
-                    splitterRef.datacenter.setIsMoving(false);
+                    splitterRef.datacenter.isMoving = false;
 
                     var mtxS = this.dcmatrix.getManMtxSize();
                     var i, ii;
@@ -288,7 +289,7 @@ define(
                     splitterRef.manLineHeight = splitterRef.lanLineTopY-splitterRef.manLineTopY;
                     splitterRef.lanLineHeight = splitterRef.lanLineBdrY-splitterRef.lanLineTopY;
                 },
-                mlbMouseMove = function(e) {
+                mlbMouseMove = function() {
                     this.attr('cursor','move');
                     splitterRef.datacenter.show();
                     //helper_.debug("man lan line cursor: ".concat(this.attr("cursor")));
@@ -381,6 +382,7 @@ define(
                             ["L",this.datacenter.getZoneCoord().x+this.datacenter.getZoneSize().width, this.lanLineBdrY]
                         ];
 
+                //noinspection JSUnusedGlobalSymbols
                 this.splitterR = this.r.set();
 
                 this.dc_wan_border = this.r.path(dcWanPath);

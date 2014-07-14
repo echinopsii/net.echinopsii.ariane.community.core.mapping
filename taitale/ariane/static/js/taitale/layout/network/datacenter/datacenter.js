@@ -200,7 +200,7 @@ define(
                 };
 
             this.isEditionMode = function() {
-                return (options.getMode()==dcRef.dic.mapMode.EDITION);
+                return this.isEditing;
             };
 
             this.show = function() {
@@ -237,7 +237,7 @@ define(
 
             this.setTopLeftCoord = function (x, y) {
                 this.topLeftX = x;
-                this.topLeftY = y + this.dcmatrix.getYOffset(); //align on network type
+                this.topLeftY = y; //align on network type
             };
 
             this.geoDCLocEqual = function (geoDCLoc_) {
@@ -325,6 +325,11 @@ define(
                 this.dcmatrix.displayLan(display);
             };
 
+            this.isElemMoving = function() {
+                if (this.dcmatrix.isElemMoving()) return true;
+                else return this.isMoving;
+            };
+
             this.changeInit = function() {
                 if (!this.menuHided && !this.isMoving) {
                     this.menu.toBack();
@@ -338,7 +343,9 @@ define(
 
                 this.extrx = this.rect.attr("x");
                 this.extry = this.rect.attr("y");
+                //noinspection JSUnusedGlobalSymbols
                 this.extrw = this.rect.attr("width");
+                //noinspection JSUnusedGlobalSymbols
                 this.extrh = this.rect.attr("height");
                 this.extt0x = this.dcName.attr("x");
                 this.extt0y = this.dcName.attr("y");
@@ -347,7 +354,7 @@ define(
             };
 
             this.changeUp = function() {
-                var mtxS, i, ii;
+                var i, ii;
                 this.mvx = 0; this.mvy = 0;
 
                 this.setTopLeftCoord(this.rect.attr("x"),this.rect.attr("y"));
@@ -456,6 +463,7 @@ define(
                 if (!dcRef.isEditing) {
                     dcRef.r.scaleInit(dcRef);
                     dcRef.isEditing = true;
+                    dcRef.dcsplitter.show();
                 } else {
                     dcRef.r.scaleDone(dcRef);
                     dcRef.isEditing = false;
@@ -473,14 +481,14 @@ define(
             var areaSet;
             this.getMinBBox = function() {
                 var i, ii;
-                var mtxS = this.dcmatrix.getWanMtxSize();
 
+                //noinspection JSUnresolvedVariable
                 var nameHeight = this.geoDCLoc.dc.height(params.dc_txtTitle),
                     townHeight = this.geoDCLoc.town.height(params.dc_txtTitle);
 
                 areaSet = this.r.set();
 
-                mtxS = this.dcmatrix.getWanMtxSize();
+                var mtxS = this.dcmatrix.getWanMtxSize();
                 for (i = 0, ii =  mtxS; i < ii; i++)
                     areaSet.push(this.dcmatrix.getAreaFromWanMtx(i).rect);
                 mtxS = this.dcmatrix.getManMtxSize();
@@ -509,6 +517,9 @@ define(
             this.editInit = function() {
                 this.extwidth  = this.dcwidth;
                 this.extheight = this.dcheight;
+                this.dcsplitter.extwanLineHeight = this.dcsplitter.wanLineHeight;
+                this.dcsplitter.extmanLineHeight = this.dcsplitter.manLineHeight;
+                this.dcsplitter.extlanLineHeight = this.dcsplitter.lanLineHeight;
                 this.dcsplitter.hide();
                 this.changeInit();
                 this.isMoving = true;
@@ -521,28 +532,58 @@ define(
                         this.extry = this.topLeftY + dy;
                         this.extwidth = this.dcwidth - dx;
                         this.extheight = this.dcheight - dy;
+                        if (this.dcmatrix.getWanMtxSize()!=0)
+                            this.dcsplitter.extwanLineHeight = this.dcsplitter.wanLineHeight - dy;
+                        else if (this.dcmatrix.getManMtxSize()!=0)
+                            this.dcsplitter.extmanLineHeight = this.dcsplitter.manLineHeight - dy;
+                        else
+                            this.dcsplitter.extlanLineHeight = this.dcsplitter.lanLineHeight - dy;
                         break;
 
                     case 1:
                         this.extry = this.topLeftY + dy;
                         this.extwidth = this.dcwidth + dx;
                         this.extheight = this.dcheight - dy;
+                        if (this.dcmatrix.getWanMtxSize()!=0)
+                            this.dcsplitter.extwanLineHeight = this.dcsplitter.wanLineHeight - dy;
+                        else if (this.dcmatrix.getManMtxSize()!=0)
+                            this.dcsplitter.extmanLineHeight = this.dcsplitter.manLineHeight - dy;
+                        else
+                            this.dcsplitter.extlanLineHeight = this.dcsplitter.lanLineHeight - dy;
                         break;
 
                     case 2:
                         this.extwidth = this.dcwidth + dx;
                         this.extheight = this.dcheight + dy;
+                        if (this.dcmatrix.getLanMtxSize()!=0)
+                            this.dcsplitter.extlanLineHeight = this.dcsplitter.lanLineHeight + dy;
+                        else if (this.dcmatrix.getManMtxSize()!=0)
+                            this.dcsplitter.extmanLineHeight = this.dcsplitter.manLineHeight + dy;
+                        else
+                            this.dcsplitter.extwanLineHeight = this.dcsplitter.wanLineHeight + dy;
                         break;
 
                     case 3:
                         this.extrx = this.topLeftX + dx;
                         this.extwidth = this.dcwidth - dx;
                         this.extheight = this.dcheight + dy;
+                        if (this.dcmatrix.getLanMtxSize()!=0)
+                            this.dcsplitter.extlanLineHeight = this.dcsplitter.lanLineHeight + dy;
+                        else if (this.dcmatrix.getManMtxSize()!=0)
+                            this.dcsplitter.extmanLineHeight = this.dcsplitter.manLineHeight + dy;
+                        else
+                            this.dcsplitter.extwanLineHeight = this.dcsplitter.wanLineHeight + dy;
                         break;
 
                     case 4:
                         this.extry = this.topLeftY + dy;
                         this.extheight = this.dcheight - dy;
+                        if (this.dcmatrix.getWanMtxSize()!=0)
+                            this.dcsplitter.extwanLineHeight = this.dcsplitter.wanLineHeight - dy;
+                        else if (this.dcmatrix.getManMtxSize()!=0)
+                            this.dcsplitter.extmanLineHeight = this.dcsplitter.manLineHeight - dy;
+                        else
+                            this.dcsplitter.extlanLineHeight = this.dcsplitter.lanLineHeight - dy;
                         break;
 
                     case 5:
@@ -551,6 +592,12 @@ define(
 
                     case 6:
                         this.extheight = this.dcheight + dy;
+                        if (this.dcmatrix.getLanMtxSize()!=0)
+                            this.dcsplitter.extlanLineHeight = this.dcsplitter.lanLineHeight + dy;
+                        else if (this.dcmatrix.getManMtxSize()!=0)
+                            this.dcsplitter.extmanLineHeight = this.dcsplitter.manLineHeight + dy;
+                        else
+                            this.dcsplitter.extwanLineHeight = this.dcsplitter.wanLineHeight + dy;
                         break;
 
                     case 7:
@@ -593,9 +640,12 @@ define(
             this.editUp = function() {
                 this.dcwidth = this.extwidth;
                 this.dcheight = this.extheight;
+                this.dcsplitter.wanLineHeight = this.dcsplitter.extwanLineHeight;
+                this.dcsplitter.manLineHeight = this.dcsplitter.extmanLineHeight;
+                this.dcsplitter.lanLineHeight = this.dcsplitter.extlanLineHeight;
                 this.dcsplitter.show();
-                this.isMoving = false;
                 this.changeUp();
+                this.isMoving = false;
             };
         }
 
