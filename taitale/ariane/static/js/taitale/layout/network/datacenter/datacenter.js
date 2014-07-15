@@ -453,6 +453,31 @@ define(
 
             //EDITABLE
 
+            this.setEditionMode = function(editionMode) {
+                if (editionMode) {
+                    if (this.isEditing)
+                        this.r.scaleDone(this);
+                    this.r.scaleInit(this);
+                    this.isEditing = true;
+                } else if (!editionMode) {
+                    if (this.isEditing)
+                        this.r.scaleDone(this);
+                    this.isEditing = false;
+                }
+
+                var mtxS, i, ii;
+
+                mtxS = this.dcmatrix.getWanMtxSize();
+                for (i = 0, ii =  mtxS; i < ii; i++)
+                    this.dcmatrix.getAreaFromWanMtx(i).setEditionMode(editionMode);
+                mtxS = this.dcmatrix.getManMtxSize();
+                for (i = 0, ii =  mtxS; i < ii; i++)
+                    this.dcmatrix.getAreaFromManMtx(i).setEditionMode(editionMode);
+                mtxS = this.dcmatrix.getLanMtxSize();
+                for (i = 0, ii =  mtxS; i < ii; i++)
+                    this.dcmatrix.getAreaFromLanMtx(i).setEditionMode(editionMode);
+            };
+
             this.menuFieldEditClick = function() {
                 dcRef.menu.toBack();
                 dcRef.menuSet.toBack();

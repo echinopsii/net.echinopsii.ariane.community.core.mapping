@@ -32,7 +32,6 @@ require.config({
         'raphael-vml': 'ajs/raphael/raphael.vml',
         'raphael': 'ajs/raphael/raphael.amd',
         'raphael-zpd': 'ajs/raphael/raphael.zpd',
-        'raphael.free_transform': 'ajs/raphael/raphael.free_transform',
 
         /*taitale tools*/
         'taitale-cylinder': 'ajs/taitale/tools/cylinder',
@@ -119,17 +118,21 @@ requirejs (
                     options.setURI(requestURI);
                     try {
                         loader_.reloadMap(options);
+                        loader_.editionMode(options);
                         if (options.getLayout()===dic.mapLayout.NTWWW) {
                             document.getElementById('treeOptions').style.display = "none";
                             document.getElementById('networkOptions').style.display = "";
                             for (var i = 0, ii = networkLayoutDisplayOptions.inputs.length; i < ii; i++) {
                                 var input = networkLayoutDisplayOptions.inputs[i];
                                 if (input.value==="displayDC") {
-                                    loader_.displayDC(input.checked);
+                                    options.displayDC = input.checked;
+                                    loader_.displayDC(options.displayDC);
                                 } else if (input.value==="displayArea") {
-                                    loader_.displayArea(input.checked);
+                                    options.displayAREA = input.checked;
+                                    loader_.displayArea(options.displayAREA);
                                 } else if (input.value==="displayLan") {
-                                    loader_.displayLan(input.checked);
+                                    options.displayLAN = input.checked;
+                                    loader_.displayLan(options.displayLAN);
                                 }
                             }
                         } else if (options.getLayout()===dic.mapLayout.TREE) {
@@ -142,7 +145,7 @@ requirejs (
                             {
                                 severity: 'error',
                                 summary: 'Failed to load map',
-                                detail: 'Layout: '+options.getLayout(), // +"<br>Mode: "+options.getMode(),
+                                detail: 'Layout: '+options.getLayout() +"<br>Mode: "+options.getMode(),
                                 sticky: true
                             }
                         );
@@ -155,20 +158,23 @@ requirejs (
                         if (input.checked) {
                             var num = input.value;
                             options.setLayout(num);
-                            //options.setURI(homeURI + "/rest/service/map/all");
                             try {
                                 loader_.rebuildMap(options);
+                                loader_.editionMode(options);
                                 if (options.getLayout()===dic.mapLayout.NTWWW) {
                                     document.getElementById('treeOptions').style.display = "none";
                                     document.getElementById('networkOptions').style.display = "";
                                     for (var i = 0, ii = networkLayoutDisplayOptions.inputs.length; i < ii; i++) {
                                         var input = networkLayoutDisplayOptions.inputs[i];
                                         if (input.value==="displayDC") {
-                                            loader_.displayDC(input.checked);
+                                            options.displayDC = input.checked;
+                                            loader_.displayDC(options.displayDC);
                                         } else if (input.value==="displayArea") {
-                                            loader_.displayArea(input.checked);
+                                            options.displayAREA = input.checked;
+                                            loader_.displayArea(options.displayAREA);
                                         } else if (input.value==="displayLan") {
-                                            loader_.displayLan(input.checked);
+                                            options.displayLAN = input.checked;
+                                            loader_.displayLan(options.displayLAN);
                                         }
                                     }
                                 } else if (options.getLayout()===dic.mapLayout.TREE) {
@@ -181,7 +187,7 @@ requirejs (
                                     {
                                         severity: 'error',
                                         summary: 'Failed to load map',
-                                        detail: 'Layout: '+options.getLayout(), // +"<br>Mode: "+options.getMode(),
+                                        detail: 'Layout: '+options.getLayout() + "<br>Mode: "+options.getMode(),
                                         sticky: true
                                     }
                                 );
@@ -191,23 +197,26 @@ requirejs (
                         }
                     }
                 });
-                /*
                 $(modeSelector.jqId).change([loader_, dic], function() {
                     for (var i = 0, ii = modeSelector.inputs.length; i < ii; i++) {
                         var input = modeSelector.inputs[i];
                         if (input.checked) {
                             options.setMode(input.value);
                             try {
-                                loader_.refreshMap(options);
+                                //loader_.refreshMap(options);
+                                loader_.editionMode(options);
                                 if (options.getLayout()===dic.mapLayout.NTWWW) {
                                     for (var i = 0, ii = networkLayoutDisplayOptions.inputs.length; i < ii; i++) {
                                         var input = networkLayoutDisplayOptions.inputs[i];
                                         if (input.value==="displayDC") {
-                                            loader_.displayDC(input.checked);
+                                            options.displayDC = input.checked;
+                                            loader_.displayDC(options.displayDC);
                                         } else if (input.value==="displayArea") {
-                                            loader_.displayArea(input.checked);
+                                            options.displayAREA = input.checked;
+                                            loader_.displayArea(options.displayAREA);
                                         } else if (input.value==="displayLan") {
-                                            loader_.displayLan(input.checked);
+                                            options.displayLAN = input.checked;
+                                            loader_.displayLan(options.displayLAN);
                                         }
                                     }
                                 }
@@ -225,7 +234,6 @@ requirejs (
                         }
                     }
                 });
-                */
                 $(notificationsOptions.jqId).change([loader_, dic], function() {
                     for (var i = 0, ii = notificationsOptions.inputs.length; i < ii; i++) {
                         var input = notificationsOptions.inputs[i];
@@ -242,11 +250,14 @@ requirejs (
                     for (var i = 0, ii = networkLayoutDisplayOptions.inputs.length; i < ii; i++) {
                         var input = networkLayoutDisplayOptions.inputs[i];
                         if (input.value==="displayDC") {
-                            loader_.displayDC(input.checked);
+                            options.displayDC = input.checked;
+                            loader_.displayDC(options.displayDC);
                         } else if (input.value==="displayArea") {
-                            loader_.displayArea(input.checked);
+                            options.displayAREA = input.checked;
+                            loader_.displayArea(options.displayAREA);
                         } else if (input.value==="displayLan") {
-                            loader_.displayLan(input.checked);
+                            options.displayLAN = input.checked;
+                            loader_.displayLan(options.displayLAN);
                         }
                     }
                 });
@@ -290,7 +301,7 @@ requirejs (
                                     {
                                         severity: 'info',
                                         summary: 'Map successfully refreshed ',
-                                        detail: 'Name: '+$('#test').val()+'<br>Layout: '+options.getLayout() //+"<br>Mode: "+options.getMode()
+                                        detail: 'Name: '+$('#test').val()+'<br>Layout: '+options.getLayout() +"<br>Mode: "+options.getMode()
                                     }
                                 );
                             } catch (e) {
@@ -335,18 +346,29 @@ requirejs (
             }
         }
 
-        /*
         for (var i = 0, ii = modeSelector.inputs.length; i < ii; i++) {
             var input = modeSelector.inputs[i];
             if (input.checked) {
                 options.setMode(input.value);
             }
         }
-        */
 
         if (options.getLayout()===dic.mapLayout.NTWWW) {
             document.getElementById('treeOptions').style.display = "none";
             document.getElementById('networkOptions').style.display = "";
+            for (var i = 0, ii = networkLayoutDisplayOptions.inputs.length; i < ii; i++) {
+                var input = networkLayoutDisplayOptions.inputs[i];
+                if (input.value==="displayDC") {
+                    options.displayDC = input.checked;
+                    loader_.displayDC(options.displayDC);
+                } else if (input.value==="displayArea") {
+                    options.displayAREA = input.checked;
+                    loader_.displayArea(options.displayAREA);
+                } else if (input.value==="displayLan") {
+                    options.displayLAN = input.checked;
+                    loader_.displayLan(options.displayLAN);
+                }
+            }
         } else if (options.getLayout()===dic.mapLayout.TREE) {
             document.getElementById('treeOptions').style.display = "";
             document.getElementById('networkOptions').style.display = "none";

@@ -646,6 +646,19 @@ define(
 
             // EDITABLE
 
+            this.setEditionMode = function(editionMode) {
+                if (editionMode) {
+                    if (this.isEditing)
+                        this.r.scaleDone(this);
+                    this.r.scaleInit(this);
+                    this.isEditing = true;
+                } else if (!editionMode) {
+                    if (this.isEditing)
+                        this.r.scaleDone(this);
+                    this.isEditing = false;
+                }
+            };
+
             this.menuFieldEditClick = function() {
                 containerRef.menu.toBack();
                 containerRef.menuSet.toBack();

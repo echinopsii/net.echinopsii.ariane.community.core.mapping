@@ -46,7 +46,8 @@ define(
                 zoneSpan  = params.map_zoneSpan,
                 linkColor = params.map_linkColor,
                 linkBckg  = params.map_linkBckg,
-                helper_   = new helper();
+                helper_   = new helper(),
+                options_  = options;
 
             var containerRegistry             = [],
                 nodeRegistry                  = [],
@@ -412,6 +413,24 @@ define(
                 for (i = 0, ii = endpointRegistry.length; i < ii; i++) {
                     endpointRegistry[i].toFront();
                 }
+
+                if (this.isEditionMode())
+                    this.editionMode(options_)
+                mapmatrix.displayDC(options_.displayDC);
+                mapmatrix.displayArea(options_.displayAREA);
+                mapmatrix.displayLan(options_.displayLAN);
+            };
+
+            this.editionMode = function(options_) {
+                var i, ii;
+                var editionMode = (options_.getMode()==dic.mapMode.EDITION);
+                for (i = 0, ii = containerRegistry.length; i < ii; i++) {
+                    containerRegistry[i].setEditionMode(editionMode);
+                    var linkedBus = containerRegistry[i].getLinkedBus();
+                    for (var j = 0, jj = linkedBus.length; j<jj; j++)
+                        linkedBus[j].mbus.setEditionMode(editionMode);
+                }
+                return mapmatrix.setEditionMode(editionMode);
             };
 
             this.displayDC = function(display) {

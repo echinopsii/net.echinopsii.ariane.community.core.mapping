@@ -31,7 +31,6 @@ require.config({
         'raphael-vml': 'js/raphael/raphael.vml',
         'raphael': 'js/raphael/raphael.amd',
         'raphael-zpd': 'js/raphael/raphael.zpd',
-        'raphael.free_transform': 'js/raphael/raphael.free_transform',
         /*taitale tools*/
         'taitale-cylinder': 'js/taitale/tools/cylinder',
         'taitale-dictionaries': 'js/taitale/tools/dictionaries',
@@ -117,6 +116,7 @@ requirejs (
             options.setURI(homeURI + "/js/taitale.samples/json/sample.taitale.input."+test.val()+".json");
             try {
                 loader_.reloadMap(options);
+                loader_.editionMode(options);
                 loader_.displayDC(displayDC[0].checked);
                 loader_.displayArea(displayArea[0].checked);
                 loader_.displayLan(displayLan[0].checked);
@@ -147,7 +147,8 @@ requirejs (
                     document.getElementById('networkOptions').style.display = "none";
                     document.getElementById('treeOptions').style.display    = "none";
                 }
-                loader_.reloadMap(options);
+                loader_.rebuildMap(options);
+                loader_.editionMode(options);
                 loader_.displayDC(displayDC[0].checked);
                 loader_.displayArea(displayArea[0].checked);
                 loader_.displayLan(displayLan[0].checked);
@@ -168,7 +169,8 @@ requirejs (
         mode.change([loader_, dic], function() {
             options.setMode(mode.val());
             try {
-                loader_.refreshMap();
+                //loader_.refreshMap(options);
+                loader_.editionMode(options);
                 loader_.displayDC(displayDC[0].checked);
                 loader_.displayArea(displayArea[0].checked);
                 loader_.displayLan(displayLan[0].checked);
@@ -239,6 +241,7 @@ requirejs (
         reload.click([loader_, dic], function() {
             try {
                 loader_.reloadMap(options);
+                loader_.editionMode(options);
                 loader_.displayDC(displayDC[0].checked);
                 loader_.displayArea(displayArea[0].checked);
                 loader_.displayLan(displayLan[0].checked);
@@ -258,7 +261,8 @@ requirejs (
 
         displayDC.change([loader_, dic], function() {
             try {
-                loader_.displayDC(displayDC[0].checked);
+                options.displayDC = displayDC[0].checked;
+                loader_.displayDC(options.displayDC);
             } catch (e) {
                 helper_.addMsgToGrowl(e);
                 helper_.growlMsgs(
@@ -275,7 +279,8 @@ requirejs (
 
         displayArea.change([loader_, dic], function() {
             try {
-                loader_.displayArea(displayArea[0].checked);
+                options.displayAREA = displayArea[0].checked;
+                loader_.displayArea(options.displayAREA);
             } catch (e) {
                 helper_.addMsgToGrowl(e);
                 helper_.growlMsgs(
@@ -292,7 +297,8 @@ requirejs (
 
         displayLan.change([loader_, dic], function() {
             try {
-                loader_.displayLan(displayLan[0].checked);
+                options.displayLAN = displayLan[0].checked;
+                loader_.displayLan(options.displayLAN);
             } catch (e) {
                 helper_.addMsgToGrowl(e);
                 helper_.growlMsgs(
@@ -313,6 +319,7 @@ requirejs (
                 loader_.sortRootTree(rootTreeSorting.val());
                 loader_.rebuildMapTreeLayout();
                 loader_.refreshMap(options);
+                loader_.editionMode(options);
             } catch (e) {
                 helper_.addMsgToGrowl(e);
                 helper_.growlMsgs(
@@ -333,6 +340,7 @@ requirejs (
                 loader_.sortSubTrees(options.getSubTreesSorting());
                 loader_.rebuildMapTreeLayout();
                 loader_.refreshMap(options);
+                loader_.editionMode(options);
             } catch (e) {
                 helper_.addMsgToGrowl(e);
                 helper_.growlMsgs(
@@ -366,6 +374,7 @@ requirejs (
                 document.getElementById('treeOptions').style.display    = "none";
             }
             loader_.loadMap(options);
+            loader_.editionMode(options);
             loader_.displayDC(displayDC[0].checked);
             loader_.displayArea(displayArea[0].checked);
             loader_.displayLan(displayLan[0].checked);

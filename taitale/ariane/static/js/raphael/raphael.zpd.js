@@ -158,15 +158,9 @@ define(
                 //noinspection JSUnresolvedFunction
                 var p = pt.matrixTransform(g.getCTM().inverse());
 
-                if (!me.isEditionMode()){
-                    //noinspection JSUnresolvedFunction
-                    var k = me.root.createSVGMatrix().translate(p.x, p.y).scale(z).translate(-p.x, -p.y);
-                }
-                /*
-                 else {
-                 var k = me.root.createSVGMatrix().scale(z);
-                 }
-                 */
+                //noinspection JSUnresolvedFunction
+                var k = me.root.createSVGMatrix().translate(p.x, p.y).scale(z).translate(-p.x, -p.y);
+
                 //noinspection JSUnresolvedFunction
                 me.setCTM(g, g.getCTM().multiply(k));
 
@@ -271,10 +265,6 @@ define(
                 return me.map.isMapElementMoving();
             };
 
-            me.isEditionMode = function() {
-                return me.map.isEditionMode();
-            };
-
             /**
              * Sets the current transform matrix of an element.
              */
@@ -338,16 +328,7 @@ define(
                 //logOnFirbugConsole("[RaphaelZPD.me.handleMouseWheel]delta:"+delta);
 
                 // Compute new scale matrix in current mouse position
-                if (!me.isEditionMode()) {
-                    zoomer(evt,delta);
-                }/* else {
-                 if (Math.abs(me.zoomCurrent)<5) {
-                 zoomer(evt,delta);
-                 } else if ((me.zoomCurrent==-5 && delta > 0) || (me.zoomCurrent==5 && delta < 0)) {
-                 zoomer(evt,delta);
-                 }
-
-                 }*/
+                zoomer(evt,delta);
             };
 
             /**

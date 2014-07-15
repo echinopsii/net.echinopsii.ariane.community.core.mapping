@@ -188,7 +188,7 @@ define(
                     {
                         severity: 'info',
                         summary: 'Map successfully loaded ',
-                        detail: 'Layout: '+options.getLayout() //+"<br>Mode: "+options.getMode()
+                        detail: 'Layout: '+options.getLayout() +"<br>Mode: "+options.getMode()
                     }
                 );
             };
@@ -278,9 +278,13 @@ define(
                     {
                         severity: 'info',
                         summary: 'Map successfully refreshed ',
-                        detail: '<br>Layout: '+options.getLayout()//+"<br>Mode: "+options.getMode()
+                        detail: '<br>Layout: '+options.getLayout()+"<br>Mode: "+options.getMode()
                     }
                 );
+            };
+
+            this.editionMode = function(options) {
+                if (mappy!=null) mappy.editionMode(options);
             };
 
             this.displayDC = function(display) {

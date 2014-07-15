@@ -39,8 +39,9 @@ define(
             var dic  = new dictionaries();
 
             this.printMtx = function(r) {
-                for (var i = 0, ii = nbColumns; i < ii ; i++) {
-                    for (var j = 0, jj = nbLines; j < jj ; j++) {
+                var i, ii, j, jj;
+                for (i = 0, ii = nbColumns; i < ii ; i++) {
+                    for (j = 0, jj = nbLines; j < jj ; j++) {
                         rows[j][i].print(r);
                     }
                 }
@@ -54,45 +55,54 @@ define(
             };
 
             // A zone could be a DC or something else (to be defined)
+            //noinspection JSUnusedGlobalSymbols
             this.getZoneFromMtx = function (x,y) {
                 return rows[y][x];
             };
 
             this.isMoving = function() {
-                for (var i = 0, ii = nbColumns; i < ii ; i++) {
-                    for (var j = 0, jj = nbLines; j < jj ; j++ ) {
+                var i, ii, j, jj;
+                for (i = 0, ii = nbColumns; i < ii ; i++)
+                    for (j = 0, jj = nbLines; j < jj ; j++ )
                         if (rows[j][i].isElemMoving())
                             return true;
-                    }
-                }
                 return false;
             };
 
+            this.setEditionMode = function(editionMode) {
+                var i, ii, j, jj;
+                for (i = 0, ii = nbColumns; i < ii ; i++)
+                    for (j = 0, jj = nbLines; j < jj ; j++ )
+                        rows[j][i].setEditionMode(editionMode);
+            };
+
             this.defineMtxZoneSize = function() {
-                for (var i = 0, ii = nbColumns; i < ii ; i++) {
-                    for (var j = 0, jj = nbLines; j < jj ; j++ ) {
+                var i, ii, j, jj;
+                for (i = 0, ii = nbColumns; i < ii ; i++) {
+                    for (j = 0, jj = nbLines; j < jj ; j++ ) {
                         rows[j][i].defineZoneObjectsSize();
                     }
                 }
-                for (var i = 0, ii = nbColumns; i < ii ; i++) {
-                    for (var j = 0, jj = nbLines; j < jj ; j++ ) {
+                for (i = 0, ii = nbColumns; i < ii ; i++) {
+                    for (j = 0, jj = nbLines; j < jj ; j++ ) {
                         rows[j][i].defineZoneSize();
                     }
                 }
             };
 
             this.defineMapContentSize = function() {
-                for (var i = 0, ii = nbColumns; i < ii ; i++) {
+                var i, ii, j, jj;
+                for (i = 0, ii = nbColumns; i < ii ; i++) {
                     var tmpHeight = 0;
-                    for (var j = 0, jj = nbLines; j < jj; j++) {
+                    for (j = 0, jj = nbLines; j < jj; j++) {
                         tmpHeight = tmpHeight + rows[j][i].getZoneSize().height;
                     }
                     if (tmpHeight > contentHeight)
                         contentHeight=tmpHeight;
                 }
-                for (var i = 0, ii = nbLines; i < ii ; i++) {
+                for (i = 0, ii = nbLines; i < ii ; i++) {
                     var tmpWidth = 0;
-                    for (var j = 0, jj = nbColumns; j < jj; j++) {
+                    for (j = 0, jj = nbColumns; j < jj; j++) {
                         tmpWidth = tmpWidth + rows[i][j].getZoneSize().width;
                     }
                     if (tmpWidth > contentWidth)
@@ -109,9 +119,10 @@ define(
 
             this.defineMtxZonePoz = function(borderSpan, zoneSpan) {
                 var cursorWidth  = 0;
-                for (var i = 0, ii = nbColumns; i < ii; i++) {
+                var i, ii, j, jj;
+                for (i = 0, ii = nbColumns; i < ii; i++) {
                     var cursorHeight = 0;
-                    for (var j = 0, jj = nbLines; j < jj; j++) {
+                    for (j = 0, jj = nbLines; j < jj; j++) {
                         rows[j][i].setTopLeftCoord(borderSpan+zoneSpan*i+cursorWidth,borderSpan+zoneSpan*j+cursorHeight);
                         rows[j][i].definePoz();
                         cursorHeight = cursorHeight + rows[j][i].getZoneSize().height;
@@ -122,6 +133,7 @@ define(
 
             this.populateLayoutRegistries = function(container) {
                 var layout = options.getLayout();
+                //noinspection FallthroughInSwitchStatementJS
                 switch(layout) {
                     case dic.mapLayout.NTWWW:
                     default:
@@ -258,6 +270,7 @@ define(
 
             this.addContainerZone = function(container) {
                 var layout = options.getLayout();
+                //noinspection FallthroughInSwitchStatementJS
                 switch(layout) {
                     case dic.mapLayout.NTWWW:
                     default:
@@ -304,24 +317,27 @@ define(
             };
 
             this.displayDC = function(display) {
+                var i, ii;
                 if (options.getLayout() === dic.mapLayout.NTWWW) {
-                    for (var i= 0, ii=nbColumns; i < ii; i++) {
+                    for (i= 0, ii=nbColumns; i < ii; i++) {
                         rows[0][i].displayDC(display);
                     }
                 }
             };
 
             this.displayArea = function(display) {
+                var i, ii;
                 if (options.getLayout() === dic.mapLayout.NTWWW) {
-                    for (var i= 0, ii=nbColumns; i < ii; i++) {
+                    for (i= 0, ii=nbColumns; i < ii; i++) {
                         rows[0][i].displayArea(display);
                     }
                 }
             };
 
             this.displayLan = function(display) {
+                var i, ii;
                 if (options.getLayout() === dic.mapLayout.NTWWW) {
-                    for (var i= 0, ii=nbColumns; i < ii; i++) {
+                    for (i= 0, ii=nbColumns; i < ii; i++) {
                         rows[0][i].displayLan(display);
                     }
                 }

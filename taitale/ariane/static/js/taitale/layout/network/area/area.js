@@ -445,6 +445,32 @@ define(
 
             //EDITABLE
 
+            this.setEditionMode = function(editionMode) {
+                if (editionMode) {
+                    if (this.isEditing)
+                        this.r.scaleDone(this);
+                    this.r.scaleInit(this);
+                    this.isEditing = true;
+                } else if (!editionMode) {
+                    if (this.isEditing)
+                        this.r.scaleDone(this);
+                    this.isEditing = false;
+                }
+
+                var mtxX, mtxY, i, ii, j, jj;
+                mtxX = this.armatrix.getMtxSize().x;
+                mtxY = this.armatrix.getMtxSize().y;
+                for (i = 0, ii =  mtxX; i < ii; i++)
+                    for (j = 0, jj =  mtxY; j < jj; j++) {
+                        var areaObj = this.armatrix.getObjFromMtx(i,j);
+                        var areaObjType = this.armatrix.getObjTypeFromMtx(i,j);
+                        if (areaObjType==="LAN")
+                            areaObj.setEditionMode(editionMode);
+                        else if (areaObjType==="BUS")
+                            areaObj.mbus.setEditionMode(editionMode);
+                    }
+            };
+
             this.menuFieldEditClick = function() {
                 areaRef.menu.toBack();
                 areaRef.menuSet.toBack();

@@ -21,8 +21,7 @@
 define(
     [
         'raphael',
-        'taitale-helper',
-        'raphael.free_transform'
+        'taitale-helper'
     ],
     function (Raphael,helper) {
         function cylinder(parent,centerX,centerY,d,h,title,color_) {
@@ -380,6 +379,19 @@ define(
 
 
             // EDITABLE
+
+            this.setEditionMode = function(editionMode) {
+                if (editionMode) {
+                    if (this.root.isEditing)
+                        this.r.scaleDone(this);
+                    this.r.scaleInit(this);
+                    this.root.isEditing = true;
+                } else if (!editionMode) {
+                    if (this.root.isEditing)
+                        this.r.scaleDone(this);
+                    this.root.isEditing = false;
+                }
+            };
 
             this.menuFieldEditClick = function() {
                 cylinderRef.root.menu.toBack();

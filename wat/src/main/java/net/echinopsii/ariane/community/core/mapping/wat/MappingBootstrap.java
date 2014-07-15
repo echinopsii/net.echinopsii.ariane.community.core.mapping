@@ -160,7 +160,13 @@ public class MappingBootstrap implements FaceletsResourceResolverService {
                                                                                                             "Define your prefered layout").
                                                                                                             addSelectValue("Tree").
                                                                                                             addSelectValue("Network")./*addSelectValue("Random").*/
-                                                                                                            setFieldDefault("Tree"));
+                                                                                                            setFieldDefault("Tree")).
+                                                                         addEntity(new UserPreferenceEntity(MAPPING_USER_PREF_MODE,
+                                                                                                            UserPreferenceEntityType.TYPE_USR_PREF_ENTITY_ONEBUTTON_SELECT,
+                                                                                                            "Define your prefered mode").
+                                                                                                            addSelectValue("Navigation").
+                                                                                                            addSelectValue("Edition").
+                                                                                                            setFieldDefault("Navigation"));
         /*.
                                                                          addEntity(new UserPreferenceEntity(MAPPING_USER_PREF_VIEW,
                                                                                                             UserPreferenceEntityType.TYPE_USR_PREF_ENTITY_ONEBUTTON_SELECT,
@@ -168,13 +174,7 @@ public class MappingBootstrap implements FaceletsResourceResolverService {
                                                                                                             addSelectValue("Component").
                                                                                                             addSelectValue("Cluster").
                                                                                                             addSelectValue("Application").
-                                                                                                            setFieldDefault("Component")).
-                                                                         addEntity(new UserPreferenceEntity(MAPPING_USER_PREF_MODE,
-                                                                                                            UserPreferenceEntityType.TYPE_USR_PREF_ENTITY_ONEBUTTON_SELECT,
-                                                                                                            "Define your prefered mode").
-                                                                                                            addSelectValue("Navigation").
-                                                                                                            addSelectValue("Edition").
-                                                                                                            setFieldDefault("Navigation"));*/
+                                                                                                            setFieldDefault("Component")).*/
 
         userPreferencesRegistry.registerUserPreferenceSection(mappingDisplay);
         /*

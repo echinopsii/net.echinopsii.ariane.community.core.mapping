@@ -30,6 +30,10 @@ define(
             var rootTreeSorting = 1,
                 subTreesSorting = 1;
 
+            this.displayDC   = false;
+            this.displayAREA = false;
+            this.displayLAN  = false;
+
             this.getLayout = function() {
                 return layout;
             };
@@ -65,7 +69,7 @@ define(
             };
             this.getSubTreesSorting = function() {
                 return subTreesSorting;
-            }
+            };
         }
 
         return mapOptions;
