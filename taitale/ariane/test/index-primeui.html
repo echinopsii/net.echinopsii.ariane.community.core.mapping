@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
     <link rel="stylesheet" href="js/jquery-ui-1.10.3.custom/css/ui-lightness/jquery-ui-1.10.3.custom.css"/>
-    <link rel="stylesheet" href="js/primeui-0.9.6/themes/rocket/theme.css" />
+    <link rel="stylesheet" href="js/primeui-0.9.6/themes/ariane/theme.css" />
     <link rel="stylesheet" href="js/primeui-0.9.6/development/primeui-0.9.6.css" />
     <style type="text/css" media="screen">
         input,
@@ -28,7 +28,12 @@
 </head>
 <body>
 <div id="primeUI">
-    <button id="btn-show" type="button">Show</button>
+    <div id ="little things">
+        <button id="btn-show" type="button">Show</button>
+        <input id="inputTxt" type="text" />
+        <div id="datepicker"></div>
+    </div>
+
     <div id="dlg" title="Godfather I">
         <p>The story begins as Don Vito Corleone, the head of a New York Mafia family, oversees his daughter's wedding.
             His beloved son Michael has just come home from the war, but does not intend to become part of his father's business.
@@ -36,6 +41,160 @@
             kind and benevolent to those who give respect,
             but given to ruthless violence whenever anything stands against the good of the family.</p>
     </div>
+    <br/><br/>
+    <fieldset id="fieldSetDefault" style="margin-bottom:20px">
+        <legend>Default</legend>
+        The story begins as Don Vito Corleone, the head of a New York Mafia family, oversees his daughter's wedding.
+        His beloved son Michael has just come home from the war, but does not intend to become part of his father's business.
+        Through Michael's life the nature of the family business becomes clear. The business of the family is just like the head of the family,
+        kind and benevolent to those who give respect,
+        but given to ruthless violence whenever anything stands against the good of the family.
+    </fieldset>
+    <br/>
+    <fieldset id="fieldSetToggle">
+        <legend>Toggleable</legend>
+        The story begins as Don Vito Corleone, the head of a New York Mafia family, oversees his daughter's wedding.
+        His beloved son Michael has just come home from the war, but does not intend to become part of his father's business.
+        Through Michael's life the nature of the family business becomes clear. The business of the family is just like the head of the family,
+        kind and benevolent to those who give respect,
+        but given to ruthless violence whenever anything stands against the good of the family.
+    </fieldset>
+    <br/>
+    <div id="container1" style="width:100%;">
+        <div id="accordion" style="float:left; width:50%">
+            <div id="defaultAccordion"><h3>Godfather 1</h3>
+                <div>
+                    The story begins as Don Vito Corleone, the head of a New York Mafia family, oversees his daughter's wedding. His beloved son Michael has just come home from the war, but does not intend to become part of his father's business. Through Michael's life the nature of the family business becomes clear. The business of the family is just like the head of the family, kind and benevolent to those who give respect, but given to ruthless violence whenever anything stands against the good of the family.
+                </div>
+
+                <h3>Godfather 2</h3>
+                <div>
+                    Francis Ford Coppola's legendary continuation and sequel to his landmark 1972 film, The_Godfather, parallels the young Vito Corleone's rise with his son Michael's spiritual fall, deepening The_Godfather's depiction of the dark side of the American dream. In the early 1900s, the child Vito flees his Sicilian village for America after the local Mafia kills his family. Vito struggles to make a living, legally or illegally, for his wife and growing brood in Little Italy, killing the local Black Hand Fanucci after he demands his customary cut of the tyro's business. With Fanucci gone, Vito's communal stature grows.
+                </div>
+
+                <h3>Godfather 3</h3>
+                <div>
+                    After a break of more than 15 years, director Francis Ford Coppola and writer Mario Puzo returned to the well for this third and final story of the fictional Corleone crime family. Two decades have passed, and crime kingpin Michael Corleone, now divorced from his wife Kay has nearly succeeded in keeping his promise that his family would one day be completely legitimate.
+                </div>
+            </div>
+            <br/>
+            <div id="multipleAccordion">
+                <h3>Godfather 1</h3>
+                <div>
+                    The story begins as Don Vito Corleone, the head of a New York Mafia family, oversees his daughter's wedding. His beloved son Michael has just come home from the war, but does not intend to become part of his father's business. Through Michael's life the nature of the family business becomes clear. The business of the family is just like the head of the family, kind and benevolent to those who give respect, but given to ruthless violence whenever anything stands against the good of the family.
+                </div>
+
+                <h3>Godfather 2</h3>
+                <div>
+                    Francis Ford Coppola's legendary continuation and sequel to his landmark 1972 film, The_Godfather, parallels the young Vito Corleone's rise with his son Michael's spiritual fall, deepening The_Godfather's depiction of the dark side of the American dream. In the early 1900s, the child Vito flees his Sicilian village for America after the local Mafia kills his family. Vito struggles to make a living, legally or illegally, for his wife and growing brood in Little Italy, killing the local Black Hand Fanucci after he demands his customary cut of the tyro's business. With Fanucci gone, Vito's communal stature grows.
+                </div>
+
+                <h3>Godfather 3</h3>
+                <div>
+                    After a break of more than 15 years, director Francis Ford Coppola and writer Mario Puzo returned to the well for this third and final story of the fictional Corleone crime family. Two decades have passed, and crime kingpin Michael Corleone, now divorced from his wife Kay has nearly succeeded in keeping his promise that his family would one day be completely legitimate.
+                </div>
+            </div>
+        </div>
+
+        <div id="tab" style="float:right; width:50%">
+            <div id="defaultTab">
+                <ul>
+                    <li><a href="#tab1">Tab 1</a></li>
+                    <li><a href="#tab2">Tab 2</a></li>
+                    <li><a href="#tab3">Tab 3</a></li>
+                </ul>
+                <div>
+                    <div id="tab1">
+                        The story begins as Don Vito Corleone, the head of a New York Mafia family, oversees his daughter's wedding. His beloved son Michael has just come home from the war, but does not intend to become part of his father's business. T hrough Michael's life the nature of the family business becomes clear. The business of the family is just like the head of the family, kind and benevolent to those who give respect, but given to ruthless violence whenever anything stands against the good of the family.
+                    </div>
+                    <div id="tab2">
+                        Francis Ford Coppola's legendary continuation and sequel to his landmark 1972 film, The_Godfather, parallels the young Vito Corleone's rise with his son Michael's spiritual fall, deepening The_Godfather's depiction of the dark side of the American dream. In the early 1900s, the child Vito flees his Sicilian village for America after the local Mafia kills his family. Vito struggles to make a living, legally or illegally, for his wife and growing brood in Little Italy, killing the local Black Hand Fanucci after he demands his customary cut of the tyro's business. With Fanucci gone, Vito's communal stature grows.
+                    </div>
+                    <div id="tab3">
+                        After a break of more than 15 years, director Francis Ford Coppola and writer Mario Puzo returned to the well for this third and final story of the fictional Corleone crime family. Two decades have passed, and crime kingpin Michael Corleone, now divorced from his wife Kay has nearly succeeded in keeping his promise that his family would one day be completely legitimate.
+                    </div>
+                </div>
+            </div>
+
+            <div id="dynamicTab">
+                <ul>
+                    <li><a href="#tab1">Tab 1</a></li>
+                    <li><a href="#tab2">Tab 2</a></li>
+                    <li><a href="#tab3">Tab 3</a></li>
+                </ul>
+                <div>
+                    <div id="tab1">
+                        <p>Dynamic Content for Tab 1</p>
+                    </div>
+                    <div id="tab2">
+                        <p>Dynamic Content for Tab 2</p>
+                    </div>
+                    <div id="tab3">
+                        <p>Dynamic Content for Tab 3</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="effectTab">
+                <ul>
+                    <li><a href="#tab1">Tab 1</a></li>
+                    <li><a href="#tab2">Tab 2</a></li>
+                    <li><a href="#tab3">Tab 3</a></li>
+                </ul>
+                <div>
+                    <div id="tab1">
+                        The story begins as Don Vito Corleone, the head of a New York Mafia family, oversees his daughter's wedding. His beloved son Michael has just come home from the war, but does not intend to become part of his father's business. T hrough Michael's life the nature of the family business becomes clear. The business of the family is just like the head of the family, kind and benevolent to those who give respect, but given to ruthless violence whenever anything stands against the good of the family.
+                    </div>
+                    <div id="tab2">
+                        Francis Ford Coppola's legendary continuation and sequel to his landmark 1972 film, The_Godfather, parallels the young Vito Corleone's rise with his son Michael's spiritual fall, deepening The_Godfather's depiction of the dark side of the American dream. In the early 1900s, the child Vito flees his Sicilian village for America after the local Mafia kills his family. Vito struggles to make a living, legally or illegally, for his wife and growing brood in Little Italy, killing the local Black Hand Fanucci after he demands his customary cut of the tyro's business. With Fanucci gone, Vito's communal stature grows.
+                    </div>
+                    <div id="tab3">
+                        After a break of more than 15 years, director Francis Ford Coppola and writer Mario Puzo returned to the well for this third and final story of the fictional Corleone crime family. Two decades have passed, and crime kingpin Michael Corleone, now divorced from his wife Kay has nearly succeeded in keeping his promise that his family would one day be completely legitimate.
+                    </div>
+                </div>
+            </div>
+
+            <div id="closableTab">
+                <ul>
+                    <li><a href="#tab1">Tab 1</a><span class="ui-icon ui-icon-close"></span></li>
+                    <li><a href="#tab2">Tab 2</a><span class="ui-icon ui-icon-close"></span></li>
+                    <li><a href="#tab3">Tab 3</a><span class="ui-icon ui-icon-close"></span></li>
+                </ul>
+                <div>
+                    <div id="tab1">
+                        The story begins as Don Vito Corleone, the head of a New York Mafia family, oversees his daughter's wedding. His beloved son Michael has just come home from the war, but does not intend to become part of his father's business. T hrough Michael's life the nature of the family business becomes clear. The business of the family is just like the head of the family, kind and benevolent to those who give respect, but given to ruthless violence whenever anything stands against the good of the family.
+                    </div>
+                    <div id="tab2">
+                        Francis Ford Coppola's legendary continuation and sequel to his landmark 1972 film, The_Godfather, parallels the young Vito Corleone's rise with his son Michael's spiritual fall, deepening The_Godfather's depiction of the dark side of the American dream. In the early 1900s, the child Vito flees his Sicilian village for America after the local Mafia kills his family. Vito struggles to make a living, legally or illegally, for his wife and growing brood in Little Italy, killing the local Black Hand Fanucci after he demands his customary cut of the tyro's business. With Fanucci gone, Vito's communal stature grows.
+                    </div>
+                    <div id="tab3">
+                        After a break of more than 15 years, director Francis Ford Coppola and writer Mario Puzo returned to the well for this third and final story of the fictional Corleone crime family. Two decades have passed, and crime kingpin Michael Corleone, now divorced from his wife Kay has nearly succeeded in keeping his promise that his family would one day be completely legitimate.
+                    </div>
+                </div>
+            </div>
+
+            <div id="leftTab" style="width:600px;">
+                <ul>
+                    <li><a href="#tab1">Tab 1</a></li>
+                    <li><a href="#tab2">Tab 2</a></li>
+                    <li><a href="#tab3">Tab 3</a></li>
+                </ul>
+                <div>
+                    <div id="tab1">
+                        The story begins as Don Vito Corleone, the head of a New York Mafia family, oversees his daughter's wedding. His beloved son Michael has just come home from the war, but does not intend to become part of his father's business. T hrough Michael's life the nature of the family business becomes clear. The business of the family is just like the head of the family, kind and benevolent to those who give respect, but given to ruthless violence whenever anything stands against the good of the family.
+                    </div>
+                    <div id="tab2">
+                        Francis Ford Coppola's legendary continuation and sequel to his landmark 1972 film, The_Godfather, parallels the young Vito Corleone's rise with his son Michael's spiritual fall, deepening The_Godfather's depiction of the dark side of the American dream. In the early 1900s, the child Vito flees his Sicilian village for America after the local Mafia kills his family. Vito struggles to make a living, legally or illegally, for his wife and growing brood in Little Italy, killing the local Black Hand Fanucci after he demands his customary cut of the tyro's business. With Fanucci gone, Vito's communal stature grows.
+                    </div>
+                    <div id="tab3">
+                        After a break of more than 15 years, director Francis Ford Coppola and writer Mario Puzo returned to the well for this third and final story of the fictional Corleone crime family. Two decades have passed, and crime kingpin Michael Corleone, now divorced from his wife Kay has nearly succeeded in keeping his promise that his family would one day be completely legitimate.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
 </div>
 </body>
 </html>

@@ -43,6 +43,7 @@ requirejs (
         'prime-ui'
     ],
     function ($) {
+
         $('#dlg').puidialog({
             showEffect: 'fade',
             hideEffect: 'fade',
@@ -72,4 +73,51 @@ requirejs (
                 $('#dlg').puidialog('show');
             }
         });
+
+        $('#inputTxt').puiinputtext();
+
+        $('#fieldSetDefault').puifieldset();
+
+        $('#fieldSetToggle').puifieldset({
+            toggleable: true
+        });
+
+        $('#defaultAccordion').puiaccordion();
+
+        $('#multipleAccordion').puiaccordion({multiple:true});
+
+        $('#defaultTab').puitabview();
+
+        $('#dynamicTab').puitabview({
+            change: function(event, ui) {
+
+                $.ajax({
+                    type: "GET",
+                    url: './tabcontent',
+                    data: {tabindex: ui.index},
+                    dataType: "html",
+                    context: this,
+                    success: function(data) {
+                        $(this).children('div.ui-tabs-panels').children().eq(ui.index).html(data);
+                    }
+                });
+            }
+        });
+
+
+        $('#effectTab').puitabview({
+            effect: {
+                name: 'fade'
+                ,duration: 'normal'
+            }
+        });
+
+        $('#closableTab').puitabview();
+
+        $('#leftTab').puitabview({
+            orientation: 'left'
+        });
+
+        $( "#datepicker" ).datepicker();
+
     });
