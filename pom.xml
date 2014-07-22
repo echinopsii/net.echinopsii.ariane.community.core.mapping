@@ -165,7 +165,7 @@
             </activation>
             <properties>
                 <com.tinkerpop.blueprints.version>2.5.0</com.tinkerpop.blueprints.version>
-                <version.osgi.com.neo4j>1.9.7</version.osgi.com.neo4j>
+                <version.osgi.com.neo4j>2.1.2</version.osgi.com.neo4j>
                 <com.tinkerpop.blueprints.blueprints-neo4j-graph.groupid>com.tinkerpop.blueprints.osgi</com.tinkerpop.blueprints.blueprints-neo4j-graph.groupid>
             </properties>
         </profile>
@@ -363,11 +363,18 @@
             <version>${com.tinkerpop.blueprints.version}</version>
             <scope>provided</scope>
         </dependency>
+        <!--
         <dependency>
             <groupId>com.tinkerpop.blueprints</groupId>
             <artifactId>net.echinopsii.3rdparty.com.tinkerpop.blueprints.blueprints-neo4j-graph</artifactId>
             <version>${com.tinkerpop.blueprints.version}</version>
             <scope>provided</scope>
+        </dependency>
+        -->
+        <dependency>
+            <groupId>com.tinkerpop.blueprints</groupId>
+            <artifactId>blueprints-neo4j2-graph</artifactId>
+            <version>${com.tinkerpop.blueprints.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.annotation</groupId>
@@ -501,12 +508,14 @@
             <version>${version.org.hibernate.javax.persistence.hibernate-jpa-2.1-api}</version>
             <scope>provided</scope>
         </dependency>
+        <!--
         <dependency>
             <groupId>org.neo4j</groupId>
             <artifactId>neo4j-backup</artifactId>
             <scope>provided</scope>
             <version>${version.osgi.com.neo4j}</version>
         </dependency>
+        -->
         <dependency>
             <groupId>org.neo4j</groupId>
             <artifactId>neo4j-kernel</artifactId>

@@ -26,12 +26,8 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNam
 class MapperExecutor(val graph: Object) {
   var engineOption: Option[Object] = None
   graph match {
-    case neodb: GraphDatabaseService => {
-      engineOption = Some(new ExecutionEngine(neodb))
-    }
-    case _ => {
-      throw new MapperExecutorException("Unsupported graph !")
-    }
+    case neodb: GraphDatabaseService => engineOption = Some(new ExecutionEngine(neodb))
+    case _ => throw new MapperExecutorException("Unsupported graph !")
   }
 
   def execute(query: String): java.util.Map[String, String] = {
@@ -40,18 +36,24 @@ class MapperExecutor(val graph: Object) {
     val engine: Object = engineOption getOrElse { throw new MapperExecutorException("Execution engine has not been initialized correctly !") }
     engine match {
       case cypherEngine: ExecutionEngine => {
-        var mapperQuery : String = new MapperParser("cypher").parse(query).genQuery()
-        var result: ExecutionResult = cypherEngine.prepare(mapperQuery).execute(null)
+        val mapperQuery : String = new MapperParser("cypher").parse(query).genQuery()
+        //var result: ExecutionResult = cypherEngine.prepare(mapperQuery).execute(null)
+        var result: ExecutionResult = cypherEngine.execute(mapperQuery)
+
         //println(result.dumpToString())
         result.columnAs[List[Long]]("CID").toList foreach(cidl => cidl.toList foreach (cid => resultMap+=("V" + cid.toString -> MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE)))
         // TODO : check why first columnAs seems to erase entire result and so why we need to replay the query exec !
-        result = cypherEngine.prepare(mapperQuery).execute(null)
+        //result = cypherEngine.prepare(mapperQuery).execute(null)
+        result = cypherEngine.execute(mapperQuery)
         result.columnAs[List[Long]]("NID").toList foreach(nidl => nidl.toList foreach (nid => resultMap+=("V" + nid.toString -> MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE)))
-        result = cypherEngine.prepare(mapperQuery).execute(null)
+        //result = cypherEngine.prepare(mapperQuery).execute(null)
+        result = cypherEngine.execute(mapperQuery)
         result.columnAs[List[Long]]("EID").toList foreach(eidl => eidl.toList foreach (eid => resultMap+=("V" + eid.toString -> MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE)))
-        result = cypherEngine.prepare(mapperQuery).execute(null)
+        //result = cypherEngine.prepare(mapperQuery).execute(null)
+        result = cypherEngine.execute(mapperQuery)
         result.columnAs[List[Long]]("TID").toList foreach(tidl => tidl.toList foreach (tid => resultMap+=("V" + tid.toString -> MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE)))
-        result = cypherEngine.prepare(mapperQuery).execute(null)
+        //result = cypherEngine.prepare(mapperQuery).execute(null)
+        result = cypherEngine.execute(mapperQuery)
         result.columnAs[List[Long]]("LID").toList foreach(lidl => lidl.toList foreach (lid => resultMap+=("E" + lid.toString -> MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY)))
       }
       case _ => throw new MapperExecutorException("Unsupported execution engine !")

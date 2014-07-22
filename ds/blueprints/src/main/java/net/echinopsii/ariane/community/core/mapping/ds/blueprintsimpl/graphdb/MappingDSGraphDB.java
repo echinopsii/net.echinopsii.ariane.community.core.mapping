@@ -28,7 +28,8 @@ import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cfg.Mappin
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.*;
 import net.echinopsii.ariane.community.core.mapping.ds.dsl.MapperExecutor;
 import com.tinkerpop.blueprints.*;
-import com.tinkerpop.blueprints.impls.neo4j.Neo4jGraph;
+//import com.tinkerpop.blueprints.impls.neo4j.Neo4jGraph;
+import com.tinkerpop.blueprints.impls.neo4j2.Neo4j2Graph;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.slf4j.Logger;
@@ -80,7 +81,8 @@ public class MappingDSGraphDB {
                         graphDb = neoBootstrapper.getDatabase();
                     }
                     if (graphDb!=null) {
-                        ccgraph = new Neo4jGraph(graphDb);
+//                        ccgraph = new Neo4jGraph(graphDb);
+                        ccgraph = new Neo4j2Graph(graphDb);
                         executor = new MapperExecutor(graphDb);
                         log.debug("{} is started", new Object[]{ccgraph.toString()});
                         log.debug(ccgraph.getFeatures().toString());
