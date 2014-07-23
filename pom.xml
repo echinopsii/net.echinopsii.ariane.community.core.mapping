@@ -164,7 +164,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <com.tinkerpop.blueprints.version>2.5.0</com.tinkerpop.blueprints.version>
+                <com.tinkerpop.blueprints.version>2.5.1</com.tinkerpop.blueprints.version>
                 <version.osgi.com.neo4j>2.1.2</version.osgi.com.neo4j>
                 <com.tinkerpop.blueprints.blueprints-neo4j-graph.groupid>com.tinkerpop.blueprints.osgi</com.tinkerpop.blueprints.blueprints-neo4j-graph.groupid>
             </properties>
@@ -359,7 +359,8 @@
         </dependency>
         <dependency>
             <groupId>com.tinkerpop.blueprints</groupId>
-            <artifactId>net.echinopsii.3rdparty.com.tinkerpop.blueprints.blueprints-core</artifactId>
+            <!--<artifactId>net.echinopsii.3rdparty.com.tinkerpop.blueprints.blueprints-core</artifactId>-->
+            <artifactId>blueprints-core</artifactId>
             <version>${com.tinkerpop.blueprints.version}</version>
             <scope>provided</scope>
         </dependency>
