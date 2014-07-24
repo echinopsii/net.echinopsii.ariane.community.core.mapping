@@ -359,8 +359,7 @@
         </dependency>
         <dependency>
             <groupId>com.tinkerpop.blueprints</groupId>
-            <!--<artifactId>net.echinopsii.3rdparty.com.tinkerpop.blueprints.blueprints-core</artifactId>-->
-            <artifactId>blueprints-core</artifactId>
+            <artifactId>net.echinopsii.3rdparty.com.tinkerpop.blueprints.blueprints-core</artifactId>
             <version>${com.tinkerpop.blueprints.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -374,7 +373,7 @@
         -->
         <dependency>
             <groupId>com.tinkerpop.blueprints</groupId>
-            <artifactId>blueprints-neo4j2-graph</artifactId>
+            <artifactId>net.echinopsii.3rdparty.com.tinkerpop.blueprints.blueprints-neo4j2-graph</artifactId>
             <version>${com.tinkerpop.blueprints.version}</version>
         </dependency>
         <dependency>
