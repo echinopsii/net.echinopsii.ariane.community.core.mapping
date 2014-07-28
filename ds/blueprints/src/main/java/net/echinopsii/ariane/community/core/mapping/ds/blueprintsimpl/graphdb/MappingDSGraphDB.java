@@ -514,6 +514,8 @@ public class MappingDSGraphDB {
     }
 
     public static MappingDSCacheEntity getVertexEntity(long id) {
+        if (id == 0)
+            return null;
         log.debug("Get cache entity {} if exists ...", new Object[]{"V"+id});
         MappingDSCacheEntity ret = MappingDSCache.getCachedEntity("V" + id);
         if (ret == null) {
@@ -850,6 +852,8 @@ public class MappingDSGraphDB {
     }
 
     public static MappingDSCacheEntity getLink(long id) {
+        if (id == 0)
+            return null;
         MappingDSCacheEntity ret = MappingDSCache.getCachedEntity("E" + id);
         if (ret == null && ccgraph != null) {
             Edge edge = ccgraph.getEdges(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID, id).iterator().hasNext() ?
