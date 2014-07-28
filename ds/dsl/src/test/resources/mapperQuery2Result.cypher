@@ -1,4 +1,4 @@
-
+CYPHER 1.9
 START startNode = node(*)
 WHERE
 startNode.MappingGraphVertexType! = "node" AND

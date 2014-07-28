@@ -115,7 +115,7 @@ case class MapperToCypherQueryGen(override val startBlock: Block, override val l
   }
 
   def genQuery(): String = {
-    var cypher : String = ""
+    var cypher : String = "CYPHER 1.9"
     var withList : mutable.MutableList[String] = mutable.MutableList()
     var startLinkPointsCount : Int = 0
     var startLinkPoint : String = ""

@@ -22,8 +22,11 @@ import org.neo4j.graphdb.GraphDatabaseService
 import org.neo4j.cypher.{ExecutionResult, ExecutionEngine}
 import scala.collection.JavaConverters._
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames
+import org.slf4j.{LoggerFactory, Logger}
 
 class MapperExecutor(val graph: Object) {
+  private final val log: Logger = LoggerFactory.getLogger(classOf[MapperExecutor])
+
   var engineOption: Option[Object] = None
   graph match {
     case neodb: GraphDatabaseService => engineOption = Some(new ExecutionEngine(neodb))
@@ -31,12 +34,16 @@ class MapperExecutor(val graph: Object) {
   }
 
   def execute(query: String): java.util.Map[String, String] = {
+    log.error("mapper query : \n\n" + query)
     var resultMap: Map[String, String] = Map()
 
     val engine: Object = engineOption getOrElse { throw new MapperExecutorException("Execution engine has not been initialized correctly !") }
     engine match {
       case cypherEngine: ExecutionEngine => {
         val mapperQuery : String = new MapperParser("cypher").parse(query).genQuery()
+
+        log.error("cypher query : \n\n" + mapperQuery)
+
         //var result: ExecutionResult = cypherEngine.prepare(mapperQuery).execute(null)
         var result: ExecutionResult = cypherEngine.execute(mapperQuery)
 

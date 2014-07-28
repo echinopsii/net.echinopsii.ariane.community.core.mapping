@@ -1,4 +1,4 @@
-
+CYPHER 1.9
 START startEP = node(*)
 WHERE
 startEP.MappingGraphVertexType! = "endpoint" AND

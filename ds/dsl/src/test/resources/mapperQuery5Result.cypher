@@ -1,4 +1,4 @@
-
+CYPHER 1.9
 START startContainers = node(*)
 MATCH startContainers-[owns]->startContainersContainerPrimaryAdminGate
 WHERE
