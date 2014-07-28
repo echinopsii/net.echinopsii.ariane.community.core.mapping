@@ -34,7 +34,7 @@ class MapperExecutor(val graph: Object) {
   }
 
   def execute(query: String): java.util.Map[String, String] = {
-    log.error("mapper query : \n\n" + query)
+    log.debug("mapper query : \n\n" + query)
     var resultMap: Map[String, String] = Map()
 
     val engine: Object = engineOption getOrElse { throw new MapperExecutorException("Execution engine has not been initialized correctly !") }
@@ -42,7 +42,7 @@ class MapperExecutor(val graph: Object) {
       case cypherEngine: ExecutionEngine => {
         val mapperQuery : String = new MapperParser("cypher").parse(query).genQuery()
 
-        log.error("cypher query : \n\n" + mapperQuery)
+        log.debug("cypher query : \n\n" + mapperQuery)
 
         //var result: ExecutionResult = cypherEngine.prepare(mapperQuery).execute(null)
         var result: ExecutionResult = cypherEngine.execute(mapperQuery)
