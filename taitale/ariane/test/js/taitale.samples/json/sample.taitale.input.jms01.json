@@ -6,6 +6,21 @@
             "containerCompany":"My Company",
             "containerProduct":"FrontOffice APP",
             "containerProperties":{
+                "Network":{
+                    "lan":"lab01.lan2",
+                    "marea":"angelsMind",
+                    "subnetmask":"255.255.255.0",
+                    "type":"LAN",
+                    "subnetip":"192.168.36.0"
+                },
+                "Datacenter":{
+                    "dc":"My little paradise",
+                    "gpsLng":2.246621,
+                    "address":"26 rue de Belfort",
+                    "gpsLat":48.895308,
+                    "town":"Courbevoie",
+                    "country":"France"
+                },
                 "manualCoord":{
                     "x":100,
                     "y":200
@@ -13,6 +28,10 @@
                 "supportTeam":{
                     "name":"JMS APP 01",
                     "color":"456"
+                },
+                "Server":{
+                    "os":"Fedora 18 - x86_64",
+                    "hostname":"app6969rvd12"
                 }
             }
         },
@@ -22,6 +41,21 @@
             "containerCompany":"My Company",
             "containerProduct":"FrontOffice APP",
             "containerProperties":{
+                "Network":{
+                    "lan":"lab01.lan2",
+                    "marea":"angelsMind",
+                    "subnetmask":"255.255.255.0",
+                    "type":"LAN",
+                    "subnetip":"192.168.36.0"
+                },
+                "Datacenter":{
+                    "dc":"My little paradise",
+                    "gpsLng":2.246621,
+                    "address":"26 rue de Belfort",
+                    "gpsLat":48.895308,
+                    "town":"Courbevoie",
+                    "country":"France"
+                },
                 "manualCoord":{
                     "x":100,
                     "y":400
@@ -29,6 +63,10 @@
                 "supportTeam":{
                     "name":"JMS APP 01",
                     "color":"456"
+                },
+                "Server":{
+                    "os":"Fedora 18 - x86_64",
+                    "hostname":"app6969rvd12"
                 }
             }
         },
@@ -39,6 +77,21 @@
             "containerProduct":"Tibco EMS",
             "containerType":"Server",
             "containerProperties":{
+                "Network":{
+                    "lan":"lab01.lan2",
+                    "marea":"angelsMind",
+                    "subnetmask":"255.255.255.0",
+                    "type":"LAN",
+                    "subnetip":"192.168.36.0"
+                },
+                "Datacenter":{
+                    "dc":"My little paradise",
+                    "gpsLng":2.246621,
+                    "address":"26 rue de Belfort",
+                    "gpsLat":48.895308,
+                    "town":"Courbevoie",
+                    "country":"France"
+                },
                 "manualCoord":{
                     "x":500,
                     "y":300
@@ -46,6 +99,10 @@
                 "supportTeam":{
                     "name":"FR MDW",
                     "color":"567"
+                },
+                "Server":{
+                    "os":"Fedora 18 - x86_64",
+                    "hostname":"app6969rvd12"
                 }
             }
         },
@@ -55,6 +112,21 @@
             "containerCompany":"MariaDB Foundation",
             "containerProduct":"BackOffice APP",
             "containerProperties":{
+                "Network":{
+                    "lan":"lab01.lan2",
+                    "marea":"angelsMind",
+                    "subnetmask":"255.255.255.0",
+                    "type":"LAN",
+                    "subnetip":"192.168.36.0"
+                },
+                "Datacenter":{
+                    "dc":"My little paradise",
+                    "gpsLng":2.246621,
+                    "address":"26 rue de Belfort",
+                    "gpsLat":48.895308,
+                    "town":"Courbevoie",
+                    "country":"France"
+                },
                 "manualCoord":{
                     "x":900,
                     "y":200
@@ -62,6 +134,10 @@
                 "supportTeam":{
                     "name":"JMS APP 02",
                     "color":"678"
+                },
+                "Server":{
+                    "os":"Fedora 18 - x86_64",
+                    "hostname":"app6969rvd12"
                 }
             }
         },
@@ -71,6 +147,21 @@
             "containerCompany":"My Company",
             "containerProduct":"Risk APP",
             "containerProperties":{
+                "Network":{
+                    "lan":"lab01.lan2",
+                    "marea":"angelsMind",
+                    "subnetmask":"255.255.255.0",
+                    "type":"LAN",
+                    "subnetip":"192.168.36.0"
+                },
+                "Datacenter":{
+                    "dc":"My little paradise",
+                    "gpsLng":2.246621,
+                    "address":"26 rue de Belfort",
+                    "gpsLat":48.895308,
+                    "town":"Courbevoie",
+                    "country":"France"
+                },
                 "manualCoord":{
                     "x":900,
                     "y":400
@@ -78,6 +169,10 @@
                 "supportTeam":{
                     "name":"JMS APP 02",
                     "color":"678"
+                },
+                "Server":{
+                    "os":"Fedora 18 - x86_64",
+                    "hostname":"app6969rvd12"
                 }
             }
         }

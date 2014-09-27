@@ -704,6 +704,10 @@ define(
                             var downColumn = getDownColumn();
                             rows[downColumn][downLine] = {obj:curlan,type:LAN};
                             curlan.isInserted = true;
+                        } else  {
+                            var newInternalCoord = getInternalCoord();
+                            rows[newInternalCoord.column][newInternalCoord.line] = {obj:curlan,type:LAN};
+                            curlan.isInserted = true;
                         }
                     }
                 } else {
