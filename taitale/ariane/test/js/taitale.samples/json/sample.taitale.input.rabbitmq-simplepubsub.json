@@ -1,0 +1,194 @@
+{
+    "containers":[
+        {
+            "containerID":1,
+            "containerGateURI":"somejmx://feeder.lab01.dev.dekatonshivr.echinopsii.net:feeder_port/etc",
+            "containerCompany":"My Company",
+            "containerProduct":"Feeder APP",
+            "containerProperties":{
+                "Network":{
+                    "lan":"lab01.lan2",
+                    "marea":"angelsMind",
+                    "subnetmask":"255.255.255.0",
+                    "type":"LAN",
+                    "subnetip":"192.168.36.0"
+                },
+                "Datacenter":{
+                    "dc":"My little paradise",
+                    "gpsLng":2.246621,
+                    "address":"26 rue de Belfort",
+                    "gpsLat":48.895308,
+                    "town":"Courbevoie",
+                    "country":"France"
+                },
+                "manualCoord":{
+                    "x":100,
+                    "y":200
+                },
+                "supportTeam":{
+                    "name":"FEEDER APP",
+                    "color":"4E6"
+                },
+                "Server":{
+                    "os":"Fedora 18 - x86_64",
+                    "hostname":"feeder"
+                }
+            }
+        },
+        {
+            "containerID":2,
+            "containerGateURI":"somejmx://frontA.lab01.dev.dekatonshivr.echinopsii.net:frontA_port/etc",
+            "containerCompany":"My Company",
+            "containerProduct":"FrontOffice APP",
+            "containerProperties":{
+                "Network":{
+                    "lan":"lab01.lan2",
+                    "marea":"angelsMind",
+                    "subnetmask":"255.255.255.0",
+                    "type":"LAN",
+                    "subnetip":"192.168.36.0"
+                },
+                "Datacenter":{
+                    "dc":"My little paradise",
+                    "gpsLng":2.246621,
+                    "address":"26 rue de Belfort",
+                    "gpsLat":48.895308,
+                    "town":"Courbevoie",
+                    "country":"France"
+                },
+                "manualCoord":{
+                    "x":100,
+                    "y":400
+                },
+                "supportTeam":{
+                    "name":"FrontAPP",
+                    "color":"E04"
+                },
+                "Server":{
+                    "os":"Fedora 18 - x86_64",
+                    "hostname":"frontA"
+                }
+            }
+        },
+        {
+            "containerID":3,
+            "containerGateURI":"http://rabbitmq.lab01.dev.dekatonshivr.echinopsii.net:15672",
+            "containerCompany":"Pivotal",
+            "containerProduct":"RabbitMQ",
+            "containerType":"Node",
+            "containerProperties":{
+                "Network":{
+                    "lan":"lab01.lan2",
+                    "marea":"angelsMind",
+                    "subnetmask":"255.255.255.0",
+                    "type":"LAN",
+                    "subnetip":"192.168.36.0"
+                },
+                "Datacenter":{
+                    "dc":"My little paradise",
+                    "gpsLng":2.246621,
+                    "address":"26 rue de Belfort",
+                    "gpsLat":48.895308,
+                    "town":"Courbevoie",
+                    "country":"France"
+                },
+                "manualCoord":{
+                    "x":500,
+                    "y":300
+                },
+                "supportTeam":{
+                    "name":"FR MDW",
+                    "color":"FFA500"
+                },
+                "Server":{
+                    "os":"Fedora 18 - x86_64",
+                    "hostname":"rabbitmq"
+                }
+            }
+        }
+    ],
+    "nodes":[
+        {
+            "nodeID":1,
+            "nodeName":"PRICE publisher",
+            "nodeContainerID":1
+        },
+        {
+            "nodeID":2,
+            "nodeName":"PRICE subscriber",
+            "nodeContainerID":2
+        },
+        {
+            "nodeID":3,
+            "nodeName":"PRICE exchange",
+            "nodeContainerID":3
+        },
+        {
+            "nodeID":4,
+            "nodeName":"PRICE.SUBS.FRONTA queue",
+            "nodeContainerID":3
+        }
+    ],
+    "endpoints":[
+        {
+            "endpointID":1,
+            "endpointURL":"amqp-0.9.1://feeder.lab01.dev.dekatonshivr.echinopsii.net:51168/(1)/PRICE",
+            "endpointParentNodeID":1
+        },
+        {
+            "endpointID":2,
+            "endpointURL":"amqp-0.9.1://rabbitmq.lab01.dev.dekatonshivr.echinopsii.net:5672/(1)/PRICE",
+            "endpointParentNodeID":3
+        },
+        {
+            "endpointID":3,
+            "endpointURL":"rabbitmq-memory://rabbitmq.lab01.dev.dekatonshivr.echinopsii.net/PRICE/#",
+            "endpointParentNodeID":3
+        },
+        {
+            "endpointID":4,
+            "endpointURL":"rabbitmq-memory://rabbitmq.lab01.dev.dekatonshivr.echinopsii.net/PRICE.SUBS.FRONTA/#",
+            "endpointParentNodeID":4
+        },
+        {
+            "endpointID":5,
+            "endpointURL":"amqp-0.9.1://rabbitmq.lab01.dev.dekatonshivr.echinopsii.net:5672/(2)/amq.ctag.pricesubsfronta",
+            "endpointParentNodeID":4
+        },
+        {
+            "endpointID":6,
+            "endpointURL":"amqp-0.9.1://frontA.lab01.dev.dekatonshivr.echinopsii.net:44243/(2)/amq.ctag.pricesubsfronta",
+            "endpointParentNodeID":2
+        }
+    ],
+    "links":[
+        {
+            "linkID":1,
+            "linkSEPID":1,
+            "linkTEPID":2,
+            "linkTRPID":1
+        },
+        {
+            "linkID":2,
+            "linkSEPID":3,
+            "linkTEPID":4,
+            "linkTRPID":2
+        },
+        {
+            "linkID":3,
+            "linkSEPID":5,
+            "linkTEPID":6,
+            "linkTRPID":1
+        }
+    ],
+    "transports":[
+        {
+            "transportID":1,
+            "transportName":"amqp-0.9.1://"
+        },
+        {
+            "transportID":2,
+            "transportName":"rabbitmq-memory://"
+        }
+    ]
+}
