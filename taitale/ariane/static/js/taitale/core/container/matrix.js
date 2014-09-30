@@ -30,7 +30,7 @@ define(function() {
         this.getMtxSize = function() {
             return {
                 x: nbColumns,
-                y: nbLines
+                y: nbLines-1
             };
         };
 
@@ -39,14 +39,14 @@ define(function() {
         };
 
         this.getNodeFromMtx = function (x,y) {
-            return rows[y][x];
+            return rows[y+1][x];
         };
 
         this.addNode = function(node) {
             if (nbLines!=0) {
-                var linkedNX = -1,
-                    linkedNY = -1;
-                for (var j = 0, jj = nbLines; j < jj; j++) {
+                var linkedNX = 0,
+                    linkedNY = 0;
+                for (var j = 1, jj = nbLines; j < jj; j++) {
                     for (var i = 0, ii = nbColumns; i < ii; i++) {
                         if (node.isLinkedToNode(rows[j][i])) {
                             linkedNX = i;
@@ -54,18 +54,25 @@ define(function() {
                         }
                     }
                 }
-                if (linkedNX == -1 && linkedNY == -1) {
-                    //logOnFirbugConsole("Push Node " + node.getName() + " on "+container.getName()+"(0,"+nbLines+")");
+                if (linkedNX == 0 && linkedNY == 0) {
                     rows[nbLines]    = [];
                     rows[nbLines][0] = node;
+                    rows[0][nbLines] = 1;
                     nbLines++;
                 } else {
-                    //TODO
+                    rows[linkedNY][rows[0][linkedNY-1]] = node;
+                    rows[0][linkedNY-1]++;
+                    if (nbColumns<rows[0][linkedNY-1])
+                        nbColumns++;
                 }
             } else {
-                //logOnFirbugConsole("Push Node " + node.getName() + " on "+container.getName()+"(0,0)");
+                // init columns count per lines
                 rows[0]    = [];
-                rows[0][0] = node;
+                rows[0][nbLines] = 1;
+                nbLines ++ ;
+                // push node in matrix
+                rows[nbLines]    = [];
+                rows[nbLines][nbColumns] = node;
                 nbLines ++ ;
                 nbColumns ++ ;
             }
@@ -73,7 +80,7 @@ define(function() {
         };
 
         this.toFront = function() {
-            for (var i = 0, ii = nbLines; i < ii; i++) {
+            for (var i = 1, ii = nbLines; i < ii; i++) {
                 for (var j = 0, jj = nbColumns; j < jj; j++) {
                     rows[i][j].toFront();
                 }

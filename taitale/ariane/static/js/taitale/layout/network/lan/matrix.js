@@ -48,7 +48,7 @@ define(
                             maxContWidth = rows[j][i].getMaxRectSize().width;
                     }
                     curContWidth = curContWidth + maxContWidth;
-                };
+                }
             };
 
             this.defineLanContentSize = function() {
@@ -60,9 +60,9 @@ define(
                     if (tmpHeight > contentHeight)
                         contentHeight=tmpHeight;
                 }
-                for (var i = 0, ii = nbLines; i < ii ; i++) {
+                for (i = 0, ii = nbLines; i < ii ; i++) {
                     var tmpWidth = 0;
-                    for (var j = 0, jj = nbColumns; j < jj; j++) {
+                    for (j = 0, jj = nbColumns; j < jj; j++) {
                         tmpWidth = tmpWidth + rows[i][j].getMaxRectSize().width;
                     }
                     if (tmpWidth > contentWidth)
@@ -83,14 +83,14 @@ define(
 
             this.addContainer = function(container) {
                 if (nbLines==0) {
-                    rows[nbLines]            = [];
+                    rows[nbLines] = [];
                     nbLines++;
                 }
 
                 rows[0][nbColumns] = container;
                 nbColumns ++ ;
             };
-        };
+        }
 
         return lanMatrix;
     });
