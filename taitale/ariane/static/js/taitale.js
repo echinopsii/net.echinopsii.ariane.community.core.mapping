@@ -50,6 +50,7 @@ require.config({
         'taitale-container-matrix': 'ajs/taitale/core/container/matrix',
         'taitale-container-hat': 'ajs/taitale/core/container/hat',
         'taitale-container': 'ajs/taitale/core/container/container',
+        'taitale-node-matrix': 'ajs/taitale/core/node/matrix',
         'taitale-node': 'ajs/taitale/core/node/node',
         'taitale-endpoint': 'ajs/taitale/core/endpoint',
         'taitale-transport': 'ajs/taitale/core/transport/transport',
