@@ -234,26 +234,33 @@ define(
 
             this.buildMap = function() {
                 var i, ii, j, jj;
-                // first : place nodes in container
+
+                // first : place nodes in container (first placement)
                 for (j = 0, jj = nodeRegistry.length; j < jj; j++) {
                     nodeRegistry[j].placeInContainer();
                 }
+
                 // second : define container size & max size
                 for (j = 0, jj = containerRegistry.length; j < jj; j++) {
                     containerRegistry[j].setSize();
                     containerRegistry[j].setMaxSize();
                 }
+
+                // third : layout policy
                 var layout = options.getLayout();
                 switch (layout) {
                     case dic.mapLayout.NTWWW:
+                        containerRegistry.sort(minMaxLinkedObjectsComparator);
                         // third 0 : populate DC, Area and Lan registries and enrich the objects
                         for (j = 0, jj = containerRegistry.length; j < jj; j++) {
                             mapmatrix.populateLayoutRegistries(containerRegistry[j]);
                         }
+
                         // third 1 : place container and the linked bus into the map matrix
                         for (j = 0, jj = containerRegistry.length; j < jj; j++) {
                             mapmatrix.addContainerZone(containerRegistry[j]);
                         }
+
                         // third 2 : define map objects size and position
                         //this.updateSize();
                         mapmatrix.defineMtxZoneSize();
@@ -261,6 +268,7 @@ define(
                         //this.definePoz();
                         mapmatrix.defineMtxZonePoz(mbrdSpan, zoneSpan);
                         break;
+
                     case dic.mapLayout.MANUAL:
                         mapWidth  = 1800;
                         mapHeight = 800;
@@ -268,6 +276,7 @@ define(
                             containerRegistry[j].definedNodesPoz();
                         }
                         break;
+
                     case dic.mapLayout.TREE:
                         // third 0 : sort all tree lists
                         sortOrdering = options.getRootTreeSorting();
@@ -276,10 +285,12 @@ define(
                             treeObjects[i].sortLinkedTreeObjects();
                         }
                         containerRegistry.sort(minMaxLinkedObjectsComparator);
+
                         // third 1 : define the tree with objects
                         // TODO: manage multi tree
                         lTree = new tree();
                         lTree.loadTree(containerRegistry[0]);
+
                         // third 2 : define map objects position
                         lTree.definePoz();
                         break;

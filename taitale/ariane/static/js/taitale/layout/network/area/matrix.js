@@ -283,7 +283,7 @@ define(
                 if (column==-1) {
                     if (!pushInternaLudOnLeft) {
                         pushInternaLudOnLeft=true;
-                        column=mtxColumnsSplitter[maxInternalRighTudC]++;
+                        column=++mtxColumnsSplitter[maxInternalRighTudC];
                         addColumnToMtx(column,FREE);
                     } else {
                         pushInternaLudOnLeft=false;

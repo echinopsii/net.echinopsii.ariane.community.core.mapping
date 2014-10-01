@@ -339,8 +339,12 @@ define(
                     mtxY = this.lanmatrix.getMtxSize().y;
 
                 for (i = 0, ii =  mtxX; i < ii; i++)
-                    for (j = 0, jj =  mtxY; j < jj; j++)
-                        this.lanmatrix.getContainerFromMtx(i, j).toFront();
+                    for (j = 0, jj =  mtxY; j < jj; j++) {
+                        var container = this.lanmatrix.getContainerFromMtx(i, j);
+                        if (container != null)
+                            container.toFront();
+                    }
+
             };
 
             this.displayLan = function(display) {
@@ -381,12 +385,15 @@ define(
 
                 for (j = 0, jj = mtxX; j < jj; j++)
                     for (k = 0, kk = mtxY; k < kk; k++) {
-                        this.lanmatrix.getContainerFromMtx(j, k).setMoveJail(
-                            this.topLeftX,
-                            this.topLeftY+this.lbrdSpan,
-                            this.topLeftX+this.lanwidth,
-                            this.topLeftY+this.lanheight
-                        );
+                        var container = this.lanmatrix.getContainerFromMtx(j, k);
+                        if (container != null) {
+                            container.setMoveJail(
+                                this.topLeftX,
+                                this.topLeftY+this.lbrdSpan,
+                                this.topLeftX+this.lanwidth,
+                                this.topLeftY+this.lanheight
+                            );
+                        }
                     }
             };
 
@@ -406,8 +413,11 @@ define(
                     this.r.moveSetPush(this.rect);
 
                     for (i = 0, ii =  mtxX; i < ii; i++)
-                        for (j = 0, jj =  mtxY; j < jj; j++)
-                            this.lanmatrix.getContainerFromMtx(i, j).moveInit();
+                        for (j = 0, jj =  mtxY; j < jj; j++) {
+                            var container = this.lanmatrix.getContainerFromMtx(i, j);
+                            if (container!=null)
+                                container.moveInit();
+                        }
 
                     this.changeInit();
                 }
@@ -482,8 +492,11 @@ define(
                 lanObjSet = this.r.set();
 
                 for (j = 0, jj = mtxX; j < jj; j++)
-                    for (k = 0, kk = mtxY; k < kk; k++)
-                        lanObjSet.push(this.lanmatrix.getContainerFromMtx(j, k).rect);
+                    for (k = 0, kk = mtxY; k < kk; k++) {
+                        var container = this.lanmatrix.getContainerFromMtx(j, k)
+                        if (container != null)
+                            lanObjSet.push(container);
+                    }
 
                 var lanMinBBox = lanObjSet.getBBox();
 
