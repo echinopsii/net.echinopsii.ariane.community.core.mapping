@@ -388,10 +388,7 @@ define(
             };
 
             this.getMaxBoxSize = function() {
-                return {
-                    width  : this.maxRectWidth,
-                    height : this.maxRectHeight
-                };
+                return this.getMaxRectSize();
             };
 
             this.getRectCornerPoints = function() {
@@ -416,17 +413,17 @@ define(
             };
             */
 
-            this.setSize = function () {
+            this.defineSize = function () {
+                //this.containerNodes.defineContainerContentSize();
                 var mtxX        = this.containerNodes.getMtxSize().x,
                     mtxY        = this.containerNodes.getMtxSize().y;
-
                 this.rectWidth  = getMaxWidth(this.interSpan*(mtxX+1) + this.nodeRectWidth*mtxX);
                 this.rectHeight = containerRef.containerHat_.height + this.titleHeight + this.interSpan*(mtxY+1) + this.nodeRectHeight*mtxY;
-
                 defineRectPoints(this.X,this.Y);
             };
 
-            this.setMaxSize = function() {
+            this.defineMaxSize = function() {
+                //this.containerNodes.defineContainerContentMaxSize();
                 var nodesCount = this.containerNodes.getMtxCount();
                 this.maxRectWidth = getMaxWidth(nodesCount*this.nodeRectWidth + (nodesCount+1)*this.interSpan);
                 this.maxRectHeight = this.containerHat_.height + this.titleHeight + this.interSpan*(nodesCount+1) + this.nodeRectHeight*nodesCount;

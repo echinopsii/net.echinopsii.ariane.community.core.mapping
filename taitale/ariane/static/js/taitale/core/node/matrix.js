@@ -1,5 +1,5 @@
 // ┌──────────────────────────────────────────────────────────────────────────────────────┐ \\
-// │ Taitale - JavaScript Taitale Library - CORE module - Container Matrix                │ \\
+// │ Taitale - JavaScript Taitale Library - CORE module - Node Matrix                     │ \\
 // │ Use Raphael.js                                                                       │ \\
 // │ -------------------------------------------------------------------------------------│ \\
 // │ Taitale - provide an infrastructure mapping graph engine                             │ \\
@@ -20,14 +20,12 @@
 // └──────────────────────────────────────────────────────────────────────────────────────┘ \\
 
 define(function() {
-    function containerMatrix() {
+    function nodeMatrix() {
 
-        var count           = 0,
-            nbLines         = 0,
-            nbColumns       = 0,
-            rows            = [],
-            contentWidth    = 0,
-            contentHeight   = 0;
+        var count     = 0,
+            nbLines   = 0,
+            nbColumns = 0,
+            rows      = [];
 
         this.getMtxSize = function() {
             return {
@@ -42,30 +40,6 @@ define(function() {
 
         this.getNodeFromMtx = function (x,y) {
             return rows[y+1][x];
-        };
-
-        this.defineContainerContentMaxSize = function() {
-            var tmpHeight, tmpWidth, block;
-            var i, ii, j, jj;
-            for (i = 0, ii = nbColumns; i < ii ; i++) {
-                tmpHeight = 0;
-                for (j = 0, jj = nbLines; j < jj; j++) {
-                    block = rows[i][j];
-                    block.defineMaxSize();
-                    tmpHeight = tmpHeight + block.getMaxRectSize().height;
-                }
-                if (tmpHeight > contentHeight)
-                    contentHeight=tmpHeight;
-            }
-            for (i = 0, ii = nbLines; i < ii ; i++) {
-                tmpWidth = 0;
-                for (j = 0, jj = nbColumns; j < jj; j++) {
-                    block = rows[j][i];
-                    tmpWidth = tmpWidth + block.getMaxRectSize().width;
-                }
-                if (tmpWidth > contentWidth)
-                    contentWidth = tmpWidth;
-            }
         };
 
         this.addNode = function(node) {
@@ -114,5 +88,5 @@ define(function() {
         }
     }
 
-    return containerMatrix;
+    return nodeMatrix;
 });

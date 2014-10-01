@@ -242,8 +242,8 @@ define(
 
                 // second : define container size & max size
                 for (j = 0, jj = containerRegistry.length; j < jj; j++) {
-                    containerRegistry[j].setSize();
-                    containerRegistry[j].setMaxSize();
+                    containerRegistry[j].defineSize();
+                    containerRegistry[j].defineMaxSize();
                 }
 
                 // third : layout policy

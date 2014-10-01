@@ -23,9 +23,10 @@ define(
     [
         'raphael',
         'taitale-helper',
-        'taitale-params'
+        'taitale-params',
+        'taitale-node-matrix'
     ],
-    function(Raphael, helper, params){
+    function(Raphael, helper, params, nodeMatrix){
         function node(JSONNodeDesc, container_) {
             var helper_       = new helper();
 
@@ -37,10 +38,10 @@ define(
             //noinspection JSUnresolvedVariable
             this.properties    = JSONNodeDesc.nodeProperties;
 
-            this.r             = null;
-            this.nodeContainer = container_;
+            this.r              = null;
+            this.nodeContainer  = container_;
             //noinspection JSUnresolvedVariable
-            this.color         = ((this.properties != null && this.properties.primaryApplication != null && this.properties.primaryApplication.color != null) ?
+            this.color          = ((this.properties != null && this.properties.primaryApplication != null && this.properties.primaryApplication.color != null) ?
                                             "#"+this.properties.primaryApplication.color :
                                             (this.nodeContainer!=null) ? this.nodeContainer.color : Raphael.getColor());
             this.nodeName      = null;
@@ -51,6 +52,9 @@ define(
             this.isMoving       = false;
             this.rightClick     = false;
 
+
+            this.nodeParentNode = null;
+            this.nodeChildNodes = new nodeMatrix();
             this.nodeEndpoints   = [];
             // ordered list of epAvgLinksTeta (Teta is the angle as : T = Y/sqrt(X*X+Y*Y))
             this.nodeEpAvgLinksT = [];
@@ -64,6 +68,9 @@ define(
 
             this.rectWidth  = params.node_minWidth;
             this.rectHeight = params.node_minHeight;
+
+            this.maxRectWidth  = 0;
+            this.maxRectHeight = 0;
 
             this.menu              = null;
             this.menuSet           = null;
@@ -415,6 +422,10 @@ define(
                 return "{\n Node " + this.name + " : ("+nodeRef.rectTopLeftX+","+nodeRef.rectTopLeftY+")\n}";
             };
 
+            this.pushChildNode = function (node) {
+                this.nodeChildNodes.addNode(node);
+            };
+
             this.popEndpoint = function(endpoint) {
                 var index = nodeRef.nodeEndpoints.indexOf(endpoint);
                 nodeRef.nodeEndpoints.splice(index,1)
@@ -469,12 +480,29 @@ define(
                 };
             };
 
+            this.getMaxRectSize = function() {
+                return {
+                    width  : this.maxRectWidth,
+                    height : this.maxRectHeight
+                };
+            };
+
+            this.defineMaxSize = function () {
+
+            };
+
+
+
             this.setPoz = function(x,y) {
                 defineRectPoints(x,y);
             };
 
             this.placeInContainer = function() {
-                this.nodeContainer.pushNode(this);
+                if (this.nodeParentNode!=null) {
+                    this.nodeParentNode.pushChildNode(this);
+                } else {
+                    this.nodeContainer.pushNode(this);
+                }
             };
 
             this.pushLinkedNode = function(node) {
