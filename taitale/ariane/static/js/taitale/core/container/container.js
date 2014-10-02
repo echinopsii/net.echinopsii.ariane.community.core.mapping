@@ -101,9 +101,6 @@ define(
             this.maxRectWidth      = 0;
             this.maxRectHeight     = 0;
 
-            this.nodeRectWidth  = params.node_minWidth;
-            this.nodeRectHeight = params.node_minHeight;
-
             this.minTopLeftX       = 0;
             this.minTopLeftY       = 0;
             this.maxTopLeftX       = 0;
@@ -414,19 +411,21 @@ define(
             */
 
             this.defineSize = function () {
-                //this.containerNodes.defineContainerContentSize();
+                this.containerNodes.defineContainerContentSize();
+                var mtxSize = this.containerNodes.getContainerContentSize();
                 var mtxX        = this.containerNodes.getMtxSize().x,
                     mtxY        = this.containerNodes.getMtxSize().y;
-                this.rectWidth  = getMaxWidth(this.interSpan*(mtxX+1) + this.nodeRectWidth*mtxX);
-                this.rectHeight = containerRef.containerHat_.height + this.titleHeight + this.interSpan*(mtxY+1) + this.nodeRectHeight*mtxY;
+                this.rectWidth  = getMaxWidth(this.interSpan*(mtxX+1) + mtxSize.width);
+                this.rectHeight = containerRef.containerHat_.height + this.titleHeight + this.interSpan*(mtxY+1) + mtxSize.height;
                 defineRectPoints(this.X,this.Y);
             };
 
             this.defineMaxSize = function() {
-                //this.containerNodes.defineContainerContentMaxSize();
+                this.containerNodes.defineContainerContentMaxSize();
+                var mtxMaxSize = this.containerNodes.getContainerContentMaxSize();
                 var nodesCount = this.containerNodes.getMtxCount();
-                this.maxRectWidth = getMaxWidth(nodesCount*this.nodeRectWidth + (nodesCount+1)*this.interSpan);
-                this.maxRectHeight = this.containerHat_.height + this.titleHeight + this.interSpan*(nodesCount+1) + this.nodeRectHeight*nodesCount;
+                this.maxRectWidth = getMaxWidth(mtxMaxSize.width + (nodesCount+1)*this.interSpan);
+                this.maxRectHeight = this.containerHat_.height + this.titleHeight + this.interSpan*(nodesCount+1) + mtxMaxSize.height;
             };
 
             this.setTopLeftCoord = function(x,y) {
@@ -442,18 +441,7 @@ define(
             };
 
             this.definedNodesPoz = function() {
-                var mtxX        = this.containerNodes.getMtxSize().x,
-                    mtxY        = this.containerNodes.getMtxSize().y;
-                var i, ii, j, jj;
-
-                for (i = 0, ii = mtxX; i < ii; i++) {
-                    for (j = 0, jj = mtxY; j < jj; j++) {
-                        this.containerNodes.getNodeFromMtx(i, j).setPoz(
-                            this.rectTopLeftX + (this.interSpan+this.nodeRectWidth)*i + this.interSpan,
-                            this.rectTopLeftY + this.containerHat_.height + this.titleHeight + (this.interSpan+this.nodeRectHeight)*j + this.interSpan
-                        );
-                    }
-                }
+                this.containerNodes.defineMtxNodePoz(this.rectTopLeftX, this.rectTopLeftY + this.containerHat_.height + this.titleHeight, this.interSpan);
             };
 
             this.getLinkedTreeObjectsCount = function() {
