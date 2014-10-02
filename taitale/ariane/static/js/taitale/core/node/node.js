@@ -488,10 +488,31 @@ define(
             };
 
             this.defineMaxSize = function () {
-
+                this.nodeChildNodes.defineNodeContentMaxSize();
+                var mtxMaxSize = this.nodeChildNodes.getNodeContentMaxSize();
+                this.maxRectWidth = mtxMaxSize.width;
+                this.maxRectHeight = mtxMaxSize.height;
+                if (this.maxRectWidth==0)
+                    this.maxRectWidth = this.rectWidth;
+                if (this.maxRectHeight==0)
+                    this.maxRectHeight = this.rectHeight;
             };
 
+            this.defineSize = function() {
+                this.nodeChildNodes.defineNodeContentSize();
+                var mtxSize = this.nodeChildNodes.getNodeContentSize();
+                if (mtxSize.width != 0)
+                    this.rectWidth = mtxSize.width;
+                if (mtxSize.height != 0)
+                    this.rectHeight = mtxSize.height;
+            };
 
+            this.getRectSize = function() {
+                return {
+                    width : this.rectWidth,
+                    height : this.rectHeight
+                }
+            };
 
             this.setPoz = function(x,y) {
                 defineRectPoints(x,y);
