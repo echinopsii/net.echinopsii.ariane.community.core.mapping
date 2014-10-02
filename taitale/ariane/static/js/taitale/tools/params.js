@@ -111,6 +111,7 @@ define({
     node_menuFields      : {'font-size': '10px', 'font-family': 'Arial', 'font-weight': 'normal', 'cursor': 'default', fill: "#fff"},
     node_menuFieldsOver  : {'font-size': '10px', 'font-family': 'Arial', 'font-weight': 'bold', 'cursor': 'default', fill: "#fff"},
     node_cornerRad   : 25,
+    node_interSpan   : 20,
     node_minWidth    : 180,
     node_minHeight   : 40,
     node_opacSelec   : 0.3,

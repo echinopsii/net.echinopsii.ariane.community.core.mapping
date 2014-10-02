@@ -86,6 +86,7 @@ define(
             this.oSelected   = params.node_opacSelec;
             this.cornerRad   = params.node_cornerRad;
             this.strokeWidth = params.node_strokeWidth;
+            this.interSpan   = params.node_interSpan;
 
             // coord top left point
             this.rectTopLeftX  = 0;
@@ -490,21 +491,26 @@ define(
             this.defineMaxSize = function () {
                 this.nodeChildNodes.defineNodeContentMaxSize();
                 var mtxMaxSize = this.nodeChildNodes.getNodeContentMaxSize();
-                this.maxRectWidth = mtxMaxSize.width;
-                this.maxRectHeight = mtxMaxSize.height;
-                if (this.maxRectWidth==0)
+                var mtxMaxInterspan = (this.nodeChildNodes.getMtxCount+1)*this.interSpan;
+
+                if (mtxMaxSize.width == 0)
                     this.maxRectWidth = this.rectWidth;
-                if (this.maxRectHeight==0)
+                else
+                    this.maxRectWidth = mtxMaxInterspan + mtxMaxSize.width;
+
+                if (this.maxRectHeight == 0)
                     this.maxRectHeight = this.rectHeight;
+                else
+                    this.maxRectHeight = mtxMaxInterspan + mtxMaxSize.height;
             };
 
             this.defineSize = function() {
                 this.nodeChildNodes.defineNodeContentSize();
                 var mtxSize = this.nodeChildNodes.getNodeContentSize();
                 if (mtxSize.width != 0)
-                    this.rectWidth = mtxSize.width;
+                    this.rectWidth = (this.nodeChildNodes.getMtxSize.x)*this.interSpan + mtxSize.width;
                 if (mtxSize.height != 0)
-                    this.rectHeight = mtxSize.height;
+                    this.rectHeight = (this.nodeChildNodes.getMtxSize.y)*this.interSpan + mtxSize.height;
             };
 
             this.getRectSize = function() {
@@ -519,11 +525,10 @@ define(
             };
 
             this.placeInContainer = function() {
-                if (this.nodeParentNode!=null) {
+                if (this.nodeParentNode!=null)
                     this.nodeParentNode.pushChildNode(this);
-                } else {
+                else
                     this.nodeContainer.pushNode(this);
-                }
             };
 
             this.pushLinkedNode = function(node) {
