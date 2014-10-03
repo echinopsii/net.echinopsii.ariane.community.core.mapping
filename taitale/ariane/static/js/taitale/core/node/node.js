@@ -52,6 +52,7 @@ define(
             this.rect          = null;
 
             this.isMoving       = false;
+            this.isEditing      = false;
             this.rightClick     = false;
 
 
@@ -83,6 +84,11 @@ define(
             //this.menuMainTitleTXT  = params.node_menuMainTitle;
             //this.menuFieldTXT      = params.node_menuFields;
             this.menuHided         = true;
+
+            this.menuEditionMode     = null;
+            this.menuEditionModeRect = null;
+            this.menuFieldStartEditTitle  = "Edition mode ON";
+            this.menuFieldStopEditTitle   = "Edition mode OFF";
 
             this.oUnselected = params.node_opacUnselec;
             this.oSelected   = params.node_opacSelec;
@@ -309,13 +315,17 @@ define(
                                     fieldRectHeight = fieldRect.attr("height");
                                     fieldRect.attr({"x": nodeRef.rectTopMiddleX - fieldRectWidth/2, "y": nodeRef.rectTopMiddleY+30 - fieldRectHeight/2});
                                     nodeRef.menuSet[i+1].attr({"x": nodeRef.rectTopMiddleX, "y": nodeRef.rectTopMiddleY+30});
+                                    if (nodeRef.nodeChildNodes.getMtxCount()!=0) {
+                                        if (nodeRef.isEditing) nodeRef.menuSet[i+1].attr({text: nodeRef.menuFieldStopEditTitle});
+                                        else nodeRef.menuSet[i+1].attr({text: nodeRef.menuFieldStartEditTitle});
+                                    }
                                     i++;
                                 } else {
                                     fieldRect = nodeRef.menuSet[i];
                                     fieldRectWidth = fieldRect.attr("width");
                                     fieldRectHeight = fieldRect.attr("height");
-                                    fieldRect.attr({"x": nodeRef.rectTopMiddleX, "y": nodeRef.rectTopMiddleY+30+(i-1)*15});
-                                    nodeRef.menuSet[i+1].attr({"x": nodeRef.rectTopMiddleX, "y": nodeRef.rectTopMiddleY+30+(i-1)*15});
+                                    fieldRect.attr({"x": nodeRef.rectTopMiddleX - fieldRectWidth/2, "y": nodeRef.rectTopMiddleY+30+(i-2)*15 - fieldRectHeight/2});
+                                    nodeRef.menuSet[i+1].attr({"x": nodeRef.rectTopMiddleX, "y": nodeRef.rectTopMiddleY+30+(i-2)*15});
                                     i++;
                                 }
                             }
@@ -415,7 +425,8 @@ define(
                             if (!nodeRef.nodeParentNode.isMoving) {
                                 var minX = nodeRef.nodeParentNode.getRectCornerPoints().topLeftX,
                                     minY = nodeRef.nodeParentNode.getRectCornerPoints().topLeftY +
-                                           nodeRef.nodeParentNode.name.height(params.node_txtTitle["font-size"]),
+                                           nodeRef.nodeParentNode.name.height(params.node_txtTitle["font-size"]) +
+                                           params.node_interSpan,
                                     maxX = nodeRef.nodeParentNode.getRectCornerPoints().bottomRightX - nodeRef.rectWidth,
                                     maxY = nodeRef.nodeParentNode.getRectCornerPoints().bottomRightY - nodeRef.rectHeight;
 
@@ -603,6 +614,19 @@ define(
                 this.rect.drag(nodeMove, nodeDragger, nodeUP);
 
                 this.nodeMenuTitle = this.r.text(0,10,"Node menu").attr(this.nodeMainTitleTXT);
+
+                if (this.nodeChildNodes.getMtxCount()!=0) {
+                    this.menuEditionModeRect = this.r.rect(0,10,this.menuFieldStartEditTitle.width(this.nodeFieldTXT),this.menuFieldStartEditTitle.height(this.nodeFieldTXT));
+                    this.menuEditionModeRect.attr({fill: this.color, stroke: this.color, "fill-opacity": 0, "stroke-width": 0});
+                    this.menuEditionModeRect.mouseover(menuFieldOver);
+                    this.menuEditionModeRect.mouseout(menuFieldOut);
+                    this.menuEditionModeRect.mousedown(this.menuFieldEditClick);
+                    this.menuEditionMode = this.r.text(0,10,this.menuFieldStartEditTitle).attr(this.nodeFieldTXT);
+                    this.menuEditionMode.mouseover(menuFieldOver);
+                    this.menuEditionMode.mouseout(menuFieldOut);
+                    this.menuEditionMode.mousedown(this.menuFieldEditClick);
+                }
+
                 var fieldTitle = "Display all properties";
                 this.nodeMenuPropertiesRect = this.r.rect(0,10,fieldTitle.width(this.nodeFieldTXT),fieldTitle.height(this.nodeFieldTXT));
                 this.nodeMenuPropertiesRect.attr({fill: this.color, stroke: this.color, "fill-opacity": 0, "stroke-width": 0});
@@ -616,6 +640,10 @@ define(
 
                 this.nodeMenuSet = this.r.set();
                 this.nodeMenuSet.push(this.nodeMenuTitle);
+                if (this.nodeChildNodes.getMtxCount()!=0) {
+                    this.nodeMenuSet.push(this.menuEditionModeRect);
+                    this.nodeMenuSet.push(this.menuEditionMode);
+                }
                 this.nodeMenuSet.push(this.nodeMenuPropertiesRect);
                 this.nodeMenuSet.push(this.nodeMenuProperties);
                 this.nodeMenuSet.toBack();
@@ -631,7 +659,37 @@ define(
                     this.nodeEndpoints[i].toFront();
             };
 
+            this.changeInit = function() {
+                this.extrx = this.rect.attr("x");
+                this.extry = this.rect.attr("y");
+                this.extt0x = this.nodeName.attr("x");
+                this.extt0y = this.nodeName.attr("y");
+
+                if (!this.menuHided) {
+                    this.menu.toBack();
+                    this.menuSet.toBack();
+                    this.menu.hide();
+                    this.menuSet.hide();
+                    this.menuHided=true;
+                    if (this.r.getDisplayMainMenu())
+                        this.r.setDisplayMainMenu(false);
+                }
+
+                this.isMoving = true;
+            };
+
+            this.changeUp = function() {
+                this.toFront();
+                this.setPoz(this.nodeName.attr("x")-(this.rectWidth/2), this.nodeName.attr("y")-(this.titleHeight/2));
+                this.isMoving = false;
+            };
+
+            // MOVEABLE
+
             this.moveInit = function() {
+                if (this.isEditing)
+                    this.r.scaleDone(this);
+
                 var i, ii, j, jj;
                 var mtxX        = this.nodeChildNodes.getMtxSize().x,
                     mtxY        = this.nodeChildNodes.getMtxSize().y;
@@ -647,22 +705,7 @@ define(
                 for (i = 0, ii = this.nodeEndpoints.length; i < ii; i++)
                     this.nodeEndpoints[i].moveInit();
 
-                this.extrx  = this.rect.attr("x");
-                this.extry  = this.rect.attr("y");
-                this.extt0x = this.nodeName.attr("x");
-                this.extt0y = this.nodeName.attr("y");
-
-                if (!this.menuHided) {
-                    this.menu.toBack();
-                    this.menuSet.toBack();
-                    this.menu.hide();
-                    this.menuSet.hide();
-                    this.menuHided=true;
-                    if (this.r.getDisplayMainMenu())
-                        this.r.setDisplayMainMenu(false);
-                }
-
-                this.isMoving = true;
+                this.changeInit();
 
                 this.rect.animate({"fill-opacity": this.oSelected}, 500);
             };
@@ -679,9 +722,178 @@ define(
                 this.rect.attr(attrect);
                 this.nodeName.attr(attrtxt0);
 
-                this.setPoz(this.nodeName.attr("x")-(this.rectWidth/2), this.nodeName.attr("y")-(this.titleHeight/2));
                 this.rect.animate({"fill-opacity": this.oUnselected}, 500);
-                this.isMoving = false;
+                this.changeUp();
+
+                if (this.isEditing)
+                    this.r.scaleInit(this);
+            };
+
+            // EDITABLE
+
+            this.setEditionMode = function(editionMode) {
+                if (this.nodeChildNodes.getMtxCount()!=0) {
+                    if (editionMode) {
+                        if (this.isEditing)
+                            this.r.scaleDone(this);
+                        this.r.scaleInit(this);
+                        this.isEditing = true;
+                    } else if (!editionMode) {
+                        if (this.isEditing)
+                            this.r.scaleDone(this);
+                        this.isEditing = false;
+                    }
+                }
+            };
+
+            this.menuFieldEditClick = function() {
+                nodeRef.menu.toBack();
+                nodeRef.menuSet.toBack();
+                nodeRef.menu.hide();
+                nodeRef.menuSet.hide();
+                nodeRef.menuHided=true;
+
+                if (!nodeRef.isEditing) {
+                    nodeRef.r.scaleInit(nodeRef);
+                    nodeRef.isEditing = true;
+                } else {
+                    nodeRef.r.scaleDone(nodeRef);
+                    nodeRef.isEditing = false;
+                }
+            };
+
+            this.getBBox = function() {
+                return this.rect.getBBox();
+            };
+
+            var nodeSet;
+            this.getMinBBox = function() {
+                var i, ii, j, jj;
+                var mtxX        = this.nodeChildNodes.getMtxSize().x,
+                    mtxY        = this.nodeChildNodes.getMtxSize().y;
+
+                nodeSet = this.r.set();
+                for (i = 0, ii = mtxX; i < ii; i++)
+                    for (j = 0, jj = mtxY; j < jj; j++)
+                        nodeSet.push(this.nodeChildNodes.getNodeFromMtx(i, j).rect);
+
+                var nodeBBox = nodeSet.getBBox();
+
+                return {
+                    x: nodeBBox.x - this.interSpan,
+                    y: nodeBBox.y - (this.titleHeight + this.interSpan),
+                    x2: nodeBBox.x2 + this.interSpan,
+                    y2: nodeBBox.y2 + this.interSpan,
+                    width: nodeBBox.width + 2*this.interSpan,
+                    height: nodeBBox.height + (this.titleHeight + this.interSpan)
+                };
+            };
+
+            this.getMaxBBox = function() {
+                if (this.nodeParentNode==null) {
+                    if (this.nodeContainer!=null) {
+                        this.minTopLeftX = this.nodeContainer.getRectCornerPoints().topLeftX;
+                        this.minTopLeftY = this.nodeContainer.getRectCornerPoints().topLeftY +
+                                           this.nodeContainer.name.height(params.container_txtTitle["font-size"]) +
+                                           this.nodeContainer.containerHat_.height + params.container_interSpan;
+                        this.maxTopLeftX = this.nodeContainer.getRectCornerPoints().bottomRightX - this.rectWidth;
+                        this.maxTopLeftY = this.nodeContainer.getRectCornerPoints().bottomRightY - nodeRef.rectHeight;
+                    }
+                } else {
+                    this.minTopLeftX = this.nodeParentNode.getRectCornerPoints().topLeftX;
+                    this.minTopLeftY = this.nodeParentNode.getRectCornerPoints().topLeftY +
+                                       this.nodeParentNode.name.height(params.node_txtTitle["font-size"]) +
+                                       params.node_interSpan;
+                    this.maxTopLeftX = this.nodeParentNode.getRectCornerPoints().bottomRightX - this.rectWidth;
+                    this.maxTopLeftY = this.nodeParentNode.getRectCornerPoints().bottomRightY - this.rectHeight;
+                }
+
+                return {
+                    x: this.minTopLeftX,
+                    y: this.minTopLeftY,
+                    x2: this.maxTopLeftX + this.rectWidth,
+                    y2: this.maxTopLeftY + this.rectHeight,
+                    width: this.maxTopLeftX + this.rectWidth - this.minTopLeftX,
+                    height: this.maxTopLeftY + this.rectHeight - this.minTopLeftY
+                }
+            };
+
+            this.editInit = function() {
+                this.extwidth  = this.rectWidth;
+                this.extheight = this.rectHeight;
+                this.changeInit();
+            };
+
+            this.editAction = function(elem, dx, dy) {
+                switch(elem.idx) {
+                    case 0:
+                        this.extrx = this.rectTopLeftX + dx;
+                        this.extry = this.rectTopLeftY + dy;
+                        this.extwidth = this.rectWidth - dx;
+                        this.extheight = this.rectHeight - dy;
+                        break;
+
+                    case 1:
+                        this.extry = this.rectTopLeftY + dy;
+                        this.extwidth = this.rectWidth + dx;
+                        this.extheight = this.rectHeight - dy;
+                        break;
+
+                    case 2:
+                        this.extwidth = this.rectWidth + dx;
+                        this.extheight = this.rectHeight + dy;
+                        break;
+
+                    case 3:
+                        this.extrx = this.rectTopLeftX + dx;
+                        this.extwidth = this.rectWidth - dx;
+                        this.extheight = this.rectHeight + dy;
+                        break;
+
+                    case 4:
+                        this.extry = this.rectTopLeftY + dy;
+                        this.extheight = this.rectHeight - dy;
+                        break;
+
+                    case 5:
+                        this.extwidth = this.rectWidth + dx;
+                        break;
+
+                    case 6:
+                        this.extheight = this.rectHeight + dy;
+                        break;
+
+                    case 7:
+                        this.extrx = this.rectTopLeftX + dx;
+                        this.extwidth = this.rectWidth - dx;
+                        break;
+
+                    default:
+                        break;
+                }
+
+                this.nodeName.remove();
+                this.rect.remove();
+
+                this.nodeName = this.r.text(0, 0, this.name).attr(this.txtTitleFont);
+                this.nodeName.attr({x: this.extrx + (this.extwidth/2), y: this.extry + (this.titleHeight/2)});
+                this.nodeName.mousedown(mouseDown);
+                this.nodeName.drag(nodeMove, nodeDragger, nodeUP);
+
+                this.rect = this.r.rect(this.extrx, this.extry, this.extwidth, this.extheight, this.cornerRad);
+                this.rect.attr({fill: this.color, stroke: this.color, "fill-opacity": nodeRef.oUnselected, "stroke-width": this.strokeWidth});
+                this.rect.mousedown(mouseDown);
+                this.rect.drag(nodeMove, nodeDragger, nodeUP);
+                this.toFront();
+            };
+
+            this.editUp = function() {
+                this.maxTopLeftX = this.maxTopLeftX + this.rectWidth - this.extwidth;
+                this.maxTopLeftY = this.maxTopLeftY + this.rectHeight - this.extheight;
+                this.rectWidth = this.extwidth;
+                this.rectHeight = this.extheight;
+
+                this.changeUp();
             };
         }
 
