@@ -104,7 +104,7 @@ define(function() {
                 for (var i = 0, ii = nbColumns; i < ii; i++) {
                     var node = rows[j][i];
                         node.setPoz(interSpan*(i+1) + curContWidth, interSpan*j + curContHeight);
-                        //node.definedNodesPoz();
+                        node.definedNodesPoz();
                         curContWidth = curContWidth + node.getMaxRectSize().width;
                         if (node.getMaxRectSize().height>maxContHeight)
                             maxContHeight = node.getMaxRectSize().height;

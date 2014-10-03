@@ -36,14 +36,16 @@ define(
             //noinspection JSUnresolvedVariable
             this.cID           = JSONNodeDesc.nodeContainerID;
             //noinspection JSUnresolvedVariable
+            this.npID          = (JSONNodeDesc.nodeParentNodeID!=null)?JSONNodeDesc.nodeParentNodeID:0;
+            //noinspection JSUnresolvedVariable
             this.properties    = JSONNodeDesc.nodeProperties;
 
             this.r              = null;
             this.nodeContainer  = container_;
             //noinspection JSUnresolvedVariable
             this.color          = ((this.properties != null && this.properties.primaryApplication != null && this.properties.primaryApplication.color != null) ?
-                                            "#"+this.properties.primaryApplication.color :
-                                            (this.nodeContainer!=null) ? this.nodeContainer.color : Raphael.getColor());
+                                    "#"+this.properties.primaryApplication.color :
+                                    (this.nodeContainer!=null) ? this.nodeContainer.color : Raphael.getColor());
             this.nodeName      = null;
             //this.nodeDesc      = null;
             //this.nodeR         = null;
@@ -391,22 +393,41 @@ define(
                         var rx = nodeRef.extrx,
                             ry = nodeRef.extry;
 
-                        if (nodeRef.nodeContainer!=null && !nodeRef.nodeContainer.isMoving) {
-                            var minX = nodeRef.nodeContainer.getRectCornerPoints().topLeftX,
-                                minY = nodeRef.nodeContainer.getRectCornerPoints().topLeftY +
-                                    nodeRef.nodeContainer.name.height(params.container_txtTitle["font-size"]) +
-                                    nodeRef.nodeContainer.containerHat_.height + params.container_interSpan,
-                                maxX = nodeRef.nodeContainer.getRectCornerPoints().bottomRightX - nodeRef.rectWidth,
-                                maxY = nodeRef.nodeContainer.getRectCornerPoints().bottomRightY - nodeRef.rectHeight;
+                        if (nodeRef.nodeParentNode==null) {
+                            if (nodeRef.nodeContainer!=null && !nodeRef.nodeContainer.isMoving) {
+                                var minX = nodeRef.nodeContainer.getRectCornerPoints().topLeftX,
+                                    minY = nodeRef.nodeContainer.getRectCornerPoints().topLeftY +
+                                           nodeRef.nodeContainer.name.height(params.container_txtTitle["font-size"]) +
+                                           nodeRef.nodeContainer.containerHat_.height + params.container_interSpan,
+                                    maxX = nodeRef.nodeContainer.getRectCornerPoints().bottomRightX - nodeRef.rectWidth,
+                                    maxY = nodeRef.nodeContainer.getRectCornerPoints().bottomRightY - nodeRef.rectHeight;
 
-                            if (minX > rx + dx)
-                                dx = minX - rx;
-                            if (minY > ry + dy)
-                                dy = minY - ry;
-                            if (maxX < rx + dx)
-                                dx = maxX - rx;
-                            if (maxY < ry + dy)
-                                dy = maxY - ry;
+                                if (minX > rx + dx)
+                                    dx = minX - rx;
+                                if (minY > ry + dy)
+                                    dy = minY - ry;
+                                if (maxX < rx + dx)
+                                    dx = maxX - rx;
+                                if (maxY < ry + dy)
+                                    dy = maxY - ry;
+                            }
+                        } else {
+                            if (!nodeRef.nodeParentNode.isMoving) {
+                                var minX = nodeRef.nodeParentNode.getRectCornerPoints().topLeftX,
+                                    minY = nodeRef.nodeParentNode.getRectCornerPoints().topLeftY +
+                                           nodeRef.nodeParentNode.name.height(params.node_txtTitle["font-size"]),
+                                    maxX = nodeRef.nodeParentNode.getRectCornerPoints().bottomRightX - nodeRef.rectWidth,
+                                    maxY = nodeRef.nodeParentNode.getRectCornerPoints().bottomRightY - nodeRef.rectHeight;
+
+                                if (minX > rx + dx)
+                                    dx = minX - rx;
+                                if (minY > ry + dy)
+                                    dy = minY - ry;
+                                if (maxX < rx + dx)
+                                    dx = maxX - rx;
+                                if (maxY < ry + dy)
+                                    dy = maxY - ry;
+                            }
                         }
 
                         nodeRef.mvx=dx; nodeRef.mvy=dy;
@@ -491,7 +512,7 @@ define(
             this.defineMaxSize = function () {
                 this.nodeChildNodes.defineNodeContentMaxSize();
                 var mtxMaxSize = this.nodeChildNodes.getNodeContentMaxSize();
-                var mtxMaxInterspan = (this.nodeChildNodes.getMtxCount+1)*this.interSpan;
+                var mtxMaxInterspan = (this.nodeChildNodes.getMtxCount()+1)*this.interSpan;
 
                 if (mtxMaxSize.width == 0)
                     this.maxRectWidth = this.rectWidth;
@@ -508,9 +529,9 @@ define(
                 this.nodeChildNodes.defineNodeContentSize();
                 var mtxSize = this.nodeChildNodes.getNodeContentSize();
                 if (mtxSize.width != 0)
-                    this.rectWidth = (this.nodeChildNodes.getMtxSize.x)*this.interSpan + mtxSize.width;
+                    this.rectWidth = (this.nodeChildNodes.getMtxSize().x+1)*this.interSpan + mtxSize.width;
                 if (mtxSize.height != 0)
-                    this.rectHeight = (this.nodeChildNodes.getMtxSize.y)*this.interSpan + mtxSize.height;
+                    this.rectHeight = (this.nodeChildNodes.getMtxSize().y+1)*this.interSpan + + this.titleHeight + mtxSize.height;
             };
 
             this.getRectSize = function() {
@@ -524,7 +545,11 @@ define(
                 defineRectPoints(x,y);
             };
 
-            this.placeInContainer = function() {
+            this.definedNodesPoz = function() {
+                this.nodeChildNodes.defineMtxNodePoz(this.rectTopLeftX, this.rectTopLeftY + this.titleHeight, this.interSpan);
+            };
+
+            this.placeIn = function() {
                 if (this.nodeParentNode!=null)
                     this.nodeParentNode.pushChildNode(this);
                 else
@@ -601,16 +626,23 @@ define(
             this.toFront = function() {
                 this.rect.toFront();
                 this.nodeName.toFront();
+                this.nodeChildNodes.toFront();
                 for (var i = 0, ii = this.nodeEndpoints.length; i < ii; i++)
                     this.nodeEndpoints[i].toFront();
             };
 
             this.moveInit = function() {
-                var i, ii;
+                var i, ii, j, jj;
+                var mtxX        = this.nodeChildNodes.getMtxSize().x,
+                    mtxY        = this.nodeChildNodes.getMtxSize().y;
 
                 this.r.nodesOnMovePush(this);
                 this.r.moveSetPush(this.rect);
                 this.r.moveSetPush(this.nodeName);
+
+                for (i = 0, ii = mtxX; i < ii; i++)
+                    for (j = 0, jj = mtxY; j < jj; j++)
+                        this.nodeChildNodes.getNodeFromMtx(i, j).moveInit();
 
                 for (i = 0, ii = this.nodeEndpoints.length; i < ii; i++)
                     this.nodeEndpoints[i].moveInit();

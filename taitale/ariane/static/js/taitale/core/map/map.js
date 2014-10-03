@@ -86,8 +86,10 @@ define(
             */
 
             this.addNode = function(JSONNodeDesc) {
-                var container = null;
-                for (var i = 0, ii = containerRegistry.length; i < ii; i++ ) {
+                var container = null, childNodesWaitingParent = [], childNodesFoundParent = [];
+                var i, ii, j, jj;
+
+                for (i = 0, ii = containerRegistry.length; i < ii; i++ ) {
                     var tmpContainer = containerRegistry[i];
                     //noinspection JSUnresolvedVariable
                     if (tmpContainer.ID === JSONNodeDesc.nodeContainerID) {
@@ -95,8 +97,27 @@ define(
                         break;
                     }
                 }
+
                 if (container != null) {
-                    nodeRegistry.push(new node(JSONNodeDesc, container));
+                    var nodeToPush = new node(JSONNodeDesc, container);
+                    nodeRegistry.push(nodeToPush);
+                    if (nodeToPush.npID!=0)
+                        childNodesWaitingParent.push(nodeToPush);
+
+                    for (j = 0, jj = childNodesWaitingParent.length; j < jj; j++) {
+                        for (i = 0, ii = nodeRegistry.length; i < ii; i++) {
+                            var possibleParentNode = nodeRegistry[i];
+                            var waitingParentNode = childNodesWaitingParent[j];
+                            if (possibleParentNode.ID==waitingParentNode.npID) {
+                                waitingParentNode.nodeParentNode = possibleParentNode;
+                                childNodesFoundParent.push(waitingParentNode);
+                            }
+                        }
+                    }
+
+                    for (i = 0, ii = childNodesFoundParent.length; i < ii; i++)
+                        childNodesWaitingParent.splice(childNodesWaitingParent.indexOf(childNodesFoundParent[i]),1);
+
                 } else {
                     //noinspection JSUnresolvedVariable
                     helper_.addMsgToGrowl(
@@ -107,6 +128,7 @@ define(
                             sticky: true
                         });
                 }
+
             };
 
             this.addEndpoint = function(JSONEndpointDesc) {
@@ -204,41 +226,34 @@ define(
 
             this.parseJSON = function(JSONmapDesc) {
                 var i, ii;
-                for (i = 0, ii = JSONmapDesc.containers.length; i < ii; i++ ) {
+                for (i = 0, ii = JSONmapDesc.containers.length; i < ii; i++ )
                     this.addContainer(JSONmapDesc.containers[i]);
-                }
 
-                for (i = 0, ii = JSONmapDesc.nodes.length; i < ii; i++ ) {
+                for (i = 0, ii = JSONmapDesc.nodes.length; i < ii; i++ )
                     this.addNode(JSONmapDesc.nodes[i]);
-                }
 
                 //noinspection JSUnresolvedVariable
-                for (i = 0, ii = JSONmapDesc.endpoints.length; i < ii; i++ ) {
+                for (i = 0, ii = JSONmapDesc.endpoints.length; i < ii; i++ )
                     //noinspection JSUnresolvedVariable
                     this.addEndpoint(JSONmapDesc.endpoints[i]);
-                }
 
                 //noinspection JSUnresolvedVariable
-                if (JSONmapDesc.transports!=null) {
+                if (JSONmapDesc.transports!=null)
                     //noinspection JSUnresolvedVariable
-                    for (i = 0, ii = JSONmapDesc.transports.length; i < ii; i++) {
+                    for (i = 0, ii = JSONmapDesc.transports.length; i < ii; i++)
                         //noinspection JSUnresolvedVariable
                         this.addTransport(JSONmapDesc.transports[i]);
-                    }
-                }
 
-                for (i = 0, ii = JSONmapDesc.links.length; i < ii; i++ ) {
+                for (i = 0, ii = JSONmapDesc.links.length; i < ii; i++ )
                     this.addLink(JSONmapDesc.links[i]);
-                }
             };
 
             this.buildMap = function() {
                 var i, ii, j, jj;
 
                 // first : place nodes in container (first placement)
-                for (j = 0, jj = nodeRegistry.length; j < jj; j++) {
-                    nodeRegistry[j].placeInContainer();
-                }
+                for (j = 0, jj = nodeRegistry.length; j < jj; j++)
+                    nodeRegistry[j].placeIn();
 
                 // second : define container size & max size
                 for (j = 0, jj = containerRegistry.length; j < jj; j++) {
@@ -252,14 +267,12 @@ define(
                     case dic.mapLayout.NTWWW:
                         containerRegistry.sort(minMaxLinkedObjectsComparator);
                         // third 0 : populate DC, Area and Lan registries and enrich the objects
-                        for (j = 0, jj = containerRegistry.length; j < jj; j++) {
+                        for (j = 0, jj = containerRegistry.length; j < jj; j++)
                             mapmatrix.populateLayoutRegistries(containerRegistry[j]);
-                        }
 
                         // third 1 : place container and the linked bus into the map matrix
-                        for (j = 0, jj = containerRegistry.length; j < jj; j++) {
+                        for (j = 0, jj = containerRegistry.length; j < jj; j++)
                             mapmatrix.addContainerZone(containerRegistry[j]);
-                        }
 
                         // third 2 : define map objects size and position
                         //this.updateSize();

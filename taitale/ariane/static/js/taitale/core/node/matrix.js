@@ -49,12 +49,12 @@ define(function() {
         this.defineNodeContentMaxSize = function() {
             var block;
             var i, ii, j, jj;
-            for (i = 0, ii = nbColumns; i < ii ; i++) {
-                for (j = 0, jj = nbLines; j < jj; j++) {
+            for (i = 1, ii = nbLines; i < ii ; i++) {
+                for (j = 0, jj = nbColumns; j < jj; j++) {
                     block = rows[i][j];
                     block.defineMaxSize();
-                    contentMaxHeight += block.getMaxRectSize().height;
                     contentMaxWidth += block.getMaxRectSize().width;
+                    contentMaxHeight += block.getMaxRectSize().height;
                 }
             }
         };
@@ -69,24 +69,24 @@ define(function() {
         this.defineNodeContentSize = function() {
             var tmpHeight, tmpWidth, block;
             var i, ii, j, jj;
-            for (i = 0, ii = nbColumns; i < ii ; i++) {
-                tmpHeight = 0;
-                for (j = 0, jj = nbLines; j < jj; j++) {
-                    block = rows[i][j];
-                    block.defineSize();
-                    tmpHeight = tmpHeight + block.getRectSize().height;
-                }
-                if (tmpHeight > contentHeight)
-                    contentHeight=tmpHeight;
-            }
-            for (i = 0, ii = nbLines; i < ii ; i++) {
+            for (i = 1, ii = nbLines; i < ii ; i++) {
                 tmpWidth = 0;
                 for (j = 0, jj = nbColumns; j < jj; j++) {
-                    block = rows[j][i];
+                    block = rows[i][j];
+                    block.defineSize();
                     tmpWidth = tmpWidth + block.getRectSize().width;
                 }
                 if (tmpWidth > contentWidth)
                     contentWidth = tmpWidth;
+            }
+            for (i = 0, ii = nbColumns; i < ii ; i++) {
+                tmpHeight = 0;
+                for (j = 1, jj = nbLines; j < jj; j++) {
+                    block = rows[j][i];
+                    tmpHeight = tmpHeight + block.getRectSize().height;
+                }
+                if (tmpHeight > contentHeight)
+                    contentHeight=tmpHeight;
             }
         };
 
@@ -94,6 +94,22 @@ define(function() {
             return {
                 width : contentWidth,
                 height: contentHeight
+            }
+        };
+
+        this.defineMtxNodePoz = function(topLeftX, topLeftY, interSpan) {
+            var curContHeight = topLeftY;
+            for (var j = 1, jj = nbLines; j < jj; j++) {
+                var curContWidth  = topLeftX, maxContHeight=0;
+                for (var i = 0, ii = nbColumns; i < ii; i++) {
+                    var node = rows[j][i];
+                    node.setPoz(interSpan*(i+1) + curContWidth, interSpan*j + curContHeight);
+                    node.definedNodesPoz();
+                    curContWidth = curContWidth + node.getMaxRectSize().width;
+                    if (node.getMaxRectSize().height>maxContHeight)
+                        maxContHeight = node.getMaxRectSize().height;
+                }
+                curContHeight = curContHeight + maxContHeight;
             }
         };
 
