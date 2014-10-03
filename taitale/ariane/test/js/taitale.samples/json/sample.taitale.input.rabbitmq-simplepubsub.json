@@ -120,12 +120,19 @@
         },
         {
             "nodeID":3,
-            "nodeName":"PRICE exchange",
+            "nodeName":"/ vhost",
             "nodeContainerID":3
         },
         {
             "nodeID":4,
+            "nodeName":"PRICE exchange",
+            "nodeParentNodeID":3,
+            "nodeContainerID":3
+        },
+        {
+            "nodeID":5,
             "nodeName":"PRICE.SUBS.FRONTA queue",
+            "nodeParentNodeID":3,
             "nodeContainerID":3
         }
     ],
@@ -138,22 +145,22 @@
         {
             "endpointID":2,
             "endpointURL":"amqp-0.9.1://rabbitmq.lab01.dev.dekatonshivr.echinopsii.net:5672/(1)/PRICE",
-            "endpointParentNodeID":3
+            "endpointParentNodeID":4
         },
         {
             "endpointID":3,
-            "endpointURL":"rabbitmq-memory://rabbitmq.lab01.dev.dekatonshivr.echinopsii.net/PRICE/#",
-            "endpointParentNodeID":3
+            "endpointURL":"rabbitmq-binding://rabbitmq.lab01.dev.dekatonshivr.echinopsii.net/PRICE/#",
+            "endpointParentNodeID":4
         },
         {
             "endpointID":4,
-            "endpointURL":"rabbitmq-memory://rabbitmq.lab01.dev.dekatonshivr.echinopsii.net/PRICE.SUBS.FRONTA/#",
-            "endpointParentNodeID":4
+            "endpointURL":"rabbitmq-binding://rabbitmq.lab01.dev.dekatonshivr.echinopsii.net/PRICE.SUBS.FRONTA/#",
+            "endpointParentNodeID":5
         },
         {
             "endpointID":5,
             "endpointURL":"amqp-0.9.1://rabbitmq.lab01.dev.dekatonshivr.echinopsii.net:5672/(2)/amq.ctag.pricesubsfronta",
-            "endpointParentNodeID":4
+            "endpointParentNodeID":5
         },
         {
             "endpointID":6,
