@@ -700,7 +700,8 @@ define(
 
                 for (i = 0, ii = mtxX; i < ii; i++)
                     for (j = 0, jj = mtxY; j < jj; j++)
-                        this.nodeChildNodes.getNodeFromMtx(i, j).moveInit();
+                        if (this.nodeChildNodes.getNodeFromMtx(i, j)!=null)
+                            this.nodeChildNodes.getNodeFromMtx(i, j).moveInit();
 
                 for (i = 0, ii = this.nodeEndpoints.length; i < ii; i++)
                     this.nodeEndpoints[i].moveInit();
@@ -775,7 +776,8 @@ define(
                 nodeSet = this.r.set();
                 for (i = 0, ii = mtxX; i < ii; i++)
                     for (j = 0, jj = mtxY; j < jj; j++)
-                        nodeSet.push(this.nodeChildNodes.getNodeFromMtx(i, j).rect);
+                        if (this.nodeChildNodes.getNodeFromMtx(i, j)!=null)
+                            nodeSet.push(this.nodeChildNodes.getNodeFromMtx(i, j).rect);
 
                 var nodeBBox = nodeSet.getBBox();
 
