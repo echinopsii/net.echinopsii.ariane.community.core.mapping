@@ -1,10 +1,10 @@
 {
     "containers":[
         {
-            "containerID":1,
-            "containerGateURI":"somejmx://feeder.lab01.dev.dekatonshivr.echinopsii.net:feeder_port/etc",
+            "containerID":5,
+            "containerGateURI":"somejmx://middleoffice.lab01.dev.dekatonshivr.echinopsii.net:mo_port/etc",
             "containerCompany":"My Company",
-            "containerProduct":"Feeder APP",
+            "containerProduct":"MiddleOffice APP",
             "containerProperties":{
                 "Network":{
                     "lan":"lab01.lan2",
@@ -36,7 +36,7 @@
             }
         },
         {
-            "containerID":2,
+            "containerID":6,
             "containerGateURI":"somejmx://front1.lab01.dev.dekatonshivr.echinopsii.net:front1_port/etc",
             "containerCompany":"My Company",
             "containerProduct":"FrontOffice APP 1",
@@ -71,7 +71,7 @@
             }
         },
         {
-            "containerID":3,
+            "containerID":7,
             "containerGateURI":"http://rabbitmq.lab01.dev.dekatonshivr.echinopsii.net:15672",
             "containerCompany":"Pivotal",
             "containerProduct":"RabbitMQ",
@@ -105,159 +105,156 @@
                     "hostname":"rabbitmq"
                 }
             }
-        },
-        {
-            "containerID":4,
-            "containerGateURI":"somejmx://front2.lab01.dev.dekatonshivr.echinopsii.net:front2_port/etc",
-            "containerCompany":"My Company",
-            "containerProduct":"FrontOffice APP 2",
-            "containerProperties":{
-                "Network":{
-                    "lan":"lab01.lan2",
-                    "marea":"angelsMind",
-                    "subnetmask":"255.255.255.0",
-                    "type":"LAN",
-                    "subnetip":"192.168.36.0"
-                },
-                "Datacenter":{
-                    "dc":"My little paradise",
-                    "gpsLng":2.246621,
-                    "address":"26 rue de Belfort",
-                    "gpsLat":48.895308,
-                    "town":"Courbevoie",
-                    "country":"France"
-                },
-                "manualCoord":{
-                    "x":100,
-                    "y":400
-                },
-                "supportTeam":{
-                    "name":"FrontAPP",
-                    "color":"E04"
-                },
-                "Server":{
-                    "os":"Fedora 18 - x86_64",
-                    "hostname":"frontA"
-                }
-            }
         }
     ],
     "nodes":[
         {
-            "nodeID":1,
-            "nodeName":"PRICE publisher",
-            "nodeContainerID":1
+            "nodeID":8,
+            "nodeName":"MiddleOff Request Consumer",
+            "nodeContainerID":5
         },
         {
-            "nodeID":2,
-            "nodeName":"PRICE subscriber",
-            "nodeContainerID":2
+            "nodeID":9,
+            "nodeName":"MiddleOff Reply Sender",
+            "nodeContainerID":5
         },
         {
-            "nodeID":3,
+            "nodeID":10,
             "nodeName":"/",
-            "nodeContainerID":3
+            "nodeContainerID":7
         },
         {
-            "nodeID":4,
-            "nodeName":"PRICE exchange",
-            "nodeParentNodeID":3,
-            "nodeContainerID":3
+            "nodeID":11,
+            "nodeName":"RPC exchange",
+            "nodeParentNodeID":10,
+            "nodeContainerID":7
         },
         {
-            "nodeID":5,
-            "nodeName":"FrontOff-01_SUBS_2_PRICE.#",
-            "nodeParentNodeID":3,
-            "nodeContainerID":3
+            "nodeID":12,
+            "nodeName":"Middle Office Req Queue",
+            "nodeParentNodeID":10,
+            "nodeContainerID":7
         },
         {
-            "nodeID":6,
-            "nodeName":"PRICE subscriber",
-            "nodeContainerID":4
+            "nodeID":13,
+            "nodeName":"[AMQP default] exchange",
+            "nodeParentNodeID":10,
+            "nodeContainerID":7
         },
         {
-            "nodeID":7,
-            "nodeName":"FrontOff-02_SUBS_2_PRICE.#",
-            "nodeParentNodeID":3,
-            "nodeContainerID":3
+            "nodeID":14,
+            "nodeName":"Front Office 1 Rep Queue",
+            "nodeParentNodeID":10,
+            "nodeContainerID":7
+        },
+        {
+            "nodeID":15,
+            "nodeName":"FrontOff Request Sender",
+            "nodeContainerID":6
+        },
+        {
+            "nodeID":16,
+            "nodeName":"FrontOff Reply Consumer",
+            "nodeContainerID":6
         }
     ],
     "endpoints":[
         {
-            "endpointID":1,
-            "endpointURL":"amqp-0.9.1://feeder.lab01.dev.dekatonshivr.echinopsii.net:51168/(1)/PRICE",
-            "endpointParentNodeID":1
+            "endpointID":10,
+            "endpointURL":"amqp-0.9.1://front1.lab01.dev.dekatonshivr.echinopsii.net:44243/(1)/RPC",
+            "endpointParentNodeID":15
         },
         {
-            "endpointID":2,
-            "endpointURL":"amqp-0.9.1://rabbitmq.lab01.dev.dekatonshivr.echinopsii.net:5672/(1)/PRICE",
-            "endpointParentNodeID":4
+            "endpointID":11,
+            "endpointURL":"amqp-0.9.1://rabbitmq.lab01.dev.dekatonshivr.echinopsii.net:5672/(1)/RPC",
+            "endpointParentNodeID":11
         },
         {
-            "endpointID":3,
-            "endpointURL":"rabbitmq-binding://rabbitmq.lab01.dev.dekatonshivr.echinopsii.net/PRICE/#",
-            "endpointParentNodeID":4
+            "endpointID":12,
+            "endpointURL":"rabbitmq-binding://rabbitmq.lab01.dev.dekatonshivr.echinopsii.net/RPC/MOQ",
+            "endpointParentNodeID":11
         },
         {
-            "endpointID":4,
-            "endpointURL":"rabbitmq-binding://rabbitmq.lab01.dev.dekatonshivr.echinopsii.net/FrontOff-01_SUBS_2_PRICE.#/#",
-            "endpointParentNodeID":5
+            "endpointID":13,
+            "endpointURL":"rabbitmq-binding://rabbitmq.lab01.dev.dekatonshivr.echinopsii.net/Middle Office Req Queue/MOQ",
+            "endpointParentNodeID":12
         },
         {
-            "endpointID":5,
-            "endpointURL":"amqp-0.9.1://rabbitmq.lab01.dev.dekatonshivr.echinopsii.net:5672/(2)/amq.ctag.pricesubsfront1",
-            "endpointParentNodeID":5
+            "endpointID":14,
+            "endpointURL":"amqp-0.9.1://rabbitmq.lab01.dev.dekatonshivr.echinopsii.net:5672/(1)/amq.ctag.middoffrequeue",
+            "endpointParentNodeID":12
         },
         {
-            "endpointID":6,
-            "endpointURL":"amqp-0.9.1://front1.lab01.dev.dekatonshivr.echinopsii.net:44243/(2)/amq.ctag.pricesubsfront1",
-            "endpointParentNodeID":2
+            "endpointID":15,
+            "endpointURL":"amqp-0.9.1://middleoffice.lab01.dev.dekatonshivr.echinopsii.net:51268/(1)/amq.ctag.middoffrequeue",
+            "endpointParentNodeID":8
         },
         {
-            "endpointID":7,
-            "endpointURL":"rabbitmq-binding://rabbitmq.lab01.dev.dekatonshivr.echinopsii.net/FrontOff-02_SUBS_2_PRICE.#/#",
-            "endpointParentNodeID":7
+            "endpointID":16,
+            "endpointURL":"amqp-0.9.1://middleoffice.lab01.dev.dekatonshivr.echinopsii.net:51268/(1)/[AMQP default]",
+            "endpointParentNodeID":9
         },
         {
-            "endpointID":8,
-            "endpointURL":"amqp-0.9.1://rabbitmq.lab01.dev.dekatonshivr.echinopsii.net:5672/(2)/amq.ctag.pricesubsfront2",
-            "endpointParentNodeID":7
+            "endpointID":17,
+            "endpointURL":"amqp-0.9.1://rabbitmq.lab01.dev.dekatonshivr.echiinopsii.net:5672/(1)/[AMQP default]",
+            "endpointParentNodeID":13
         },
         {
-            "endpointID":9,
-            "endpointURL":"amqp-0.9.1://front2.lab01.dev.dekatonshivr.echinopsii.net:54443/(2)/amq.ctag.pricesubsfront2",
-            "endpointParentNodeID":6
+            "endpointID":18,
+            "endpointURL":"rabbitmq-binding://rabbitmq.lab01.dev.dekatonshivr.echinopsii.net/[AMQP default]/Front1ReqQ",
+            "endpointParentNodeID":13
+        },
+        {
+            "endpointID":19,
+            "endpointURL":"rabbitmq-binding://rabbitmq.lab01.dev.dekatonshivr.echinopsii.net/Front Office 1 Rep Queue/Front1ReqQ",
+            "endpointParentNodeID":14
+        },
+        {
+            "endpointID":20,
+            "endpointURL":"amqp-0.9.1://rabbitmq.lab01.dev.dekatonshivr.echinopsii.net:5672/(1)/amq.ctag.frontoff1repqueue",
+            "endpointParentNodeID":14
+        },
+        {
+            "endpointID":21,
+            "endpointURL":"amqp-0.9.1://front1.lab01.dev.dekatonshivr.echinopsii.net:44243/(1)/amq.ctag.frontoff1repqueue",
+            "endpointParentNodeID":16
         }
     ],
     "links":[
         {
             "linkID":1,
-            "linkSEPID":1,
-            "linkTEPID":2,
+            "linkSEPID":10,
+            "linkTEPID":11,
             "linkTRPID":1
         },
         {
             "linkID":2,
-            "linkSEPID":3,
-            "linkTEPID":4,
+            "linkSEPID":12,
+            "linkTEPID":13,
             "linkTRPID":2
         },
         {
             "linkID":3,
-            "linkSEPID":5,
-            "linkTEPID":6,
+            "linkSEPID":14,
+            "linkTEPID":15,
             "linkTRPID":1
         },
         {
             "linkID":4,
-            "linkSEPID":3,
-            "linkTEPID":7,
-            "linkTRPID":2
+            "linkSEPID":16,
+            "linkTEPID":17,
+            "linkTRPID":1
         },
         {
             "linkID":5,
-            "linkSEPID":8,
-            "linkTEPID":9,
+            "linkSEPID":18,
+            "linkTEPID":19,
+            "linkTRPID":2
+        },
+        {
+            "linkID":6,
+            "linkSEPID":20,
+            "linkTEPID":21,
             "linkTRPID":1
         }
     ],
