@@ -37,9 +37,9 @@
         },
         {
             "containerID":2,
-            "containerGateURI":"somejmx://frontA.lab01.dev.dekatonshivr.echinopsii.net:frontA_port/etc",
+            "containerGateURI":"somejmx://front1.lab01.dev.dekatonshivr.echinopsii.net:front1_port/etc",
             "containerCompany":"My Company",
-            "containerProduct":"FrontOffice APP",
+            "containerProduct":"FrontOffice APP 1",
             "containerProperties":{
                 "Network":{
                     "lan":"lab01.lan2",
@@ -105,6 +105,41 @@
                     "hostname":"rabbitmq"
                 }
             }
+        },
+        {
+            "containerID":4,
+            "containerGateURI":"somejmx://front2.lab01.dev.dekatonshivr.echinopsii.net:front2_port/etc",
+            "containerCompany":"My Company",
+            "containerProduct":"FrontOffice APP 2",
+            "containerProperties":{
+                "Network":{
+                    "lan":"lab01.lan2",
+                    "marea":"angelsMind",
+                    "subnetmask":"255.255.255.0",
+                    "type":"LAN",
+                    "subnetip":"192.168.36.0"
+                },
+                "Datacenter":{
+                    "dc":"My little paradise",
+                    "gpsLng":2.246621,
+                    "address":"26 rue de Belfort",
+                    "gpsLat":48.895308,
+                    "town":"Courbevoie",
+                    "country":"France"
+                },
+                "manualCoord":{
+                    "x":100,
+                    "y":400
+                },
+                "supportTeam":{
+                    "name":"FrontAPP",
+                    "color":"E04"
+                },
+                "Server":{
+                    "os":"Fedora 18 - x86_64",
+                    "hostname":"frontA"
+                }
+            }
         }
     ],
     "nodes":[
@@ -120,7 +155,7 @@
         },
         {
             "nodeID":3,
-            "nodeName":"/ vhost",
+            "nodeName":"/",
             "nodeContainerID":3
         },
         {
@@ -131,7 +166,18 @@
         },
         {
             "nodeID":5,
-            "nodeName":"PRICE.SUBS.FRONTA queue",
+            "nodeName":"FrontOfficeService-01_SUBS_2_PRICE.#",
+            "nodeParentNodeID":3,
+            "nodeContainerID":3
+        },
+        {
+            "nodeID":6,
+            "nodeName":"PRICE subscriber",
+            "nodeContainerID":4
+        },
+        {
+            "nodeID":7,
+            "nodeName":"FrontOfficeService-02_SUBS_2_PRICE.#",
             "nodeParentNodeID":3,
             "nodeContainerID":3
         }
@@ -154,18 +200,33 @@
         },
         {
             "endpointID":4,
-            "endpointURL":"rabbitmq-binding://rabbitmq.lab01.dev.dekatonshivr.echinopsii.net/PRICE.SUBS.FRONTA/#",
+            "endpointURL":"rabbitmq-binding://rabbitmq.lab01.dev.dekatonshivr.echinopsii.net/FrontOfficeService-01_SUBS_2_PRICE.#/#",
             "endpointParentNodeID":5
         },
         {
             "endpointID":5,
-            "endpointURL":"amqp-0.9.1://rabbitmq.lab01.dev.dekatonshivr.echinopsii.net:5672/(2)/amq.ctag.pricesubsfronta",
+            "endpointURL":"amqp-0.9.1://rabbitmq.lab01.dev.dekatonshivr.echinopsii.net:5672/(2)/amq.ctag.pricesubsfront1",
             "endpointParentNodeID":5
         },
         {
             "endpointID":6,
-            "endpointURL":"amqp-0.9.1://frontA.lab01.dev.dekatonshivr.echinopsii.net:44243/(2)/amq.ctag.pricesubsfronta",
+            "endpointURL":"amqp-0.9.1://front1.lab01.dev.dekatonshivr.echinopsii.net:44243/(2)/amq.ctag.pricesubsfront1",
             "endpointParentNodeID":2
+        },
+        {
+            "endpointID":7,
+            "endpointURL":"rabbitmq-binding://rabbitmq.lab01.dev.dekatonshivr.echinopsii.net/FrontOfficeService-02_SUBS_2_PRICE.#/#",
+            "endpointParentNodeID":7
+        },
+        {
+            "endpointID":8,
+            "endpointURL":"amqp-0.9.1://rabbitmq.lab01.dev.dekatonshivr.echinopsii.net:5672/(2)/amq.ctag.pricesubsfront2",
+            "endpointParentNodeID":7
+        },
+        {
+            "endpointID":9,
+            "endpointURL":"amqp-0.9.1://front2.lab01.dev.dekatonshivr.echinopsii.net:54443/(2)/amq.ctag.pricesubsfront2",
+            "endpointParentNodeID":6
         }
     ],
     "links":[
@@ -185,6 +246,18 @@
             "linkID":3,
             "linkSEPID":5,
             "linkTEPID":6,
+            "linkTRPID":1
+        },
+        {
+            "linkID":4,
+            "linkSEPID":3,
+            "linkTEPID":7,
+            "linkTRPID":2
+        },
+        {
+            "linkID":5,
+            "linkSEPID":8,
+            "linkTEPID":9,
             "linkTRPID":1
         }
     ],
