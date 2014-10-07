@@ -530,7 +530,7 @@ define(
                 else
                     this.maxRectWidth = mtxMaxInterspan + mtxMaxSize.width;
 
-                if (this.maxRectHeight == 0)
+                if (mtxMaxSize.height == 0)
                     this.maxRectHeight = this.rectHeight;
                 else
                     this.maxRectHeight = mtxMaxInterspan + mtxMaxSize.height;

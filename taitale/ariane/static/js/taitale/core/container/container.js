@@ -103,7 +103,9 @@ define(
 
             this.minTopLeftX       = 0;
             this.minTopLeftY       = 0;
+            this.maxJailX          = 0;
             this.maxTopLeftX       = 0;
+            this.maxJailY          = 0;
             this.maxTopLeftY       = 0;
             this.isJailed          = false;
 
@@ -417,10 +419,11 @@ define(
                     mtxY        = this.containerNodes.getMtxSize().y;
                 this.rectWidth  = getMaxWidth(this.interSpan*(mtxX+1) + mtxSize.width);
                 this.rectHeight = containerRef.containerHat_.height + this.titleHeight + this.interSpan*(mtxY+1) + mtxSize.height;
-                defineRectPoints(this.X,this.Y);
+                //defineRectPoints(this.X,this.Y);
             };
 
             this.defineMaxSize = function() {
+                defineRectPoints(this.X,this.Y);
                 this.containerNodes.defineContainerContentMaxSize();
                 var mtxMaxSize = this.containerNodes.getContainerContentMaxSize();
                 var nodesCount = this.containerNodes.getMtxCount();
@@ -435,8 +438,8 @@ define(
             this.setMoveJail = function(minJailX, minJailY, maxJailX, maxJailY) {
                 this.minTopLeftX = minJailX;
                 this.minTopLeftY = minJailY;
-                this.maxTopLeftX = maxJailX - this.rectWidth;
-                this.maxTopLeftY = maxJailY - this.rectHeight;
+                this.maxJailX    = maxJailX;
+                this.maxJailY    = maxJailY;
                 this.isJailed    = true;
             };
 
@@ -504,6 +507,7 @@ define(
 
             this.print = function(r_) {
                 this.r = r_;
+
                 this.containerHat_.print(this.r,this.rectTopLeftX + (this.rectWidth/2),this.rectTopLeftY,this.color);
                 this.containerHat_.mousedown(mouseDown);
                 this.containerHat_.drag(containerMove, containerDragger, containerUP);
@@ -553,6 +557,9 @@ define(
                 //menuSet.push(this.text(0,60,"Hide gates").attr(menuFieldTXT));
                 this.menuSet.toBack();
                 this.menuSet.hide();
+
+                this.maxTopLeftX = this.maxJailX - this.rectWidth;
+                this.maxTopLeftY = this.maxJailY - this.rectHeight;
             };
 
             this.toFront = function() {

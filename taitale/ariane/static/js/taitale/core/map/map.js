@@ -255,11 +255,9 @@ define(
                 for (j = 0, jj = nodeRegistry.length; j < jj; j++)
                     nodeRegistry[j].placeIn();
 
-                // second : define container size & max size
-                for (j = 0, jj = containerRegistry.length; j < jj; j++) {
-                    containerRegistry[j].defineSize();
+                // second : define container max size
+                for (j = 0, jj = containerRegistry.length; j < jj; j++)
                     containerRegistry[j].defineMaxSize();
-                }
 
                 // third : layout policy
                 var layout = options.getLayout();
@@ -274,20 +272,17 @@ define(
                         for (j = 0, jj = containerRegistry.length; j < jj; j++)
                             mapmatrix.addContainerZone(containerRegistry[j]);
 
-                        // third 2 : define map objects size and position
-                        //this.updateSize();
+                        // third 2 : define map objects max size and first position
                         mapmatrix.defineMtxZoneSize();
                         mapmatrix.defineMapContentSize();
-                        //this.definePoz();
                         mapmatrix.defineMtxZonePoz(mbrdSpan, zoneSpan);
                         break;
 
                     case dic.mapLayout.MANUAL:
                         mapWidth  = 1800;
                         mapHeight = 800;
-                        for (j = 0, jj = containerRegistry.length; j < jj; j++) {
+                        for (j = 0, jj = containerRegistry.length; j < jj; j++)
                             containerRegistry[j].definedNodesPoz();
-                        }
                         break;
 
                     case dic.mapLayout.TREE:
@@ -317,6 +312,10 @@ define(
             };
 
             this.updateSize = function () {
+                var j, jj;
+                for (j = 0, jj = containerRegistry.length; j < jj; j++)
+                    containerRegistry[j].defineSize();
+
                 var layout = options.getLayout();
                 //noinspection FallthroughInSwitchStatementJS
                 switch (layout) {
