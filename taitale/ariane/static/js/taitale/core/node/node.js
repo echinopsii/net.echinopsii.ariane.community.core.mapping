@@ -603,7 +603,7 @@ define(
                 this.r        = r_;
 
                 this.nodeName = this.r.text(0, 0, this.name).attr(this.txtTitleFont);
-                this.r.FitText(this.nodeName, this.rectWidth-1, 1);
+                this.r.FitText(this.nodeName, this.rectWidth-1, 1.5);
                 this.nodeName.attr({x: this.rectTopLeftX + (this.rectWidth/2), y: this.rectTopLeftY + (this.titleHeight/2)});
                 this.nodeName.mousedown(mouseDown);
                 this.nodeName.drag(nodeMove, nodeDragger, nodeUP);
