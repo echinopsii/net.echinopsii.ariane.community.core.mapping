@@ -615,7 +615,6 @@ define(
                 defineRectPoints(this.rectTopLeftX, this.rectTopLeftY);
 
                 this.nodeMenuTitle = this.r.text(0,10,"Node menu").attr(this.nodeMainTitleTXT);
-
                 if (this.nodeChildNodes.getMtxCount()!=0) {
                     this.menuEditionModeRect = this.r.rect(0,10,this.menuFieldStartEditTitle.width(this.nodeFieldTXT),this.menuFieldStartEditTitle.height(this.nodeFieldTXT));
                     this.menuEditionModeRect.attr({fill: this.color, stroke: this.color, "fill-opacity": 0, "stroke-width": 0});
@@ -649,7 +648,6 @@ define(
                 this.nodeMenuSet.push(this.nodeMenuProperties);
                 this.nodeMenuSet.toBack();
                 this.nodeMenuSet.hide();
-
             };
 
             this.toFront = function() {
