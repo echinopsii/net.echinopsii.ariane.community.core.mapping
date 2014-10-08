@@ -473,7 +473,7 @@ define(
                 };
             };
 
-            this.defineMtxContainerPoz = function(topLeftX, topLeftY, lbrdSpan, contSpan, lanwidth, lanheight) {
+            this.defineMtxContainerFirstPoz = function(topLeftX, topLeftY, lbrdSpan, contSpan, lanwidth, lanheight) {
                 var curContHeight = topLeftY;
                 for (var i = 0, ii = nbLines; i < ii; i++) {
                     var curContWidth  = topLeftX, maxContHeight=0;
@@ -492,7 +492,7 @@ define(
                 }
             };
 
-            this.defineLanContentSize = function() {
+            this.defineLanContentMaxSize = function() {
                 var tmpHeight, tmpWidth, block;
                 var i, ii, j, jj;
                 for (i = 0, ii = nbColumns; i < ii ; i++) {
@@ -515,6 +515,13 @@ define(
                     if (tmpWidth > contentWidth)
                         contentWidth = tmpWidth;
                 }
+            };
+
+            this.getLanContentMaxSize = function () {
+                return {
+                    width  : contentWidth,
+                    height : contentHeight
+                };
             };
 
             this.getLanContentSize = function () {

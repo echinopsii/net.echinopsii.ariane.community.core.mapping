@@ -591,8 +591,8 @@ define(
                         if (block!=FREE && block!=LOCKED) {
                             var size;
                             if (block.type===LAN) {
-                                block.obj.defineSize();
-                                size = block.obj.getLanSize();
+                                block.obj.defineMaxSize();
+                                size = block.obj.getLanMaxSize();
                             } else if (block.type===BUS){
                                 size = block.obj.getBusSize();
                             }
@@ -611,12 +611,10 @@ define(
             };
 
             this.defineAreaContentMaxSize = function() {
-                for (var j = 0, jj = nbLines; j < jj; j++) {
+                for (var j = 0, jj = nbLines; j < jj; j++)
                     contentHeight = contentHeight + lineMaxHeight[j];
-                }
-                for (j = 0, jj = nbColumns; j < jj; j++) {
+                for (j = 0, jj = nbColumns; j < jj; j++)
                     contentWidth = contentWidth + columnMaxWidth[j];
-                }
             };
 
             this.getAreaContentSize = function() {
@@ -648,14 +646,14 @@ define(
                                 );
                                 block.obj.setMoveJail(topLeftX+abrdSpan, topLeftY+abrdSpan, topLeftX+areawidth-abrdSpan, topLeftY+areaheight-abrdSpan);
                             } else if (block.type===LAN){
-                                if (block.obj.getLanSize().width < columnMaxWidth[i]) {
+                                if (block.obj.getLanMaxSize().width < columnMaxWidth[i]) {
                                     block.obj.setTopLeftCoord(
-                                        abrdSpan + lanSpan*i + curContWidth + (columnMaxWidth[i]-block.obj.getLanSize().width)/2,
+                                        abrdSpan + lanSpan*i + curContWidth + (columnMaxWidth[i]-block.obj.getLanMaxSize().width)/2,
                                         abrdSpan + lanSpan*j + curContHeight
                                     );
                                 } else block.obj.setTopLeftCoord(abrdSpan + lanSpan*i + curContWidth , abrdSpan + lanSpan*j + curContHeight);
                                 block.obj.setMoveJail(topLeftX+abrdSpan, topLeftY+abrdSpan, topLeftX+areawidth-abrdSpan, topLeftY+areaheight-abrdSpan);
-                                block.obj.definePoz();
+                                block.obj.defineFirstPoz();
                             }
                         }
                         curContHeight += lineMaxHeight[j];
