@@ -243,17 +243,17 @@ define(
                 this.armatrix.addContainerLanAndBus(container);
             };
 
-            this.defineSize = function() {
-                this.armatrix.defineMtxObjSize();
-                this.armatrix.defineAreaContentSize();
+            this.defineMaxSize = function() {
+                this.armatrix.defineMtxObjMaxSize();
+                this.armatrix.defineAreaContentMaxSize();
 
-                var contentAreaSize = this.armatrix.getAreaContentSize();
+                var contentAreaSize = this.armatrix.getAreaContentMaxSize();
                 this.areawidth  = this.abrdSpan*2 + (this.armatrix.getMtxSize().x-1)*this.lanSpan + contentAreaSize.width;
                 this.areaheight = this.abrdSpan*2 + (this.armatrix.getMtxSize().y-1)*this.lanSpan + contentAreaSize.height;
             };
 
-            this.definePoz = function() {
-                this.armatrix.defineMtxObjPoz(this.topLeftX, this.topLeftY, this.abrdSpan, this.lanSpan, this.areawidth, this.areaheight);
+            this.defineFirstPoz = function() {
+                this.armatrix.defineMtxObjFirstPoz(this.topLeftX, this.topLeftY, this.abrdSpan, this.lanSpan, this.areawidth, this.areaheight);
             };
 
             this.getAreaDef = function() {
@@ -261,6 +261,13 @@ define(
             };
 
             this.getAreaSize = function() {
+                return {
+                    width  : this.areawidth,
+                    height : this.areaheight
+                };
+            };
+
+            this.getAreaMaxSize = function() {
                 return {
                     width  : this.areawidth,
                     height : this.areaheight

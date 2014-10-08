@@ -584,7 +584,7 @@ define(
                 }
             };
 
-            this.defineMtxObjSize = function() {
+            this.defineMtxObjMaxSize = function() {
                 for (var i = 0, ii = nbColumns; i < ii ; i++) {
                     for (var j = 0, jj = nbLines; j < jj ; j++ ) {
                         var block = rows[i][j];
@@ -610,7 +610,7 @@ define(
                 }
             };
 
-            this.defineAreaContentSize = function() {
+            this.defineAreaContentMaxSize = function() {
                 for (var j = 0, jj = nbLines; j < jj; j++) {
                     contentHeight = contentHeight + lineMaxHeight[j];
                 }
@@ -626,7 +626,14 @@ define(
                 };
             };
 
-            this.defineMtxObjPoz = function(topLeftX, topLeftY, abrdSpan, lanSpan, areawidth, areaheight) {
+            this.getAreaContentMaxSize = function() {
+                return {
+                    width : contentWidth,
+                    height: contentHeight
+                };
+            };
+
+            this.defineMtxObjFirstPoz = function(topLeftX, topLeftY, abrdSpan, lanSpan, areawidth, areaheight) {
                 var i, ii, j, jj;
                 var curContWidth  = topLeftX;
                 for (i = 0, ii = nbColumns; i < ii; i++) {

@@ -136,41 +136,41 @@ define(
             this.defineMtxAreaMaxSize = function() {
                 var i, ii;
                 for (i = 0, ii = rows[3][0]; i < ii ; i++ ) {
-                    rows[0][i].defineSize();
-                    splitter.setWanLineHeight(rows[0][i].getAreaSize().height);
+                    rows[0][i].defineMaxSize();
+                    splitter.setWanLineHeight(rows[0][i].getAreaMaxSize().height);
                 }
                 for (i = 0, ii = rows[3][1]; i < ii ; i++ ) {
-                    rows[1][i].defineSize();
-                    splitter.setManLineHeight(rows[1][i].getAreaSize().height);
+                    rows[1][i].defineMaxSize();
+                    splitter.setManLineHeight(rows[1][i].getAreaMaxSize().height);
                 }
                 for (i = 0, ii = rows[3][2]; i < ii ; i++ ) {
-                    rows[2][i].defineSize();
-                    splitter.setLanLineHeight(rows[2][i].getAreaSize().height);
+                    rows[2][i].defineMaxSize();
+                    splitter.setLanLineHeight(rows[2][i].getAreaMaxSize().height);
                 }
             };
 
             this.defineDCContentMaxSize = function() {
                 var tmpWidth = 0, i, ii;
                 for (i = 0, ii = rows[3][0]; i < ii ; i++ )
-                    tmpWidth = tmpWidth + rows[0][i].getAreaSize().width;
+                    tmpWidth = tmpWidth + rows[0][i].getAreaMaxSize().width;
                 if (tmpWidth > contentWidth)
                     contentWidth = tmpWidth;
 
                 tmpWidth=0;
                 for (i = 0, ii = rows[3][1]; i < ii ; i++ )
-                    tmpWidth = tmpWidth + rows[1][i].getAreaSize().width;
+                    tmpWidth = tmpWidth + rows[1][i].getAreaMaxSize().width;
                 if (tmpWidth > contentWidth)
                     contentWidth = tmpWidth;
 
                 tmpWidth=0;
                 for (i = 0, ii = rows[3][2]; i < ii ; i++ )
-                    tmpWidth = tmpWidth + rows[2][i].getAreaSize().width;
+                    tmpWidth = tmpWidth + rows[2][i].getAreaMaxSize().width;
                 if (tmpWidth > contentWidth)
                     contentWidth = tmpWidth;
 
                 var tmpHeight = 0, rowHeight;
                 for (i = 0, ii = rows[3][0]; i < ii ; i++ ) {
-                    rowHeight = rows[0][i].getAreaSize().height;
+                    rowHeight = rows[0][i].getAreaMaxSize().height;
                     if (rowHeight > tmpHeight)
                         tmpHeight = rowHeight;
                 }
@@ -178,7 +178,7 @@ define(
 
                 tmpHeight = 0;
                 for (i = 0, ii = rows[3][1]; i < ii ; i++ ) {
-                    rowHeight = rows[1][i].getAreaSize().height;
+                    rowHeight = rows[1][i].getAreaMaxSize().height;
                     if (rowHeight > tmpHeight)
                         tmpHeight = rowHeight;
                 }
@@ -186,7 +186,7 @@ define(
 
                 tmpHeight = 0;
                 for (i = 0, ii = rows[3][2]; i < ii ; i++ ) {
-                    rowHeight = rows[2][i].getAreaSize().height;
+                    rowHeight = rows[2][i].getAreaMaxSize().height;
                     if (rowHeight > tmpHeight)
                         tmpHeight = rowHeight;
                 }
@@ -215,15 +215,15 @@ define(
 
                 var aHeight, aWidth;
                 for (i = 0, ii = rows[3][0]; i < ii ; i++ ) {
-                    aHeight = rows[0][i].getAreaSize().height;
-                    aWidth  = rows[0][i].getAreaSize().width;
+                    aHeight = rows[0][i].getAreaMaxSize().height;
+                    aWidth  = rows[0][i].getAreaMaxSize().width;
                     if (ii == 1)
                         rows[0][i].setTopLeftCoord(cursorWidth + (dcWidth/2 - aWidth/2), dbrdSpan + cursorHeight);
                     else {
                         rows[0][i].setTopLeftCoord(dbrdSpan + areaSpan*i + cursorWidth , dbrdSpan + cursorHeight);
                         cursorWidth = cursorWidth + aWidth;
                     }
-                    rows[0][i].definePoz();
+                    rows[0][i].defineFirstPoz();
                     if (tmpAHeight < aHeight)
                         tmpAHeight = aHeight;
                 }
@@ -238,15 +238,15 @@ define(
                 cursorWidth  = dcTopLeftX;
                 tmpAHeight    = 0;
                 for (i = 0, ii = rows[3][1]; i < ii ; i++ ) {
-                    aHeight = rows[1][i].getAreaSize().height;
-                    aWidth  = rows[1][i].getAreaSize().width;
+                    aHeight = rows[1][i].getAreaMaxSize().height;
+                    aWidth  = rows[1][i].getAreaMaxSize().width;
                     if (ii == 1)
                         rows[1][i].setTopLeftCoord(cursorWidth + (dcWidth/2 - aWidth/2), dbrdSpan + cursorHeight);
                     else {
                         rows[1][i].setTopLeftCoord(dbrdSpan + areaSpan*i + cursorWidth , dbrdSpan + cursorHeight);
                         cursorWidth = cursorWidth + aWidth;
                     }
-                    rows[1][i].definePoz();
+                    rows[1][i].defineFirstPoz();
                     if (tmpAHeight < aHeight)
                         tmpAHeight = aHeight;
                 }
@@ -258,14 +258,14 @@ define(
 
                 cursorWidth  = dcTopLeftX;
                 for (i = 0, ii = rows[3][2]; i < ii ; i++ ) {
-                    aWidth  = rows[2][i].getAreaSize().width;
+                    aWidth  = rows[2][i].getAreaMaxSize().width;
                     if (ii == 1)
                         rows[2][i].setTopLeftCoord(cursorWidth + (dcWidth/2 - aWidth/2), dbrdSpan + cursorHeight);
                     else {
                         rows[2][i].setTopLeftCoord(dbrdSpan + areaSpan*i + cursorWidth , dbrdSpan + cursorHeight);
                         cursorWidth = cursorWidth + aWidth;
                     }
-                    rows[2][i].definePoz();
+                    rows[2][i].defineFirstPoz();
                 }
                 areaJailYMin = cursorHeight+dbrdSpan;
                 areaJailYMax = cursorHeight+dbrdSpan+splitter.getLanLineHeight();
