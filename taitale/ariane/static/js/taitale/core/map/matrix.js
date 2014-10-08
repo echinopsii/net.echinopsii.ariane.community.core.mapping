@@ -90,17 +90,15 @@ define(
                 var i, ii, j, jj;
                 for (i = 0, ii = nbColumns; i < ii ; i++) {
                     var tmpHeight = 0;
-                    for (j = 0, jj = nbLines; j < jj; j++) {
-                        tmpHeight = tmpHeight + rows[j][i].getZoneSize().height;
-                    }
+                    for (j = 0, jj = nbLines; j < jj; j++)
+                        tmpHeight = tmpHeight + rows[j][i].getZoneMaxSize().height;
                     if (tmpHeight > contentHeight)
                         contentHeight=tmpHeight;
                 }
                 for (i = 0, ii = nbLines; i < ii ; i++) {
                     var tmpWidth = 0;
-                    for (j = 0, jj = nbColumns; j < jj; j++) {
-                        tmpWidth = tmpWidth + rows[i][j].getZoneSize().width;
-                    }
+                    for (j = 0, jj = nbColumns; j < jj; j++)
+                        tmpWidth = tmpWidth + rows[i][j].getZoneMaxSize().width;
                     if (tmpWidth > contentWidth)
                         contentWidth = tmpWidth;
                 }
@@ -121,9 +119,9 @@ define(
                     for (j = 0, jj = nbLines; j < jj; j++) {
                         rows[j][i].setTopLeftCoord(borderSpan+zoneSpan*i+cursorWidth,borderSpan+zoneSpan*j+cursorHeight);
                         rows[j][i].defineFirstPoz();
-                        cursorHeight = cursorHeight + rows[j][i].getZoneSize().height;
+                        cursorHeight = cursorHeight + rows[j][i].getZoneMaxSize().height;
                     }
-                    cursorWidth = cursorWidth + rows[0][i].getZoneSize().width;
+                    cursorWidth = cursorWidth + rows[0][i].getZoneMaxSize().width;
                 }
             };
 
