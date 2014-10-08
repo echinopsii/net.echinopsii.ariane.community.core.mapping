@@ -214,21 +214,21 @@ define(
             };
 
             this.defineZoneMaxSize = function() {
-                this.dcmatrix.defineDCContentSize();
+                this.dcmatrix.defineDCContentMaxSize();
 
-                var contentDCSize = this.dcmatrix.getDCContentSize();
+                var contentDCSize = this.dcmatrix.getDCContentMaxSize();
                 this.dcwidth  = this.dbrdSpan*2 + (this.dcmatrix.getMtxSize().x-1)*this.areaSpan + contentDCSize.width;
                 this.dcheight = this.dbrdSpan*2 + (this.dcmatrix.getMtxSize().y-1)*this.areaSpan + contentDCSize.height;
             };
 
             this.defineZoneObjectsMaxSize = function() {
-                this.dcmatrix.defineMtxAreaSize();
+                this.dcmatrix.defineMtxAreaMaxSize();
             };
 
             this.defineFirstPoz = function() {
-                this.dcmatrix.defineMtxAreaPoz(this.topLeftX,this.topLeftY,this.dcwidth,this.dbrdSpan,this.areaSpan);
+                this.dcmatrix.defineMtxAreaFirstPoz(this.topLeftX,this.topLeftY,this.dcwidth,this.dbrdSpan,this.areaSpan);
                 this.dcsplitter = new datacenterSplitter(this);
-                this.dcsplitter.definePoz();
+                this.dcsplitter.defineFirstPoz();
             };
 
             this.getGeoDCLoc = function() {
@@ -242,6 +242,13 @@ define(
 
             this.geoDCLocEqual = function (geoDCLoc_) {
                 return (this.geoDCLoc.dc==geoDCLoc_.dc);
+            };
+
+            this.getZoneMaxSize = function() {
+                return {
+                    width  : this.dcwidth,
+                    height : this.dcheight
+                };
             };
 
             this.getZoneSize = function() {

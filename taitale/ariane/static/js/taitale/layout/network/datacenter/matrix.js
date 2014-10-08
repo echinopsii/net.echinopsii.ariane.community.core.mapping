@@ -37,63 +37,53 @@ define(
                 options       = options_;
 
             this.printMtx = function(r) {
-                for (var i = 0, ii = rows[3][0]; i < ii ; i++ ) {
+                var i, ii;
+                for (i = 0, ii = rows[3][0]; i < ii ; i++ )
                     rows[0][i].print(r);
-                }
-                for (var i = 0, ii = rows[3][1]; i < ii ; i++ ) {
+                for (i = 0, ii = rows[3][1]; i < ii ; i++ )
                     rows[1][i].print(r);
-                }
-                for (var i = 0, ii = rows[3][2]; i < ii ; i++ ) {
+                for (i = 0, ii = rows[3][2]; i < ii ; i++ )
                     rows[2][i].print(r);
-                }
             };
 
             this.displayArea = function(display) {
-                for (var i = 0, ii = rows[3][0]; i < ii ; i++ ) {
+                var i, ii;
+                for (i = 0, ii = rows[3][0]; i < ii ; i++ )
                     rows[0][i].displayArea(display);
-                }
-                for (var i = 0, ii = rows[3][1]; i < ii ; i++ ) {
+                for (i = 0, ii = rows[3][1]; i < ii ; i++ )
                     rows[1][i].displayArea(display);
-                }
-                for (var i = 0, ii = rows[3][2]; i < ii ; i++ ) {
+                for (i = 0, ii = rows[3][2]; i < ii ; i++ )
                     rows[2][i].displayArea(display);
-                }
             };
 
             this.displayArea = function(display) {
-                for (var i = 0, ii = rows[3][0]; i < ii ; i++ ) {
+                var i, ii;
+                for (i = 0, ii = rows[3][0]; i < ii ; i++ )
                     rows[0][i].displayArea(display);
-                }
-                for (var i = 0, ii = rows[3][1]; i < ii ; i++ ) {
+                for (i = 0, ii = rows[3][1]; i < ii ; i++ )
                     rows[1][i].displayArea(display);
-                }
-                for (var i = 0, ii = rows[3][2]; i < ii ; i++ ) {
+                for (i = 0, ii = rows[3][2]; i < ii ; i++ )
                     rows[2][i].displayArea(display);
-                }
             };
 
             this.displayLan = function(display) {
-                for (var i = 0, ii = rows[3][0]; i < ii ; i++ ) {
+                var i, ii;
+                for (i = 0, ii = rows[3][0]; i < ii ; i++ )
                     rows[0][i].displayLan(display);
-                }
-                for (var i = 0, ii = rows[3][1]; i < ii ; i++ ) {
+                for (i = 0, ii = rows[3][1]; i < ii ; i++ )
                     rows[1][i].displayLan(display);
-                }
-                for (var i = 0, ii = rows[3][2]; i < ii ; i++ ) {
+                for (i = 0, ii = rows[3][2]; i < ii ; i++ )
                     rows[2][i].displayLan(display);
-                }
             };
 
             this.isElemMoving = function() {
-                for (var i = 0, ii = rows[3][0]; i < ii ; i++ ) {
+                var i, ii;
+                for (i = 0, ii = rows[3][0]; i < ii ; i++ )
                     rows[0][i].isElemMoving();
-                }
-                for (var i = 0, ii = rows[3][1]; i < ii ; i++ ) {
+                for (i = 0, ii = rows[3][1]; i < ii ; i++ )
                     rows[1][i].isElemMoving();
-                }
-                for (var i = 0, ii = rows[3][2]; i < ii ; i++ ) {
+                for (i = 0, ii = rows[3][2]; i < ii ; i++ )
                     rows[2][i].isElemMoving();
-                }
             };
 
             this.getMtxSize = function() {
@@ -109,27 +99,27 @@ define(
 
             this.getWanMtxSize = function() {
                 return rows[3][0];
-            }
+            };
 
             this.getManMtxSize = function() {
                 return rows[3][1];
-            }
+            };
 
             this.getLanMtxSize = function() {
                 return rows[3][2];
-            }
+            };
 
             this.getAreaFromWanMtx = function(x) {
                 return rows[0][x];
-            }
+            };
 
             this.getAreaFromManMtx = function(x) {
                 return rows[1][x];
-            }
+            };
 
             this.getAreaFromLanMtx = function(x) {
                 return rows[2][x];
-            }
+            };
 
             this.getYOffset = function() {
                 var yoffset = 0;
@@ -143,67 +133,64 @@ define(
                 return yoffset;
             };
 
-            this.defineMtxAreaSize = function() {
-                for (var i = 0, ii = rows[3][0]; i < ii ; i++ ) {
+            this.defineMtxAreaMaxSize = function() {
+                var i, ii;
+                for (i = 0, ii = rows[3][0]; i < ii ; i++ ) {
                     rows[0][i].defineSize();
                     splitter.setWanLineHeight(rows[0][i].getAreaSize().height);
                 }
-                for (var i = 0, ii = rows[3][1]; i < ii ; i++ ) {
+                for (i = 0, ii = rows[3][1]; i < ii ; i++ ) {
                     rows[1][i].defineSize();
                     splitter.setManLineHeight(rows[1][i].getAreaSize().height);
                 }
-                for (var i = 0, ii = rows[3][2]; i < ii ; i++ ) {
+                for (i = 0, ii = rows[3][2]; i < ii ; i++ ) {
                     rows[2][i].defineSize();
                     splitter.setLanLineHeight(rows[2][i].getAreaSize().height);
                 }
             };
 
-            this.defineDCContentSize = function() {
-                var tmpWidth = 0;
-                for (var i = 0, ii = rows[3][0]; i < ii ; i++ ) {
+            this.defineDCContentMaxSize = function() {
+                var tmpWidth = 0, i, ii;
+                for (i = 0, ii = rows[3][0]; i < ii ; i++ )
                     tmpWidth = tmpWidth + rows[0][i].getAreaSize().width;
-                }
                 if (tmpWidth > contentWidth)
                     contentWidth = tmpWidth;
 
                 tmpWidth=0;
-                for (var i = 0, ii = rows[3][1]; i < ii ; i++ ) {
+                for (i = 0, ii = rows[3][1]; i < ii ; i++ )
                     tmpWidth = tmpWidth + rows[1][i].getAreaSize().width;
-                }
                 if (tmpWidth > contentWidth)
                     contentWidth = tmpWidth;
 
                 tmpWidth=0;
-                for (var i = 0, ii = rows[3][2]; i < ii ; i++ ) {
+                for (i = 0, ii = rows[3][2]; i < ii ; i++ )
                     tmpWidth = tmpWidth + rows[2][i].getAreaSize().width;
-                }
                 if (tmpWidth > contentWidth)
                     contentWidth = tmpWidth;
 
-                var tmpHeight = 0;
-                for (var i = 0, ii = rows[3][0]; i < ii ; i++ ) {
-                    var rowHeight = rows[0][i].getAreaSize().height;
+                var tmpHeight = 0, rowHeight;
+                for (i = 0, ii = rows[3][0]; i < ii ; i++ ) {
+                    rowHeight = rows[0][i].getAreaSize().height;
                     if (rowHeight > tmpHeight)
                         tmpHeight = rowHeight;
                 }
                 contentHeight += tmpHeight;
 
-                var tmpHeight = 0;
-                for (var i = 0, ii = rows[3][1]; i < ii ; i++ ) {
-                    var rowHeight = rows[1][i].getAreaSize().height;
+                tmpHeight = 0;
+                for (i = 0, ii = rows[3][1]; i < ii ; i++ ) {
+                    rowHeight = rows[1][i].getAreaSize().height;
                     if (rowHeight > tmpHeight)
                         tmpHeight = rowHeight;
                 }
                 contentHeight += ((tmpHeight!=0)? tmpHeight : splitter.getManLineHeight());
 
-                var tmpHeight = 0;
-                for (var i = 0, ii = rows[3][2]; i < ii ; i++ ) {
-                    var rowHeight = rows[2][i].getAreaSize().height;
+                tmpHeight = 0;
+                for (i = 0, ii = rows[3][2]; i < ii ; i++ ) {
+                    rowHeight = rows[2][i].getAreaSize().height;
                     if (rowHeight > tmpHeight)
                         tmpHeight = rowHeight;
                 }
                 contentHeight = contentHeight + tmpHeight;
-
             };
 
             this.getDCContentSize = function() {
@@ -213,14 +200,23 @@ define(
                 };
             };
 
-            this.defineMtxAreaPoz = function(dcTopLeftX,dcTopLeftY,dcWidth,dbrdSpan,areaSpan) {
+            this.getDCContentMaxSize = function() {
+                return {
+                    width : contentWidth,
+                    height: contentHeight
+                };
+            };
+
+            this.defineMtxAreaFirstPoz = function(dcTopLeftX,dcTopLeftY,dcWidth,dbrdSpan,areaSpan) {
                 var cursorHeight = dcTopLeftY,
                     cursorWidth  = dcTopLeftX,
-                    tmpAHeight    = 0;
+                    tmpAHeight    = 0,
+                    i, ii;
 
-                for (var i = 0, ii = rows[3][0]; i < ii ; i++ ) {
-                    var aHeight = rows[0][i].getAreaSize().height,
-                        aWidth  = rows[0][i].getAreaSize().width;
+                var aHeight, aWidth;
+                for (i = 0, ii = rows[3][0]; i < ii ; i++ ) {
+                    aHeight = rows[0][i].getAreaSize().height;
+                    aWidth  = rows[0][i].getAreaSize().width;
                     if (ii == 1)
                         rows[0][i].setTopLeftCoord(cursorWidth + (dcWidth/2 - aWidth/2), dbrdSpan + cursorHeight);
                     else {
@@ -236,15 +232,14 @@ define(
                 var areaJailYMin = dcTopLeftY+dbrdSpan;
                 var areaJailXMax = dcTopLeftX+dcWidth-dbrdSpan;
                 var areaJailYMax = dcTopLeftY+dbrdSpan+splitter.getWanLineHeight();
-                for (var i = 0, ii = rows[3][0]; i < ii ; i++ ) {
+                for (i = 0, ii = rows[3][0]; i < ii ; i++ )
                     rows[0][i].setMoveJail(areaJailXMin,areaJailYMin,areaJailXMax,areaJailYMax);
-                }
 
                 cursorWidth  = dcTopLeftX;
                 tmpAHeight    = 0;
-                for (var i = 0, ii = rows[3][1]; i < ii ; i++ ) {
-                    var aHeight = rows[1][i].getAreaSize().height,
-                        aWidth  = rows[1][i].getAreaSize().width;
+                for (i = 0, ii = rows[3][1]; i < ii ; i++ ) {
+                    aHeight = rows[1][i].getAreaSize().height;
+                    aWidth  = rows[1][i].getAreaSize().width;
                     if (ii == 1)
                         rows[1][i].setTopLeftCoord(cursorWidth + (dcWidth/2 - aWidth/2), dbrdSpan + cursorHeight);
                     else {
@@ -258,13 +253,12 @@ define(
                 areaJailYMin = cursorHeight+dbrdSpan;
                 areaJailYMax = cursorHeight+dbrdSpan+splitter.getManLineHeight();
                 cursorHeight += ((tmpAHeight!=0)? tmpAHeight : splitter.getManLineHeight())+ areaSpan;
-                for (var i = 0, ii = rows[3][1]; i < ii ; i++ ) {
+                for (i = 0, ii = rows[3][1]; i < ii ; i++ )
                     rows[1][i].setMoveJail(areaJailXMin,areaJailYMin,areaJailXMax,areaJailYMax);
-                }
 
                 cursorWidth  = dcTopLeftX;
-                for (var i = 0, ii = rows[3][2]; i < ii ; i++ ) {
-                    var aWidth  = rows[2][i].getAreaSize().width;
+                for (i = 0, ii = rows[3][2]; i < ii ; i++ ) {
+                    aWidth  = rows[2][i].getAreaSize().width;
                     if (ii == 1)
                         rows[2][i].setTopLeftCoord(cursorWidth + (dcWidth/2 - aWidth/2), dbrdSpan + cursorHeight);
                     else {
@@ -275,9 +269,8 @@ define(
                 }
                 areaJailYMin = cursorHeight+dbrdSpan;
                 areaJailYMax = cursorHeight+dbrdSpan+splitter.getLanLineHeight();
-                for (var i = 0, ii = rows[3][2]; i < ii ; i++ ) {
+                for (i = 0, ii = rows[3][2]; i < ii ; i++ )
                     rows[2][i].setMoveJail(areaJailXMin,areaJailYMin,areaJailXMax,areaJailYMax);
-                }
             };
 
             this.addContainerArea = function(container) {
@@ -331,7 +324,7 @@ define(
                 // finally push the lan
                 curarea.pushContainerLan(container);
             };
-        };
+        }
 
         return datacenterMatrix;
     });
