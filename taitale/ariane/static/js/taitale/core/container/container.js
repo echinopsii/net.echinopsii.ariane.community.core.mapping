@@ -571,6 +571,8 @@ define(
             };
 
             this.changeInit = function() {
+                this.maxTopLeftX = this.maxJailX - this.rectWidth;
+                this.maxTopLeftY = this.maxJailY - this.rectHeight;
                 this.extrx = this.rect.attr("x");
                 this.extry = this.rect.attr("y");
                 this.extt0x = this.containerName.attr("x");
