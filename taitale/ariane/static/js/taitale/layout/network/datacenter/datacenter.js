@@ -213,7 +213,7 @@ define(
                 this.dcmatrix.addContainerArea(container);
             };
 
-            this.defineZoneSize = function() {
+            this.defineZoneMaxSize = function() {
                 this.dcmatrix.defineDCContentSize();
 
                 var contentDCSize = this.dcmatrix.getDCContentSize();
@@ -221,11 +221,11 @@ define(
                 this.dcheight = this.dbrdSpan*2 + (this.dcmatrix.getMtxSize().y-1)*this.areaSpan + contentDCSize.height;
             };
 
-            this.defineZoneObjectsSize = function() {
+            this.defineZoneObjectsMaxSize = function() {
                 this.dcmatrix.defineMtxAreaSize();
             };
 
-            this.definePoz = function() {
+            this.defineFirstPoz = function() {
                 this.dcmatrix.defineMtxAreaPoz(this.topLeftX,this.topLeftY,this.dcwidth,this.dbrdSpan,this.areaSpan);
                 this.dcsplitter = new datacenterSplitter(this);
                 this.dcsplitter.definePoz();

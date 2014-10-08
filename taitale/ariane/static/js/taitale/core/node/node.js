@@ -612,6 +612,7 @@ define(
                 this.rect.attr({fill: this.color, stroke: this.color, "fill-opacity": this.oUnselected, "stroke-width": this.strokeWidth});
                 this.rect.mousedown(mouseDown);
                 this.rect.drag(nodeMove, nodeDragger, nodeUP);
+                defineRectPoints(this.rectTopLeftX, this.rectTopLeftY);
 
                 this.nodeMenuTitle = this.r.text(0,10,"Node menu").attr(this.nodeMainTitleTXT);
 

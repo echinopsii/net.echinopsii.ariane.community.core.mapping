@@ -76,21 +76,17 @@ define(
                         rows[j][i].setEditionMode(editionMode);
             };
 
-            this.defineMtxZoneSize = function() {
+            this.defineMtxZoneMaxSize = function() {
                 var i, ii, j, jj;
-                for (i = 0, ii = nbColumns; i < ii ; i++) {
-                    for (j = 0, jj = nbLines; j < jj ; j++ ) {
-                        rows[j][i].defineZoneObjectsSize();
-                    }
-                }
-                for (i = 0, ii = nbColumns; i < ii ; i++) {
-                    for (j = 0, jj = nbLines; j < jj ; j++ ) {
-                        rows[j][i].defineZoneSize();
-                    }
-                }
+                for (i = 0, ii = nbColumns; i < ii ; i++)
+                    for (j = 0, jj = nbLines; j < jj ; j++ )
+                        rows[j][i].defineZoneObjectsMaxSize();
+                for (i = 0, ii = nbColumns; i < ii ; i++)
+                    for (j = 0, jj = nbLines; j < jj ; j++ )
+                        rows[j][i].defineZoneMaxSize();
             };
 
-            this.defineMapContentSize = function() {
+            this.defineMapContentMaxSize = function() {
                 var i, ii, j, jj;
                 for (i = 0, ii = nbColumns; i < ii ; i++) {
                     var tmpHeight = 0;
@@ -117,14 +113,14 @@ define(
                 };
             };
 
-            this.defineMtxZonePoz = function(borderSpan, zoneSpan) {
+            this.defineMtxZoneFirstPoz = function(borderSpan, zoneSpan) {
                 var cursorWidth  = 0;
                 var i, ii, j, jj;
                 for (i = 0, ii = nbColumns; i < ii; i++) {
                     var cursorHeight = 0;
                     for (j = 0, jj = nbLines; j < jj; j++) {
                         rows[j][i].setTopLeftCoord(borderSpan+zoneSpan*i+cursorWidth,borderSpan+zoneSpan*j+cursorHeight);
-                        rows[j][i].definePoz();
+                        rows[j][i].defineFirstPoz();
                         cursorHeight = cursorHeight + rows[j][i].getZoneSize().height;
                     }
                     cursorWidth = cursorWidth + rows[0][i].getZoneSize().width;

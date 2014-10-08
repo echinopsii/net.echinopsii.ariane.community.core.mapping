@@ -273,9 +273,9 @@ define(
                             mapmatrix.addContainerZone(containerRegistry[j]);
 
                         // third 2 : define map objects max size and first position
-                        mapmatrix.defineMtxZoneSize();
-                        mapmatrix.defineMapContentSize();
-                        mapmatrix.defineMtxZonePoz(mbrdSpan, zoneSpan);
+                        mapmatrix.defineMtxZoneMaxSize();
+                        mapmatrix.defineMapContentMaxSize();
+                        mapmatrix.defineMtxZoneFirstPoz(mbrdSpan, zoneSpan);
                         break;
 
                     case dic.mapLayout.MANUAL:

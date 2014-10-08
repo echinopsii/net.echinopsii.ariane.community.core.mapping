@@ -560,6 +560,7 @@ define(
 
                 this.maxTopLeftX = this.maxJailX - this.rectWidth;
                 this.maxTopLeftY = this.maxJailY - this.rectHeight;
+                defineRectPoints(this.rectTopLeftX, this.rectTopLeftY);
             };
 
             this.toFront = function() {
