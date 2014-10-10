@@ -492,6 +492,52 @@ define(
                 }
             };
 
+            this.defineMtxContainerFinalPoz = function(topLeftX, topLeftY, lbrdSpan, contSpan, lanwidth, lanheight) {
+                var curContHeight = topLeftY;
+                for (var i = 0, ii = nbLines; i < ii; i++) {
+                    var curContWidth  = topLeftX, maxContHeight=0;
+                    for (var j = 0, jj = nbColumns; j < jj; j++) {
+                        var block = rows[j][i];
+                        if (block!=null && block!==FREE && block!==LOCKED) {
+                            block.setTopLeftCoord(lbrdSpan + contSpan*j + curContWidth , lbrdSpan + contSpan*i + curContHeight);
+                            block.setMoveJail(topLeftX, topLeftY+lbrdSpan, topLeftX+lanwidth, topLeftY+lanheight);
+                            block.definedNodesPoz();
+                            curContWidth = curContWidth + block.getRectSize().width;
+                            if (block.getRectSize().height>maxContHeight)
+                                maxContHeight = block.getRectSize().height;
+                        }
+                    }
+                    curContHeight = curContHeight + maxContHeight;
+                }
+            };
+
+            this.defineLanContentSize = function() {
+                var tmpHeight, tmpWidth, block;
+                var i, ii, j, jj;
+                contentHeight = 0 ;
+                contentWidth  = 0 ;
+                for (i = 0, ii = nbColumns; i < ii ; i++) {
+                    tmpHeight = 0;
+                    for (j = 0, jj = nbLines; j < jj; j++) {
+                        block = rows[i][j];
+                        if (block!=null && block!==FREE && block!==LOCKED)
+                            tmpHeight = tmpHeight + block.getRectSize().height;
+                    }
+                    if (tmpHeight > contentHeight)
+                        contentHeight=tmpHeight;
+                }
+                for (i = 0, ii = nbLines; i < ii ; i++) {
+                    tmpWidth = 0;
+                    for (j = 0, jj = nbColumns; j < jj; j++) {
+                        block = rows[j][i];
+                        if (block!=null && block!==FREE && block!==LOCKED)
+                            tmpWidth = tmpWidth + block.getRectSize().width;
+                    }
+                    if (tmpWidth > contentWidth)
+                        contentWidth = tmpWidth;
+                }
+            };
+
             this.defineLanContentMaxSize = function() {
                 var tmpHeight, tmpWidth, block;
                 var i, ii, j, jj;

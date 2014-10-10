@@ -567,6 +567,10 @@ define(
                     this.nodeContainer.pushNode(this);
             };
 
+            //this.updateNodesPoz = function(node) {
+            //
+            //};
+
             this.pushLinkedNode = function(node) {
                 var isAlreadyPushed = this.isLinkedToNode(node);
                 if (!isAlreadyPushed) {

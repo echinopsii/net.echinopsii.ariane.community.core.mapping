@@ -363,6 +363,10 @@ define(
                 this.containerNodes.addNode(node);
             };
 
+            //this.updateNodesPoz = function(node) {
+            //
+            //};
+
             this.getRectMiddlePoint = function() {
                 return {
                     x: this.rectMiddleX,
@@ -370,14 +374,12 @@ define(
                 };
             };
 
-            /*
             this.getRectSize = function() {
                 return {
                     width  : this.rectWidth,
                     height : this.rectHeight
                 };
             };
-            */
 
             this.getMaxRectSize = function() {
                 return {

@@ -230,8 +230,20 @@ define(
                 this.lanheight = this.lbrdSpan*2 + (this.lanmatrix.getMtxSize().y-1)*this.contSpan + contentLanSize.height;
             };
 
+            this.defineSize = function() {
+                this.lanmatrix.defineLanContentSize();
+
+                var contentLanSize = this.lanmatrix.getLanContentSize();
+                this.lanwidth  = this.lbrdSpan*2 + (this.lanmatrix.getMtxSize().x-1)*this.contSpan + contentLanSize.width;
+                this.lanheight = this.lbrdSpan*2 + (this.lanmatrix.getMtxSize().y-1)*this.contSpan + contentLanSize.height;
+            };
+
             this.defineFirstPoz = function() {
                 this.lanmatrix.defineMtxContainerFirstPoz(this.topLeftX, this.topLeftY, this.lbrdSpan, this.contSpan, this.lanwidth, this.lanheight);
+            };
+
+            this.defineFinalPoz = function() {
+                this.lanmatrix.defineMtxContainerFinalPoz(this.topLeftX, this.topLeftY, this.lbrdSpan, this.contSpan, this.lanwidth, this.lanheight);
             };
 
             this.getLanMaxSize = function() {

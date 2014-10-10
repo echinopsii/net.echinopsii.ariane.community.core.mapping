@@ -295,7 +295,7 @@ define(
                     //helper_.debug("man lan line cursor: ".concat(this.attr("cursor")));
                 };
 
-            this.defineFirstPoz = function() {
+            this.definePoz = function() {
                 this.wanLineHeight = this.datacenter.msplitter.getWanLineHeight();
                 this.manLineHeight = this.datacenter.msplitter.getManLineHeight();
                 this.lanLineHeight = this.datacenter.msplitter.getLanLineHeight();

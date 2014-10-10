@@ -221,14 +221,32 @@ define(
                 this.dcheight = this.dbrdSpan*2 + (this.dcmatrix.getMtxSize().y-1)*this.areaSpan + contentDCSize.height;
             };
 
+            this.defineZoneSize = function() {
+                this.dcmatrix.defineDCContentSize();
+
+                var contentDCSize = this.dcmatrix.getDCContentSize();
+                this.dcwidth  = this.dbrdSpan*2 + (this.dcmatrix.getMtxSize().x-1)*this.areaSpan + contentDCSize.width;
+                this.dcheight = this.dbrdSpan*2 + (this.dcmatrix.getMtxSize().y-1)*this.areaSpan + contentDCSize.height;
+            };
+
             this.defineZoneObjectsMaxSize = function() {
                 this.dcmatrix.defineMtxAreaMaxSize();
+            };
+
+            this.defineZoneObjectsSize = function() {
+                this.dcmatrix.defineMtxAreaSize();
             };
 
             this.defineFirstPoz = function() {
                 this.dcmatrix.defineMtxAreaFirstPoz(this.topLeftX,this.topLeftY,this.dcwidth,this.dbrdSpan,this.areaSpan);
                 this.dcsplitter = new datacenterSplitter(this);
-                this.dcsplitter.defineFirstPoz();
+                this.dcsplitter.definePoz();
+            };
+
+            this.defineFinalPoz = function() {
+                this.dcmatrix.defineMtxAreaFinalPoz(this.topLeftX,this.topLeftY,this.dcwidth,this.dbrdSpan,this.areaSpan);
+                this.dcsplitter = new datacenterSplitter(this);
+                this.dcsplitter.definePoz();
             };
 
             this.getGeoDCLoc = function() {

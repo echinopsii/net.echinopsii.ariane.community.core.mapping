@@ -267,11 +267,9 @@ define(
                         // third 0 : populate DC, Area and Lan registries and enrich the objects
                         for (j = 0, jj = containerRegistry.length; j < jj; j++)
                             mapmatrix.populateLayoutRegistries(containerRegistry[j]);
-
                         // third 1 : place container and the linked bus into the map matrix
                         for (j = 0, jj = containerRegistry.length; j < jj; j++)
                             mapmatrix.addContainerZone(containerRegistry[j]);
-
                         // third 2 : define map objects max size and first position
                         mapmatrix.defineMtxZoneMaxSize();
                         mapmatrix.defineMapContentMaxSize();
@@ -303,19 +301,35 @@ define(
                         lTree.definePoz();
                         break;
                 }
-                // fourth : define the links
-                for (i = 0, ii = linkRegistry.length; i < ii; i++) {
-                    linkRegistry[i].linkEp();
-                }
 
-                this.updateSize();
+                this.updateObjectFinalPozAndSize();
+                this.updateMapSize();
+
+                // fourth : define the links
+                for (i = 0, ii = linkRegistry.length; i < ii; i++)
+                    linkRegistry[i].linkEp();
             };
 
-            this.updateSize = function () {
+            this.updateObjectFinalPozAndSize = function () {
                 var j, jj;
+                // TODO: update node poz
+
+                // Set final container size
                 for (j = 0, jj = containerRegistry.length; j < jj; j++)
                     containerRegistry[j].defineSize();
 
+                var layout = options.getLayout();
+                switch(layout) {
+                    case dic.mapLayout.NTWWW:
+                        // Set final map matrix size and poz
+                        mapmatrix.defineMtxZoneSize();
+                        mapmatrix.defineMapContentSize();
+                        mapmatrix.defineMtxZoneFinalPoz(mbrdSpan, zoneSpan);
+                        break;
+                }
+            };
+
+            this.updateMapSize = function () {
                 var layout = options.getLayout();
                 //noinspection FallthroughInSwitchStatementJS
                 switch (layout) {

@@ -610,7 +610,50 @@ define(
                 }
             };
 
+            this.defineMtxObjSize = function() {
+                var i, ii, j, jj;
+
+                for (i = 0, ii = lineMaxHeight.length; i < ii; i++)
+                    lineMaxHeight[i] = 0;
+
+                for (i = 0, ii = columnMaxWidth.length; i < ii; i++)
+                    columnMaxWidth[i] = 0;
+
+                for (i = 0, ii = nbColumns; i < ii ; i++) {
+                    for (j = 0, jj = nbLines; j < jj ; j++ ) {
+                        var block = rows[i][j];
+                        if (block!=FREE && block!=LOCKED) {
+                            var size;
+                            if (block.type===LAN) {
+                                block.obj.defineSize();
+                                size = block.obj.getLanSize();
+                            } else if (block.type===BUS){
+                                size = block.obj.getBusSize();
+                            }
+                            if ((lineMaxHeight[j]!=null && lineMaxHeight[j]<size.height)||lineMaxHeight[j]==null)
+                                lineMaxHeight[j]=size.height;
+                            if ((columnMaxWidth[i]!=null && columnMaxWidth[i]<size.width)||columnMaxWidth[i]==null)
+                                columnMaxWidth[i]=size.width;
+                        } else {
+                            if (lineMaxHeight[j]==null)
+                                lineMaxHeight[j]=0;
+                            if (columnMaxWidth[i]==null)
+                                columnMaxWidth[i]=0;
+                        }
+                    }
+                }
+            };
+
             this.defineAreaContentMaxSize = function() {
+                for (var j = 0, jj = nbLines; j < jj; j++)
+                    contentHeight = contentHeight + lineMaxHeight[j];
+                for (j = 0, jj = nbColumns; j < jj; j++)
+                    contentWidth = contentWidth + columnMaxWidth[j];
+            };
+
+            this.defineAreaContentSize = function() {
+                contentHeight = 0 ;
+                contentWidth  = 0 ;
                 for (var j = 0, jj = nbLines; j < jj; j++)
                     contentHeight = contentHeight + lineMaxHeight[j];
                 for (j = 0, jj = nbColumns; j < jj; j++)
@@ -654,6 +697,37 @@ define(
                                 } else block.obj.setTopLeftCoord(abrdSpan + lanSpan*i + curContWidth , abrdSpan + lanSpan*j + curContHeight);
                                 block.obj.setMoveJail(topLeftX+abrdSpan, topLeftY+abrdSpan, topLeftX+areawidth-abrdSpan, topLeftY+areaheight-abrdSpan);
                                 block.obj.defineFirstPoz();
+                            }
+                        }
+                        curContHeight += lineMaxHeight[j];
+                    }
+                    curContWidth += columnMaxWidth[i];
+                }
+            };
+
+            this.defineMtxObjFinalPoz = function(topLeftX, topLeftY, abrdSpan, lanSpan, areawidth, areaheight) {
+                var i, ii, j, jj;
+                var curContWidth  = topLeftX;
+                for (i = 0, ii = nbColumns; i < ii; i++) {
+                    var curContHeight = topLeftY;
+                    for (j = 0, jj = nbLines; j < jj; j++) {
+                        var block = rows[i][j];
+                        if (block!=FREE && block!=LOCKED) {
+                            if (block.type===BUS) {
+                                block.obj.setCylinder(
+                                        abrdSpan + lanSpan*i + curContWidth + columnMaxWidth[i]/2,
+                                        abrdSpan + lanSpan*j + curContHeight + block.obj.getBusSize().height + lineMaxHeight[j]/2
+                                );
+                                block.obj.setMoveJail(topLeftX+abrdSpan, topLeftY+abrdSpan, topLeftX+areawidth-abrdSpan, topLeftY+areaheight-abrdSpan);
+                            } else if (block.type===LAN){
+                                if (block.obj.getLanSize().width < columnMaxWidth[i]) {
+                                    block.obj.setTopLeftCoord(
+                                            abrdSpan + lanSpan*i + curContWidth + (columnMaxWidth[i]-block.obj.getLanSize().width)/2,
+                                            abrdSpan + lanSpan*j + curContHeight
+                                    );
+                                } else block.obj.setTopLeftCoord(abrdSpan + lanSpan*i + curContWidth , abrdSpan + lanSpan*j + curContHeight);
+                                block.obj.setMoveJail(topLeftX+abrdSpan, topLeftY+abrdSpan, topLeftX+areawidth-abrdSpan, topLeftY+areaheight-abrdSpan);
+                                block.obj.defineFinalPoz();
                             }
                         }
                         curContHeight += lineMaxHeight[j];

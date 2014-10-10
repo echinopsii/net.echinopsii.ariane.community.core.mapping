@@ -102,7 +102,7 @@ define(
                     mapCanvasCenterX   = mapCanvasWidth/ 2,
                     mapCanvasCenterY   = mapCanvasHeight/2;
 
-                mappy.updateSize();
+                mappy.updateMapSize();
 
                 var mappyWidth    = mappy.getMapSize().width,
                     mappyHeight   = mappy.getMapSize().height,

@@ -149,6 +149,22 @@ define(
                 }
             };
 
+            this.defineMtxAreaSize = function() {
+                var i, ii;
+                for (i = 0, ii = rows[3][0]; i < ii ; i++ ) {
+                    rows[0][i].defineSize();
+                    splitter.setWanLineHeight(rows[0][i].getAreaSize().height);
+                }
+                for (i = 0, ii = rows[3][1]; i < ii ; i++ ) {
+                    rows[1][i].defineSize();
+                    splitter.setManLineHeight(rows[1][i].getAreaSize().height);
+                }
+                for (i = 0, ii = rows[3][2]; i < ii ; i++ ) {
+                    rows[2][i].defineSize();
+                    splitter.setLanLineHeight(rows[2][i].getAreaSize().height);
+                }
+            };
+
             this.defineDCContentMaxSize = function() {
                 var tmpWidth = 0, i, ii;
                 for (i = 0, ii = rows[3][0]; i < ii ; i++ )
@@ -187,6 +203,54 @@ define(
                 tmpHeight = 0;
                 for (i = 0, ii = rows[3][2]; i < ii ; i++ ) {
                     rowHeight = rows[2][i].getAreaMaxSize().height;
+                    if (rowHeight > tmpHeight)
+                        tmpHeight = rowHeight;
+                }
+                contentHeight = contentHeight + tmpHeight;
+            };
+
+            this.defineDCContentSize = function() {
+                var tmpWidth = 0, i, ii;
+
+                contentHeight = 0 ;
+                contentWidth  = 0 ;
+
+                for (i = 0, ii = rows[3][0]; i < ii ; i++ )
+                    tmpWidth = tmpWidth + rows[0][i].getAreaSize().width;
+                if (tmpWidth > contentWidth)
+                    contentWidth = tmpWidth;
+
+                tmpWidth=0;
+                for (i = 0, ii = rows[3][1]; i < ii ; i++ )
+                    tmpWidth = tmpWidth + rows[1][i].getAreaSize().width;
+                if (tmpWidth > contentWidth)
+                    contentWidth = tmpWidth;
+
+                tmpWidth=0;
+                for (i = 0, ii = rows[3][2]; i < ii ; i++ )
+                    tmpWidth = tmpWidth + rows[2][i].getAreaSize().width;
+                if (tmpWidth > contentWidth)
+                    contentWidth = tmpWidth;
+
+                var tmpHeight = 0, rowHeight;
+                for (i = 0, ii = rows[3][0]; i < ii ; i++ ) {
+                    rowHeight = rows[0][i].getAreaSize().height;
+                    if (rowHeight > tmpHeight)
+                        tmpHeight = rowHeight;
+                }
+                contentHeight += tmpHeight;
+
+                tmpHeight = 0;
+                for (i = 0, ii = rows[3][1]; i < ii ; i++ ) {
+                    rowHeight = rows[1][i].getAreaSize().height;
+                    if (rowHeight > tmpHeight)
+                        tmpHeight = rowHeight;
+                }
+                contentHeight += ((tmpHeight!=0)? tmpHeight : splitter.getManLineHeight());
+
+                tmpHeight = 0;
+                for (i = 0, ii = rows[3][2]; i < ii ; i++ ) {
+                    rowHeight = rows[2][i].getAreaSize().height;
                     if (rowHeight > tmpHeight)
                         tmpHeight = rowHeight;
                 }
@@ -272,6 +336,74 @@ define(
                 for (i = 0, ii = rows[3][2]; i < ii ; i++ )
                     rows[2][i].setMoveJail(areaJailXMin,areaJailYMin,areaJailXMax,areaJailYMax);
             };
+
+
+            this.defineMtxAreaFinalPoz = function(dcTopLeftX,dcTopLeftY,dcWidth,dbrdSpan,areaSpan) {
+                var cursorHeight = dcTopLeftY,
+                    cursorWidth  = dcTopLeftX,
+                    tmpAHeight    = 0,
+                    i, ii;
+
+                var aHeight, aWidth;
+                for (i = 0, ii = rows[3][0]; i < ii ; i++ ) {
+                    aHeight = rows[0][i].getAreaSize().height;
+                    aWidth  = rows[0][i].getAreaSize().width;
+                    if (ii == 1)
+                        rows[0][i].setTopLeftCoord(cursorWidth + (dcWidth/2 - aWidth/2), dbrdSpan + cursorHeight);
+                    else {
+                        rows[0][i].setTopLeftCoord(dbrdSpan + areaSpan*i + cursorWidth , dbrdSpan + cursorHeight);
+                        cursorWidth = cursorWidth + aWidth;
+                    }
+                    rows[0][i].defineFinalPoz();
+                    if (tmpAHeight < aHeight)
+                        tmpAHeight = aHeight;
+                }
+                cursorHeight += tmpAHeight + areaSpan;
+                var areaJailXMin = dcTopLeftX+dbrdSpan;
+                var areaJailYMin = dcTopLeftY+dbrdSpan;
+                var areaJailXMax = dcTopLeftX+dcWidth-dbrdSpan;
+                var areaJailYMax = dcTopLeftY+dbrdSpan+splitter.getWanLineHeight();
+                for (i = 0, ii = rows[3][0]; i < ii ; i++ )
+                    rows[0][i].setMoveJail(areaJailXMin,areaJailYMin,areaJailXMax,areaJailYMax);
+
+                cursorWidth  = dcTopLeftX;
+                tmpAHeight    = 0;
+                for (i = 0, ii = rows[3][1]; i < ii ; i++ ) {
+                    aHeight = rows[1][i].getAreaSize().height;
+                    aWidth  = rows[1][i].getAreaSize().width;
+                    if (ii == 1)
+                        rows[1][i].setTopLeftCoord(cursorWidth + (dcWidth/2 - aWidth/2), dbrdSpan + cursorHeight);
+                    else {
+                        rows[1][i].setTopLeftCoord(dbrdSpan + areaSpan*i + cursorWidth , dbrdSpan + cursorHeight);
+                        cursorWidth = cursorWidth + aWidth;
+                    }
+                    rows[1][i].defineFinalPoz();
+                    if (tmpAHeight < aHeight)
+                        tmpAHeight = aHeight;
+                }
+                areaJailYMin = cursorHeight+dbrdSpan;
+                areaJailYMax = cursorHeight+dbrdSpan+splitter.getManLineHeight();
+                cursorHeight += ((tmpAHeight!=0)? tmpAHeight : splitter.getManLineHeight())+ areaSpan;
+                for (i = 0, ii = rows[3][1]; i < ii ; i++ )
+                    rows[1][i].setMoveJail(areaJailXMin,areaJailYMin,areaJailXMax,areaJailYMax);
+
+                cursorWidth  = dcTopLeftX;
+                for (i = 0, ii = rows[3][2]; i < ii ; i++ ) {
+                    aWidth  = rows[2][i].getAreaSize().width;
+                    if (ii == 1)
+                        rows[2][i].setTopLeftCoord(cursorWidth + (dcWidth/2 - aWidth/2), dbrdSpan + cursorHeight);
+                    else {
+                        rows[2][i].setTopLeftCoord(dbrdSpan + areaSpan*i + cursorWidth , dbrdSpan + cursorHeight);
+                        cursorWidth = cursorWidth + aWidth;
+                    }
+                    rows[2][i].defineFinalPoz();
+                }
+                areaJailYMin = cursorHeight+dbrdSpan;
+                areaJailYMax = cursorHeight+dbrdSpan+splitter.getLanLineHeight();
+                for (i = 0, ii = rows[3][2]; i < ii ; i++ )
+                    rows[2][i].setMoveJail(areaJailXMin,areaJailYMin,areaJailXMax,areaJailYMax);
+            };
+
 
             this.addContainerArea = function(container) {
                 if (nbLines==0) {
