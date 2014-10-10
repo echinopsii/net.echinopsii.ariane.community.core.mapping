@@ -239,8 +239,6 @@ define(
 
             this.defineFirstPoz = function() {
                 this.dcmatrix.defineMtxAreaFirstPoz(this.topLeftX,this.topLeftY,this.dcwidth,this.dbrdSpan,this.areaSpan);
-                this.dcsplitter = new datacenterSplitter(this);
-                this.dcsplitter.definePoz();
             };
 
             this.defineFinalPoz = function() {
@@ -255,7 +253,7 @@ define(
 
             this.setTopLeftCoord = function (x, y) {
                 this.topLeftX = x;
-                this.topLeftY = y; //align on network type
+                this.topLeftY = y;
             };
 
             this.geoDCLocEqual = function (geoDCLoc_) {

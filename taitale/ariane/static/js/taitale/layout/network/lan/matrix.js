@@ -481,7 +481,6 @@ define(
                         var block = rows[j][i];
                         if (block!=null && block!==FREE && block!==LOCKED) {
                             block.setTopLeftCoord(lbrdSpan + contSpan*j + curContWidth , lbrdSpan + contSpan*i + curContHeight);
-                            block.setMoveJail(topLeftX, topLeftY+lbrdSpan, topLeftX+lanwidth, topLeftY+lanheight);
                             block.definedNodesPoz();
                             curContWidth = curContWidth + block.getMaxRectSize().width;
                             if (block.getMaxRectSize().height>maxContHeight)

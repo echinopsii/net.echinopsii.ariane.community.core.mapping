@@ -135,18 +135,12 @@ define(
 
             this.defineMtxAreaMaxSize = function() {
                 var i, ii;
-                for (i = 0, ii = rows[3][0]; i < ii ; i++ ) {
+                for (i = 0, ii = rows[3][0]; i < ii ; i++ )
                     rows[0][i].defineMaxSize();
-                    splitter.setWanLineHeight(rows[0][i].getAreaMaxSize().height);
-                }
-                for (i = 0, ii = rows[3][1]; i < ii ; i++ ) {
+                for (i = 0, ii = rows[3][1]; i < ii ; i++ )
                     rows[1][i].defineMaxSize();
-                    splitter.setManLineHeight(rows[1][i].getAreaMaxSize().height);
-                }
-                for (i = 0, ii = rows[3][2]; i < ii ; i++ ) {
+                for (i = 0, ii = rows[3][2]; i < ii ; i++ )
                     rows[2][i].defineMaxSize();
-                    splitter.setLanLineHeight(rows[2][i].getAreaMaxSize().height);
-                }
             };
 
             this.defineMtxAreaSize = function() {
