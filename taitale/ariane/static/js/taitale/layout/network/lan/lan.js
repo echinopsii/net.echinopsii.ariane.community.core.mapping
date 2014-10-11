@@ -92,7 +92,7 @@ define(
             var mouseDown = function(e) {
                     if (e.which == 3) {
                         if (lanRef.menuHided) {
-                            lanRef.rect.animate({"fill-opacity": this.oUnselected, "stroke-width": params.lan_strokeWidthShow}, 1);
+                            lanRef.rect.animate({"fill-opacity": lanRef.oUnselected, "stroke-width": params.lan_strokeWidthShow}, 1);
                             lanRef.lanR.show();
                             lanRef.dispLan = true;
 
@@ -132,7 +132,7 @@ define(
                             lanRef.menuSet.show();
                             lanRef.menuHided=false;
                         } else {
-                            lanRef.rect.animate({"fill-opacity": this.oUnselected, "stroke-width": 0}, 1);
+                            lanRef.rect.animate({"fill-opacity": lanRef.oUnselected, "stroke-width": 0}, 1);
                             lanRef.lanR.hide();
                             lanRef.dispLan = false;
                             lanRef.menu.toBack();
@@ -150,7 +150,7 @@ define(
                 },
                 menuMouseDown = function(e) {
                     if (e.which == 3) {
-                        lanRef.rect.animate({"fill-opacity": this.oUnselected, "stroke-width": 0}, 1);
+                        lanRef.rect.animate({"fill-opacity": lanRef.oUnselected, "stroke-width": 0}, 1);
                         lanRef.lanR.hide();
                         lanRef.dispLan = false;
                         lanRef.menu.toBack();
@@ -512,7 +512,7 @@ define(
 
                 for (j = 0, jj = mtxX; j < jj; j++)
                     for (k = 0, kk = mtxY; k < kk; k++) {
-                        var container = this.lanmatrix.getContainerFromMtx(j, k)
+                        var container = this.lanmatrix.getContainerFromMtx(j, k);
                         if (container != null)
                             lanObjSet.push(container);
                     }
