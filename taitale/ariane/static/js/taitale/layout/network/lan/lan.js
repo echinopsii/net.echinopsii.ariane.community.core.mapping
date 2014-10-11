@@ -514,7 +514,7 @@ define(
                     for (k = 0, kk = mtxY; k < kk; k++) {
                         var container = this.lanmatrix.getContainerFromMtx(j, k);
                         if (container != null)
-                            lanObjSet.push(container);
+                            lanObjSet.push(container.rect);
                     }
 
                 var lanMinBBox = lanObjSet.getBBox();
