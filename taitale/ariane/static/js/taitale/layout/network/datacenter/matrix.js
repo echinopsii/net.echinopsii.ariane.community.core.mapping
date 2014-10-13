@@ -398,6 +398,15 @@ define(
                     rows[2][i].setMoveJail(areaJailXMin,areaJailYMin,areaJailXMax,areaJailYMax);
             };
 
+            this.optimizeAreaMtxCoord = function() {
+                var i, ii;
+                for (i = 0, ii = rows[3][0]; i < ii ; i++ )
+                    rows[0][i].optimizeMtxCoord();
+                for (i = 0, ii = rows[3][1]; i < ii ; i++ )
+                    rows[1][i].optimizeMtxCoord();
+                for (i = 0, ii = rows[3][2]; i < ii ; i++ )
+                    rows[2][i].optimizeMtxCoord();
+            };
 
             this.addContainerArea = function(container) {
                 if (nbLines==0) {

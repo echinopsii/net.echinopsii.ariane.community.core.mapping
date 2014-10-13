@@ -153,6 +153,13 @@ define(
                 }
             };
 
+            this.optimizeMtxCoord = function() {
+                var i, ii, j, jj;
+                for (i = 0, ii = nbColumns; i < ii; i++)
+                    for (j = 0, jj = nbLines; j < jj; j++)
+                        rows[j][i].optimizeMtxCoord();
+            };
+
             this.defineMtxZoneFinalPoz = function(borderSpan, zoneSpan) {
                 var cursorWidth  = 0;
                 var i, ii, j, jj;
@@ -296,7 +303,8 @@ define(
                                 isConnectedToLeftLan: isConnectedToLeftLan, isConnectedToRightLan: isConnectedToRightLan,
                                 isConnectedToUpArea: isConnectedToUpArea, isConnectedToDownArea:isConnectedToDownArea,
                                 isConnectedToUpLan: isConnectedToUpLan, isConnectedToDownLan:isConnectedToDownLan,
-                                isConnectedInsideArea: isConnectedInsideArea, isConnectedInsideLan:isConnectedInsideLan
+                                isConnectedInsideArea: isConnectedInsideArea, isConnectedInsideLan:isConnectedInsideLan,
+                                areaMtxCoord: null, lanWeight: null
                             }
                         );
 

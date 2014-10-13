@@ -149,7 +149,7 @@ define(
                 return column;
             };
 
-            var getInternalCoord = function() {
+            var getInternalCoord = function(container) {
                 var column = -1,
                     line   = -1;
 
@@ -600,7 +600,7 @@ define(
                         rows[downColumn][downInternalLine] = container;
                         rows[downColumn][downLine]=LOCKED;
                     } else  {
-                        newInternalCoord = getInternalCoord();
+                        newInternalCoord = getInternalCoord(container);
                         rows[newInternalCoord.column][newInternalCoord.line] = container;
                     }
                 } else {
@@ -614,20 +614,10 @@ define(
                         downColumn = getDownColumn();
                         rows[downColumn][downLine] = container;
                     } else  {
-                        newInternalCoord = getInternalCoord();
+                        newInternalCoord = getInternalCoord(container);
                         rows[newInternalCoord.column][newInternalCoord.line] = container;
                     }
                 }
-
-                /*
-                if (nbLines==0) {
-                    rows[nbLines] = [];
-                    nbLines++;
-                }
-
-                rows[0][nbColumns] = container;
-                nbColumns ++ ;
-                */
             };
         }
 

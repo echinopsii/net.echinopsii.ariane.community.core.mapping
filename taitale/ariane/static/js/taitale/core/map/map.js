@@ -312,20 +312,24 @@ define(
 
             this.updateObjectFinalPozAndSize = function () {
                 var j, jj;
-                // TODO: update node poz
+                var layout = options.getLayout();
+
+                if (layout === dic.mapLayout.NTWWW) {
+                    // TODO: optimize lan mtx poz
+                    // TODO: optimize container mtx poz
+                    mapmatrix.optimizeMtxCoord();
+                }
+                // TODO: optimize node mtx poz
 
                 // Set final container size
                 for (j = 0, jj = containerRegistry.length; j < jj; j++)
                     containerRegistry[j].defineSize();
 
-                var layout = options.getLayout();
-                switch(layout) {
-                    case dic.mapLayout.NTWWW:
-                        // Set final map matrix size and poz
-                        mapmatrix.defineMtxZoneSize();
-                        mapmatrix.defineMapContentSize();
-                        mapmatrix.defineMtxZoneFinalPoz(mbrdSpan, zoneSpan);
-                        break;
+                if (layout === dic.mapLayout.NTWWW) {
+                    // Set final map matrix size and poz
+                    mapmatrix.defineMtxZoneSize();
+                    mapmatrix.defineMapContentSize();
+                    mapmatrix.defineMtxZoneFinalPoz(mbrdSpan, zoneSpan);
                 }
             };
 

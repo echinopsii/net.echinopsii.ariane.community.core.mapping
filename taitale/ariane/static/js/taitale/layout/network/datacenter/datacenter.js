@@ -241,6 +241,10 @@ define(
                 this.dcmatrix.defineMtxAreaFirstPoz(this.topLeftX,this.topLeftY,this.dcwidth,this.dbrdSpan,this.areaSpan);
             };
 
+            this.optimizeMtxCoord = function() {
+                this.dcmatrix.optimizeAreaMtxCoord();
+            };
+
             this.defineFinalPoz = function() {
                 this.dcmatrix.defineMtxAreaFinalPoz(this.topLeftX,this.topLeftY,this.dcwidth,this.dbrdSpan,this.areaSpan);
                 this.dcsplitter = new datacenterSplitter(this);
