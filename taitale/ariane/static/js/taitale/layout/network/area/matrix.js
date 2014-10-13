@@ -848,8 +848,6 @@ define(
                 var curlan          = container.layoutData.lan,
                     alreadyInserted = curlan.isInserted;
 
-                var testMin = minMulticastL, testMax = maxMulticastL;
-
                 var i, ii;
                 var linkedBus, lBus, newBusCoord;
                 var upColumn, downColumn, newInternalUDC, newInternalCoord, newUDC;
@@ -944,8 +942,6 @@ define(
                     }
                 }
 
-                testMin = minMulticastL;
-                testMax = maxMulticastL;
                 // finally push the container
                 curlan.pushContainer(container);
             };
