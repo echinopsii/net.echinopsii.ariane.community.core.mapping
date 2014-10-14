@@ -49,6 +49,7 @@ define(
                 downLine            = -1; // DOWN LINK ONLY
 
             // PUSH LEFT/RIGHT BALANCER
+            //noinspection JSUnusedLocalSymbols
             var pushUDonLeft         = false,
                 pushInternalUDonLeft = false,
                 pushInternaLudOnLeft = false,
@@ -123,6 +124,7 @@ define(
                 return ret;
             };
 
+            /*
             var isLineFreeFromMinToMax = function(lineIdx, minColumn, maxColumn) {
                 var ret = true;
                 for (var j = minColumn, jj = maxColumn; j <= jj; j++) {
@@ -133,6 +135,7 @@ define(
                 }
                 return ret;
             };
+            */
 
             var getFreeColumnFromTo = function(minL,maxL,minC,maxC) {
                 var column = -1;
@@ -207,10 +210,12 @@ define(
                     }
                 } else {
                     if (!boolLeftRight) {
+                        //noinspection JSUnusedAssignment
                         boolLeftRight=true;
                         column=++mtxColumnsSplitter[maxRight];
                         addColumnToMtx(column,LOCKED);
                     } else {
+                        //noinspection JSUnusedAssignment
                         boolLeftRight=false;
                         column=mtxColumnsSplitter[minLeft];
                         for (var i = minLeft, ii = mtxColumnsSplitter.length; i<ii; i++){
@@ -412,61 +417,59 @@ define(
             };
 
             var getInternalCoord = function() {
-                var column = -1,
-                    line   = -1;
+                var column2ret, line2ret;
 
                 //FIRST : TRY TO GET FREE COORDS IN THE DOWN INTERNAL LINE
                 initDownInternalLineWithZone(minMulticastC,maxMulticastC);
-                line   = downInternalLine;
-                column = getFreeBlockColumn(downInternalLine,mtxColumnsSplitter[minMulticastC],mtxColumnsSplitter[maxMulticastC]);
+                line2ret   = downInternalLine;
+                column2ret = getFreeBlockColumn(downInternalLine,mtxColumnsSplitter[minMulticastC],mtxColumnsSplitter[maxMulticastC]);
 
                 //SECOND : TRY TO GET FREE COORDS IN THE INTERNAL LEFT COLUMNS AND THEN TRY IN INTERNAL RIGHT COLUMNS
-                if (mtxColumnsSplitter[minInternalLeftC]!=-1 && mtxColumnsSplitter[maxInternalLeftC]!=-1 && column==-1) {
+                if (mtxColumnsSplitter[minInternalLeftC]!=-1 && mtxColumnsSplitter[maxInternalLeftC]!=-1 && column2ret==-1) {
                     for (var i = maxMulticastL, ii = minMulticastL; i>=ii; i--) {
-                        column=getFreeBlockColumn(i,mtxColumnsSplitter[minInternalLeftC],mtxColumnsSplitter[maxInternalLeftC]);
-                        if (column!=-1) line = i;
+                        column2ret=getFreeBlockColumn(i,mtxColumnsSplitter[minInternalLeftC],mtxColumnsSplitter[maxInternalLeftC]);
+                        if (column2ret!=-1) line2ret = i;
                     }
                 } else {
-                    if (column==-1) {
+                    if (column2ret==-1) {
                         //ELSE IF THIS AREA IS NOT INITIALIZED INITIALIZE IT
-                        column=getColumnFromInitializedArea(minInternalLeftC,maxInternalLeftC);
-                        line=downInternalLine;
+                        column2ret=getColumnFromInitializedArea(minInternalLeftC,maxInternalLeftC);
+                        line2ret=downInternalLine;
                     }
                 }
 
-                if (mtxColumnsSplitter[minInternalRightC]!=-1 && mtxColumnsSplitter[maxInternalRightC]!=-1 && column==-1) {
+                if (mtxColumnsSplitter[minInternalRightC]!=-1 && mtxColumnsSplitter[maxInternalRightC]!=-1 && column2ret==-1) {
                     for (i = maxMulticastL, ii = minMulticastL; i>=ii; i--) {
-                        column=getFreeBlockColumn(i,mtxColumnsSplitter[minInternalRightC],mtxColumnsSplitter[maxInternalRightC]);
-                        if (column!=-1) line = i;
+                        column2ret=getFreeBlockColumn(i,mtxColumnsSplitter[minInternalRightC],mtxColumnsSplitter[maxInternalRightC]);
+                        if (column2ret!=-1) line2ret = i;
                     }
                 } else {
-                    if (column==-1) {
+                    if (column2ret==-1) {
                         //ELSE IF THIS AREA IS NOT INITIALIZED INITIALIZE IT
-                        column=getColumnFromInitializedArea(minInternalRightC,maxInternalRightC);
-                        line=downInternalLine;
+                        column2ret=getColumnFromInitializedArea(minInternalRightC,maxInternalRightC);
+                        line2ret=downInternalLine;
                     }
                 }
 
-                if (column==-1) {
+                if (column2ret==-1) {
                     //THIRD : TRY TO GET FREE COORDS IN THE UP INTERNAL LINE
                     initDownInternalLineWithZone(minMulticastC,maxMulticastC);
-                    line   = upInternalLine;
-                    column = getFreeBlockColumn(upInternalLine,mtxColumnsSplitter[minMulticastC],mtxColumnsSplitter[maxMulticastC]);
+                    line2ret   = upInternalLine;
+                    column2ret = getFreeBlockColumn(upInternalLine,mtxColumnsSplitter[minMulticastC],mtxColumnsSplitter[maxMulticastC]);
                 }
 
-                if (column==-1) {
+                if (column2ret==-1) {
                     //FOURTH : ADD A NEW MULTICAST COLUMN AND RETURN COORDS(downInternalLine,maxMulticastC)
-                    for (i = maxMulticastC, ii = mtxColumnsSplitter.length; i<ii; i++){
-                        if (mtxColumnsSplitter[i]!=-1) mtxColumnsSplitter[i]++
-                    }
-                    column=mtxColumnsSplitter[maxMulticastC];
-                    addColumnToMtx(column,FREE);
-                    line=downInternalLine;
+                    for (i = maxMulticastC, ii = mtxColumnsSplitter.length; i<ii; i++)
+                        if (mtxColumnsSplitter[i]!=-1) mtxColumnsSplitter[i]++;
+                    column2ret=mtxColumnsSplitter[maxMulticastC];
+                    addColumnToMtx(column2ret,FREE);
+                    line2ret=downInternalLine;
                 }
 
                 return {
-                    column: column,
-                    line  : line
+                    column: column2ret,
+                    line  : line2ret
                 }
             };
 
@@ -589,6 +592,7 @@ define(
                             }
                         }
 
+                        var column;
                         for (i = minMulticastL+1, ii = maxMulticastL-1; i<=ii; i++) {
                             isSwapped = false;
                             lBus = rows[j][i];
@@ -601,6 +605,14 @@ define(
                                         isSwapped = true;
                                         break;
                                     }
+                                }
+
+                                if (!isSwapped) {
+                                    for (i = maxMulticastC, ii = mtxColumnsSplitter.length; i<ii; i++)
+                                        if (mtxColumnsSplitter[i]!=-1) mtxColumnsSplitter[i]++;
+                                    column = mtxColumnsSplitter[maxMulticastC];
+                                    addColumnToMtx(column,FREE);
+                                    rows[column][minMulticastL] = lBus;
                                 }
                             }
 
@@ -616,6 +628,14 @@ define(
                                         isSwapped = true;
                                         break;
                                     }
+                                }
+
+                                if (!isSwapped) {
+                                    for (i = maxMulticastC, ii = mtxColumnsSplitter.length; i<ii; i++)
+                                        if (mtxColumnsSplitter[i]!=-1) mtxColumnsSplitter[i]++;
+                                    column = mtxColumnsSplitter[maxMulticastC];
+                                    addColumnToMtx(column,FREE);
+                                    rows[column][minMulticastL] = lBus;
                                 }
                             }
                         }
@@ -662,6 +682,7 @@ define(
                 return rows[x][y].type;
             };
 
+            /*
             this.getObjSizeFromMtx = function(x,y) {
                 var block=rows[x][y];
                 if (block!=null && block!==FREE && block!==LOCKED) {
@@ -687,6 +708,7 @@ define(
                     return null;
                 }
             };
+            */
 
             this.defineMtxObjMaxSize = function() {
                 for (var i = 0, ii = nbColumns; i < ii ; i++) {
