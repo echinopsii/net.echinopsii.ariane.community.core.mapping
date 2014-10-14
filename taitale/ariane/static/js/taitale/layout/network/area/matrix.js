@@ -540,7 +540,9 @@ define(
                                     llBus = rows[k][maxMulticastL];
                                     if ((llBus!=FREE && llBus!=LOCKED && llBus.obj.layoutData.toUp) || (llBus==FREE)) {
                                         rows[k][maxMulticastL] = lBus;
+                                        lBus.obj.layoutData.areaMtxCoord= {x: maxMulticastL, y: k};
                                         rows[j][minMulticastL] = llBus;
+                                        llBus.obj.layoutData.areaMtxCoord= {x: minMulticastL, y: j};
                                         isSwapped = true;
                                         break;
                                     }
@@ -551,7 +553,9 @@ define(
                                         llBus = rows[k][i];
                                         if ((llBus!=FREE && llBus!=LOCKED && llBus.obj.layoutData.toUp) || (llBus==FREE)) {
                                             rows[k][i] = lBus;
+                                            lBus.obj.layoutData.areaMtxCoord= {x: i, y: k};
                                             rows[j][minMulticastL] = llBus;
+                                            llBus.obj.layoutData.areaMtxCoord= {x: minMulticastL, y: j};
                                             isSwapped = true;
                                             break;
                                         }
@@ -570,7 +574,9 @@ define(
                                     llBus = rows[k][minMulticastL];
                                     if ((llBus!=FREE && llBus!=LOCKED && llBus.obj.layoutData.toDown) || (llBus==FREE)) {
                                         rows[k][minMulticastL] = lBus;
+                                        lBus.obj.layoutData.areaMtxCoord= {x: minMulticastL, y: k};
                                         rows[j][maxMulticastL] = llBus;
+                                        llBus.obj.layoutData.areaMtxCoord= {x: maxMulticastL, y: j};
                                         isSwapped = true;
                                         break;
                                     }
@@ -581,7 +587,9 @@ define(
                                         llBus = rows[k][i];
                                         if ((llBus!=FREE && llBus!=LOCKED && llBus.obj.layoutData.toDown) || llBus==FREE) {
                                             rows[k][i] = lBus;
+                                            lBus.obj.layoutData.areaMtxCoord={x: i, y: k};
                                             rows[j][maxMulticastL] = llBus;
+                                            llBus.obj.layoutData.areaMtxCoord={x: maxMulticastL, y: j};
                                             isSwapped = true;
                                             break;
                                         }
@@ -600,8 +608,10 @@ define(
                                 for (k = mtxColumnsSplitter[minMulticastC], kk = mtxColumnsSplitter[maxMulticastC]; k <= kk; k++) {
                                     llBus = rows[k][minMulticastL];
                                     if ((llBus!=FREE && llBus!=LOCKED && !llBus.obj.layoutData.toUp) || llBus == FREE) {
-                                        rows[j][i] = llBus;
                                         rows[k][minMulticastL] = lBus;
+                                        lBus.obj.layoutData.areaMtxCoord={x: minMulticastL, y: k};
+                                        rows[j][i] = llBus;
+                                        llBus.obj.layoutData.areaMtxCoord={x: i, y: j};
                                         isSwapped = true;
                                         break;
                                     }
@@ -612,7 +622,10 @@ define(
                                         if (mtxColumnsSplitter[i]!=-1) mtxColumnsSplitter[i]++;
                                     column = mtxColumnsSplitter[maxMulticastC];
                                     addColumnToMtx(column,FREE);
+                                    rows[j][i] = FREE;
                                     rows[column][minMulticastL] = lBus;
+                                    lBus.obj.layoutData.areaMtxCoord={x: minMulticastL, y: column};
+                                    isSwapped = true;
                                 }
                             }
 
@@ -623,8 +636,10 @@ define(
                                 for (k = mtxColumnsSplitter[minMulticastC], kk = mtxColumnsSplitter[maxMulticastC]; k <= kk; k++) {
                                     llBus = rows[k][maxMulticastL];
                                     if ((llBus!=FREE && llBus!=LOCKED && !llBus.obj.layoutData.toDown) || llBus == FREE) {
-                                        rows[j][i] = llBus;
                                         rows[k][maxMulticastL] = lBus;
+                                        lBus.obj.layoutData.areaMtxCoord={x: maxMulticastL, y: k};
+                                        rows[j][i] = llBus;
+                                        llBus.obj.layoutData.areaMtxCoord={x: i, y: j};
                                         isSwapped = true;
                                         break;
                                     }
@@ -635,7 +650,10 @@ define(
                                         if (mtxColumnsSplitter[i]!=-1) mtxColumnsSplitter[i]++;
                                     column = mtxColumnsSplitter[maxMulticastC];
                                     addColumnToMtx(column,FREE);
-                                    rows[column][minMulticastL] = lBus;
+                                    rows[j][i] = FREE;
+                                    rows[column][maxMulticastL] = lBus;
+                                    lBus.obj.layoutData.areaMtxCoord={x: maxMulticastL, y: column};
+                                    isSwapped = true;
                                 }
                             }
                         }
@@ -681,34 +699,6 @@ define(
             this.getObjTypeFromMtx = function(x,y) {
                 return rows[x][y].type;
             };
-
-            /*
-            this.getObjSizeFromMtx = function(x,y) {
-                var block=rows[x][y];
-                if (block!=null && block!==FREE && block!==LOCKED) {
-                    if (block.type===LAN) {
-                        return block.obj.getLanSize();
-                    } else if (block.type===BUS) {
-                        return block.obj.getBusSize();
-                    }
-                } else {
-                    return null;
-                }
-            };
-
-            this.getObjCoordsFromMtx = function(x,y) {
-                var block=rows[x][y];
-                if (block!=null && block!==FREE && block!==LOCKED) {
-                    if (block.type===LAN) {
-                        return block.obj.getLanCoords();
-                    } else if (block.type===BUS) {
-                        return block.obj.getBusCoords();
-                    }
-                } else {
-                    return null;
-                }
-            };
-            */
 
             this.defineMtxObjMaxSize = function() {
                 for (var i = 0, ii = nbColumns; i < ii ; i++) {
@@ -882,9 +872,10 @@ define(
                         for (i = 0, ii = linkedBus.length; i < ii; i++) {
                             lBus = linkedBus[i];
                             if (!lBus.isInserted) {
-                                lBus.layoutData = { busWeight: 1, toUp: curlan.layoutData.isConnectedToUpArea, toDown : curlan.layoutData.isConnectedToDownArea};
+                                lBus.layoutData = { busWeight: 1, toUp: curlan.layoutData.isConnectedToUpArea, toDown : curlan.layoutData.isConnectedToDownArea, areaMtxCoord: null};
                                 newBusCoord = getMulticastBusCoord();
                                 rows[newBusCoord.column][newBusCoord.line] = {obj:lBus,type:BUS};
+                                lBus.layoutData.areaMtxCoord= {x: newBusCoord.line, y: newBusCoord.column};
                                 lBus.isInserted=true;
                             } else {
                                 lBus.layoutData.busWeight++;
