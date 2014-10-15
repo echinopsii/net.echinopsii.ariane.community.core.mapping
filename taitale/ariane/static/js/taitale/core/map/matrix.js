@@ -301,10 +301,10 @@ define(
                                 isConnectedToLeftDC: isConnectedToLeftDC, isConnectedToRightDC: isConnectedToRightDC,
                                 isConnectedToLeftArea: isConnectedToRightArea, isConnectedToRightArea: isConnectedToRightArea,
                                 isConnectedToLeftLan: isConnectedToLeftLan, isConnectedToRightLan: isConnectedToRightLan,
-                                isConnectedToUpArea: isConnectedToUpArea, isConnectedToDownArea:isConnectedToDownArea,
-                                isConnectedToUpLan: isConnectedToUpLan, isConnectedToDownLan:isConnectedToDownLan,
-                                isConnectedInsideArea: isConnectedInsideArea, isConnectedInsideLan:isConnectedInsideLan,
-                                areaMtxCoord: null, lanWeight: null
+                                isConnectedToUpArea: isConnectedToUpArea, isConnectedToDownArea: isConnectedToDownArea,
+                                isConnectedToUpLan: isConnectedToUpLan, isConnectedToDownLan: isConnectedToDownLan,
+                                isConnectedInsideArea: isConnectedInsideArea, isConnectedInsideLan: isConnectedInsideLan,
+                                areaMtxCoord: null, areaInternalLinksWeight: 0, areaConnectedObject: [], areaPozFinal: false
                             }
                         );
 

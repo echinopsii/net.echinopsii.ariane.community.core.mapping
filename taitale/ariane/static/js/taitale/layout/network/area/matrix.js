@@ -77,12 +77,16 @@ define(
                 minRightUDC          = 16,// LANS WITH UP & DOWN LINKS ON RIGHT
                 maxRightUDC          = 17;
 
+            var lansList = [];
+
             var addLineToMtx = function(index) {
                 var i,ii;
                 if (index < nbLines) {
                     for (i = 0, ii = nbColumns; i < ii; i++) {
                         for (var j = index, jj = nbLines; j <= jj; jj--) {
                             rows[i][jj] = rows[i][jj-1];
+                            if (rows[i][jj]!==FREE && rows[i][jj]!==LOCKED && rows[i][jj]!=null)
+                                rows[i][jj].obj.layoutData.areaMtxCoord= {x: jj, y: i};
                         }
                     }
                 }
@@ -99,11 +103,15 @@ define(
             };
 
             var addColumnToMtx = function(index,flag) {
-                var i, ii;
+                var i, ii, j, jj;
                 if (index < nbColumns){
                     rows[nbColumns] = [];
                     for (i = index, ii=nbColumns; i < ii; ii--)  {
                         rows[ii] = rows[ii-1];
+                        for (j=0, jj=nbLines; j<jj; j++) {
+                            if (rows[ii][j]!==FREE && rows[ii][j]!==LOCKED && rows[ii][j]!=null)
+                                rows[ii][j].obj.layoutData.areaMtxCoord= {x: j, y: ii};
+                        }
                     }
                 }
                 rows[index] = [];
@@ -152,6 +160,17 @@ define(
                 var column = -1;
                 for (var i=minC, ii=maxC; i<=ii;i++) {
                     if (rows[i][lineIdx]===FREE) {
+                        column=i;
+                        break;
+                    }
+                }
+                return column;
+            };
+
+            var getFreeOrNonFinalBlockColumn = function(lineIdx,minC,maxC) {
+                var column = -1;
+                for (var i=minC, ii=maxC; i<=ii;i++) {
+                    if (rows[i][lineIdx]===FREE || (rows[i][lineIdx]!==FREE && rows[i][lineIdx]!==LOCKED && rows[i][lineIdx]!=null && !rows[i][lineIdx].obj.layoutData.areaPozFinal)) {
                         column=i;
                         break;
                     }
@@ -283,7 +302,7 @@ define(
                 } else {
                     if (column==-1)
                         //ELSE IF THIS AREA IS NOT INITIALIZED INITIALIZE IT
-                        column=getColumnFromInitializedArea(minInternalLefTudC,maxInternalLefTudC);
+                        column=getColumnFromInitializedArea(minInternalRighTudC,maxInternalRighTudC);
                 }
 
                 // IF NO BLOCK FOUNDED THEN CREATE A NEW COLUMN IN LEFT|RIGHT UP or DOWN &/or INTERNAL AREA
@@ -378,10 +397,9 @@ define(
             };
 
             var getInternalUpColumn = function() {
-                var column = -1;
-                initUpInternalLineWithZone(minInternalLefTudC,maxInternalLefTudC);
+                var column = initUpInternalLineWithZone(minInternalLefTudC,maxInternalLefTudC);
                 if (column==-1)
-                    column = getUpOrDownFreeBlockColumn(upLine,null);
+                    column = getUpOrDownFreeBlockColumn(upLine,upInternalLine);
                 return column;
             };
 
@@ -409,10 +427,9 @@ define(
             };
 
             var getInternalDownColumn = function() {
-                var column = -1;
-                initDownInternalLineWithZone(minInternalLefTudC,maxInternalLefTudC);
+                var column = initDownInternalLineWithZone(minInternalLefTudC,maxInternalLefTudC);
                 if (column == -1)
-                    column = getUpOrDownFreeBlockColumn(downLine,null);
+                    column = getUpOrDownFreeBlockColumn(downLine,downInternalLine);
                 return column;
             };
 
@@ -453,7 +470,7 @@ define(
 
                 if (column2ret==-1) {
                     //THIRD : TRY TO GET FREE COORDS IN THE UP INTERNAL LINE
-                    initDownInternalLineWithZone(minMulticastC,maxMulticastC);
+                    initUpInternalLineWithZone(minMulticastC,maxMulticastC);
                     line2ret   = upInternalLine;
                     column2ret = getFreeBlockColumn(upInternalLine,mtxColumnsSplitter[minMulticastC],mtxColumnsSplitter[maxMulticastC]);
                 }
@@ -470,6 +487,22 @@ define(
                 return {
                     column: column2ret,
                     line  : line2ret
+                }
+            };
+
+            var swapInternalCoord = function(objToSwapFinal, line) {
+                var column2swap = -1;
+                column2swap = getFreeOrNonFinalBlockColumn(line,mtxColumnsSplitter[minMulticastC],mtxColumnsSplitter[maxMulticastC]);
+
+                if (mtxColumnsSplitter[minInternalLeftC]!=-1 && mtxColumnsSplitter[maxInternalLeftC]!=-1 && column2swap==-1)
+                    column2swap = getFreeOrNonFinalBlockColumn(line, mtxColumnsSplitter[minInternalLeftC], mtxColumnsSplitter[maxInternalLeftC]);
+
+                if (mtxColumnsSplitter[minInternalRightC]!=-1 && mtxColumnsSplitter[maxInternalRightC]!=-1 && column2swap==-1)
+                    column2swap = getFreeOrNonFinalBlockColumn(line,mtxColumnsSplitter[minInternalRightC],mtxColumnsSplitter[maxInternalRightC]);
+
+                if (column2swap!=-1) {
+                    rows[objToSwapFinal.obj.layoutData.areaMtxCoord.y][objToSwapFinal.obj.layoutData.areaMtxCoord.x] = rows[column2swap][line];
+                    rows[column2swap][line] = objToSwapFinal;
                 }
             };
 
@@ -526,9 +559,34 @@ define(
                 }
             };
 
+            var addConnectedAreaObjectToAreaObject = function(targetAreaObj, sourceObj) {
+                var i, ii, isRedefined = false;
+                for (i = 0, ii = targetAreaObj.layoutData.areaConnectedObject.length; i < ii; i++) {
+                    var alreadyConnectedObject = targetAreaObj.layoutData.areaConnectedObject[i];
+                    if (sourceObj.type === alreadyConnectedObject.type) {
+                        if (sourceObj.type === LAN) {
+                            if (sourceObj.obj.lanDef.lan === alreadyConnectedObject.obj.lanDef.lan) {
+                                alreadyConnectedObject.weight++;
+                                isRedefined = true;
+                                break;
+                            }
+                        } else if (sourceObj.type === BUS) {
+                            if (sourceObj.obj.multicastAddr === alreadyConnectedObject.obj.multicastAddr) {
+                                alreadyConnectedObject.weight++;
+                                isRedefined = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (!isRedefined)
+                    targetAreaObj.layoutData.areaConnectedObject.push(sourceObj);
+
+                targetAreaObj.layoutData.areaInternalLinksWeight++;
+            };
+
             var optimizeMulticastBusCoord = function() {
-                //lBus.layoutData.toUp = lBus.layoutData.toUp || curlan.layoutData.isConnectedToUpArea;
-                //lBus.layoutData.toDown = lBus.layoutData.toDown || curlan.layoutData.isConnectedToDownArea;
                 var i, ii, j, jj, k, kk, isSwapped, lBus, llBus;
 
                 if (minMulticastL!=-1 && maxMulticastL!=-1) {
@@ -541,8 +599,10 @@ define(
                                     if ((llBus!=FREE && llBus!=LOCKED && llBus.obj.layoutData.toUp) || (llBus==FREE)) {
                                         rows[k][maxMulticastL] = lBus;
                                         lBus.obj.layoutData.areaMtxCoord= {x: maxMulticastL, y: k};
+                                        lBus.obj.layoutData.areaPozFinal = true;
                                         rows[j][minMulticastL] = llBus;
                                         llBus.obj.layoutData.areaMtxCoord= {x: minMulticastL, y: j};
+                                        llBus.obj.layoutData.areaPozFinal = true;
                                         isSwapped = true;
                                         break;
                                     }
@@ -554,8 +614,10 @@ define(
                                         if ((llBus!=FREE && llBus!=LOCKED && llBus.obj.layoutData.toUp) || (llBus==FREE)) {
                                             rows[k][i] = lBus;
                                             lBus.obj.layoutData.areaMtxCoord= {x: i, y: k};
+                                            lBus.obj.layoutData.areaPozFinal = true;
                                             rows[j][minMulticastL] = llBus;
                                             llBus.obj.layoutData.areaMtxCoord= {x: minMulticastL, y: j};
+                                            llBus.obj.layoutData.areaPozFinal = true;
                                             isSwapped = true;
                                             break;
                                         }
@@ -564,7 +626,10 @@ define(
                                         break;
                                 }
                             }
-                        }
+                        } else if (lBus!=FREE && lBus!=LOCKED && upMulticastL && !lBus.obj.layoutData.toUp)
+                            lBus.obj.layoutData.areaPozFinal = true;
+                        else if (lBus!=FREE && lBus!=LOCKED && upMulticastL)
+                            lBus.obj.layoutData.areaPozFinal = true;
 
                         isSwapped = false;
                         lBus = rows[j][maxMulticastL];
@@ -575,8 +640,10 @@ define(
                                     if ((llBus!=FREE && llBus!=LOCKED && llBus.obj.layoutData.toDown) || (llBus==FREE)) {
                                         rows[k][minMulticastL] = lBus;
                                         lBus.obj.layoutData.areaMtxCoord= {x: minMulticastL, y: k};
+                                        lBus.obj.layoutData.areaPozFinal = true;
                                         rows[j][maxMulticastL] = llBus;
                                         llBus.obj.layoutData.areaMtxCoord= {x: maxMulticastL, y: j};
+                                        llBus.obj.layoutData.areaPozFinal = true;
                                         isSwapped = true;
                                         break;
                                     }
@@ -588,8 +655,10 @@ define(
                                         if ((llBus!=FREE && llBus!=LOCKED && llBus.obj.layoutData.toDown) || llBus==FREE) {
                                             rows[k][i] = lBus;
                                             lBus.obj.layoutData.areaMtxCoord={x: i, y: k};
+                                            lBus.obj.layoutData.areaPozFinal = true;
                                             rows[j][maxMulticastL] = llBus;
                                             llBus.obj.layoutData.areaMtxCoord={x: maxMulticastL, y: j};
+                                            llBus.obj.layoutData.areaPozFinal = true;
                                             isSwapped = true;
                                             break;
                                         }
@@ -598,7 +667,10 @@ define(
                                         break;
                                 }
                             }
-                        }
+                        } else if (lBus!=FREE && lBus!=LOCKED && downMulticastL && lBus.obj.layoutData.toDown)
+                            lBus.obj.layoutData.areaPozFinal = true;
+                        else if (lBus!=FREE && lBus!=LOCKED && downMulticastL)
+                            lBus.obj.layoutData.areaPozFinal = true;
 
                         var column;
                         for (i = minMulticastL+1, ii = maxMulticastL-1; i<=ii; i++) {
@@ -610,8 +682,10 @@ define(
                                     if ((llBus!=FREE && llBus!=LOCKED && !llBus.obj.layoutData.toUp) || llBus == FREE) {
                                         rows[k][minMulticastL] = lBus;
                                         lBus.obj.layoutData.areaMtxCoord={x: minMulticastL, y: k};
+                                        lBus.obj.layoutData.areaPozFinal = true;
                                         rows[j][i] = llBus;
                                         llBus.obj.layoutData.areaMtxCoord={x: i, y: j};
+                                        llBus.obj.layoutData.areaPozFinal = true;
                                         isSwapped = true;
                                         break;
                                     }
@@ -625,6 +699,7 @@ define(
                                     rows[j][i] = FREE;
                                     rows[column][minMulticastL] = lBus;
                                     lBus.obj.layoutData.areaMtxCoord={x: minMulticastL, y: column};
+                                    lBus.obj.layoutData.areaPozFinal = true;
                                     isSwapped = true;
                                 }
                             }
@@ -638,8 +713,10 @@ define(
                                     if ((llBus!=FREE && llBus!=LOCKED && !llBus.obj.layoutData.toDown) || llBus == FREE) {
                                         rows[k][maxMulticastL] = lBus;
                                         lBus.obj.layoutData.areaMtxCoord={x: maxMulticastL, y: k};
+                                        lBus.obj.layoutData.areaPozFinal = true;
                                         rows[j][i] = llBus;
                                         llBus.obj.layoutData.areaMtxCoord={x: i, y: j};
+                                        llBus.obj.layoutData.areaPozFinal = true;
                                         isSwapped = true;
                                         break;
                                     }
@@ -653,22 +730,57 @@ define(
                                     rows[j][i] = FREE;
                                     rows[column][maxMulticastL] = lBus;
                                     lBus.obj.layoutData.areaMtxCoord={x: maxMulticastL, y: column};
+                                    lBus.obj.layoutData.areaPozFinal = true;
                                     isSwapped = true;
                                 }
                             }
                         }
                     }
-                }
 
+                    for (j = mtxColumnsSplitter[minMulticastC], jj = mtxColumnsSplitter[maxMulticastC]; j<=jj; j++)
+                        for (i = minMulticastL, ii = maxMulticastL; i<=ii; i++)
+                            rows[j][i].obj.layoutData.areaPozFinal = true;
+                }
+            };
+
+            var optimizeLanCoord = function() {
+                var i, ii, j, jj;
+                var lan, connectedObjects, averageLine = 0, mtxAverageLine = Math.round(nbLines/2), connectedWeight = 0;
+                lansList.sort(function(lan1, lan2){
+                    return (lan2.layoutData.areaInternalLinksWeight-lan1.layoutData.areaInternalLinksWeight);
+                });
+
+                for (i=0, ii=lansList.length; i<ii; i++) {
+                    lan = lansList[i];
+                    if (lan.layoutData.isConnectedInsideArea) {
+                        if (!lan.layoutData.isConnectedToUpArea && !lan.layoutData.isConnectedToDownArea) {
+                            connectedObjects = lan.layoutData.areaConnectedObject.sort(function(coord1, coord2) {
+                                return (coord2.weight - coord1.weight);
+                            });
+                            connectedWeight = 0;
+                            for (j = 0, jj = connectedObjects.length; j<jj; j++) {
+                                if (connectedObjects[j].obj.layoutData.areaPozFinal) {
+                                    averageLine = (connectedObjects[j].obj.layoutData.areaMtxCoord.x-mtxAverageLine)*connectedObjects[j].weight;
+                                    connectedWeight += connectedObjects[j].weight;
+                                }
+                            }
+                            if (connectedWeight!=0) {
+                                averageLine = Math.round(averageLine/connectedWeight) + mtxAverageLine;
+                                if (averageLine!=lan.layoutData.areaMtxCoord.x)
+                                    swapInternalCoord(rows[lan.layoutData.areaMtxCoord.y][lan.layoutData.areaMtxCoord.x], averageLine);
+                                lan.layoutData.areaPozFinal = true;
+                            }
+                        }
+                    }
+                }
             };
 
             this.printMtx = function(r) {
                 for (var i = 0, ii = nbColumns; i < ii ; i++) {
                     for (var j = 0, jj = nbLines; j < jj ; j++ ) {
                         var block = rows[i][j];
-                        if (block!=FREE &&  block!=LOCKED) {
+                        if (block!=FREE &&  block!=LOCKED)
                             block.obj.print(r);
-                        }
                     }
                 }
             };
@@ -854,6 +966,7 @@ define(
 
             this.optimizeLanAndBusMtxCoord = function() {
                 optimizeMulticastBusCoord();
+                optimizeLanCoord();
             };
 
             this.addContainerLanAndBus = function(container) {
@@ -861,33 +974,38 @@ define(
                     alreadyInserted = curlan.isInserted;
 
                 var i, ii;
-                var linkedBus, lBus, newBusCoord;
+                var linkedContainers;
+                var linkedBuss, lBus, newBusCoord;
                 var upColumn, downColumn, newInternalUDC, newInternalCoord, newUDC;
+
+                linkedBuss = container.getLinkedBus();
+                for (i = 0, ii = linkedBuss.length; i < ii; i++) {
+                    lBus = linkedBuss[i];
+                    if (!lBus.isInserted) {
+                        lBus.layoutData = { busWeight: 1, toUp: curlan.layoutData.isConnectedToUpArea,
+                            toDown : curlan.layoutData.isConnectedToDownArea, areaMtxCoord: null,
+                            areaConnectedObject: []
+                        };
+                        newBusCoord = getMulticastBusCoord();
+                        rows[newBusCoord.column][newBusCoord.line] = {obj:lBus,type:BUS};
+                        lBus.layoutData.areaMtxCoord= {x: newBusCoord.line, y: newBusCoord.column};
+                        lBus.isInserted=true;
+                    } else {
+                        lBus.layoutData.busWeight++;
+                        lBus.layoutData.toUp = lBus.layoutData.toUp || curlan.layoutData.isConnectedToUpArea;
+                        lBus.layoutData.toDown = lBus.layoutData.toDown || curlan.layoutData.isConnectedToDownArea;
+                    }
+                    if (lBus.layoutData.toUp)
+                        upMulticastL = true;
+                    if (lBus.layoutData.toDown)
+                        downMulticastL = true;
+
+                    addConnectedAreaObjectToAreaObject(curlan, {obj:lBus, type: BUS, weight: 1});
+                }
 
                 if (!alreadyInserted){
                     // if not inserted create lan and insert it in the area mtx
                     if (curlan.layoutData.isConnectedInsideArea) {
-
-                        linkedBus = container.getLinkedBus();
-                        for (i = 0, ii = linkedBus.length; i < ii; i++) {
-                            lBus = linkedBus[i];
-                            if (!lBus.isInserted) {
-                                lBus.layoutData = { busWeight: 1, toUp: curlan.layoutData.isConnectedToUpArea, toDown : curlan.layoutData.isConnectedToDownArea, areaMtxCoord: null};
-                                newBusCoord = getMulticastBusCoord();
-                                rows[newBusCoord.column][newBusCoord.line] = {obj:lBus,type:BUS};
-                                lBus.layoutData.areaMtxCoord= {x: newBusCoord.line, y: newBusCoord.column};
-                                lBus.isInserted=true;
-                            } else {
-                                lBus.layoutData.busWeight++;
-                                lBus.layoutData.toUp = lBus.layoutData.toUp || curlan.layoutData.isConnectedToUpArea;
-                                lBus.layoutData.toDown = lBus.layoutData.toDown || curlan.layoutData.isConnectedToDownArea;
-                            }
-                            if (lBus.layoutData.toUp)
-                                upMulticastL = true;
-                            if (lBus.layoutData.toDown)
-                                downMulticastL = true;
-                        }
-
                         if (curlan.layoutData.isConnectedToUpArea && curlan.layoutData.isConnectedToDownArea) {
                             newInternalUDC = getNewInternalUpDownColumn();
                             rows[newInternalUDC][0] = {obj:curlan,type:LAN};
@@ -934,26 +1052,20 @@ define(
                             curlan.isInserted = true;
                         }
                     }
-                } else {
-                    linkedBus = container.getLinkedBus();
-                    for (i = 0, ii = linkedBus.length; i < ii; i++) {
-                        lBus = linkedBus[i];
-                        if (!lBus.isInserted) {
-                            newBusCoord = getMulticastBusCoord();
-                            rows[newBusCoord.column][newBusCoord.line] = {obj:lBus,type:BUS};
-                            lBus.layoutData = { busWeight: 1, toUp: curlan.layoutData.isConnectedToUpArea, toDown : curlan.layoutData.isConnectedToDownArea};
-                            lBus.isInserted=true;
-                        } else {
-                            lBus.layoutData.busWeight++;
-                            lBus.layoutData.toUp = lBus.layoutData.toUp || curlan.layoutData.isConnectedToUpArea;
-                            lBus.layoutData.toDown = lBus.layoutData.toDown || curlan.layoutData.isConnectedToDownArea;
-                        }
-                        if (lBus.layoutData.toUp)
-                            upMulticastL = true;
-                        if (lBus.layoutData.toDown)
-                            downMulticastL = true;
-                    }
+                    lansList.push(curlan);
                 }
+
+                //ADD CURRENT LAN TO AREA LAN/MBUS CONNECTED LIST
+                linkedBuss = container.getLinkedBus();
+                for (i = 0, ii = linkedBuss.length; i < ii; i++)
+                    addConnectedAreaObjectToAreaObject(linkedBuss[i], {obj:curlan, type: LAN, weight: 1});
+
+                linkedContainers = container.getLinkedContainers();
+                for (i = 0, ii = linkedContainers.length; i < ii; i++)
+                    if (container.localisation.equalArea(linkedContainers[i].localisation) &&
+                        container.localisation.getLan().lan!==linkedContainers[i].localisation.getLan().lan)
+                            addConnectedAreaObjectToAreaObject(linkedContainers[i].layoutData.lan,
+                                {obj:curlan, type: LAN, weight: 1});
 
                 // finally push the container
                 curlan.pushContainer(container);
