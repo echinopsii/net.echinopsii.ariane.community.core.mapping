@@ -584,8 +584,29 @@ define(
                     return null;
             };
 
+            var addConnectedLanContainerToContainer = function(targetLanContainer, sourceContainer) {
+                var i, ii, isRedefined = false;
+                for (i = 0, ii = targetLanContainer.layoutData.lanConnectedContainer.length; i < ii; i++) {
+                    if (targetLanContainer.layoutData.lanConnectedContainer[i].ID === sourceContainer.ID) {
+                        alreadyConnectedContainer.weight++;
+                        isRedefined = true;
+                        break;
+                    }
+                }
+
+                if (!isRedefined)
+                    targetLanContainer.layoutData.lanConnectedContainer.push(sourceContainer);
+
+                targetLanContainer.layoutData.lanInternalLinksWeight++;
+            };
+
+            this.optimizeContainerMtxCoord = function() {
+
+            };
+
             this.addContainer = function(container) {
                 var upColumn, downColumn, newInternalUDC, newInternalCoord, newUDC;
+                var i, ii;
 
                 if (container.layoutData.isConnectedInsideLan) {
                     if (container.layoutData.isConnectedToUpArea && container.layoutData.isConnectedToDownArea) {
@@ -618,6 +639,12 @@ define(
                         rows[newInternalCoord.column][newInternalCoord.line] = container;
                     }
                 }
+
+                //ADD CURRENT CONTAINER TO LAN CONTAINER CONNECTED LIST
+                var linkedContainers = container.getLinkedContainers();
+                for (i=0, ii=linkedContainers.length; i << ii; i++)
+                    if (container.localisation.equal(linkedContainers[i]))
+                        addConnectedLanContainerToContainer(linkedContainers[i], container)
             };
         }
 

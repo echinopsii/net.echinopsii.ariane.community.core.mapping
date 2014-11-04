@@ -967,6 +967,11 @@ define(
             this.optimizeLanAndBusMtxCoord = function() {
                 optimizeMulticastBusCoord();
                 optimizeLanCoord();
+
+                //TODO UP Container layout Data according to final lan placement
+
+                for (var i=0, ii=lansList.length; i<ii; i++)
+                    lansList[i].optimizeMtxCoord();
             };
 
             this.addContainerLanAndBus = function(container) {
@@ -982,7 +987,8 @@ define(
                 for (i = 0, ii = linkedBuss.length; i < ii; i++) {
                     lBus = linkedBuss[i];
                     if (!lBus.isInserted) {
-                        lBus.layoutData = { busWeight: 1, toUp: curlan.layoutData.isConnectedToUpArea,
+                        lBus.layoutData = {
+                            busWeight: 1, toUp: curlan.layoutData.isConnectedToUpArea,
                             toDown : curlan.layoutData.isConnectedToDownArea, areaMtxCoord: null,
                             areaConnectedObject: []
                         };

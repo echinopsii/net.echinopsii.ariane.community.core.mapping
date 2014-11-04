@@ -242,6 +242,10 @@ define(
                 this.lanmatrix.defineMtxContainerFirstPoz(this.topLeftX, this.topLeftY, this.lbrdSpan, this.contSpan, this.lanwidth, this.lanheight);
             };
 
+            this.optimizeMtxCoord = function() {
+                this.lanmatrix.optimizeContainerMtxCoord();
+            };
+
             this.defineFinalPoz = function() {
                 this.lanmatrix.defineMtxContainerFinalPoz(this.topLeftX, this.topLeftY, this.lbrdSpan, this.contSpan, this.lanwidth, this.lanheight);
             };
