@@ -52,9 +52,9 @@ define(
             // COLUMNS SPLITTER TABLE IDX
             var minLeftUDC           = 0, // CONTAINERS WITH UP & DOWN LINKS ON LEFT
                 maxLeftUDC           = 1,
-                minInternalLeftUDC   = 2, // CONTAINERS WITH UP & DOWN & INTERNAL LINKS ON LEFT
+                minInternalLeftUDC   = 2, // CONTAINERS WITH UP & DOWN & EXTERNAL LINKS ON LEFT
                 maxInternalLeftUDC   = 3,
-                minInternalLefTudC   = 4, // CONTAINERS WITH UP OR DOWN LINKS OR LANS WITH UP OR DOWN & INTERNAL LINKS ON LEFT
+                minInternalLefTudC   = 4, // CONTAINERS WITH UP OR DOWN LINKS & INTERNAL LINKS ON LEFT
                 maxInternalLefTudC   = 5,
                 minInternalLeftC     = 6, // CONTAINERS WITH INTERNAL LINKS ON LEFT
                 maxInternalLeftC     = 7,
@@ -62,19 +62,23 @@ define(
                 maxInternalC         = 9,
                 minInternalRightC    = 10,// CONTAINERS WITH INTERNAL LINKS ON RIGHT
                 maxInternalRightC    = 11,
-                minInternalRighTudC  = 12,// CONTAINERS WITH UP OR DOWN LINKS OR LANS WITH UP OR DOWN & INTERNAL LINKS ON RIGHT
+                minInternalRighTudC  = 12,// CONTAINERS WITH UP OR DOWN LINKS & INTERNAL LINKS ON RIGHT
                 maxInternalRighTudC  = 13,
-                minInternalRightUDC  = 14,// CONTAINERS WITH UP & DOWN & INTERNAL LINKS ON RIGHT
+                minInternalRightUDC  = 14,// CONTAINERS WITH UP & DOWN & EXTERNAL LINKS ON RIGHT
                 maxInternalRightUDC  = 15,
                 minRightUDC          = 16,// CONTAINERS WITH UP & DOWN LINKS ON RIGHT
                 maxRightUDC          = 17;
 
+            var containersList = [];
+
             var addLineToMtx = function(index) {
-                var i,ii;
+                var i,ii, j, jj;
                 if (index < nbLines) {
                     for (i = 0, ii = nbColumns; i < ii; i++) {
-                        for (var j = index, jj = nbLines; j <= jj; jj--) {
+                        for (j = index, jj = nbLines; j <= jj; jj--) {
                             rows[i][jj] = rows[i][jj-1];
+                            if (rows[i][jj]!==FREE && rows[i][jj]!==LOCKED && rows[i][jj]!=null)
+                                rows[i][jj].layoutData.lanMtxCoord= {x: jj, y: i};
                         }
                     }
                 }
@@ -90,12 +94,31 @@ define(
                 nbLines++;
             };
 
+            var removeLineFromMtx = function(index) {
+                var i, ii, j, jj;
+                for (i=0, i=nbColumns; i < ii; i++) {
+                    for (j=index, jj = nbLines; j < jj; j++) {
+                        rows[i][j] = rows[i][j+1];
+                        if (rows[i][j]!==FREE && rows[i][j]!==LOCKED && rows[i][j]!=null)
+                            rows[i][j].layoutData.lanMtxCoord= {x: j, y: i};
+                    }
+                }
+                for (i=0, ii=nbColumns; i < ii; i++)
+                //    rows[i][nbLines] = null
+                    rows[i].pop();
+                nbLines--;
+            };
+
             var addColumnToMtx = function(index,flag) {
-                var i, ii;
+                var i, ii, j, jj;
                 if (index < nbColumns){
                     rows[nbColumns] = [];
                     for (i = index, ii=nbColumns; i < ii; ii--)  {
                         rows[ii] = rows[ii-1];
+                        for (j=0, jj=nbLines; j<jj; j++) {
+                            if (rows[ii][j]!==FREE && rows[ii][j]!==LOCKED && rows[ii][j]!=null)
+                                rows[ii][j].layoutData.lanMtxCoord= {x: j, y: ii};
+                        }
                     }
                 }
                 rows[index] = [];
@@ -103,6 +126,14 @@ define(
                     rows[index][i] = flag;
                 }
                 nbColumns++;
+            };
+
+            var removeColumnFromMtx = function(index) {
+                var i, ii, j, jj;
+                for (i=index, ii=nbColumns; i < ii; i++)
+                    rows[i] = rows[i+1]
+                rows.pop();
+                nbColumns--;
             };
 
             var isColumnFreeFromMinToMax = function(columnIdx, minLine, maxLine) {
@@ -149,65 +180,6 @@ define(
                 return column;
             };
 
-            var getInternalCoord = function(container) {
-                var column = -1,
-                    line   = -1;
-
-                //FIRST : TRY TO GET FREE COORDS IN THE DOWN INTERNAL LINE
-                initDownInternalLineWithZone(minInternalC,maxInternalC);
-                line   = downInternalLine;
-                column = getFreeBlockColumn(downInternalLine,mtxColumnsSplitter[minInternalC],mtxColumnsSplitter[maxInternalC]);
-
-                //SECOND : TRY TO GET FREE COORDS IN THE INTERNAL LEFT COLUMNS AND THEN TRY IN INTERNAL RIGHT COLUMNS
-                if (mtxColumnsSplitter[minInternalLeftC]!=-1 && mtxColumnsSplitter[maxInternalLeftC]!=-1 && column==-1) {
-                    for (var i = maxInternalLine, ii = minInternalLine; i>=ii; i--) {
-                        column=getFreeBlockColumn(i,mtxColumnsSplitter[minInternalLeftC],mtxColumnsSplitter[maxInternalLeftC]);
-                        if (column!=-1) line = i;
-                    }
-                } else {
-                    if (column==-1) {
-                        //ELSE IF THIS AREA IS NOT INITIALIZED INITIALIZE IT
-                        column=getColumnFromInitializedArea(minInternalLeftC,maxInternalLeftC);
-                        line=downInternalLine;
-                    }
-                }
-
-                if (mtxColumnsSplitter[minInternalRightC]!=-1 && mtxColumnsSplitter[maxInternalRightC]!=-1 && column==-1) {
-                    for (i = maxInternalLine, ii = minInternalLine; i>=ii; i--) {
-                        column=getFreeBlockColumn(i,mtxColumnsSplitter[minInternalRightC],mtxColumnsSplitter[maxInternalRightC]);
-                        if (column!=-1) line = i;
-                    }
-                } else {
-                    if (column==-1) {
-                        //ELSE IF THIS AREA IS NOT INITIALIZED INITIALIZE IT
-                        column=getColumnFromInitializedArea(minInternalRightC,maxInternalRightC);
-                        line=downInternalLine;
-                    }
-                }
-
-                if (column==-1) {
-                    //THIRD : TRY TO GET FREE COORDS IN THE UP INTERNAL LINE
-                    initDownInternalLineWithZone(minInternalC,maxInternalC);
-                    line   = upInternalLine;
-                    column = getFreeBlockColumn(upInternalLine,mtxColumnsSplitter[minInternalC],mtxColumnsSplitter[maxInternalC]);
-                }
-
-                if (column==-1) {
-                    //FOURTH : ADD A NEW INTERNAL COLUMN AND RETURN COORDS(downInternalLine,maxInternalC)
-                    for (i = maxInternalC, ii = mtxColumnsSplitter.length; i<ii; i++){
-                        if (mtxColumnsSplitter[i]!=-1) mtxColumnsSplitter[i]++
-                    }
-                    column=mtxColumnsSplitter[maxInternalC];
-                    addColumnToMtx(column,FREE);
-                    line=downInternalLine;
-                }
-
-                return {
-                    column: column,
-                    line  : line
-                }
-            };
-
             var getUpOrDownFreeBlockColumn = function(minL,maxL) {
                 var column=-1;
                 //CHECK IF THERE IS FREE UP BLOCK IN INTERNAL AREA
@@ -242,7 +214,7 @@ define(
                         column=getFreeBlockColumn(minL,mtxColumnsSplitter[minInternalLefTudC],mtxColumnsSplitter[maxInternalLefTudC]);
                 } else {
                     if (column==-1)
-                    //ELSE IF THIS AREA IS NOT INITIALIZED INITIALIZE IT
+                        //ELSE IF THIS AREA IS NOT INITIALIZED INITIALIZE IT
                         column=getColumnFromInitializedArea(minInternalLefTudC,maxInternalLefTudC);
                 }
 
@@ -254,7 +226,7 @@ define(
                         column=getFreeBlockColumn(minL,mtxColumnsSplitter[minInternalRighTudC],mtxColumnsSplitter[maxInternalRighTudC]);
                 } else {
                     if (column==-1)
-                    //ELSE IF THIS AREA IS NOT INITIALIZED INITIALIZE IT
+                        //ELSE IF THIS AREA IS NOT INITIALIZED INITIALIZE IT
                         column=getColumnFromInitializedArea(minInternalLefTudC,maxInternalLefTudC);
                 }
 
@@ -320,10 +292,83 @@ define(
                         if (downLine==-1) {
                             downLine = nbLines;
                             addLineToMtx(downLine);
-                        }
+                        } else downLine++;
                     }
                 }
                 return column;
+            };
+
+            var initInternalLineWithZone = function(minZoneC, maxZoneC) {
+                var column = -1;
+                if (minInternalLine==-1){
+                    if (nbLines == 0 && nbColumns ==0) {
+                        minInternalLine=0;
+                        maxInternalLine=0;
+                        downInternalLine=1;
+                        downLine=2;
+                        column=++mtxColumnsSplitter[minZoneC];
+                        mtxColumnsSplitter[maxZoneC]++
+                        addColumnToMtx(column,FREE);
+                        addLineToMtx(minInternalLine);
+                        addLineToMtx(downInternalLine);
+                        addLineToMtx(downLine);
+                    } else {
+                        if (upLine!=-1 && upInternalLine!=-1)
+                            minInternalLine=upInternalLine+1;
+                        else if (downInternalLine!=-1 && downLine!=-1)
+                            minInternalLine=downInternalLine;
+                        else
+                            minInternalLine=0;
+                        maxInternalLine=minInternalLine;
+                        addLineToMtx(minInternalLine);
+                        if (downInternalLine==-1) {
+                            downInternalLine = nbLines;
+                            addLineToMtx(downInternalLine);
+                        } else downInternalLine++;
+                        if (downLine==-1) {
+                            downLine = nbLines;
+                            addLineToMtx(downLine);
+                        } else downLine++;
+                    }
+                }
+                return column;
+            };
+
+            var addInternalMinLine = function() {
+                if (minInternalLine!=-1 && maxInternalLine!=-1) {
+                    addLineToMtx(minInternalLine);
+                    maxInternalLine++;
+
+                    if (downInternalLine==-1) {
+                        downInternalLine = nbLines;
+                        addLineToMtx(downInternalLine);
+                    } else downInternalLine++;
+
+                    if (downLine==-1) {
+                        downLine = nbLines;
+                        addLineToMtx(downLine);
+                    } else downLine++;
+                } else {
+                    //TODO RAISE ERROR
+                }
+            };
+
+            var addInternalMaxLine = function() {
+                if (minInternalLine!=-1 && maxInternalLine!=-1) {
+                    addLineToMtx(maxInternalLine);
+
+                    if (downInternalLine==-1) {
+                        downInternalLine = nbLines;
+                        addLineToMtx(downInternalLine);
+                    } else downInternalLine++;
+
+                    if (downLine==-1) {
+                        downLine = nbLines;
+                        addLineToMtx(downLine);
+                    } else downLine++;
+                } else {
+                    //TODO RAISE ERROR
+                }
             };
 
             var getInternalUpColumn = function() {
@@ -418,8 +463,26 @@ define(
                 return column;
             };
 
+            var addNewLeftFUpDownColumn = function(minLeft, maxLeft) {
+                var column = -1, i, ii;
+                column=mtxColumnsSplitter[minLeft];
+                for (i = minLeft+1, ii = mtxColumnsSplitter.length; i<ii; i++)
+                    if (mtxColumnsSplitter[i]!=-1) mtxColumnsSplitter[i]++;
+                addColumnToMtx(column,LOCKED);
+                return column;
+            };
+
+            var addNewRightFUpDownColumn = function(minRight, maxRight) {
+                var column = -1, i, ii;
+                column=++mtxColumnsSplitter[maxRight];
+                for (i = maxRight+1, ii = mtxColumnsSplitter.length; i<ii; i++)
+                    if (mtxColumnsSplitter[i]!=-1) mtxColumnsSplitter[i]++;
+                addColumnToMtx(column,LOCKED);
+                return column;
+            };
+
             var getNewFUpDownColumn = function(minLeft,maxLeft,minRight,maxRight,boolLeftRight) {
-                var column = -1;
+                var column = -1, i, ii;
                 if (mtxColumnsSplitter[minLeft]==-1 && mtxColumnsSplitter[maxLeft]==-1) {
                     if (nbColumns==0 && nbLines==0) {
                         column = ++mtxColumnsSplitter[minLeft];
@@ -438,33 +501,97 @@ define(
                         column=getColumnFromInitializedArea(minRight,maxRight);
                     }
                 } else {
-                    if (!boolLeftRight) {
-                        boolLeftRight=true;
-                        column=++mtxColumnsSplitter[maxRight];
-                        addColumnToMtx(column,LOCKED);
-                    } else {
-                        boolLeftRight=false;
-                        column=mtxColumnsSplitter[minLeft];
-                        for (var i = minLeft, ii = mtxColumnsSplitter.length; i<ii; i++){
-                            if (mtxColumnsSplitter[i]!=-1) mtxColumnsSplitter[i]++
-                        }
-                        addColumnToMtx(column,LOCKED);
-                    }
+                    if (!boolLeftRight)
+                        column=addNewRightFUpDownColumn(minRight, maxRight);
+                    else
+                        column=addNewLeftFUpDownColumn(minLeft, maxLeft);
                 }
                 return column;
             };
 
+
+
             var getNewUpDownColumn = function() {
-                return getNewFUpDownColumn(minLeftUDC,maxLeftUDC,minRightUDC,maxRightUDC,pushUDonLeft);
+                var column = getNewFUpDownColumn(minLeftUDC,maxLeftUDC,minRightUDC,maxRightUDC,pushUDonLeft); pushUDonLeft=!pushUDonLeft;
+                return column;
             };
 
             var getNewInternalUpDownColumn = function() {
-                return getNewFUpDownColumn(minInternalLeftUDC,maxInternalLeftUDC,minInternalRightUDC,maxInternalRightUDC,pushInternalUDonLeft)
+                var column = getNewFUpDownColumn(minInternalLeftUDC,maxInternalLeftUDC,minInternalRightUDC,maxInternalRightUDC,pushInternalUDonLeft); pushInternalUDonLeft=!pushInternalUDonLeft;
+                return column;
             };
 
+            var getInternalCoord = function() {
+                var column2ret,
+                    line2ret  ;
 
+                //FIRST : TRY TO GET FREE COORDS IN THE DOWN INTERNAL LINE
+                initDownInternalLineWithZone(minInternalC,maxInternalC);
+                line2ret   = downInternalLine;
+                column2ret = getFreeBlockColumn(downInternalLine,mtxColumnsSplitter[minInternalC],mtxColumnsSplitter[maxInternalC]);
 
+                //SECOND : TRY TO GET FREE COORDS IN THE INTERNAL LEFT COLUMNS AND THEN TRY IN INTERNAL RIGHT COLUMNS
+                if (mtxColumnsSplitter[minInternalLeftC]!=-1 && mtxColumnsSplitter[maxInternalLeftC]!=-1 && column2ret==-1) {
+                    for (var i = maxInternalLine, ii = minInternalLine; i>=ii; i--) {
+                        column2ret=getFreeBlockColumn(i,mtxColumnsSplitter[minInternalLeftC],mtxColumnsSplitter[maxInternalLeftC]);
+                        if (column2ret!=-1) {
+                            line2ret = i;
+                            break;
+                        }
+                    }
+                } else {
+                    if (column2ret==-1) {
+                        //ELSE IF THIS AREA IS NOT INITIALIZED INITIALIZE IT
+                        column2ret=getColumnFromInitializedArea(minInternalLeftC,maxInternalLeftC);
+                        line2ret=downInternalLine;
+                    }
+                }
 
+                if (mtxColumnsSplitter[minInternalRightC]!=-1 && mtxColumnsSplitter[maxInternalRightC]!=-1 && column2ret==-1) {
+                    for (i = maxInternalLine, ii = minInternalLine; i>=ii; i--) {
+                        column2ret=getFreeBlockColumn(i,mtxColumnsSplitter[minInternalRightC],mtxColumnsSplitter[maxInternalRightC]);
+                        if (column2ret!=-1) {
+                            line2ret = i;
+                            break;
+                        }
+                    }
+                } else {
+                    if (column2ret==-1) {
+                        //ELSE IF THIS AREA IS NOT INITIALIZED INITIALIZE IT
+                        column2ret=getColumnFromInitializedArea(minInternalRightC,maxInternalRightC);
+                        line2ret=downInternalLine;
+                    }
+                }
+
+                //THIRD : TRY TO GET FREE COORDS IN THE UP INTERNAL LINE
+                if (column2ret==-1) {
+                    initDownInternalLineWithZone(minInternalC,maxInternalC);
+                    line2ret   = upInternalLine;
+                    column2ret = getFreeBlockColumn(upInternalLine,mtxColumnsSplitter[minInternalC],mtxColumnsSplitter[maxInternalC]);
+                }
+
+                //FOURTH : TRY TO GET FREE COORDS IN THE INTERNAL LINE
+                if (column2ret==-1) {
+                    initInternalLineWithZone(minInternalC,maxInternalC);
+                    line2ret   = minInternalLine;
+                    column2ret = getFreeBlockColumn(minInternalLine,mtxColumnsSplitter[minInternalC],mtxColumnsSplitter[maxInternalC]);
+                }
+
+                //FIFTH : ADD A NEW INTERNAL COLUMN AND RETURN COORDS(downInternalLine,maxInternalC)
+                if (column2ret==-1) {
+                    for (i = maxInternalC, ii = mtxColumnsSplitter.length; i<ii; i++){
+                        if (mtxColumnsSplitter[i]!=-1) mtxColumnsSplitter[i]++
+                    }
+                    column2ret=mtxColumnsSplitter[maxInternalC];
+                    addColumnToMtx(column2ret,FREE);
+                    line2ret=downInternalLine;
+                }
+
+                return {
+                    column: column2ret,
+                    line  : line2ret
+                }
+            };
 
             this.getMtxSize = function() {
                 return {
@@ -492,11 +619,25 @@ define(
             };
 
             this.defineMtxContainerFinalPoz = function(topLeftX, topLeftY, lbrdSpan, contSpan, lanwidth, lanheight) {
+                var i, ii, j, jj, block;
+                var maxColumnWidth = [];
                 var curContHeight = topLeftY;
-                for (var i = 0, ii = nbLines; i < ii; i++) {
+
+                for (i=0, ii=nbColumns; i < ii; i++) {
+                    for (j=0, jj=nbLines; j < jj; j++) {
+                        block = rows[i][j];
+                        if (block!=null && block!==FREE && block!==LOCKED) {
+                            if (maxColumnWidth[i]==null || maxColumnWidth[i] < block.getRectSize().width)
+                                maxColumnWidth[i] = block.getRectSize().width;
+                        } else if (maxColumnWidth[i]==null)
+                            maxColumnWidth[i] = 0;
+                    }
+                }
+
+                for (i = 0, ii = nbLines; i < ii; i++) {
                     var curContWidth  = topLeftX, maxContHeight=0;
-                    for (var j = 0, jj = nbColumns; j < jj; j++) {
-                        var block = rows[j][i];
+                    for (j = 0, jj = nbColumns; j < jj; j++) {
+                        block = rows[j][i];
                         if (block!=null && block!==FREE && block!==LOCKED) {
                             block.setTopLeftCoord(lbrdSpan + contSpan*j + curContWidth , lbrdSpan + contSpan*i + curContHeight);
                             block.setMoveJail(topLeftX, topLeftY+lbrdSpan, topLeftX+lanwidth, topLeftY+lanheight);
@@ -504,6 +645,8 @@ define(
                             curContWidth = curContWidth + block.getRectSize().width;
                             if (block.getRectSize().height>maxContHeight)
                                 maxContHeight = block.getRectSize().height;
+                        } else {
+                            curContWidth = curContWidth + maxColumnWidth[j];
                         }
                     }
                     curContHeight = curContHeight + maxContHeight;
@@ -511,29 +654,34 @@ define(
             };
 
             this.defineLanContentSize = function() {
-                var tmpHeight, tmpWidth, block;
+                var block;
+                var maxLineHeight = [], maxColumnWidth = [];
                 var i, ii, j, jj;
                 contentHeight = 0 ;
                 contentWidth  = 0 ;
+
                 for (i = 0, ii = nbColumns; i < ii ; i++) {
-                    tmpHeight = 0;
                     for (j = 0, jj = nbLines; j < jj; j++) {
                         block = rows[i][j];
-                        if (block!=null && block!==FREE && block!==LOCKED)
-                            tmpHeight = tmpHeight + block.getRectSize().height;
+                        if (block!=null && block!==FREE && block!==LOCKED) {
+                            if (maxColumnWidth[i]==null || maxColumnWidth[i] < block.getRectSize().width)
+                                maxColumnWidth[i] = block.getRectSize().width;
+                        } else if (maxColumnWidth[i]==null)
+                            maxColumnWidth[i] = 0;
                     }
-                    if (tmpHeight > contentHeight)
-                        contentHeight=tmpHeight;
+                    contentWidth+=maxColumnWidth[i];
                 }
-                for (i = 0, ii = nbLines; i < ii ; i++) {
-                    tmpWidth = 0;
-                    for (j = 0, jj = nbColumns; j < jj; j++) {
+
+                for (i = 0, ii = nbLines; i < ii; i++) {
+                    for (j=0, jj = nbColumns; j < jj; j++) {
                         block = rows[j][i];
-                        if (block!=null && block!==FREE && block!==LOCKED)
-                            tmpWidth = tmpWidth + block.getRectSize().width;
+                        if (block!=null && block!==FREE && block!==LOCKED) {
+                            if (maxLineHeight[i]==null || (maxLineHeight[i]!=null && maxLineHeight[i] < block.getRectSize().height))
+                                maxLineHeight[i] = block.getRectSize().height;
+                        } else if (maxLineHeight[i]==null)
+                            maxLineHeight[i]=0;
                     }
-                    if (tmpWidth > contentWidth)
-                        contentWidth = tmpWidth;
+                    contentHeight+=maxLineHeight[i];
                 }
             };
 
@@ -588,7 +736,7 @@ define(
                 var i, ii, isRedefined = false;
                 for (i = 0, ii = targetLanContainer.layoutData.lanConnectedContainer.length; i < ii; i++) {
                     if (targetLanContainer.layoutData.lanConnectedContainer[i].ID === sourceContainer.ID) {
-                        alreadyConnectedContainer.weight++;
+                        sourceContainer.weight++;
                         isRedefined = true;
                         break;
                     }
@@ -600,8 +748,221 @@ define(
                 targetLanContainer.layoutData.lanInternalLinksWeight++;
             };
 
-            this.optimizeContainerMtxCoord = function() {
+            var optimizeContainerLinkedToLeftOrRightLan = function(container, minLeft, maxLeft, minRight, maxRight) {
+                var i, ii, j, jj;
+                var targetSwapColumn = -1, targetSwapLine = container.layoutData.lanMtxCoord.x;
+                if (container.layoutData.isConnectedToLeftLan && !container.layoutData.isConnectedToRightLan) {
+                    if (mtxColumnsSplitter[minLeft]!=-1 && mtxColumnsSplitter[maxLeft]!=-1 && targetSwapColumn==-1) {
+                        //EXTENDS minLeft,maxLeft area
+                        if (targetSwapLine==upLine || targetSwapLine==upInternalLine) {
+                            if (minInternalLine==-1 || maxInternalLine==-1)
+                                initInternalLineWithZone(minLeft, maxLeft);
+                            else
+                                addInternalMinLine();
+                            targetSwapLine=minInternalLine;
+                        } else if (targetSwapLine==downLine || targetSwapLine==downInternalLine) {
+                            if (minInternalLine==-1 || maxInternalLine==-1)
+                                initInternalLineWithZone(minLeft, maxLeft);
+                            else
+                                addInternalMaxLine();
+                            targetSwapLine=maxInternalLine;
+                        } else {
+                            addInternalMaxLine();
+                            targetSwapLine=maxInternalLine;
+                        }
+                        addNewLeftFUpDownColumn(minLeft, maxLeft);
+                        targetSwapColumn=mtxColumnsSplitter[minLeft];
+                    } else {
+                        if (targetSwapColumn==-1)
+                            //ELSE IF THIS AREA IS NOT INITIALIZED INITIALIZE IT
+                            targetSwapColumn=getColumnFromInitializedArea(minLeft,maxLeft);
+                    }
+                } else if (container.layoutData.isConnectedToRightLan && !container.layoutData.isConnectedToLeftLan) {
+                    if (mtxColumnsSplitter[minRight]!=-1 && mtxColumnsSplitter[maxRight]!=-1 && targetSwapColumn==-1) {
+                        //EXTENDS minRight,maxRight area
+                        if (targetSwapLine==upLine || targetSwapLine==upInternalLine) {
+                            if (minInternalLine==-1 || maxInternalLine==-1)
+                                initInternalLineWithZone(minRight, maxRight);
+                            else
+                                addInternalMinLine();
+                            targetSwapLine=minInternalLine;
+                        } else if (targetSwapLine==downLine || targetSwapLine==downInternalLine) {
+                            if (minInternalLine==-1 || maxInternalLine==-1)
+                                initInternalLineWithZone(minRight, maxRight);
+                            else
+                                addInternalMaxLine();
+                            targetSwapLine=maxInternalLine;
+                        } else {
+                            addInternalMaxLine();
+                            targetSwapLine=maxInternalLine;
+                        }
+                        addNewRightFUpDownColumn(minRight, maxRight);
+                        targetSwapColumn=mtxColumnsSplitter[maxRight];
+                    } else {
+                        if (targetSwapColumn==-1)
+                            //ELSE IF THIS AREA IS NOT INITIALIZED INITIALIZE IT
+                            targetSwapColumn=getColumnFromInitializedArea(minRight,maxRight);
+                    }
+                }
+                if (targetSwapColumn!=-1) {
+                    var swapObj = rows[targetSwapColumn][targetSwapLine];
+                    rows[targetSwapColumn][targetSwapLine] = container;
+                    rows[container.layoutData.lanMtxCoord.y][container.layoutData.lanMtxCoord.x] = swapObj;
+                    container.layoutData.lanMtxCoord = {x:targetSwapLine, y: targetSwapColumn}
+                }
+            };
 
+            this.optimizeContainerMtxCoord = function() {
+                var i, ii, j, jj;
+                var container, linkedContainers, linkedContainer, linkedBuss, linkedBus;
+                var containersToExternalLeft = [], containersToExternalRight = [];
+                var lan1, lan2;
+
+                //FIRST : SORT ACCORDING INTERNAL LINKS WIEGHT
+                containersList.sort(function(container1, container2){
+                    return (container2.layoutData.lanInternalLinksWeight-container1.layoutData.lanInternalLinksWeight);
+                });
+
+                //SECOND : ADD CONTAINER LAYOUT DATA TO FEET LAN POSITIONING OPTIMIZATION
+                for (i=0, ii=containersList.length; i<ii; i++) {
+                    container = containersList[i];
+                    if (container.layoutData.isConnectedInsideArea) {
+                        linkedContainers = container.getLinkedContainers();
+                        for(j=0, jj=linkedContainers.length; j < jj; j++) {
+                            linkedContainer = linkedContainers[j];
+                            if (container.localisation.equalArea(linkedContainer.localisation)) {
+                                lan1 = container.layoutData.lan;
+                                lan2 = linkedContainer.layoutData.lan;
+
+                                if (lan1.layoutData.areaMtxCoord.x > lan2.layoutData.areaMtxCoord.x)
+                                    container.layoutData.isConnectedToUpLan = true;
+                                else if (lan1.layoutData.areaMtxCoord.x < lan2.layoutData.areaMtxCoord.x)
+                                    container.layoutData.isConnectedToDowntLan = true;
+
+                                if (lan1.layoutData.areaMtxCoord.y > lan2.layoutData.areaMtxCoord.y && !container.layoutData.isConnectedToLeftLan){
+                                    container.layoutData.isConnectedToLeftLan = true;
+                                    containersToExternalLeft.push(container);
+                                } else if (lan1.layoutData.areaMtxCoord.y < lan2.layoutData.areaMtxCoord.y && !container.layoutData.isConnectedToRightLan ) {
+                                    container.layoutData.isConnectedToRightLan = true;
+                                    containersToExternalRight.push(container);
+                                }
+
+                                container.layoutData.lanUpDownIdx+=(lan1.layoutData.areaMtxCoord.x - lan2.layoutData.areaMtxCoord.x)
+                            }
+                        }
+
+                        linkedBuss = container.getLinkedBus();
+                        for (j=0, jj=linkedBuss.length; j < jj; j++) {
+                            linkedBus = linkedBuss[j];
+                            lan1 = container.layoutData.lan;
+
+                            if (lan1.layoutData.areaMtxCoord.x > linkedBus.layoutData.areaMtxCoord.x)
+                                container.layoutData.isConnectedToUpLan = true;
+                            else if (lan1.layoutData.areaMtxCoord.x < linkedBus.layoutData.areaMtxCoord.x)
+                                container.layoutData.isConnectedToDownLan = true;
+
+                            if (lan1.layoutData.areaMtxCoord.y > linkedBus.layoutData.areaMtxCoord.y && !container.layoutData.isConnectedToLeftLan) {
+                                container.layoutData.isConnectedToLeftLan = true;
+                                containersToExternalLeft.push(container);
+                            }
+                            else if (lan1.layoutData.areaMtxCoord.y < linkedBus.layoutData.areaMtxCoord.y && !container.layoutData.isConnectedToRightLan ) {
+                                container.layoutData.isConnectedToRightLan = true;
+                                containersToExternalRight.push(container);
+                            }
+
+                            container.layoutData.lanUpDownIdx+=(lan1.layoutData.areaMtxCoord.x - linkedBus.layoutData.areaMtxCoord.x)
+                        }
+                    }
+                }
+
+                //THIRD : OPTIMIZE COLUMN POZ
+                for (i=0, ii=containersList.length; i < ii; i++) {
+                    container = containersList[i];
+                    if (container.layoutData.isConnectedInsideLan) {
+                        optimizeContainerLinkedToLeftOrRightLan(container, minInternalLeftUDC, maxInternalLeftUDC, minInternalRightUDC, maxInternalRightUDC);
+                    } else {
+                        optimizeContainerLinkedToLeftOrRightLan(container, minLeftUDC, maxLeftUDC, minRightUDC, maxRightUDC);
+                    }
+                }
+
+                //FOURTH : OPTIMIZE LINE POZ
+                containersToExternalLeft.sort(function(container1, container2){
+                    return (container2.layoutData.lanUpDownIdx-container1.layoutData.lanUpDownIdx);
+                });
+                for (i=0, ii=containersToExternalLeft.length; i < ii; i++) {
+                    var container = containersToExternalLeft[i];
+                    if (i < nbLines) {
+                        var swapObj = rows[container.layoutData.lanMtxCoord.y][i];
+                        rows[container.layoutData.lanMtxCoord.y][i] = container;
+                        rows[container.layoutData.lanMtxCoord.y][container.layoutData.lanMtxCoord.x] = swapObj;
+                        container.layoutData.lanMtxCoord = {x:i, y: container.layoutData.y}
+                    } else {
+                        if (downInternalLine!=-1 && downLine !=1) {
+                            downLine = nbLines;
+                            addLineToMtx(downLine);
+                        } else if (minInternalLine==-1 && maxInternalLine==-1) {
+                            maxInternalLine = nbLines;
+                            addLineToMtx(maxInternalLine);
+                        } else if (upInternalLine!=-1 && upLine!=-1) {
+                            upInternalLine = nbLines;
+                            addLineToMtx(upInternalLine);
+                        }
+                    }
+                }
+
+                containersToExternalRight.sort(function(container1, container2){
+                    return (container2.layoutData.lanUpDownIdx-container1.layoutData.lanUpDownIdx);
+                });
+                for (i=0, ii=containersToExternalRight.length; i < ii; i++) {
+                    var container = containersToExternalRight[i];
+                    if (i < nbLines) {
+                        var swapObj = rows[container.layoutData.lanMtxCoord.y][i];
+                        rows[container.layoutData.lanMtxCoord.y][i] = container;
+                        rows[container.layoutData.lanMtxCoord.y][container.layoutData.lanMtxCoord.x] = swapObj;
+                        container.layoutData.lanMtxCoord = {x:i, y: container.layoutData.y}
+                    } else {
+                        if (downInternalLine!=-1 && downLine !=1) {
+                            downLine = nbLines;
+                            addLineToMtx(downLine);
+                        } else if (minInternalLine==-1 && maxInternalLine==-1) {
+                            maxInternalLine = nbLines;
+                            addLineToMtx(maxInternalLine);
+                        } else if (upInternalLine!=-1 && upLine!=-1) {
+                            upInternalLine = nbLines;
+                            addLineToMtx(upInternalLine);
+                        }
+                    }
+                }
+
+                //FIFTH : CLEAN MATRIX (IE REMOVE UNUSED COLUMN OR UNUSED LINE)
+                var linesIdxToBeRemoved = [], columnsIdxToBeRemoved = [];
+                for (i=0, ii=nbLines; i < ii; i++) {
+                    var lineToBeRemoved = true;
+                    for (j = 0, jj = nbColumns; j < jj; j++) {
+                        if (rows[j][i] != null && rows[j][i] !== FREE && rows[j][i] !== LOCKED) {
+                            lineToBeRemoved = false;
+                            break;
+                        }
+                    }
+                    if (lineToBeRemoved)
+                        linesIdxToBeRemoved.push(i)
+                }
+                for (i=0, ii=linesIdxToBeRemoved.length; i<ii; i++)
+                    removeLineFromMtx(linesIdxToBeRemoved[i]-i);
+
+                for (i=0, ii=nbColumns; i < ii; i++) {
+                    var columnToBeRemoved = true;
+                    for (j=0, jj=nbLines; j < jj; j++) {
+                        if (rows[i][j]!=null && rows[i][j]!==FREE && rows[i][j]!==LOCKED) {
+                            columnToBeRemoved = false;
+                            break;
+                        }
+                    }
+                    if (columnToBeRemoved)
+                        columnsIdxToBeRemoved.push(i)
+                }
+                for (i=0, ii=columnsIdxToBeRemoved.length; i<ii; i++)
+                    removeColumnFromMtx(columnsIdxToBeRemoved[i]-i);
             };
 
             this.addContainer = function(container) {
@@ -612,33 +973,43 @@ define(
                     if (container.layoutData.isConnectedToUpArea && container.layoutData.isConnectedToDownArea) {
                         newInternalUDC = getNewInternalUpDownColumn();
                         rows[newInternalUDC][0] = container;
+                        container.layoutData.lanMtxCoord = {x:0, y:newInternalUDC}
                     } else if (container.layoutData.isConnectedToUpArea) {
                         upColumn = getInternalUpColumn();
                         rows[upColumn][upInternalLine] = container;
                         rows[upColumn][upLine]=LOCKED;
+                        container.layoutData.lanMtxCoord = {x:upLine, y:upColumn}
                     } else if (container.layoutData.isConnectedToDownArea) {
                         downColumn = getInternalDownColumn();
                         rows[downColumn][downInternalLine] = container;
                         rows[downColumn][downLine]=LOCKED;
+                        container.layoutData.lanMtxCoord = {x:downLine, y:downColumn}
                     } else  {
                         newInternalCoord = getInternalCoord(container);
                         rows[newInternalCoord.column][newInternalCoord.line] = container;
+                        container.layoutData.lanMtxCoord = {x:newInternalCoord.line, y:newInternalCoord.column}
                     }
                 } else {
                     if (container.layoutData.isConnectedToUpArea && container.layoutData.isConnectedToDownArea) {
                         newUDC = getNewUpDownColumn();
                         rows[newUDC][0] = container;
+                        container.layoutData.lanMtxCoord = {x:0, y:newUDC}
                     } else if (container.layoutData.isConnectedToUpArea) {
                         upColumn = getUpColumn();
                         rows[upColumn][upLine] = container;
+                        container.layoutData.lanMtxCoord = {x: upLine, y:upColumn}
                     } else if (container.layoutData.isConnectedToDownArea) {
                         downColumn = getDownColumn();
                         rows[downColumn][downLine] = container;
+                        container.layoutData.lanMtxCoord = {x: downLine, y:downColumn}
                     } else  {
                         newInternalCoord = getInternalCoord(container);
                         rows[newInternalCoord.column][newInternalCoord.line] = container;
+                        container.layoutData.lanMtxCoord = {x:newInternalCoord.line, y:newInternalCoord.column}
                     }
                 }
+
+                containersList.push(container);
 
                 //ADD CURRENT CONTAINER TO LAN CONTAINER CONNECTED LIST
                 var linkedContainers = container.getLinkedContainers();

@@ -294,7 +294,7 @@ define(
                                 isConnectedToUpArea: isConnectedToUpArea, isConnectedToDownArea:isConnectedToDownArea,
                                 isConnectedToUpLan: isConnectedToUpLan, isConnectedToDownLan:isConnectedToDownLan,
                                 isConnectedInsideArea: isConnectedInsideArea, isConnectedInsideLan:isConnectedInsideLan,
-                                lanMtxCoord: null, lanInternalLinksWeight: 0, lanConnectedContainer: [], lanPozFinal: false
+                                lanMtxCoord: null, lanInternalLinksWeight: 0, lanConnectedContainer: [], lanUpDownIdx: 0
                             };
 
                         lan.setLayoutData(

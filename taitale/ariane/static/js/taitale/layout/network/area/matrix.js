@@ -503,6 +503,7 @@ define(
                 if (column2swap!=-1) {
                     rows[objToSwapFinal.obj.layoutData.areaMtxCoord.y][objToSwapFinal.obj.layoutData.areaMtxCoord.x] = rows[column2swap][line];
                     rows[column2swap][line] = objToSwapFinal;
+                    objToSwapFinal.obj.layoutData.areaMtxCoord = {x: line, y: column2swap}
                 }
             };
 
@@ -965,12 +966,12 @@ define(
             };
 
             this.optimizeLanAndBusMtxCoord = function() {
+                var i, ii;
+
                 optimizeMulticastBusCoord();
                 optimizeLanCoord();
 
-                //TODO UP Container layout Data according to final lan placement
-
-                for (var i=0, ii=lansList.length; i<ii; i++)
+                for (i=0, ii=lansList.length; i<ii; i++)
                     lansList[i].optimizeMtxCoord();
             };
 
