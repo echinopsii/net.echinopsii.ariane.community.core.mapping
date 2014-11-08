@@ -460,6 +460,9 @@ define(
             this.moveAction = function(dx,dy) {
                 this.mvx = dx; this.mvy = dy;
                 this.lanHat.move(this.r, this.extrx + dx + (this.lanwidth/2), this.extry + dy + this.lbrdSpan/5);
+                this.lanHat.mousedown(mouseDown);
+                this.lanHat.drag(lanMove, lanDragg, lanUP);
+                this.lanHat.toBack();
                 if (!this.hasMoveHdl && !this.dispLan)
                     this.lanHat.hide();
             };

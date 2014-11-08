@@ -71,14 +71,14 @@ define(
                 this.hatSet = r.set();
                 dcLogo.print(r,x-this.width/3,y,this.color,this.hatSet);
 
-                this.hatSet.push(this.textSet);
-                this.hatSet.attr({stroke:'none','stroke-width':'1','stroke-opacity':'1'});
-
                 if (this.name != null) {
                     var nameTxt = r.text(x,
                             y+dcLogo.height+5, this.name).attr(this.txtFont);
                     this.textSet.push(nameTxt);
                 }
+
+                this.hatSet.push(this.textSet);
+                this.hatSet.attr({stroke:'none','stroke-width':'1','stroke-opacity':'1'});
             };
 
             this.hide = function() {

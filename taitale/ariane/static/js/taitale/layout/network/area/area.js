@@ -348,6 +348,7 @@ define(
 
                 this.areaHat.mousedown(mouseDown);
                 this.areaHat.drag(areaMove, areaDragg, areaUP);
+                this.areaHat.toBack();
 
                 this.rect.attr({fill: params.area_color, stroke: params.area_color, "stroke-dasharray": this.sDasharray, "fill-opacity": this.oUnselected, "stroke-width": 0});
                 this.rect.mousedown(mouseDown);
@@ -460,8 +461,11 @@ define(
             this.moveAction = function(dx, dy) {
                 this.mvx = dx; this.mvy = dy;
                 this.areaHat.move(this.r, this.extrx + dx + (this.areawidth/2), this.extry + dy + this.abrdSpan/5);
-                if (!this.hasMoveHdl && !this.dispArea)
-                    this.areaHat.hide();
+                this.areaHat.mousedown(mouseDown);
+                this.areaHat.drag(areaMove, areaDragg, areaUP);
+                this.areaHat.toBack();
+                if (!this.hasMoveHdl && !this.dispArea){
+                    this.areaHat.hide();}
             };
 
             this.moveUp = function() {

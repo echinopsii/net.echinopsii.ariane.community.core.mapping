@@ -33,13 +33,6 @@ define(
 
                 this.print = function(r,x,y,color,hset) {
 
-                    var path_b = r.path(" M 62.89 0.00 L 65.34 0.00 C 82.11 0.41 98.62 7.54 110.16 19.75 C 121.30 31.22 127.67 " +
-                        "46.98 128.00 62.94 L 128.00 65.33 C 127.59 81.19 121.24 96.83 110.17 108.24 C 98.58 120.50 81.98 127.65 " +
-                        "65.13 128.00 L 62.67 128.00 C 46.82 127.59 31.18 121.25 19.78 110.19 C 7.48 98.57 0.32 81.92 0.00 65.03 " +
-                        "L 0.00 62.66 C 0.41 46.12 7.34 29.82 19.27 18.30 C 30.76 6.90 46.72 0.35 62.89 0.00 Z");
-                    path_b.attr({fill: '#333333','stroke-width': '0','stroke-opacity': '1'}).transform("t-50,-50s0.2t"+x*5+","+y*5);
-                    hset.push(path_b);
-
                     var path_d = r.path(" M 47.96 32.06 C 52.01 25.65 57.35 20.06 63.18 15.24 C 63.59 15.24 64.41 15.24 64.83 " +
                         "15.24 C 70.50 19.88 75.58 25.33 79.68 31.42 C 80.56 32.46 79.54 34.41 78.13 34.28 C 75.68 34.50 73.23 " +
                         "34.37 70.78 34.37 C 70.18 38.59 69.96 42.89 68.92 47.03 C 66.39 49.94 61.64 49.27 58.67 47.31 C 58.14 " +
@@ -68,6 +61,13 @@ define(
                         "80.69 Z");
                     path_i.attr({fill: '#ffffff','stroke-width': '0','stroke-opacity': '1'}).transform("t-50,-75s0.2t"+x*5+","+y*5);
                     hset.push(path_i);
+
+                    var path_b = r.path(" M 62.89 0.00 L 65.34 0.00 C 82.11 0.41 98.62 7.54 110.16 19.75 C 121.30 31.22 127.67 " +
+                        "46.98 128.00 62.94 L 128.00 65.33 C 127.59 81.19 121.24 96.83 110.17 108.24 C 98.58 120.50 81.98 127.65 " +
+                        "65.13 128.00 L 62.67 128.00 C 46.82 127.59 31.18 121.25 19.78 110.19 C 7.48 98.57 0.32 81.92 0.00 65.03 " +
+                        "L 0.00 62.66 C 0.41 46.12 7.34 29.82 19.27 18.30 C 30.76 6.90 46.72 0.35 62.89 0.00 Z");
+                    path_b.attr({fill: '#333333','stroke-width': '0','stroke-opacity': '1'}).transform("t-50,-50s0.2t"+x*5+","+y*5);
+                    hset.push(path_b);
                 }
             }
 
@@ -92,14 +92,14 @@ define(
                 this.hatSet = r.set();
                 routerLogo.print(r,x-this.width/3,y,this.color,this.hatSet);
 
-                this.hatSet.push(this.textSet);
-                this.hatSet.attr({stroke:'none','stroke-width':'1','stroke-opacity':'1'});
-
                 if (this.name != null) {
                     var nameTxt = r.text(x,
                             y+routerLogo.height+5, this.name).attr(this.txtFont);
                     this.textSet.push(nameTxt);
                 }
+
+                this.hatSet.push(this.textSet);
+                this.hatSet.attr({stroke:'none','stroke-width':'1','stroke-opacity':'1'});
             };
 
             this.hide = function() {

@@ -462,6 +462,9 @@ define(
             this.moveAction = function(dx, dy) {
                 this.mvx = dx; this.mvy = dy;
                 this.dcHat.move(this.r, this.extrx + dx + (this.dcwidth/2), this.extry + dy + this.dbrdSpan/5);
+                this.dcHat.mousedown(mouseDown);
+                this.dcHat.drag(dcMove, dcDragg, dcUP);
+                this.dcHat.toBack();
             };
 
             this.moveUp = function() {
@@ -685,6 +688,8 @@ define(
                 this.dcR.toBack();
 
                 this.dcHat.move(this.r, this.extrx + (this.extwidth/2), this.extry + this.dbrdSpan/5);
+                this.dcHat.mousedown(mouseDown);
+                this.dcHat.drag(dcMove, dcDragg, dcUP);
 
                 this.rect.attr({fill: this.color, stroke: this.color, "stroke-dasharray": this.sDasharray, "fill-opacity": this.oUnselected, "stroke-width": this.sWidth});
                 this.rect.drag(dcMove, dcDragg, dcUP);
