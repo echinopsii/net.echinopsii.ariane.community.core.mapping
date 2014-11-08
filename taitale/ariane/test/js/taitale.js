@@ -64,6 +64,7 @@ require.config({
         'taitale-datacenter-hat': 'js/taitale/layout/network/datacenter/hat',
         'taitale-datacenter-matrix': 'js/taitale/layout/network/datacenter/matrix',
         'taitale-area': 'js/taitale/layout/network/area/area',
+        'taitale-area-hat': 'js/taitale/layout/network/area/hat',
         'taitale-area-matrix': 'js/taitale/layout/network/area/matrix',
         'taitale-lan': 'js/taitale/layout/network/lan/lan',
         'taitale-lan-matrix': 'js/taitale/layout/network/lan/matrix'

@@ -23,9 +23,10 @@ define(
         'taitale-params',
         'taitale-dictionaries',
         'taitale-area-matrix',
+        'taitale-area-hat',
         'taitale-helper'
     ],
-    function (params,dictionary,areaMatrix, helper) {
+    function (params,dictionary,areaMatrix, areaHat, helper) {
         function area(areaDef_, registries, options_) {
             //noinspection JSUnusedLocalSymbols
             var helper_     = new helper();
@@ -46,7 +47,6 @@ define(
             this.dispArea    = false;
 
             this.areaR    = null;
-            this.areaName = null;
             this.rect     = null;
 
             this.minJailX    = 0;
@@ -77,6 +77,10 @@ define(
             this.menuEditionModeRect = null;
             this.menuFieldStartEditTitle  = "Edition mode ON";
             this.menuFieldStopEditTitle   = "Edition mode OFF";
+
+            this.areaHat  = new areaHat(this.areaDef.type + " area | " +
+                ((this.areaDef.marea != null) ? this.areaDef.marea : "no multicast area"),
+                params.area_txtTitle, params.area_color);
 
             this.mvx = 0;
             this.mvy = 0;
@@ -212,12 +216,14 @@ define(
                     if (!areaRef.dispArea && !areaRef.isMoving && !areaRef.isEditing) {
                         this.animate({"stroke-width": params.area_strokeWidthShow}, 1);
                         areaRef.areaR.show();
+                        areaRef.areaHat.show();
                     }
                 },
                 areaOut = function () {
                     if (!areaRef.dispArea && !areaRef.isMoving && !areaRef.isEditing) {
                         this.animate({"stroke-width": 0}, 1);
                         areaRef.areaR.hide();
+                        areaRef.areaHat.hide();
                     }
                 };
 
@@ -334,12 +340,12 @@ define(
                 var title    = this.areaDef.type + " area | " + ((this.areaDef.marea != null) ? this.areaDef.marea : "no multicast area");
 
                 this.areaR    = this.r.set();
-                this.areaName = this.r.text(this.topLeftX + (this.areawidth/2), this.topLeftY + this.abrdSpan/2, title);
+                this.areaHat.print(this.r, this.topLeftX + (this.areawidth/2), this.topLeftY + this.abrdSpan/5);
+
                 this.rect     = this.r.rect(this.topLeftX, this.topLeftY, this.areawidth, this.areaheight, 0);
 
-                this.areaName.attr(params.area_txtTitle).attr({'fill':params.area_color});
-                this.areaName.mousedown(mouseDown);
-                this.areaR.push(this.areaName);
+                this.areaHat.mousedown(mouseDown);
+                this.areaHat.drag(areaMove, areaDragg, areaUP);
 
                 this.rect.attr({fill: params.area_color, stroke: params.area_color, "stroke-dasharray": this.sDasharray, "fill-opacity": this.oUnselected, "stroke-width": 0});
                 this.rect.mousedown(mouseDown);
@@ -348,6 +354,7 @@ define(
                 this.rect.mouseout(areaOut);
 
                 this.areaR.hide();
+                this.areaHat.hide();
                 this.armatrix.printMtx(this.r);
 
                 this.menuTitle = this.r.text(0,10,"Area menu").attr(this.menuMainTitleTXT);
@@ -376,9 +383,11 @@ define(
                 if (display) {
                     this.rect.animate({"stroke-width": params.area_strokeWidthShow}, 1);
                     this.areaR.show();
+                    this.areaHat.show();
                 } else {
                     this.rect.animate({"stroke-width": 0}, 1);
                     this.areaR.hide();
+                    this.areaHat.hide();
                 }
             };
 
@@ -391,8 +400,6 @@ define(
                 this.extry  = this.rect.attr("y");
                 this.extrw  = this.rect.attr("width");
                 this.extrh  = this.rect.attr("height");
-                this.extt0x = this.areaName.attr("x");
-                this.extt0y = this.areaName.attr("y");
                 this.minTopLeftX = this.minJailX;
                 this.minTopLeftY = this.minJailY;
                 this.maxTopLeftX = this.maxJailX - this.areawidth;
@@ -429,7 +436,6 @@ define(
                     this.r.scaleDone(this);
 
                 this.r.areasOnMovePush(this);
-                this.r.moveSetPush(this.areaName);
                 this.r.moveSetPush(this.rect);
 
                 var mtxX, mtxY, i, ii, j, jj;
@@ -451,6 +457,7 @@ define(
 
             this.moveAction = function(dx, dy) {
                 this.mvx = dx; this.mvy = dy;
+                this.areaHat.move(this.r, this.extrx + dx + (this.areawidth/2), this.extry + dy + this.abrdSpan/5);
             };
 
             this.moveUp = function() {
@@ -459,7 +466,6 @@ define(
 
                 this.mvx=0; this.mvy=0;
                 this.rect.attr(attrect);
-                this.areaName.attr(attrtxt0);
 
                 this.changeUp();
                 this.isMoving = false;
@@ -509,6 +515,7 @@ define(
                     areaRef.r.scaleDone(areaRef);
                     areaRef.isEditing = false;
                     areaRef.rect.animate({"fill-opacity": areaRef.oUnselected, "stroke-width": 0}, 0);
+                    areaRef.areaHat.hide();
                     areaRef.areaR.hide();
                     areaRef.dispArea = false;
                 }
@@ -617,15 +624,11 @@ define(
                 }
 
                 this.areaR.pop(this.areaName);
-                this.areaName.remove();
                 this.rect.remove();
 
                 var title    = this.areaDef.type + " area | " + ((this.areaDef.marea != null) ? this.areaDef.marea : "no multicast area");
-                this.areaName = this.r.text(this.extrx + (this.extwidth/2), this.extry + this.abrdSpan/2, title);
                 this.rect     = this.r.rect(this.extrx, this.extry, this.extwidth, this.extheight, 0);
 
-                this.areaName.attr(params.area_txtTitle).attr({'fill':params.area_color});
-                this.areaName.mousedown(mouseDown);
                 this.areaR.push(this.areaName);
 
                 this.rect.attr({fill: params.area_color, stroke: params.area_color, "stroke-dasharray": this.sDasharray, "fill-opacity": this.oUnselected, "stroke-width": 1});
@@ -633,6 +636,8 @@ define(
                 this.rect.mouseover(areaOver);
                 this.rect.mouseout(areaOut);
                 this.rect.mousedown(mouseDown);
+
+                this.areaHat.move(this.r, this.extrx + (this.extwidth/2), this.extry + this.abrdSpan/5);
 
                 var mtxX, mtxY, i, ii, j, jj;
                 mtxX = this.armatrix.getMtxSize().x;

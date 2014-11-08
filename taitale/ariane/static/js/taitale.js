@@ -70,6 +70,7 @@ require.config({
         'taitale-datacenter-matrix': 'ajs/taitale/layout/network/datacenter/matrix',
         'taitale-area': 'ajs/taitale/layout/network/area/area',
         'taitale-area-matrix': 'ajs/taitale/layout/network/area/matrix',
+        'taitale-area-hat': 'ajs/taitale/layout/network/area/hat',
         'taitale-lan': 'ajs/taitale/layout/network/lan/lan',
         'taitale-lan-matrix': 'ajs/taitale/layout/network/lan/matrix'
     },

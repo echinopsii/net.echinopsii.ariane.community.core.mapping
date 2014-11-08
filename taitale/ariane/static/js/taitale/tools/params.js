@@ -63,7 +63,7 @@ define({
     area_menuFields      : {'font-size': '10px', 'font-family': 'Arial', 'font-weight': 'normal', 'cursor': 'default', fill: "#fff"},
     area_menuFieldsOver  : {'font-size': '10px', 'font-family': 'Arial', 'font-weight': 'bold', 'cursor': 'default', fill: "#fff"},
     area_lanSpan         : 0,  /*space between 2 lan*/
-    area_abrdSpan        : 20, /*space between 1 lan and area border*/
+    area_abrdSpan        : 60, /*space between 1 lan and area border*/
     area_abrdResz        : 10,
     area_txtTitle        : {font: '13px Helvetica, Arial', 'font-weight': 'bold', fill: "#000"},
     area_opacSelec       : 0.2,
