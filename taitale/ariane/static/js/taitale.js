@@ -66,6 +66,7 @@ require.config({
         'taitale-layoutntw-registries' : 'ajs/taitale/layout/network/registries',
         'taitale-datacenter': 'ajs/taitale/layout/network/datacenter/datacenter',
         'taitale-datacenter-splitter': 'ajs/taitale/layout/network/datacenter/dcSplitter',
+        'taitale-datacenter-hat': 'ajs/taitale/layout/network/datacenter/hat',
         'taitale-datacenter-matrix': 'ajs/taitale/layout/network/datacenter/matrix',
         'taitale-area': 'ajs/taitale/layout/network/area/area',
         'taitale-area-matrix': 'ajs/taitale/layout/network/area/matrix',
