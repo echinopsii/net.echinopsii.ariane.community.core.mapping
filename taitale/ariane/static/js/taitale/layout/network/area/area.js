@@ -53,6 +53,7 @@ define(
             this.minJailY    = 0;
             this.maxJailX    = 0;
             this.maxJailY    = 0;
+            this.hasMoveHdl  = false;
             this.isJailed    = false;
             this.isMoving    = false;
             this.isEditing   = false;
@@ -176,6 +177,7 @@ define(
             var areaDragg = function () {
                     areaRef.moveInit();
                     areaRef.rect.animate({"fill-opacity": areaRef.oSelected}, 500);
+                    areaRef.hasMoveHdl = true;
                 },
                 areaMove = function (dx, dy) {
                     areaRef.minTopLeftX = areaRef.minJailX;
@@ -209,6 +211,7 @@ define(
                     areaRef.r.safari();
                 },
                 areaUP = function () {
+                    areaRef.hasMoveHdl = false;
                     areaRef.r.up();
                     areaRef.rect.animate({"fill-opacity": areaRef.oUnselected}, 500);
                 },
@@ -337,7 +340,6 @@ define(
 
             this.print = function(r_) {
                 this.r = r_;
-                var title    = this.areaDef.type + " area | " + ((this.areaDef.marea != null) ? this.areaDef.marea : "no multicast area");
 
                 this.areaR    = this.r.set();
                 this.areaHat.print(this.r, this.topLeftX + (this.areawidth/2), this.topLeftY + this.abrdSpan/5);
@@ -458,6 +460,8 @@ define(
             this.moveAction = function(dx, dy) {
                 this.mvx = dx; this.mvy = dy;
                 this.areaHat.move(this.r, this.extrx + dx + (this.areawidth/2), this.extry + dy + this.abrdSpan/5);
+                if (!this.hasMoveHdl && !this.dispArea)
+                    this.areaHat.hide();
             };
 
             this.moveUp = function() {
@@ -623,13 +627,11 @@ define(
                         break;
                 }
 
-                this.areaR.pop(this.areaName);
                 this.rect.remove();
 
                 var title    = this.areaDef.type + " area | " + ((this.areaDef.marea != null) ? this.areaDef.marea : "no multicast area");
                 this.rect     = this.r.rect(this.extrx, this.extry, this.extwidth, this.extheight, 0);
 
-                this.areaR.push(this.areaName);
 
                 this.rect.attr({fill: params.area_color, stroke: params.area_color, "stroke-dasharray": this.sDasharray, "fill-opacity": this.oUnselected, "stroke-width": 1});
                 this.rect.drag(areaMove, areaDragg, areaUP);

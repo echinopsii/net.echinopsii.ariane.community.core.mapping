@@ -79,7 +79,7 @@ define({
     lan_menuFields      : {'font-size': '10px', 'font-family': 'Arial', 'font-weight': 'normal', 'cursor': 'default', fill: "#fff"},
     lan_menuFieldsOver  : {'font-size': '10px', 'font-family': 'Arial', 'font-weight': 'bold', 'cursor': 'default', fill: "#fff"},
     lan_contSpan        : 5,  /*space between 2 container*/
-    lan_lbrdSpan        : 20, /*space between 1 container and lan border*/
+    lan_lbrdSpan        : 50, /*space between 1 container and lan border*/
     lan_lbrdResz        : 10,
     lan_txtTitle        : {font: '12px Helvetica, Arial', 'font-weight': 'bold', fill: "#000"},
     lan_opacSelec       : 0.2,

@@ -23,9 +23,10 @@ define(
         'taitale-params',
         'taitale-helper',
         'taitale-dictionaries',
-        'taitale-lan-matrix'
+        'taitale-lan-matrix',
+        'taitale-lan-hat'
     ],
-    function (params,helper,dictionary,lanMatrix) {
+    function (params,helper,dictionary,lanMatrix, lanHat) {
         function lan(lanDef_,options_) {
             this.r          = null;
             this.topLeftX   = 0;
@@ -45,13 +46,13 @@ define(
             this.layoutData = null;
 
             this.lanR    = null;
-            this.lanName = null;
             this.rect    = null;
 
             this.minJailX       = 0;
             this.minJailY       = 0;
             this.maxJailX       = 0;
             this.maxJailY       = 0;
+            this.hasMoveHdl     = false;
             this.isJailed       = false;
             this.isMoving       = false;
             this.isEditing      = false;
@@ -61,6 +62,9 @@ define(
             this.oSelected   = params.lan_opacSelec;
             this.sDasharray  = params.lan_strokeDasharray;
             this.color       = params.lan_color;
+
+            this.lanHat  = new lanHat("Lan " + this.lanDef.lan + " - " +
+                this.lanDef.subnetip + "/" + this.lanDef.subnetmask, params.dc_txtTitle, this.color);
 
             this.mvx = 0;
             this.mvy = 0;
@@ -94,6 +98,7 @@ define(
                         if (lanRef.menuHided) {
                             lanRef.rect.animate({"fill-opacity": lanRef.oUnselected, "stroke-width": params.lan_strokeWidthShow}, 1);
                             lanRef.lanR.show();
+                            lanRef.lanHat.show();
                             lanRef.dispLan = true;
 
                             lanRef.rectTopMiddleX = lanRef.topLeftX + lanRef.lanwidth/2;
@@ -134,6 +139,7 @@ define(
                         } else {
                             lanRef.rect.animate({"fill-opacity": lanRef.oUnselected, "stroke-width": 0}, 1);
                             lanRef.lanR.hide();
+                            lanRef.lanHat.hide();
                             lanRef.dispLan = false;
                             lanRef.menu.toBack();
                             lanRef.menuSet.toBack();
@@ -152,6 +158,7 @@ define(
                     if (e.which == 3) {
                         lanRef.rect.animate({"fill-opacity": lanRef.oUnselected, "stroke-width": 0}, 1);
                         lanRef.lanR.hide();
+                        lanRef.lanHat.hide();
                         lanRef.dispLan = false;
                         lanRef.menu.toBack();
                         lanRef.menuSet.toBack();
@@ -175,6 +182,7 @@ define(
             var lanDragg = function () {
                     lanRef.moveInit();
                     lanRef.rect.animate({"fill-opacity": lanRef.oSelected}, 500);
+                    lanRef.hasMoveHdl = true;
                 },
                 lanMove = function (dx, dy) {
                     var rx  = lanRef.extrx,
@@ -202,6 +210,7 @@ define(
                     lanRef.r.safari();
                 },
                 lanUP = function () {
+                    lanRef.hasMoveHdl = false;
                     lanRef.r.up();
                     lanRef.rect.animate({"fill-opacity": lanRef.oUnselected}, 500);
                 },
@@ -209,12 +218,14 @@ define(
                     if (!lanRef.dispLan  && !lanRef.isMoving && !lanRef.isEditing) {
                         lanRef.rect.animate({"fill-opacity": lanRef.oUnselected, "stroke-width": params.lan_strokeWidthShow}, 1);
                         lanRef.lanR.show();
+                        lanRef.lanHat.show();
                     }
                 },
                 lanOut  = function () {
                     if (!lanRef.dispLan && !lanRef.isMoving && !lanRef.isEditing) {
                         lanRef.rect.animate({"fill-opacity": lanRef.oUnselected, "stroke-width": 0}, 1);
                         lanRef.lanR.hide();
+                        lanRef.lanHat.hide();
                     }
                 };
 
@@ -318,13 +329,14 @@ define(
                 var lanTitle = "Lan " + this.lanDef.lan + " - " + this.lanDef.subnetip + "/" + this.lanDef.subnetmask;
 
                 this.lanR    = this.r.set();
-                this.lanName = this.r.text(this.topLeftX + (this.lanwidth/2), this.topLeftY + this.lbrdSpan/2, lanTitle);
+                this.lanHat.print(this.r, this.topLeftX + (this.lanwidth/2), this.topLeftY + this.lbrdSpan/5);
                 this.rect    = this.r.rect(this.topLeftX, this.topLeftY, this.lanwidth, this.lanheight, 0);
 
-                this.lanName.attr(params.lan_txtTitle);
-                this.lanName.mousedown(mouseDown);
+                this.lanHat.mousedown(mouseDown);
+                this.lanHat.drag(lanMove, lanDragg, lanUP);
                 this.lanR.push(this.lanName);
                 this.lanR.hide();
+                this.lanHat.hide();
 
                 this.rect.attr({fill: this.color, stroke: this.color, "stroke-dasharray": this.sDasharray, "fill-opacity": this.oUnselected, "stroke-width": 0});
                 this.rect.mousedown(mouseDown);
@@ -375,9 +387,11 @@ define(
                 if (this.dispLan) {
                     this.rect.animate({"fill-opacity": this.oUnselected, "stroke-width": params.lan_strokeWidthShow}, 1);
                     this.lanR.show();
+                    this.lanHat.show();
                 } else {
                     this.rect.animate({"fill-opacity": this.oUnselected, "stroke-width": 0}, 1);
                     this.lanR.hide();
+                    this.lanHat.hide();
                 }
             };
 
@@ -388,8 +402,6 @@ define(
                 this.extrw  = this.rect.attr("width");
                 //noinspection JSUnusedGlobalSymbols
                 this.extrh  = this.rect.attr("height");
-                this.extt0x = this.lanR[0].attr("x");
-                this.extt0y = this.lanR[0].attr("y");
                 this.minTopLeftX = this.minJailX;
                 this.minTopLeftY = this.minJailY;
                 this.maxTopLeftX = this.maxJailX - this.lanwidth;
@@ -432,7 +444,6 @@ define(
                         mtxY = this.lanmatrix.getMtxSize().y;
 
                     this.r.lansOnMovePush(this);
-                    this.r.moveSetPush(this.lanName);
                     this.r.moveSetPush(this.rect);
 
                     for (i = 0, ii =  mtxX; i < ii; i++)
@@ -448,16 +459,17 @@ define(
 
             this.moveAction = function(dx,dy) {
                 this.mvx = dx; this.mvy = dy;
+                this.lanHat.move(this.r, this.extrx + dx + (this.lanwidth/2), this.extry + dy + this.lbrdSpan/5);
+                if (!this.hasMoveHdl && !this.dispLan)
+                    this.lanHat.hide();
             };
 
             this.moveUp = function() {
                 if (!this.rightClick) {
-                    var attrect  = {x: this.extrx + this.mvx, y: this.extry + this.mvy},
-                        attrtxt0 = {x: this.extt0x + this.mvx, y: this.extt0y + this.mvy};
+                    var attrect  = {x: this.extrx + this.mvx, y: this.extry + this.mvy};
 
                     this.mvx=0; this.mvy=0;
                     this.rect.attr(attrect);
-                    this.lanName.attr(attrtxt0);
 
                     this.changeUp();
                     this.isMoving = false;
@@ -497,6 +509,7 @@ define(
                     lanRef.isEditing = false;
                     lanRef.rect.animate({"fill-opacity": this.oUnselected, "stroke-width": 0}, 1);
                     lanRef.lanR.hide();
+                    lanRef.lanHat.hide();
                     lanRef.dispLan = false;
                 }
             };
@@ -603,24 +616,17 @@ define(
                         break;
                 }
 
-                this.lanR.pop(this.lanName);
-                this.lanName.remove();
                 this.rect.remove();
 
-                var lanTitle = "Lan " + this.lanDef.lan + " - " + this.lanDef.subnetip + "/" + this.lanDef.subnetmask;
-
-                this.lanName = this.r.text(this.extrx + (this.extwidth/2), this.extry + this.lbrdSpan/2, lanTitle);
                 this.rect    = this.r.rect(this.extrx, this.extry, this.extwidth, this.extheight, 0);
-
-                this.lanName.attr(params.lan_txtTitle);
-                this.lanName.mousedown(mouseDown);
-                this.lanR.push(this.lanName);
-
-                this.rect.attr({fill: this.color, stroke: this.color, "stroke-dasharray": this.sDasharray, "fill-opacity": this.oUnselected, "stroke-width": params.lan_strokeWidthShow});
+                this.rect.attr({fill: this.color, stroke: this.color, "stroke-dasharray": this.sDasharray,
+                    "fill-opacity": this.oUnselected, "stroke-width": params.lan_strokeWidthShow});
                 this.rect.mousedown(mouseDown);
                 this.rect.drag(lanMove, lanDragg, lanUP);
                 this.rect.mouseover(lanOver);
                 this.rect.mouseout(lanOut);
+
+                this.lanHat.move(this.r, this.extrx + (this.extwidth/2), this.extry + this.lbrdSpan/5);
 
                 this.toFront();
             };

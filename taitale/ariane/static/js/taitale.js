@@ -72,7 +72,8 @@ require.config({
         'taitale-area-matrix': 'ajs/taitale/layout/network/area/matrix',
         'taitale-area-hat': 'ajs/taitale/layout/network/area/hat',
         'taitale-lan': 'ajs/taitale/layout/network/lan/lan',
-        'taitale-lan-matrix': 'ajs/taitale/layout/network/lan/matrix'
+        'taitale-lan-matrix': 'ajs/taitale/layout/network/lan/matrix',
+        'taitale-lan-hat': 'ajs/taitale/layout/network/lan/hat'
     },
     map: {
         '*': { 'jquery': 'jquery-private' },

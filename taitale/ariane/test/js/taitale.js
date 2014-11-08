@@ -67,7 +67,8 @@ require.config({
         'taitale-area-hat': 'js/taitale/layout/network/area/hat',
         'taitale-area-matrix': 'js/taitale/layout/network/area/matrix',
         'taitale-lan': 'js/taitale/layout/network/lan/lan',
-        'taitale-lan-matrix': 'js/taitale/layout/network/lan/matrix'
+        'taitale-lan-matrix': 'js/taitale/layout/network/lan/matrix',
+        'taitale-lan-hat': 'js/taitale/layout/network/lan/hat'
     },
     shim: {
         "jquery-ui": {
