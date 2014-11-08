@@ -754,14 +754,16 @@ define(
                 for (i=0, ii=lansList.length; i<ii; i++) {
                     lan = lansList[i];
                     if (lan.layoutData.isConnectedInsideArea) {
-                        if (!lan.layoutData.isConnectedToUpArea && !lan.layoutData.isConnectedToDownArea) {
+                        if (!lan.layoutData.isConnectedToUpArea && !lan.layoutData.isConnectedToDownArea &&
+                            !lan.layoutData.isConnectedToLeftArea && !lan.layoutData.isConnectedToRightArea) {
                             connectedObjects = lan.layoutData.areaConnectedObject.sort(function(coord1, coord2) {
                                 return (coord2.weight - coord1.weight);
                             });
                             connectedWeight = 0;
+                            averageLine = 0;
                             for (j = 0, jj = connectedObjects.length; j<jj; j++) {
                                 if (connectedObjects[j].obj.layoutData.areaPozFinal) {
-                                    averageLine = (connectedObjects[j].obj.layoutData.areaMtxCoord.x-mtxAverageLine)*connectedObjects[j].weight;
+                                    averageLine += (connectedObjects[j].obj.layoutData.areaMtxCoord.x-mtxAverageLine)*connectedObjects[j].weight;
                                     connectedWeight += connectedObjects[j].weight;
                                 }
                             }
