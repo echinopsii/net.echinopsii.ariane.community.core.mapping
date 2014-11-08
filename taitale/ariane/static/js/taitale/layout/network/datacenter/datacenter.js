@@ -25,9 +25,10 @@ define(
         'taitale-dictionaries',
         'taitale-datacenter-matrix',
         'taitale-datacenter-splitter',
+        'taitale-datacenter-hat',
         'taitale-helper'
     ],
-    function (params,dictionary,datacenterMatrix,datacenterSplitter,helper) {
+    function (params,dictionary,datacenterMatrix,datacenterSplitter,datacenterHat,helper) {
         function datacenter(geoDCLoc_, mapSplitter, registries, options) {
             //noinspection JSUnusedLocalSymbols
             var helper_     = new helper();
@@ -49,7 +50,6 @@ define(
             this.dcmatrix   = new datacenterMatrix(this.msplitter, registries, options);
 
             this.dcR    = null;
-            this.dcName = null;
             this.dcTown = null;
             this.rect   = null;
 
@@ -62,6 +62,8 @@ define(
             this.sDasharray  = params.dc_strokeDasharray;
             this.sWidth      = params.dc_strokeWidthShow;
             this.color       = params.dc_color;
+
+            this.dcHat  = new datacenterHat(this.geoDCLoc.dc, params.dc_txtTitle, this.color);
 
             this.menu              = null;
             this.menuSet           = null;
@@ -132,6 +134,7 @@ define(
                                 dcRef.rect.animate({"fill-opacity": dcRef.oUnselected, "stroke-width": 0}, 0);
                                 dcRef.dcR.hide();
                                 dcRef.dcsplitter.hide();
+                                dcRef.dcHat.hide();
                                 dcRef.dispDC = false;
                             }
                             dcRef.menu.toBack();
@@ -153,6 +156,7 @@ define(
                             dcRef.rect.animate({"fill-opacity": dcRef.oUnselected, "stroke-width": 0}, 0);
                             dcRef.dcR.hide();
                             dcRef.dcsplitter.hide();
+                            dcRef.dcHat.hide();
                             dcRef.dispDC = false;
                         }
                         dcRef.menu.toBack();
@@ -189,6 +193,7 @@ define(
                         this.animate({"fill-opacity": dcRef.oUnselected, "stroke-width": dcRef.sWidth}, 1);
                         dcRef.dcR.show();
                         dcRef.dcsplitter.show();
+                        dcRef.dcHat.show();
                     }
                 },
                 dcOut  = function () {
@@ -196,6 +201,7 @@ define(
                         this.animate({"fill-opacity": dcRef.oUnselected, "stroke-width": 0}, 1);
                         dcRef.dcR.hide();
                         dcRef.dcsplitter.hide();
+                        dcRef.dcHat.hide();
                     }
                 };
 
@@ -207,6 +213,7 @@ define(
                 this.rect.animate({"fill-opacity": this.oUnselected, "stroke-width": this.sWidth}, 1);
                 this.dcR.show();
                 this.dcsplitter.show();
+                this.dcHat.show();
             };
 
             this.pushContainerArea = function(container) {
@@ -288,18 +295,18 @@ define(
             this.print = function(r_) {
                 this.r      = r_;
                 this.dcR    = this.r.set();
-                this.dcName = this.r.text(this.topLeftX + (this.dcwidth/2), this.topLeftY + this.dbrdSpan/2, this.geoDCLoc.dc);
+                this.dcHat.print(this.r, this.topLeftX + (this.dcwidth/2), this.topLeftY + this.dbrdSpan/5);
                 //noinspection JSUnresolvedVariable
                 this.dcTown = this.r.text(this.topLeftX + (this.dcwidth/2), this.topLeftY + this.dcheight - this.dbrdSpan/2, this.geoDCLoc.town);
                 this.rect   = this.r.rect(this.topLeftX, this.topLeftY, this.dcwidth, this.dcheight, 0);
 
-                this.dcName.attr(params.dc_txtTitle).attr({'fill':this.color});
-                this.dcName.mousedown(mouseDown);
+                this.dcHat.mousedown(mouseDown);
+                this.dcHat.drag(dcMove, dcDragg, dcUP);
                 this.dcTown.attr(params.dc_txtTitle).attr({'fill':this.color});
                 this.dcTown.mousedown(mouseDown);
-                this.dcR.push(this.dcName);
                 this.dcR.push(this.dcTown);
                 this.dcR.hide();
+                this.dcHat.hide();
 
                 this.rect.attr({fill: this.color, stroke: this.color, "stroke-dasharray": this.sDasharray, "fill-opacity": this.oUnselected, "stroke-width": 0});
                 this.rect.mousedown(mouseDown);
@@ -337,10 +344,12 @@ define(
                     this.rect.animate({"fill-opacity": this.oUnselected, "stroke-width": this.sWidth}, 1);
                     this.dcR.show();
                     this.dcsplitter.show();
+                    this.dcHat.show();
                 } else {
                     this.rect.animate({"fill-opacity": this.oUnselected, "stroke-width": 0}, 1);
                     this.dcR.hide();
                     this.dcsplitter.hide();
+                    this.dcHat.hide();
                 }
             };
 
@@ -374,8 +383,6 @@ define(
                 this.extrw = this.rect.attr("width");
                 //noinspection JSUnusedGlobalSymbols
                 this.extrh = this.rect.attr("height");
-                this.extt0x = this.dcName.attr("x");
-                this.extt0y = this.dcName.attr("y");
                 this.extt1x = this.dcTown.attr("x");
                 this.extt1y = this.dcTown.attr("y");
             };
@@ -429,7 +436,6 @@ define(
                     var mtxS, i, ii;
 
                     this.r.dcsOnMovePush(this);
-                    this.r.moveSetPush(this.dcName);
                     this.r.moveSetPush(this.dcTown);
                     this.r.moveSetPush(this.rect);
 
@@ -455,6 +461,7 @@ define(
 
             this.moveAction = function(dx, dy) {
                 this.mvx = dx; this.mvy = dy;
+                this.dcHat.move(this.r, this.extrx + dx + (this.dcwidth/2), this.extry + dy + this.dbrdSpan/5);
             };
 
             this.moveUp = function() {
@@ -464,7 +471,6 @@ define(
                         attrtxt1 = {x: this.extt1x + this.mvx, y: this.extt1y + this.mvy};
 
                     this.rect.attr(attrect);
-                    this.dcName.attr(attrtxt0);
                     this.dcTown.attr(attrtxt1);
 
                     this.changeUp();
@@ -516,12 +522,14 @@ define(
                     dcRef.r.scaleInit(dcRef);
                     dcRef.isEditing = true;
                     dcRef.dcsplitter.show();
+                    dcRef.dcHat.show();
                 } else {
                     dcRef.r.scaleDone(dcRef);
                     dcRef.isEditing = false;
                     dcRef.rect.animate({"fill-opacity": dcRef.oUnselected, "stroke-width": 0}, 0);
                     dcRef.dcR.hide();
                     dcRef.dcsplitter.hide();
+                    dcRef.dcHat.hide();
                     dcRef.dispDC = false;
                 }
             };
@@ -554,11 +562,11 @@ define(
 
                 return {
                     x: areaBBox.x - this.dbrdSpan ,
-                    y: areaBBox.y - (nameHeight + this.areaSpan),
+                    y: areaBBox.y - (this.dbrdSpan + this.areaSpan),
                     x2: areaBBox.x2 + this.dbrdSpan,
-                    y2: areaBBox.y2  + townHeight + this.areaSpan,
+                    y2: areaBBox.y2  + this.dbrdSpan + this.areaSpan,
                     width: areaBBox.width + 2*this.dbrdSpan,
-                    height: areaBBox.height + (nameHeight + this.areaSpan)
+                    height: areaBBox.height + (this.dbrdSpan + this.areaSpan)
                 };
             };
 
@@ -573,6 +581,7 @@ define(
                 this.dcsplitter.extmanLineHeight = this.dcsplitter.manLineHeight;
                 this.dcsplitter.extlanLineHeight = this.dcsplitter.lanLineHeight;
                 this.dcsplitter.hide();
+                this.dcHat.hide();
                 this.changeInit();
                 this.isMoving = true;
             };
@@ -661,25 +670,21 @@ define(
                         break;
                 }
 
-                this.dcR.pop(this.dcName);
                 this.dcR.pop(this.dcTown);
 
-                this.dcName.remove();
                 this.dcTown.remove();
                 this.rect.remove();
 
-                this.dcName = this.r.text(this.extrx + (this.extwidth/2), this.extry + this.dbrdSpan/2, this.geoDCLoc.dc);
                 //noinspection JSUnresolvedVariable
                 this.dcTown = this.r.text(this.extrx + (this.extwidth/2), this.extry + this.extheight - this.dbrdSpan/2, this.geoDCLoc.town);
                 this.rect   = this.r.rect(this.extrx, this.extry, this.extwidth, this.extheight, 0);
 
-                this.dcName.attr(params.dc_txtTitle).attr({'fill':this.color});
-                this.dcName.mousedown(mouseDown);
                 this.dcTown.attr(params.dc_txtTitle).attr({'fill':this.color});
                 this.dcTown.mousedown(mouseDown);
-                this.dcR.push(this.dcName);
                 this.dcR.push(this.dcTown);
                 this.dcR.toBack();
+
+                this.dcHat.move(this.r, this.extrx + (this.extwidth/2), this.extry + this.dbrdSpan/5);
 
                 this.rect.attr({fill: this.color, stroke: this.color, "stroke-dasharray": this.sDasharray, "fill-opacity": this.oUnselected, "stroke-width": this.sWidth});
                 this.rect.drag(dcMove, dcDragg, dcUP);
@@ -696,6 +701,7 @@ define(
                 this.dcsplitter.manLineHeight = this.dcsplitter.extmanLineHeight;
                 this.dcsplitter.lanLineHeight = this.dcsplitter.extlanLineHeight;
                 this.dcsplitter.show();
+                this.dcHat.show();
                 this.changeUp();
                 this.isMoving = false;
             };

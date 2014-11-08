@@ -39,7 +39,7 @@ define({
     dc_menuFields      : {'font-size': '10px', 'font-family': 'Arial', 'font-weight': 'normal', 'cursor': 'default', fill: "#fff"},
     dc_menuFieldsOver  : {'font-size': '10px', 'font-family': 'Arial', 'font-weight': 'bold', 'cursor': 'default', fill: "#fff"},
     dc_areaSpan          : 0,  /*space between 2 area*/
-    dc_dbrdSpan          : 20, /*space between 1 area and DC border*/
+    dc_dbrdSpan          : 85, /*space between 1 area and DC border*/
     dc_dbrdResz          : 10, /*resizing border*/
     dc_txtTitle          : {font: '14px Helvetica, Arial', 'font-weight': 'bold', fill: "#000"},
     dc_opacSelec         : 0.2,

@@ -26,43 +26,14 @@ define(
                 TREE  : "Tree",
                 NTWWW : "Network"
             };
-
             this.mapMode = {
                 NAVIGATION: "Navigation",
                 EDITION: "Edition"
-            }
-
+            };
             this.networkType = {
                 WAN: "WAN",
                 MAN: "MAN",
                 LAN: "LAN"
-            };
-
-            this.company = {
-                //TODO: this values should be retrieved from server
-                //      (then we synchronize server and client runtimes)
-                TIBCO : 'Tibco',
-                IBM : 'IBM'
-                //...
-            }
-
-            this.product = {
-                //TODO: this values should be retrieved from server
-                //      (then we synchronize server and client runtimes)
-                TIBRV : 'Tibco Rendez Vous',
-                TIBEMS : 'Tibco EMS'
-            }
-
-            this.containerType = {
-                //TODO: this values should be retrieved from server
-                //      (then we synchronize server and client runtimes)
-                TIBRVRD  : 'RV Router Daemon',
-                TIBRVD : 'RV Daemon',
-                TIBEMS : 'EMS Server',
-                TIBBW  : 'BUSINESS WORK Server',
-                IBMWSMQ : 'WEBSPHERE MQ Server',
-                ACTIVEMQ : 'ACTIVE MQ Server'
-                //...
             };
         }
         return dictionaries;
