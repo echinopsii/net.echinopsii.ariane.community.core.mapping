@@ -305,7 +305,7 @@ define(
                                 isConnectedToUpArea: isConnectedToUpArea, isConnectedToDownArea: isConnectedToDownArea,
                                 isConnectedToUpLan: isConnectedToUpLan, isConnectedToDownLan: isConnectedToDownLan,
                                 isConnectedInsideArea: isConnectedInsideArea, isConnectedInsideLan: isConnectedInsideLan,
-                                areaMtxCoord: null, areaInternalLinksWeight: 0, areaConnectedObject: [], areaPozFinal: false
+                                areaMtxCoord: null, areaInternalLinksWeight: 0, areaConnectedObject: [], averageLine: -1, areaPozFinal: false
                             }
                         );
 

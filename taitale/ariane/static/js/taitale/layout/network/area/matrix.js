@@ -20,9 +20,9 @@
 // └──────────────────────────────────────────────────────────────────────────────────────┘ \\
 define(
     [
-        'taitale-lan'
+        'taitale-helper'
     ],
-    function () {
+    function (helper) {
 
         var FREE   = "FREE",
             LOCKED = "LOCKED";
@@ -31,6 +31,7 @@ define(
             BUS    = "BUS";
 
         function areaMatrix() {
+            var helper_ = new helper();
             var nbLines             = 0,
                 nbColumns           = 0,
                 rows                = [],
@@ -102,6 +103,21 @@ define(
                 nbLines++;
             };
 
+            var removeLineFromMtx = function(index) {
+                var i, ii, j, jj;
+                for (i=0, ii=nbColumns; i < ii; i++) {
+                    for (j=index, jj = nbLines; j < jj; j++) {
+                        rows[i][j] = rows[i][j+1];
+                        if (rows[i][j]!==FREE && rows[i][j]!==LOCKED && rows[i][j]!=null)
+                            rows[i][j].obj.layoutData.lanMtxCoord= {x: j, y: i};
+                    }
+                }
+                for (i=0, ii=nbColumns; i < ii; i++)
+                    //    rows[i][nbLines] = null
+                    rows[i].pop();
+                nbLines--;
+            };
+
             var addColumnToMtx = function(index,flag) {
                 var i, ii, j, jj;
                 if (index < nbColumns){
@@ -119,6 +135,46 @@ define(
                     rows[index][i] = flag;
                 }
                 nbColumns++;
+            };
+
+            var removeColumnFromMtx = function(index) {
+                var i, ii, j, jj;
+                for (i=index, ii=nbColumns; i < ii; i++)
+                    rows[i] = rows[i+1]
+                rows.pop();
+                nbColumns--;
+            };
+
+            var cleanFinalMatrix = function() {
+                var i, ii, j, jj;
+                var linesIdxToBeRemoved = [], columnsIdxToBeRemoved = [];
+                for (i=0, ii=nbLines; i < ii; i++) {
+                    var lineToBeRemoved = true;
+                    for (j = 0, jj = nbColumns; j < jj; j++) {
+                        if (rows[j][i] != null && rows[j][i] !== FREE && rows[j][i] !== LOCKED) {
+                            lineToBeRemoved = false;
+                            break;
+                        }
+                    }
+                    if (lineToBeRemoved)
+                        linesIdxToBeRemoved.push(i)
+                }
+                for (i=0, ii=linesIdxToBeRemoved.length; i<ii; i++)
+                    removeLineFromMtx(linesIdxToBeRemoved[i]-i);
+
+                for (i=0, ii=nbColumns; i < ii; i++) {
+                    var columnToBeRemoved = true;
+                    for (j=0, jj=nbLines; j < jj; j++) {
+                        if (rows[i][j]!=null && rows[i][j]!==FREE && rows[i][j]!==LOCKED) {
+                            columnToBeRemoved = false;
+                            break;
+                        }
+                    }
+                    if (columnToBeRemoved)
+                        columnsIdxToBeRemoved.push(i)
+                }
+                for (i=0, ii=columnsIdxToBeRemoved.length; i<ii; i++)
+                    removeColumnFromMtx(columnsIdxToBeRemoved[i]-i);
             };
 
             var isColumnFreeFromMinToMax = function(columnIdx, minLine, maxLine) {
@@ -490,9 +546,19 @@ define(
                 }
             };
 
-            var swapInternalCoord = function(objToSwapFinal, line) {
+            var swapInternalCoordToAverageLine = function(objToSwapFinal, line) {
                 var column2swap = -1;
-                column2swap = getFreeOrNonFinalBlockColumn(line,mtxColumnsSplitter[minMulticastC],mtxColumnsSplitter[maxMulticastC]);
+
+                column2swap = getFreeBlockColumn(line,mtxColumnsSplitter[minMulticastC],mtxColumnsSplitter[maxMulticastC]);
+
+                if (mtxColumnsSplitter[minInternalLeftC]!=-1 && mtxColumnsSplitter[maxInternalLeftC]!=-1 && column2swap==-1)
+                    column2swap = getFreeBlockColumn(line, mtxColumnsSplitter[minInternalLeftC], mtxColumnsSplitter[maxInternalLeftC]);
+
+                if (mtxColumnsSplitter[minInternalRightC]!=-1 && mtxColumnsSplitter[maxInternalRightC]!=-1 && column2swap==-1)
+                    column2swap = getFreeBlockColumn(line,mtxColumnsSplitter[minInternalRightC],mtxColumnsSplitter[maxInternalRightC]);
+
+                if (column2swap==-1)
+                    column2swap = getFreeBlockColumn(line,mtxColumnsSplitter[minMulticastC],mtxColumnsSplitter[maxMulticastC]);
 
                 if (mtxColumnsSplitter[minInternalLeftC]!=-1 && mtxColumnsSplitter[maxInternalLeftC]!=-1 && column2swap==-1)
                     column2swap = getFreeOrNonFinalBlockColumn(line, mtxColumnsSplitter[minInternalLeftC], mtxColumnsSplitter[maxInternalLeftC]);
@@ -501,9 +567,35 @@ define(
                     column2swap = getFreeOrNonFinalBlockColumn(line,mtxColumnsSplitter[minInternalRightC],mtxColumnsSplitter[maxInternalRightC]);
 
                 if (column2swap!=-1) {
-                    rows[objToSwapFinal.obj.layoutData.areaMtxCoord.y][objToSwapFinal.obj.layoutData.areaMtxCoord.x] = rows[column2swap][line];
+                    var blockToSwap = rows[column2swap][line];
+                    rows[objToSwapFinal.obj.layoutData.areaMtxCoord.y][objToSwapFinal.obj.layoutData.areaMtxCoord.x] = blockToSwap;
+                    if (blockToSwap!=null && blockToSwap!==FREE && blockToSwap !==LOCKED)
+                        blockToSwap.obj.layoutData.areaMtxCoord = {x: objToSwapFinal.obj.layoutData.areaMtxCoord.x, y:objToSwapFinal.obj.layoutData.areaMtxCoord.y};
                     rows[column2swap][line] = objToSwapFinal;
                     objToSwapFinal.obj.layoutData.areaMtxCoord = {x: line, y: column2swap}
+                }
+            };
+
+            var sortAgainLineOnColumn = function(minC, maxC) {
+                var i, ii, j, jj, k, kk;
+                if (mtxColumnsSplitter[minC]!=-1 && mtxColumnsSplitter[maxC]!=-1) {
+                    for (i=mtxColumnsSplitter[minC], ii=mtxColumnsSplitter[maxC]; i<=ii; i++) {
+                        for(j=0, jj=nbLines; j<jj; j++) {
+                            if (rows[i][j]!==FREE && rows[i][j]!== LOCKED && rows[i][j].type===LAN) {
+                                for(k=j+1, kk=nbLines; k<kk; k++) {
+                                    if (rows[i][k]!==FREE && rows[i][k]!== LOCKED && rows[i][k].type===LAN) {
+                                        if (rows[i][j].obj.layoutData.averageLine > rows[i][k].obj.layoutData.averageLine) {
+                                            var objToSwitch = rows[i][j], objSwitchWith = rows[i][k];
+                                            rows[i][j] = objSwitchWith; objSwitchWith.obj.layoutData.areaMtxCoord={x:j,y:i};
+                                            rows[i][k] = objToSwitch; objToSwitch.obj.layoutData.areaMtxCoord={x:k,y:i};
+                                        } else if (rows[i][j].obj.layoutData.averageLine == rows[i][k].obj.layoutData.averageLine) {
+
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             };
 
@@ -745,37 +837,45 @@ define(
             };
 
             var optimizeLanCoord = function() {
-                var i, ii, j, jj;
+                var i, ii, j, jj, k, kk;
                 var lan, connectedObjects, averageLine = 0, mtxAverageLine = Math.round(nbLines/2), connectedWeight = 0;
+                //var stillNeedFinalPoz = [];
+
                 lansList.sort(function(lan1, lan2){
                     return (lan2.layoutData.areaInternalLinksWeight-lan1.layoutData.areaInternalLinksWeight);
                 });
 
                 for (i=0, ii=lansList.length; i<ii; i++) {
                     lan = lansList[i];
-                    if (lan.layoutData.isConnectedInsideArea) {
-                        if (!lan.layoutData.isConnectedToUpArea && !lan.layoutData.isConnectedToDownArea &&
-                            !lan.layoutData.isConnectedToLeftArea && !lan.layoutData.isConnectedToRightArea) {
-                            connectedObjects = lan.layoutData.areaConnectedObject.sort(function(coord1, coord2) {
-                                return (coord2.weight - coord1.weight);
-                            });
-                            connectedWeight = 0;
-                            averageLine = 0;
-                            for (j = 0, jj = connectedObjects.length; j<jj; j++) {
-                                if (connectedObjects[j].obj.layoutData.areaPozFinal) {
-                                    averageLine += (connectedObjects[j].obj.layoutData.areaMtxCoord.x-mtxAverageLine)*connectedObjects[j].weight;
-                                    connectedWeight += connectedObjects[j].weight;
-                                }
+                    if (lan.layoutData.isConnectedInsideArea && !lan.layoutData.isConnectedToUpArea && !lan.layoutData.isConnectedToDownArea &&
+                        !lan.layoutData.isConnectedToLeftArea && !lan.layoutData.isConnectedToRightArea) {
+                        connectedObjects = lan.layoutData.areaConnectedObject.sort(function(coord1, coord2) {
+                            return (coord2.weight - coord1.weight);
+                        });
+                        connectedWeight = 0;
+                        averageLine = 0;
+                        for (j = 0, jj = connectedObjects.length; j<jj; j++) {
+                            if (connectedObjects[j].obj.layoutData.areaPozFinal) {
+                                averageLine += (connectedObjects[j].obj.layoutData.areaMtxCoord.x-mtxAverageLine)*connectedObjects[j].weight;
+                                connectedWeight += connectedObjects[j].weight;
+                                //helper_.debug('['+lan.lanDef.subnetip+'] : connectectObj['+i+'], averageLine:'+averageLine+', connectedWeight:'+connectedWeight);
                             }
-                            if (connectedWeight!=0) {
-                                averageLine = Math.round(averageLine/connectedWeight) + mtxAverageLine;
-                                if (averageLine!=lan.layoutData.areaMtxCoord.x)
-                                    swapInternalCoord(rows[lan.layoutData.areaMtxCoord.y][lan.layoutData.areaMtxCoord.x], averageLine);
-                                lan.layoutData.areaPozFinal = true;
-                            }
+                        }
+
+
+                        if (connectedWeight!=0) {
+                            averageLine = Math.round(averageLine/connectedWeight) + mtxAverageLine ;
+                            lan.layoutData.averageLine = averageLine;
+                            //helper_.debug('['+lan.lanDef.subnetip+'] : connectectObj['+i+'], averageLine:'+averageLine+', connectedWeight:'+connectedWeight);
+                            if (averageLine!=lan.layoutData.areaMtxCoord.x)
+                                swapInternalCoordToAverageLine(rows[lan.layoutData.areaMtxCoord.y][lan.layoutData.areaMtxCoord.x], averageLine);
+                            lan.layoutData.areaPozFinal = true;
                         }
                     }
                 }
+
+                sortAgainLineOnColumn(minInternalLeftC,maxInternalLeftC);
+                sortAgainLineOnColumn(minInternalRightC,maxInternalRightC);
             };
 
             this.printMtx = function(r) {
@@ -972,6 +1072,7 @@ define(
 
                 optimizeMulticastBusCoord();
                 optimizeLanCoord();
+                cleanFinalMatrix();
 
                 for (i=0, ii=lansList.length; i<ii; i++)
                     lansList[i].optimizeMtxCoord();

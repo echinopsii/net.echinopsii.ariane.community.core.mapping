@@ -96,7 +96,7 @@ define(
 
             var removeLineFromMtx = function(index) {
                 var i, ii, j, jj;
-                for (i=0, i=nbColumns; i < ii; i++) {
+                for (i=0, ii=nbColumns; i < ii; i++) {
                     for (j=index, jj = nbLines; j < jj; j++) {
                         rows[i][j] = rows[i][j+1];
                         if (rows[i][j]!==FREE && rows[i][j]!==LOCKED && rows[i][j]!=null)
