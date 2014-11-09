@@ -41,7 +41,7 @@ define({
     dc_areaSpan          : 0,  /*space between 2 area*/
     dc_dbrdSpan          : 85, /*space between 1 area and DC border*/
     dc_dbrdResz          : 10, /*resizing border*/
-    dc_txtTitle          : {font: '14px Helvetica, Arial', 'font-weight': 'bold', fill: "#000"},
+    dc_txtTitle          : {font: '18px Helvetica, Arial', 'font-weight': 'bold', fill: "#000"},
     dc_opacSelec         : 0.2,
     dc_opacUnselec       : 0,
     dc_strokeWidthShow   : 1.5,
@@ -54,7 +54,7 @@ define({
     dc_split_moverCRad   : 5,
     dc_split_moverOSel   : 0.2,
     dc_split_moverOUnsel : 0,
-    dc_split_title       : {font: '13px Helvetica, Arial', 'font-weight': 'bold', fill: "#000"},
+    dc_split_title       : {font: '18px Helvetica, Arial', 'font-weight': 'bold', fill: "#000"},
 
     area_menuFillColor   : "#000",
     area_menuOpacity     : 0.7,
@@ -65,7 +65,7 @@ define({
     area_lanSpan         : 0,  /*space between 2 lan*/
     area_abrdSpan        : 60, /*space between 1 lan and area border*/
     area_abrdResz        : 10,
-    area_txtTitle        : {font: '13px Helvetica, Arial', 'font-weight': 'bold', fill: "#000"},
+    area_txtTitle        : {font: '16px Helvetica, Arial', 'font-weight': 'bold', fill: "#000"},
     area_opacSelec       : 0.2,
     area_opacUnselec     : 0,
     area_strokeDasharray : "- .",
@@ -81,7 +81,7 @@ define({
     lan_contSpan        : 5,  /*space between 2 container*/
     lan_lbrdSpan        : 50, /*space between 1 container and lan border*/
     lan_lbrdResz        : 10,
-    lan_txtTitle        : {font: '12px Helvetica, Arial', 'font-weight': 'bold', fill: "#000"},
+    lan_txtTitle        : {font: '14px Helvetica, Arial', 'font-weight': 'bold', fill: "#000"},
     lan_opacSelec       : 0.2,
     lan_opacUnselec     : 0,
     lan_strokeDasharray : "-..",

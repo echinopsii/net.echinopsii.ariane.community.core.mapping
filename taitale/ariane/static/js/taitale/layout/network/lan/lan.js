@@ -64,7 +64,7 @@ define(
             this.color       = params.lan_color;
 
             this.lanHat  = new lanHat("Lan " + this.lanDef.lan + " - " +
-                this.lanDef.subnetip + "/" + this.lanDef.subnetmask, params.dc_txtTitle, this.color);
+                this.lanDef.subnetip + "/" + this.lanDef.subnetmask, params.lan_txtTitle, this.color);
 
             this.mvx = 0;
             this.mvy = 0;
