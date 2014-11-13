@@ -608,8 +608,6 @@ define(
                     for (var j = 0, jj = nbColumns; j < jj; j++) {
                         var block = rows[j][i];
                         if (block!=null && block!==FREE && block!==LOCKED) {
-                            block.setTopLeftCoord(lbrdSpan + contSpan*j + curContWidth , lbrdSpan + contSpan*i + curContHeight);
-                            block.definedNodesPoz();
                             curContWidth = curContWidth + block.getMaxRectSize().width;
                             if (block.getMaxRectSize().height>maxContHeight)
                                 maxContHeight = block.getMaxRectSize().height;
