@@ -109,7 +109,7 @@ define(
                     for (j=index, jj = nbLines; j < jj; j++) {
                         rows[i][j] = rows[i][j+1];
                         if (rows[i][j]!==FREE && rows[i][j]!==LOCKED && rows[i][j]!=null)
-                            rows[i][j].obj.layoutData.lanMtxCoord= {x: j, y: i};
+                            rows[i][j].obj.layoutData.areaMtxCoord= {x: j, y: i};
                     }
                 }
                 for (i=0, ii=nbColumns; i < ii; i++)

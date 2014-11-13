@@ -180,8 +180,39 @@ define(
                 return column;
             };
 
+            var getColumnFromInitializedArea = function(minSplitterIdx, maxSplitterIdx) {
+                var column = -1;
+                var i,ii;
+                for (i = minSplitterIdx+2, ii = mtxColumnsSplitter.length-1; i<ii; i+=2){
+                    if (mtxColumnsSplitter[i]!=-1 && mtxColumnsSplitter[i+1]!=-1) {
+                        column = mtxColumnsSplitter[i];
+                        mtxColumnsSplitter[minSplitterIdx]=column;
+                        mtxColumnsSplitter[maxSplitterIdx]=column;
+                        addColumnToMtx(column,FREE);
+                        break;
+                    }
+                }
+                if (column==-1) {
+                    for (i = maxSplitterIdx-2, ii=1; i>ii; i-=2) {
+                        if (mtxColumnsSplitter[i]!=-1 && mtxColumnsSplitter[i-1]!=-1) {
+                            column = mtxColumnsSplitter[i]+1;
+                            mtxColumnsSplitter[minSplitterIdx]=column;
+                            mtxColumnsSplitter[maxSplitterIdx]=column;
+                            addColumnToMtx(column,FREE);
+                            break;
+                        }
+                    }
+                } else {
+                    for (i = maxSplitterIdx+1, ii = mtxColumnsSplitter.length; i<ii; i++){
+                        if (mtxColumnsSplitter[i]!=-1) mtxColumnsSplitter[i]++
+                    }
+                }
+                return column;
+            };
+
             var getUpOrDownFreeBlockColumn = function(minL,maxL) {
                 var column=-1;
+
                 //CHECK IF THERE IS FREE UP BLOCK IN INTERNAL AREA
                 if (mtxColumnsSplitter[minInternalC]!=-1 && mtxColumnsSplitter[maxInternalC]!=-1 && column==-1) {
                     if (maxL!=null)
@@ -430,36 +461,6 @@ define(
                 if (column == -1)
                     column = getUpOrDownFreeBlockColumn(downLine,null);
 
-                return column;
-            };
-
-            var getColumnFromInitializedArea = function(minSplitterIdx, maxSplitterIdx) {
-                var column = -1;
-                var i,ii;
-                for (i = minSplitterIdx+2, ii = mtxColumnsSplitter.length-1; i<ii; i+=2){
-                    if (mtxColumnsSplitter[i]!=-1 && mtxColumnsSplitter[i+1]!=-1) {
-                        column = mtxColumnsSplitter[i];
-                        mtxColumnsSplitter[minSplitterIdx]=column;
-                        mtxColumnsSplitter[maxSplitterIdx]=column;
-                        addColumnToMtx(column,FREE);
-                        break;
-                    }
-                }
-                if (column==-1) {
-                    for (i = maxSplitterIdx-2, ii=1; i>ii; i-=2) {
-                        if (mtxColumnsSplitter[i]!=-1 && mtxColumnsSplitter[i-1]!=-1) {
-                            column = mtxColumnsSplitter[i]+1;
-                            mtxColumnsSplitter[minSplitterIdx]=column;
-                            mtxColumnsSplitter[maxSplitterIdx]=column;
-                            addColumnToMtx(column,FREE);
-                            break;
-                        }
-                    }
-                } else {
-                    for (i = maxSplitterIdx+1, ii = mtxColumnsSplitter.length; i<ii; i++){
-                        if (mtxColumnsSplitter[i]!=-1) mtxColumnsSplitter[i]++
-                    }
-                }
                 return column;
             };
 
