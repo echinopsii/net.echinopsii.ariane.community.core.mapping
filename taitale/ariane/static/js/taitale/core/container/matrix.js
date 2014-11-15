@@ -19,7 +19,12 @@
 // │ along with this program.  If not, see <http://www.gnu.org/licenses/>.		  		  │ \\
 // └──────────────────────────────────────────────────────────────────────────────────────┘ \\
 
-define(function() {
+define(
+    [
+        'taitale-matrix'
+    ],
+    function(zeMatrix) {
+    /*
     function containerMatrix() {
 
         var count            = 0,
@@ -42,11 +47,11 @@ define(function() {
             return count;
         };
 
-        this.getNodeFromMtx = function (x,y) {
+        this.getObjectFromMtx = function (x,y) {
             return rows[y+1][x];
         };
 
-        this.defineContainerContentMaxSize = function() {
+        this.defineMtxContentMaxSize = function() {
             var block;
             var i, ii, j, jj;
             for (i = 1, ii = nbLines; i < ii ; i++) {
@@ -61,14 +66,14 @@ define(function() {
             }
         };
 
-        this.getContainerContentMaxSize = function() {
+        this.getMtxContentMaxSize = function() {
             return {
                 width  : contentMaxWidth,
                 height : contentMaxHeight
             }
         };
 
-        this.defineContainerContentSize = function() {
+        this.defineMtxContentSize = function() {
             var tmpHeight, tmpWidth, block;
             var i, ii, j, jj;
             for (i = 1, ii = nbLines; i < ii ; i++) {
@@ -96,14 +101,14 @@ define(function() {
             }
         };
 
-        this.getContainerContentSize = function() {
+        this.getMtxContentSize = function() {
             return {
                 width : contentWidth,
                 height: contentHeight
             }
         };
 
-        this.defineMtxNodePoz = function(topLeftX, topLeftY, interSpan) {
+        this.defineMtxObjectFirstPoz = function(topLeftX, topLeftY, interSpan) {
             var curContHeight = topLeftY;
             for (var j = 1, jj = nbLines; j < jj; j++) {
                 var curContWidth  = topLeftX, maxContHeight=0;
@@ -121,7 +126,15 @@ define(function() {
             }
         };
 
-        this.addNode = function(node) {
+        this.toFront = function() {
+            for (var i = 1, ii = nbLines; i < ii; i++) {
+                for (var j = 0, jj = nbColumns; j < jj; j++) {
+                    if (rows[i][j]!=null) rows[i][j].toFront();
+                }
+            }
+        };
+
+        this.addObject = function(node) {
             if (nbLines!=0) {
                 var linkedNX = 0,
                     linkedNY = 0;
@@ -158,14 +171,13 @@ define(function() {
             count++;
         };
 
-        this.toFront = function() {
-            for (var i = 1, ii = nbLines; i < ii; i++) {
-                for (var j = 0, jj = nbColumns; j < jj; j++) {
-                    if (rows[i][j]!=null) rows[i][j].toFront();
-                }
-            }
-        }
     }
+    */
+
+        function containerMatrix() {
+            var containerMatrix = new zeMatrix();
+            return containerMatrix;
+        }
 
     return containerMatrix;
 });

@@ -37,6 +37,7 @@ require.config({
         'taitale-ext-string': 'js/taitale/tools/ext.string',
         'taitale-ext-raphael': 'js/taitale/tools/ext.raphael',
         'taitale-helper': 'js/taitale/tools/helper',
+        'taitale-matrix': 'js/taitale/tools/matrix',
         'taitale-loader': 'js/taitale/tools/loader',
         'taitale-params': 'js/taitale/tools/params',
         'taitale-prototypes': 'js/taitale/tools/prototypes',

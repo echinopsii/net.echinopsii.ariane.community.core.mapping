@@ -128,7 +128,6 @@ define(
                             sticky: true
                         });
                 }
-
             };
 
             this.addEndpoint = function(JSONEndpointDesc) {
@@ -231,6 +230,9 @@ define(
 
                 for (i = 0, ii = JSONmapDesc.nodes.length; i < ii; i++ )
                     this.addNode(JSONmapDesc.nodes[i]);
+
+                for (i = 0, ii = nodeRegistry.length; i < ii; i++)
+                    nodeRegistry[i].defineHeapNodes();
 
                 //noinspection JSUnresolvedVariable
                 for (i = 0, ii = JSONmapDesc.endpoints.length; i < ii; i++ )

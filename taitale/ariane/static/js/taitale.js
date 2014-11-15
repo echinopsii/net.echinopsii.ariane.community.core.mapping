@@ -40,6 +40,7 @@ require.config({
         'taitale-ext-raphael': 'ajs/taitale/tools/ext.raphael',
         'taitale-helper': 'ajs/taitale/tools/helper',
         'taitale-loader': 'ajs/taitale/tools/loader',
+        'taitale-matrix': 'ajs/taitale/tools/matrix',
         'taitale-params': 'ajs/taitale/tools/params',
         'taitale-prototypes': 'ajs/taitale/tools/prototypes',
 

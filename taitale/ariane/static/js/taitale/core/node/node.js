@@ -56,14 +56,26 @@ define(
             this.rightClick     = false;
 
 
-            this.nodeParentNode = null;
-            this.nodeChildNodes = new nodeMatrix();
+            this.nodeParentNode    = null;
+            this.nodeHeapNodes     = []; // the current nodes heap from this to the last parent node of the chain as a list [this,this.nodeParentNode,this.nodeParentNode.nodeParentNode ...]
+            this.nodeChildNodes    = new nodeMatrix();
+
             this.nodeEndpoints   = [];
             // ordered list of epAvgLinksTeta (Teta is the angle as : T = Y/sqrt(X*X+Y*Y))
             this.nodeEpAvgLinksT = [];
 
             this.linkedBus         = [];
             this.linkedNodes       = [];
+
+            this.layoutData = {
+                isConnectedInsideMtx:  false,
+                isConnectedOutsideMtx: false,
+                isConnectedOutsideToUpMtx: false,
+                isConnectedOutsideToDownMtx: false,
+                isConnectedOutsideToLeftMtx: false,
+                isConnectedOutsideToRightMtx: false,
+                mtxCoord: null
+            };
 
             this.titleHeight   = params.node_titleHeight;
             this.txtTitleFont  = params.node_txtTitle;
@@ -560,6 +572,23 @@ define(
                 this.nodeChildNodes.defineMtxNodePoz(this.rectTopLeftX, this.rectTopLeftY + this.titleHeight, this.interSpan);
             };
 
+            this.defineHeapNodes = function() {
+                var parentNode = this.nodeParentNode;
+                this.nodeHeapNodes.push(this);
+                while (parentNode != null) {
+                    this.nodeHeapNodes.push(parentNode);
+                    parentNode = parentNode.nodeParentNode;
+                }
+            };
+
+            this.isInHeapNode = function(node) {
+                var i, ii;
+                for (i=0, ii=this.nodeHeapNodes.length; i < ii; i++)
+                    if (this.nodeHeapNodes[i].ID==node.ID)
+                        return true;
+                return false;
+            };
+
             this.placeIn = function() {
                 if (this.nodeParentNode!=null)
                     this.nodeParentNode.pushChildNode(this);
@@ -567,29 +596,42 @@ define(
                     this.nodeContainer.pushNode(this);
             };
 
-            //this.updateNodesPoz = function(node) {
-            //
-            //};
-
             this.pushLinkedNode = function(node) {
-                var isAlreadyPushed = this.isLinkedToNode(node);
+                var i, ii, j, jj, isAlreadyPushed = this.isLinkedToNode(node);
+                var isInHeap = [];
                 if (!isAlreadyPushed) {
-                    this.linkedNodes.push(node);
+                    for (i = 0, ii = this.nodeHeapNodes.length; i < ii; i++)
+                        for (j = 0, jj=node.nodeHeapNodes.length; j <jj ; j++) {
+                            var linkedNodeHeapNode = node.nodeHeapNodes[j],
+                                thisNodeHeapNode = this.nodeHeapNodes[i];
+                            if (isInHeap.indexOf[linkedNodeHeapNode]==-1)
+                                if (linkedNodeHeapNode.ID!=thisNodeHeapNode.ID)
+                                    if (!thisNodeHeapNode.isInHeapNode(linkedNodeHeapNode))
+                                        if (thisNodeHeapNode.linkedNodes.indexOf(linkedNodeHeapNode)==-1)
+                                            thisNodeHeapNode.linkedNodes.push(linkedNodeHeapNode);
+                                    else
+                                        isInHeap.push(linkedNodeHeapNode)
+                        }
+
+                    if (this.linkedNodes.indexOf(node)==-1)
+                        this.linkedNodes.push(node);
                     this.nodeContainer.pushLinkedContainer(node.nodeContainer);
                 }
             };
 
             this.isLinkedToNode = function(node) {
-                for (var i = 0, ii = this.linkedNodes.length; i < ii; i++) {
+                for (var i = 0, ii = this.linkedNodes.length; i < ii; i++)
                     if (this.linkedNodes[i].ID==node.ID)
                         return true;
-                }
                 return false;
             };
 
             this.pushLinkedBus = function(bus) {
-                var isAlreadyPushed = this.isLinkedToBus(bus);
+                var i, ii, isAlreadyPushed = this.isLinkedToBus(bus);
                 if (!isAlreadyPushed) {
+                    for (i = 0, ii = this.nodeHeapNodes.length; i < ii; i++) {
+                        this.nodeHeapNodes[i].linkedBus.push(bus);
+                    }
                     this.linkedBus.push(bus);
                     this.nodeContainer.pushLinkedBus(bus);
                 }
@@ -601,6 +643,27 @@ define(
                         return true;
                 }
                 return false;
+            };
+
+            this.initLayoutData = function() {
+                var i, ii, linkedContainer;
+                for (i = 0, ii = this.linkedNodes.length; i < ii; i++) {
+                    linkedContainer = this.linkedNodes[i].nodeContainer;
+                    if (this.nodeContainer.ID!=linkedContainer.ID)
+                        this.layoutData.isConnectedOutsideMtx = true;
+                        /*
+                        if (this.nodeContainer.rectTopLeftX > linkedContainer.rectTopLeftX)
+                            this.layoutData.isConnectedOutsideToLeftMtx = true;
+                        else if (this.nodeContainer.rectTopLeftX < linkedContainer.rectTopLeftX)
+                            this.layoutData.isConnectedOutsideToRightMtx = true;
+                        if (this.nodeContainer.rectTopLeftY > linkedContainer.rectTopLeftY)
+                            this.layoutData.isConnectedOutsideToUpMtx = true;
+                        else if (this.nodeContainer.rectTopLeftY < linkedContainer.rectTopLeftY)
+                            this.layoutData.isConnectedOutsideToDownMtx = true;
+                        */
+                    else
+                        this.layoutData.isConnectedInsideMtx = true;
+                }
             };
 
             this.print = function(r_) {
