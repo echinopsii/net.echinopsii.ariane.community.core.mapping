@@ -645,13 +645,12 @@ define(
                 return false;
             };
 
-            this.initLayoutData = function() {
+            this.updateLayoutData = function() {
                 var i, ii, linkedContainer;
                 for (i = 0, ii = this.linkedNodes.length; i < ii; i++) {
                     linkedContainer = this.linkedNodes[i].nodeContainer;
                     if (this.nodeContainer.ID!=linkedContainer.ID)
                         this.layoutData.isConnectedOutsideMtx = true;
-                        /*
                         if (this.nodeContainer.rectTopLeftX > linkedContainer.rectTopLeftX)
                             this.layoutData.isConnectedOutsideToLeftMtx = true;
                         else if (this.nodeContainer.rectTopLeftX < linkedContainer.rectTopLeftX)
@@ -660,7 +659,6 @@ define(
                             this.layoutData.isConnectedOutsideToUpMtx = true;
                         else if (this.nodeContainer.rectTopLeftY < linkedContainer.rectTopLeftY)
                             this.layoutData.isConnectedOutsideToDownMtx = true;
-                        */
                     else
                         this.layoutData.isConnectedInsideMtx = true;
                 }

@@ -415,7 +415,6 @@ define(
             */
 
             this.defineSize = function () {
-                this.containerNodes.cleanMtx();
                 this.containerNodes.defineMtxContentSize();
                 var mtxSize = this.containerNodes.getMtxContentSize();
                 var mtxX        = this.containerNodes.getMtxSize().x,
@@ -423,6 +422,14 @@ define(
                 this.rectWidth  = getMaxWidth(this.interSpan*(mtxY+1) + mtxSize.width);
                 this.rectHeight = containerRef.containerHat_.height + this.titleHeight + this.interSpan*(mtxX+1) + mtxSize.height;
                 //defineRectPoints(this.X,this.Y);
+            };
+
+            this.optimizeMtxCoord = function() {
+                this.containerNodes.updateLayoutData();
+                this.containerNodes.optimizeObjectLinkedToOutsideOnly(function(node1, node2){
+                    return ((node2.linkedNodes.length+node2.linkedBus.length)-(node2.linkedNodes.length+node2.linkedBus.length));
+                });
+                this.containerNodes.cleanMtx();
             };
 
             this.defineMaxSize = function() {

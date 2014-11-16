@@ -748,7 +748,6 @@ define(
             };
 
             var optimizeContainerLinkedToLeftOrRightLan = function(container, minLeft, maxLeft, minRight, maxRight) {
-                var i, ii, j, jj;
                 var targetSwapColumn = -1, targetSwapLine = container.layoutData.lanMtxCoord.x;
                 if (container.layoutData.isConnectedToLeftLan && !container.layoutData.isConnectedToRightLan) {
                     if (mtxColumnsSplitter[minLeft]!=-1 && mtxColumnsSplitter[maxLeft]!=-1 && targetSwapColumn==-1) {
@@ -838,7 +837,7 @@ define(
                                 else if (lan1.layoutData.areaMtxCoord.x < lan2.layoutData.areaMtxCoord.x)
                                     container.layoutData.isConnectedToDowntLan = true;
 
-                                if (lan1.layoutData.areaMtxCoord.y > lan2.layoutData.areaMtxCoord.y && !container.layoutData.isConnectedToLeftLan){
+                                if (lan1.layoutData.areaMtxCoord.y > lan2.layoutData.areaMtxCoord.y && !container.layoutData.isConnectedToLeftLan) {
                                     container.layoutData.isConnectedToLeftLan = true;
                                     containersToExternalLeft.push(container);
                                 } else if (lan1.layoutData.areaMtxCoord.y < lan2.layoutData.areaMtxCoord.y && !container.layoutData.isConnectedToRightLan ) {
@@ -889,9 +888,9 @@ define(
                     return (container2.layoutData.lanUpDownIdx-container1.layoutData.lanUpDownIdx);
                 });
                 for (i=0, ii=containersToExternalLeft.length; i < ii; i++) {
-                    var container = containersToExternalLeft[i];
+                    container = containersToExternalLeft[i];
                     if (i < nbLines) {
-                        var swapObj = rows[container.layoutData.lanMtxCoord.y][i];
+                        swapObj = rows[container.layoutData.lanMtxCoord.y][i];
                         rows[container.layoutData.lanMtxCoord.y][i] = container;
                         rows[container.layoutData.lanMtxCoord.y][container.layoutData.lanMtxCoord.x] = swapObj;
                         container.layoutData.lanMtxCoord = {x:i, y: container.layoutData.y}
@@ -913,7 +912,7 @@ define(
                     return (container2.layoutData.lanUpDownIdx-container1.layoutData.lanUpDownIdx);
                 });
                 for (i=0, ii=containersToExternalRight.length; i < ii; i++) {
-                    var container = containersToExternalRight[i];
+                    container = containersToExternalRight[i];
                     if (i < nbLines) {
                         var swapObj = rows[container.layoutData.lanMtxCoord.y][i];
                         rows[container.layoutData.lanMtxCoord.y][i] = container;

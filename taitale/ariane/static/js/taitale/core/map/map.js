@@ -316,16 +316,14 @@ define(
                 var j, jj;
                 var layout = options.getLayout();
 
-                if (layout === dic.mapLayout.NTWWW) {
-                    // TODO: optimize lan mtx poz
-                    // TODO: optimize container mtx poz
+                if (layout === dic.mapLayout.NTWWW)
                     mapmatrix.optimizeMtxCoord();
-                }
-                // TODO: optimize node mtx poz
 
                 // Set final container size
-                for (j = 0, jj = containerRegistry.length; j < jj; j++)
+                for (j = 0, jj = containerRegistry.length; j < jj; j++) {
+                    containerRegistry[j].optimizeMtxCoord();
                     containerRegistry[j].defineSize();
+                }
 
                 if (layout === dic.mapLayout.NTWWW) {
                     // Set final map matrix size and poz
