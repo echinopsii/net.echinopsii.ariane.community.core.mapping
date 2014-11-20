@@ -278,6 +278,10 @@ define(
                 this.armatrix.optimizeLanAndBusMtxCoord();
             };
 
+            this.defineIntermediatePoz = function() {
+                this.armatrix.defineMtxObjIntermediatePoz(this.topLeftX, this.topLeftY, this.abrdSpan, this.lanSpan, this.areawidth, this.areaheight);
+            };
+
             this.defineFinalPoz = function() {
                 this.armatrix.defineMtxObjFinalPoz(this.topLeftX, this.topLeftY, this.abrdSpan, this.lanSpan, this.areawidth, this.areaheight);
             };

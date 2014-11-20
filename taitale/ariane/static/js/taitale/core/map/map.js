@@ -329,7 +329,24 @@ define(
                     // Set final map matrix size and poz
                     mapmatrix.defineMtxZoneSize();
                     mapmatrix.defineMapContentSize();
+                    mapmatrix.defineMtxZoneIntermediatePoz(mbrdSpan, zoneSpan);
+
+                    for (j = 0, jj = containerRegistry.length; j < jj; j++) {
+                        containerRegistry[j].optimizeMtxCoord();
+                        containerRegistry[j].cleanMtx();
+                        containerRegistry[j].defineSize();
+                    }
+
+                    // Set final map matrix size and poz
+                    mapmatrix.defineMtxZoneSize();
+                    mapmatrix.defineMapContentSize();
                     mapmatrix.defineMtxZoneFinalPoz(mbrdSpan, zoneSpan);
+                } else if (layout == dic.mapLayout.TREE) {
+                    for (j = 0, jj=containerRegistry.length; j < jj; j++) {
+                        containerRegistry[j].cleanMtx();
+                        containerRegistry[j].defineSize();
+                    }
+                    lTree.definePoz();
                 }
             };
 

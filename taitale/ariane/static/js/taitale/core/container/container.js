@@ -429,6 +429,10 @@ define(
                 this.containerNodes.optimizeObjectLinkedToOutsideOnly(function(node1, node2){
                     return ((node2.linkedNodes.length+node2.linkedBus.length)-(node2.linkedNodes.length+node2.linkedBus.length));
                 });
+                //this.containerNodes.cleanMtx();
+            };
+
+            this.cleanMtx = function() {
                 this.containerNodes.cleanMtx();
             };
 
@@ -453,13 +457,22 @@ define(
                 this.isJailed    = true;
             };
 
-            this.definedNodesPoz = function() {
-                this.containerNodes.defineMtxObjectFirstPoz(this.rectTopLeftX,
+            this.defineIntermediateNodesPoz = function() {
+                this.containerNodes.defineMtxObjectIntermediatePoz(this.rectTopLeftX,
                         this.rectTopLeftY + this.containerHat_.height + this.titleHeight,
                         this.interSpan, this.interSpan, function(node, mtxSpan, objSpan, columnIdx, lineIdx, widthPointer, heightPointer) {
                             node.setPoz(mtxSpan + objSpan * columnIdx + widthPointer, objSpan * (lineIdx+1) + heightPointer);
                             node.definedNodesPoz();
                         });
+            };
+
+            this.definedNodesPoz = function() {
+                this.containerNodes.defineMtxObjectLastPoz(this.rectTopLeftX,
+                    this.rectTopLeftY + this.containerHat_.height + this.titleHeight,
+                    this.interSpan, this.interSpan, function(node, mtxSpan, objSpan, columnIdx, lineIdx, widthPointer, heightPointer) {
+                        node.setPoz(mtxSpan + objSpan * columnIdx + widthPointer, objSpan * (lineIdx+1) + heightPointer);
+                        node.definedNodesPoz();
+                    });
             };
 
             this.getLinkedTreeObjectsCount = function() {

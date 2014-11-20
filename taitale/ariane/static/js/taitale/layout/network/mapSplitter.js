@@ -26,6 +26,12 @@ define(
                 manLineHeight = 0,
                 lanLineHeight = 0;
 
+            this.init = function () {
+                wanLineHeight = 0;
+                manLineHeight = 0;
+                lanLineHeight = 0;
+            };
+
             this.setWanLineHeight = function(areaHeight) {
                 if (areaHeight > wanLineHeight)
                     wanLineHeight = areaHeight;

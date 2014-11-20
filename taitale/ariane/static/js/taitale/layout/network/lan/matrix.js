@@ -75,7 +75,7 @@ define(
                 var i,ii, j, jj;
                 if (index < nbLines) {
                     for (i = 0, ii = nbColumns; i < ii; i++) {
-                        for (j = index, jj = nbLines; j <= jj; jj--) {
+                        for (j = index, jj = nbLines; j < jj; jj--) {
                             rows[i][jj] = rows[i][jj-1];
                             if (rows[i][jj]!==FREE && rows[i][jj]!==LOCKED && rows[i][jj]!=null)
                                 rows[i][jj].layoutData.lanMtxCoord= {x: jj, y: i};
@@ -617,7 +617,7 @@ define(
                 }
             };
 
-            this.defineMtxContainerFinalPoz = function(topLeftX, topLeftY, lbrdSpan, contSpan, lanwidth, lanheight) {
+            this.defineMtxContainerIntermediatePoz = function(topLeftX, topLeftY, lbrdSpan, contSpan, lanwidth, lanheight) {
                 var i, ii, j, jj, block;
                 var maxColumnWidth = [];
                 var curContHeight = topLeftY;
@@ -640,7 +640,7 @@ define(
                         if (block!=null && block!==FREE && block!==LOCKED) {
                             block.setTopLeftCoord(lbrdSpan + contSpan*j + curContWidth , lbrdSpan + contSpan*i + curContHeight);
                             block.setMoveJail(topLeftX, topLeftY+lbrdSpan, topLeftX+lanwidth, topLeftY+lanheight);
-                            block.definedNodesPoz();
+                            block.defineIntermediateNodesPoz();
                             curContWidth = curContWidth + block.getRectSize().width;
                             if (block.getRectSize().height>maxContHeight)
                                 maxContHeight = block.getRectSize().height;
@@ -649,6 +649,40 @@ define(
                         }
                     }
                     curContHeight = curContHeight + maxContHeight;
+                }
+            };
+
+            this.defineMtxContainerFinalPoz = function(topLeftX, topLeftY, lbrdSpan, contSpan, lanwidth, lanheight) {
+                var i, ii, j, jj, block;
+
+                var maxColumnWidth = [];
+                var curContHeight = topLeftY;
+
+                for (i=0, ii=nbColumns; i < ii; i++) {
+                    for (j=0, jj=nbLines; j < jj; j++) {
+                        block = rows[i][j];
+                        if (block!=null && block!==FREE && block!==LOCKED) {
+                            if (maxColumnWidth[i]==null || maxColumnWidth[i] < block.getRectSize().width)
+                                maxColumnWidth[i] = block.getRectSize().width;
+                        } else if (maxColumnWidth[i]==null)
+                            maxColumnWidth[i] = 0;
+                    }
+                }
+
+                for (i = 0, ii = nbLines; i < ii; i++) {
+                    var curContWidth  = topLeftX, maxContHeight=0;
+                    for (j = 0, jj = nbColumns; j < jj; j++) {
+                        block = rows[j][i];
+                        if (block!=null && block!==FREE && block!==LOCKED) {
+                            block.setTopLeftCoord(lbrdSpan + contSpan*j + curContWidth , lbrdSpan + contSpan*i + curContHeight);
+                            block.setMoveJail(topLeftX, topLeftY+lbrdSpan, topLeftX+lanwidth, topLeftY+lanheight);
+                            block.definedNodesPoz();
+                            if (block.getRectSize().height>maxContHeight)
+                                maxContHeight = block.getRectSize().height;
+                        }
+                        curContWidth += maxColumnWidth[j];
+                    }
+                    curContHeight += maxContHeight;
                 }
             };
 

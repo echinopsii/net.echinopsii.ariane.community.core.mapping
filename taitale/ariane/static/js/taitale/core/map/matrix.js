@@ -160,6 +160,20 @@ define(
                         rows[j][i].optimizeMtxCoord();
             };
 
+            this.defineMtxZoneIntermediatePoz = function(borderSpan, zoneSpan) {
+                var cursorWidth  = 0;
+                var i, ii, j, jj;
+                for (i = 0, ii = nbColumns; i < ii; i++) {
+                    var cursorHeight = 0;
+                    for (j = 0, jj = nbLines; j < jj; j++) {
+                        rows[j][i].setTopLeftCoord(borderSpan+zoneSpan*i+cursorWidth,borderSpan+zoneSpan*j+cursorHeight);
+                        rows[j][i].defineIntermediatePoz();
+                        cursorHeight = cursorHeight + rows[j][i].getZoneSize().height;
+                    }
+                    cursorWidth = cursorWidth + rows[0][i].getZoneSize().width;
+                }
+            };
+
             this.defineMtxZoneFinalPoz = function(borderSpan, zoneSpan) {
                 var cursorWidth  = 0;
                 var i, ii, j, jj;

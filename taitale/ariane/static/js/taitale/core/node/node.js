@@ -646,21 +646,60 @@ define(
             };
 
             this.updateLayoutData = function() {
-                var i, ii, linkedContainer;
+                var i, ii, linkedContainer, linkedBus;
                 for (i = 0, ii = this.linkedNodes.length; i < ii; i++) {
                     linkedContainer = this.linkedNodes[i].nodeContainer;
-                    if (this.nodeContainer.ID!=linkedContainer.ID)
+                    if (this.nodeContainer.ID!=linkedContainer.ID) {
                         this.layoutData.isConnectedOutsideMtx = true;
-                        if (this.nodeContainer.rectTopLeftX > linkedContainer.rectTopLeftX)
+                        if (this.nodeContainer.rectTopLeftX > linkedContainer.rectTopLeftX) {
                             this.layoutData.isConnectedOutsideToLeftMtx = true;
-                        else if (this.nodeContainer.rectTopLeftX < linkedContainer.rectTopLeftX)
+                            this.layoutData.isConnectedOutsideToRightMtx = false;
+                        } else if (this.nodeContainer.rectTopLeftX < linkedContainer.rectTopLeftX) {
                             this.layoutData.isConnectedOutsideToRightMtx = true;
-                        if (this.nodeContainer.rectTopLeftY > linkedContainer.rectTopLeftY)
+                            this.layoutData.isConnectedOutsideToLeftMtx = false;
+                        } else {
+                            this.layoutData.isConnectedOutsideToRightMtx = false;
+                            this.layoutData.isConnectedOutsideToLeftMtx = false;
+                        }
+                        if (this.nodeContainer.rectTopLeftY > linkedContainer.rectTopLeftY) {
                             this.layoutData.isConnectedOutsideToUpMtx = true;
-                        else if (this.nodeContainer.rectTopLeftY < linkedContainer.rectTopLeftY)
+                            this.layoutData.isConnectedOutsideToDownMtx = false;
+                        }
+                        else if (this.nodeContainer.rectTopLeftY < linkedContainer.rectTopLeftY) {
                             this.layoutData.isConnectedOutsideToDownMtx = true;
-                    else
-                        this.layoutData.isConnectedInsideMtx = true;
+                            this.layoutData.isConnectedOutsideToUpMtx = false;
+                        } else {
+                            this.layoutData.isConnectedOutsideToDownMtx = false;
+                            this.layoutData.isConnectedOutsideToUpMtx = false;
+                        }
+                    } else this.layoutData.isConnectedInsideMtx = true;
+                }
+
+                if (this.linkedBus.length > 0)
+                    this.layoutData.isConnectedOutsideMtx = true;
+
+                for (i=0 , ii = this.linkedBus.length; i < ii; i++) {
+                    linkedBus = this.linkedBus[i];
+                    if (this.nodeContainer.rectTopLeftX > linkedBus.getBusCoords().x) {
+                        this.layoutData.isConnectedOutsideToLeftMtx = true;
+                        this.layoutData.isConnectedOutsideToRightMtx = false;
+                    } else if (this.nodeContainer.rectTopLeftX < linkedBus.getBusCoords().x) {
+                        this.layoutData.isConnectedOutsideToRightMtx = true;
+                        this.layoutData.isConnectedOutsideToLeftMtx = false;
+                    } else {
+                        this.layoutData.isConnectedOutsideToRightMtx = false;
+                        this.layoutData.isConnectedOutsideToLeftMtx = false;
+                    }
+                    if (this.nodeContainer.rectTopLeftY > linkedBus.getBusCoords().y) {
+                        this.layoutData.isConnectedOutsideToUpMtx = true;
+                        this.layoutData.isConnectedOutsideToDownMtx = false;
+                    } else if (this.nodeContainer.rectTopLeftY < linkedBus.getBusCoords().y) {
+                        this.layoutData.isConnectedOutsideToDownMtx = true;
+                        this.layoutData.isConnectedOutsideToUpMtx = false;
+                    } else {
+                        this.layoutData.isConnectedOutsideToDownMtx = false;
+                        this.layoutData.isConnectedOutsideToUpMtx = false;
+                    }
                 }
             };
 
