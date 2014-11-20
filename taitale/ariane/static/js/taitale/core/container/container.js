@@ -426,7 +426,7 @@ define(
 
             this.optimizeMtxCoord = function() {
                 this.containerNodes.updateLayoutData();
-                this.containerNodes.optimizeObjectLinkedToOutsideOnly(function(node1, node2){
+                this.containerNodes.position4ObjectLinkedToOutsideOnly(function(node1, node2){
                     return ((node2.linkedNodes.length+node2.linkedBus.length)-(node2.linkedNodes.length+node2.linkedBus.length));
                 });
                 //this.containerNodes.cleanMtx();

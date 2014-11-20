@@ -34,10 +34,6 @@ define(
             this.contentWidth   = 0;
             this.contentHeight  = 0;
 
-            // LOCKED LINES REGISTRIES
-            this.lockedToRight  = []; // index of array is the line number, content is the column number or -1 if line is not locked
-            this.lockedToLeft   = []; // index of array is the line number, content is the column number or -1 if line is not locked
-
             // LINES SPLITTER TABLE
             this.mtxLinesSplitter    = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1];
             this.upLineMin           = 0; // UP LINK ONLY
@@ -51,14 +47,17 @@ define(
             this.downLineMin         = 8; // DOWN LINK ONLY
             this.downLineMax         = 9;
 
+            // PUSH MIN/MAX BALANCER
+            this.pushInternalLineMin      = false;
+
             // COLUMNS SPLITTER TABLE
             this.mtxColumnsSplitter  = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1];
             // COLUMNS SPLITTER TABLE IDX
-            this.minLeftUDC          = 0;  // LANS WITH UP & DOWN LINKS ON LEFT
+            this.minLeftUDC          = 0;  // LANS WITH UP &| DOWN &| LEFT LINKS
             this.maxLeftUDC          = 1;
-            this.minInternalLeftUDC  = 2;  // LANS WITH UP & DOWN & INTERNAL LINKS ON LEFT
+            this.minInternalLeftUDC  = 2;  // LANS WITH UP &| DOWN &| LEFT & INTERNAL LINKS
             this.maxInternalLeftUDC  = 3;
-            this.minInternalLefTudC  = 4;  // LANS WITH UP OR DOWN LINKS OR LANS WITH UP OR DOWN & INTERNAL LINKS ON LEFT
+            this.minInternalLefTudC  = 4;  // LANS WITH UP OR DOWN LINKS OR LANS WITH UP OR DOWN &| LEFT & INTERNAL LINKS
             this.maxInternalLefTudC  = 5;
             this.minInternalLeftC    = 6;  // LANS WITH INTERNAL LINKS ON LEFT
             this.maxInternalLeftC    = 7;
@@ -116,8 +115,6 @@ define(
             if (index < this.nbLines) {
                 for (i = 0, ii = this.nbColumns; i < ii; i++) {
                     for (var j = index, jj = this.nbLines; j < jj; jj--) {
-                        this.lockedToLeft[jj] = this.lockedToLeft[jj-1];
-                        this.lockedToRight[jj] = this.lockedToRight[jj-1];
                         this.zemtx[i][jj] = this.zemtx[i][jj-1];
                         if (this.zemtx[i][jj]!==this.FREE && this.zemtx[i][jj]!==this.LOCKED && this.zemtx[i][jj]!=null)
                             this.zemtx[i][jj].obj.layoutData.mtxCoord= {x: jj, y: i};
@@ -133,10 +130,6 @@ define(
                 else
                     this.zemtx[i][index] = this.FREE;
             }
-
-            //unlocked line by default
-            this.lockedToRight[index] = -1;
-            this.lockedToLeft[index] = -1;
 
             this.nbLines++;
         };
@@ -283,6 +276,14 @@ define(
             return this.mtxLinesSplitter[this.minInternalLine];
         };
 
+        Matrix.prototype.addInternalLine = function() {
+            var line = -1;
+            if (this.pushInternalLineMin) line = this.addInternalMinLine();
+            else line = this.addInternalMaxLine();
+            this.pushInternalLineMin=!this.pushInternalLineMin;
+            return line;
+        };
+
         Matrix.prototype.addInternalMaxLine = function() {
             var i, ii;
             this.addLineToMtx(++this.mtxLinesSplitter[this.maxInternalLine]);
@@ -343,20 +344,29 @@ define(
 
         };
 
-        Matrix.prototype.addInternalColumn = function() {
+        Matrix.prototype.addMinInternalColumn = function() {
             var column = -1, i, ii;
-            if (this.pushInternalOnLeft) {
-                column = this.mtxColumnsSplitter[this.minInternalC];
-                this.addColumnToMtx(column,this.FREE);
-                for (i=this.maxInternalC, ii=this.maxRightUDC; i <= ii; i++)
-                    this.mtxColumnsSplitter[i]++;
-            } else {
-                column = ++this.mtxColumnsSplitter[this.maxInternalC];
-                this.addColumnToMtx(column,this.FREE);
-                for (i=this.minInternalRighTudC, ii=this.maxRightUDC; i <= ii; i++)
-                    this.mtxColumnsSplitter[i]++;
-            }
+            column = this.mtxColumnsSplitter[this.minInternalC];
+            this.addColumnToMtx(column,this.FREE);
+            for (i=this.maxInternalC, ii=this.maxRightUDC; i <= ii; i++)
+                this.mtxColumnsSplitter[i]++;
+            return column;
+        };
+
+        Matrix.prototype.addInternalColumn = function() {
+            var column = -1;
+            if (this.pushInternalOnLeft) column = this.addMinInternalColumn();
+            else column = this.addMaxInternalColumn();
             this.pushInternalOnLeft=!this.pushInternalOnLeft;
+            return column;
+        };
+
+        Matrix.prototype.addMaxInternalColumn = function() {
+            var column = -1, i, ii;
+            column = ++this.mtxColumnsSplitter[this.maxInternalC];
+            this.addColumnToMtx(column,this.FREE);
+            for (i=this.minInternalRighTudC, ii=this.maxRightUDC; i <= ii; i++)
+                this.mtxColumnsSplitter[i]++;
             return column;
         };
 
@@ -386,8 +396,8 @@ define(
         };
 
 
-        // Helper for advanced matrix coord algorithm choice
-        // --------------------------------------------------
+        // Helper for advanced matrix coord algorithm choice - internal only
+        // ------------------------------------------------------------------
 
         Matrix.prototype.getInternalBasicCoord = function() {
             var column2ret,
@@ -405,105 +415,119 @@ define(
             }
         };
 
-        Matrix.prototype.getExternalRightDownCoord = function() {
-            var column2ret = -1,
-                line2ret   = -1;
+        // Helper for advanced matrix coord algorithm choice - external only
+        // ------------------------------------------------------------------
 
-            if (this.isBlockFree(this.mtxLinesSplitter[this.downLineMax],this.mtxColumnsSplitter[this.minRightUDC])) {
-                column2ret = this.mtxColumnsSplitter[this.minRightUDC];
-                line2ret   = this.mtxLinesSplitter[this.downLineMax]
-            } else {
-                column2ret = this.addRightMinUDColumn();
-                line2ret   = this.addDownMaxLine();
-            }
-
+        Matrix.prototype.getExternalRightUpDownCoord = function() {
             return {
-                column: column2ret,
-                line: line2ret
+                column: this.addRightMaxUDColumn(),
+                line: this.addInternalLine()
+            }
+        };
+
+        Matrix.prototype.getExternalRightDownCoord = function() {
+            return {
+                column: this.addRightMinUDColumn(),
+                line: this.addDownMinLine()
             };
         };
 
         Matrix.prototype.getExternalRightUpCoord = function() {
-            var column2ret = -1,
-                line2ret   = -1;
-
-            if (this.isBlockFree(this.mtxLinesSplitter[this.upLineMin],this.mtxColumnsSplitter[this.minRightUDC])) {
-                column2ret = this.mtxColumnsSplitter[this.minRightUDC];
-                line2ret   = this.mtxLinesSplitter[this.upLineMin];
-            } else {
-                column2ret = this.addRightMinUDColumn();
-                line2ret   = this.addUpMinLine();
-            }
-
             return {
-                column: column2ret,
-                line: line2ret
+                column: this.addRightMinUDColumn(),
+                line: this.addUpMaxLine()
             };
         };
 
         Matrix.prototype.getExternalRightCoord = function() {
-            var column2ret = this.mtxColumnsSplitter[this.maxRightUDC],
-                line2ret   = this.getFreeBlockLine(this.mtxColumnsSplitter[this.maxRightUDC],
-                    this.mtxLinesSplitter[this.minInternalLine],this.mtxLinesSplitter[this.maxInternalLine]);
-
-            if (line2ret==-1)
-                line2ret = this.addInternalMaxLine();
-
             return {
-                column: column2ret,
-                line: line2ret
+                column: this.mtxColumnsSplitter[this.maxRightUDC],
+                line: this.addInternalLine()
             };
         };
 
-        Matrix.prototype.getExternalLeftDownCoord = function() {
-            var column2ret = -1,
-                line2ret   = -1;
-
-            if (this.isBlockFree(this.mtxLinesSplitter[this.downLineMax],this.mtxColumnsSplitter[this.maxLeftUDC])) {
-                column2ret = this.mtxColumnsSplitter[this.maxLeftUDC];
-                line2ret   = this.mtxLinesSplitter[this.downLineMax];
-            } else {
-                column2ret = this.addLeftMaxUDColumn();
-                line2ret   = this.addDownMaxLine();
-            }
-
+        Matrix.prototype.getExternalLeftUpDownCoord = function() {
             return {
-                column: column2ret,
-                line: line2ret
+                column: this.addLeftMinUDColumn(),
+                line: this.addInternalLine()
+            }
+        };
+
+        Matrix.prototype.getExternalLeftDownCoord = function() {
+            return {
+                column: this.addLeftMaxUDColumn(),
+                line: this.addDownMinLine()
             }
         };
 
         Matrix.prototype.getExternalLeftUpCoord = function() {
-            var column2ret = -1,
-                line2ret   = -1;
-
-            if (this.isBlockFree(this.mtxLinesSplitter[this.upLineMin],this.mtxColumnsSplitter[this.maxLeftUDC])) {
-                column2ret = this.mtxColumnsSplitter[this.maxLeftUDC];
-                line2ret   = this.mtxLinesSplitter[this.upLineMin];
-            } else {
-                column2ret = this.addLeftMaxUDColumn();
-                line2ret   = this.addUpMinLine();
-            }
-
             return {
-                column: column2ret,
-                line: line2ret
+                column: this.addLeftMaxUDColumn(),
+                line: this.addUpMaxLine()
             };
         };
 
         Matrix.prototype.getExternalLeftCoord = function() {
-            var column2ret = this.mtxColumnsSplitter[this.maxLeftUDC],
-                line2ret   = this.getFreeBlockLine(this.mtxColumnsSplitter[this.maxLeftUDC],
-                    this.mtxLinesSplitter[this.minInternalLine],this.mtxLinesSplitter[this.maxInternalLine]);
-
-            if (line2ret==-1)
-                line2ret = this.addInternalMaxLine();
-
             return {
-                column: column2ret,
-                line: line2ret
+                column: this.mtxColumnsSplitter[this.maxLeftUDC],
+                line: this.addInternalLine()
             };
         };
+
+        Matrix.prototype.getExternalUpDownCoord = function() {
+            var column2ret = (this.pushUDonLeft) ? this.addLeftMaxUDColumn() : this.addRightMinUDColumn();
+            this.pushUDonLeft=!this.pushUDonLeft;
+            return {
+                column: column2ret,
+                line: this.addInternalLine()
+            }
+        };
+
+        Matrix.prototype.getExternalUpCoord = function() {
+            return {
+                column: this.addInternalColumn(),
+                line: this.mtxLinesSplitter[this.upLineMin]
+            }
+        };
+
+        Matrix.prototype.getExternalDownCoord = function() {
+            return {
+                column: this.addInternalColumn(),
+                line: this.mtxLinesSplitter[this.downLineMax]
+            }
+        };
+
+        Matrix.prototype.getExternalLeftRightCoord = function() {
+            var column2ret = (this.pushUDonLeft) ? this.addLeftMaxUDColumn() : this.addRightMinUDColumn();
+            this.pushUDonLeft=!this.pushUDonLeft;
+            return {
+                column: column2ret,
+                line: this.addInternalLine()
+            }
+        };
+
+        Matrix.prototype.getExternalLeftRightUpCoord = function() {
+            var column2ret = (this.pushUDonLeft) ? this.addLeftMaxUDColumn() : this.addRightMinUDColumn();
+            this.pushUDonLeft=!this.pushUDonLeft;
+            return {
+                column: column2ret,
+                line: this.addUpMaxLine()
+            }
+        };
+
+        Matrix.prototype.getExternalLeftRightDownCoord = function() {
+            var column2ret = (this.pushUDonLeft) ? this.addLeftMaxUDColumn() : this.addRightMinUDColumn();
+            this.pushUDonLeft=!this.pushUDonLeft;
+            return {
+                column: column2ret,
+                line: this.addDownMinLine()
+            }
+        };
+
+        Matrix.prototype.getExternalLeftRightUpDownCoord = function() {
+            return this.getExternalLeftRightCoord();
+        };
+
 
 
         /*
@@ -616,7 +640,7 @@ define(
             }
         };
 
-        Matrix.prototype.optimizeObjectLinkedToOutsideOnly = function(arraySortCallback) {
+        Matrix.prototype.position4ObjectLinkedToOutsideOnly = function(arraySortCallback) {
             var i, ii, j, jj, block, object;
 
             if (this.objectsList.length > 1) {
@@ -644,10 +668,18 @@ define(
                             //    object.layoutData.isConnectedOutsideToLeftMtx + ", " +
                             //    object.layoutData.isConnectedOutsideToUpMtx + ", " +
                             //    object.layoutData.isConnectedOutsideToDownMtx + " }");
+                            newCoord = this.getExternalUpDownCoord();
+                            newLine = newCoord.line; newColumn = newCoord.column;
 
                         } else if (object.layoutData.isConnectedOutsideToUpMtx) {
 
+                            newCoord = this.getExternalUpCoord();
+                            newLine = newCoord.line; newColumn = newCoord.column;
+
                         } else if (object.layoutData.isConnectedOutsideToDownMtx) {
+
+                            newCoord = this.getExternalDownCoord();
+                            newLine = newCoord.line; newColumn = newCoord.column;
 
                         }
                     } else if (object.layoutData.isConnectedOutsideToRightMtx && !object.layoutData.isConnectedOutsideToLeftMtx) {
@@ -657,6 +689,9 @@ define(
                             newLine = newCoord.line; newColumn = newCoord.column;
 
                         } else if (object.layoutData.isConnectedOutsideToUpMtx && object.layoutData.isConnectedOutsideToDownMtx) {
+
+                            newCoord = this.getExternalRightUpDownCoord();
+                            newLine = newCoord.line; newColumn = newCoord.column;
 
                         } else if (object.layoutData.isConnectedOutsideToUpMtx) {
 
@@ -677,6 +712,9 @@ define(
 
                         } else if (object.layoutData.isConnectedOutsideToUpMtx && object.layoutData.isConnectedOutsideToDownMtx) {
 
+                            newCoord = this.getExternalLeftUpDownCoord();
+                            newLine = newCoord.line; newColumn = newCoord.column;
+
                         } else if (object.layoutData.isConnectedOutsideToUpMtx) {
 
                             newCoord = this.getExternalLeftUpCoord();
@@ -691,11 +729,23 @@ define(
                     } else if (object.layoutData.isConnectedOutsideToRightMtx && object.layoutData.isConnectedOutsideToRightMtx) {
                         if (object.layoutData.isConnectedOutsideToUpMtx && object.layoutData.isConnectedOutsideToDownMtx) {
 
+                            newCoord = this.getExternalLeftRightUpDownCoord();
+                            newLine = newCoord.line; newColumn = newCoord.column;
+
                         } else if (object.layoutData.isConnectedOutsideToUpMtx) {
+
+                            newCoord = this.getExternalLeftRightUpCoord();
+                            newLine = newCoord.line; newColumn = newCoord.column;
 
                         } else if (object.layoutData.isConnectedOutsideToDownMtx) {
 
+                            newCoord = this.getExternalLeftRightDownCoord();
+                            newLine = newCoord.line; newColumn = newCoord.column;
+
                         } else {
+
+                            newCoord = this.getExternalLeftRightCoord();
+                            newLine = newCoord.line; newColumn = newCoord.column;
 
                         }
                     }
