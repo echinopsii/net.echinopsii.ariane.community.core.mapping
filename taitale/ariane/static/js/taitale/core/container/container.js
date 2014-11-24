@@ -424,15 +424,14 @@ define(
                 //defineRectPoints(this.X,this.Y);
             };
 
-            this.optimizeMtxCoord = function() {
-                this.containerNodes.updateLayoutData();
-                this.containerNodes.position4ObjectLinkedToOutsideOnly(function(node1, node2){
-                    return ((node2.linkedNodes.length+node2.linkedBus.length)-(node2.linkedNodes.length+node2.linkedBus.length));
+            this.defineMtxIntermediatePoz = function() {
+                this.containerNodes.updateLayoutData(function(node1, node2){
+                    return ((node2.linkedNodes.length+node2.linkedBus.length)-(node1.linkedNodes.length+node1.linkedBus.length));
                 });
-                //this.containerNodes.cleanMtx();
+                this.containerNodes.updatePosition();
             };
 
-            this.cleanMtx = function() {
+            this.clean = function() {
                 this.containerNodes.cleanMtx();
             };
 
@@ -462,7 +461,7 @@ define(
                         this.rectTopLeftY + this.containerHat_.height + this.titleHeight,
                         this.interSpan, this.interSpan, function(node, mtxSpan, objSpan, columnIdx, lineIdx, widthPointer, heightPointer) {
                             node.setPoz(mtxSpan + objSpan * columnIdx + widthPointer, objSpan * (lineIdx+1) + heightPointer);
-                            node.definedNodesPoz();
+                            node.defineIntermediateNodesPoz();
                         });
             };
 

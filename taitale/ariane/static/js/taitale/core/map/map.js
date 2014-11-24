@@ -85,7 +85,7 @@ define(
             };
             */
 
-            this.addNode = function(JSONNodeDesc) {
+            this.addObject = function(JSONNodeDesc) {
                 var container = null, childNodesWaitingParent = [], childNodesFoundParent = [];
                 var i, ii, j, jj;
 
@@ -229,7 +229,7 @@ define(
                     this.addContainer(JSONmapDesc.containers[i]);
 
                 for (i = 0, ii = JSONmapDesc.nodes.length; i < ii; i++ )
-                    this.addNode(JSONmapDesc.nodes[i]);
+                    this.addObject(JSONmapDesc.nodes[i]);
 
                 for (i = 0, ii = nodeRegistry.length; i < ii; i++)
                     nodeRegistry[i].defineHeapNodes();
@@ -279,10 +279,10 @@ define(
                         break;
 
                     case dic.mapLayout.MANUAL:
-                        mapWidth  = 1800;
-                        mapHeight = 800;
-                        for (j = 0, jj = containerRegistry.length; j < jj; j++)
-                            containerRegistry[j].definedNodesPoz();
+                    //    mapWidth  = 1800;
+                    //    mapHeight = 800;
+                    //    for (j = 0, jj = containerRegistry.length; j < jj; j++)
+                    //        containerRegistry[j].definedNodesPoz();
                         break;
 
                     case dic.mapLayout.TREE:
@@ -321,7 +321,7 @@ define(
 
                 // Set final container size
                 for (j = 0, jj = containerRegistry.length; j < jj; j++) {
-                    containerRegistry[j].optimizeMtxCoord();
+                    containerRegistry[j].defineMtxIntermediatePoz();
                     containerRegistry[j].defineSize();
                 }
 
@@ -332,8 +332,8 @@ define(
                     mapmatrix.defineMtxZoneIntermediatePoz(mbrdSpan, zoneSpan);
 
                     for (j = 0, jj = containerRegistry.length; j < jj; j++) {
-                        containerRegistry[j].optimizeMtxCoord();
-                        containerRegistry[j].cleanMtx();
+                        containerRegistry[j].defineMtxIntermediatePoz();
+                        containerRegistry[j].clean();
                         containerRegistry[j].defineSize();
                     }
 
@@ -343,7 +343,7 @@ define(
                     mapmatrix.defineMtxZoneFinalPoz(mbrdSpan, zoneSpan);
                 } else if (layout == dic.mapLayout.TREE) {
                     for (j = 0, jj=containerRegistry.length; j < jj; j++) {
-                        containerRegistry[j].cleanMtx();
+                        containerRegistry[j].clean();
                         containerRegistry[j].defineSize();
                     }
                     lTree.definePoz();

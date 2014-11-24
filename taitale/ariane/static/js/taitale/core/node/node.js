@@ -74,8 +74,11 @@ define(
                 isConnectedOutsideToDownMtx: false,
                 isConnectedOutsideToLeftMtx: false,
                 isConnectedOutsideToRightMtx: false,
-                mtxCoord: null
+                mtxCoord: null,
+                tag: null
             };
+
+            this.type = "node";
 
             this.titleHeight   = params.node_titleHeight;
             this.txtTitleFont  = params.node_txtTitle;
@@ -327,7 +330,7 @@ define(
                                     fieldRectHeight = fieldRect.attr("height");
                                     fieldRect.attr({"x": nodeRef.rectTopMiddleX - fieldRectWidth/2, "y": nodeRef.rectTopMiddleY+30 - fieldRectHeight/2});
                                     nodeRef.menuSet[i+1].attr({"x": nodeRef.rectTopMiddleX, "y": nodeRef.rectTopMiddleY+30});
-                                    if (nodeRef.nodeChildNodes.getMtxCount()!=0) {
+                                    if (nodeRef.nodeChildNodes.getMtxObjCount()!=0) {
                                         if (nodeRef.isEditing) nodeRef.menuSet[i+1].attr({text: nodeRef.menuFieldStopEditTitle});
                                         else nodeRef.menuSet[i+1].attr({text: nodeRef.menuFieldStartEditTitle});
                                     }
@@ -468,7 +471,7 @@ define(
             };
 
             this.pushChildNode = function (node) {
-                this.nodeChildNodes.addNode(node);
+                this.nodeChildNodes.addObject(node);
             };
 
             this.popEndpoint = function(endpoint) {
@@ -533,9 +536,9 @@ define(
             };
 
             this.defineMaxSize = function () {
-                this.nodeChildNodes.defineNodeContentMaxSize();
-                var mtxMaxSize = this.nodeChildNodes.getNodeContentMaxSize();
-                var mtxMaxInterspan = (this.nodeChildNodes.getMtxCount()+1)*this.interSpan;
+                this.nodeChildNodes.defineMtxContentMaxSize();
+                var mtxMaxSize = this.nodeChildNodes.getMtxContentSize();
+                var mtxMaxInterspan = (this.nodeChildNodes.getMtxObjCount()+1)*this.interSpan;
 
                 if (mtxMaxSize.width == 0)
                     this.maxRectWidth = this.rectWidth;
@@ -549,12 +552,12 @@ define(
             };
 
             this.defineSize = function() {
-                this.nodeChildNodes.defineNodeContentSize();
-                var mtxSize = this.nodeChildNodes.getNodeContentSize();
+                this.nodeChildNodes.defineMtxContentSize();
+                var mtxSize = this.nodeChildNodes.getMtxContentSize();
                 if (mtxSize.width != 0)
-                    this.rectWidth = (this.nodeChildNodes.getMtxSize().x+1)*this.interSpan + mtxSize.width;
+                    this.rectWidth = (this.nodeChildNodes.getMtxSize().y+1)*this.interSpan + mtxSize.width;
                 if (mtxSize.height != 0)
-                    this.rectHeight = (this.nodeChildNodes.getMtxSize().y+1)*this.interSpan + + this.titleHeight + mtxSize.height;
+                    this.rectHeight = (this.nodeChildNodes.getMtxSize().x+1)*this.interSpan + this.titleHeight + mtxSize.height;
             };
 
             this.getRectSize = function() {
@@ -569,7 +572,25 @@ define(
             };
 
             this.definedNodesPoz = function() {
-                this.nodeChildNodes.defineMtxNodePoz(this.rectTopLeftX, this.rectTopLeftY + this.titleHeight, this.interSpan);
+                this.nodeChildNodes.defineMtxObjectLastPoz(this.rectTopLeftX, this.rectTopLeftY + this.titleHeight,
+                    this.interSpan, this.interSpan, function(node, mtxSpan, objSpan, columnIdx, lineIdx, widthPointer, heightPointer) {
+                        node.setPoz(mtxSpan + objSpan * columnIdx + widthPointer, objSpan * (lineIdx+1) + heightPointer);
+                        node.definedNodesPoz();
+                    });
+                    //defineMtxObjectPoz(this.rectTopLeftX, this.rectTopLeftY + this.titleHeight, this.interSpan);
+            };
+
+            this.defineIntermediateNodesPoz = function() {
+                this.nodeChildNodes.defineMtxObjectIntermediatePoz(this.rectTopLeftX, this.rectTopLeftY + this.titleHeight,
+                    this.interSpan, this.interSpan, function(node, mtxSpan, objSpan, columnIdx, lineIdx, widthPointer, heightPointer) {
+                        node.setPoz(mtxSpan + objSpan * columnIdx + widthPointer, objSpan * (lineIdx+1) + heightPointer);
+                        node.defineIntermediateNodesPoz();
+                    });
+                //defineMtxObjectPoz(this.rectTopLeftX, this.rectTopLeftY + this.titleHeight, this.interSpan);
+            };
+
+            this.clean = function() {
+                this.nodeChildNodes.cleanMtx();
             };
 
             this.defineHeapNodes = function() {
@@ -646,8 +667,9 @@ define(
             };
 
             this.updateLayoutData = function() {
-                var i, ii, linkedContainer, linkedBus;
+                var i, ii, linkedNode, linkedContainer, linkedBus;
                 for (i = 0, ii = this.linkedNodes.length; i < ii; i++) {
+                    linkedNode = this.linkedNodes[i];
                     linkedContainer = this.linkedNodes[i].nodeContainer;
                     if (this.nodeContainer.ID!=linkedContainer.ID) {
                         this.layoutData.isConnectedOutsideMtx = true;
@@ -672,7 +694,33 @@ define(
                             this.layoutData.isConnectedOutsideToDownMtx = false;
                             this.layoutData.isConnectedOutsideToUpMtx = false;
                         }
-                    } else this.layoutData.isConnectedInsideMtx = true;
+                    } else {
+                        if (this.nodeParentNode!=null) {
+                            if (this.nodeParentNode.ID!=linkedNode.nodeParentNode.ID) {
+                                this.layoutData.isConnectedOutsideMtx = true;
+                                if (this.nodeParentNode.rectTopLeftX > linkedNode.nodeParentNode.rectTopLeftX) {
+                                    this.layoutData.isConnectedOutsideToLeftMtx = true;
+                                    this.layoutData.isConnectedOutsideToRightMtx = false;
+                                } else if (this.nodeParentNode.rectTopLeftX < linkedNode.nodeParentNode.rectTopLeftX) {
+                                    this.layoutData.isConnectedOutsideToRightMtx = true;
+                                    this.layoutData.isConnectedOutsideToLeftMtx = false;
+                                } else {
+                                    this.layoutData.isConnectedOutsideToRightMtx = false;
+                                    this.layoutData.isConnectedOutsideToLeftMtx = false;
+                                }
+                                if (this.nodeParentNode.rectTopLeftY > linkedNode.nodeParentNode.rectTopLeftY) {
+                                    this.layoutData.isConnectedOutsideToUpMtx = true;
+                                    this.layoutData.isConnectedOutsideToDownMtx = false;
+                                } else if (this.nodeParentNode.rectTopLeftY < linkedNode.nodeParentNode.rectTopLeftY) {
+                                    this.layoutData.isConnectedOutsideToDownMtx = true;
+                                    this.layoutData.isConnectedOutsideToUpMtx = false;
+                                } else {
+                                    this.layoutData.isConnectedOutsideToDownMtx = false;
+                                    this.layoutData.isConnectedOutsideToUpMtx = false;
+                                }
+                            } else this.layoutData.isConnectedInsideMtx = true;
+                        } else this.layoutData.isConnectedInsideMtx = true;
+                    }
                 }
 
                 if (this.linkedBus.length > 0)
@@ -703,6 +751,13 @@ define(
                 }
             };
 
+            this.updatePosition = function() {
+                this.nodeChildNodes.updateLayoutData(function(node1, node2){
+                    return ((node2.linkedNodes.length+node2.linkedBus.length)-(node1.linkedNodes.length+node1.linkedBus.length));
+                });
+                this.nodeChildNodes.updatePosition();
+            };
+
             this.print = function(r_) {
                 this.r        = r_;
 
@@ -719,7 +774,7 @@ define(
                 defineRectPoints(this.rectTopLeftX, this.rectTopLeftY);
 
                 this.nodeMenuTitle = this.r.text(0,10,"Node menu").attr(this.nodeMainTitleTXT);
-                if (this.nodeChildNodes.getMtxCount()!=0) {
+                if (this.nodeChildNodes.getMtxObjCount()!=0) {
                     this.menuEditionModeRect = this.r.rect(0,10,this.menuFieldStartEditTitle.width(this.nodeFieldTXT),this.menuFieldStartEditTitle.height(this.nodeFieldTXT));
                     this.menuEditionModeRect.attr({fill: this.color, stroke: this.color, "fill-opacity": 0, "stroke-width": 0});
                     this.menuEditionModeRect.mouseover(menuFieldOver);
@@ -744,7 +799,7 @@ define(
 
                 this.nodeMenuSet = this.r.set();
                 this.nodeMenuSet.push(this.nodeMenuTitle);
-                if (this.nodeChildNodes.getMtxCount()!=0) {
+                if (this.nodeChildNodes.getMtxObjCount()!=0) {
                     this.nodeMenuSet.push(this.menuEditionModeRect);
                     this.nodeMenuSet.push(this.menuEditionMode);
                 }
@@ -803,8 +858,8 @@ define(
 
                 for (i = 0, ii = mtxX; i < ii; i++)
                     for (j = 0, jj = mtxY; j < jj; j++)
-                        if (this.nodeChildNodes.getNodeFromMtx(i, j)!=null)
-                            this.nodeChildNodes.getNodeFromMtx(i, j).moveInit();
+                        if (this.nodeChildNodes.getObjectFromMtx(i, j)!=null)
+                            this.nodeChildNodes.getObjectFromMtx(i, j).moveInit();
 
                 for (i = 0, ii = this.nodeEndpoints.length; i < ii; i++)
                     this.nodeEndpoints[i].moveInit();
@@ -836,7 +891,7 @@ define(
             // EDITABLE
 
             this.setEditionMode = function(editionMode) {
-                if (this.nodeChildNodes.getMtxCount()!=0) {
+                if (this.nodeChildNodes.getMtxObjCount()!=0) {
                     if (editionMode) {
                         if (this.isEditing)
                             this.r.scaleDone(this);
@@ -879,8 +934,8 @@ define(
                 nodeSet = this.r.set();
                 for (i = 0, ii = mtxX; i < ii; i++)
                     for (j = 0, jj = mtxY; j < jj; j++)
-                        if (this.nodeChildNodes.getNodeFromMtx(i, j)!=null)
-                            nodeSet.push(this.nodeChildNodes.getNodeFromMtx(i, j).rect);
+                        if (this.nodeChildNodes.getObjectFromMtx(i, j)!=null)
+                            nodeSet.push(this.nodeChildNodes.getObjectFromMtx(i, j).rect);
 
                 var nodeBBox = nodeSet.getBBox();
 

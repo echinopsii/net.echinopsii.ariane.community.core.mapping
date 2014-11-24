@@ -53,23 +53,23 @@ define(
             // COLUMNS SPLITTER TABLE
             this.mtxColumnsSplitter  = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1];
             // COLUMNS SPLITTER TABLE IDX
-            this.minLeftUDC          = 0;  // LANS WITH UP &| DOWN &| LEFT LINKS
+            this.minLeftUDC          = 0;  // OBJS WITH UP &| DOWN &| LEFT LINKS
             this.maxLeftUDC          = 1;
-            this.minInternalLeftUDC  = 2;  // LANS WITH UP &| DOWN &| LEFT & INTERNAL LINKS
+            this.minInternalLeftUDC  = 2;  // OBJS WITH UP &| DOWN &| LEFT & INTERNAL LINKS
             this.maxInternalLeftUDC  = 3;
-            this.minInternalLefTudC  = 4;  // LANS WITH UP OR DOWN LINKS OR LANS WITH UP OR DOWN &| LEFT & INTERNAL LINKS
+            this.minInternalLefTudC  = 4;  // OBJS WITH UP OR DOWN LINKS OR LANS WITH UP OR DOWN &| LEFT & INTERNAL LINKS
             this.maxInternalLefTudC  = 5;
-            this.minInternalLeftC    = 6;  // LANS WITH INTERNAL LINKS ON LEFT
+            this.minInternalLeftC    = 6;  // OBJS WITH INTERNAL LINKS ON LEFT
             this.maxInternalLeftC    = 7;
             this.minInternalC        = 8;  // INTERNAL OBJECT WITH INTERNAL LINKS ONLY
             this.maxInternalC        = 9;
-            this.minInternalRightC   = 10; // LANS WITH INTERNAL LINKS ON RIGHT
+            this.minInternalRightC   = 10; // OBJS WITH INTERNAL LINKS ON RIGHT
             this.maxInternalRightC   = 11;
-            this.minInternalRighTudC = 12; // LANS WITH UP OR DOWN LINKS OR LANS WITH UP OR DOWN & INTERNAL LINKS ON RIGHT
+            this.minInternalRighTudC = 12; // OBJS WITH UP OR DOWN LINKS OR LANS WITH UP OR DOWN & INTERNAL LINKS ON RIGHT
             this.maxInternalRighTudC = 13;
-            this.minInternalRightUDC = 14; // LANS WITH UP & DOWN & INTERNAL LINKS ON RIGHT
+            this.minInternalRightUDC = 14; // OBJS WITH UP & DOWN & INTERNAL LINKS ON RIGHT
             this.maxInternalRightUDC = 15;
-            this.minRightUDC         = 16; // LANS WITH UP & DOWN LINKS ON RIGHT
+            this.minRightUDC         = 16; // OBJS WITH UP & DOWN LINKS ON RIGHT
             this.maxRightUDC         = 17;
 
             // PUSH LEFT/RIGHT BALANCER
@@ -80,8 +80,9 @@ define(
             this.pushInternalOnLeft   = false;
 
             this.objectsList   = [];
-            this.objectLinkedToOutsideOnly = [];
-            this.objectLinkedToInsideOnly = [];
+            this.objectLinkedToOutsideOnly      = [];
+            this.objectLinkedToInsideOnly       = [];
+            this.objectLinkedToInsideAndOutside = [];
 
             this.initMatrix();
         }
@@ -328,16 +329,43 @@ define(
             return column;
         };
 
-        Matrix.prototype.addLeftInternalUDColumn = function() {
+        Matrix.prototype.addMinLeftInternalUDColumn = function() {
+            var column = this.mtxColumnsSplitter[this.minInternalLeftUDC], i, ii;
+            this.addColumnToMtx(column, this.LOCKED);
+            for (i=this.maxInternalLeftUDC, ii=this.maxRightUDC; i < ii; i++)
+                this.mtxColumnsSplitter[i]++;
+            return column;
+        };
 
+        Matrix.prototype.addLeftInternalUDColumn = function() {
+        };
+
+        Matrix.prototype.addMaxLeftInternalUDColumn = function() {
+            var column = ++this.mtxColumnsSplitter[this.maxInternalLeftUDC], i, ii;
+            this.addColumnToMtx(column, this.LOCKED);
+            for (i = this.minInternalLefTudC, ii = this.maxRightUDC; i < ii; i++)
+                this.mtxColumnsSplitter[i]++;
+            return column;
+        };
+
+        Matrix.prototype.addMinLeftInternaLudColumn = function() {
+            var column = this.mtxColumnsSplitter[this.minInternalLefTudC], i, ii;
+            this.addColumnToMtx(column, this.LOCKED);
+            for (i = this.maxInternalLefTudC, ii = this.maxRightUDC; i < ii; i++)
+                this.mtxColumnsSplitter[i]++;
+            return column;
         };
 
         Matrix.prototype.addLeftInternaLudColumn = function() {
 
         };
 
-        Matrix.prototype.addLeftInternalColumn = function() {
-
+        Matrix.prototype.addMaxLeftInternaLudColumn = function() {
+            var column = ++this.mtxColumnsSplitter[this.maxInternalLefTudC], i, ii;
+            this.addColumnToMtx(column, this.LOCKED);
+            for (i = this.minInternalLeftC, ii = this.maxRightUDC; i < ii; i++)
+                this.mtxColumnsSplitter[i]++;
+            return column;
         };
 
         Matrix.prototype.addLeftInternalColumn = function() {
@@ -374,12 +402,44 @@ define(
 
         };
 
+        Matrix.prototype.addMinRightInternaLudColumn = function() {
+            var column = this.mtxColumnsSplitter[this.minInternalRighTudC], i, ii;
+            this.addColumnToMtx(column, this.FREE);
+            for (i=this.maxInternalRighTudC, ii=this.maxRightUDC; i < ii; i++)
+                this.mtxColumnsSplitter[i]++;
+            return column;
+        };
+
         Matrix.prototype.addRightInternaLudColumn = function() {
 
         };
 
+        Matrix.prototype.addMaxRightInternaLudColumn = function() {
+            var column = ++this.mtxColumnsSplitter[this.maxInternalRighTudC], i, ii;
+            this.addColumnToMtx(column, this.FREE);
+            for (i=this.minInternalRightUDC, ii=this.maxRightUDC; i < ii; i++)
+                this.mtxColumnsSplitter[i]++
+            return column;
+        };
+
+        Matrix.prototype.addMinRightInternalUDColumn = function() {
+            var column = this.mtxColumnsSplitter[this.minInternalRightUDC], i, ii;
+            this.addColumnToMtx(column,this.LOCKED);
+            for (i=this.maxInternalRightUDC, ii=this.maxRightUDC; i < ii; i++)
+                this.mtxColumnsSplitter[i]++;
+            return column;
+        };
+
         Matrix.prototype.addRightInternalUDColumn = function() {
 
+        };
+
+        Matrix.prototype.addMaxRightInternalUDColumn = function() {
+            var column = ++this.mtxColumnsSplitter[this.maxInternalC], i, ii;
+            this.addColumnToMtx(column, this.LOCKED);
+            for (i=this.minRightUDC, ii=this.maxRightUDC; i < ii; i++)
+                this.mtxColumnsSplitter[i]++
+            return column;
         };
 
         Matrix.prototype.addRightMinUDColumn = function() {
@@ -394,6 +454,7 @@ define(
             this.addColumnToMtx(column,this.LOCKED);
             return column;
         };
+
 
 
         // Helper for advanced matrix coord algorithm choice - internal only
@@ -414,6 +475,128 @@ define(
                 line  : line2ret
             }
         };
+
+
+
+
+        // Helper for advanced matrix coord algorithm choice - external / internal
+        // ------------------------------------------------------------------------
+
+        Matrix.prototype.getExternalInternalUpDownCoord = function() {
+            var column2ret = (this.pushInternalUDonLeft) ? this.addMaxLeftInternalUDColumn() : this.addMinRightInternalUDColumn();
+            this.pushInternalUDonLeft=!this.pushInternalUDonLeft;
+            return {
+                column: column2ret,
+                line: this.addInternalLine()
+            };
+        };
+
+        Matrix.prototype.getExternalInternalUpCoord = function() {
+            var column2ret = (this.pushInternaLudOnLeft) ? this.addMaxLeftInternaLudColumn() : this.addMinRightInternaLudColumn();
+            this.pushInternaLudOnLeft=!this.pushInternaLudOnLeft;
+            return {
+                column: column2ret,
+                line: this.addUpInternalLine()
+            };
+        };
+
+        Matrix.prototype.getExternalInternalDownCoord = function() {
+            var column2ret = (this.pushInternaLudOnLeft) ? this.addMaxLeftInternaLudColumn() : this.addMinRightInternaLudColumn();
+            this.pushInternaLudOnLeft=!this.pushInternaLudOnLeft;
+            return {
+                column: column2ret,
+                line: this.addDownInternalLine()
+            };
+        };
+
+        Matrix.prototype.getExternalInternalRightUpDownCoord = function() {
+            return {
+                column: this.addMinRightInternalUDColumn(),
+                line: this.addInternalLine()
+            };
+        };
+
+        Matrix.prototype.getExternalInternalRightUpCoord = function() {
+            return {
+                column: this.addMinRightInternaLudColumn(),
+                line: this.addUpInternalLine()
+            };
+        };
+
+        Matrix.prototype.getExternalInternalRightDownCoord = function() {
+            return {
+                column: this.addMinRightInternaLudColumn(),
+                line: this.addDownInternalLine()
+            }
+        };
+
+        Matrix.prototype.getExternalInternalRightCoord = function() {
+            return {
+                column: this.addMaxRightInternaLudColumn(),
+                line: this.addInternalLine()
+            }
+        };
+
+        Matrix.prototype.getExternalInternalLeftUpDownCoord = function() {
+            return {
+                column: this.addMaxLeftInternalUDColumn(),
+                line: this.addInternalLine()
+            }
+        };
+
+        Matrix.prototype.getExternalInternalLeftUpCoord = function() {
+            return {
+                column: this.addMaxLeftInternaLudColumn(),
+                line: this.addUpInternalLine()
+            }
+        };
+
+        Matrix.prototype.getExternalInternalLeftDownCoord = function() {
+            return {
+                column: this.addMaxLeftInternaLudColumn(),
+                line: this.addDownInternalLine()
+            }
+        };
+
+        Matrix.prototype.getExternalInternalLeftCoord = function() {
+            return {
+                column: this.addMinLeftInternaLudColumn(),
+                line: this.addInternalLine()
+            }
+        };
+
+        Matrix.prototype.getExternalInternalLeftRightUpDownCoord = function() {
+            var column2ret = (this.pushInternalUDonLeft) ? this.addMaxLeftInternalUDColumn() : this.addMinRightInternalUDColumn();
+            this.pushInternalUDonLeft=!this.pushInternalUDonLeft;
+            return {
+                column: column2ret,
+                line: this.addInternalLine()
+            }
+        };
+
+        Matrix.prototype.getExternalInternalLeftRightUpCoord = function() {
+            var column2ret = (this.pushInternalUDonLeft) ? this.addMaxLeftInternaLudColumn() : this.addMinRightInternaLudColumn();
+            this.pushInternalUDonLeft=!this.pushInternalUDonLeft;
+            return {
+                column: column2ret,
+                line: this.addUpInternalLine()
+            }
+        };
+
+        Matrix.prototype.getExternalInternalLeftRightDownCoord = function() {
+            var column2ret = (this.pushInternalUDonLeft) ? this.addMaxLeftInternaLudColumn() : this.addMinRightInternaLudColumn();
+            this.pushInternalUDonLeft=!this.pushInternalUDonLeft;
+            return {
+                column: column2ret,
+                line: this.addDownInternalLine()
+            }
+        };
+
+        Matrix.prototype.getExternalInternalLeftRightCoord = function() {
+            return this.getExternalInternalLeftRightUpDownCoord()
+        };
+
+
 
         // Helper for advanced matrix coord algorithm choice - external only
         // ------------------------------------------------------------------
@@ -578,7 +761,6 @@ define(
         };
 
         // To be used on intermediate placements pass
-
         Matrix.prototype.defineMtxObjectIntermediatePoz = function(topLeftX, topLeftY, mtxSpan, objSpan, objDefinePozCallback) {
             var heightPointer = topLeftY, widthPointer, maxLineHeight;
             var i, ii, j, jj, block;
@@ -628,149 +810,272 @@ define(
 
         // Optimisation
 
-        Matrix.prototype.updateLayoutData = function() {
+        Matrix.prototype.updateLayoutData = function(arraySortCallback) {
             var i, ii, j, jj, block;
-            if (this.objectsList.length > 1) {
-                for (i = 0, ii = this.nbLines; i < ii; i++)
-                    for (j = 0, jj = this.nbColumns; j < jj; j++) {
-                        block = this.zemtx[j][i];
-                        if (block!=null && block!==this.FREE && block!==this.LOCKED)
-                            block.obj.updateLayoutData();
-                    }
-            }
-        };
 
-        Matrix.prototype.position4ObjectLinkedToOutsideOnly = function(arraySortCallback) {
-            var i, ii, j, jj, block, object;
+            for (i = 0, ii = this.nbLines; i < ii; i++)
+                for (j = 0, jj = this.nbColumns; j < jj; j++) {
+                    block = this.zemtx[j][i];
+                    if (block != null && block !== this.FREE && block !== this.LOCKED)
+                        block.obj.updateLayoutData();
+                }
+
+            this.objectLinkedToOutsideOnly = [];
+            this.objectLinkedToInsideAndOutside = [];
+            this.objectLinkedToInsideOnly = [];
 
             if (this.objectsList.length > 1) {
-                this.objectLinkedToOutsideOnly = [];
                 for (i = 0, ii = this.nbLines; i < ii; i++)
                     for (j = 0, jj = this.nbColumns; j < jj; j++) {
                         block = this.zemtx[j][i];
                         if (block!=null && block!==this.FREE && block!==this.LOCKED) {
                             if (block.obj.layoutData.isConnectedOutsideMtx && !block.obj.layoutData.isConnectedInsideMtx)
                                 this.objectLinkedToOutsideOnly.push(block.obj);
+                            else if (block.obj.layoutData.isConnectedInsideMtx && !block.obj.layoutData.isConnectedOutsideMtx)
+                                this.objectLinkedToInsideOnly.push(block.obj);
+                            else if (block.obj.layoutData.isConnectedOutsideMtx && block.obj.layoutData.isConnectedInsideMtx)
+                                this.objectLinkedToInsideAndOutside.push(block.obj);
                         }
                     }
 
-                if (arraySortCallback!=null)
+                if (arraySortCallback!=null) {
                     this.objectLinkedToOutsideOnly.sort(arraySortCallback);
-
-                for (i=0, ii=this.objectLinkedToOutsideOnly.length; i < ii; i++) {
-                    var newCoord, newColumn=-1, newLine=-1;
-
-                    object = this.objectLinkedToOutsideOnly[i];
-                    if (!object.layoutData.isConnectedOutsideToRightMtx && !object.layoutData.isConnectedOutsideToLeftMtx) {
-                        if (object.layoutData.isConnectedOutsideToUpMtx && object.layoutData.isConnectedOutsideToDownMtx) {
-
-                            //this.helper.debug(object.name + ": { " + object.layoutData.isConnectedOutsideToRightMtx + ", " +
-                            //    object.layoutData.isConnectedOutsideToLeftMtx + ", " +
-                            //    object.layoutData.isConnectedOutsideToUpMtx + ", " +
-                            //    object.layoutData.isConnectedOutsideToDownMtx + " }");
-                            newCoord = this.getExternalUpDownCoord();
-                            newLine = newCoord.line; newColumn = newCoord.column;
-
-                        } else if (object.layoutData.isConnectedOutsideToUpMtx) {
-
-                            newCoord = this.getExternalUpCoord();
-                            newLine = newCoord.line; newColumn = newCoord.column;
-
-                        } else if (object.layoutData.isConnectedOutsideToDownMtx) {
-
-                            newCoord = this.getExternalDownCoord();
-                            newLine = newCoord.line; newColumn = newCoord.column;
-
-                        }
-                    } else if (object.layoutData.isConnectedOutsideToRightMtx && !object.layoutData.isConnectedOutsideToLeftMtx) {
-                        if (!object.layoutData.isConnectedOutsideToUpMtx && !object.layoutData.isConnectedOutsideToDownMtx) {
-
-                            newCoord = this.getExternalRightCoord();
-                            newLine = newCoord.line; newColumn = newCoord.column;
-
-                        } else if (object.layoutData.isConnectedOutsideToUpMtx && object.layoutData.isConnectedOutsideToDownMtx) {
-
-                            newCoord = this.getExternalRightUpDownCoord();
-                            newLine = newCoord.line; newColumn = newCoord.column;
-
-                        } else if (object.layoutData.isConnectedOutsideToUpMtx) {
-
-                            newCoord = this.getExternalRightUpCoord();
-                            newLine = newCoord.line; newColumn = newCoord.column;
-
-                        } else if (object.layoutData.isConnectedOutsideToDownMtx) {
-
-                            newCoord = this.getExternalRightDownCoord();
-                            newLine = newCoord.line; newColumn = newCoord.column;
-
-                        }
-                    } else if (!object.layoutData.isConnectedOutsideToRightMtx && object.layoutData.isConnectedOutsideToLeftMtx) {
-                        if (!object.layoutData.isConnectedOutsideToUpMtx && !object.layoutData.isConnectedOutsideToDownMtx) {
-
-                            newCoord = this.getExternalLeftCoord();
-                            newLine = newCoord.line; newColumn = newCoord.column;
-
-                        } else if (object.layoutData.isConnectedOutsideToUpMtx && object.layoutData.isConnectedOutsideToDownMtx) {
-
-                            newCoord = this.getExternalLeftUpDownCoord();
-                            newLine = newCoord.line; newColumn = newCoord.column;
-
-                        } else if (object.layoutData.isConnectedOutsideToUpMtx) {
-
-                            newCoord = this.getExternalLeftUpCoord();
-                            newLine = newCoord.line; newColumn = newCoord.column;
-
-                        } else if (object.layoutData.isConnectedOutsideToDownMtx) {
-
-                            newCoord = this.getExternalLeftDownCoord();
-                            newLine = newCoord.line; newColumn = newCoord.column;
-
-                        }
-                    } else if (object.layoutData.isConnectedOutsideToRightMtx && object.layoutData.isConnectedOutsideToRightMtx) {
-                        if (object.layoutData.isConnectedOutsideToUpMtx && object.layoutData.isConnectedOutsideToDownMtx) {
-
-                            newCoord = this.getExternalLeftRightUpDownCoord();
-                            newLine = newCoord.line; newColumn = newCoord.column;
-
-                        } else if (object.layoutData.isConnectedOutsideToUpMtx) {
-
-                            newCoord = this.getExternalLeftRightUpCoord();
-                            newLine = newCoord.line; newColumn = newCoord.column;
-
-                        } else if (object.layoutData.isConnectedOutsideToDownMtx) {
-
-                            newCoord = this.getExternalLeftRightDownCoord();
-                            newLine = newCoord.line; newColumn = newCoord.column;
-
-                        } else {
-
-                            newCoord = this.getExternalLeftRightCoord();
-                            newLine = newCoord.line; newColumn = newCoord.column;
-
-                        }
-                    }
-
-                    if (newColumn!=-1 && newLine!=-1) {
-                        this.zemtx[object.layoutData.mtxCoord.y][object.layoutData.mtxCoord.x] = this.FREE;
-                        this.zemtx[newColumn][newLine] = {obj: object, type: object.type};
-                        object.layoutData.mtxCoord = {x:newLine, y:newColumn}
-                    }
+                    this.objectLinkedToInsideAndOutside.sort(arraySortCallback);
+                    this.objectLinkedToInsideOnly.sort(arraySortCallback);
                 }
             }
-
         };
 
-        Matrix.optimizeObjectLinkedToInsideOnly = function() {
+        Matrix.prototype.TAG_EXT_UP_DOWN = "TAG_EXT_UP_DOWN";
+        Matrix.prototype.TAG_EXT_UP      = "TAG_EXT_UP";
+        Matrix.prototype.TAG_EXT_DOWN    = "TAG_EXT_DOWN";
+
+        Matrix.prototype.TAG_EXT_RIGHT_UP_DOWN = "TAG_EXT_RIGHT_UP_DOWN";
+        Matrix.prototype.TAG_EXT_RIGHT_UP      = "TAG_EXT_RIGHT_UP";
+        Matrix.prototype.TAG_EXT_RIGHT_DOWN    = "TAG_EXT_RIGHT_DOWN";
+        Matrix.prototype.TAG_EXT_RIGHT         = "TAG_EXT_RIGHT";
+
+        Matrix.prototype.TAG_EXT_LEFT_UP_DOWN = "TAG_EXT_LEFT_UP_DOWN";
+        Matrix.prototype.TAG_EXT_LEFT_UP      = "TAG_EXT_LEFT_UP";
+        Matrix.prototype.TAG_EXT_LEFT_DOWN    = "TAG_EXT_LEFT_DOWN";
+        Matrix.prototype.TAG_EXT_LEFT         = "TAG_EXT_LEFT";
+
+        Matrix.prototype.TAG_EXT_LEFT_RIGHT_UP_DOWN = "TAG_EXT_LEFT_RIGHT_UP_DOWN";
+        Matrix.prototype.TAG_EXT_LEFT_RIGHT_UP      = "TAG_EXT_LEFT_RIGHT_UP";
+        Matrix.prototype.TAG_EXT_LEFT_RIGHT_DOWN    = "TAG_EXT_LEFT_RIGHT_DOWN";
+        Matrix.prototype.TAG_EXT_LEFT_RIGHT         = "TAG_EXT_LEFT_RIGHT";
+
+        Matrix.prototype.position4ObjectLinkedToOutsideOnly = function() {
+            var i, ii, object;
+
+            for (i=0, ii=this.objectLinkedToOutsideOnly.length; i < ii; i++) {
+                var newCoord, newColumn=-1, newLine=-1, newTag = null;
+
+                object = this.objectLinkedToOutsideOnly[i];
+                if (!object.layoutData.isConnectedOutsideToRightMtx && !object.layoutData.isConnectedOutsideToLeftMtx) {
+                    if (object.layoutData.isConnectedOutsideToUpMtx && object.layoutData.isConnectedOutsideToDownMtx &&
+                        object.layoutData.tag!=this.TAG_EXT_UP_DOWN) {
+                        newCoord = this.getExternalUpDownCoord(); newTag   = this.TAG_EXT_UP_DOWN;
+                        newLine = newCoord.line; newColumn = newCoord.column;
+                    } else if (object.layoutData.isConnectedOutsideToUpMtx &&
+                        object.layoutData.tag!=this.TAG_EXT_UP) {
+                        newCoord = this.getExternalUpCoord(); newTag = this.TAG_EXT_UP;
+                        newLine = newCoord.line; newColumn = newCoord.column;
+                    } else if (object.layoutData.isConnectedOutsideToDownMtx &&
+                        object.layoutData.tag!=this.TAG_EXT_DOWN) {
+                        newCoord = this.getExternalDownCoord(); newTag = this.TAG_EXT_DOWN;
+                        newLine = newCoord.line; newColumn = newCoord.column;
+                    }
+                } else if (object.layoutData.isConnectedOutsideToRightMtx && !object.layoutData.isConnectedOutsideToLeftMtx) {
+                    if (!object.layoutData.isConnectedOutsideToUpMtx && !object.layoutData.isConnectedOutsideToDownMtx &&
+                        object.layoutData.tag!=this.TAG_EXT_RIGHT) {
+                        newCoord = this.getExternalRightCoord(); newTag = this.TAG_EXT_RIGHT;
+                        newLine = newCoord.line; newColumn = newCoord.column;
+                    } else if (object.layoutData.isConnectedOutsideToUpMtx && object.layoutData.isConnectedOutsideToDownMtx &&
+                        object.layoutData.tag!=this.TAG_EXT_RIGHT_UP_DOWN) {
+                        newCoord = this.getExternalRightUpDownCoord(); newTag = this.TAG_EXT_RIGHT_UP_DOWN;
+                        newLine = newCoord.line; newColumn = newCoord.column;
+                    } else if (object.layoutData.isConnectedOutsideToUpMtx &&
+                        object.layoutData.tag!=this.TAG_EXT_RIGHT_UP) {
+                        newCoord = this.getExternalRightUpCoord(); newTag = this.TAG_EXT_RIGHT_UP;
+                        newLine = newCoord.line; newColumn = newCoord.column;
+                    } else if (object.layoutData.isConnectedOutsideToDownMtx &&
+                        object.layoutData.tag!=this.TAG_EXT_RIGHT_DOWN) {
+                        newCoord = this.getExternalRightDownCoord(); newTag = this.TAG_EXT_RIGHT_DOWN;
+                        newLine = newCoord.line; newColumn = newCoord.column;
+                    }
+                } else if (!object.layoutData.isConnectedOutsideToRightMtx && object.layoutData.isConnectedOutsideToLeftMtx) {
+                    if (!object.layoutData.isConnectedOutsideToUpMtx && !object.layoutData.isConnectedOutsideToDownMtx &&
+                        object.layoutData.tag!=this.TAG_EXT_LEFT) {
+                        newCoord = this.getExternalLeftCoord(); newTag = this.TAG_EXT_LEFT;
+                        newLine = newCoord.line; newColumn = newCoord.column;
+                    } else if (object.layoutData.isConnectedOutsideToUpMtx && object.layoutData.isConnectedOutsideToDownMtx &&
+                        object.layoutData.tag!=this.TAG_EXT_LEFT_UP_DOWN) {
+                        newCoord = this.getExternalLeftUpDownCoord(); newTag = this.TAG_EXT_LEFT_UP_DOWN;
+                        newLine = newCoord.line; newColumn = newCoord.column;
+                    } else if (object.layoutData.isConnectedOutsideToUpMtx &&
+                        object.layoutData.tag!=this.TAG_EXT_LEFT_UP) {
+                        newCoord = this.getExternalLeftUpCoord(); newTag = this.TAG_EXT_LEFT_UP;
+                        newLine = newCoord.line; newColumn = newCoord.column;
+                    } else if (object.layoutData.isConnectedOutsideToDownMtx &&
+                        object.layoutData.tag!=this.TAG_EXT_LEFT_DOWN) {
+                        newCoord = this.getExternalLeftDownCoord(); newTag= this.TAG_EXT_LEFT_DOWN;
+                        newLine = newCoord.line; newColumn = newCoord.column;
+                    }
+                } else if (object.layoutData.isConnectedOutsideToRightMtx && object.layoutData.isConnectedOutsideToRightMtx) {
+                    if (object.layoutData.isConnectedOutsideToUpMtx && object.layoutData.isConnectedOutsideToDownMtx &&
+                        object.layoutData.tag!=this.TAG_EXT_LEFT_RIGHT_UP_DOWN) {
+                        newCoord = this.getExternalLeftRightUpDownCoord(); newTag = this.TAG_EXT_LEFT_RIGHT_UP_DOWN;
+                        newLine = newCoord.line; newColumn = newCoord.column;
+                    } else if (object.layoutData.isConnectedOutsideToUpMtx &&
+                        object.layoutData.tag!=this.TAG_EXT_LEFT_RIGHT_UP) {
+                        newCoord = this.getExternalLeftRightUpCoord(); newTag = this.TAG_EXT_LEFT_RIGHT_UP;
+                        newLine = newCoord.line; newColumn = newCoord.column;
+                    } else if (object.layoutData.isConnectedOutsideToDownMtx &&
+                        object.layoutData.tag!=this.TAG_EXT_LEFT_RIGHT_DOWN) {
+                        newCoord = this.getExternalLeftRightDownCoord(); newTag = this.TAG_EXT_LEFT_RIGHT_DOWN;
+                        newLine = newCoord.line; newColumn = newCoord.column;
+                    } else if (object.layoutData.tag!=this.TAG_EXT_LEFT_RIGHT) {
+                        newCoord = this.getExternalLeftRightCoord(); newTag = this.TAG_EXT_LEFT_RIGHT;
+                        newLine = newCoord.line; newColumn = newCoord.column;
+                    }
+                }
+
+                if (newColumn!=-1 && newLine!=-1) {
+                    this.zemtx[object.layoutData.mtxCoord.y][object.layoutData.mtxCoord.x] = this.FREE;
+                    this.zemtx[newColumn][newLine] = {obj: object, type: object.type};
+                    object.layoutData.mtxCoord = {x:newLine, y:newColumn};
+                    object.layoutData.tag = newTag;
+                }
+            }
         };
 
+        Matrix.prototype.TAG_EXT_INT_UP_DOWN = "TAG_EXT_INT_UP_DOWN";
+        Matrix.prototype.TAG_EXT_INT_UP      = "TAG_EXT_INT_UP";
+        Matrix.prototype.TAG_EXT_INT_DOWN    = "TAG_EXT_INT_DOWN";
 
-        Matrix.optimizeObjectLinkedToInsideAndOutside = function() {
+        Matrix.prototype.TAG_EXT_INT_RIGHT_UP_DOWN = "TAG_EXT_INT_RIGHT_UP_DOWN";
+        Matrix.prototype.TAG_EXT_INT_RIGHT_UP      = "TAG_EXT_INT_RIGHT_UP";
+        Matrix.prototype.TAG_EXT_INT_RIGHT_DOWN    = "TAG_EXT_INT_RIGHT_DOWN";
+        Matrix.prototype.TAG_EXT_INT_RIGHT         = "TAG_EXT_INT_RIGHT";
+
+        Matrix.prototype.TAG_EXT_INT_LEFT_UP_DOWN = "TAG_EXT_INT_LEFT_UP_DOWN";
+        Matrix.prototype.TAG_EXT_INT_LEFT_UP      = "TAG_EXT_INT_LEFT_UP";
+        Matrix.prototype.TAG_EXT_INT_LEFT_DOWN    = "TAG_EXT_INT_LEFT_DOWN";
+        Matrix.prototype.TAG_EXT_INT_LEFT         = "TAG_EXT_INT_LEFT";
+
+        Matrix.prototype.TAG_EXT_INT_LEFT_RIGHT_UP_DOWN = "TAG_EXT_INT_LEFT_RIGHT_UP_DOWN";
+        Matrix.prototype.TAG_EXT_INT_LEFT_RIGHT_UP      = "TAG_EXT_INT_LEFT_RIGHT_UP";
+        Matrix.prototype.TAG_EXT_INT_LEFT_RIGHT_DOWN    = "TAG_EXT_INT_LEFT_RIGHT_DOWN";
+        Matrix.prototype.TAG_EXT_INT_LEFT_RIGHT         = "TAG_EXT_INT_LEFT_RIGHT";
+
+        Matrix.prototype.position4ObjectLinkedToInsideAndOutside = function() {
+            var i, ii, object;
+            for (i=0, ii=this.objectLinkedToInsideAndOutside.length; i < ii; i++) {
+                var newCoord, newColumn = -1, newLine = -1, newTag = null;
+                object = this.objectLinkedToInsideAndOutside[i];
+
+                if (!object.layoutData.isConnectedOutsideToRightMtx && !object.layoutData.isConnectedOutsideToLeftMtx) {
+                    if (object.layoutData.isConnectedOutsideToUpMtx && object.layoutData.isConnectedOutsideToDownMtx &&
+                        object.layoutData.tag!=this.TAG_EXT_INT_UP_DOWN) {
+                        newCoord = this.getExternalInternalUpDownCoord(); newTag = this.TAG_EXT_INT_UP_DOWN;
+                        newLine = newCoord.line; newColumn = newCoord.column;
+                    } else if (object.layoutData.isConnectedOutsideToUpMtx &&
+                        object.layoutData.tag!=this.TAG_EXT_INT_UP) {
+                        newCoord = this.getExternalInternalUpCoord(); newTag = this.TAG_EXT_INT_UP;
+                        newLine = newCoord.line; newColumn = newCoord.column;
+                    } else if (object.layoutData.isConnectedOutsideToDownMtx &&
+                        object.layoutData.tag!=this.TAG_EXT_INT_DOWN) {
+                        newCoord = this.getExternalInternalDownCoord(); newTag = this.TAG_EXT_INT_DOWN;
+                        newLine = newCoord.line; newColumn = newCoord.column;
+                    }
+                } else if (object.layoutData.isConnectedOutsideToRightMtx && !object.layoutData.isConnectedOutsideToLeftMtx) {
+                    if (object.layoutData.isConnectedOutsideToUpMtx && object.layoutData.isConnectedOutsideToDownMtx &&
+                        object.layoutData.tag!=this.TAG_EXT_INT_RIGHT_UP_DOWN) {
+                        newCoord = this.getExternalInternalRightUpDownCoord(); newTag = this.TAG_EXT_INT_RIGHT_UP_DOWN;
+                        newLine = newCoord.line; newColumn = newCoord.column;
+                    } else if (object.layoutData.isConnectedOutsideToUpMtx &&
+                        object.layoutData.tag!=this.TAG_EXT_INT_RIGHT_UP) {
+                        newCoord = this.getExternalInternalRightUpCoord(); newTag = this.TAG_EXT_INT_RIGHT_UP;
+                        newLine = newCoord.line; newColumn = newCoord.column;
+                    } else if (object.layoutData.isConnectedOutsideToDownMtx &&
+                        object.layoutData.tag!=this.TAG_EXT_INT_RIGHT_UP_DOWN) {
+                        newCoord = this.getExternalInternalRightDownCoord(); newTag = this.TAG_EXT_INT_RIGHT_DOWN;
+                        newLine = newCoord.line; newColumn = newCoord.column;
+                    } else if (object.layoutData.tag!=this.TAG_EXT_INT_RIGHT) {
+                        newCoord = this.getExternalInternalRightCoord(); newTag = this.TAG_EXT_INT_RIGHT;
+                        newLine = newCoord.line; newColumn = newCoord.column;
+                    }
+                } else if (!object.layoutData.isConnectedOutsideToRightMtx && object.layoutData.isConnectedOutsideToLeftMtx) {
+                    if (object.layoutData.isConnectedOutsideToUpMtx && object.layoutData.isConnectedOutsideToDownMtx &&
+                        object.layoutData.tag!=this.TAG_EXT_INT_LEFT_UP_DOWN) {
+                        newCoord = this.getExternalInternalLeftUpDownCoord(); newTag = this.TAG_EXT_INT_LEFT_UP_DOWN;
+                        newLine = newCoord.line; newColumn = newCoord.column;
+                    } else if (object.layoutData.isConnectedOutsideToUpMtx &&
+                        object.layoutData.tag!=this.TAG_EXT_INT_LEFT_UP) {
+                        newCoord = this.getExternalInternalLeftUpCoord(); newTag = this.TAG_EXT_INT_LEFT_UP;
+                        newLine = newCoord.line; newColumn = newCoord.column;
+                    } else if (object.layoutData.isConnectedOutsideToDownMtx &&
+                        object.layoutData.tag!=this.TAG_EXT_INT_LEFT_DOWN) {
+                        newCoord = this.getExternalInternalLeftDownCoord(); newTag = this.TAG_EXT_INT_LEFT_DOWN;
+                        newLine = newCoord.line; newColumn = newCoord.column;
+                    } else if (object.layoutData.tag!=this.TAG_EXT_INT_LEFT) {
+                        newCoord = this.getExternalInternalLeftCoord(); newTag = this.TAG_EXT_INT_LEFT;
+                        newLine = newCoord.line; newColumn = newCoord.column;
+                    }
+                } else if (object.layoutData.isConnectedOutsideToRightMtx && object.layoutData.isConnectedOutsideToRightMtx) {
+                    if (object.layoutData.isConnectedOutsideToUpMtx && object.layoutData.isConnectedOutsideToDownMtx &&
+                        object.layoutData.tag!=this.TAG_EXT_LEFT_RIGHT_UP_DOWN) {
+                        newCoord = this.getExternalInternalLeftRightUpDownCoord(); newTag = this.TAG_EXT_LEFT_RIGHT_UP_DOWN;
+                        newLine = newCoord.line; newColumn = newCoord.column
+                    } else if (object.layoutData.isConnectedOutsideToUpMtx &&
+                        object.layoutData.tag!=this.TAG_EXT_LEFT_RIGHT_UP) {
+                        newCoord = this.getExternalInternalLeftRightUpCoord(); newTag = this.TAG_EXT_LEFT_RIGHT_UP;
+                        newLine = newCoord.line; newColumn = newCoord.column;
+                    } else if (object.layoutData.isConnectedOutsideToDownMtx &&
+                        object.layoutData.tag!=this.TAG_EXT_LEFT_RIGHT_DOWN) {
+                        newCoord = this.getExternalInternalLeftRightDownCoord(); newTag = this.TAG_EXT_LEFT_RIGHT_DOWN;
+                        newLine = newCoord.line; newColumn = newCoord.column
+                    } else if (object.layoutData.tag!=this.TAG_EXT_LEFT_RIGHT) {
+                        newCoord = this.getExternalInternalLeftRightCoord(); newTag = this.TAG_EXT_INT_LEFT_RIGHT;
+                        newLine = newCoord.line; newColumn = newCoord.column;
+                    }
+                }
+
+                if (newColumn!=-1 && newLine!=-1) {
+                    this.zemtx[object.layoutData.mtxCoord.y][object.layoutData.mtxCoord.x] = this.FREE;
+                    this.zemtx[newColumn][newLine] = {obj: object, type: object.type};
+                    object.layoutData.mtxCoord = {x:newLine, y:newColumn}
+                    object.layoutData.tag = newTag;
+                }
+            }
         };
 
+        Matrix.prototype.position4ObjectLinkedToInsideOnly = function() {
+        };
+
+        Matrix.prototype.updatePosition = function() {
+            var i, ii, j, jj, block;
+            for (i = 0, ii = this.nbLines; i < ii; i++)
+                for (j = 0, jj = this.nbColumns; j < jj; j++) {
+                    block = this.zemtx[j][i];
+                    if (block != null && block !== this.FREE && block !== this.LOCKED)
+                        block.obj.updatePosition();
+                }
+            this.position4ObjectLinkedToOutsideOnly();
+            this.position4ObjectLinkedToInsideAndOutside();
+            this.position4ObjectLinkedToInsideOnly();
+        };
 
         Matrix.prototype.cleanMtx = function() {
             var i, ii, j, jj;
             var linesIdxToBeRemoved = [], columnsIdxToBeRemoved = [];
+
+            for (i=0, ii=this.nbLines; i < ii; i++)
+                for (j = 0, jj = this.nbColumns; j < jj; j++)
+                    if (this.zemtx[j][i] != null && this.zemtx[j][i] !== this.FREE && this.zemtx[j][i] !== this.LOCKED)
+                        this.zemtx[j][i].obj.clean();
+
             for (i=0, ii=this.nbLines; i < ii; i++) {
                 var lineToBeRemoved = true;
                 for (j = 0, jj = this.nbColumns; j < jj; j++) {
