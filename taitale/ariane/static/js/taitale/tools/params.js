@@ -28,7 +28,7 @@ define({
     map_menuMainTitle   : {'font-size': '12px', 'font-family': 'Arial', 'font-weight': 'bold', fill: "#dddddd"},
     map_menuFields      : {'font-size': '12px', 'font-family': 'Arial', fill: "#fff"},
     map_mbrdSpan        : 20,
-    map_zoneSpan        : 5,
+    map_zoneSpan        : 150,
     map_linkColor       : '#fff',
     map_linkBckg        : '#000|1.5',
 
@@ -44,7 +44,7 @@ define({
     dc_txtTitle          : {font: '18px Helvetica, Arial', 'font-weight': 'bold', fill: "#000"},
     dc_opacSelec         : 0.2,
     dc_opacUnselec       : 0,
-    dc_strokeWidthShow   : 1.5,
+    dc_strokeWidthShow   : 3,
     dc_color             : "#000",
     dc_strokeDasharray   : "",
     dc_split_lineColor   : "#000",
