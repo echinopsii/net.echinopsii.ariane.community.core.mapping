@@ -715,8 +715,8 @@ define(
                 this.dcsplitter.lanLineHeight = this.dcsplitter.extlanLineHeight;
                 this.dcsplitter.show();
                 this.dcHat.show();
-                this.changeUp();
                 this.isMoving = false;
+                this.changeUp();
             };
         }
 
