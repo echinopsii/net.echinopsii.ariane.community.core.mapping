@@ -122,9 +122,6 @@ requirejs (
             try {
                 loader_.reloadMap(options);
                 loader_.editionMode(options);
-                loader_.displayDC(displayDC[0].checked);
-                loader_.displayArea(displayArea[0].checked);
-                loader_.displayLan(displayLan[0].checked);
             } catch (e) {
                 helper_.addMsgToGrowl(e);
                 helper_.growlMsgs(
@@ -174,11 +171,7 @@ requirejs (
         mode.change([loader_, dic], function() {
             options.setMode(mode.val());
             try {
-                //loader_.refreshMap(options);
                 loader_.editionMode(options);
-                loader_.displayDC(displayDC[0].checked);
-                loader_.displayArea(displayArea[0].checked);
-                loader_.displayLan(displayLan[0].checked);
             } catch (e) {
                 helper_.addMsgToGrowl(e);
                 helper_.growlMsgs(
@@ -247,9 +240,6 @@ requirejs (
             try {
                 loader_.reloadMap(options);
                 loader_.editionMode(options);
-                loader_.displayDC(displayDC[0].checked);
-                loader_.displayArea(displayArea[0].checked);
-                loader_.displayLan(displayLan[0].checked);
             } catch (e) {
                 helper_.addMsgToGrowl(e);
                 helper_.growlMsgs(
@@ -380,9 +370,6 @@ requirejs (
             }
             loader_.loadMap(options);
             loader_.editionMode(options);
-            loader_.displayDC(displayDC[0].checked);
-            loader_.displayArea(displayArea[0].checked);
-            loader_.displayLan(displayLan[0].checked);
         } catch (e) {
             helper_.addMsgToGrowl(e);
             helper_.growlMsgs(

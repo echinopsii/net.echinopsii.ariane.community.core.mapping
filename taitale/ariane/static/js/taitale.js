@@ -106,7 +106,8 @@ requirejs (
             helper_   = new helper(),
             dic       = new dictionaries(),
             options   = new mapOptions(),
-            homeURI   = window.location.protocol + "//" + window.location.host + "/" + window.location.pathname.split('/')[1];
+            homeURI   = window.location.protocol + "//" + window.location.host + "/" + window.location.pathname.split('/')[1],
+            i, ii, input;
 
         var readyStateCheckInterval = setInterval(function() {
             if (document.readyState === "complete") {
@@ -127,8 +128,9 @@ requirejs (
                         if (options.getLayout()===dic.mapLayout.NTWWW) {
                             document.getElementById('treeOptions').style.display = "none";
                             document.getElementById('networkOptions').style.display = "";
-                            for (var i = 0, ii = networkLayoutDisplayOptions.inputs.length; i < ii; i++) {
-                                var input = networkLayoutDisplayOptions.inputs[i];
+                            for (i = 0, ii = networkLayoutDisplayOptions.inputs.length; i < ii; i++) {
+                                input = networkLayoutDisplayOptions.inputs[i];
+                                /*
                                 if (input.value==="displayDC") {
                                     options.displayDC = input.checked;
                                     loader_.displayDC(options.displayDC);
@@ -139,6 +141,7 @@ requirejs (
                                     options.displayLAN = input.checked;
                                     loader_.displayLan(options.displayLAN);
                                 }
+                                */
                             }
                         } else if (options.getLayout()===dic.mapLayout.TREE) {
                             document.getElementById('treeOptions').style.display = "";
@@ -158,8 +161,8 @@ requirejs (
                     }
                 });
                 $(layoutSelector.jqId).change([loader_, dic], function() {
-                    for (var i = 0, ii = layoutSelector.inputs.length; i < ii; i++) {
-                        var input = layoutSelector.inputs[i];
+                    for (i = 0, ii = layoutSelector.inputs.length; i < ii; i++) {
+                        input = layoutSelector.inputs[i];
                         if (input.checked) {
                             var num = input.value;
                             options.setLayout(num);
@@ -169,6 +172,7 @@ requirejs (
                                 if (options.getLayout()===dic.mapLayout.NTWWW) {
                                     document.getElementById('treeOptions').style.display = "none";
                                     document.getElementById('networkOptions').style.display = "";
+                                    /*
                                     for (var i = 0, ii = networkLayoutDisplayOptions.inputs.length; i < ii; i++) {
                                         var input = networkLayoutDisplayOptions.inputs[i];
                                         if (input.value==="displayDC") {
@@ -182,6 +186,7 @@ requirejs (
                                             loader_.displayLan(options.displayLAN);
                                         }
                                     }
+                                    */
                                 } else if (options.getLayout()===dic.mapLayout.TREE) {
                                     document.getElementById('treeOptions').style.display = "";
                                     document.getElementById('networkOptions').style.display = "none";
@@ -203,13 +208,14 @@ requirejs (
                     }
                 });
                 $(modeSelector.jqId).change([loader_, dic], function() {
-                    for (var i = 0, ii = modeSelector.inputs.length; i < ii; i++) {
-                        var input = modeSelector.inputs[i];
+                    for (i = 0, ii = modeSelector.inputs.length; i < ii; i++) {
+                        input = modeSelector.inputs[i];
                         if (input.checked) {
                             options.setMode(input.value);
                             try {
                                 //loader_.refreshMap(options);
                                 loader_.editionMode(options);
+                                /*
                                 if (options.getLayout()===dic.mapLayout.NTWWW) {
                                     for (var i = 0, ii = networkLayoutDisplayOptions.inputs.length; i < ii; i++) {
                                         var input = networkLayoutDisplayOptions.inputs[i];
@@ -225,6 +231,7 @@ requirejs (
                                         }
                                     }
                                 }
+                                */
                             } catch (e) {
                                 helper_.addMsgToGrowl(e);
                                 helper_.growlMsgs(
@@ -240,8 +247,8 @@ requirejs (
                     }
                 });
                 $(notificationsOptions.jqId).change([loader_, dic], function() {
-                    for (var i = 0, ii = notificationsOptions.inputs.length; i < ii; i++) {
-                        var input = notificationsOptions.inputs[i];
+                    for (i = 0, ii = notificationsOptions.inputs.length; i < ii; i++) {
+                        input = notificationsOptions.inputs[i];
                         if (input.value==="notifyInfos") {
                             helper_.setNotifyInfo(input.checked);
                         } else if (input.value==="notifyWarns") {
@@ -252,8 +259,8 @@ requirejs (
                     }
                 });
                 $(networkLayoutDisplayOptions.jqId).change([loader_, dic], function() {
-                    for (var i = 0, ii = networkLayoutDisplayOptions.inputs.length; i < ii; i++) {
-                        var input = networkLayoutDisplayOptions.inputs[i];
+                    for (i = 0, ii = networkLayoutDisplayOptions.inputs.length; i < ii; i++) {
+                        input = networkLayoutDisplayOptions.inputs[i];
                         if (input.value==="displayDC") {
                             options.displayDC = input.checked;
                             loader_.displayDC(options.displayDC);
@@ -267,8 +274,8 @@ requirejs (
                     }
                 });
                 $(rootTreeSorting.jqId).change([loader_, dic], function() {
-                    for (var i = 0, ii = rootTreeSorting.inputs.length; i < ii; i++) {
-                        var input = rootTreeSorting.inputs[i];
+                    for (i = 0, ii = rootTreeSorting.inputs.length; i < ii; i++) {
+                        input = rootTreeSorting.inputs[i];
                         if (input.checked) {
                             var value = input.value;
                             try {
@@ -293,8 +300,8 @@ requirejs (
                     }
                 });
                 $(subTreesSorting.jqId).change([loader_, dic], function() {
-                    for (var i = 0, ii = subTreesSorting.inputs.length; i < ii; i++) {
-                        var input = subTreesSorting.inputs[i];
+                    for (i = 0, ii = subTreesSorting.inputs.length; i < ii; i++) {
+                        input = subTreesSorting.inputs[i];
                         if (input.checked) {
                             var value = input.value;
                             try {
@@ -325,8 +332,8 @@ requirejs (
                         }
                     }
                 });
-                for (var i = 0, ii = notificationsOptions.inputs.length; i < ii; i++) {
-                    var input = notificationsOptions.inputs[i];
+                for (i = 0, ii = notificationsOptions.inputs.length; i < ii; i++) {
+                    input = notificationsOptions.inputs[i];
                     if (input.value==="notifyInfos") {
                         input.checked=helper_.getNotifyInfo();
                     } else if (input.value==="notifyWarns") {
@@ -341,8 +348,8 @@ requirejs (
 
         helper_.initGrowlMsgs(widget_growl.jqId);
 
-        for (var i = 0, ii = layoutSelector.inputs.length; i < ii; i++) {
-            var input = layoutSelector.inputs[i];
+        for (i = 0, ii = layoutSelector.inputs.length; i < ii; i++) {
+            input = layoutSelector.inputs[i];
             if (input.checked) {
                 var num = input.value;
                 options.setLayout(num);
@@ -351,8 +358,8 @@ requirejs (
             }
         }
 
-        for (var i = 0, ii = modeSelector.inputs.length; i < ii; i++) {
-            var input = modeSelector.inputs[i];
+        for (i = 0, ii = modeSelector.inputs.length; i < ii; i++) {
+            input = modeSelector.inputs[i];
             if (input.checked) {
                 options.setMode(input.value);
             }
@@ -361,17 +368,17 @@ requirejs (
         if (options.getLayout()===dic.mapLayout.NTWWW) {
             document.getElementById('treeOptions').style.display = "none";
             document.getElementById('networkOptions').style.display = "";
-            for (var i = 0, ii = networkLayoutDisplayOptions.inputs.length; i < ii; i++) {
-                var input = networkLayoutDisplayOptions.inputs[i];
+            for (i = 0, ii = networkLayoutDisplayOptions.inputs.length; i < ii; i++) {
+                input = networkLayoutDisplayOptions.inputs[i];
                 if (input.value==="displayDC") {
                     options.displayDC = input.checked;
-                    loader_.displayDC(options.displayDC);
+                    //loader_.displayDC(options.displayDC);
                 } else if (input.value==="displayArea") {
                     options.displayAREA = input.checked;
-                    loader_.displayArea(options.displayAREA);
+                    //loader_.displayArea(options.displayAREA);
                 } else if (input.value==="displayLan") {
                     options.displayLAN = input.checked;
-                    loader_.displayLan(options.displayLAN);
+                    //loader_.displayLan(options.displayLAN);
                 }
             }
         } else if (options.getLayout()===dic.mapLayout.TREE) {
