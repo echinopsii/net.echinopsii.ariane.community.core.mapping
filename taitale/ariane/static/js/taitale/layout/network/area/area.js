@@ -665,6 +665,11 @@ define(
                 this.rect.mousedown(mouseDown);
 
                 this.areaHat.move(this.r, this.extrx + (this.extwidth/2), this.extry + this.abrdSpan/5);
+                this.areaHat.mousedown(mouseDown);
+                this.areaHat.drag(areaMove, areaDragg, areaUP);
+                this.areaHat.toBack();
+                if (!this.dispArea)
+                    this.areaHat.hide();
 
                 var mtxX, mtxY, i, ii, j, jj;
                 mtxX = this.armatrix.getMtxSize().x;
