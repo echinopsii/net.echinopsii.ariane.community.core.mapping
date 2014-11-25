@@ -130,18 +130,9 @@ requirejs (
                             document.getElementById('networkOptions').style.display = "";
                             for (i = 0, ii = networkLayoutDisplayOptions.inputs.length; i < ii; i++) {
                                 input = networkLayoutDisplayOptions.inputs[i];
-                                /*
-                                if (input.value==="displayDC") {
-                                    options.displayDC = input.checked;
-                                    loader_.displayDC(options.displayDC);
-                                } else if (input.value==="displayArea") {
-                                    options.displayAREA = input.checked;
-                                    loader_.displayArea(options.displayAREA);
-                                } else if (input.value==="displayLan") {
-                                    options.displayLAN = input.checked;
-                                    loader_.displayLan(options.displayLAN);
-                                }
-                                */
+                                if (input.value==="displayDC") options.displayDC = input.checked;
+                                else if (input.value==="displayArea") options.displayAREA = input.checked;
+                                else if (input.value==="displayLan") options.displayLAN = input.checked;
                             }
                         } else if (options.getLayout()===dic.mapLayout.TREE) {
                             document.getElementById('treeOptions').style.display = "";
@@ -172,21 +163,12 @@ requirejs (
                                 if (options.getLayout()===dic.mapLayout.NTWWW) {
                                     document.getElementById('treeOptions').style.display = "none";
                                     document.getElementById('networkOptions').style.display = "";
-                                    /*
                                     for (var i = 0, ii = networkLayoutDisplayOptions.inputs.length; i < ii; i++) {
                                         var input = networkLayoutDisplayOptions.inputs[i];
-                                        if (input.value==="displayDC") {
-                                            options.displayDC = input.checked;
-                                            loader_.displayDC(options.displayDC);
-                                        } else if (input.value==="displayArea") {
-                                            options.displayAREA = input.checked;
-                                            loader_.displayArea(options.displayAREA);
-                                        } else if (input.value==="displayLan") {
-                                            options.displayLAN = input.checked;
-                                            loader_.displayLan(options.displayLAN);
-                                        }
+                                        if (input.value==="displayDC") options.displayDC = input.checked;
+                                        else if (input.value==="displayArea") options.displayAREA = input.checked;
+                                        else if (input.value==="displayLan") options.displayLAN = input.checked;
                                     }
-                                    */
                                 } else if (options.getLayout()===dic.mapLayout.TREE) {
                                     document.getElementById('treeOptions').style.display = "";
                                     document.getElementById('networkOptions').style.display = "none";
@@ -215,23 +197,14 @@ requirejs (
                             try {
                                 //loader_.refreshMap(options);
                                 loader_.editionMode(options);
-                                /*
                                 if (options.getLayout()===dic.mapLayout.NTWWW) {
                                     for (var i = 0, ii = networkLayoutDisplayOptions.inputs.length; i < ii; i++) {
                                         var input = networkLayoutDisplayOptions.inputs[i];
-                                        if (input.value==="displayDC") {
-                                            options.displayDC = input.checked;
-                                            loader_.displayDC(options.displayDC);
-                                        } else if (input.value==="displayArea") {
-                                            options.displayAREA = input.checked;
-                                            loader_.displayArea(options.displayAREA);
-                                        } else if (input.value==="displayLan") {
-                                            options.displayLAN = input.checked;
-                                            loader_.displayLan(options.displayLAN);
-                                        }
+                                        if (input.value==="displayDC") options.displayDC = input.checked;
+                                        else if (input.value==="displayArea") options.displayAREA = input.checked;
+                                        else if (input.value==="displayLan") options.displayLAN = input.checked;
                                     }
                                 }
-                                */
                             } catch (e) {
                                 helper_.addMsgToGrowl(e);
                                 helper_.growlMsgs(
@@ -385,42 +358,4 @@ requirejs (
             document.getElementById('treeOptions').style.display = "";
             document.getElementById('networkOptions').style.display = "none";
         }
-
-        /*
-        try {
-            if (options.getLayout()!==dic.mapLayout.NTWWW) {
-                document.getElementById('networkOptions').style.display = "none";
-            } else {
-                document.getElementById('networkOptions').style.display = "";
-            }
-            loader_.loadMap(options);
-            for (var i = 0, ii = networkLayoutDisplayOptions.inputs.length; i < ii; i++) {
-                var input = networkLayoutDisplayOptions.inputs[i];
-                if (input.value==="displayDC") {
-                    loader_.displayDC(input.checked);
-                } else if (input.value==="displayArea") {
-                    loader_.displayArea(input.checked);
-                } else if (input.value==="displayLan") {
-                    loader_.displayLan(input.checked);
-                }
-            }
-            helper_.growlMsgs(
-                {
-                    severity: 'info',
-                    summary: 'Map successfully loaded',
-                    detail: 'Layout: '+options.getLayout()+"<br>Mode: "+options.getMode()
-                }
-            );
-        } catch (e) {
-            helper_.addMsgToGrowl(e);
-            helper_.growlMsgs(
-                {
-                    severity: 'error',
-                    summary: 'Failed to load map',
-                    detail: 'Layout: '+options.getLayout()+"<br>Mode: "+options.getMode(),
-                    sticky: true
-                });
-            console.log(e.stack);
-        }
-        */
     });
