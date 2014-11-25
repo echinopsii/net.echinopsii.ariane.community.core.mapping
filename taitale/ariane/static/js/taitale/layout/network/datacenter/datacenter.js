@@ -63,6 +63,8 @@ define(
             this.sWidth      = params.dc_strokeWidthShow;
             this.color       = params.dc_color;
 
+
+            this.dcName = this.geoDCLoc.dc;
             this.dcHat  = new datacenterHat(this.geoDCLoc.dc, params.dc_txtTitle, this.color);
 
             this.menu              = null;

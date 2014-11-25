@@ -29,6 +29,8 @@ define(
 
             this.dcName        = localisation.getDatacenter().dc;
             this.areaName      = localisation.getArea().marea;
+            this.areaLongName  = localisation.dcproto.dc + "-" + localisation.type + " area | " +
+                ((localisation.marea != null) ? localisation.marea : "no multicast area");;
             this.multicastAddr = multicastAddr_;
             this.properties    = properties_;
             this.isInserted    = false;

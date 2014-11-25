@@ -468,15 +468,16 @@ define(
             var k, kk,  toUp;
             if (linksToUp.length <= linksOnMove.length) {
                 toUp = false;
-                for (k = 0, kk = linksToUp.length; k < kk; k++)
+                for (k = 0, kk = linksToUp.length; k < kk; k++) {
                     if (linksToUp[k].id === link.id) {
                         toUp = true;
                         break;
                     }
+                }
             } else {
                 toUp = true;
                 for (k = 0, kk = linksOnMove.length; k < kk; k++)
-                    if (linksOnMove[k].id === link.id) {
+                    if (linksOnMove[k].id == link.id) {
                         toUp = false;
                         break;
                     }
@@ -495,17 +496,23 @@ define(
                 moveSet = this.set();
 
             var sourceLan  = link.getEpSource().epNode.nodeContainer.localisation.lan,
-                sourceArea = link.getEpSource().epNode.nodeContainer.localisation.marea,
+                sourceArea = link.getEpSource().epNode.nodeContainer.localisation.dcproto.dc + "-" +
+                    link.getEpSource().epNode.nodeContainer.localisation.type + " area | " +
+                    ((link.getEpSource().epNode.nodeContainer.localisation.marea != null) ?
+                        link.getEpSource().epNode.nodeContainer.localisation.marea : "no multicast area"),
                 sourceDC   = link.getEpSource().epNode.nodeContainer.localisation.dcproto.dc;
 
             var targetLan, targetArea, targetDC;
             if (link.getEpTarget()!=null) {
                 targetLan  = link.getEpTarget().epNode.nodeContainer.localisation.lan;
-                targetArea = link.getEpTarget().epNode.nodeContainer.localisation.marea;
+                targetArea = link.getEpTarget().epNode.nodeContainer.localisation.dcproto.dc + "-" +
+                    link.getEpTarget().epNode.nodeContainer.localisation.type + " area | " +
+                    ((link.getEpTarget().epNode.nodeContainer.localisation.marea != null) ?
+                        link.getEpTarget().epNode.nodeContainer.localisation.marea : "no multicast area");
                 targetDC   = link.getEpTarget().epNode.nodeContainer.localisation.dcproto.dc;
             } else {
                 targetLan  = null;
-                targetArea = link.getMulticastBus().areaName;
+                targetArea = link.getMulticastBus().areaLongName;
                 targetDC   = link.getMulticastBus().dcName;
             }
 
@@ -515,6 +522,7 @@ define(
                     if (sourceDC === dc.dcName && targetDC === dc.dcName) {
                         linksOnMove.push(link);
                         moveSet.push(link.line);
+                        moveSet.push(link.bg);
                         isOnMove=true;
                         break;
                     }
@@ -526,6 +534,7 @@ define(
                     if (sourceArea === area.areaName && targetArea === area.areaName) {
                         linksOnMove.push(link);
                         moveSet.push(link.line);
+                        moveSet.push(link.bg);
                         isOnMove=true;
                         break;
                     }
@@ -535,8 +544,9 @@ define(
                 for (i = 0, ii = lansOnMove.length; i < ii; i++) {
                     lan = lansOnMove[i];
                     if (sourceLan === lan.lanName && targetLan === lan.lanName) {
-                        moveSet.push(link.line);
                         linksOnMove.push(link);
+                        moveSet.push(link.line);
+                        moveSet.push(link.bg);
                         isOnMove=true;
                         break;
                     }
@@ -544,7 +554,6 @@ define(
             }
             if (!isOnMove)
                 linksToUp.push(link);
-
         };
 
         Raphael.fn.move = function(dx, dy) {

@@ -79,9 +79,13 @@ define(
             this.menuFieldStartEditTitle  = "Edition mode ON";
             this.menuFieldStopEditTitle   = "Edition mode OFF";
 
-            this.areaHat  = new areaHat(this.areaDef.type + " area | " +
-                ((this.areaDef.marea != null) ? this.areaDef.marea : "no multicast area"),
-                params.area_txtTitle, params.area_color);
+            this.areaName = this.areaDef.dc + "-" + this.areaDef.type + " area | " +
+                ((this.areaDef.marea != null) ? this.areaDef.marea : "no multicast area");
+
+            this.areaNameHat = this.areaDef.type + " area | " +
+                ((this.areaDef.marea != null) ? this.areaDef.marea : "no multicast area");
+
+            this.areaHat  = new areaHat(this.areaNameHat, params.area_txtTitle, params.area_color);
 
             this.mvx = 0;
             this.mvy = 0;
@@ -175,9 +179,9 @@ define(
                 };
 
             var areaDragg = function () {
+                    areaRef.hasMoveHdl = true;
                     areaRef.moveInit();
                     areaRef.rect.animate({"fill-opacity": areaRef.oSelected}, 500);
-                    areaRef.hasMoveHdl = true;
                 },
                 areaMove = function (dx, dy) {
                     areaRef.minTopLeftX = areaRef.minJailX;
@@ -211,9 +215,9 @@ define(
                     areaRef.r.safari();
                 },
                 areaUP = function () {
-                    areaRef.hasMoveHdl = false;
                     areaRef.r.up();
                     areaRef.rect.animate({"fill-opacity": areaRef.oUnselected}, 500);
+                    areaRef.hasMoveHdl = false;
                 },
                 areaOver = function () {
                     if (!areaRef.dispArea && !areaRef.isMoving && !areaRef.isEditing) {
@@ -442,6 +446,9 @@ define(
                 if (this.isEditing)
                     this.r.scaleDone(this);
 
+                if (!this.hasMoveHdl)
+                    this.areaHat.hide();
+
                 this.r.areasOnMovePush(this);
                 this.r.moveSetPush(this.rect);
 
@@ -464,23 +471,33 @@ define(
 
             this.moveAction = function(dx, dy) {
                 this.mvx = dx; this.mvy = dy;
-                this.areaHat.move(this.r, this.extrx + dx + (this.areawidth/2), this.extry + dy + this.abrdSpan/5);
-                this.areaHat.mousedown(mouseDown);
-                this.areaHat.drag(areaMove, areaDragg, areaUP);
-                this.areaHat.toBack();
-                if (!this.hasMoveHdl && !this.dispArea){
-                    this.areaHat.hide();}
+                if (this.hasMoveHdl) {
+                    this.areaHat.move(this.r, this.extrx + dx + (this.areawidth/2), this.extry + dy + this.abrdSpan/5);
+                    this.areaHat.mousedown(mouseDown);
+                    this.areaHat.drag(areaMove, areaDragg, areaUP);
+                    this.areaHat.toBack();
+                }
             };
 
             this.moveUp = function() {
                 var attrect  = {x: this.extrx + this.mvx, y: this.extry + this.mvy},
                     attrtxt0 = {x: this.extt0x + this.mvx, y: this.extt0y + this.mvy};
 
+                if (!this.hasMoveHdl) {
+                    this.areaHat.move(this.r, this.extrx + this.mvx + (this.areawidth/2), this.extry + this.mvy + this.abrdSpan/5);
+                    this.areaHat.mousedown(mouseDown);
+                    this.areaHat.drag(areaMove, areaDragg, areaUP);
+                    this.areaHat.toBack();
+                    if (!this.dispArea)
+                        this.areaHat.hide();
+                }
+
                 this.mvx=0; this.mvy=0;
                 this.rect.attr(attrect);
 
                 this.changeUp();
                 this.isMoving = false;
+
                 if (this.isEditing)
                     this.r.scaleInit(this)
             };

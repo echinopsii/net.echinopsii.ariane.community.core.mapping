@@ -63,8 +63,10 @@ define(
             this.sDasharray  = params.lan_strokeDasharray;
             this.color       = params.lan_color;
 
-            this.lanHat  = new lanHat("Lan " + this.lanDef.lan + " - " +
-                this.lanDef.subnetip + "/" + this.lanDef.subnetmask, params.lan_txtTitle, this.color);
+            this.lanName        = this.lanDef.lan;
+            this.lanNameHat     = "Lan " + this.lanDef.lan + " - " + this.lanDef.subnetip + "/" + this.lanDef.subnetmask
+
+            this.lanHat  = new lanHat(this.lanNameHat, params.lan_txtTitle, this.color);
 
             this.mvx = 0;
             this.mvy = 0;
@@ -180,9 +182,9 @@ define(
                 };
 
             var lanDragg = function () {
+                    lanRef.hasMoveHdl = true;
                     lanRef.moveInit();
                     lanRef.rect.animate({"fill-opacity": lanRef.oSelected}, 500);
-                    lanRef.hasMoveHdl = true;
                 },
                 lanMove = function (dx, dy) {
                     var rx  = lanRef.extrx,
@@ -210,9 +212,9 @@ define(
                     lanRef.r.safari();
                 },
                 lanUP = function () {
-                    lanRef.hasMoveHdl = false;
                     lanRef.r.up();
                     lanRef.rect.animate({"fill-opacity": lanRef.oUnselected}, 500);
+                    lanRef.hasMoveHdl = false;
                 },
                 lanOver = function () {
                     if (!lanRef.dispLan  && !lanRef.isMoving && !lanRef.isEditing) {
@@ -457,26 +459,37 @@ define(
                                 container.moveInit();
                         }
 
+                    if (!this.hasMoveHdl)
+                        this.lanHat.hide();
+
                     this.changeInit();
                 }
             };
 
             this.moveAction = function(dx,dy) {
                 this.mvx = dx; this.mvy = dy;
-                this.lanHat.move(this.r, this.extrx + dx + (this.lanwidth/2), this.extry + dy + this.lbrdSpan/5);
-                this.lanHat.mousedown(mouseDown);
-                this.lanHat.drag(lanMove, lanDragg, lanUP);
-                this.lanHat.toBack();
-                if (!this.hasMoveHdl && !this.dispLan)
-                    this.lanHat.hide();
+                if (this.hasMoveHdl) {
+                    this.lanHat.move(this.r, this.extrx + dx + (this.lanwidth/2), this.extry + dy + this.lbrdSpan/5);
+                    this.lanHat.mousedown(mouseDown);
+                    this.lanHat.drag(lanMove, lanDragg, lanUP);
+                    this.lanHat.toBack();
+                }
             };
 
             this.moveUp = function() {
                 if (!this.rightClick) {
                     var attrect  = {x: this.extrx + this.mvx, y: this.extry + this.mvy};
 
-                    this.mvx=0; this.mvy=0;
                     this.rect.attr(attrect);
+                    if (!this.hasMoveHdl) {
+                        this.lanHat.move(this.r, this.extrx + this.mvx + (this.lanwidth/2), this.extry + this.mvy + this.lbrdSpan/5);
+                        this.lanHat.mousedown(mouseDown);
+                        this.lanHat.drag(lanMove, lanDragg, lanUP);
+                        this.lanHat.toBack();
+                        if (!this.dispLan)
+                            this.lanHat.hide();
+                    }
+                    this.mvx=0; this.mvy=0;
 
                     this.changeUp();
                     this.isMoving = false;

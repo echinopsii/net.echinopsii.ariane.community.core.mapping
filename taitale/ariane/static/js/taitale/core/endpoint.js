@@ -587,7 +587,7 @@ define(
                     for (i = this.epLinks.length; i--;) {
                         link = this.epLinks[i];
 
-                        if (this.r.isLinkToUp(i)) {
+                        if (this.r.isLinkToUp(link)) {
                             if (link.getMulticastBus()!=null) {
                                 this.chooseMulticastTargetBindingPointAndCalcPoz(link);
                             }
@@ -601,12 +601,25 @@ define(
             };
 
             this.moveUp = function() {
-                var att = {cx: this.circle.attr("cx") + this.mvx, cy: this.circle.attr("cy") + this.mvy};
+                var att = {cx: this.circle.attr("cx") + this.mvx, cy: this.circle.attr("cy") + this.mvy}, up, i, link;
                 this.mvx = 0 ; this.mvy = 0;
                 this.circle.attr(att);
                 this.circle.animate({"fill-opacity": this.oUnselected}, 500);
                 this.x = this.circle.attr("cx");
                 this.y = this.circle.attr("cy");
+                for (i = this.epLinks.length; i--;) {
+                    link = this.epLinks[i];
+
+                    if (!this.r.isLinkToUp(link)) {
+                        if (link.getMulticastBus()!=null) {
+                            this.chooseMulticastTargetBindingPointAndCalcPoz(link);
+                        }
+                        up = this.r.link(link.toCompute());
+                        if (typeof up != 'undefined') {
+                            link.toUpdate(up);
+                        }
+                    }
+                }
                 this.isMoving = false;
             };
         }
