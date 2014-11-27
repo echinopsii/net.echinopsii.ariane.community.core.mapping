@@ -145,7 +145,6 @@ define(
 
             this.defineMtxAreaSize = function() {
                 var i, ii;
-                splitter.init();
                 for (i = 0, ii = rows[3][0]; i < ii ; i++ ) {
                     rows[0][i].defineSize();
                     splitter.setWanLineHeight(rows[0][i].getAreaSize().height);
@@ -207,7 +206,6 @@ define(
             this.defineDCContentSize = function() {
                 var tmpWidth = 0, i, ii;
 
-                contentHeight = 0 ;
                 contentWidth  = 0 ;
 
                 for (i = 0, ii = rows[3][0]; i < ii ; i++ )
@@ -227,29 +225,9 @@ define(
                 if (tmpWidth > contentWidth)
                     contentWidth = tmpWidth;
 
-                var tmpHeight = 0, rowHeight;
-                for (i = 0, ii = rows[3][0]; i < ii ; i++ ) {
-                    rowHeight = rows[0][i].getAreaSize().height;
-                    if (rowHeight > tmpHeight)
-                        tmpHeight = rowHeight;
-                }
-                contentHeight += tmpHeight;
-
-                tmpHeight = 0;
-                for (i = 0, ii = rows[3][1]; i < ii ; i++ ) {
-                    rowHeight = rows[1][i].getAreaSize().height;
-                    if (rowHeight > tmpHeight)
-                        tmpHeight = rowHeight;
-                }
-                contentHeight += ((tmpHeight!=0)? tmpHeight : splitter.getManLineHeight());
-
-                tmpHeight = 0;
-                for (i = 0, ii = rows[3][2]; i < ii ; i++ ) {
-                    rowHeight = rows[2][i].getAreaSize().height;
-                    if (rowHeight > tmpHeight)
-                        tmpHeight = rowHeight;
-                }
-                contentHeight = contentHeight + tmpHeight;
+                contentHeight = ((rows[2].length!=0)?splitter.getLanLineHeight():0) +
+                    ((rows[1].length!=0)?splitter.getManLineHeight():0) +
+                    ((rows[0].length!=0)?splitter.getWanLineHeight():0);
             };
 
             this.getDCContentSize = function() {

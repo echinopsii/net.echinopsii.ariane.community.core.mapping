@@ -44,7 +44,7 @@ define(
             this.dic        = new dictionary();
             this.msplitter  = mapSplitter;
             this.isInserted = false;
-            this.dispDC  = false;
+            this.dispDC     = false;
 
             this.dcsplitter = null;
             this.dcmatrix   = new datacenterMatrix(this.msplitter, registries, options);

@@ -1,0 +1,1098 @@
+{
+    "containers":[
+        {
+            "containerID":171,
+            "containerCompany":"Tibco",
+            "containerProduct":"Tibco Rendez Vous",
+            "containerType":"RV Daemon",
+            "containerGateURI":"http://app6969rvd23.lab02.dev.dekatonshivr.echinopsii.net:7580",
+            "containerProperties":{
+                "Network":{
+                    "lan":"lab02.lan4",
+                    "marea":"devil's mind",
+                    "subnetmask":"255.255.255.0",
+                    "type":"LAN",
+                    "subnetip":"192.168.48.0"
+                },
+                "Datacenter":{
+                    "dc":"Somewhere in hell [DR]",
+                    "gpsLng":-52.582179,
+                    "address":"Devil's Island",
+                    "gpsLat":5.295366,
+                    "town":"Devil's Island",
+                    "country":"France"
+                },
+                "supportTeam":{
+                    "color":"71ab90",
+                    "name":"DEV APP"
+                },
+                "Server":{
+                    "os":"Fedora 18 - x86_64",
+                    "hostname":"app6969rvd23"
+                }
+            }
+        },
+        {
+            "containerID":87,
+            "containerCompany":"Tibco",
+            "containerProduct":"Tibco Rendez Vous",
+            "containerType":"RV Router Daemon",
+            "containerGateURI":"http://tibrvrdl03prd01.lab01.dev.dekatonshivr.echinopsii.net:7580",
+            "containerProperties":{
+                "RVRD_HOSTNAME":"tibrvrdl03prd01.lab01.dev.dekatonshivr.echinopsii.net",
+                "Network":{
+                    "subnetmask":"255.255.255.0",
+                    "lan":"lab01.lan1",
+                    "marea":"angelsMind",
+                    "type":"LAN",
+                    "subnetip":"192.168.33.0"
+                },
+                "Datacenter":{
+                    "dc":"My little paradise",
+                    "gpsLng":2.24639,
+                    "address":"26 rue de Belfort",
+                    "gpsLat":48.894944,
+                    "town":"Courbevoie",
+                    "country":"France"
+                },
+                "RVRD_PID":"489",
+                "RVRD_IPADDR":"192.168.33.7",
+                "RVRD_NAME":"rvrd",
+                "RVRD_LICENSE_TICKET":"217318",
+                "RVRD_INBOX_PORT":"0",
+                "supportTeam":{
+                    "color":"11301f",
+                    "name":"MDW BUS"
+                },
+                "Server":{
+                    "os":"Fedora 18 - x86_64",
+                    "hostname":"tibrvrdl03prd01"
+                },
+                "RVRD_VERSION":"8.4.0"
+            }
+        },
+        {
+            "containerID":70,
+            "containerCompany":"Tibco",
+            "containerProduct":"Tibco Rendez Vous",
+            "containerType":"RV Router Daemon",
+            "containerGateURI":"http://tibrvrdwprd01.lab01.dev.dekatonshivr.echinopsii.net:7580",
+            "containerProperties":{
+                "RVRD_HOSTNAME":"tibrvrdwprd01.lab01.dev.dekatonshivr.echinopsii.net",
+                "Network":{
+                    "subnetmask":"255.255.255.0",
+                    "lan":"lab01.wan",
+                    "type":"WAN",
+                    "subnetip":"192.168.35.0"
+                },
+                "Datacenter":{
+                    "dc":"My little paradise",
+                    "gpsLng":2.24639,
+                    "address":"26 rue de Belfort",
+                    "gpsLat":48.894944,
+                    "town":"Courbevoie",
+                    "country":"France"
+                },
+                "RVRD_PID":"509",
+                "RVRD_IPADDR":"192.168.33.5",
+                "RVRD_NAME":"rvrd",
+                "RVRD_LICENSE_TICKET":"217318",
+                "RVRD_INBOX_PORT":"0",
+                "supportTeam":{
+                    "color":"11301f",
+                    "name":"MDW BUS"
+                },
+                "Server":{
+                    "os":"Fedora 18 - x86_64",
+                    "hostname":"tibrvrdwprd01"
+                },
+                "RVRD_VERSION":"8.4.0"
+            }
+        },
+        {
+            "containerID":157,
+            "containerCompany":"Tibco",
+            "containerProduct":"Tibco Rendez Vous",
+            "containerType":"RV Daemon",
+            "containerGateURI":"http://app6969rvd21.lab02.dev.dekatonshivr.echinopsii.net:7580",
+            "containerProperties":{
+                "Network":{
+                    "lan":"lab02.lan3",
+                    "marea":"devil's mind",
+                    "subnetmask":"255.255.255.0",
+                    "type":"LAN",
+                    "subnetip":"192.168.47.0"
+                },
+                "Datacenter":{
+                    "dc":"Somewhere in hell [DR]",
+                    "gpsLng":-52.582179,
+                    "address":"Devil's Island",
+                    "gpsLat":5.295366,
+                    "town":"Devil's Island",
+                    "country":"France"
+                },
+                "supportTeam":{
+                    "color":"71ab90",
+                    "name":"DEV APP"
+                },
+                "Server":{
+                    "os":"Fedora 18 - x86_64",
+                    "hostname":"app6969rvd21"
+                }
+            }
+        },
+        {
+            "containerID":142,
+            "containerCompany":"Tibco",
+            "containerProduct":"Tibco Rendez Vous",
+            "containerType":"RV Router Daemon",
+            "containerGateURI":"http://tibrvrdm02prd01.lab02.dev.dekatonshivr.echinopsii.net:7580",
+            "containerProperties":{
+                "RVRD_HOSTNAME":"tibrvrdm02prd01.lab02.dev.dekatonshivr.echinopsii.net",
+                "Network":{
+                    "lan":"lab02.man",
+                    "subnetmask":"255.255.255.0",
+                    "type":"MAN",
+                    "subnetip":"192.168.45.0"
+                },
+                "Datacenter":{
+                    "dc":"Somewhere in hell [DR]",
+                    "gpsLng":-52.582179,
+                    "address":"Devil's Island",
+                    "gpsLat":5.295366,
+                    "town":"Devil's Island",
+                    "country":"France"
+                },
+                "RVRD_PID":"666",
+                "RVRD_IPADDR":"192.168.45.8",
+                "RVRD_NAME":"rvrd",
+                "RVRD_LICENSE_TICKET":"217318",
+                "RVRD_INBOX_PORT":"0",
+                "supportTeam":{
+                    "color":"11301f",
+                    "name":"MDW BUS"
+                },
+                "Server":{
+                    "os":"Fedora 18 - x86_64",
+                    "hostname":"tibrvrdm02prd01"
+                },
+                "RVRD_VERSION":"8.4.0"
+            }
+        },
+        {
+            "containerID":178,
+            "containerCompany":"Tibco",
+            "containerProduct":"Tibco Rendez Vous",
+            "containerType":"RV Daemon",
+            "containerGateURI":"http://app6969rvd24.lab02.dev.dekatonshivr.echinopsii.net:7580",
+            "containerProperties":{
+                "Network":{
+                    "lan":"lab02.lan4",
+                    "marea":"devil's mind",
+                    "subnetmask":"255.255.255.0",
+                    "type":"LAN",
+                    "subnetip":"192.168.48.0"
+                },
+                "Datacenter":{
+                    "dc":"Somewhere in hell [DR]",
+                    "gpsLng":-52.582179,
+                    "address":"Devil's Island",
+                    "gpsLat":5.295366,
+                    "town":"Devil's Island",
+                    "country":"France"
+                },
+                "supportTeam":{
+                    "color":"71ab90",
+                    "name":"DEV APP"
+                },
+                "Server":{
+                    "os":"Fedora 18 - x86_64",
+                    "hostname":"app6969rvd24"
+                }
+            }
+        },
+        {
+            "containerID":124,
+            "containerCompany":"Tibco",
+            "containerProduct":"Tibco Rendez Vous",
+            "containerType":"RV Router Daemon",
+            "containerGateURI":"http://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net:7580",
+            "containerProperties":{
+                "RVRD_HOSTNAME":"tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net",
+                "Network":{
+                    "marea":"devil's mind",
+                    "lan":"lab02.lan1",
+                    "subnetmask":"255.255.255.0",
+                    "type":"LAN",
+                    "subnetip":"192.168.43.0"
+                },
+                "Datacenter":{
+                    "dc":"Somewhere in hell [DR]",
+                    "gpsLng":-52.582179,
+                    "address":"Devil's Island",
+                    "gpsLat":5.295366,
+                    "town":"Devil's Island",
+                    "country":"France"
+                },
+                "RVRD_PID":"666",
+                "RVRD_IPADDR":"192.168.43.8",
+                "RVRD_NAME":"rvrd",
+                "RVRD_LICENSE_TICKET":"217318",
+                "RVRD_INBOX_PORT":"0",
+                "supportTeam":{
+                    "color":"11301f",
+                    "name":"MDW BUS"
+                },
+                "Server":{
+                    "os":"Fedora 18 - x86_64",
+                    "hostname":"tibrvrdl06prd01"
+                },
+                "RVRD_VERSION":"8.4.0"
+            }
+        },
+        {
+            "containerID":79,
+            "containerCompany":"Tibco",
+            "containerProduct":"Tibco Rendez Vous",
+            "containerType":"RV Router Daemon",
+            "containerGateURI":"http://tibrvrdl05prd01.lab01.dev.dekatonshivr.echinopsii.net:7580",
+            "containerProperties":{
+                "RVRD_HOSTNAME":"tibrvrdl05prd01.lab01.dev.dekatonshivr.echinopsii.net",
+                "Network":{
+                    "subnetmask":"255.255.255.0",
+                    "lan":"lab01.lan1",
+                    "marea":"angelsMind",
+                    "type":"LAN",
+                    "subnetip":"192.168.33.0"
+                },
+                "Datacenter":{
+                    "dc":"My little paradise",
+                    "gpsLng":2.24639,
+                    "address":"26 rue de Belfort",
+                    "gpsLat":48.894944,
+                    "town":"Courbevoie",
+                    "country":"France"
+                },
+                "RVRD_PID":"487",
+                "RVRD_IPADDR":"192.168.33.8",
+                "RVRD_NAME":"rvrd",
+                "RVRD_LICENSE_TICKET":"217318",
+                "RVRD_INBOX_PORT":"0",
+                "supportTeam":{
+                    "color":"11301f",
+                    "name":"MDW BUS"
+                },
+                "Server":{
+                    "os":"Fedora 18 - x86_64",
+                    "hostname":"tibrvrdl05prd01"
+                },
+                "RVRD_VERSION":"8.4.0"
+            }
+        },
+        {
+            "containerID":63,
+            "containerCompany":"Tibco",
+            "containerProduct":"Tibco Rendez Vous",
+            "containerType":"RV Router Daemon",
+            "containerGateURI":"http://tibrvrdmprd01.lab01.dev.dekatonshivr.echinopsii.net:7580",
+            "containerProperties":{
+                "RVRD_HOSTNAME":"tibrvrdmprd01.lab01.dev.dekatonshivr.echinopsii.net",
+                "Network":{
+                    "subnetmask":"255.255.255.0",
+                    "lan":"lab01.man",
+                    "type":"MAN",
+                    "subnetip":"192.168.34.0"
+                },
+                "Datacenter":{
+                    "dc":"My little paradise",
+                    "gpsLng":2.24639,
+                    "address":"26 rue de Belfort",
+                    "gpsLat":48.894944,
+                    "town":"Courbevoie",
+                    "country":"France"
+                },
+                "RVRD_PID":"486",
+                "RVRD_IPADDR":"192.168.33.6",
+                "RVRD_NAME":"rvrd",
+                "RVRD_LICENSE_TICKET":"217318",
+                "RVRD_INBOX_PORT":"0",
+                "supportTeam":{
+                    "color":"11301f",
+                    "name":"MDW BUS"
+                },
+                "Server":{
+                    "os":"Fedora 18 - x86_64",
+                    "hostname":"tibrvrdmprd01"
+                },
+                "RVRD_VERSION":"8.4.0"
+            }
+        },
+        {
+            "containerID":149,
+            "containerCompany":"Tibco",
+            "containerProduct":"Tibco Rendez Vous",
+            "containerType":"RV Router Daemon",
+            "containerGateURI":"http://tibrvrdw02prd01.lab02.dev.dekatonshivr.echinopsii.net:7580",
+            "containerProperties":{
+                "RVRD_HOSTNAME":"tibrvrdw02prd01.lab02.dev.dekatonshivr.echinopsii.net",
+                "Network":{
+                    "lan":"lab02.wan",
+                    "subnetmask":"255.255.255.0",
+                    "type":"WAN",
+                    "subnetip":"192.168.46.0"
+                },
+                "Datacenter":{
+                    "dc":"Somewhere in hell [DR]",
+                    "gpsLng":-52.582179,
+                    "address":"Devil's Island",
+                    "gpsLat":5.295366,
+                    "town":"Devil's Island",
+                    "country":"France"
+                },
+                "RVRD_PID":"666",
+                "RVRD_IPADDR":"192.168.46.8",
+                "RVRD_NAME":"rvrd",
+                "RVRD_LICENSE_TICKET":"217318",
+                "RVRD_INBOX_PORT":"0",
+                "supportTeam":{
+                    "color":"11301f",
+                    "name":"MDW BUS"
+                },
+                "Server":{
+                    "os":"Fedora 18 - x86_64",
+                    "hostname":"tibrvrdw02prd01"
+                },
+                "RVRD_VERSION":"8.4.0"
+            }
+        },
+        {
+            "containerID":132,
+            "containerCompany":"Tibco",
+            "containerProduct":"Tibco Rendez Vous",
+            "containerType":"RV Router Daemon",
+            "containerGateURI":"http://tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net:7580",
+            "containerProperties":{
+                "RVRD_HOSTNAME":"tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net",
+                "Network":{
+                    "marea":"devil's mind",
+                    "lan":"lab02.lan2",
+                    "subnetmask":"255.255.255.0",
+                    "type":"LAN",
+                    "subnetip":"192.168.44.0"
+                },
+                "Datacenter":{
+                    "dc":"Somewhere in hell [DR]",
+                    "gpsLng":-52.582179,
+                    "address":"Devil's Island",
+                    "gpsLat":5.295366,
+                    "town":"Devil's Island",
+                    "country":"France"
+                },
+                "RVRD_PID":"696",
+                "RVRD_IPADDR":"192.168.44.8",
+                "RVRD_NAME":"rvrd",
+                "RVRD_LICENSE_TICKET":"217318",
+                "RVRD_INBOX_PORT":"0",
+                "supportTeam":{
+                    "color":"11301f",
+                    "name":"MDW BUS"
+                },
+                "Server":{
+                    "os":"Fedora 18 - x86_64",
+                    "hostname":"tibrvrdl07prd01"
+                },
+                "RVRD_VERSION":"8.4.0"
+            }
+        },
+        {
+            "containerID":164,
+            "containerCompany":"Tibco",
+            "containerProduct":"Tibco Rendez Vous",
+            "containerType":"RV Daemon",
+            "containerGateURI":"http://app6969rvd22.lab02.dev.dekatonshivr.echinopsii.net:7580",
+            "containerProperties":{
+                "Network":{
+                    "lan":"lab02.lan3",
+                    "marea":"devil's mind",
+                    "subnetmask":"255.255.255.0",
+                    "type":"LAN",
+                    "subnetip":"192.168.47.0"
+                },
+                "Datacenter":{
+                    "dc":"Somewhere in hell [DR]",
+                    "gpsLng":-52.582179,
+                    "address":"Devil's Island",
+                    "gpsLat":5.295366,
+                    "town":"Devil's Island",
+                    "country":"France"
+                },
+                "supportTeam":{
+                    "color":"71ab90",
+                    "name":"DEV APP"
+                },
+                "Server":{
+                    "os":"Fedora 18 - x86_64",
+                    "hostname":"app6969rvd22"
+                }
+            }
+        }
+    ],
+    "nodes":[
+        {
+            "nodeID":68,
+            "nodeName":"APP6969.tibrvrdmprd01",
+            "nodeContainerID":63,
+            "nodeProperties":{
+                "primaryApplication":{
+                    "color":"e8a25d",
+                    "name":"APP"
+                },
+                "RVRD_ROUTER_MAXBACKLOG":0,
+                "busDescription":"APP fix prices diffusion"
+            }
+        },
+        {
+            "nodeID":137,
+            "nodeName":"APP6969.tibrvrdl07prd01",
+            "nodeContainerID":132,
+            "nodeProperties":{
+                "primaryApplication":{
+                    "color":"e8a25d",
+                    "name":"APP"
+                },
+                "RVRD_ROUTER_MAXBACKLOG":"0",
+                "busDescription":"APP FX prices diffusion"
+            }
+        },
+        {
+            "nodeID":84,
+            "nodeName":"APP6969.tibrvrdl05prd01",
+            "nodeContainerID":79,
+            "nodeProperties":{
+                "primaryApplication":{
+                    "color":"e8a25d",
+                    "name":"APP"
+                },
+                "RVRD_ROUTER_MAXBACKLOG":0,
+                "busDescription":"APP fix prices diffusion"
+            }
+        },
+        {
+            "nodeID":154,
+            "nodeName":"APP6969.tibrvrdlw02prd01",
+            "nodeContainerID":149,
+            "nodeProperties":{
+                "primaryApplication":{
+                    "color":"e8a25d",
+                    "name":"APP"
+                },
+                "RVRD_ROUTER_MAXBACKLOG":"0",
+                "busDescription":"APP FX prices diffusion"
+            }
+        },
+        {
+            "nodeID":169,
+            "nodeName":"APP6969.RVD22",
+            "nodeContainerID":164,
+            "nodeProperties":{
+                "primaryApplication":{
+                    "color":"e3a164",
+                    "name":"APP"
+                },
+                "busDescription":"APP FX prices diffusion"
+            }
+        },
+        {
+            "nodeID":129,
+            "nodeName":"APP6969.tibrvrdl06prd01",
+            "nodeContainerID":124,
+            "nodeProperties":{
+                "primaryApplication":{
+                    "color":"e8a25d",
+                    "name":"APP"
+                },
+                "RVRD_ROUTER_MAXBACKLOG":"0",
+                "busDescription":"APP FX prices diffusion"
+            }
+        },
+        {
+            "nodeID":162,
+            "nodeName":"APP6969.RVD21",
+            "nodeContainerID":157,
+            "nodeProperties":{
+                "primaryApplication":{
+                    "color":"e3a164",
+                    "name":"APP"
+                },
+                "busDescription":"APP FX prices diffusion"
+            }
+        },
+        {
+            "nodeID":92,
+            "nodeName":"APP6969.tibrvrdl03prd01",
+            "nodeContainerID":87,
+            "nodeProperties":{
+                "primaryApplication":{
+                    "color":"e8a25d",
+                    "name":"APP"
+                },
+                "RVRD_ROUTER_MAXBACKLOG":0,
+                "busDescription":"APP fix prices diffusion"
+            }
+        },
+        {
+            "nodeID":176,
+            "nodeName":"APP6969.RVD23",
+            "nodeContainerID":171,
+            "nodeProperties":{
+                "primaryApplication":{
+                    "color":"e3a164",
+                    "name":"APP"
+                },
+                "busDescription":"APP FX prices diffusion"
+            }
+        },
+        {
+            "nodeID":147,
+            "nodeName":"APP6969.tibrvrdlm02prd01",
+            "nodeContainerID":142,
+            "nodeProperties":{
+                "primaryApplication":{
+                    "color":"e8a25d",
+                    "name":"APP"
+                },
+                "RVRD_ROUTER_MAXBACKLOG":"0",
+                "busDescription":"APP FX prices diffusion"
+            }
+        },
+        {
+            "nodeID":183,
+            "nodeName":"APP6969.RVD24",
+            "nodeContainerID":178,
+            "nodeProperties":{
+                "primaryApplication":{
+                    "color":"e3a164",
+                    "name":"APP"
+                },
+                "busDescription":"APP FX prices diffusion"
+            }
+        },
+        {
+            "nodeID":75,
+            "nodeName":"APP6969.tibrvrdwprd01",
+            "nodeContainerID":70,
+            "nodeProperties":{
+                "primaryApplication":{
+                    "color":"e8a25d",
+                    "name":"APP"
+                },
+                "RVRD_ROUTER_MAXBACKLOG":0,
+                "busDescription":"APP fix prices diffusion"
+            }
+        }
+    ],
+    "endpoints":[
+        {
+            "endpointID":69,
+            "endpointURL":"tcp-tibrvrd://tibrvrdmprd01.lab01.dev.dekatonshivr.echinopsii.net:6969",
+            "endpointParentNodeID":68,
+            "endpointTwinEndpointID":[
+
+            ],
+            "endpointProperties":{
+                "primaryApplication":{
+                    "color":"e8a25d",
+                    "name":"APP"
+                },
+                "RVRD_NEIGHBD_COST":1,
+                "RVRD_NEIGHBD_COMP":false,
+                "RVRD_NEIGHBD_TYPE":0,
+                "RVRD_NEIGHBD_LPORT":6969,
+                "RVRD_NEIGHBD_RPORT":-1,
+                "RVRD_NEIGHBD_ENC":false,
+                "RVRD_NEIGHBD_LHOST":"tibrvrdmprd01.lab01.dev.dekatonshivr.echinopsii.net",
+                "busDescription":"APP fix prices diffusion"
+            }
+        },
+        {
+            "endpointID":170,
+            "endpointURL":"multicast-udp-tibrv://app6969rvd22.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969",
+            "endpointParentNodeID":169,
+            "endpointTwinEndpointID":[
+
+            ],
+            "endpointProperties":{
+                "primaryApplication":{
+                    "color":"e3a164",
+                    "name":"APP"
+                }
+            }
+        },
+        {
+            "endpointID":139,
+            "endpointURL":"tcp-tibrvrd://tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net:6969",
+            "endpointParentNodeID":137,
+            "endpointTwinEndpointID":[
+
+            ],
+            "endpointProperties":{
+                "primaryApplication":{
+                    "color":"e8a25d",
+                    "name":"APP"
+                },
+                "RVRD_NEIGHBD_COST":1,
+                "RVRD_NEIGHBD_COMP":false,
+                "RVRD_NEIGHBD_TYPE":2,
+                "RVRD_NEIGHBD_LPORT":6969,
+                "RVRD_NEIGHBD_RPORT":6969,
+                "RVRD_NEIGHBD_ENC":false,
+                "RVRD_NEIGHBD_RHOST":"tibrvrdmprd02.lab02.deb.dekatonshivr.echinopsii.net",
+                "RVRD_NEIGHBD_NNAME":"APP6969.tibrvrdmprd02",
+                "RVRD_NEIGHBD_LHOST":"tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net",
+                "busDescription":"APP FX prices diffusion"
+            }
+        },
+        {
+            "endpointID":138,
+            "endpointURL":"multicast-udp-tibrv://tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969",
+            "endpointParentNodeID":137,
+            "endpointTwinEndpointID":[
+                130
+            ],
+            "endpointProperties":{
+                "RVRD_LOCALNT_ESUB":[
+                    "FR.APP.>",
+                    "FR.BPP.>"
+                ],
+                "primaryApplication":{
+                    "color":"e8a25d",
+                    "name":"APP"
+                },
+                "RVRD_LOCALNT_SERVICE":6969,
+                "RVRD_LOCALNT_NETWORK":";239.69.69.69",
+                "RVRD_LOCALNT_ISUB":[
+                    "FR.APP.>-weight:10",
+                    "FR.BPP.>-weight:10"
+                ],
+                "busDescription":"APP FX prices diffusion",
+                "RVRD_LOCALNT_NAME":"APP6969.devilsMind"
+            }
+        },
+        {
+            "endpointID":163,
+            "endpointURL":"multicast-udp-tibrv://app6969rvd21.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969",
+            "endpointParentNodeID":162,
+            "endpointTwinEndpointID":[
+
+            ],
+            "endpointProperties":{
+                "primaryApplication":{
+                    "color":"e3a164",
+                    "name":"APP"
+                }
+            }
+        },
+        {
+            "endpointID":76,
+            "endpointURL":"tcp-tibrvrd://tibrvrdwprd01.lab01.dev.dekatonshivr.echinopsii.net:6969",
+            "endpointParentNodeID":75,
+            "endpointTwinEndpointID":[
+
+            ],
+            "endpointProperties":{
+                "primaryApplication":{
+                    "color":"e8a25d",
+                    "name":"APP"
+                },
+                "RVRD_NEIGHBD_COST":1,
+                "RVRD_NEIGHBD_COMP":false,
+                "RVRD_NEIGHBD_TYPE":0,
+                "RVRD_NEIGHBD_LPORT":6969,
+                "RVRD_NEIGHBD_RPORT":-1,
+                "RVRD_NEIGHBD_ENC":false,
+                "RVRD_NEIGHBD_LHOST":"tibrvrdwprd01.lab01.dev.dekatonshivr.echinopsii.net",
+                "busDescription":"APP fix prices diffusion"
+            }
+        },
+        {
+            "endpointID":77,
+            "endpointURL":"tcp-tibrvrd://tibrvrdwprd01.lab01.dev.dekatonshivr.echinopsii.net:16969",
+            "endpointParentNodeID":75,
+            "endpointTwinEndpointID":[
+
+            ],
+            "endpointProperties":{
+                "primaryApplication":{
+                    "color":"e8a25d",
+                    "name":"APP"
+                },
+                "RVRD_NEIGHBD_COST":1,
+                "RVRD_NEIGHBD_COMP":false,
+                "RVRD_NEIGHBD_TYPE":2,
+                "RVRD_NEIGHBD_LPORT":16969,
+                "RVRD_NEIGHBD_RPORT":6969,
+                "RVRD_NEIGHBD_ENC":false,
+                "RVRD_NEIGHBD_RHOST":"tibrvrdmprd01.lab01.dev.dekatonshivr.echinopsii.net",
+                "RVRD_NEIGHBD_NNAME":"APP6969.tibrvrdmprd01",
+                "RVRD_NEIGHBD_LHOST":"tibrvrdwprd01.lab01.dev.dekatonshivr.echinopsii.net",
+                "busDescription":"APP fix prices diffusion"
+            }
+        },
+        {
+            "endpointID":131,
+            "endpointURL":"tcp-tibrvrd://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net:6969",
+            "endpointParentNodeID":129,
+            "endpointTwinEndpointID":[
+
+            ],
+            "endpointProperties":{
+                "primaryApplication":{
+                    "color":"e8a25d",
+                    "name":"APP"
+                },
+                "RVRD_NEIGHBD_COST":1,
+                "RVRD_NEIGHBD_COMP":false,
+                "RVRD_NEIGHBD_TYPE":2,
+                "RVRD_NEIGHBD_LPORT":6969,
+                "RVRD_NEIGHBD_RPORT":6969,
+                "RVRD_NEIGHBD_ENC":false,
+                "RVRD_NEIGHBD_RHOST":"tibrvrdmprd02.lab02.deb.dekatonshivr.echinopsii.net",
+                "RVRD_NEIGHBD_NNAME":"APP6969.tibrvrdmprd02",
+                "RVRD_NEIGHBD_LHOST":"tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net",
+                "busDescription":"APP FX prices diffusion"
+            }
+        },
+        {
+            "endpointID":130,
+            "endpointURL":"multicast-udp-tibrv://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969",
+            "endpointParentNodeID":129,
+            "endpointTwinEndpointID":[
+                138
+            ],
+            "endpointProperties":{
+                "RVRD_LOCALNT_ESUB":[
+                    "FR.APP.>",
+                    "FR.BPP.>"
+                ],
+                "primaryApplication":{
+                    "color":"e8a25d",
+                    "name":"APP"
+                },
+                "RVRD_LOCALNT_SERVICE":6969,
+                "RVRD_LOCALNT_NETWORK":";239.69.69.69",
+                "RVRD_LOCALNT_ISUB":[
+                    "FR.APP.>-weight:10",
+                    "FR.BPP.>-weight:10"
+                ],
+                "busDescription":"APP FX prices diffusion",
+                "RVRD_LOCALNT_NAME":"APP6969.devilsMind"
+            }
+        },
+        {
+            "endpointID":85,
+            "endpointURL":"multicast-udp-tibrv://tibrvrdl05prd01.lab01.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969",
+            "endpointParentNodeID":84,
+            "endpointTwinEndpointID":[
+                93
+            ],
+            "endpointProperties":{
+                "RVRD_LOCALNT_ESUB":[
+                    "FR.APP.>"
+                ],
+                "primaryApplication":{
+                    "color":"e8a25d",
+                    "name":"APP"
+                },
+                "RVRD_MULTICAST_AREA":"angelsMind",
+                "RVRD_LOCALNT_SERVICE":6969,
+                "RVRD_LOCALNT_ISUB":[
+                    "FR.APP.>-weight:10"
+                ],
+                "RVRD_LOCALNT_NETWORK":";239.69.69.69",
+                "busDescription":"APP fix prices diffusion",
+                "RVRD_LOCALNT_NAME":"APP6969.devlab01"
+            }
+        },
+        {
+            "endpointID":184,
+            "endpointURL":"multicast-udp-tibrv://app6969rvd24.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969",
+            "endpointParentNodeID":183,
+            "endpointTwinEndpointID":[
+
+            ],
+            "endpointProperties":{
+                "primaryApplication":{
+                    "color":"e3a164",
+                    "name":"APP"
+                }
+            }
+        },
+        {
+            "endpointID":86,
+            "endpointURL":"tcp-tibrvrd://tibrvrdl05prd01.lab01.dev.dekatonshivr.echinopsii.net:6969",
+            "endpointParentNodeID":84,
+            "endpointTwinEndpointID":[
+
+            ],
+            "endpointProperties":{
+                "primaryApplication":{
+                    "color":"e8a25d",
+                    "name":"APP"
+                },
+                "RVRD_NEIGHBD_COST":1,
+                "RVRD_NEIGHBD_COMP":false,
+                "RVRD_NEIGHBD_TYPE":2,
+                "RVRD_NEIGHBD_LPORT":6969,
+                "RVRD_NEIGHBD_RPORT":6969,
+                "RVRD_NEIGHBD_ENC":false,
+                "RVRD_NEIGHBD_RHOST":"tibrvrdmprd01.lab01.dev.dekatonshivr.echinopsii.net",
+                "RVRD_NEIGHBD_NNAME":"APP6969.tibrvrdmprd01",
+                "RVRD_NEIGHBD_LHOST":"tibrvrdl05prd01.lab01.dev.dekatonshivr.echinopsii.net",
+                "busDescription":"APP fix prices diffusion"
+            }
+        },
+        {
+            "endpointID":155,
+            "endpointURL":"tcp-tibrvrd://tibrvrdw02prd01.lab02.dev.dekatonshivr.echinopsii.net:16969",
+            "endpointParentNodeID":154,
+            "endpointTwinEndpointID":[
+
+            ],
+            "endpointProperties":{
+                "primaryApplication":{
+                    "color":"e8a25d",
+                    "name":"APP"
+                },
+                "RVRD_NEIGHBD_COST":1,
+                "RVRD_NEIGHBD_COMP":false,
+                "RVRD_NEIGHBD_TYPE":2,
+                "RVRD_NEIGHBD_LPORT":16969,
+                "RVRD_NEIGHBD_RPORT":6969,
+                "RVRD_NEIGHBD_ENC":false,
+                "RVRD_NEIGHBD_RHOST":"tibrvrdm02prd02.lab02.deb.dekatonshivr.echinopsii.net",
+                "RVRD_NEIGHBD_LHOST":"tibrvrdw02prd01.lab02.dev.dekatonshivr.echinopsii.net",
+                "busDescription":"APP FX prices diffusion"
+            }
+        },
+        {
+            "endpointID":156,
+            "endpointURL":"tcp-tibrvrd://tibrvrdw02prd01.lab02.dev.dekatonshivr.echinopsii.net:6969",
+            "endpointParentNodeID":154,
+            "endpointTwinEndpointID":[
+
+            ],
+            "endpointProperties":{
+                "primaryApplication":{
+                    "color":"e8a25d",
+                    "name":"APP"
+                },
+                "RVRD_NEIGHBD_COST":1,
+                "RVRD_NEIGHBD_COMP":false,
+                "RVRD_NEIGHBD_TYPE":2,
+                "RVRD_NEIGHBD_LPORT":6969,
+                "RVRD_NEIGHBD_RPORT":6969,
+                "RVRD_NEIGHBD_ENC":false,
+                "RVRD_NEIGHBD_RHOST":"tibrvrdwprd01.lab01.deb.dekatonshivr.echinopsii.net",
+                "RVRD_NEIGHBD_LHOST":"tibrvrdw02prd01.lab02.dev.dekatonshivr.echinopsii.net",
+                "busDescription":"APP FX prices diffusion"
+            }
+        },
+        {
+            "endpointID":93,
+            "endpointURL":"multicast-udp-tibrv://tibrvrdl03prd01.lab01.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969",
+            "endpointParentNodeID":92,
+            "endpointTwinEndpointID":[
+                85
+            ],
+            "endpointProperties":{
+                "RVRD_LOCALNT_ESUB":[
+                    "FR.APP.>"
+                ],
+                "primaryApplication":{
+                    "color":"e8a25d",
+                    "name":"APP"
+                },
+                "RVRD_MULTICAST_AREA":"angelsMind",
+                "RVRD_LOCALNT_SERVICE":6969,
+                "RVRD_LOCALNT_ISUB":[
+                    "FR.APP.>-weight:10"
+                ],
+                "RVRD_LOCALNT_NETWORK":";239.69.69.69",
+                "busDescription":"APP fix prices diffusion",
+                "RVRD_LOCALNT_NAME":"APP6969.devlab01"
+            }
+        },
+        {
+            "endpointID":94,
+            "endpointURL":"tcp-tibrvrd://tibrvrdl03prd01.lab01.dev.dekatonshivr.echinopsii.net:6969",
+            "endpointParentNodeID":92,
+            "endpointTwinEndpointID":[
+
+            ],
+            "endpointProperties":{
+                "primaryApplication":{
+                    "color":"e8a25d",
+                    "name":"APP"
+                },
+                "RVRD_NEIGHBD_COST":1,
+                "RVRD_NEIGHBD_COMP":false,
+                "RVRD_NEIGHBD_TYPE":2,
+                "RVRD_NEIGHBD_LPORT":6969,
+                "RVRD_NEIGHBD_RPORT":6969,
+                "RVRD_NEIGHBD_ENC":false,
+                "RVRD_NEIGHBD_RHOST":"tibrvrdmprd01.lab01.dev.dekatonshivr.echinopsii.net",
+                "RVRD_NEIGHBD_NNAME":"APP6969.tibrvrdmprd01",
+                "RVRD_NEIGHBD_LHOST":"tibrvrdl03prd01.lab01.dev.dekatonshivr.echinopsii.net",
+                "busDescription":"APP fix prices diffusion"
+            }
+        },
+        {
+            "endpointID":177,
+            "endpointURL":"multicast-udp-tibrv://app6969rvd23.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969",
+            "endpointParentNodeID":176,
+            "endpointTwinEndpointID":[
+
+            ],
+            "endpointProperties":{
+                "primaryApplication":{
+                    "color":"e3a164",
+                    "name":"APP"
+                }
+            }
+        },
+        {
+            "endpointID":148,
+            "endpointURL":"tcp-tibrvrd://tibrvrdm02prd01.lab02.dev.dekatonshivr.echinopsii.net:6969",
+            "endpointParentNodeID":147,
+            "endpointTwinEndpointID":[
+
+            ],
+            "endpointProperties":{
+                "primaryApplication":{
+                    "color":"e8a25d",
+                    "name":"APP"
+                },
+                "RVRD_NEIGHBD_COST":1,
+                "RVRD_NEIGHBD_COMP":false,
+                "RVRD_NEIGHBD_TYPE":0,
+                "RVRD_NEIGHBD_LPORT":6969,
+                "RVRD_NEIGHBD_RPORT":-1,
+                "RVRD_NEIGHBD_ENC":false,
+                "RVRD_NEIGHBD_LHOST":"tibrvrdm02prd01.lab02.dev.dekatonshivr.echinopsii.net",
+                "busDescription":"APP FX prices diffusion"
+            }
+        }
+    ],
+    "links":[
+        {
+            "linkID":168,
+            "linkSEPID":163,
+            "linkTRPID":140
+        },
+        {
+            "linkID":141,
+            "linkSEPID":130,
+            "linkTRPID":140
+        },
+        {
+            "linkID":98,
+            "linkSEPID":94,
+            "linkTEPID":69,
+            "linkTRPID":78
+        },
+        {
+            "linkID":175,
+            "linkSEPID":170,
+            "linkTRPID":140
+        },
+        {
+            "linkID":96,
+            "linkSEPID":93,
+            "linkTRPID":8
+        },
+        {
+            "linkID":142,
+            "linkSEPID":138,
+            "linkTRPID":140
+        },
+        {
+            "linkID":97,
+            "linkSEPID":85,
+            "linkTRPID":8
+        },
+        {
+            "linkID":76,
+            "linkSEPID":77,
+            "linkTEPID":69,
+            "linkTRPID":78
+        },
+        {
+            "linkID":161,
+            "linkSEPID":156,
+            "linkTEPID":76,
+            "linkTRPID":78
+        },
+        {
+            "linkID":160,
+            "linkSEPID":155,
+            "linkTEPID":148,
+            "linkTRPID":78
+        },
+        {
+            "linkID":152,
+            "linkSEPID":139,
+            "linkTEPID":148,
+            "linkTRPID":78
+        },
+        {
+            "linkID":84,
+            "linkSEPID":86,
+            "linkTEPID":69,
+            "linkTRPID":78
+        },
+        {
+            "linkID":189,
+            "linkSEPID":184,
+            "linkTRPID":140
+        },
+        {
+            "linkID":182,
+            "linkSEPID":177,
+            "linkTRPID":140
+        },
+        {
+            "linkID":151,
+            "linkSEPID":131,
+            "linkTEPID":148,
+            "linkTRPID":78
+        }
+    ],
+    "transports":[
+        {
+            "transportID":140,
+            "transportName":"multicast-udp-tibrv://devilsMind;239.69.69.69",
+            "transportProperties":{
+                "primaryApplication":{
+                    "color":"e8a25d",
+                    "name":"APP"
+                },
+                "busDescription":"APP FX prices diffusion"
+            }
+        },
+        {
+            "transportID":8,
+            "transportName":"multicast-udp-tibrv://angelsMind;239.69.69.69",
+            "transportProperties":{
+                "primaryApplication":{
+                    "color":"e8a25d",
+                    "name":"APP"
+                },
+                "busDescription":"APP fix prices diffusion"
+            }
+        },
+        {
+            "transportID":78,
+            "transportName":"tcp-tibrvrd://"
+        }
+    ]
+}

@@ -88,6 +88,7 @@ define(
 
             this.defineMtxZoneSize = function() {
                 var i, ii, j, jj;
+                ldatacenterSplitter.init();
                 for (i = 0, ii = nbColumns; i < ii ; i++)
                     for (j = 0, jj = nbLines; j < jj ; j++ )
                         rows[j][i].defineZoneObjectsSize();
