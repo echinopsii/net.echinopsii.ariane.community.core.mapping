@@ -40,12 +40,13 @@ public class NodeJSON {
 
     private final static Logger log = LoggerFactory.getLogger(NodeJSON.class);
 
-    public final static String ND_ID_TOKEN = MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE+"ID";
-    public final static String ND_NAME_TOKEN = MappingDSGraphPropertyNames.DD_NODE_NAME_KEY;
+    public final static String ND_ID_TOKEN    = MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE+"ID";
+    public final static String ND_NAME_TOKEN  = MappingDSGraphPropertyNames.DD_NODE_NAME_KEY;
     public final static String ND_CONID_TOKEN = MappingDSGraphPropertyNames.DD_NODE_CONT_KEY+"ID";
+    public final static String ND_PNDID_TOKEN = MappingDSGraphPropertyNames.DD_NODE_PNODE_KEY+"ID";
     public final static String ND_TWNID_TOKEN = MappingDSGraphPropertyNames.DD_NODE_EDGE_TWIN_KEY+"ID";
     public final static String ND_EPSID_TOKEN = MappingDSGraphPropertyNames.DD_NODE_EDGE_ENDPT_KEY+"ID";
-    public final static String ND_PRP_TOKEN = MappingDSGraphPropertyNames.DD_NODE_PROPS_KEY;
+    public final static String ND_PRP_TOKEN   = MappingDSGraphPropertyNames.DD_NODE_PROPS_KEY;
 
     private final static void nodeProps2JSON(Node node, JsonGenerator jgenerator) throws JsonGenerationException, IOException {
         if (node.getNodeProperties()!=null && node.getNodeProperties().size()!=0) {
@@ -60,6 +61,8 @@ public class NodeJSON {
         jgenerator.writeNumberField(ND_ID_TOKEN, node.getNodeID());
         jgenerator.writeStringField(ND_NAME_TOKEN, node.getNodeName());
         jgenerator.writeNumberField(ND_CONID_TOKEN, node.getNodeContainer().getContainerID());
+        if (node.getNodeParentNode()!=null)
+            jgenerator.writeNumberField(ND_PNDID_TOKEN, node.getNodeParentNode().getNodeID());
         if (node.getNodeProperties() != null) {
             nodeProps2JSON(node, jgenerator);
         }
@@ -70,6 +73,8 @@ public class NodeJSON {
         jgenerator.writeNumberField(ND_ID_TOKEN, node.getNodeID());
         jgenerator.writeStringField(ND_NAME_TOKEN, node.getNodeName());
         jgenerator.writeNumberField(ND_CONID_TOKEN, node.getNodeContainer().getContainerID());
+        if (node.getNodeParentNode()!=null)
+            jgenerator.writeNumberField(ND_PNDID_TOKEN, node.getNodeParentNode().getNodeID());
 
         jgenerator.writeArrayFieldStart(ND_TWNID_TOKEN);
         Iterator<? extends Node> iterT = node.getTwinNodes().iterator();
