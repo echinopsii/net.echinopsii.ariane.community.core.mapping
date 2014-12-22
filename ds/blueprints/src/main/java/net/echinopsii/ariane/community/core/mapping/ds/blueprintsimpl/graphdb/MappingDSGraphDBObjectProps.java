@@ -23,6 +23,8 @@ import com.tinkerpop.blueprints.Vertex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -33,16 +35,27 @@ public class MappingDSGraphDBObjectProps {
     public static void synchronizeObjectPropertyToDB(Vertex vertex, String key, Object value, String mappingObjPropsKey) {
         if (MappingDSGraphDB.isBlueprintsNeo4j()) {
             if (value instanceof HashMap) {
-                HashMap<String, Object> hashMap = (HashMap) value;
+                HashMap<String, Object> hashMap = (HashMap)value;
                 for (String hKey: hashMap.keySet()) {
                     Object hValue = hashMap.get(hKey);
-                    log.debug("Synchronize property {}_{}_HashMap_{} : {}...", new Object[]{mappingObjPropsKey, key, hKey, hValue});
-                    vertex.setProperty(mappingObjPropsKey+"_"+key+"_HashMap_"+hKey, hValue);
+                    synchronizeObjectPropertyToDB(vertex, key+"_HashMap_"+hKey, hValue, mappingObjPropsKey);
+                    //vertex.setProperty(mappingObjPropsKey+"_"+key+"_HashMap_"+hKey, hValue);
                 }
+                return;
+            } else if (value instanceof BigDecimal) {
+                BigDecimal bigDecimal = (BigDecimal) value;
+                double scale = bigDecimal.scale();
+                synchronizeObjectPropertyToDB(vertex, key+"_BigDecimal_Scale", scale, mappingObjPropsKey);
+                double otherValue = bigDecimal.doubleValue()*Math.pow(10,scale);
+                synchronizeObjectPropertyToDB(vertex, key+"_BigDecimal_Value", otherValue, mappingObjPropsKey);
+                return;
+            } else if (value instanceof ArrayList) {
+                for (Object aValue : (ArrayList<Object>)value)
+                    synchronizeObjectPropertyToDB(vertex, key+"_ArrayList", aValue, mappingObjPropsKey);
                 return;
             }
         }
-        log.debug("Synchronize property {}_{}...", new Object[]{mappingObjPropsKey,key});
+        log.debug("Synchronize property {}_{} : {}...", new Object[]{mappingObjPropsKey,key,value.toString()});
         vertex.setProperty(mappingObjPropsKey+"_"+key, value);
     }
 
@@ -50,16 +63,20 @@ public class MappingDSGraphDBObjectProps {
         Object value = vertex.getProperty(mappingObjPropsKey+"_"+key);
         if (MappingDSGraphDB.isBlueprintsNeo4j() && value == null) {
             for (String pKey : vertex.getPropertyKeys()) {
-                if (pKey.startsWith(mappingObjPropsKey+"_"+key+"_HashMap_"))
+                if (pKey.startsWith(mappingObjPropsKey+"_"+key+"_HashMap") ||
+                    pKey.startsWith(mappingObjPropsKey+"_"+key+"_BigDecimal") ||
+                    pKey.startsWith(mappingObjPropsKey+"_"+key+"_ArrayList"))
                     vertex.removeProperty(pKey);
             }
-        } else if (value != null) {
+        } else if (value != null)
             vertex.removeProperty(mappingObjPropsKey+"_"+key);
-        }
     }
 
     public static void synchronizeObjectPropertyFromDB(Vertex vertex, HashMap<String,Object> props, String mappingObjPropsKey) {
         HashMap<String, Object> neoObjProps = new HashMap<String,Object>();
+        HashMap<String, Double> neoDoubleScale = new HashMap<String, Double>();
+        HashMap<String, Double> neoDoubleValue = new HashMap<String, Double>();
+
         Iterator<String> iterK = vertex.getPropertyKeys().iterator();
         while (iterK.hasNext()) {
             String key = iterK.next();
@@ -76,6 +93,19 @@ public class MappingDSGraphDBObjectProps {
                         String hKey = subkey.split("_HashMap_")[1];
                         log.debug("Synchronize {} property {} into HashMap {}..", new Object[]{hKey, vertex.getProperty(key).toString(), notTypedSubkey});
                         ((HashMap)subkeyObjValue).put(hKey,vertex.getProperty(key));
+                    } else if (subkey.contains("BigDecimal")) {
+                        String notTypedSubkey = subkey.split("_BigDecimal_")[0];
+                        if (subkey.contains("Scale")) {
+                            if (neoDoubleValue.get(notTypedSubkey)!=null)
+                                neoObjProps.put(notTypedSubkey, new BigDecimal(neoDoubleValue.get(notTypedSubkey)/Math.pow(10,(double)vertex.getProperty(key))));
+                            else
+                                neoDoubleScale.put(notTypedSubkey, (double)vertex.getProperty(key));
+                        } else if (subkey.contains("Value")) {
+                            if (neoDoubleScale.get(notTypedSubkey)!=null)
+                                neoObjProps.put(notTypedSubkey, new BigDecimal((double)vertex.getProperty(key)/Math.pow(10,neoDoubleScale.get(notTypedSubkey))));
+                            else
+                                neoDoubleValue.put(notTypedSubkey, (double)vertex.getProperty(key));
+                        }
                     } else {
                         props.put(subkey, vertex.getProperty(key));
                     }
