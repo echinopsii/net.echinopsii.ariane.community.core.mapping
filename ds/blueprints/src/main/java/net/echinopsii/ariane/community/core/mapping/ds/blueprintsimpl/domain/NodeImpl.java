@@ -627,10 +627,13 @@ public class NodeImpl implements Node, MappingDSCacheEntity {
             return super.equals(o);
         }
         boolean nameEq = false;
-        if (this.nodeName != null) {
-            nameEq = this.nodeName.equals(tmp.getNodeName());
+        if (this.nodeName != null && this.nodeContainer != null) {
+            if (this.nodeParentNode != null)
+                nameEq = this.nodeName.equals(tmp.getNodeName()) && this.nodeParentNode.equals(tmp.getNodeParentNode());
+            else
+                nameEq = this.nodeName.equals(tmp.getNodeName()) && this.nodeContainer.equals(tmp.getNodeContainer());
         }
-        return (this.getNodeID() == tmp.getNodeID() || nameEq);
+        return (this.getNodeID() == tmp.getNodeID() && nameEq);
     }
 
     @Override
