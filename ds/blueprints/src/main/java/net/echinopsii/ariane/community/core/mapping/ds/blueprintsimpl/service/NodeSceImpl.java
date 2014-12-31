@@ -58,10 +58,10 @@ public class NodeSceImpl implements NodeSce<NodeImpl> {
                     }
                 }
                 sce.getGlobalRepo().getNodeRepo().saveNode(ret);
-                container.addContainerNode(ret);
-                if (ret.getNodeParentNode() != null) {
+                if (ret.getNodeParentNode() != null)
                     ret.getNodeParentNode().addNodeChildNode(ret);
-                }
+                else
+                    container.addContainerNode(ret);
             } else {
                 throw new MappingDSException("Node creation failed : provided container " + containerID + " doesn't exists.");
             }
