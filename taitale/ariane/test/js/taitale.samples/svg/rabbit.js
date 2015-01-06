@@ -52,6 +52,8 @@ requirejs (
 
             rsr.text(x+62, y+41/3, "Pivotal").attr({'font-size': '11px', 'font-family': 'Arial', 'font-weight': 'bold'});
             rsr.text(x+85, y+2*(41/3), "RabbitMQ node").attr({'font-size': '11px', 'font-family': 'Arial', 'font-weight': 'bold'});
+            //rsr.circle(x, y, 1);
+            rsr.rect(x,y,41,41);
         }
 
         rabbitLogo(100,100)

@@ -166,7 +166,7 @@
         },
         {
             "nodeID":5,
-            "nodeName":"FrontOff-01_SUBS_2_PRICE.#",
+            "nodeName":"FrontOffice-01_SUBS_2_PRICE.#",
             "nodeParentNodeID":3,
             "nodeContainerID":3
         },
@@ -177,7 +177,7 @@
         },
         {
             "nodeID":7,
-            "nodeName":"FrontOff-02_SUBS_2_PRICE.#",
+            "nodeName":"FrontOffice-02_SUBS_2_PRICE.#",
             "nodeParentNodeID":3,
             "nodeContainerID":3
         }

@@ -33,6 +33,8 @@ public interface NodeSce<N extends Node> {
 
     public N getNode(String endpointURL);
 
+    public N getNode(Node parentNode, String nodeName);
+
     public Set<N> getNodes(String selector);
 
     public Set<N> getNodes(String key, Object value);

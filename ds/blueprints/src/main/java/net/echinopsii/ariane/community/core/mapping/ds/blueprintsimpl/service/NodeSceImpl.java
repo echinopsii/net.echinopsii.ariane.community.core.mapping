@@ -23,6 +23,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.ContainerImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.NodeImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository.NodeRepoImpl;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.service.NodeSce;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,6 +90,19 @@ public class NodeSceImpl implements NodeSce<NodeImpl> {
     @Override
     public NodeImpl getNode(String endpointURL) {
         return sce.getGlobalRepo().getNodeRepo().findNodeByEndpointURL(endpointURL);
+    }
+
+    @Override
+    public NodeImpl getNode(Node parentNode, String nodeName) {
+        NodeImpl ret = null;
+        if (parentNode instanceof NodeImpl) {
+            for (Node childNode : parentNode.getNodeChildNodes())
+                if (childNode instanceof NodeImpl && childNode.getNodeName().equals(nodeName)) {
+                    ret = (NodeImpl)childNode;
+                    break;
+                }
+        }
+        return ret;
     }
 
     @Override
