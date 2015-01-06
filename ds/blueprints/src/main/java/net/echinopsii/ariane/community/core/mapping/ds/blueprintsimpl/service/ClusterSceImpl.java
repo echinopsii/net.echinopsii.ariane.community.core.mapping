@@ -67,6 +67,11 @@ public class ClusterSceImpl implements ClusterSce<ClusterImpl> {
     }
 
     @Override
+    public ClusterImpl getCluster(String clusterName) {
+        return sce.getGlobalRepo().getClusterRepo().findClusterByName(clusterName);
+    }
+
+    @Override
     public Set<ClusterImpl> getClusters(String selector) {
         //TODO : manage selector - check graphdb query
         return ClusterRepoImpl.getRepository();

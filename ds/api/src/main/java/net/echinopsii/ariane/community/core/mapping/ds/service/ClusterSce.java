@@ -29,5 +29,6 @@ public interface ClusterSce<CL extends Cluster> {
 	public void deleteCluster(String clusterName) throws MappingDSException;
 
     public CL getCluster(long clusterID);
+    public CL getCluster(String clusterName);
     public Set<CL> getClusters(String selector);
 }
