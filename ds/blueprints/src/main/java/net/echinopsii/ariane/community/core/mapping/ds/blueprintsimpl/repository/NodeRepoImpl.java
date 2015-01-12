@@ -27,6 +27,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.repository.NodeRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class NodeRepoImpl implements NodeRepo<NodeImpl> {
@@ -50,12 +51,13 @@ public class NodeRepoImpl implements NodeRepo<NodeImpl> {
             this.deleteNode(childNode);
         }
 
-        for (EndpointImpl endpoint : node.getNodeEndpoints()) {
+        Set<EndpointImpl> clonedESet = new HashSet<>(node.getNodeEndpoints());
+        for (EndpointImpl endpoint : clonedESet) {
             log.debug("Deleted endpoint {} from graph({}).", new Object[]{endpoint.getEndpointURL(), MappingDSGraphDB.getVertexMaxCursor()});
             node.removeEndpoint(endpoint);
         }
 
-        for (NodeImpl twinNode : node.getNodeChildNodes()) {
+        for (NodeImpl twinNode : node.getTwinNodes()) {
             twinNode.removeTwinNode(node);
         }
 
