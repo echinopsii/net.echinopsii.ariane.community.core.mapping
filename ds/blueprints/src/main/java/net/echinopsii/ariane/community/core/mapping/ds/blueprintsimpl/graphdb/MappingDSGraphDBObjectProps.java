@@ -85,7 +85,7 @@ public class MappingDSGraphDBObjectProps {
         String type    = null;
         String subKey  = null;
 
-        if (splittedKey.split("_").length>2) {
+        if (splittedKey.split("_|\\.").length>2) {
             type = splittedKey.split(keyName + "_")[1].split("_|\\.")[0];
             subKey = splittedKey.split(keyName + "_")[1];
         }
