@@ -30,7 +30,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -175,10 +177,102 @@ public class PropertiesJSON {
                 throw new PropertiesException("Json property badly defined : array should be defined as a Json array.");
             }
         } else {
-            throw new PropertiesException("Unsupported json type (" + type + "). Supported types are : map");
+            throw new PropertiesException("Unsupported json type (" + type + "). Supported types are : array, map");
         }
 
         return ret;
+    }
+
+    private static void arrayListToJSON(ArrayList<Object> aobj, String objectName, JsonGenerator jgenerator) throws IOException {
+        if (objectName!=null)
+            jgenerator.writeArrayFieldStart(objectName);
+        else
+            jgenerator.writeStartArray();
+        @SuppressWarnings("unchecked")
+        Iterator<Object> iterAK = aobj.iterator();
+        while (iterAK.hasNext()) {
+            Object value = iterAK.next();
+            if (value instanceof String) {
+                jgenerator.writeString((String) value);
+            } else if (value instanceof Long) {
+                jgenerator.writeNumber((Long) value);
+            } else if (value instanceof Integer) {
+                jgenerator.writeNumber((Integer) value);
+            } else if (value instanceof Double) {
+                jgenerator.writeNumber((Double) value);
+            } else if (value instanceof BigDecimal) {
+                jgenerator.writeNumber((BigDecimal) value);
+            } else if (value instanceof Boolean) {
+                jgenerator.writeBoolean((Boolean) value);
+            } else if (value instanceof ArrayList) {
+                arrayListToJSON((ArrayList<Object>) value, null, jgenerator);
+            } else if (value instanceof String[]) {
+                arrayListToJSON(new ArrayList<Object>(Arrays.asList((String[])value)), objectName, jgenerator);
+            } else if (value instanceof Long[]) {
+                arrayListToJSON(new ArrayList<Object>(Arrays.asList((Long[])value)), objectName, jgenerator);
+            } else if (value instanceof Integer[]) {
+                arrayListToJSON(new ArrayList<Object>(Arrays.asList((Integer[])value)), objectName, jgenerator);
+            } else if (value instanceof Double[]) {
+                arrayListToJSON(new ArrayList<Object>(Arrays.asList((Double[])value)), objectName, jgenerator);
+            } else if (value instanceof BigDecimal[]) {
+                arrayListToJSON(new ArrayList<Object>(Arrays.asList((BigDecimal[])value)), objectName, jgenerator);
+            } else if (value instanceof Boolean[]) {
+                arrayListToJSON(new ArrayList<Object>(Arrays.asList((Boolean[])value)), objectName, jgenerator);
+            } else if (value instanceof HashMap) {
+                hashMapToJSON((HashMap)value, null, jgenerator);
+            }
+        }
+        jgenerator.writeEndArray();
+    }
+
+    private static void hashMapToJSON(HashMap<String, Object> hobj, String objectName, JsonGenerator jgenerator) throws IOException {
+        if (objectName!=null)
+            jgenerator.writeObjectFieldStart(objectName);
+        else
+            jgenerator.writeStartObject();
+        @SuppressWarnings("unchecked")
+        Iterator<String> iterHK = hobj.keySet().iterator();
+        while (iterHK.hasNext()) {
+            String key = iterHK.next();
+            Object value = hobj.get(key);
+            if (value instanceof String) {
+                log.debug("HashMap key {} value {}:{}", new Object[]{objectName, key, (String) value});
+                jgenerator.writeStringField(key, (String) value);
+            } else if (value instanceof Long) {
+                log.debug("HashMap key {} value {}:{}", new Object[]{objectName, key, (Long) value});
+                jgenerator.writeNumberField(key, (Long) value);
+            } else if (value instanceof Integer) {
+                jgenerator.writeNumberField(key, (Integer) value);
+                log.debug("HashMap key {} value {}:{}", new Object[]{objectName, key, (Integer) value});
+            } else if (value instanceof Double) {
+                jgenerator.writeNumberField(key, (Double) value);
+                log.debug("HashMap key {} value {}:{}", new Object[]{objectName, key, (Double) value});
+            } else if (value instanceof BigDecimal) {
+                jgenerator.writeNumberField(key, (BigDecimal) value);
+                log.debug("HashMap key {} value {}:{}", new Object[]{objectName, key, (BigDecimal) value});
+            } else if (value instanceof Boolean) {
+                jgenerator.writeBooleanField(key, (Boolean) value);
+                log.debug("HashMap key {} value {}:{}", new Object[]{objectName, key, (Boolean) value});
+            } else if (value instanceof HashMap) {
+                hashMapToJSON((HashMap) value, key, jgenerator);
+                log.debug("HashMap key {} value {}:{}", new Object[]{objectName, key, value.toString()});
+            } else if (value instanceof ArrayList) {
+                arrayListToJSON((ArrayList)value, key, jgenerator);
+            } else if (value instanceof String[]) {
+                arrayListToJSON(new ArrayList<Object>(Arrays.asList((String[])value)), objectName, jgenerator);
+            } else if (value instanceof Long[]) {
+                arrayListToJSON(new ArrayList<Object>(Arrays.asList((Long[])value)), objectName, jgenerator);
+            } else if (value instanceof Integer[]) {
+                arrayListToJSON(new ArrayList<Object>(Arrays.asList((Integer[])value)), objectName, jgenerator);
+            } else if (value instanceof Double[]) {
+                arrayListToJSON(new ArrayList<Object>(Arrays.asList((Double[])value)), objectName, jgenerator);
+            } else if (value instanceof BigDecimal[]) {
+                arrayListToJSON(new ArrayList<Object>(Arrays.asList((BigDecimal[])value)), objectName, jgenerator);
+            } else if (value instanceof Boolean[]) {
+                arrayListToJSON(new ArrayList<Object>(Arrays.asList((Boolean[]) value)), objectName, jgenerator);
+            }
+        }
+        jgenerator.writeEndObject();
     }
 
     public static void propertiesToJSON(HashMap<String, Object> props, JsonGenerator jgenerator) throws IOException {
@@ -200,82 +294,25 @@ public class PropertiesJSON {
                     jgenerator.writeNumberField(objectName, (Integer) obj);
                 } else if (obj instanceof Double) {
                     jgenerator.writeNumberField(objectName, (Double) obj);
+                } else if (obj instanceof BigDecimal) {
+                    jgenerator.writeNumberField(objectName, (BigDecimal) obj);
                 } else if (obj instanceof HashMap<?, ?>) {
                     log.debug("Property {} value is an object", new Object[]{objectName});
-                    jgenerator.writeObjectFieldStart(objectName);
-                    @SuppressWarnings("unchecked")
-                    HashMap<String, Object> hobj = (HashMap<String, Object>) obj;
-                    Iterator<String> iterHK = hobj.keySet().iterator();
-                    while (iterHK.hasNext()) {
-                        String key = iterHK.next();
-                        Object value = hobj.get(key);
-                        if (value instanceof String) {
-                            log.debug("Property Object {} value {}:{}", new Object[]{objectName, key, (String) value});
-                            jgenerator.writeStringField(key, (String) value);
-                        } else if (value instanceof Long) {
-                            log.debug("Property Object {} value {}:{}", new Object[]{objectName, key, (Long) value});
-                            jgenerator.writeNumberField(key, (Long) value);
-                        } else if (value instanceof Integer) {
-                            jgenerator.writeNumberField(key, (Integer) value);
-                            log.debug("Property Object {} value {}:{}", new Object[]{objectName, key, (Integer) value});
-                        } else if (value instanceof Double) {
-                            jgenerator.writeNumberField(key, (Double) value);
-                            log.debug("Property Object {} value {}:{}", new Object[]{objectName, key, (Double) value});
-                        } else if (value instanceof Boolean) {
-                            jgenerator.writeBooleanField(key, (Boolean) value);
-                        }
-                    }
-                    jgenerator.writeEndObject();
+                    hashMapToJSON((HashMap<String, Object>)obj, objectName, jgenerator);
                 } else if (obj instanceof ArrayList<?>) {
-                    jgenerator.writeArrayFieldStart(objectName);
-                    @SuppressWarnings("unchecked")
-                    ArrayList<Object> aobj = (ArrayList<Object>) obj;
-                    Iterator<Object> iterAK = aobj.iterator();
-                    while (iterAK.hasNext()) {
-                        Object value = iterAK.next();
-                        if (value instanceof String) {
-                            jgenerator.writeString((String) value);
-                        } else if (value instanceof Long) {
-                            jgenerator.writeNumber((Long) value);
-                        } else if (value instanceof Integer) {
-                            jgenerator.writeNumber((Integer) value);
-                        } else if (value instanceof Double) {
-                            jgenerator.writeNumber((Double) value);
-                        } else if (value instanceof Boolean) {
-                            jgenerator.writeBoolean((Boolean) value);
-                        }
-                    }
-                    jgenerator.writeEndArray();
+                    arrayListToJSON((ArrayList)obj, objectName, jgenerator);
                 } else if (obj instanceof String[]) {
-                    jgenerator.writeArrayFieldStart(objectName);
-                    for (String value : (String[])obj) {
-                        jgenerator.writeString(value);
-                    }
-                    jgenerator.writeEndArray();
+                    arrayListToJSON(new ArrayList<Object>(Arrays.asList((String[]) obj)), objectName, jgenerator);
                 } else if (obj instanceof Long[]) {
-                    jgenerator.writeArrayFieldStart(objectName);
-                    for (Long value : (Long[])obj) {
-                        jgenerator.writeNumber(value);
-                    }
-                    jgenerator.writeEndArray();
+                    arrayListToJSON(new ArrayList<Object>(Arrays.asList((Long[]) obj)), objectName, jgenerator);
                 } else if (obj instanceof Integer[]) {
-                    jgenerator.writeArrayFieldStart(objectName);
-                    for (Integer value : (Integer[])obj) {
-                        jgenerator.writeNumber(value);
-                    }
-                    jgenerator.writeEndArray();
+                    arrayListToJSON(new ArrayList<Object>(Arrays.asList((Integer[]) obj)), objectName, jgenerator);
                 } else if (obj instanceof Double[]) {
-                    jgenerator.writeArrayFieldStart(objectName);
-                    for (Double value : (Double[])obj) {
-                        jgenerator.writeNumber(value);
-                    }
-                    jgenerator.writeEndArray();
+                    arrayListToJSON(new ArrayList<Object>(Arrays.asList((Double[]) obj)), objectName, jgenerator);
+                } else if (obj instanceof BigDecimal[]) {
+                    arrayListToJSON(new ArrayList<Object>(Arrays.asList((BigDecimal[]) obj)), objectName, jgenerator);
                 } else if (obj instanceof Boolean[]) {
-                    jgenerator.writeArrayFieldStart(objectName);
-                    for (Boolean value : (Boolean[])obj) {
-                        jgenerator.writeBoolean(value);
-                    }
-                    jgenerator.writeEndArray();
+                    arrayListToJSON(new ArrayList<Object>(Arrays.asList((Boolean[])obj)), objectName, jgenerator);
                 } else {
                     log.error("Property {} type is not managed...", new Object[]{objectName});
                 }
