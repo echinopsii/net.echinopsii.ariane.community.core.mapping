@@ -44,13 +44,13 @@ public class MappingDSGraphDBObjectProps {
         } else if (value instanceof BigDecimal) {
             BigDecimal bigDecimal = (BigDecimal) value;
             double scale = bigDecimal.scale();
-            flatObjectProperties(vertex, key + "_BigDecimal_Scale", scale, mappingObjPropsKey);
+            flatObjectProperties(vertex, key + "_BigDecimalScale", scale, mappingObjPropsKey);
             double otherValue = bigDecimal.doubleValue()*Math.pow(10,scale);
-            flatObjectProperties(vertex, key + "_BigDecimal_Value", otherValue, mappingObjPropsKey);
+            flatObjectProperties(vertex, key + "_BigDecimalValue", otherValue, mappingObjPropsKey);
             return;
         } else if (value instanceof ArrayList) {
             for (Object aValue : (ArrayList<Object>)value)
-                flatObjectProperties(vertex, key + "_ArrayList_" + ((ArrayList<Object>) value).indexOf(aValue), aValue, mappingObjPropsKey);
+                flatObjectProperties(vertex, key + "_ArrayList." + ((ArrayList<Object>) value).indexOf(aValue), aValue, mappingObjPropsKey);
             return;
         }
         log.debug("Synchronize property {}_{} : {}...", new Object[]{mappingObjPropsKey,key,value.toString()});
@@ -79,63 +79,139 @@ public class MappingDSGraphDBObjectProps {
             vertex.removeProperty(mappingObjPropsKey+"_"+key);
     }
 
-    public static void unflatVertexPropertiesToObjectProperties(Vertex vertex, HashMap<String, Object> props, String mappingObjPropsKey) {
+    private static void unflatVertexPropertyToObject(Vertex vertex, String key, String prefixObjKey, String splittedKey, String parentObjKey,
+                                                    HashMap<String, Object> props,  HashMap<String, Object> objectsMap) {
+        String keyName = splittedKey.split(prefixObjKey + "_|\\.")[1].split("_")[0];
+        String type    = null;
+        String subKey  = null;
 
-        HashMap<String, Object> vertexGlobalHashMapProps = new HashMap<String,Object>();
-        HashMap<String, Double> vertexGlobalDoubleScale  = new HashMap<String,Double>();
-        HashMap<String, Double> vertexGlobalDoubleValue  = new HashMap<String,Double>();
+        if (splittedKey.split("_").length>2) {
+            type = splittedKey.split(keyName + "_")[1].split("_|\\.")[0];
+            subKey = splittedKey.split(keyName + "_")[1];
+        }
 
-        Iterator<String> iterK = vertex.getPropertyKeys().iterator();
-        while (iterK.hasNext()) {
-            String key = iterK.next();
-            if (key.contains(mappingObjPropsKey)) {
-                String subkey = key.split(mappingObjPropsKey + "_")[1];
+        if (type!=null) {
+            if (type.equals("HashMap") || type.equals("ArrayList")) {
+                Object keyObject = null;
+                if (parentObjKey!=null)
+                    keyObject = objectsMap.get(parentObjKey+"."+keyName);
+                else
+                    keyObject = objectsMap.get(keyName);
 
-                if (subkey.contains("HashMap")) {
+                if (keyObject==null) {
+                    if (type.equals("HashMap"))
+                        keyObject = new HashMap<String, Object>();
+                    else if (type.equals("ArrayList"))
+                        keyObject = new ArrayList<Object>();
+                    if (parentObjKey!=null) {
+                        Object parentObj = objectsMap.get(parentObjKey);
+                        if (parentObj instanceof HashMap)
+                            ((HashMap<String, Object>) parentObj).put(keyName, keyObject);
+                        else if (parentObj instanceof ArrayList) {
+                            int index = new Integer(keyName);
+                            while (index >= ((ArrayList<Object>) parentObj).size())
+                                ((ArrayList<Object>) parentObj).add(null);
+                            ((ArrayList<Object>) parentObj).set(new Integer(keyName), keyObject);
+                        } else
+                            log.error("Unsupported property type {}", parentObj.getClass().getCanonicalName());
 
-                    String hashMapPropKey = subkey.split("_HashMap_")[0];
-                    Object subkeyObjValue = vertexGlobalHashMapProps.get(hashMapPropKey);
-                    if (subkeyObjValue == null) {
-                        subkeyObjValue = new HashMap<String, Object>();
-                        vertexGlobalHashMapProps.put(hashMapPropKey, subkeyObjValue);
+                        objectsMap.put(parentObjKey+"."+keyName, keyObject);
+                    } else {
+                        props.put(keyName, keyObject);
+                        objectsMap.put(keyName, keyObject);
                     }
-                    String hKey = subkey.split("_HashMap_")[1];
-                    log.debug("Synchronize {} property {} into HashMap {}..", new Object[]{hKey, vertex.getProperty(key).toString(), hashMapPropKey});
-                    ((HashMap) subkeyObjValue).put(hKey, vertex.getProperty(key));
-
-                } else if (subkey.contains("BigDecimal")) {
-
-                    String bigDecimalPropKey = subkey.split("_BigDecimal_")[0];
-                    if (subkey.contains("Scale"))
-
-                        if (vertexGlobalDoubleValue.get(bigDecimalPropKey) != null)
-                            props.put(bigDecimalPropKey, new BigDecimal(vertexGlobalDoubleValue.get(bigDecimalPropKey) / Math.pow(10, (double) vertex.getProperty(key))));
-                        else
-                            vertexGlobalDoubleScale.put(bigDecimalPropKey, (double) vertex.getProperty(key));
-
-                    else if (subkey.contains("Value"))
-
-                        if (vertexGlobalDoubleScale.get(bigDecimalPropKey) != null)
-                            props.put(bigDecimalPropKey, new BigDecimal((double) vertex.getProperty(key) / Math.pow(10, vertexGlobalDoubleScale.get(bigDecimalPropKey))));
-                        else
-                            vertexGlobalDoubleValue.put(bigDecimalPropKey, (double) vertex.getProperty(key));
-
-                } else if (subkey.contains("ArrayList")) {
-
-                } else {
-                    props.put(subkey, vertex.getProperty(key));
                 }
+                unflatVertexPropertyToObject(vertex, key, type, subKey, (parentObjKey!=null)?parentObjKey+"."+keyName:keyName, props, objectsMap);
+            } else if (type.contains("BigDecimal")) {
+                if (type.equals("BigDecimalValue")) {
+                    Object scaleObject = null;
+                    if (parentObjKey!=null)
+                        scaleObject = objectsMap.get(parentObjKey + "." + keyName + ".Scale");
+                    else
+                        scaleObject = objectsMap.get(keyName+".Scale");
 
-                for (String nsubkey :  vertexGlobalHashMapProps.keySet())
-                    if (nsubkey.startsWith("MappingDSToPush."))
-                        props.put(nsubkey, vertexGlobalHashMapProps.get(nsubkey));
+                    Object valueObject = vertex.getProperty(key);
+                    if (scaleObject==null) {
+                        if (parentObjKey!=null)
+                            objectsMap.put(parentObjKey+"."+keyName+".Value", valueObject);
+                        else
+                            objectsMap.put(keyName+".Value", valueObject);
+                    } else {
+                        if (parentObjKey!=null) {
+                            Object parentObj = objectsMap.get(parentObjKey);
+                            if (parentObj instanceof HashMap)
+                                ((HashMap<String, Object>) parentObj).put(keyName, new BigDecimal((Double)valueObject / Math.pow(10, (double) scaleObject)));
+                            else if (parentObj instanceof ArrayList) {
+                                int index = new Integer(keyName);
+                                while (index >= ((ArrayList<Object>) parentObj).size())
+                                    ((ArrayList<Object>) parentObj).add(null);
+                                ((ArrayList<Object>) parentObj).set(new Integer(keyName), new BigDecimal((Double)valueObject / Math.pow(10, (double) scaleObject)));
+                            } else
+                                log.error("Unsupported property type {}", parentObj.getClass().getCanonicalName());
+                        } else
+                            props.put(keyName, new BigDecimal((Double)valueObject / Math.pow(10, (Double) scaleObject)));
+                    }
+                } else if (type.equals("BigDecimalScale")) {
+                    Object valueObject = null;
+                    if (parentObjKey!=null)
+                        valueObject = objectsMap.get(parentObjKey + "." + keyName + ".Value");
+                    else
+                        valueObject = objectsMap.get(keyName+".Value");
+
+                    Object scaleObject = vertex.getProperty(key);
+                    if (valueObject==null) {
+                        if (parentObjKey!=null)
+                            objectsMap.put(parentObjKey+"."+keyName+".Scale", scaleObject);
+                        else
+                            objectsMap.put(keyName+".Scale", scaleObject);
+                    } else {
+                        if (parentObjKey!=null) {
+                            Object parentObj = objectsMap.get(parentObjKey);
+                            if (parentObj instanceof HashMap)
+                                ((HashMap<String, Object>) parentObj).put(keyName, new BigDecimal((Double)valueObject / Math.pow(10, (double) scaleObject)));
+                            else if (parentObj instanceof ArrayList) {
+                                int index = new Integer(keyName);
+                                while (index >= ((ArrayList<Object>) parentObj).size())
+                                    ((ArrayList<Object>) parentObj).add(null);
+                                ((ArrayList<Object>) parentObj).set(new Integer(keyName), new BigDecimal((Double)valueObject / Math.pow(10, (double) scaleObject)));
+                            } else
+                                log.error("Unsupported property type {}", parentObj.getClass().getCanonicalName());
+                        } else
+                            props.put(keyName, new BigDecimal((Double)valueObject / Math.pow(10, (Double) scaleObject)));
+                    }
+                }
+            }
+        } else {
+            if (parentObjKey!=null) {
+                Object parentObj = objectsMap.get(parentObjKey);
+                if (parentObj instanceof HashMap)
+                    ((HashMap<String, Object>)parentObj).put(keyName, vertex.getProperty(key));
+                else if (parentObj instanceof ArrayList) {
+                    int index = new Integer(keyName);
+                    while (index >= ((ArrayList<Object>) parentObj).size())
+                        ((ArrayList<Object>) parentObj).add(null);
+                    ((ArrayList<Object>) parentObj).set(new Integer(keyName), vertex.getProperty(key));
+                }
+                else
+                    log.error("Unsupported property type {}", parentObj.getClass().getCanonicalName());
+            } else {
+                props.put(keyName, vertex.getProperty(key));
             }
         }
     }
 
+    public static void unflatVertexPropsToObjects(Vertex vertex, HashMap<String, Object> props, String mappingObjPropsKey) {
+        HashMap<String, Object> vertexObjectProperties = new HashMap<String,Object>();
+        HashMap<String, Object> objectsMap = new HashMap<String, Object>();
+
+        for (String key : vertex.getPropertyKeys())
+            if (key.contains(mappingObjPropsKey))
+                unflatVertexPropertyToObject(vertex, key, mappingObjPropsKey, key, null, props, objectsMap);
+    }
+
     public static void synchronizeObjectPropertyFromDB(Vertex vertex, HashMap<String,Object> props, String mappingObjPropsKey) {
         if (MappingDSGraphDB.isBlueprintsNeo4j()) {
-            unflatVertexPropertiesToObjectProperties(vertex, props, mappingObjPropsKey);
+            unflatVertexPropsToObjects(vertex, props, mappingObjPropsKey);
         } else {
             Iterator<String> iterK = vertex.getPropertyKeys().iterator();
             while (iterK.hasNext()) {

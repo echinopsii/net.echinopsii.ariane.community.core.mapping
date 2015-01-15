@@ -127,6 +127,8 @@ public class MappingDSGraphDBObjectPropsTest {
 
     private static void defineHMembeddedBigDecimal(Vertex vertex) {
         HMembbededBigDecimal = new HashMap<>();
+        pi = new BigDecimal(3.14159265359);
+        e = new BigDecimal(2.71828182846);
         HMembbededBigDecimal.put("piBigDecimal", pi);HMembbededBigDecimal.put("eBigDecimal", e);
         MappingDSGraphDBObjectProps.flatObjectProperties(vertex, "HMembbededBigDecimal", HMembbededBigDecimal, MappingDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY);
     }
@@ -134,22 +136,6 @@ public class MappingDSGraphDBObjectPropsTest {
     @BeforeClass
     public static void testSetup() {
         graph          = new TinkerGraph();
-        vertexToUnflat = graph.addVertex(null);
-
-        defineSimpleHashMap1(vertexToUnflat);
-        defineSimpleHashMap2(vertexToUnflat);
-        defineSimpleHashMap3(vertexToUnflat);
-
-        defineSimpleArray1(vertexToUnflat);
-        defineSimpleArray2(vertexToUnflat);
-        defineSimpleArray3(vertexToUnflat);
-
-        definePiBigDecimal(vertexToUnflat);
-        defineEBigDecimal(vertexToUnflat);
-
-        defineHMembeddedSimpleHashMap(vertexToUnflat);
-        defineHMembeddedSimpleArray(vertexToUnflat);
-        defineHMembeddedBigDecimal(vertexToUnflat);
     }
 
     @Test
@@ -169,15 +155,37 @@ public class MappingDSGraphDBObjectPropsTest {
     }
 
     @Test
+    public void testUnflatSimpleHashMap() {
+        Vertex vertex = graph.addVertex(null);
+        defineSimpleHashMap1(vertex);
+        HashMap<String, Object> unflattedProperties = new HashMap<String, Object>();
+        MappingDSGraphDBObjectProps.unflatVertexPropsToObjects(vertex, unflattedProperties, MappingDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY);
+        //System.out.println(unflattedProperties);
+        assertTrue(unflattedProperties.containsKey("simpleHashMap1"));
+        assertTrue(unflattedProperties.get("simpleHashMap1").equals(simpleHashMap1));
+    }
+
+    @Test
     public void testFlatSimpleArray() {
         Vertex vertex = graph.addVertex(null);
         defineSimpleArray1(vertex);
         for (String key : vertex.getPropertyKeys()) {
             //System.out.println(key + ":" + vertex.getProperty(key));
-            assertTrue(key.startsWith(MappingDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY+"_simpleArray1_ArrayList_"));
-            int index = new Integer(key.split("_ArrayList_")[1]);
+            assertTrue(key.startsWith(MappingDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY+"_simpleArray1_ArrayList."));
+            int index = new Integer(key.split("_ArrayList\\.")[1]);
             assertTrue(vertex.getProperty(key).equals("value1"+(index+1)));
         }
+    }
+
+    @Test
+    public void testUnflatSimpleArray() {
+        Vertex vertex = graph.addVertex(null);
+        defineSimpleArray1(vertex);
+        HashMap<String, Object> unflattedProperties = new HashMap<String, Object>();
+        MappingDSGraphDBObjectProps.unflatVertexPropsToObjects(vertex, unflattedProperties, MappingDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY);
+        //System.out.println(unflattedProperties);
+        assertTrue(unflattedProperties.containsKey("simpleArray1"));
+        assertTrue(unflattedProperties.get("simpleArray1").equals(simpleArray1));
     }
 
     @Test
@@ -186,12 +194,23 @@ public class MappingDSGraphDBObjectPropsTest {
         definePiBigDecimal(vertex);
         for (String key : vertex.getPropertyKeys()) {
             //System.out.println(key + ":" + vertex.getProperty(key));
-            assertTrue(key.startsWith(MappingDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY+"_piBigDecimal_BigDecimal_"));
-            if (key.contains("Scale"))
+            assertTrue(key.startsWith(MappingDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY+"_piBigDecimal_BigDecimal"));
+            if (key.contains("BigDecimalScale"))
                 assertTrue(vertex.getProperty(key).equals(50.0));
-            else if (key.contains("Value"))
+            else if (key.contains("BigDecimalValue"))
                 assertTrue(vertex.getProperty(key).equals(3.14159265359E50));
         }
+    }
+
+    @Test
+    public void testUnflatSimpleBigDecimal() {
+        Vertex vertex = graph.addVertex(null);
+        defineEBigDecimal(vertex);
+        HashMap<String, Object> unflattedProperties = new HashMap<String, Object>();
+        MappingDSGraphDBObjectProps.unflatVertexPropsToObjects(vertex, unflattedProperties, MappingDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY);
+        //System.out.println(unflattedProperties);
+        assertTrue(unflattedProperties.containsKey("eBigDecimal"));
+        assertTrue(unflattedProperties.get("eBigDecimal").equals(e));
     }
 
     @Test
@@ -232,6 +251,23 @@ public class MappingDSGraphDBObjectPropsTest {
     }
 
     @Test
+    public void testUnflatHMembeddedSimpleHashMap() {
+        Vertex vertex = graph.addVertex(null);
+        defineHMembeddedSimpleHashMap(vertex);
+        HashMap<String, Object> unflattedProperties = new HashMap<String, Object>();
+        MappingDSGraphDBObjectProps.unflatVertexPropsToObjects(vertex, unflattedProperties, MappingDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY);
+        //System.out.println(unflattedProperties);
+        assertTrue(unflattedProperties.containsKey("HMembbededSimpleHashMap"));
+        assertTrue(unflattedProperties.get("HMembbededSimpleHashMap").equals(HMembbededSimpleHashMap));
+        assertTrue(((HashMap)unflattedProperties.get("HMembbededSimpleHashMap")).containsKey("simpleHashMap1"));
+        assertTrue(((HashMap)unflattedProperties.get("HMembbededSimpleHashMap")).get("simpleHashMap1").equals(simpleHashMap1));
+        assertTrue(((HashMap)unflattedProperties.get("HMembbededSimpleHashMap")).containsKey("simpleHashMap2"));
+        assertTrue(((HashMap)unflattedProperties.get("HMembbededSimpleHashMap")).get("simpleHashMap2").equals(simpleHashMap2));
+        assertTrue(((HashMap)unflattedProperties.get("HMembbededSimpleHashMap")).containsKey("simpleHashMap3"));
+        assertTrue(((HashMap)unflattedProperties.get("HMembbededSimpleHashMap")).get("simpleHashMap3").equals(simpleHashMap3));
+    }
+
+    @Test
     public void testFlatHMembeddedSimpleArray() {
         Vertex vertex = graph.addVertex(null);
         defineHMembeddedSimpleArray(vertex);
@@ -240,7 +276,7 @@ public class MappingDSGraphDBObjectPropsTest {
             assertTrue(key.startsWith(MappingDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY + "_HMembbededSimpleArray_HashMap_"));
             String subkey = key.split(MappingDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY + "_")[1];
             String embeddedArrayKey = subkey.split("_HashMap_")[1];
-            int index = new Integer(key.split("_ArrayList_")[1]);
+            int index = new Integer(key.split("_ArrayList\\.")[1]);
             if (embeddedArrayKey.equals("simpleArray1")) {
                 assertTrue(vertex.getProperty(key).equals("value1"+(index+1)));
             } else if (embeddedArrayKey.equals("simpleArray2")) {
@@ -257,26 +293,58 @@ public class MappingDSGraphDBObjectPropsTest {
     }
 
     @Test
+    public void testUnflatHMembeddedSimpleArray() {
+        Vertex vertex = graph.addVertex(null);
+        defineHMembeddedSimpleArray(vertex);
+        HashMap<String, Object> unflattedProperties = new HashMap<String, Object>();
+        MappingDSGraphDBObjectProps.unflatVertexPropsToObjects(vertex, unflattedProperties, MappingDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY);
+        //System.out.println(unflattedProperties);
+        assertTrue(unflattedProperties.containsKey("HMembbededSimpleArray"));
+        assertTrue(unflattedProperties.get("HMembbededSimpleArray").equals(HMembbededSimpleArray));
+        assertTrue(((HashMap)unflattedProperties.get("HMembbededSimpleArray")).containsKey("simpleArray1"));
+        assertTrue(((HashMap)unflattedProperties.get("HMembbededSimpleArray")).get("simpleArray1").equals(simpleArray1));
+        assertTrue(((HashMap)unflattedProperties.get("HMembbededSimpleArray")).containsKey("simpleArray2"));
+        assertTrue(((HashMap)unflattedProperties.get("HMembbededSimpleArray")).get("simpleArray2").equals(simpleArray2));
+        assertTrue(((HashMap)unflattedProperties.get("HMembbededSimpleArray")).containsKey("simpleArray3"));
+        assertTrue(((HashMap)unflattedProperties.get("HMembbededSimpleArray")).get("simpleArray3").equals(simpleArray3));
+    }
+
+    @Test
     public void testFlatHMembeddedBigDecimal() {
         Vertex vertex = graph.addVertex(null);
         defineHMembeddedBigDecimal(vertex);
         for (String key : vertex.getPropertyKeys()) {
-            System.out.println(key + ":" + vertex.getProperty(key));
+            //System.out.println(key + ":" + vertex.getProperty(key));
             assertTrue(key.startsWith(MappingDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY + "_HMembbededBigDecimal_HashMap_"));
             String subkey = key.split(MappingDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY + "_")[1];
-            String embeddedBigDecimalKey = subkey.split("_ArrayList_|_BigDecimal_Value|_BigDecimal_Scale|_HashMap_")[1];
+            String embeddedBigDecimalKey = subkey.split("_ArrayList\\.|_BigDecimal_Value|_BigDecimal_Scale|_HashMap_")[1];
             if (embeddedBigDecimalKey.contains("piBigDecimal")) {
-                if (key.contains("BigDecimal_Scale"))
+                if (key.contains("BigDecimalScale"))
                     assertTrue(vertex.getProperty(key).equals(50.0));
-                else if (key.contains("BigDecimal_Value"))
+                else if (key.contains("BigDecimalValue"))
                     assertTrue(vertex.getProperty(key).equals(3.14159265359E50));
             } else if (embeddedBigDecimalKey.contains("eBigDecimal")) {
-                if (key.contains("BigDecimal_Scale"))
+                if (key.contains("BigDecimalScale"))
                     assertTrue(vertex.getProperty(key).equals(51.0));
-                else if (key.contains("BigDecimal_Value"))
+                else if (key.contains("BigDecimalValue"))
                     assertTrue(vertex.getProperty(key).equals(2.71828182846E51));
             }
         }
+    }
+
+    @Test
+    public void testUnflatHMembeddedBigDecimal() {
+        Vertex vertex = graph.addVertex(null);
+        defineHMembeddedBigDecimal(vertex);
+        HashMap<String, Object> unflattedProperties = new HashMap<String, Object>();
+        MappingDSGraphDBObjectProps.unflatVertexPropsToObjects(vertex, unflattedProperties, MappingDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY);
+        //System.out.println(unflattedProperties);
+        assertTrue(unflattedProperties.containsKey("HMembbededBigDecimal"));
+        assertTrue(unflattedProperties.get("HMembbededBigDecimal").equals(HMembbededBigDecimal));
+        assertTrue(((HashMap)unflattedProperties.get("HMembbededBigDecimal")).containsKey("piBigDecimal"));
+        assertTrue(((HashMap)unflattedProperties.get("HMembbededBigDecimal")).get("piBigDecimal").equals(pi));
+        assertTrue(((HashMap)unflattedProperties.get("HMembbededBigDecimal")).containsKey("eBigDecimal"));
+        assertTrue(((HashMap)unflattedProperties.get("HMembbededBigDecimal")).get("eBigDecimal").equals(e));
     }
 
     @AfterClass
