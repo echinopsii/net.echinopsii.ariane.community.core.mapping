@@ -41,6 +41,162 @@ public class PropertiesJSON {
 
     private final static Logger log = LoggerFactory.getLogger(PropertiesJSON.class);
 
+
+    private static HashMap<String, Object> JSONStringMapToPropertyObject(JsonNode rootTree) throws PropertiesException {
+        HashMap<String, Object> ret = null;
+        if (rootTree.isObject()) {
+            ObjectNode objectNode = (ObjectNode) rootTree;
+            Iterator<Entry<String, JsonNode>> iter = objectNode.fields();
+            while (iter.hasNext()) {
+                Entry<String, JsonNode> entry = iter.next();
+                String objectFieldName = entry.getKey();
+                JsonNode objectField = entry.getValue();
+                if (objectField.isArray()) {
+                    if (ret == null)
+                        ret = new HashMap<String, Object>();
+                    ArrayNode arrayNode = (ArrayNode) objectField;
+                    if (objectField.size() == 2) {
+                        String vType = arrayNode.get(0).asText();
+                        JsonNode subRootTree = arrayNode.get(1);
+                        String value = arrayNode.get(1).asText();
+                        switch (vType.toLowerCase()) {
+                            case "boolean":
+                                ((HashMap<String, Object>) ret).put(objectFieldName, new Boolean(value));
+                                break;
+                            case "double":
+                                ((HashMap<String, Object>) ret).put(objectFieldName, new Double(value));
+                                break;
+                            case "int":
+                            case "integer":
+                                ((HashMap<String, Object>) ret).put(objectFieldName, new Integer(value));
+                                break;
+                            case "long":
+                                ((HashMap<String, Object>) ret).put(objectFieldName, new Long(value));
+                                break;
+                            case "string":
+                                ((HashMap<String, Object>) ret).put(objectFieldName, value);
+                                break;
+                            case "map":
+                                HashMap<String, Object> valueHashMap = JSONStringMapToPropertyObject(subRootTree);
+                                ((HashMap<String, Object>) ret).put(objectFieldName, valueHashMap);
+                                break;
+                            case "array":
+                                ArrayList<?> valueArray = JSONStringArrayToPropertyObject(subRootTree);
+                                ((HashMap<String, Object>) ret).put(objectFieldName, valueArray);
+                                break;
+                            default:
+                                throw new PropertiesException("Unsupported map entry type (" + vType.toLowerCase() + "). Supported types are : boolean, double, integer, long, string");
+                        }
+                    } else {
+                        throw new PropertiesException("Json property map badly defined. Each map entry should be defined with following array : ['value type','value']");
+                    }
+                } else {
+                    throw new PropertiesException("Json property map badly defined. Each map entry should be defined with following array : ['value type','value']");
+                }
+            }
+        } else {
+            throw new PropertiesException("Json property badly defined : map should be defined as a Json object.");
+        }
+        return ret;
+    }
+
+    private static ArrayList<?> JSONStringArrayToPropertyObject(JsonNode rootTree) throws PropertiesException {
+        Object ret = null;
+        if (rootTree.isArray()) {
+            ArrayNode arrayNode = (ArrayNode) rootTree;
+            if (arrayNode.size() == 2) {
+                JsonNode arrayType = arrayNode.get(0);
+                if (arrayType.isTextual()) {
+                    String arrayTypeValue = arrayType.asText();
+                    JsonNode value = arrayNode.get(1);
+                    if (value.isArray()) {
+                        ArrayNode arrayValue = (ArrayNode) value;
+                        Iterator<JsonNode> iter = arrayValue.elements();
+                        switch(arrayTypeValue.toLowerCase()) {
+                            case "map":
+                                ret = new ArrayList<HashMap<String, Object>>();
+                                HashMap<String, Object> valueHashMap = JSONStringMapToPropertyObject(arrayValue);
+                                ((ArrayList<HashMap<String, Object>>) ret).add(valueHashMap);
+                                break;
+                            case "array":
+                                ret = new ArrayList<ArrayList<?>>();
+                                ArrayList<?> valueArray = JSONStringArrayToPropertyObject(arrayValue);
+                                ((ArrayList<ArrayList<?>>) ret).add(valueArray);
+                                break;
+                            case "boolean":
+                                ret = new ArrayList<Boolean>();
+                                while (iter.hasNext()) {
+                                    JsonNode next = iter.next();
+                                    if (next.isBoolean())
+                                        ((ArrayList)ret).add(next.asBoolean());
+                                    else
+                                        throw new PropertiesException("Json property array badly defined. Following array value is not a boolean : " +next.toString() + ".\n" +
+                                                                              "Array entry should be defined with following array : ['array type',['value1','value2' ...]]");
+                                }
+                                break;
+                            case "double":
+                                ret = new ArrayList<Double>();
+                                while (iter.hasNext()) {
+                                    JsonNode next = iter.next();
+                                    if (next.isDouble())
+                                        ((ArrayList)ret).add(next.asDouble());
+                                    else
+                                        throw new PropertiesException("Json property array badly defined. Following array value is not a double : " +next.toString() + ".\n" +
+                                                                              "Array entry should be defined with following array : ['array type',['value1','value2' ...]]");
+                                }
+                                break;
+                            case "int":
+                            case "integer":
+                                ret = new ArrayList<Integer>();
+                                while (iter.hasNext()) {
+                                    JsonNode next = iter.next();
+                                    if (next.isInt())
+                                        ((ArrayList)ret).add(next.asInt());
+                                    else
+                                        throw new PropertiesException("Json property array badly defined. Following array value is not an integer : " +next.toString() + ".\n" +
+                                                                              "Array entry should be defined with following array : ['array type',['value1','value2' ...]]");
+                                }
+                                break;
+                            case "long":
+                                ret = new ArrayList<Long>();
+                                while (iter.hasNext()) {
+                                    JsonNode next = iter.next();
+                                    if (next.isLong())
+                                        ((ArrayList)ret).add(next.asLong());
+                                    else
+                                        throw new PropertiesException("Json property array badly defined. Following array value is not a long : " +next.toString() + ".\n" +
+                                                                              "Array entry should be defined with following array : ['array type',['value1','value2' ...]]");
+                                }
+                                break;
+                            case "string":
+                                ret = new ArrayList<String>();
+                                while (iter.hasNext()) {
+                                    JsonNode next = iter.next();
+                                    if (next.isTextual())
+                                        ((ArrayList)ret).add(next.asText());
+                                    else
+                                        throw new PropertiesException("Json property array badly defined. Following array value is not textual : " +next.toString() + ".\n" +
+                                                                              "Array entry should be defined with following array : ['array type',['value1','value2' ...]]");
+                                }
+                                break;
+                            default:
+                                throw new PropertiesException("Unsupported array type (" + arrayTypeValue.toLowerCase() + "). Supported types are : boolean, double, integer, long, string");
+                        }
+                    } else {
+                        throw new PropertiesException("Json property array badly defined. Array value is not an array.\nArray entry should be defined with following array : ['array type',['value1','value2' ...]]");
+                    }
+                } else {
+                    throw new PropertiesException("Json property array badly defined. Array type is not textual.\nArray entry should be defined with following array : ['array type',['value1','value2' ...]]");
+                }
+            } else {
+                throw new PropertiesException("Json property array badly defined. Array entry should be defined with following array : ['array type',['value1','value2' ...]]");
+            }
+        } else {
+            throw new PropertiesException("Json property badly defined : array should be defined as a Json array.");
+        }
+        return (ArrayList<?>) ret;
+    }
+
     public static Object JSONStringToPropertyObject(String type, String json) throws IOException, PropertiesException {
         Object ret = null;
         ObjectMapper mapper = new ObjectMapper();
@@ -48,134 +204,10 @@ public class PropertiesJSON {
         JsonParser jp = factory.createJsonParser(json);
         JsonNode rootTree = mapper.readTree(jp);
 
-        if (type.toLowerCase().equals("map")) {
-            if (rootTree.isObject()) {
-                ObjectNode objectNode = (ObjectNode) rootTree;
-                Iterator<Entry<String, JsonNode>> iter = objectNode.fields();
-                while (iter.hasNext()) {
-                    Entry<String, JsonNode> entry = iter.next();
-                    String objectFieldName = entry.getKey();
-                    JsonNode objectField = entry.getValue();
-                    if (objectField.isArray()) {
-                        if (ret == null)
-                            ret = new HashMap<String, Object>();
-                        ArrayNode arrayNode = (ArrayNode) objectField;
-                        if (objectField.size() == 2) {
-                            String vType = arrayNode.get(0).asText();
-                            String value = arrayNode.get(1).asText();
-                            switch (vType.toLowerCase()) {
-                                case "boolean":
-                                    ((HashMap<String, Object>) ret).put(objectFieldName, new Boolean(value));
-                                    break;
-                                case "double":
-                                    ((HashMap<String, Object>) ret).put(objectFieldName, new Double(value));
-                                    break;
-                                case "int":
-                                case "integer":
-                                    ((HashMap<String, Object>) ret).put(objectFieldName, new Integer(value));
-                                    break;
-                                case "long":
-                                    ((HashMap<String, Object>) ret).put(objectFieldName, new Long(value));
-                                    break;
-                                case "string":
-                                    ((HashMap<String, Object>) ret).put(objectFieldName, value);
-                                    break;
-                                default:
-                                    throw new PropertiesException("Unsupported map entry type (" + vType.toLowerCase() + "). Supported types are : boolean, double, integer, long, string");
-                            }
-                        } else {
-                            throw new PropertiesException("Json property map badly defined. Each map entry should be defined with following array : ['value type','value']");
-                        }
-                    } else {
-                        throw new PropertiesException("Json property map badly defined. Each map entry should be defined with following array : ['value type','value']");
-                    }
-                }
-            } else {
-                throw new PropertiesException("Json property badly defined : map should be defined as a Json object.");
-            }
-        } else if (type.toLowerCase().equals("array")) {
-            if (rootTree.isArray()) {
-                ArrayNode arrayNode = (ArrayNode) rootTree;
-                if (arrayNode.size() == 2) {
-                    JsonNode arrayType = arrayNode.get(0);
-                    if (arrayType.isTextual()) {
-                        String arrayTypeValue = arrayType.asText();
-                        JsonNode value = arrayNode.get(1);
-                        if (value.isArray()) {
-                            ArrayNode arrayValue = (ArrayNode) value;
-                            Iterator<JsonNode> iter = arrayValue.elements();
-                            switch(arrayTypeValue.toLowerCase()) {
-                                case "boolean":
-                                    ret = new ArrayList<Boolean>();
-                                    while (iter.hasNext()) {
-                                        JsonNode next = iter.next();
-                                        if (next.isBoolean())
-                                            ((ArrayList)ret).add(next.asBoolean());
-                                        else
-                                            throw new PropertiesException("Json property array badly defined. Following array value is not a boolean : " +next.toString() + ".\n" +
-                                                                          "Array entry should be defined with following array : ['array type',['value1','value2' ...]]");
-                                    }
-                                    break;
-                                case "double":
-                                    ret = new ArrayList<Double>();
-                                    while (iter.hasNext()) {
-                                        JsonNode next = iter.next();
-                                        if (next.isDouble())
-                                            ((ArrayList)ret).add(next.asDouble());
-                                        else
-                                            throw new PropertiesException("Json property array badly defined. Following array value is not a double : " +next.toString() + ".\n" +
-                                                                                  "Array entry should be defined with following array : ['array type',['value1','value2' ...]]");
-                                    }
-                                    break;
-                                case "int":
-                                case "integer":
-                                    ret = new ArrayList<Integer>();
-                                    while (iter.hasNext()) {
-                                        JsonNode next = iter.next();
-                                        if (next.isInt())
-                                            ((ArrayList)ret).add(next.asInt());
-                                        else
-                                            throw new PropertiesException("Json property array badly defined. Following array value is not an integer : " +next.toString() + ".\n" +
-                                                                                  "Array entry should be defined with following array : ['array type',['value1','value2' ...]]");
-                                    }
-                                    break;
-                                case "long":
-                                    ret = new ArrayList<Long>();
-                                    while (iter.hasNext()) {
-                                        JsonNode next = iter.next();
-                                        if (next.isLong())
-                                            ((ArrayList)ret).add(next.asLong());
-                                        else
-                                            throw new PropertiesException("Json property array badly defined. Following array value is not a long : " +next.toString() + ".\n" +
-                                                                                  "Array entry should be defined with following array : ['array type',['value1','value2' ...]]");
-                                    }
-                                    break;
-                                case "string":
-                                    ret = new ArrayList<String>();
-                                    while (iter.hasNext()) {
-                                        JsonNode next = iter.next();
-                                        if (next.isTextual())
-                                            ((ArrayList)ret).add(next.asText());
-                                        else
-                                            throw new PropertiesException("Json property array badly defined. Following array value is not textual : " +next.toString() + ".\n" +
-                                                                                  "Array entry should be defined with following array : ['array type',['value1','value2' ...]]");
-                                    }
-                                    break;
-                                default:
-                                    throw new PropertiesException("Unsupported array type (" + arrayTypeValue.toLowerCase() + "). Supported types are : boolean, double, integer, long, string");
-                            }
-                        } else {
-                            throw new PropertiesException("Json property array badly defined. Array value is not an array.\nArray entry should be defined with following array : ['array type',['value1','value2' ...]]");
-                        }
-                    } else {
-                        throw new PropertiesException("Json property array badly defined. Array type is not textual.\nArray entry should be defined with following array : ['array type',['value1','value2' ...]]");
-                    }
-                } else {
-                    throw new PropertiesException("Json property array badly defined. Array entry should be defined with following array : ['array type',['value1','value2' ...]]");
-                }
-            } else {
-                throw new PropertiesException("Json property badly defined : array should be defined as a Json array.");
-            }
+        if (type.toLowerCase().equals("map"))
+            ret = JSONStringMapToPropertyObject(rootTree);
+        else if (type.toLowerCase().equals("array")) {
+            ret = JSONStringArrayToPropertyObject(rootTree);
         } else {
             throw new PropertiesException("Unsupported json type (" + type + "). Supported types are : array, map");
         }
