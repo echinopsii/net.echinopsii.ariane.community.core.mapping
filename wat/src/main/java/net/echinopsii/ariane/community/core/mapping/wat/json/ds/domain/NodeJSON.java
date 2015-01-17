@@ -44,6 +44,7 @@ public class NodeJSON {
     public final static String ND_NAME_TOKEN  = MappingDSGraphPropertyNames.DD_NODE_NAME_KEY;
     public final static String ND_CONID_TOKEN = MappingDSGraphPropertyNames.DD_NODE_CONT_KEY+"ID";
     public final static String ND_PNDID_TOKEN = MappingDSGraphPropertyNames.DD_NODE_PNODE_KEY+"ID";
+    public final static String ND_CNDID_TOKEN = MappingDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY+"ID";
     public final static String ND_TWNID_TOKEN = MappingDSGraphPropertyNames.DD_NODE_EDGE_TWIN_KEY+"ID";
     public final static String ND_EPSID_TOKEN = MappingDSGraphPropertyNames.DD_NODE_EDGE_ENDPT_KEY+"ID";
     public final static String ND_PRP_TOKEN   = MappingDSGraphPropertyNames.DD_NODE_PROPS_KEY;
@@ -75,6 +76,11 @@ public class NodeJSON {
         jgenerator.writeNumberField(ND_CONID_TOKEN, node.getNodeContainer().getContainerID());
         if (node.getNodeParentNode()!=null)
             jgenerator.writeNumberField(ND_PNDID_TOKEN, node.getNodeParentNode().getNodeID());
+
+        jgenerator.writeArrayFieldStart(ND_CNDID_TOKEN);
+        for (Node child : node.getNodeChildNodes())
+            jgenerator.writeNumber(child.getNodeID());
+        jgenerator.writeEndArray();
 
         jgenerator.writeArrayFieldStart(ND_TWNID_TOKEN);
         Iterator<? extends Node> iterT = node.getTwinNodes().iterator();
