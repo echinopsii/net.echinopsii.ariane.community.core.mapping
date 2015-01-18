@@ -115,13 +115,17 @@ public class PropertiesJSON {
                         switch(arrayTypeValue.toLowerCase()) {
                             case "map":
                                 ret = new ArrayList<HashMap<String, Object>>();
-                                HashMap<String, Object> valueHashMap = JSONStringMapToPropertyObject(arrayValue);
-                                ((ArrayList<HashMap<String, Object>>) ret).add(valueHashMap);
+                                while (iter.hasNext()) {
+                                    HashMap<String, Object> valueHashMap = JSONStringMapToPropertyObject(iter.next());
+                                    ((ArrayList<HashMap<String, Object>>) ret).add(valueHashMap);
+                                }
                                 break;
                             case "array":
                                 ret = new ArrayList<ArrayList<?>>();
-                                ArrayList<?> valueArray = JSONStringArrayToPropertyObject(arrayValue);
-                                ((ArrayList<ArrayList<?>>) ret).add(valueArray);
+                                while (iter.hasNext()) {
+                                    ArrayList<?> valueArray = JSONStringArrayToPropertyObject(iter.next());
+                                    ((ArrayList<ArrayList<?>>) ret).add(valueArray);
+                                }
                                 break;
                             case "boolean":
                                 ret = new ArrayList<Boolean>();
