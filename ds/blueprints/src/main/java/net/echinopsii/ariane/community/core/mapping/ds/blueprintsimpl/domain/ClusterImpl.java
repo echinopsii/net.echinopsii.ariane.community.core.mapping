@@ -19,6 +19,7 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain;
 
+import com.tinkerpop.blueprints.impls.neo4j2.Neo4j2Vertex;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cache.MappingDSCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDBException;
@@ -107,6 +108,8 @@ public class ClusterImpl implements Cluster, MappingDSCacheEntity {
     @Override
     public void setElement(Element vertex) {
         this.clusterVertex = (Vertex) vertex;
+        if (MappingDSGraphDB.isBlueprintsNeo4j() && this.clusterVertex instanceof Neo4j2Vertex)
+            ((Neo4j2Vertex) this.clusterVertex).addLabel(MappingDSGraphPropertyNames.DD_TYPE_CLUSTER_VALUE);
         this.clusterVertex.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY, MappingDSGraphPropertyNames.DD_TYPE_CLUSTER_VALUE);
         this.clusterID = this.clusterVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
         log.debug("Cluster vertex has been initialized ({},{}).", new Object[]{this.clusterVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID),
@@ -136,14 +139,14 @@ public class ClusterImpl implements Cluster, MappingDSCacheEntity {
         if (this.clusterVertex != null && cont.getContainerID() != 0) {
             VertexQuery query = this.clusterVertex.query();
             query.direction(Direction.OUT);
-            query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
+            query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_HASNODE_LABEL_KEY);
             query.has(MappingDSGraphPropertyNames.DD_CLUSTER_EDGE_CONT_KEY, true);
             for (Vertex vertex : query.vertices()) {
                 if ((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID) == cont.getContainerID()) {
                     return;
                 }
             }
-            Edge owns = MappingDSGraphDB.createEdge(this.clusterVertex, cont.getElement(), MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
+            Edge owns = MappingDSGraphDB.createEdge(this.clusterVertex, cont.getElement(), MappingDSGraphPropertyNames.DD_GRAPH_EDGE_HASNODE_LABEL_KEY);
             owns.setProperty(MappingDSGraphPropertyNames.DD_CLUSTER_EDGE_CONT_KEY, true);
             MappingDSGraphDB.autocommit();
         }
@@ -199,7 +202,7 @@ public class ClusterImpl implements Cluster, MappingDSCacheEntity {
         if (this.clusterVertex!=null && container.getElement()!=null) {
             VertexQuery query = this.clusterVertex.query();
             query.direction(Direction.OUT);
-            query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
+            query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_HASNODE_LABEL_KEY);
             query.has(MappingDSGraphPropertyNames.DD_CLUSTER_EDGE_CONT_KEY, true);
             for (Edge edge : query.edges()) {
                 if (edge.getVertex(Direction.OUT).equals(container.getElement())) {

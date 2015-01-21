@@ -19,6 +19,7 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain;
 
+import com.tinkerpop.blueprints.impls.neo4j2.Neo4j2Vertex;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cache.MappingDSCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDBObjectProps;
@@ -91,6 +92,8 @@ public class TransportImpl implements Transport, MappingDSCacheEntity {
 	@Override
 	public void setElement(Element vertex) {
 		this.transportVertex = (Vertex) vertex;
+        if (MappingDSGraphDB.isBlueprintsNeo4j() && this.transportVertex instanceof Neo4j2Vertex)
+            ((Neo4j2Vertex) this.transportVertex).addLabel(MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE);
 		this.transportVertex.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY, MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE);
 		this.transportID = this.transportVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
 	}

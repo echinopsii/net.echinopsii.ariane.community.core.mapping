@@ -19,6 +19,7 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain;
 
+import com.tinkerpop.blueprints.impls.neo4j2.Neo4j2Vertex;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cache.MappingDSCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
@@ -155,6 +156,8 @@ public class EndpointImpl implements Endpoint, MappingDSCacheEntity {
 
     public void setElement(Element endpointVertex) {
         this.endpointVertex = (Vertex) endpointVertex;
+        if (MappingDSGraphDB.isBlueprintsNeo4j() && this.endpointVertex instanceof Neo4j2Vertex)
+            ((Neo4j2Vertex) this.endpointVertex).addLabel(MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE);
         this.endpointVertex.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY, MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE);
         this.endpointID = this.endpointVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
         log.debug("Endpoint vertex has been initialized ({},{}).", new Object[]{this.endpointVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID),

@@ -19,6 +19,7 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain;
 
+import com.tinkerpop.blueprints.impls.neo4j2.Neo4j2Vertex;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cache.MappingDSCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
@@ -325,6 +326,8 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 
 	public void setElement(Element containerVertex) {
 		this.containerVertex = (Vertex)containerVertex;
+        if (MappingDSGraphDB.isBlueprintsNeo4j() && this.containerVertex instanceof Neo4j2Vertex)
+            ((Neo4j2Vertex) this.containerVertex).addLabel(MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE);
 		this.containerVertex.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY, MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE);
 		this.containerID = this.containerVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
 		log.debug("Container vertex has been initialized ({},{}).", new Object[]{this.containerVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID),

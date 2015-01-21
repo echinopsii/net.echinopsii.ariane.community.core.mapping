@@ -19,6 +19,7 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain;
 
+import com.tinkerpop.blueprints.impls.neo4j2.Neo4j2Vertex;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cache.MappingDSCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDBException;
@@ -68,6 +69,8 @@ public class GateImpl extends NodeImpl implements Gate {
     @Override
     public void setElement(Element vertex) {
         super.setElement(vertex);
+        if (MappingDSGraphDB.isBlueprintsNeo4j() && super.getElement() instanceof Neo4j2Vertex)
+            ((Neo4j2Vertex) super.getElement()).addLabel(MappingDSGraphPropertyNames.DD_TYPE_GATE_VALUE);
         super.getElement().setProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY, MappingDSGraphPropertyNames.DD_TYPE_GATE_VALUE);
         log.debug("Gate vertex has been initialized ({},{}).", new Object[]{super.getElement().getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID),
                                                                                    super.getElement().getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY)});
