@@ -26,15 +26,23 @@ import org.slf4j.{LoggerFactory, Logger}
 
 class MapperExecutor(val graph: Object) {
   private final val log: Logger = LoggerFactory.getLogger(classOf[MapperExecutor])
+  private var runTimeEngine: Option[Object] = None
 
   var engineOption: Option[Object] = None
-  graph match {
-    case neodb: GraphDatabaseService => engineOption = Some(new ExecutionEngine(neodb))
-    case _ => throw new MapperExecutorException("Unsupported graph !")
+  if (runTimeEngine != None)
+    engineOption = runTimeEngine
+  else {
+    graph match {
+      case neodb: GraphDatabaseService => {
+          engineOption = Some(new ExecutionEngine(neodb))
+          runTimeEngine = engineOption
+      }
+      case _ => throw new MapperExecutorException("Unsupported graph !")
+    }
   }
 
   def execute(query: String): java.util.Map[String, String] = {
-    log.debug("mapper query : \n\n" + query)
+    log.error("mapper query : \n\n" + query)
     var resultMap: Map[String, String] = Map()
 
     val engine: Object = engineOption getOrElse { throw new MapperExecutorException("Execution engine has not been initialized correctly !") }
@@ -42,12 +50,12 @@ class MapperExecutor(val graph: Object) {
       case cypherEngine: ExecutionEngine => {
         val mapperQuery : String = new MapperParser("cypher").parse(query).genQuery()
 
-        log.debug("cypher query : \n\n" + mapperQuery)
+        log.error("cypher query : \n\n" + mapperQuery)
 
         //var result: ExecutionResult = cypherEngine.prepare(mapperQuery).execute(null)
         var result: ExecutionResult = cypherEngine.execute(mapperQuery)
 
-        //println(result.dumpToString())
+        log.error(result.dumpToString())
         result.columnAs[List[Long]]("CID").toList foreach(cidl => cidl.toList foreach (cid => resultMap+=("V" + cid.toString -> MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE)))
         // TODO : check why first columnAs seems to erase entire result and so why we need to replay the query exec !
         //result = cypherEngine.prepare(mapperQuery).execute(null)

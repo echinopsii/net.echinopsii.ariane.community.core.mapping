@@ -29,12 +29,13 @@ abstract class MapperQueryGen(val startBlock: Block, val linkBlock: Block, val e
 case class MapperToCypherQueryGen(override val startBlock: Block, override val linkBlock: Block, override val endBlock: Block) extends MapperQueryGen(startBlock, linkBlock, endBlock) {
   private def cypherBlockBorder(blockLine:(String,(String,Predicate))):String = {
     val matcher = blockLine._2._2.toCypherMatch
-    var cypher = "\nSTART " + blockLine._1 + " = node(*)\n"
-    if (matcher._1 != "") {
-      cypher += "MATCH " + matcher._1 + "\n"
-    }
+    var cypher = ""
+    if (matcher._1 != "")
+      cypher = "\nMATCH " + matcher._1 + "\n"
+    else
+      cypher = "\nMATCH " + blockLine._1 + "\n"
     cypher += "WHERE\n"
-    cypher += blockLine._1 + "." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY + "! = \""+blockLine._2._1+"\" AND\n"
+    cypher += blockLine._1 + "." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY + " = \""+blockLine._2._1+"\" AND\n"
     if (matcher._2!="")
       cypher += matcher._2 + " AND\n"
     cypher += "(" + blockLine._2._2.toCypherWhere + ")\n"
@@ -48,16 +49,15 @@ case class MapperToCypherQueryGen(override val startBlock: Block, override val l
       case MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE | MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE => cypher = cypherBlockBorder(blockLine)
       case MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE | MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE => {
         val matcher = blockLine._2._2.toCypherMatch
-        cypher += "\nSTART "+blockLine._1+"EPs = node(*)\n"
-        cypher += "MATCH " + blockLine._1 + " -[:"+MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY +"*]-> " + blockLine._1 + "EPs"
+        cypher += "\nMATCH " + blockLine._1 + " -[:"+MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY +"*]-> " + blockLine._1 + "EPs"
         if (matcher._1 != "") {
           cypher += ", " + matcher._1 + "\n"
         } else {
           cypher += "\n"
         }
         cypher += "WHERE\n"
-        cypher += blockLine._1 + "EPs.MappingGraphVertexType! = \"endpoint\" AND\n"
-        cypher += blockLine._1 + "." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY + "! = \""+blockLine._2._1+"\" AND\n"
+        cypher += blockLine._1 + "EPs.MappingGraphVertexType = \"endpoint\" AND\n"
+        cypher += blockLine._1 + "." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY + " = \""+blockLine._2._1+"\" AND\n"
         if (matcher._2!="")
           cypher += matcher._2 + " AND\n"
 
@@ -75,12 +75,12 @@ case class MapperToCypherQueryGen(override val startBlock: Block, override val l
   }
 
   private def cypherBlockUnion(withList: mutable.MutableList[String], idxBegin: Int, unionCount: Int, unionName: String): String = {
-    var cypher : String = "\nSTART "+ unionName +" = node(*)\n"
+    var cypher : String = "\nMATCH "+ unionName +"\n"
     cypher += "WHERE\n"
     withList foreach ( withVal => if (withList.indexOf(withVal) >= idxBegin && withList.indexOf(withVal) < (idxBegin+unionCount-1)) {
-      cypher += unionName + "."+MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID + "! = " + withVal + "." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID + " OR\n"
+      cypher += unionName + "."+MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID + " = " + withVal + "." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID + " OR\n"
     } else if (withList.indexOf(withVal)==idxBegin+unionCount-1) {
-      cypher += unionName + "."+MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID + "! = " + withVal + "." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID + "\n"
+      cypher += unionName + "."+MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID + " = " + withVal + "." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID + "\n"
     })
 
     val dropList: mutable.MutableList[String] = clean(withList, idxBegin, unionCount)
@@ -102,20 +102,19 @@ case class MapperToCypherQueryGen(override val startBlock: Block, override val l
       cypher += passThroughLink + " -[:"+MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY+"|"+MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY+"*]- "
     cypher += endLink + "\n"
     cypher += "WHERE\n"
-    cypher += "ALL(n in nodes(path) where 1=length(filter(m in nodes(path) : m=n))) AND\n"
-    cypher += "ALL(n in nodes(path) where n." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY + " <> \""+MappingDSGraphPropertyNames.DD_TYPE_CLUSTER_VALUE+"\")\n"
+    cypher += "ALL(n in nodes(path) where 1=length(filter(m in nodes(path) WHERE m=n)))\n"
     cypher += "RETURN DISTINCT\n"
-    cypher += "EXTRACT(co in FILTER( n in nodes(path): n." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY + "! = \""+MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE+"\"): co." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID + ") as CID,\n"
-    cypher += "EXTRACT(no in FILTER( n in nodes(path): n." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY + "! = \""+MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE+"\"): no." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID + ") as NID,\n"
-    cypher += "EXTRACT(e in FILTER( n in nodes(path): n." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY + "! = \""+MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE+"\"): e." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID + ") as EID,\n"
-    cypher += "EXTRACT(t in FILTER( n in nodes(path): n." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY + "! = \""+MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE+"\"): t." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID + ") as TID,\n"
-    cypher += "EXTRACT(l in FILTER( r in relationships(path) : type(r) = \""+MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY+"\"): l." + MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID + ") as LID;"
+    cypher += "EXTRACT(co in FILTER( n in nodes(path) WHERE n." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY + " = \""+MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE+"\")| co." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID + ") as CID,\n"
+    cypher += "EXTRACT(no in FILTER( n in nodes(path) WHERE n." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY + " = \""+MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE+"\")| no." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID + ") as NID,\n"
+    cypher += "EXTRACT(e in FILTER( n in nodes(path) WHERE n." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY + " = \""+MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE+"\")| e." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID + ") as EID,\n"
+    cypher += "EXTRACT(t in FILTER( n in nodes(path) WHERE n." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY + " = \""+MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE+"\")| t." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID + ") as TID,\n"
+    cypher += "EXTRACT(l in FILTER( r in relationships(path) WHERE type(r) = \""+MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY+"\")| l." + MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID + ") as LID;"
 
     cypher
   }
 
   def genQuery(): String = {
-    var cypher : String = "CYPHER 1.9"
+    var cypher : String = ""
     var withList : mutable.MutableList[String] = mutable.MutableList()
     var startLinkPointsCount : Int = 0
     var startLinkPoint : String = ""
