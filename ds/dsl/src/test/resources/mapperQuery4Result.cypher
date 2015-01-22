@@ -1,5 +1,5 @@
 
-MATCH startContainer-[owns]->startContainerContainerPrimaryAdminGate
+MATCH startContainer-[:owns]->startContainerContainerPrimaryAdminGate
 WHERE
 startContainer.MappingGraphVertexType = "container" AND
 startContainerContainerPrimaryAdminGate.MappingGraphVertexID = startContainer.containerPrimaryAdminGate AND

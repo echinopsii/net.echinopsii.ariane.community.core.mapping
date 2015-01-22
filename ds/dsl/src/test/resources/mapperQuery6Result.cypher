@@ -1,5 +1,5 @@
 
-MATCH startContainer-[owns]->startContainerContainerPrimaryAdminGate
+MATCH startContainer-[:owns]->startContainerContainerPrimaryAdminGate
 WHERE
 startContainer.MappingGraphVertexType = "container" AND
 startContainerContainerPrimaryAdminGate.MappingGraphVertexID = startContainer.containerPrimaryAdminGate AND
@@ -18,7 +18,7 @@ startUnion.MappingGraphVertexID = startContainer.MappingGraphVertexID OR
 startUnion.MappingGraphVertexID = startNode.MappingGraphVertexID
 WITH startUnion
 
-MATCH endContainer-[owns]->endContainerContainerPrimaryAdminGate
+MATCH endContainer-[:owns]->endContainerContainerPrimaryAdminGate
 WHERE
 endContainer.MappingGraphVertexType = "container" AND
 endContainerContainerPrimaryAdminGate.MappingGraphVertexID = endContainer.containerPrimaryAdminGate AND

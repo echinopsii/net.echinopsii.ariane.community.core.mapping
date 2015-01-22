@@ -37,7 +37,7 @@ case class IdentifierExp(var eType: String = "", iName: String, var iRoot: Optio
   def toCypherMatch : (String,String) = {
     var cypherMatch:String = ""
     if (iRoot!=None && (iRoot.get.propertiesDepth == 1 && iRoot.get.iRoot != None)) {
-      cypherMatch=globalRoot.iName+"-["+MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY+"]->"+iRoot.get.toCypherWhere
+      cypherMatch=globalRoot.iName+"-[:"+MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY+"]->"+iRoot.get.toCypherWhere
     }
     logger.debug("[IDT ("+iName+") matcher] : "+cypherMatch)
     (cypherMatch,iRoot.get.toCypherWhere+"."+MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID+" = "+iRoot.get.toString)

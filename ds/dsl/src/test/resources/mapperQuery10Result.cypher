@@ -1,12 +1,12 @@
 
-MATCH startContainer-[owns]->startContainerContainerPrimaryAdminGate
+MATCH startContainer-[:owns]->startContainerContainerPrimaryAdminGate
 WHERE
 startContainer.MappingGraphVertexType = "container" AND
 startContainerContainerPrimaryAdminGate.MappingGraphVertexID = startContainer.containerPrimaryAdminGate AND
 (startContainerContainerPrimaryAdminGate.nodeName =~ ".*tibrvrdl03prd01.*")
 WITH startContainer
 
-MATCH endContainer-[owns]->endContainerContainerPrimaryAdminGate
+MATCH endContainer-[:owns]->endContainerContainerPrimaryAdminGate
 WHERE
 endContainer.MappingGraphVertexType = "container" AND
 endContainerContainerPrimaryAdminGate.MappingGraphVertexID = endContainer.containerPrimaryAdminGate AND
@@ -19,7 +19,7 @@ moulticast.MappingGraphVertexType = "transport" AND
 (moulticast.transportName =~ ".*239.69.69.69.*")
 WITH startContainer, endContainer, moulticast
 
-MATCH ptContainer -[:owns*]-> ptContainerEPs, ptContainer-[owns]->ptContainerContainerPrimaryAdminGate
+MATCH ptContainer -[:owns*]-> ptContainerEPs, ptContainer-[:owns]->ptContainerContainerPrimaryAdminGate
 WHERE
 ptContainerEPs.MappingGraphVertexType = "endpoint" AND
 ptContainer.MappingGraphVertexType = "container" AND
