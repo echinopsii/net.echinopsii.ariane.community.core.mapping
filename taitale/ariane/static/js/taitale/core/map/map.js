@@ -85,8 +85,9 @@ define(
             };
             */
 
+            var childNodesWaitingParent = [], childNodesFoundParent = [];
             this.addObject = function(JSONNodeDesc) {
-                var container = null, childNodesWaitingParent = [], childNodesFoundParent = [];
+                var container = null;
                 var i, ii, j, jj;
 
                 for (i = 0, ii = containerRegistry.length; i < ii; i++ ) {
