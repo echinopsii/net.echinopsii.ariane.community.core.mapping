@@ -1,4 +1,3 @@
-
 {'startContainer': 'FROM container WHERE startContainer.containerPrimaryAdminGate.nodeName =~ ".*tibrvrdwprd01.*"'}
 --
 {

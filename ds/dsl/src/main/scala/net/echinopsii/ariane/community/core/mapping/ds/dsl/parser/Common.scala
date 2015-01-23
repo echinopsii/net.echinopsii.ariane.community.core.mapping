@@ -33,7 +33,7 @@ class Common extends JavaTokenParsers {
     case _ => throw new MapperParserException("List expected here !")
   }
 
-  def stripQuotesEscape(s: String) = s.replaceAll("\\\\\"" , "\"");
+  def stripQuotesEscape(s: String) = s.replaceAll("\\\\\"" , "\"")
   def stripQuotes(s: String) = s.substring(1, s.length - 1)
 
   def apostropheString: Parser[String] = ("\'" + """([^'\p{Cntrl}\\]|\\[\\/bfnrt]|\\u[a-fA-F0-9]{4})*""" + "\'").r

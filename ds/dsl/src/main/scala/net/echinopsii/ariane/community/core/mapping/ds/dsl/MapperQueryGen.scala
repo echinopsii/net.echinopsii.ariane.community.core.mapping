@@ -113,6 +113,18 @@ case class MapperToCypherQueryGen(override val startBlock: Block, override val l
     cypher
   }
 
+  private def cypherCustomLinkMatch(startLink: String, customPath: String, endLink: String):String = {
+    var cypher : String = "\nMATCH path = " + startLink + customPath + endLink + "\n"
+    cypher += "RETURN DISTINCT\n"
+    cypher += "EXTRACT(co in FILTER( n in nodes(path) WHERE n." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY + " = \""+MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE+"\")| co." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID + ") as CID,\n"
+    cypher += "EXTRACT(no in FILTER( n in nodes(path) WHERE n." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY + " = \""+MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE+"\")| no." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID + ") as NID,\n"
+    cypher += "EXTRACT(e in FILTER( n in nodes(path) WHERE n." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY + " = \""+MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE+"\")| e." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID + ") as EID,\n"
+    cypher += "EXTRACT(t in FILTER( n in nodes(path) WHERE n." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY + " = \""+MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE+"\")| t." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID + ") as TID,\n"
+    cypher += "EXTRACT(l in FILTER( r in relationships(path) WHERE type(r) = \""+MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY+"\")| l." + MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID + ") as LID;"
+
+    cypher
+  }
+
   def genQuery(): String = {
     var cypher : String = ""
     var withList : mutable.MutableList[String] = mutable.MutableList()
@@ -122,6 +134,7 @@ case class MapperToCypherQueryGen(override val startBlock: Block, override val l
     var endLinkPoint : String = ""
     var passThroughPointsCount : Int = 0
     var passThroughLinkPoint : String = ""
+    var customPath : String = ""
 
     for (lineVal:String <- startBlock.mapPointsPredicate.keySet) {
       cypher += cypherBlockBorder((lineVal, startBlock.mapPointsPredicate.get(lineVal).get))
@@ -177,15 +190,20 @@ case class MapperToCypherQueryGen(override val startBlock: Block, override val l
         })
       }
 
-      passThroughPointsCount = withList.length - (startLinkPointsCount + endLinkPointsCount)
-      if (passThroughPointsCount==1) passThroughLinkPoint = withList.last
-      else {
-        passThroughLinkPoint = "ptUnion"
-        cypher += cypherBlockUnion(withList, startLinkPointsCount+endLinkPointsCount, passThroughPointsCount, passThroughLinkPoint)
+      if (linkBlock.path!=null && linkBlock.path!="") customPath = linkBlock.path else {
+        passThroughPointsCount = withList.length - (startLinkPointsCount + endLinkPointsCount)
+        if (passThroughPointsCount==1) passThroughLinkPoint = withList.last
+        else {
+          passThroughLinkPoint = "ptUnion"
+          cypher += cypherBlockUnion(withList, startLinkPointsCount+endLinkPointsCount, passThroughPointsCount, passThroughLinkPoint)
+        }
       }
     }
 
-    cypher+=cypherLinkMatch(startLinkPoint, passThroughLinkPoint, endLinkPoint)
+    if (customPath!=null && customPath!="")
+      cypher+=cypherCustomLinkMatch(startLinkPoint, customPath, endLinkPoint)
+    else
+      cypher+=cypherLinkMatch(startLinkPoint, passThroughLinkPoint, endLinkPoint)
 
     cypher
   }

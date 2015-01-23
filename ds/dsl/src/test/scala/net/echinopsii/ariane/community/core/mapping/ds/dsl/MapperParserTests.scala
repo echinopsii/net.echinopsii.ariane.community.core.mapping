@@ -17,6 +17,8 @@ class MapperParserTests extends FunSuite {
       mapperQuery.linkBlock.mapPointsPredicate foreach {case (startObjID, (startObjType, startObjPredicate)) => println("PassThrough OBJ ID: " + startObjID + "\n" +
         "PassThrough OBJ Type: " + startObjType + "\n" +
         "PassThrough OBJ Predicate: " + startObjPredicate)}
+      if (mapperQuery.linkBlock.path!=null && mapperQuery.linkBlock.path!="")
+        println("custom path : " + mapperQuery.linkBlock.path + "\n")
     }
 
     mapperQuery.endBlock.mapPointsPredicate foreach {case (endObjID, (endObjType, endObjPredicate)) => println("End OBJ ID: " + endObjID + "\n" +
@@ -496,5 +498,38 @@ class MapperParserTests extends FunSuite {
     assert(mapperQuery.endBlock.mapPointsPredicate.get("endContainer").get._2.toString==="endContainer.containerPrimaryAdminGate.nodeName =~ \".*tibrvrdl05prd01.*\"")
 
     assert(mapperQuery.genQuery===res)
+  }
+
+  test("mapperQuery120.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mapperQuery120.ccmon")).mkString
+    val res = Source.fromURL(getClass.getResource("/mapperQuery12Result.cypher")).mkString
+    val mapperQuery: MapperQueryGen = new MapperParser("cypher").parse(req)
+
+    //traceMapperQuery(mapperQuery)
+    //println(mapperQuery.genQuery)
+
+    assert(mapperQuery.startBlock.mapPointsPredicate.size===1)
+    assert(mapperQuery.startBlock.mapPointsPredicate.get("middleOfficeService")!=None)
+    assert(mapperQuery.startBlock.mapPointsPredicate.get("middleOfficeService").get._1.toString==="container")
+    assert(mapperQuery.startBlock.mapPointsPredicate.get("middleOfficeService").get._2.toString==="middleOfficeService.containerPrimaryAdminGate.nodeName =~ \"rbqcliadmingate.mo01\"")
+
+    assert(mapperQuery.linkBlock.mapPointsPredicate.size===2)
+    assert(mapperQuery.linkBlock.mapPointsPredicate.get("rbqNode1EP2")!=None)
+    assert(mapperQuery.linkBlock.mapPointsPredicate.get("rbqNode1EP2").get._1.toString==="endpoint")
+    assert(mapperQuery.linkBlock.mapPointsPredicate.get("rbqNode1EP2").get._2.toString==="rbqNode1EP2.endpointURL =~ \".*MiddleOfficeService.*\" or rbqNode1EP2.endpointURL =~ \".*RPC/BOQ.*\" or rbqNode1EP2.endpointURL =~ \".*RPC/RIQ.*\"")
+    assert(mapperQuery.linkBlock.mapPointsPredicate.get("rbqNode2EP1")!=None)
+    assert(mapperQuery.linkBlock.mapPointsPredicate.get("rbqNode2EP1").get._1.toString==="endpoint")
+    assert(mapperQuery.linkBlock.mapPointsPredicate.get("rbqNode2EP1").get._2.toString==="rbqNode2EP1.endpointURL =~ \".*MiddleOfficeService.*\" or rbqNode2EP1.endpointURL =~ \".*BOQ/BOQ.*\" or rbqNode2EP1.endpointURL =~ \".*RIQ/RIQ.*\"")
+
+    assert(mapperQuery.endBlock.mapPointsPredicate.size===2)
+    assert(mapperQuery.endBlock.mapPointsPredicate.get("riskService")!=None)
+    assert(mapperQuery.endBlock.mapPointsPredicate.get("riskService").get._1.toString==="container")
+    assert(mapperQuery.endBlock.mapPointsPredicate.get("riskService").get._2.toString==="riskService.containerPrimaryAdminGate.nodeName =~ \"rbqcliadmingate.risk01\"")
+    assert(mapperQuery.endBlock.mapPointsPredicate.get("backOfficeService")!=None)
+    assert(mapperQuery.endBlock.mapPointsPredicate.get("backOfficeService").get._1.toString==="container")
+    assert(mapperQuery.endBlock.mapPointsPredicate.get("backOfficeService").get._2.toString==="backOfficeService.containerPrimaryAdminGate.nodeName =~ \"rbqcliadmingate.bo01\"")
+
+    assert(mapperQuery.genQuery===res)
+
   }
 }

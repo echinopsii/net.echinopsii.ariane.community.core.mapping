@@ -1,0 +1,14 @@
+{
+    'middleOfficeService': 'FROM container WHERE middleOfficeService.containerPrimaryAdminGate.nodeName =~ "rbqcliadmingate.mo01" '
+}
+-
+{ 
+	'rbqNode1EP2': 'FROM endpoint WHERE rbqNode1EP2.endpointURL =~ ".*MiddleOfficeService.*" OR rbqNode1EP2.endpointURL =~ ".*RPC/BOQ.*" OR rbqNode1EP2.endpointURL =~ ".*RPC/RIQ.*"',
+	'rbqNode2EP1': 'FROM endpoint WHERE rbqNode2EP1.endpointURL =~ ".*MiddleOfficeService.*" OR rbqNode2EP1.endpointURL =~ ".*BOQ/BOQ.*" OR rbqNode2EP1.endpointURL =~ ".*RIQ/RIQ.*"',
+	'path': ' -[:owns*]-> startContainerEP <-[:link]-> rbqNode1EP1 <-[:owns]- rbqNode1 -[:owns]-> rbqNode1EP2 -[:link]- rbqNode2EP1 <-[:owns]- rbqNode2 -[:owns]-> rbqNode2EP2 <-[:link]-> endContainerEP <-[:owns*]- '
+} 
+-
+{
+    'riskService': 'FROM container WHERE riskService.containerPrimaryAdminGate.nodeName =~ "rbqcliadmingate.risk01" ',
+    'backOfficeService': 'FROM container WHERE backOfficeService.containerPrimaryAdminGate.nodeName =~ "rbqcliadmingate.bo01" '
+}

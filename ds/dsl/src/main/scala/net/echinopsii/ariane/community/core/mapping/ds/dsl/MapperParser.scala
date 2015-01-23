@@ -62,20 +62,19 @@ class MapperParser(val queryType: String) extends Common with CCMon with SqlLike
     lexedBlock foreach {
       case (objID, objValue) =>
         parseAll(notAKeyword, objID) match {
-          case Success(result, _) => {
-            identifierRegistry+=(objID -> new IdentifierExp(iName = objID))
-            objValue match {
-              case sqlLikeT:String => {
-                parseAll(sqlLike(objID, this), sqlLikeT) match {
-                  case Success(result, _) => {
-                    block.mapPointsPredicate += (objID -> result)
+          case Success(result, _) =>
+            if (objID!="path") {
+              identifierRegistry+=(objID -> new IdentifierExp(iName = objID))
+              objValue match {
+                case sqlLikeT:String =>
+                  parseAll(sqlLike(objID, this), sqlLikeT) match {
+                    case Success(resultT, _) => block.mapPointsPredicate += (objID -> resultT)
+                    case failure : NoSuccess => throw new MapperParserException(failure.msg)
                   }
-                  case failure : NoSuccess => throw new MapperParserException(failure.msg)
-                }
+                case _ => throw new MapperParserException("Unexpected objValue type")
               }
-              case _ => throw new MapperParserException("Unexpected objValue type")
-            }
-          }
+            } else
+              block.path = objValue
           case failure : NoSuccess => throw new MapperParserException(failure.msg)
         }
     }

@@ -20,4 +20,5 @@ package net.echinopsii.ariane.community.core.mapping.ds.dsl.internal
 
 class Block {
   var mapPointsPredicate:Map[String, (String,Predicate)] = Map()
+  var path: String = null
 }
