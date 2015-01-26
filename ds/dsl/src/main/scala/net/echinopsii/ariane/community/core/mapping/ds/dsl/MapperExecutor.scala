@@ -23,6 +23,7 @@ import org.neo4j.cypher.{ExecutionResult, ExecutionEngine}
 import scala.collection.JavaConverters._
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames
 import org.slf4j.{LoggerFactory, Logger}
+import java.util.Date
 
 class MapperExecutor(val graph: Object) {
   private final val log: Logger = LoggerFactory.getLogger(classOf[MapperExecutor])
@@ -53,10 +54,12 @@ class MapperExecutor(val graph: Object) {
         log.error("cypher query : \n\n" + mapperQuery)
 
         //var result: ExecutionResult = cypherEngine.prepare(mapperQuery).execute(null)
+        log.error(new Date().toString)
         var result: ExecutionResult = cypherEngine.execute(mapperQuery)
-
         log.error(result.dumpToString())
+
         result.columnAs[List[Long]]("CID").toList foreach(cidl => cidl.toList foreach (cid => resultMap+=("V" + cid.toString -> MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE)))
+        log.error(result.dumpToString())
         // TODO : check why first columnAs seems to erase entire result and so why we need to replay the query exec !
         //result = cypherEngine.prepare(mapperQuery).execute(null)
         result = cypherEngine.execute(mapperQuery)
@@ -70,6 +73,8 @@ class MapperExecutor(val graph: Object) {
         //result = cypherEngine.prepare(mapperQuery).execute(null)
         result = cypherEngine.execute(mapperQuery)
         result.columnAs[List[Long]]("LID").toList foreach(lidl => lidl.toList foreach (lid => resultMap+=("E" + lid.toString -> MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY)))
+        log.error(new Date().toString)
+
       }
       case _ => throw new MapperExecutorException("Unsupported execution engine !")
     }

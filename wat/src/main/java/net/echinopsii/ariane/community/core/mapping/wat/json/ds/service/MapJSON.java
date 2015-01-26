@@ -65,7 +65,7 @@ public class MapJSON {
         Iterator<Node> iterN = nodes.iterator();
         while (iterN.hasNext()) {
             Node current = iterN.next();
-            if (!(current instanceof Gate)) {
+            if (!(current instanceof Gate && !current.getNodeName().contains("cluster"))) {
                 NodeJSON.node2MapJSON(current, jgenerator);
             }
         }

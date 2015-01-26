@@ -20,12 +20,15 @@
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
+import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.EndpointImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MapSce;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class MapSceImpl implements MapSce {
@@ -39,14 +42,15 @@ public class MapSceImpl implements MapSce {
 
     private static void addContainerToResultMap(Container container,  MapImpl map) {
         map.addContainer(container);
-        map.addCluster(container.getContainerCluster());
+        if (container.getContainerCluster()!=null)
+            map.addCluster(container.getContainerCluster());
     }
 
     private static void addNodeToResultMap(Node node, MapImpl map) {
         log.debug("Add node to result map : " + node.getNodeName());
         map.addNode(node);
         if (node.getNodeContainer()!=null)
-            map.addContainer(node.getNodeContainer());
+            addContainerToResultMap(node.getNodeContainer(), map);
         if (node.getNodeParentNode()!=null)
             addNodeToResultMap(node.getNodeParentNode(), map);
     }
@@ -69,6 +73,7 @@ public class MapSceImpl implements MapSce {
     public MapImpl getMap(String mapperQuery) {
         MapImpl map = new MapImpl();
         Map<String, String> minimalMap = MappingDSGraphDB.executeQuery(mapperQuery);
+
         for (String id : minimalMap.keySet()) {
             String type = minimalMap.get(id);
             switch (type) {
@@ -96,6 +101,39 @@ public class MapSceImpl implements MapSce {
                 default:
                     log.error("Unsupported type {} for object {} in minimal map return !", type, id.substring(1,id.length()));
                     break;
+            }
+        }
+
+        HashMap<String, ArrayList<Container>> containerByCluster = new HashMap<>();
+        for (Container container : map.getContainers()) {
+            if (container.getContainerCluster()!=null) {
+                if (containerByCluster.get(container.getContainerCluster().getClusterName())==null) {
+                    ArrayList<Container> containers = new ArrayList<>();
+                    containers.add(container);
+                    containerByCluster.put(container.getContainerCluster().getClusterName(), containers);
+                } else containerByCluster.get(container.getContainerCluster().getClusterName()).add(container);
+            }
+        }
+
+        for (ArrayList<Container> containers : containerByCluster.values()) {
+            if (containers.size()>1) {
+                ArrayList<Endpoint> clusterEndpoints = new ArrayList<>();
+                for (Container container : containers) {
+                    for (Gate gate : container.getContainerGates()) {
+                        if (gate.getNodeName().contains("cluster")) {
+                            addNodeToResultMap(gate, map);
+                            for (Endpoint endpoint : gate.getNodeEndpoints()) {
+                                addEndpointToResultMap(endpoint, map);
+                                for (Endpoint endpointToLink : clusterEndpoints) {
+                                    Link clusterLink = sce.getGlobalRepo().findLinkBySourceEPandDestinationEP((EndpointImpl)endpoint, (EndpointImpl)endpointToLink);
+                                    if (clusterLink==null) clusterLink = sce.getGlobalRepo().findLinkBySourceEPandDestinationEP((EndpointImpl)endpointToLink, (EndpointImpl)endpoint);
+                                    if (clusterLink!=null) addLinkToResultMap(clusterLink, map);
+                                }
+                                clusterEndpoints.add(endpoint);
+                            }
+                        }
+                    }
+                }
             }
         }
         return map;

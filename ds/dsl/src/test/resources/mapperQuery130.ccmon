@@ -1,0 +1,12 @@
+{
+    'feederService': 'FROM container WHERE feederService.containerPrimaryAdminGate.nodeName =~ "rbqcliadmingate.feeder01"'
+}
+-
+{ 
+	'rbqNode2TwinsConsumerEP': 'FROM endpoint WHERE rbqNode2TwinsConsumerEP.endpointURL =~ ".*5672.*"',
+	'path': ' -[:owns*]-> feederEP <-[:link]-> rbqNode1EP1 <-[:owns]- rbqNode1 -[:owns]-> rbqNode1EP2 <-[:link]-> rbqNode2EP1 <-[:owns]- rbqNode2 <-[:twin]-> rbqNode2Twins -[:owns]-> rbqNode2TwinsConsumerEP <-[:link]-> frontEP <-[:owns*]- '
+} 
+-
+{
+    'frontService': 'FROM container WHERE frontService.containerPrimaryAdminGate.nodeName =~ "rbqcliadmingate.fof.*" '
+}
