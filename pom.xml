@@ -6,7 +6,7 @@
     <groupId>net.echinopsii.ariane.community.core</groupId>
     <artifactId>net.echinopsii.ariane.community.core.mapping</artifactId>
     <name>Ariane Community Core Mapping Parent</name>
-    <version>0.5.2-SNAPSHOT</version>
+    <version>0.5.2</version>
     <packaging>pom</packaging>
 
     <modules>
