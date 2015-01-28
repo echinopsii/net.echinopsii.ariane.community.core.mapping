@@ -119,9 +119,4 @@ requirejs (
         });
 
         $( "#datepicker" ).datepicker();
-        
-        //Login Box
-        $('#loginboxUser').puiinputtext(); 
-        $('#loginboxPassword').puipassword();  
-		$('#loginboxSubmit').puibutton();  
     });

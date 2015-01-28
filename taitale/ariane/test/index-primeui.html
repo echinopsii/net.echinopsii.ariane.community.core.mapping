@@ -5,7 +5,6 @@
     <link rel="stylesheet" href="js/jquery-ui-1.10.3.custom/css/ui-lightness/jquery-ui-1.10.3.custom.css"/>
     <link rel="stylesheet" href="js/primeui-0.9.6/themes/ariane/theme.css" />
     <link rel="stylesheet" href="js/primeui-0.9.6/development/primeui-0.9.6.css" />
-    <link type="text/css" rel="stylesheet" href="http://localhost:6969/Ariane/acss/font-awesome.css" />
     <style type="text/css" media="screen">
         input,
         select,
@@ -23,46 +22,6 @@
             font-family: Arial, "Trebuchet MS", Verdana, sans-serif;
             font-size: 12px !important;
         }
-        
-        #login{
-	        clear: both;
-	        /*Please, remove before flight*/
-	        height: 1000px;
-	        /**/
-	        position: relative;
-	        width: 100%; padding: 0; margin: 0;
-	        background: #eeeeee; /* Old browsers */
-			background: -moz-radial-gradient(center, ellipse cover, #eeeeee 0%, #cccccc 100%); /* FF3.6+ */
-			background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,#eeeeee), color-stop(100%,#cccccc)); /* Chrome,Safari4+ */
-			background: -webkit-radial-gradient(center, ellipse cover, #eeeeee 0%,#cccccc 100%); /* Chrome10+,Safari5.1+ */
-			background: -o-radial-gradient(center, ellipse cover, #eeeeee 0%,#cccccc 100%); /* Opera 12+ */
-			background: -ms-radial-gradient(center, ellipse cover, #eeeeee 0%,#cccccc 100%); /* IE10+ */
-			background: radial-gradient(ellipse at center, #eeeeee 0%,#cccccc 100%); /* W3C */
-			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eeeeee', endColorstr='#cccccc',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
-	        }
-		#loginBox{
-			width: 450px; height: 150px; border-top: 8px solid #e15943; background: #f9f9f9; margin: 0 auto; padding: 45px 0;
-			position: absolute; top: 50%; left: 50%; margin-top: -105px; margin-left: -225px;
-		}
-		.arianeLogo{
-			background: url(images/logo-ariane-login.png) no-repeat;
-			width: 91px; height: 114px; display: block; text-indent: -9000px; position: absolute; left: 50%; margin-left: -45.5px; top: -150px;
-		}
-		#loginBox input[type=text],#loginBox input[type=password]{border: 1px solid #8c8c8c !important; background: #fff; width: 260px; padding: 15px 10px 15px 40px; color: #404041; outline: none; box-shadow: none;}
-		#loginBox input[type=text]{border-radius: 6px 6px 0 0; display: block;}
-		#loginBox .wrapperloginboxUser::before{content: "\f007"; font-family: 'FontAwesome'; left: 20px; top: 15px; position: absolute; color: #404041;}
-		#loginBox .wrapperloginboxPassword::before{content: "\F084"; font-family: 'FontAwesome'; left: 20px; top: 15px; position: absolute; color: #404041;}
-		.wrapper{width: 310px; margin: 0 auto; position: relative; display: block;}
-		#loginBox input[type=password]{border-radius: 0 0 6px 6px; border-top: none !important;}
-		#loginBox #loginboxSubmit{width: 310px; margin: 22px auto 0 auto; padding: 12px 0; display: block; background: #df513d; background: -moz-radial-gradient(center, ellipse cover, #df513d 0%, #e3674e 100%); background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,#df513d), color-stop(100%,#e3674e)); background: -webkit-radial-gradient(center, ellipse cover, #df513d 0%,#e3674e 100%); background: -o-radial-gradient(center, ellipse cover, #df513d 0%,#e3674e 100%); background: -ms-radial-gradient(center, ellipse cover, #df513d 0%,#e3674e 100%); background: radial-gradient(ellipse at center, #df513d 0%,#e3674e 100%); filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#df513d', endColorstr='#e3674e',GradientType=1 ); border: none;}
-		#loginBox #loginboxSubmit:hover{background: #404041; /* Old browsers */
-background: -moz-radial-gradient(center, ellipse cover, #404041 0%, #2e2e2f 100%); /* FF3.6+ */
-background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,#404041), color-stop(100%,#2e2e2f)); /* Chrome,Safari4+ */
-background: -webkit-radial-gradient(center, ellipse cover, #404041 0%,#2e2e2f 100%); /* Chrome10+,Safari5.1+ */
-background: -o-radial-gradient(center, ellipse cover, #404041 0%,#2e2e2f 100%); /* Opera 12+ */
-background: -ms-radial-gradient(center, ellipse cover, #404041 0%,#2e2e2f 100%); /* IE10+ */
-background: radial-gradient(ellipse at center, #404041 0%,#2e2e2f 100%); /* W3C */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#404041', endColorstr='#2e2e2f',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */ color: #fff;}
     </style>
     <script data-main="js/require-primeui.js" src="./js/require/require.js"></script>
     <title>PrimeUI</title>
@@ -234,14 +193,6 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#404041', end
             </div>
         </div>
     </div>
-</div>
-<div id="login">
-	<div id="loginBox">
-		<span class="arianeLogo">Ariane</span>
-		<div class="wrapper wrapperloginboxUser"><input id="loginboxUser" placeholder="Username" type="text" /></div>
-		<div class="wrapper wrapperloginboxPassword"><input id="loginboxPassword" placeholder="password" name="passwordField" type="password" /></div>
-		<button id="loginboxSubmit" type="button">Log in</button>  
-	</div>
 </div>
 </body>
 </html>
