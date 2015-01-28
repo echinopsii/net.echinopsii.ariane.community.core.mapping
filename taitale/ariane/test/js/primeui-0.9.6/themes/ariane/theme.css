@@ -328,3 +328,13 @@
     box-shadow: 0px 0px 5px #f85b37, inset 0 2px 2px #8f8f8f;
     color: #304915;
 }
+/*Redefine elements*/
+body .pui-notify, body .ui-shadow{box-shadow: none !important;}
+
+body .pui-growl-item-container, body .ui-growl-item-container{background: #f85b37; border: 1px solid rgba(0, 0, 0, 0.7);}
+body .pui-growl-item, body .ui-growl-item{background: rgba(0, 0, 0, 0.5); color: #fff; box-shadow: none !important;}
+body .pui-growl-image-info, body .ui-growl-image-info, body .pui-growl-image-error, body .ui-growl-image-error, body .pui-growl-image-warn, body .ui-growl-image-warn, body .ui-state-highlight .ui-icon {background: transparent !important; text-indent: 0 !important;}
+body .pui-growl-image-info::before, body .ui-growl-image-info::before{content:"\F05A"; font-family: 'FontAwesome';font-size: 2.5em;}
+body .pui-growl-image-warn::before, body .ui-growl-image-warn::before{content:"\F06A"; font-family: 'FontAwesome';font-size: 2.5em;}
+body .pui-growl-image-error::before, body .ui-growl-image-error::before{content:"\F057"; font-family: 'FontAwesome';font-size: 2.5em;}
+body .ui-state-highlight .ui-icon::before{content:"\F05C" !important; font-family: 'FontAwesome' !important;font-size: 1.5em; color: #fff !important;}
