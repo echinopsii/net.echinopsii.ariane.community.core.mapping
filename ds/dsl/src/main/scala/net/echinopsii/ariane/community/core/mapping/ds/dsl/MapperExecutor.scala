@@ -24,6 +24,7 @@ import scala.collection.JavaConverters._
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames
 import org.slf4j.{LoggerFactory, Logger}
 import java.util.Date
+import java.util.Map.Entry
 
 class MapperExecutor(val graph: Object) {
   private final val log: Logger = LoggerFactory.getLogger(classOf[MapperExecutor])
@@ -54,23 +55,45 @@ class MapperExecutor(val graph: Object) {
         log.debug("cypher query : \n\n" + mapperQuery)
 
         //var result: ExecutionResult = cypherEngine.prepare(mapperQuery).execute(null)
-        log.debug(new Date().toString)
-        var result: ExecutionResult = cypherEngine.execute(mapperQuery)
-        log.debug(result.dumpToString())
+        log.debug("Cypher execution begins : " + new Date().toString)
+        val result: ExecutionResult = cypherEngine.execute(mapperQuery)
+        //log.error(result.dumpToString())
+        log.debug("Cypher execution ends : " + new Date().toString)
 
-        result.columnAs[List[Long]]("CID").toList foreach(cidl => cidl.toList foreach (cid => resultMap+=("V" + cid.toString -> MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE)))
-        //log.debug(result.dumpToString())
-        // TODO : check why first columnAs seems to erase entire result and so why we need to replay the query exec !
-        result = cypherEngine.execute(mapperQuery)
-        result.columnAs[List[Long]]("NID").toList foreach(nidl => nidl.toList foreach (nid => resultMap+=("V" + nid.toString -> MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE)))
-        result = cypherEngine.execute(mapperQuery)
-        result.columnAs[List[Long]]("EID").toList foreach(eidl => eidl.toList foreach (eid => resultMap+=("V" + eid.toString -> MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE)))
-        result = cypherEngine.execute(mapperQuery)
-        result.columnAs[List[Long]]("TID").toList foreach(tidl => tidl.toList foreach (tid => resultMap+=("V" + tid.toString -> MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE)))
-        result = cypherEngine.execute(mapperQuery)
-        result.columnAs[List[Long]]("LID").toList foreach(lidl => lidl.toList foreach (lid => resultMap+=("E" + lid.toString -> MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY)))
-        log.debug(new Date().toString)
-
+        result foreach(row => {
+          row foreach (column => {
+            log.debug(column._1 + ":"+ column._2)
+            column._1 match {
+              case "CID" => {
+                val cidl: List[Long] = column._2.asInstanceOf[List[Long]]
+                log.debug("ADD CIDs TO RESULT MAP " + cidl)
+                cidl foreach (cid => resultMap += ("V" + cid.toString -> MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE))
+              }
+              case "NID" => {
+                val nidl: List[Long] = column._2.asInstanceOf[List[Long]]
+                log.debug("ADD NIDs TO RESULT MAP " + nidl)
+                nidl foreach (nid => resultMap += ("V" + nid.toString -> MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE))
+              }
+              case "EID" => {
+                val eidl: List[Long] = column._2.asInstanceOf[List[Long]]
+                log.debug("ADD EIDs TO RESULT MAP " + eidl)
+                eidl foreach (eid => resultMap += ("V" + eid.toString -> MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE))
+              }
+              case "TID" => {
+                val tidl: List[Long] = column._2.asInstanceOf[List[Long]]
+                log.debug("ADD TIDs TO RESULT MAP " + tidl)
+                tidl foreach (tid => resultMap += ("V" + tid.toString -> MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE))
+              }
+              case "LID" => {
+                val lidl: List[Long] = column._2.asInstanceOf[List[Long]]
+                log.debug("ADD LIDs TO RESULT MAP " + lidl)
+                lidl foreach (lid => resultMap += ("E" + lid.toString -> MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY))
+              }
+              case _ => throw new MapperExecutorException("Unknown Column Identifier !")
+            }
+          })
+        })
+        log.debug("resultMap is built : " + new Date().toString)
       }
       case _ => throw new MapperExecutorException("Unsupported execution engine !")
     }
