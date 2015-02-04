@@ -1,0 +1,1 @@
+CYPHER create index on:cluster(MappingGraphVertexID)

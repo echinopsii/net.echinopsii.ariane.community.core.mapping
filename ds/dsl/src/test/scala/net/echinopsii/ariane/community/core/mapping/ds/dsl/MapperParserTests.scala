@@ -532,4 +532,19 @@ class MapperParserTests extends FunSuite {
     assert(mapperQuery.genQuery===res)
 
   }
+
+  test("mapperQuery140.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mapperQuery140.ccmon")).mkString
+    val res = Source.fromURL(getClass.getResource("/mapperQuery14Result.cypher")).mkString
+    val parsedQ : String = MapperExecutorUtil.mapperQueryToCypherQuery(req)._1
+    assert(parsedQ===res)
+  }
+
+  test("mapperQuery150.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mapperQuery150.ccmon")).mkString
+    val res = Source.fromURL(getClass.getResource("/mapperQuery15Result.cypher")).mkString
+    val parsedQ : String = MapperExecutorUtil.mapperQueryToCypherQuery(req)._1
+    assert(parsedQ===res)
+  }
+
 }
