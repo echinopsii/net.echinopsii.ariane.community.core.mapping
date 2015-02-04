@@ -95,6 +95,33 @@ public class MappingDSGraphDB {
                     return false;
             }
 
+            if (blpImpl.equals(BLUEPRINTS_IMPL_N4J)) {
+                executor.execute("CYPHER create index on:cluster("+MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID+")");
+                executor.execute("CYPHER create index on:cluster("+MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY+")");
+                executor.execute("CYPHER create index on:cluster("+MappingDSGraphPropertyNames.DD_CLUSTER_NAME_KEY+")");
+
+                executor.execute("CYPHER create index on:container("+MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID+")");
+                executor.execute("CYPHER create index on:container("+MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY+")");
+                executor.execute("CYPHER create index on:container("+MappingDSGraphPropertyNames.DD_CONTAINER_PAGATE_KEY+")");
+
+                executor.execute("CYPHER create index on:node("+MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID+")");
+                executor.execute("CYPHER create index on:node("+MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY+")");
+                executor.execute("CYPHER create index on:node("+MappingDSGraphPropertyNames.DD_NODE_NAME_KEY+")");
+
+                executor.execute("CYPHER create index on:gate("+MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID+")");
+                executor.execute("CYPHER create index on:gate("+MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY+")");
+                executor.execute("CYPHER create index on:gate("+MappingDSGraphPropertyNames.DD_GATE_PAEP_KEY+")");
+                executor.execute("CYPHER create index on:gate("+MappingDSGraphPropertyNames.DD_NODE_NAME_KEY+")");
+
+                executor.execute("CYPHER create index on:endpoint("+MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID+")");
+                executor.execute("CYPHER create index on:endpoint("+MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY+")");
+                executor.execute("CYPHER create index on:endpoint("+MappingDSGraphPropertyNames.DD_ENDPOINT_URL_KEY+")");
+
+                executor.execute("CYPHER create index on:transport("+MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID+")");
+                executor.execute("CYPHER create index on:transport("+MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY+")");
+                executor.execute("CYPHER create index on:transport("+MappingDSGraphPropertyNames.DD_TRANSPORT_NAME_KEY+")");
+            }
+
             if (ccgraph instanceof KeyIndexableGraph) {
                 log.debug("Create index for {} ...", MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
                 ((KeyIndexableGraph) ccgraph).createKeyIndex(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID, Vertex.class);
