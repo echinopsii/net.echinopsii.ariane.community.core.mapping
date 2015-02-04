@@ -1,14 +1,12 @@
 
-MATCH startContainers-[:owns]->startContainersContainerPrimaryAdminGate
+MATCH (startContainers:container)-[:owns]->startContainersContainerPrimaryAdminGate
 WHERE
-startContainers.MappingGraphVertexType = "container" AND
 startContainersContainerPrimaryAdminGate.MappingGraphVertexID = startContainers.containerPrimaryAdminGate AND
 (startContainersContainerPrimaryAdminGate.nodeName =~ ".*tibrvrdl03prd01.*" or startContainersContainerPrimaryAdminGate.nodeName =~ ".*tibrvrdl05prd01.*")
 WITH startContainers
 
-MATCH endContainer-[:owns]->endContainerContainerPrimaryAdminGate
+MATCH (endContainer:container)-[:owns]->endContainerContainerPrimaryAdminGate
 WHERE
-endContainer.MappingGraphVertexType = "container" AND
 endContainerContainerPrimaryAdminGate.MappingGraphVertexID = endContainer.containerPrimaryAdminGate AND
 (endContainerContainerPrimaryAdminGate.nodeName =~ ".*tibrvrdwprd01.*")
 WITH startContainers, endContainer

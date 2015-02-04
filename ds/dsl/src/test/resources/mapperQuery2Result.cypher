@@ -1,13 +1,11 @@
 
-MATCH startNode
+MATCH (startNode:node)
 WHERE
-startNode.MappingGraphVertexType = "node" AND
 (startNode.nodeName = "APP6969.tibrvrdl03prd01")
 WITH startNode
 
-MATCH endNode
+MATCH (endNode:node)
 WHERE
-endNode.MappingGraphVertexType = "node" AND
 (endNode.nodeName = "APP6969.tibrvrdl05prd01")
 WITH startNode, endNode
 

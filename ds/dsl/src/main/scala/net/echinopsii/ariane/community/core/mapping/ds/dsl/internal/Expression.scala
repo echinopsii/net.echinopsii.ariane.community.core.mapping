@@ -26,7 +26,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNam
 abstract class Expression() {
   var eType: String
 
-  def toCypherMatch : (String, String)
+  def toCypherMatch(objectType: String) : (String, String)
   def toCypherWhere : String
   def calcType : String
 }
@@ -34,10 +34,10 @@ abstract class Expression() {
 case class IdentifierExp(var eType: String = "", iName: String, var iRoot: Option[IdentifierExp] = None, var iProp: Option[IdentifierExp] = None) extends Expression with Logging {
   override def toString() = if (iRoot!=None) {iRoot.get.toString+"."+iName} else {iName}
 
-  def toCypherMatch : (String,String) = {
+  def toCypherMatch(objectType: String) : (String,String) = {
     var cypherMatch:String = ""
     if (iRoot!=None && (iRoot.get.propertiesDepth == 1 && iRoot.get.iRoot != None)) {
-      cypherMatch=globalRoot.iName+"-[:"+MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY+"]->"+iRoot.get.toCypherWhere
+      cypherMatch="("+globalRoot.iName+":"+objectType+")-[:"+MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY+"]->"+iRoot.get.toCypherWhere
     }
     logger.debug("[IDT ("+iName+") matcher] : "+cypherMatch)
     (cypherMatch,iRoot.get.toCypherWhere+"."+MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID+" = "+iRoot.get.toString)
@@ -78,7 +78,7 @@ case class StringExp(value: String) extends Expression {
   override var eType: String = "String"
   override def toString() = value
 
-  def toCypherMatch : (String,String) = ("","")
+  def toCypherMatch(objectType: String) : (String,String) = ("","")
   def toCypherWhere : String = value
   def calcType : String = eType
 }

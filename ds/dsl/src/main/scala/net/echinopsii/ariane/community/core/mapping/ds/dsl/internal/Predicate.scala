@@ -27,9 +27,9 @@ abstract class Predicate extends Expression {
 case class And(left: Predicate, right: Predicate) extends Predicate with Logging {
   override def toString() = left.toString + " and " + right.toString
 
-  def toCypherMatch : (String,String) = {
-    val lmatcher : (String,String) = left.toCypherMatch
-    val rmatcher : (String,String) = right.toCypherMatch
+  def toCypherMatch(objectType: String) : (String,String) = {
+    val lmatcher : (String,String) = left.toCypherMatch(objectType)
+    val rmatcher : (String,String) = right.toCypherMatch(objectType)
     logger.debug("[AND matcher] left : "+lmatcher+" ; right : " + rmatcher)
 
     var matcher : String = lmatcher._1
@@ -58,9 +58,9 @@ case class And(left: Predicate, right: Predicate) extends Predicate with Logging
 case class Or(left: Predicate, right: Predicate) extends Predicate with Logging {
   override def toString() = left.toString + " or " + right.toString
 
-  def toCypherMatch : (String,String) = {
-    val lmatcher : (String,String) = left.toCypherMatch
-    val rmatcher : (String,String) = right.toCypherMatch
+  def toCypherMatch(objectType: String) : (String,String) = {
+    val lmatcher : (String,String) = left.toCypherMatch(objectType)
+    val rmatcher : (String,String) = right.toCypherMatch(objectType)
     logger.debug("[OR matcher] left : "+lmatcher+" ; right : "+ rmatcher)
 
     var matcher : String = lmatcher._1
@@ -89,9 +89,9 @@ case class Or(left: Predicate, right: Predicate) extends Predicate with Logging 
 case class Ops(left: Expression, right: Expression, ops: String) extends Predicate with Logging {
   override def toString() = left.toString + " " + ops + " " + right.toString
 
-  def toCypherMatch : (String,String) = {
-    val lmatcher : (String,String) = left.toCypherMatch
-    val rmatcher : (String,String) = right.toCypherMatch
+  def toCypherMatch(objectType: String) : (String,String) = {
+    val lmatcher : (String,String) = left.toCypherMatch(objectType)
+    val rmatcher : (String,String) = right.toCypherMatch(objectType)
     logger.debug("[OPS ("+ops+")  matcher] left : "+lmatcher+" ; right : "+rmatcher)
 
     var matcher : String = ""

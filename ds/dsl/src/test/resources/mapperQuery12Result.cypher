@@ -1,21 +1,18 @@
 
-MATCH middleOfficeService-[:owns]->middleOfficeServiceContainerPrimaryAdminGate
+MATCH (middleOfficeService:container)-[:owns]->middleOfficeServiceContainerPrimaryAdminGate
 WHERE
-middleOfficeService.MappingGraphVertexType = "container" AND
 middleOfficeServiceContainerPrimaryAdminGate.MappingGraphVertexID = middleOfficeService.containerPrimaryAdminGate AND
 (middleOfficeServiceContainerPrimaryAdminGate.nodeName =~ "rbqcliadmingate.mo01")
 WITH middleOfficeService
 
-MATCH riskService-[:owns]->riskServiceContainerPrimaryAdminGate
+MATCH (riskService:container)-[:owns]->riskServiceContainerPrimaryAdminGate
 WHERE
-riskService.MappingGraphVertexType = "container" AND
 riskServiceContainerPrimaryAdminGate.MappingGraphVertexID = riskService.containerPrimaryAdminGate AND
 (riskServiceContainerPrimaryAdminGate.nodeName =~ "rbqcliadmingate.risk01")
 WITH middleOfficeService, riskService
 
-MATCH backOfficeService-[:owns]->backOfficeServiceContainerPrimaryAdminGate
+MATCH (backOfficeService:container)-[:owns]->backOfficeServiceContainerPrimaryAdminGate
 WHERE
-backOfficeService.MappingGraphVertexType = "container" AND
 backOfficeServiceContainerPrimaryAdminGate.MappingGraphVertexID = backOfficeService.containerPrimaryAdminGate AND
 (backOfficeServiceContainerPrimaryAdminGate.nodeName =~ "rbqcliadmingate.bo01")
 WITH middleOfficeService, riskService, backOfficeService
@@ -26,15 +23,13 @@ endUnion.MappingGraphVertexID = riskService.MappingGraphVertexID OR
 endUnion.MappingGraphVertexID = backOfficeService.MappingGraphVertexID
 WITH middleOfficeService, endUnion
 
-MATCH rbqNode1EP2
+MATCH (rbqNode1EP2:endpoint)
 WHERE
-rbqNode1EP2.MappingGraphVertexType = "endpoint" AND
 (rbqNode1EP2.endpointURL =~ ".*MiddleOfficeService.*" or rbqNode1EP2.endpointURL =~ ".*RPC/BOQ.*" or rbqNode1EP2.endpointURL =~ ".*RPC/RIQ.*")
 WITH middleOfficeService, endUnion, rbqNode1EP2
 
-MATCH rbqNode2EP1
+MATCH (rbqNode2EP1:endpoint)
 WHERE
-rbqNode2EP1.MappingGraphVertexType = "endpoint" AND
 (rbqNode2EP1.endpointURL =~ ".*MiddleOfficeService.*" or rbqNode2EP1.endpointURL =~ ".*BOQ/BOQ.*" or rbqNode2EP1.endpointURL =~ ".*RIQ/RIQ.*")
 WITH middleOfficeService, endUnion, rbqNode1EP2, rbqNode2EP1
 

@@ -28,14 +28,14 @@ abstract class MapperQueryGen(val startBlock: Block, val linkBlock: Block, val e
 
 case class MapperToCypherQueryGen(override val startBlock: Block, override val linkBlock: Block, override val endBlock: Block) extends MapperQueryGen(startBlock, linkBlock, endBlock) {
   private def cypherBlockBorder(blockLine:(String,(String,Predicate))):String = {
-    val matcher = blockLine._2._2.toCypherMatch
+    val matcher = blockLine._2._2.toCypherMatch(blockLine._2._1)
     var cypher = ""
     if (matcher._1 != "")
       cypher = "\nMATCH " + matcher._1 + "\n"
     else
-      cypher = "\nMATCH " + blockLine._1 + "\n"
+      cypher = "\nMATCH (" + blockLine._1 + ":"+ blockLine._2._1 +")\n"
     cypher += "WHERE\n"
-    cypher += blockLine._1 + "." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY + " = \""+blockLine._2._1+"\" AND\n"
+    //cypher += blockLine._1 + "." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY + " = \""+blockLine._2._1+"\" AND\n"
     if (matcher._2!="")
       cypher += matcher._2 + " AND\n"
     cypher += "(" + blockLine._2._2.toCypherWhere + ")\n"
@@ -48,16 +48,14 @@ case class MapperToCypherQueryGen(override val startBlock: Block, override val l
     blockLine._2._1 match {
       case MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE | MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE => cypher = cypherBlockBorder(blockLine)
       case MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE | MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE => {
-        val matcher = blockLine._2._2.toCypherMatch
-        cypher += "\nMATCH " + blockLine._1 + " -[:"+MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY +"*]-> " + blockLine._1 + "EPs"
+        val matcher = blockLine._2._2.toCypherMatch(blockLine._2._1)
+        cypher += "\nMATCH (" + blockLine._1 + ":" + blockLine._2._1 +") -[:"+MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY +"*]-> (" + blockLine._1 + "EPs:endpoint)"
         if (matcher._1 != "") {
           cypher += ", " + matcher._1 + "\n"
         } else {
           cypher += "\n"
         }
         cypher += "WHERE\n"
-        cypher += blockLine._1 + "EPs.MappingGraphVertexType = \"endpoint\" AND\n"
-        cypher += blockLine._1 + "." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY + " = \""+blockLine._2._1+"\" AND\n"
         if (matcher._2!="")
           cypher += matcher._2 + " AND\n"
 

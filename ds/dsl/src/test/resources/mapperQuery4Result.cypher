@@ -1,14 +1,12 @@
 
-MATCH startContainer-[:owns]->startContainerContainerPrimaryAdminGate
+MATCH (startContainer:container)-[:owns]->startContainerContainerPrimaryAdminGate
 WHERE
-startContainer.MappingGraphVertexType = "container" AND
 startContainerContainerPrimaryAdminGate.MappingGraphVertexID = startContainer.containerPrimaryAdminGate AND
 (startContainerContainerPrimaryAdminGate.nodeName =~ ".*tibrvrdl03prd01.*")
 WITH startContainer
 
-MATCH endEP
+MATCH (endEP:endpoint)
 WHERE
-endEP.MappingGraphVertexType = "endpoint" AND
 (endEP.endpointURL = "multicast-udp-tibrv://tibrvrdl05prd01.lab01.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969")
 WITH startContainer, endEP
 
