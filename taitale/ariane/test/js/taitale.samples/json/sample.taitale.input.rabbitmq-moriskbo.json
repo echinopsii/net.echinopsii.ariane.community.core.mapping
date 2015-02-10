@@ -10,7 +10,8 @@
                 "Network":{
                     "subnetmask":"255.255.255.0",
                     "lan":"lab01.lan1",
-                    "marea":"angelsMind",
+                    "rarea":"angelsMindLAN",
+                    "multicast":true,
                     "type":"LAN",
                     "subnetip":"192.168.33.0"
                 },
@@ -42,7 +43,8 @@
                 "Network":{
                     "subnetmask":"255.255.255.0",
                     "lan":"lab01.lan1",
-                    "marea":"angelsMind",
+                    "rarea":"angelsMindLAN",
+                    "multicast":true,
                     "type":"LAN",
                     "subnetip":"192.168.33.0"
                 },
@@ -263,7 +265,8 @@
                 "Network":{
                     "subnetmask":"255.255.255.0",
                     "lan":"lab01.lan1",
-                    "marea":"angelsMind",
+                    "rarea":"angelsMindLAN",
+                    "multicast":true,
                     "type":"LAN",
                     "subnetip":"192.168.33.0"
                 },
@@ -312,7 +315,8 @@
                 "Network":{
                     "subnetmask":"255.255.255.0",
                     "lan":"lab01.lan1",
-                    "marea":"angelsMind",
+                    "rarea":"angelsMindLAN",
+                    "multicast":true,
                     "type":"LAN",
                     "subnetip":"192.168.33.0"
                 },

@@ -498,8 +498,8 @@ define(
             var sourceLan  = link.getEpSource().epNode.nodeContainer.localisation.lan,
                 sourceArea = link.getEpSource().epNode.nodeContainer.localisation.dcproto.dc + "-" +
                     link.getEpSource().epNode.nodeContainer.localisation.type + " area | " +
-                    ((link.getEpSource().epNode.nodeContainer.localisation.marea != null) ?
-                        link.getEpSource().epNode.nodeContainer.localisation.marea : "no multicast area"),
+                    ((link.getEpSource().epNode.nodeContainer.localisation.rarea != null) ?
+                        link.getEpSource().epNode.nodeContainer.localisation.rarea : "no multicast area"),
                 sourceDC   = link.getEpSource().epNode.nodeContainer.localisation.dcproto.dc;
 
             var targetLan, targetArea, targetDC;
@@ -507,8 +507,8 @@ define(
                 targetLan  = link.getEpTarget().epNode.nodeContainer.localisation.lan;
                 targetArea = link.getEpTarget().epNode.nodeContainer.localisation.dcproto.dc + "-" +
                     link.getEpTarget().epNode.nodeContainer.localisation.type + " area | " +
-                    ((link.getEpTarget().epNode.nodeContainer.localisation.marea != null) ?
-                        link.getEpTarget().epNode.nodeContainer.localisation.marea : "no multicast area");
+                    ((link.getEpTarget().epNode.nodeContainer.localisation.rarea != null) ?
+                        link.getEpTarget().epNode.nodeContainer.localisation.rarea : "no multicast area");
                 targetDC   = link.getEpTarget().epNode.nodeContainer.localisation.dcproto.dc;
             } else {
                 targetLan  = null;

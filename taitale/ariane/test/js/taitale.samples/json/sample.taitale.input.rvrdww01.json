@@ -19,7 +19,9 @@
                     "subnetmask":"255.255.255.0",
                     "lan":"11",
                     "type":"WAN",
-                    "subnetip":"192.168.11.0"
+                    "subnetip":"192.168.11.0",
+                    "rarea": "NY WAN",
+                    "multicast": false
                 },
                 "manualCoord":{
                     "x":275,
@@ -50,7 +52,9 @@
                     "subnetmask":"255.255.255.0",
                     "lan":"12",
                     "type":"MAN",
-                    "subnetip":"192.168.12.0"
+                    "subnetip":"192.168.12.0",
+                    "rarea": "NY MAN",
+                    "multicast": false
                 },
                 "manualCoord":{
                     "x":275,
@@ -81,7 +85,8 @@
                     "subnetmask":"255.255.255.0",
                     "lan":"13",
                     "type":"LAN",
-                    "marea": "lobe temporal droit du ricain",
+                    "rarea": "lobe temporal droit du ricain",
+                    "multicast": true,
                     "subnetip":"192.168.13.0"
                 },
                 "manualCoord":{
@@ -113,7 +118,8 @@
                     "subnetmask":"255.255.255.0",
                     "lan":"15",
                     "type":"LAN",
-                    "marea": "lobe temporal gauche du ricain",
+                    "rarea": "lobe temporal gauche du ricain",
+                    "multicast": true,
                     "subnetip":"192.168.15.0"
                 },
                 "manualCoord":{
@@ -145,7 +151,9 @@
                     "subnetmask":"255.255.255.255",
                     "lan":"01",
                     "type":"WAN",
-                    "subnetip":"192.168.33.5"
+                    "subnetip":"192.168.33.5",
+                    "rarea": "FR WAN",
+                    "multicast": false
                 },
                 "manualCoord":{
                     "x":875,
@@ -176,7 +184,9 @@
                     "subnetmask":"255.255.255.255",
                     "lan":"02",
                     "type":"MAN",
-                    "subnetip":"192.168.33.6"
+                    "subnetip":"192.168.33.6",
+                    "multicast": false,
+                    "rarea": "FR MAN"
                 },
                 "manualCoord":{
                     "x":875,
@@ -206,7 +216,8 @@
                 "Network":{
                     "subnetmask":"255.255.255.0",
                     "lan":"05",
-                    "marea":"mon lobe temporal droit",
+                    "rarea":"mon lobe temporal droit",
+                    "multicast": true,
                     "type":"LAN",
                     "subnetip":"192.168.33.0"
                 },
@@ -238,7 +249,8 @@
                 "Network":{
                     "subnetmask":"255.255.255.0",
                     "lan":"05",
-                    "marea":"mon lobe temporal droit",
+                    "rarea":"mon lobe temporal droit",
+                    "multicast": true,
                     "type":"LAN",
                     "subnetip":"192.168.33.0"
                 },
@@ -271,7 +283,9 @@
                     "subnetmask":"255.255.255.255",
                     "lan":"21",
                     "type":"WAN",
-                    "subnetip":"192.168.21.5"
+                    "subnetip":"192.168.21.5",
+                    "multicast": false,
+                    "rarea": "HK WAN"
                 },
                 "manualCoord":{
                     "x":1475,
@@ -302,7 +316,9 @@
                     "subnetmask":"255.255.255.255",
                     "lan":"22",
                     "type":"MAN",
-                    "subnetip":"192.168.22.5"
+                    "subnetip":"192.168.22.5",
+                    "multicast": false,
+                    "rarea": "HK MAN"
                 },
                 "manualCoord":{
                     "x":1475,
@@ -333,8 +349,9 @@
                     "subnetmask":"255.255.255.255",
                     "lan":"23",
                     "type":"LAN",
-                    "marea": "lobe temporal droit du bridé",
-                    "subnetip":"192.168.23.5"
+                    "rarea": "lobe temporal droit du bridé",
+                    "subnetip":"192.168.23.5",
+                    "multicast": true
                 },
                 "manualCoord":{
                     "x":1350,
@@ -365,7 +382,8 @@
                     "subnetmask":"255.255.255.255",
                     "lan":"23",
                     "type":"LAN",
-                    "marea": "lobe temporal droit du bridé",
+                    "rarea": "lobe temporal droit du bridé",
+                    "multicast": true,
                     "subnetip":"192.168.23.5"
                 },
                 "manualCoord":{

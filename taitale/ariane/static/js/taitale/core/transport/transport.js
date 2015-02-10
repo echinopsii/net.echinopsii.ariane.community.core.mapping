@@ -53,7 +53,7 @@ define(
                     var multicastBus=null;
                     for (var i = 0, ii = multicastBusRegistry.length; i < ii; i++) {
                         if (multicastBusRegistry[i].dcName === localisation.dcproto.dc &&
-                            multicastBusRegistry[i].areaName === localisation.marea) {
+                            multicastBusRegistry[i].areaName === localisation.rarea) {
                             multicastBus =  multicastBusRegistry[i];
                             break;
                         }
@@ -71,7 +71,7 @@ define(
                 if (localisation != null && isMoulticast ) {
                     for (var i = 0, ii = multicastBusRegistry.length; i < ii; i++) {
                         if (multicastBusRegistry[i].dcName === localisation.dcproto.dc &&
-                            multicastBusRegistry[i].areaName === localisation.marea) {
+                            multicastBusRegistry[i].areaName === localisation.rarea) {
                             multicastBus =  multicastBusRegistry[i];
                             break;
                         }

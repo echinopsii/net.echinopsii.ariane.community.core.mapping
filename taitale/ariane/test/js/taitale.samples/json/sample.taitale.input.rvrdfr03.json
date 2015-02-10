@@ -11,8 +11,9 @@
                 "Network":{
                     "subnetmask":"255.255.255.0",
                     "lan":"lab01.lan",
-                    "marea":"lab01.marea",
+                    "rarea":"lab01.rarea",
                     "type":"LAN",
+                    "multicast":true,
                     "subnetip":"192.168.33.0"
                 },
                 "Datacenter":{
@@ -50,8 +51,9 @@
                 "Network":{
                     "subnetmask":"255.255.255.0",
                     "lan":"lab01.lan",
-                    "marea":"lab01.marea",
+                    "rarea":"lab01.rarea",
                     "type":"LAN",
+                    "multicast":true,
                     "subnetip":"192.168.33.0"
                 },
                 "Datacenter":{

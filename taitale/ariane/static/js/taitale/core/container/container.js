@@ -56,7 +56,7 @@ define(
                 this.localisation = prototypes_.create(prototypes_.ntprototype, {
                         dcproto:    prototypes_.create(prototypes_.dcprototype, tmpDatacenter),
                         type:       tmpNetwork.type,
-                        marea:      tmpNetwork.marea,
+                        rarea:      tmpNetwork.rarea,
                         lan:        tmpNetwork.lan,
                         subnetip:   tmpNetwork.subnetip,
                         subnetmask: tmpNetwork.subnetmask
@@ -298,7 +298,7 @@ define(
                                 "<br/> <b>Network type</b> : " + containerRef.properties.Network.type +
                                 "<br/> <b>Network subnet IP</b> : " + containerRef.properties.Network.subnetip +
                                 "<br/> <b>Network subnet mask</b> : " + containerRef.properties.Network.subnetmask +
-                                "<br/> <b>Network multicast area</b> : " + ((containerRef.properties.Network.marea!=null) ? containerRef.properties.Network.marea + "<br/>": "no multicast<br/>") :  "") +
+                                "<br/> <b>Network multicast area</b> : " + ((containerRef.properties.Network.rarea!=null) ? containerRef.properties.Network.rarea + "<br/>": "no multicast<br/>") :  "") +
                             ((containerRef.properties.Datacenter!=null) ? "<br> <b>Datacenter ID </b> : " + containerRef.properties.Datacenter.dc +
                                 "<br/> <b>Datacenter address</b> : " + containerRef.properties.Datacenter.address +
                                 "<br/> <b>Datacenter town</b> : " + containerRef.properties.Datacenter.town +

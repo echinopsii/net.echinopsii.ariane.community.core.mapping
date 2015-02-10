@@ -9,7 +9,8 @@
             "containerProperties":{
                 "Network":{
                     "lan":"lab02.lan4",
-                    "marea":"devil's mind",
+                    "rarea":"devilsMindLAN",
+                    "multicast":true,
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.48.0"
@@ -41,7 +42,8 @@
             "containerProperties":{
                 "Network":{
                     "lan":"lab01.lan2",
-                    "marea":"angelsMind",
+                    "rarea":"angelsMindLan",
+                    "multicast":true,
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.36.0"
@@ -73,6 +75,8 @@
             "containerProperties":{
                 "RVRD_HOSTNAME":"tibrvrdwprd01.lab01.dev.dekatonshivr.echinopsii.net",
                 "Network":{
+                    "rarea": "angelsMindWAN",
+                    "multicast":false,
                     "subnetmask":"255.255.255.0",
                     "lan":"lab01.wan",
                     "type":"WAN",
@@ -111,6 +115,8 @@
             "containerProperties":{
                 "RVRD_HOSTNAME":"tibrvrdm02prd01.lab02.dev.dekatonshivr.echinopsii.net",
                 "Network":{
+                    "rarea": "devilsMindMAN",
+                    "multicast":false,
                     "lan":"lab02.man",
                     "subnetmask":"255.255.255.0",
                     "type":"MAN",
@@ -149,7 +155,8 @@
             "containerProperties":{
                 "Network":{
                     "lan":"lab01.lan2",
-                    "marea":"angelsMind",
+                    "rarea":"angelsMindLan",
+                    "multicast":true,
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.36.0"
@@ -183,7 +190,8 @@
                 "Network":{
                     "subnetmask":"255.255.255.0",
                     "lan":"lab01.lan1",
-                    "marea":"angelsMind",
+                    "rarea":"angelsMindLan",
+                    "multicast":true,
                     "type":"LAN",
                     "subnetip":"192.168.33.0"
                 },
@@ -220,7 +228,8 @@
             "containerProperties":{
                 "RVRD_HOSTNAME":"tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net",
                 "Network":{
-                    "marea":"devil's mind",
+                    "rarea":"devilsMindLAN",
+                    "multicast":true,
                     "lan":"lab02.lan2",
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
@@ -259,7 +268,8 @@
             "containerProperties":{
                 "Network":{
                     "lan":"lab02.lan3",
-                    "marea":"devil's mind",
+                    "rarea":"devilsMindLAN",
+                    "multicast":true,
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.47.0"
@@ -291,7 +301,8 @@
             "containerProperties":{
                 "Network":{
                     "lan":"lab01.lan3",
-                    "marea":"angelsMind",
+                    "rarea":"angelsMindLan",
+                    "multicast":true,
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.37.0"
@@ -325,7 +336,8 @@
                 "Network":{
                     "subnetmask":"255.255.255.0",
                     "lan":"lab01.lan1",
-                    "marea":"angelsMind",
+                    "rarea":"angelsMindLan",
+                    "multicast":true,
                     "type":"LAN",
                     "subnetip":"192.168.33.0"
                 },
@@ -362,7 +374,8 @@
             "containerProperties":{
                 "Network":{
                     "lan":"lab02.lan3",
-                    "marea":"devil's mind",
+                    "rarea":"devilsMindLAN",
+                    "multicast":true,
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.47.0"
@@ -394,7 +407,8 @@
             "containerProperties":{
                 "Network":{
                     "lan":"lab01.lan3",
-                    "marea":"angelsMind",
+                    "rarea":"angelsMindLan",
+                    "multicast":true,
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.37.0"
@@ -426,7 +440,8 @@
             "containerProperties":{
                 "Network":{
                     "lan":"lab02.lan4",
-                    "marea":"devil's mind",
+                    "rarea":"devilsMindLAN",
+                    "multicast":true,
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.48.0"
@@ -458,7 +473,8 @@
             "containerProperties":{
                 "RVRD_HOSTNAME":"tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net",
                 "Network":{
-                    "marea":"devil's mind",
+                    "rarea":"devilsMindLAN",
+                    "multicast":true,
                     "lan":"lab02.lan1",
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
@@ -497,6 +513,8 @@
             "containerProperties":{
                 "RVRD_HOSTNAME":"tibrvrdmprd01.lab01.dev.dekatonshivr.echinopsii.net",
                 "Network":{
+                    "rarea":"angelsMindMAN",
+                    "multicast":false,
                     "subnetmask":"255.255.255.0",
                     "lan":"lab01.man",
                     "type":"MAN",
@@ -535,6 +553,8 @@
             "containerProperties":{
                 "RVRD_HOSTNAME":"tibrvrdw02prd01.lab02.dev.dekatonshivr.echinopsii.net",
                 "Network":{
+                    "rarea":"devilsMindWAN",
+                    "multicast":true,
                     "lan":"lab02.wan",
                     "subnetmask":"255.255.255.0",
                     "type":"WAN",
@@ -1007,7 +1027,7 @@
                     "color":"e8a25d",
                     "name":"APP"
                 },
-                "RVRD_MULTICAST_AREA":"angelsMind",
+                "RVRD_MULTICAST_AREA":"angelsMindLan",
                 "RVRD_LOCALNT_SERVICE":6969,
                 "RVRD_LOCALNT_ISUB":[
                     "FR.APP.>-weight:10"
@@ -1130,7 +1150,7 @@
                     "color":"e8a25d",
                     "name":"APP"
                 },
-                "RVRD_MULTICAST_AREA":"angelsMind",
+                "RVRD_MULTICAST_AREA":"angelsMindLan",
                 "RVRD_LOCALNT_SERVICE":6969,
                 "RVRD_LOCALNT_ISUB":[
                     "FR.APP.>-weight:10"
@@ -1322,7 +1342,7 @@
     "transports":[
         {
             "transportID":140,
-            "transportName":"multicast-udp-tibrv://devilsMind;239.69.69.69",
+            "transportName":"multicast-udp-tibrv://devilsMindLan;239.69.69.69",
             "transportProperties":{
                 "primaryApplication":{
                     "color":"e8a25d",
@@ -1333,7 +1353,7 @@
         },
         {
             "transportID":8,
-            "transportName":"multicast-udp-tibrv://angelsMind;239.69.69.69",
+            "transportName":"multicast-udp-tibrv://angelsMindLan;239.69.69.69",
             "transportProperties":{
                 "primaryApplication":{
                     "color":"e8a25d",

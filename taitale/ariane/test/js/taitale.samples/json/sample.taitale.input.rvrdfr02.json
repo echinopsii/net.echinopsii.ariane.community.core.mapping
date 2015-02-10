@@ -11,7 +11,8 @@
                 "Network":{
                     "subnetmask":"255.255.255.0",
                     "lan":"lab01.lan",
-                    "marea":"lab01.marea",
+                    "rarea":"lab01.rarea",
+                    "multicast":true,
                     "type":"LAN",
                     "subnetip":"192.168.33.0"
                 },
@@ -50,7 +51,8 @@
                 "Network":{
                     "subnetmask":"255.255.255.0",
                     "lan":"lab01.lan",
-                    "marea":"lab01.marea",
+                    "rarea":"lab01.rarea",
+                    "multicast":true,
                     "type":"LAN",
                     "subnetip":"192.168.33.0"
                 },
@@ -89,6 +91,8 @@
                 "Network":{
                     "subnetmask":"255.255.255.255",
                     "lan":"lab01.man",
+                    "rarea":"lab01 (MAN)",
+                    "multicast":false,
                     "type":"MAN",
                     "subnetip":"192.168.33.6"
                 },

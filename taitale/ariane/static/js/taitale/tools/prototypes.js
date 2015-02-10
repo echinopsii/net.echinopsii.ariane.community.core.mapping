@@ -44,7 +44,7 @@ define( function() {
                     (
                         this.dcproto.equal(that.dcproto) &&
                         this.type===that.type &&
-                        this.marea===that.marea &&
+                        this.rarea===that.rarea &&
                         this.lan===that.lan &&
                         this.subnetip===that.subnetip &&
                         this.subnetmask===that.subnetmask
@@ -55,7 +55,7 @@ define( function() {
                 return 'Network location:'   +
                     '\n\t Datacenter : \n\t' + this.dcproto.toString() +
                     '\n\t Type : '           + this.type +
-                    '\n\t Multicast Area: '  + this.marea +
+                    '\n\t Routing Area: '    + this.rarea +
                     '\n\t LAN : '            + this.lan +
                     '\n\t Subnet IP: '       + this.subnetip +
                     '\n\t Subnet Mask: '     + this.subnetmask;
@@ -67,7 +67,8 @@ define( function() {
                 return {
                     dc   : this.dcproto.dc,
                     type : this.type,
-                    marea: this.marea
+                    rarea: this.rarea,
+                    multicast: this.multicast
                 };
             },
             equalArea: function(that) {
@@ -75,7 +76,7 @@ define( function() {
                     (
                         this.dcproto.equal(that.dcproto) &&
                         this.type === that.type &&
-                        this.marea === that.marea
+                        this.rarea === that.rarea
                     )
                 return ret;
             },
@@ -83,7 +84,7 @@ define( function() {
                 return {
                     dc         : this.dcproto.dc,
                     type       : this.type,
-                    area       : this.marea,
+                    area       : this.rarea,
                     lan        : this.lan,
                     subnetip   : this.subnetip,
                     subnetmask : this.subnetmask

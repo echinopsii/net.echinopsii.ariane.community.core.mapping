@@ -28,9 +28,9 @@ define(
             this.ID            = tid*1000+ridx;
 
             this.dcName        = localisation.getDatacenter().dc;
-            this.areaName      = localisation.getArea().marea;
+            this.areaName      = localisation.getArea().rarea;
             this.areaLongName  = localisation.dcproto.dc + "-" + localisation.type + " area | " +
-                ((localisation.marea != null) ? localisation.marea : "no multicast area");;
+                ((localisation.rarea != null) ? localisation.rarea : "no multicast area");;
             this.multicastAddr = multicastAddr_;
             this.properties    = properties_;
             this.isInserted    = false;

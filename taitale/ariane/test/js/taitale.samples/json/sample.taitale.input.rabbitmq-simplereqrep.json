@@ -8,7 +8,8 @@
             "containerProperties":{
                 "Network":{
                     "lan":"lab01.lan2",
-                    "marea":"angelsMind",
+                    "rarea":"angelsMind",
+                    "multicast":true,
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.36.0"
@@ -43,7 +44,8 @@
             "containerProperties":{
                 "Network":{
                     "lan":"lab01.lan2",
-                    "marea":"angelsMind",
+                    "rarea":"angelsMind",
+                    "multicast":true,
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.36.0"
@@ -79,7 +81,8 @@
             "containerProperties":{
                 "Network":{
                     "lan":"lab01.lan2",
-                    "marea":"angelsMind",
+                    "rarea":"angelsMind",
+                    "multicast":true,
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.36.0"

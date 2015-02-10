@@ -80,10 +80,10 @@ define(
             this.menuFieldStopEditTitle   = "Edition mode OFF";
 
             this.areaName = this.areaDef.dc + "-" + this.areaDef.type + " area | " +
-                ((this.areaDef.marea != null) ? this.areaDef.marea : "no multicast area");
+                ((this.areaDef.rarea != null) ? this.areaDef.rarea : "no multicast area");
 
             this.areaNameHat = this.areaDef.type + " area | " +
-                ((this.areaDef.marea != null) ? this.areaDef.marea : "no multicast area");
+                ((this.areaDef.rarea != null) ? this.areaDef.rarea : "no multicast area");
 
             this.areaHat  = new areaHat(this.areaNameHat, params.area_txtTitle, params.area_color);
 
@@ -321,7 +321,7 @@ define(
             };
 
             this.defEqual = function(areaDef_) {
-                return (this.areaDef.dc===areaDef_.dc && this.areaDef.type===areaDef_.type && this.areaDef.marea===areaDef_.marea);
+                return (this.areaDef.dc===areaDef_.dc && this.areaDef.type===areaDef_.type && this.areaDef.rarea===areaDef_.rarea);
             };
 
             this.setMoveJail = function(minJailX_, minJailY_, maxJailX_, maxJailY_) {
@@ -654,7 +654,7 @@ define(
 
                 this.rect.remove();
 
-                var title    = this.areaDef.type + " area | " + ((this.areaDef.marea != null) ? this.areaDef.marea : "no multicast area");
+                var title    = this.areaDef.type + " area | " + ((this.areaDef.rarea != null) ? this.areaDef.rarea : "no multicast area");
                 this.rect     = this.r.rect(this.extrx, this.extry, this.extwidth, this.extheight, 0);
 
 

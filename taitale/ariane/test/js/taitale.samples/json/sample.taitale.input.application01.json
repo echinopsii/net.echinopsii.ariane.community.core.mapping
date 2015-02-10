@@ -9,7 +9,8 @@
             "containerProperties":{
                 "Network":{
                     "lan":"lab01.lan2",
-                    "marea":"angelsMind",
+                    "rarea":"angelsMindLAN",
+                    "multicast": true,
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.36.0"
@@ -42,7 +43,8 @@
                 "Network":{
                     "subnetmask":"255.255.255.0",
                     "lan":"lab01.lan4",
-                    "marea":"angelsMind",
+                    "rarea":"angelsMindLAN",
+                    "multicast": true,
                     "type":"LAN",
                     "subnetip":"192.168.38.0"
                 },
@@ -73,7 +75,8 @@
             "containerProperties":{
                 "Network":{
                     "lan":"lab01.lan4",
-                    "marea":"angelsMind",
+                    "rarea":"angelsMindLAN",
+                    "multicast": true,
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.38.0"
@@ -105,7 +108,8 @@
             "containerProperties":{
                 "Network":{
                     "lan":"lab01.lan3",
-                    "marea":"angelsMind",
+                    "rarea":"angelsMindLAN",
+                    "multicast": true,
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.37.0"
@@ -138,7 +142,8 @@
                 "Network":{
                     "subnetmask":"255.255.255.0",
                     "lan":"lab01.lan4",
-                    "marea":"angelsMind",
+                    "rarea":"angelsMindLAN",
+                    "multicast": true,
                     "type":"LAN",
                     "subnetip":"192.168.38.0"
                 },
@@ -169,7 +174,8 @@
             "containerProperties":{
                 "Network":{
                     "lan":"lab01.lan2",
-                    "marea":"angelsMind",
+                    "rarea":"angelsMindLAN",
+                    "multicast": true,
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.36.0"
@@ -201,7 +207,8 @@
             "containerProperties":{
                 "Network":{
                     "lan":"lab01.lan3",
-                    "marea":"angelsMind",
+                    "rarea":"angelsMindLAN",
+                    "multicast": true,
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.37.0"
@@ -233,7 +240,8 @@
             "containerProperties":{
                 "Network":{
                     "lan":"lab01.lan4",
-                    "marea":"angelsMind",
+                    "rarea":"angelsMindLAN",
+                    "multicast": true,
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.38.0"
@@ -265,7 +273,8 @@
             "containerProperties":{
                 "Network":{
                     "lan":"lab01.lan5",
-                    "marea":"angelsMind",
+                    "rarea":"angelsMindLAN",
+                    "multicast": true,
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.39.0"
@@ -682,7 +691,7 @@
     "transports":[
         {
             "transportID":34,
-            "transportName":"multicast-udp-tibrv://angelsMind;239.69.69.69",
+            "transportName":"multicast-udp-tibrv://angelsMindLAN;239.69.69.69",
             "transportProperties":{
                 "primaryApplication":{
                     "color":"e3a164",
@@ -705,7 +714,7 @@
         },
         {
             "transportID":164,
-            "transportName":"multicast-udp-tibrv://angelsMind;239.69.66.69",
+            "transportName":"multicast-udp-tibrv://angelsMindLAN;239.69.66.69",
             "transportProperties":{
                 "primaryApplication":{
                     "color":"852e48",

@@ -11,7 +11,8 @@
                 "Network":{
                     "subnetmask":"255.255.255.0",
                     "lan":"lab01.lan",
-                    "marea":"lab01.marea",
+                    "rarea":"lab01.rarea",
+                    "multicast":true,
                     "type":"LAN",
                     "subnetip":"192.168.33.0"
                 },
@@ -51,6 +52,8 @@
                     "subnetmask":"255.255.255.255",
                     "lan":"lab01.man",
                     "type":"MAN",
+                    "rarea":"PARIS MAN",
+                    "multicast":false,
                     "subnetip":"192.168.33.6"
                 },
                 "Datacenter":{
@@ -86,7 +89,8 @@
             "containerProperties":{
                 "RVRD_HOSTNAME":"tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net",
                 "Network":{
-                    "marea":"devil's mind",
+                    "rarea":"devil's mind",
+                    "multicast": true,
                     "lan":"lab02.lan",
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
@@ -128,6 +132,8 @@
                     "lan":"lab02.man",
                     "subnetmask":"255.255.255.0",
                     "type":"MAN",
+                    "rarea":"HELL MAN",
+                    "multicast":false,
                     "subnetip":"192.168.45.0"
                 },
                 "Datacenter":{
@@ -163,6 +169,8 @@
             "containerProperties":{
                 "RVRD_HOSTNAME":"tibrvrdw02prd01.lab02.dev.dekatonshivr.echinopsii.net",
                 "Network":{
+                    "rarea":"HELL WAN",
+                    "multicast":false,
                     "lan":"lab02.wan",
                     "subnetmask":"255.255.255.0",
                     "type":"WAN",
@@ -203,7 +211,8 @@
                 "Network":{
                     "subnetmask":"255.255.255.0",
                     "lan":"lab01.lan",
-                    "marea":"lab01.marea",
+                    "rarea":"lab01.rarea",
+                    "multicast":true,
                     "type":"LAN",
                     "subnetip":"192.168.33.0"
                 },
@@ -242,6 +251,8 @@
                 "Network":{
                     "subnetmask":"255.255.255.255",
                     "lan":"lab01.wan",
+                    "rarea":"PARIS WAN",
+                    "multicast":false,
                     "type":"WAN",
                     "subnetip":"192.168.33.5"
                 },
@@ -278,7 +289,8 @@
             "containerProperties":{
                 "RVRD_HOSTNAME":"tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net",
                 "Network":{
-                    "marea":"devil's mind",
+                    "rarea":"devil's mind",
+                    "multicast":true,
                     "lan":"lab02.lan2",
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
