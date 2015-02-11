@@ -47,7 +47,8 @@ define( function() {
                         this.rarea===that.rarea &&
                         this.lan===that.lan &&
                         this.subnetip===that.subnetip &&
-                        this.subnetmask===that.subnetmask
+                        this.subnetmask===that.subnetmask &&
+                        this.multicast===that.multicast
                     );
                 return ret;
             },
@@ -56,6 +57,7 @@ define( function() {
                     '\n\t Datacenter : \n\t' + this.dcproto.toString() +
                     '\n\t Type : '           + this.type +
                     '\n\t Routing Area: '    + this.rarea +
+                    '\n\t Multicast:'        + this.multicast +
                     '\n\t LAN : '            + this.lan +
                     '\n\t Subnet IP: '       + this.subnetip +
                     '\n\t Subnet Mask: '     + this.subnetmask;
@@ -76,7 +78,8 @@ define( function() {
                     (
                         this.dcproto.equal(that.dcproto) &&
                         this.type === that.type &&
-                        this.rarea === that.rarea
+                        this.rarea === that.rarea &&
+                        this.multicast === that.multicast
                     )
                 return ret;
             },
@@ -85,6 +88,7 @@ define( function() {
                     dc         : this.dcproto.dc,
                     type       : this.type,
                     area       : this.rarea,
+                    multicast  : this.multicast,
                     lan        : this.lan,
                     subnetip   : this.subnetip,
                     subnetmask : this.subnetmask

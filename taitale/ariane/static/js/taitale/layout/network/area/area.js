@@ -79,11 +79,9 @@ define(
             this.menuFieldStartEditTitle  = "Edition mode ON";
             this.menuFieldStopEditTitle   = "Edition mode OFF";
 
-            this.areaName = this.areaDef.dc + "-" + this.areaDef.type + " area | " +
-                ((this.areaDef.rarea != null) ? this.areaDef.rarea : "no multicast area");
+            this.areaName = this.areaDef.dc + "-" + this.areaDef.type + " area | " + this.areaDef.rarea;
 
-            this.areaNameHat = this.areaDef.type + " area | " +
-                ((this.areaDef.rarea != null) ? this.areaDef.rarea : "no multicast area");
+            this.areaNameHat = this.areaDef.rarea + " | multicast : " + this.areaDef.multicast;
 
             this.areaHat  = new areaHat(this.areaNameHat, params.area_txtTitle, params.area_color);
 

@@ -57,6 +57,7 @@ define(
                         dcproto:    prototypes_.create(prototypes_.dcprototype, tmpDatacenter),
                         type:       tmpNetwork.type,
                         rarea:      tmpNetwork.rarea,
+                        multicast:  tmpNetwork.multicast,
                         lan:        tmpNetwork.lan,
                         subnetip:   tmpNetwork.subnetip,
                         subnetmask: tmpNetwork.subnetmask
@@ -298,7 +299,7 @@ define(
                                 "<br/> <b>Network type</b> : " + containerRef.properties.Network.type +
                                 "<br/> <b>Network subnet IP</b> : " + containerRef.properties.Network.subnetip +
                                 "<br/> <b>Network subnet mask</b> : " + containerRef.properties.Network.subnetmask +
-                                "<br/> <b>Network multicast area</b> : " + ((containerRef.properties.Network.rarea!=null) ? containerRef.properties.Network.rarea + "<br/>": "no multicast<br/>") :  "") +
+                                "<br/> <b>Network routing area</b> : " + containerRef.properties.Network.rarea :  "") +
                             ((containerRef.properties.Datacenter!=null) ? "<br> <b>Datacenter ID </b> : " + containerRef.properties.Datacenter.dc +
                                 "<br/> <b>Datacenter address</b> : " + containerRef.properties.Datacenter.address +
                                 "<br/> <b>Datacenter town</b> : " + containerRef.properties.Datacenter.town +
