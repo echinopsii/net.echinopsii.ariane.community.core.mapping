@@ -10,7 +10,7 @@
                 "Network":{
                     "lan":"lab02.lan3",
                     "rarea":"devilsMindLAN",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.47.0"
@@ -46,7 +46,7 @@
                     "lan":"lab01.wan",
                     "type":"WAN",
                     "rarea":"angelsMindWAN",
-                    "multicast": false,
+                    "multicast": "FILTERED",
                     "subnetip":"192.168.35.0"
                 },
                 "Datacenter":{
@@ -83,7 +83,7 @@
                 "Network":{
                     "lan":"lab02.lan5",
                     "rarea":"devilsMindLAN",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.49.0"
@@ -116,7 +116,7 @@
                 "Network":{
                     "lan":"lab01.lan5",
                     "rarea":"angelsMindLAN",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.39.0"
@@ -149,7 +149,7 @@
                 "Network":{
                     "lan":"lab02.lan5",
                     "rarea":"devilsMindLAN",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.49.0"
@@ -185,7 +185,7 @@
                     "lan":"lab01.man",
                     "type":"MAN",
                     "rarea": "angelsMindLAN",
-                    "multicast": false,
+                    "multicast": "FILTERED",
                     "subnetip":"192.168.34.0"
                 },
                 "Datacenter":{
@@ -222,7 +222,7 @@
                 "Network":{
                     "lan":"lab01.lan4",
                     "rarea":"angelsMindLAN",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.38.0"
@@ -255,7 +255,7 @@
                 "Network":{
                     "lan":"lab02.lan3",
                     "rarea":"devilsMindLAN",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.47.0"
@@ -288,7 +288,7 @@
                 "Network":{
                     "lan":"lab02.lan6",
                     "rarea":"devilsMindLAN",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.50.0"
@@ -323,7 +323,7 @@
                     "subnetmask":"255.255.255.0",
                     "lan":"lab01.lan1",
                     "rarea":"angelsMindLAN",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "type":"LAN",
                     "subnetip":"192.168.33.0"
                 },
@@ -361,7 +361,7 @@
                 "Network":{
                     "lan":"lab01.lan2",
                     "rarea":"angelsMindLAN",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.36.0"
@@ -394,7 +394,7 @@
                 "Network":{
                     "lan":"lab01.lan4",
                     "rarea":"angelsMindLAN",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.38.0"
@@ -427,7 +427,7 @@
                 "Network":{
                     "lan":"lab02.lan4",
                     "rarea":"devilsMindLAN",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.48.0"
@@ -460,7 +460,7 @@
                 "Network":{
                     "lan":"lab02.lan6",
                     "rarea":"devilsMindLAN",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.50.0"
@@ -495,7 +495,7 @@
                     "subnetmask":"255.255.255.0",
                     "lan":"lab01.lan1",
                     "rarea":"angelsMindLAN",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "type":"LAN",
                     "subnetip":"192.168.33.0"
                 },
@@ -533,7 +533,7 @@
                 "Network":{
                     "lan":"lab02.lan4",
                     "rarea":"devilsMindLAN",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.48.0"
@@ -566,7 +566,7 @@
                 "Network":{
                     "lan":"lab01.lan5",
                     "rarea":"angelsMindLAN",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.39.0"
@@ -599,7 +599,7 @@
                 "Network":{
                     "lan":"lab01.lan5",
                     "rarea":"angelsMindLAN",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.39.0"
@@ -632,7 +632,7 @@
                 "Network":{
                     "lan":"lab01.lan3",
                     "rarea":"angelsMindLAN",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.37.0"
@@ -666,7 +666,7 @@
                 "Network":{
                     "rarea":"devilsMindLAN",
                     "lan":"lab02.lan1",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.43.0"
@@ -705,7 +705,7 @@
                 "Network":{
                     "lan":"lab02.lan5",
                     "rarea":"devilsMindLAN",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.49.0"
@@ -738,7 +738,7 @@
                 "Network":{
                     "lan":"lab01.lan5",
                     "rarea":"angelsMindLAN",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.39.0"
@@ -772,7 +772,7 @@
                 "Network":{
                     "rarea":"devilsMindLAN",
                     "lan":"lab02.lan2",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.44.0"
@@ -811,7 +811,7 @@
                 "Network":{
                     "lan":"lab01.lan4",
                     "rarea":"angelsMindLAN",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.38.0"
@@ -844,7 +844,7 @@
                 "Network":{
                     "lan":"lab02.lan5",
                     "rarea":"devilsMindLAN",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.49.0"
@@ -877,7 +877,7 @@
                 "Network":{
                     "lan":"lab01.lan2",
                     "rarea":"angelsMindLAN",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.36.0"
@@ -910,7 +910,7 @@
                 "Network":{
                     "lan":"lab01.lan4",
                     "rarea":"angelsMindLAN",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.38.0"
@@ -943,7 +943,7 @@
                 "Network":{
                     "lan":"lab02.lan6",
                     "rarea":"devilsMindLAN",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.50.0"
@@ -977,7 +977,7 @@
                 "Network":{
                     "lan":"lab02.man",
                     "rarea":"devilsMindMAN",
-                    "multicast": false,
+                    "multicast": "FILTERED",
                     "subnetmask":"255.255.255.0",
                     "type":"MAN",
                     "subnetip":"192.168.45.0"
@@ -1016,7 +1016,7 @@
                 "Network":{
                     "lan":"lab01.lan3",
                     "rarea":"angelsMindLAN",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.37.0"
@@ -1049,7 +1049,7 @@
                 "Network":{
                     "lan":"lab02.lan6",
                     "rarea":"devilsMindLAN",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.50.0"
@@ -1083,7 +1083,7 @@
                 "Network":{
                     "lan":"lab02.wan",
                     "rarea":"devilsMindMAN",
-                    "multicast": false,
+                    "multicast": "FILTERED",
                     "subnetmask":"255.255.255.0",
                     "type":"WAN",
                     "subnetip":"192.168.46.0"

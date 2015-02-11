@@ -11,7 +11,7 @@
                     "subnetmask":"255.255.255.0",
                     "lan":"lab01.lan1",
                     "rarea":"angelsMindLAN",
-                    "multicast":true,
+                    "multicast":"NOLIMIT",
                     "type":"LAN",
                     "subnetip":"192.168.33.0"
                 },
@@ -44,7 +44,7 @@
                     "subnetmask":"255.255.255.0",
                     "lan":"lab01.lan1",
                     "rarea":"angelsMindLAN",
-                    "multicast":true,
+                    "multicast":"NOLIMIT",
                     "type":"LAN",
                     "subnetip":"192.168.33.0"
                 },
@@ -316,7 +316,7 @@
                     "subnetmask":"255.255.255.0",
                     "lan":"lab01.lan1",
                     "rarea":"angelsMindLAN",
-                    "multicast":true,
+                    "multicast":"NOLIMIT",
                     "type":"LAN",
                     "subnetip":"192.168.33.0"
                 },

@@ -12,7 +12,7 @@
                     "subnetmask":"255.255.255.0",
                     "lan":"05",
                     "rarea":"mon lobe temporal droit",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "type":"LAN",
                     "subnetip":"192.168.33.0"
                 },
@@ -56,7 +56,7 @@
                     "subnetmask":"255.255.255.0",
                     "lan":"05",
                     "rarea":"mon lobe temporal droit",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "type":"LAN",
                     "subnetip":"192.168.33.0"
                 },
@@ -99,7 +99,7 @@
                     "subnetmask":"255.255.255.0",
                     "lan":"06",
                     "rarea":"mon lobe temporal droit",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "type":"LAN",
                     "subnetip":"192.168.34.0"
                 },
@@ -136,7 +136,7 @@
                     "subnetmask":"255.255.255.0",
                     "lan":"07",
                     "rarea":"mon lobe temporal droit",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "type":"LAN",
                     "subnetip":"192.168.35.0"
                 },
@@ -173,7 +173,7 @@
                     "subnetmask":"255.255.255.0",
                     "lan":"08",
                     "rarea":"mon lobe temporal droit",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "type":"LAN",
                     "subnetip":"192.168.36.0"
                 },
@@ -210,7 +210,7 @@
                     "subnetmask":"255.255.255.0",
                     "lan":"03",
                     "rarea":"mon lobe temporal droit",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "type":"LAN",
                     "subnetip":"192.168.32.0"
                 },
@@ -247,7 +247,7 @@
                     "subnetmask":"255.255.255.0",
                     "lan":"02",
                     "rarea":"mon lobe temporal droit",
-                    "multicast": true,
+                    "multicast": "NOLIMIT",
                     "type":"LAN",
                     "subnetip":"192.168.31.0"
                 },

@@ -9,7 +9,7 @@
                 "Network":{
                     "lan":"lab01.lan2",
                     "rarea":"angelsMind",
-                    "multicast":true,
+                    "multicast":"NOLIMIT",
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.36.0"
@@ -45,7 +45,7 @@
                 "Network":{
                     "lan":"lab01.lan2",
                     "rarea":"angelsMind",
-                    "multicast":true,
+                    "multicast":"NOLIMIT",
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.36.0"
@@ -82,7 +82,7 @@
                 "Network":{
                     "lan":"lab01.lan2",
                     "rarea":"angelsMind",
-                    "multicast":true,
+                    "multicast":"NOLIMIT",
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.36.0"
@@ -118,7 +118,7 @@
                 "Network":{
                     "lan":"lab01.lan2",
                     "rarea":"angelsMind",
-                    "multicast":true,
+                    "multicast":"NOLIMIT",
                     "subnetmask":"255.255.255.0",
                     "type":"LAN",
                     "subnetip":"192.168.36.0"

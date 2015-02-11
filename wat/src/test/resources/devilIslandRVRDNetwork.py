@@ -45,7 +45,7 @@ network = {
     'type': ['String', 'LAN'],
     'lan': ['String', 'lab02.lan1'],
     'rarea': ['String', "devilsmindLAN"],
-    'multicast': ['boolean', "True"]
+    'multicast':['String', "NOLIMIT"]
 }
 containerProperty = {'ID': containerID, 'propertyName': 'Network', 'propertyValue': json.dumps(network), 'propertyType': 'map'}
 r = s.get(srvurl + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
@@ -565,7 +565,7 @@ network = {
     'type': ['String', 'LAN'],
     'lan': ['String', 'lab02.lan2'],
     'rarea': ['String', "devilsmindLAN"],
-    'multicast': ['boolean', "True"]
+    'multicast':['String', "NOLIMIT"]
 }
 containerProperty = {'ID': containerID, 'propertyName': 'Network', 'propertyValue': json.dumps(network), 'propertyType': 'map'}
 r = s.get(srvurl + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
@@ -1207,7 +1207,7 @@ network = {
     'type': ['String', 'MAN'],
     'lan': ['String', 'lab02.man'],
     'rarea': ['String', "devilsmindMAN"],
-    'multicast': ['boolean', "False"]
+    'multicast':['String', "FILTERED"]
 }
 containerProperty = {'ID': containerID, 'propertyName': 'Network', 'propertyValue': json.dumps(network), 'propertyType': 'map'}
 r = s.get(srvurl + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
@@ -1369,7 +1369,7 @@ network = {
     'type': ['String', 'WAN'],
     'lan': ['String', 'lab02.wan'],
     'rarea': ['String', "devilsmindWAN"],
-    'multicast': ['boolean', "False"]
+    'multicast':['String', "FILTERED"]
 }
 containerProperty = {'ID': containerID, 'propertyName': 'Network', 'propertyValue': json.dumps(network), 'propertyType': 'map'}
 r = s.get(srvurl + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)

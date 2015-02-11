@@ -12,7 +12,7 @@
                     "subnetmask":"255.255.255.0",
                     "lan":"lab01.lan",
                     "rarea":"lab01.rarea",
-                    "multicast":true,
+                    "multicast":"NOLIMIT",
                     "type":"LAN",
                     "subnetip":"192.168.33.0"
                 },
@@ -52,7 +52,7 @@
                     "subnetmask":"255.255.255.0",
                     "lan":"lab01.lan",
                     "rarea":"lab01.rarea",
-                    "multicast":true,
+                    "multicast":"NOLIMIT",
                     "type":"LAN",
                     "subnetip":"192.168.33.0"
                 },
@@ -92,7 +92,7 @@
                     "subnetmask":"255.255.255.255",
                     "lan":"lab01.man",
                     "rarea":"lab01 (MAN)",
-                    "multicast":false,
+                    "multicast":"FILTERED",
                     "type":"MAN",
                     "subnetip":"192.168.33.6"
                 },
@@ -173,7 +173,7 @@
                     "name":"APP"
                 },
                 "RVRD_NEIGHBD_COST":1,
-                "RVRD_NEIGHBD_COMP":false,
+                "RVRD_NEIGHBD_COMP":"FILTERED",
                 "RVRD_NEIGHBD_TYPE":0,
                 "RVRD_NEIGHBD_LPORT":6969,
                 "RVRD_NEIGHBD_RPORT":-1,

@@ -12,7 +12,7 @@
                     "subnetmask":"255.255.255.0",
                     "lan":"05",
                     "rarea":"mon lobe temporal droit (LAN)",
-                    "multicast":true,
+                    "multicast":"NOLIMIT",
                     "type":"LAN",
                     "subnetip":"192.168.33.0"
                 },
@@ -56,7 +56,7 @@
                     "subnetmask":"255.255.255.255",
                     "lan":"02",
                     "rarea":"cervelet (MAN)",
-                    "multicast":false,
+                    "multicast":"FILTERED",
                     "type":"MAN",
                     "subnetip":"192.168.33.6"
                 },
@@ -99,7 +99,7 @@
                 "Network":{
                     "subnetmask":"255.255.255.255",
                     "rarea":"Moelle epiniere (WAN)",
-                    "multicast":false,
+                    "multicast":"FILTERED",
                     "lan":"01",
                     "type":"WAN",
                     "subnetip":"192.168.33.5"
@@ -144,7 +144,7 @@
                     "subnetmask":"255.255.255.0",
                     "lan":"05",
                     "rarea":"mon lobe temporal droit",
-                    "multicast":true,
+                    "multicast":"NOLIMIT",
                     "type":"LAN",
                     "subnetip":"192.168.33.0"
                 },

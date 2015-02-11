@@ -13,7 +13,7 @@
                     "lan":"lab01.lan",
                     "rarea":"lab01.rarea",
                     "type":"LAN",
-                    "multicast":true,
+                    "multicast":"NOLIMIT",
                     "subnetip":"192.168.33.0"
                 },
                 "Datacenter":{
@@ -53,7 +53,7 @@
                     "lan":"lab01.lan",
                     "rarea":"lab01.rarea",
                     "type":"LAN",
-                    "multicast":true,
+                    "multicast":"NOLIMIT",
                     "subnetip":"192.168.33.0"
                 },
                 "Datacenter":{

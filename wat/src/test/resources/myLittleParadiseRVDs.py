@@ -41,7 +41,7 @@ network = {
     'type': ['String', 'LAN'],
     'lan': ['String', 'lab01.lan2'],
     'rarea': ['String', "angelsMindLAN"],
-    'multicast': ['boolean', "True"]
+    'multicast':['String', "NOLIMIT"]
 }
 containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
 r = s.get(srvurl + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
@@ -123,7 +123,7 @@ network = {
     'type': ['String', 'LAN'],
     'lan': ['String', 'lab01.lan2'],
     'rarea': ['String', "angelsMindLAN"],
-    'multicast': ['boolean', "True"]
+    'multicast':['String', "NOLIMIT"]
 }
 containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
 r = s.get(srvurl + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
@@ -204,7 +204,7 @@ network = {
     'type': ['String', 'LAN'],
     'lan': ['String', 'lab01.lan3'],
     'rarea': ['String', "angelsMindLAN"],
-    'multicast': ['boolean', "True"]
+    'multicast':['String', "NOLIMIT"]
 }
 containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
 r = s.get(srvurl + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
@@ -285,7 +285,7 @@ network = {
     'type': ['String', 'LAN'],
     'lan': ['String', 'lab01.lan3'],
     'rarea': ['String', "angelsMindLAN"],
-    'multicast': ['boolean', "True"]
+    'multicast':['String', "NOLIMIT"]
 }
 containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
 r = s.get(srvurl + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
@@ -365,7 +365,7 @@ network = {
     'type': ['String', 'LAN'],
     'lan': ['String', 'lab01.lan4'],
     'rarea': ['String', "angelsMindLAN"],
-    'multicast': ['boolean', "True"]
+    'multicast':['String', "NOLIMIT"]
 }
 containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
 r = s.get(srvurl + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
@@ -449,7 +449,7 @@ network = {
     'type': ['String', 'LAN'],
     'lan': ['String', 'lab01.lan4'],
     'rarea': ['String', "angelsMindLAN"],
-    'multicast': ['boolean', "True"]
+    'multicast':['String', "NOLIMIT"]
 }
 containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
 r = s.get(srvurl + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
@@ -552,7 +552,7 @@ network = {
     'type': ['String', 'LAN'],
     'lan': ['String', 'lab01.lan5'],
     'rarea': ['String', "angelsMindLAN"],
-    'multicast': ['boolean', "True"]
+    'multicast':['String', "NOLIMIT"]
 }
 containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
 r = s.get(srvurl + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
@@ -626,7 +626,7 @@ network = {
     'type': ['String', 'LAN'],
     'lan': ['String', 'lab01.lan5'],
     'rarea': ['String', "angelsMindLAN"],
-    'multicast': ['boolean', "True"]
+    'multicast':['String', "NOLIMIT"]
 }
 containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
 r = s.get(srvurl + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
