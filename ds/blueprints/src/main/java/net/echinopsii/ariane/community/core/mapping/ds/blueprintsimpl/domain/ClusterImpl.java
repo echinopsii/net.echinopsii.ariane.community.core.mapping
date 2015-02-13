@@ -139,14 +139,14 @@ public class ClusterImpl implements Cluster, MappingDSCacheEntity {
         if (this.clusterVertex != null && cont.getContainerID() != 0) {
             VertexQuery query = this.clusterVertex.query();
             query.direction(Direction.OUT);
-            query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_HASNODE_LABEL_KEY);
+            query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_COMPOSEDBY_LABEL_KEY);
             query.has(MappingDSGraphPropertyNames.DD_CLUSTER_EDGE_CONT_KEY, true);
             for (Vertex vertex : query.vertices()) {
                 if ((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID) == cont.getContainerID()) {
                     return;
                 }
             }
-            Edge owns = MappingDSGraphDB.createEdge(this.clusterVertex, cont.getElement(), MappingDSGraphPropertyNames.DD_GRAPH_EDGE_HASNODE_LABEL_KEY);
+            Edge owns = MappingDSGraphDB.createEdge(this.clusterVertex, cont.getElement(), MappingDSGraphPropertyNames.DD_GRAPH_EDGE_COMPOSEDBY_LABEL_KEY);
             owns.setProperty(MappingDSGraphPropertyNames.DD_CLUSTER_EDGE_CONT_KEY, true);
             MappingDSGraphDB.autocommit();
         }
@@ -202,7 +202,7 @@ public class ClusterImpl implements Cluster, MappingDSCacheEntity {
         if (this.clusterVertex!=null && container.getElement()!=null) {
             VertexQuery query = this.clusterVertex.query();
             query.direction(Direction.OUT);
-            query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_HASNODE_LABEL_KEY);
+            query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_COMPOSEDBY_LABEL_KEY);
             query.has(MappingDSGraphPropertyNames.DD_CLUSTER_EDGE_CONT_KEY, true);
             for (Edge edge : query.edges()) {
                 if (edge.getVertex(Direction.OUT).equals(container.getElement())) {

@@ -28,7 +28,7 @@ public final class MappingDSGraphPropertyNames {
     public final static String DD_GRAPH_VERTEX_MAXCUR_KEY = "MappingGraphVertexMaxCursor";
     public final static String DD_GRAPH_EDGE_MAXCUR_KEY = "MappingGraphEdgeMaxCursor";
     public final static String DD_GRAPH_VERTEX_TYPE_KEY = "MappingGraphVertexType"; //could be cluster, container, gate, node, endpoint, transport
-    public final static String DD_GRAPH_EDGE_HASNODE_LABEL_KEY  = "hasNode";
+    public final static String DD_GRAPH_EDGE_COMPOSEDBY_LABEL_KEY = "composedBy";
     public final static String DD_GRAPH_EDGE_OWNS_LABEL_KEY = "owns";
     public final static String DD_GRAPH_EDGE_TWIN_LABEL_KEY = "twin";
     public final static String DD_GRAPH_EDGE_LINK_LABEL_KEY = "link";
