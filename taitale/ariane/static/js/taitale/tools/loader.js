@@ -181,10 +181,10 @@ define(
                 zpd = new RaphaelZPD(r, { zoom: true, pan: true, drag: false }, mappy);
                 mappy.print(r);
 
-                rrect = r.rect(0, 0, mapCanvasWidth, mapCanvasHeight);
-                rrect.attr("fill", "#555");
-                rrect.attr("stroke", "#555");
-                rrect.toBack();
+                //rrect = r.rect(0, 0, mapCanvasWidth, mapCanvasHeight);
+                //rrect.attr("fill", "#555");
+                //rrect.attr("stroke", "#555");
+                //rrect.toBack();
 
                 if (refreshZPDOffset!=null) {
                     zpd.ZPDRefreshLastOffset(refreshZPDOffset.x,refreshZPDOffset.y);
@@ -332,7 +332,7 @@ define(
             this.exportToSVG = function() {
                 var svg = null;
                 if (r!=null && mappy !=null) {
-                    rrect.remove();
+                    //rrect.remove();
                     mappy.updateMapSize();
                     var mapSize         = mappy.getMapSize();
                     r.setSize(mapSize.width, mapSize.height);
@@ -345,7 +345,8 @@ define(
                     svg = r.toSVG();
                     mappy.reInitToInitalPoz();
 
-                    rrect.attr("fill", "#555");
+                    rrect.remove();
+                    //rrect.attr("fill", "#555");
                 }
                 return svg;
             };
