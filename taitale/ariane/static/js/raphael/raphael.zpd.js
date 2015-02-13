@@ -524,4 +524,4 @@ define(
         };
 
         return this.RaphaelZPD;
-});
+    });

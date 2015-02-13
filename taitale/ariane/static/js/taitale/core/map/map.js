@@ -342,6 +342,8 @@ define(
                     mapmatrix.defineMtxZoneSize();
                     mapmatrix.defineMapContentSize();
                     mapmatrix.defineMtxZoneFinalPoz(mbrdSpan, zoneSpan);
+                    mapmatrix.defineMtxZoneSize();
+                    mapmatrix.defineMapContentSize();
                 } else if (layout == dic.mapLayout.TREE) {
                     for (j = 0, jj=containerRegistry.length; j < jj; j++) {
                         containerRegistry[j].clean();
@@ -356,9 +358,19 @@ define(
                 //noinspection FallthroughInSwitchStatementJS
                 switch (layout) {
                     case dic.mapLayout.NTWWW:
-                        mapWidth = mbrdSpan*2 + mapmatrix.getMapContentSize().width + mapmatrix.getMtxSize().x*(zoneSpan-1);
-                        mapHeight = mbrdSpan*2 + mapmatrix.getMapContentSize().height + mapmatrix.getMtxSize().y*(zoneSpan-1);
+                        mapmatrix.defineMapContentSize();
+
+                        mapWidth = mbrdSpan*2 + mapmatrix.getMapContentSize().width;
+                        mapHeight = mbrdSpan*2 + mapmatrix.getMapContentSize().height;
+
+                        mapTopLeftX = mapmatrix.getTopLeftCoords().topLeftX;
+                        mapTopLeftY = mapmatrix.getTopLeftCoords().topLeftY;
+
+                        mapBottomRightX = mapmatrix.getBottomRightCoords().bottomRightX;
+                        mapBottomRightY = mapmatrix.getBottomRightCoords().bottomRightY;
+
                         break;
+
                     case dic.mapLayout.MANUAL:
                     case dic.mapLayout.TREE:
                         var i, ii;
@@ -379,8 +391,14 @@ define(
                                     mapBottomRightY = container.rectBottomRightY;
                             }
                         }
-                        mapWidth = mapBottomRightX - mapTopLeftX;
-                        mapHeight = mapBottomRightY - mapTopLeftY;
+                        if (mapTopLeftX<0)
+                            mapWidth = mapBottomRightX - mapTopLeftX;
+                        else
+                            mapWidth = mapBottomRightX;
+                        if (mapTopLeftY<0)
+                            mapHeight = mapBottomRightY - mapTopLeftY;
+                        else
+                            mapHeight = mapBottomRightY;
                         break;
                 }
             };
@@ -527,6 +545,34 @@ define(
                     containerRegistry[i].sortLinkedTreeObjects();
                 }
             };
+
+            this.rePozTo0Canvas = function() {
+                var layout = options.getLayout();
+                switch (layout) {
+                    case dic.mapLayout.NTWWW:
+                        var dx = (mapTopLeftX - mbrdSpan == 0 ) ? 0 : -mapTopLeftX + mbrdSpan;
+                        var dy = (mapTopLeftX - mbrdSpan == 0 ) ? 0 :-mapTopLeftY + mbrdSpan;
+                        mapmatrix.translate(dx, dy)
+                        break;
+                    case dic.mapLayout.MANUAL:
+                    case dic.mapLayout.TREE:
+                        break;
+                }
+            };
+
+            this.reInitToInitalPoz = function() {
+                var layout = options.getLayout();
+                switch (layout) {
+                    case dic.mapLayout.NTWWW:
+                        var dx = (mapTopLeftX - mbrdSpan == 0 ) ? 0 : mapTopLeftX;
+                        var dy = (mapTopLeftX - mbrdSpan == 0 ) ? 0 : mapTopLeftY;
+                        mapmatrix.translate(dx, dy)
+                        break;
+                    case dic.mapLayout.MANUAL:
+                    case dic.mapLayout.TREE:
+                        break;
+                }
+            }
         }
 
         return map;

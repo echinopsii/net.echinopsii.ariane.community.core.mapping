@@ -135,8 +135,8 @@ define(
                         minY = relY;
                 }
 
-                treeWidth   = maxX-minX + 50;
-                treeHeight  = maxY-minY + 50;
+                treeWidth   = maxX-minX;
+                treeHeight  = maxY-minY;
                 treeCenterX = treeWidth/2;
                 treeCenterY = treeHeight/2;
 

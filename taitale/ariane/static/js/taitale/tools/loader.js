@@ -24,12 +24,13 @@ define(
         'jquery',
         'raphael',
         'raphael-zpd',
+        'raphael-svg-export',
         'taitale-params',
         'taitale-map',
         'taitale-helper',
         'taitale-ext-raphael'
     ],
-    function($,Raphael,RaphelZPD,params,map,helper) {
+    function($,Raphael,RaphelZPD,RaphaelSVGExport,params,map,helper) {
 
         function loader () {
 
@@ -148,10 +149,22 @@ define(
                 }
             };
 
+            var rrect,
+                mapCanvasWidth,
+                mapCanvasHeight;
+
             this.loadMappy = function() {
-                var mapLayoutDivHeight = helper_.getMappyLayoutDivSize().height,
-                    mapCanvasWidth     = helper_.getMappyCanvasDivSize().width,
+                var mapSize = mappy.getMapSize();
+                var mapLayoutDivHeight = helper_.getMappyLayoutDivSize().height;
+                if (helper_.getMappyCanvasDivSize().width > mapSize.width)
+                    mapCanvasWidth     = helper_.getMappyCanvasDivSize().width;
+                else
+                    mapCanvasWidth     = mapSize.width;
+                if (mapLayoutDivHeight + helper_.getMappyCanvasDivSize().height > mapSize.height)
                     mapCanvasHeight    = mapLayoutDivHeight + helper_.getMappyCanvasDivSize().height;
+                else
+                    mapCanvasHeight    = mapSize.height;
+                    //mapCanvasHeight     = mapSize.height;
 
                 document.getElementById("mappyCanvas").innerHTML = "";
                 r = Raphael("mappyCanvas", mapCanvasWidth, mapCanvasHeight);
@@ -167,6 +180,11 @@ define(
                 menuSet = r.getMainMenuSet();
                 zpd = new RaphaelZPD(r, { zoom: true, pan: true, drag: false }, mappy);
                 mappy.print(r);
+
+                rrect = r.rect(0, 0, mapCanvasWidth, mapCanvasHeight);
+                rrect.attr("fill", "#555");
+                rrect.attr("stroke", "#555");
+                rrect.toBack();
 
                 if (refreshZPDOffset!=null) {
                     zpd.ZPDRefreshLastOffset(refreshZPDOffset.x,refreshZPDOffset.y);
@@ -309,7 +327,28 @@ define(
 
             this.rebuildMapTreeLayout = function()  {
                 if (mappy!=null) mappy.rebuildMapTreeLayout();
-            }
+            };
+
+            this.exportToSVG = function() {
+                var svg = null;
+                if (r!=null && mappy !=null) {
+                    rrect.remove();
+                    mappy.updateMapSize();
+                    var mapSize         = mappy.getMapSize();
+                    r.setSize(mapSize.width, mapSize.height);
+                    mappy.rePozTo0Canvas();
+
+                    rrect = r.rect(0, 0, mapSize.width, mapSize.height);
+                    rrect.attr("fill", "#fff");
+                    rrect.attr("stroke", "#fff");
+                    rrect.toBack();
+                    svg = r.toSVG();
+                    mappy.reInitToInitalPoz();
+
+                    rrect.attr("fill", "#555");
+                }
+                return svg;
+            };
         }
 
         return loader;

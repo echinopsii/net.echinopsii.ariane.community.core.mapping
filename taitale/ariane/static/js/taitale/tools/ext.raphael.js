@@ -389,7 +389,7 @@ define(
                 line.bg && line.bg.attr({path: path});
                 line.line.attr({path: path});
             } else {
-                var color = typeof line == "string" ? line : "#000",
+                var color = typeof line == "string" ? line : "#fff",
                     from = obj1,
                     to  = obj2;
                     line =  this.path(path).attr({stroke: color, fill: "none"});

@@ -207,6 +207,15 @@ define(
                     }
                 };
 
+            this.move = function(dx, dy) {
+                this.r.move(dx,dy);
+                this.r.safari();
+            };
+
+            this.up = function() {
+                this.r.up();
+            }
+
             this.isEditionMode = function() {
                 return this.isEditing;
             };

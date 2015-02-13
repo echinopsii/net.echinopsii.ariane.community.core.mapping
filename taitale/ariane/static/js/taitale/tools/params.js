@@ -30,7 +30,7 @@ define({
     map_mbrdSpan        : 20,
     map_zoneSpan        : 150,
     map_linkColor       : '#fff',
-    map_linkBckg        : '#000|1.5',
+    map_linkBckg        : '#333|2.5',
 
     dc_menuFillColor   : "#000",
     dc_menuOpacity     : 0.7,

@@ -31,7 +31,11 @@ define(
                 nbColumns     = 0,
                 rows          = [],
                 contentWidth  = 0,
-                contentHeight = 0;
+                contentHeight = 0,
+                topLeftX      = 0,
+                topLeftY      = 0,
+                bottomRightX  = 0,
+                bottomRightY  = 0;
 
             var ldatacenterSplitter = null, //for NTWWW map type
                 layoutNtwRegistries = null;
@@ -99,6 +103,8 @@ define(
 
             this.defineMapContentMaxSize = function() {
                 var i, ii, j, jj;
+                contentWidth = 0;
+                contentHeight = 0;
                 for (i = 0, ii = nbColumns; i < ii ; i++) {
                     var tmpHeight = 0;
                     for (j = 0, jj = nbLines; j < jj; j++)
@@ -117,20 +123,12 @@ define(
 
             this.defineMapContentSize = function() {
                 var i, ii, j, jj;
-                for (i = 0, ii = nbColumns; i < ii ; i++) {
-                    var tmpHeight = 0;
-                    for (j = 0, jj = nbLines; j < jj; j++)
-                        tmpHeight = tmpHeight + rows[j][i].getZoneSize().height;
-                    if (tmpHeight > contentHeight)
-                        contentHeight=tmpHeight;
-                }
-                for (i = 0, ii = nbLines; i < ii ; i++) {
-                    var tmpWidth = 0;
-                    for (j = 0, jj = nbColumns; j < jj; j++)
-                        tmpWidth = tmpWidth + rows[i][j].getZoneSize().width;
-                    if (tmpWidth > contentWidth)
-                        contentWidth = tmpWidth;
-                }
+                topLeftX = rows[0][0].topLeftX;
+                topLeftY = rows[0][0].topLeftY;
+                bottomRightX = rows[nbLines-1][nbColumns-1].topLeftX + rows[nbLines-1][nbColumns-1].getZoneSize().width;
+                bottomRightY = rows[nbLines-1][nbColumns-1].topLeftY + rows[nbLines-1][nbColumns-1].getZoneSize().height;
+                contentWidth = bottomRightX - topLeftX;
+                contentHeight = bottomRightY - topLeftY;
             };
 
             this.getMapContentSize = function() {
@@ -138,6 +136,20 @@ define(
                     width  : contentWidth,
                     height : contentHeight
                 };
+            };
+
+            this.getTopLeftCoords = function() {
+                return {
+                    topLeftX: topLeftX,
+                    topLeftY: topLeftY
+                }
+            };
+
+            this.getBottomRightCoords = function() {
+                return {
+                    bottomRightX: bottomRightX,
+                    bottomRightY: bottomRightY
+                }
             };
 
             this.defineMtxZoneFirstPoz = function(borderSpan, zoneSpan) {
@@ -374,6 +386,12 @@ define(
                         container.layoutData.dc.pushContainerArea(container);
                         break;
                 }
+            };
+
+            this.translate = function(mvx, mvy) {
+                for (var i=0, ii=nbColumns; i<ii; i++) rows[0][i].moveInit();
+                for (var i=0, ii=nbColumns; i<ii; i++) rows[0][i].move(mvx, mvy);
+                for (var i=0, ii=nbColumns; i<ii; i++) rows[0][i].up();
             };
 
             this.displayDC = function(display) {

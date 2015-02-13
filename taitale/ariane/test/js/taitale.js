@@ -31,6 +31,7 @@ require.config({
         'raphael-vml': 'js/raphael/raphael.vml',
         'raphael': 'js/raphael/raphael.amd',
         'raphael-zpd': 'js/raphael/raphael.zpd',
+        'raphael-svg-export': 'js/raphael/raphael.svg.export',
         /*taitale tools*/
         'taitale-cylinder': 'js/taitale/tools/cylinder',
         'taitale-dictionaries': 'js/taitale/tools/dictionaries',
@@ -111,6 +112,7 @@ requirejs (
             nsize = $('#nsize'),
             center = $('#center'),
             details = $('#details'),
+            SVG = $('#SVG'),
             displayDC = $("#displayDC"),
             displayArea = $("#displayArea"),
             displayLan = $("#displayLan"),
@@ -246,6 +248,30 @@ requirejs (
                     {
                         severity: 'error',
                         summary: 'Failed to reload map',
+                        detail: 'Check the console log to know more...',
+                        sticky: true
+                    }
+                );
+                console.log(e.stack);
+            }
+        });
+
+        SVG.click([loader_, dic], function() {
+            try {
+                var svg = loader_.exportToSVG();
+                //var serializer = new XMLSerializer();
+                //var svg_blob = new Blob([serializer.serializeToString(svg)],
+                //    {'type': "image/svg+xml"});
+                var svg_blob = new Blob([svg], {'type': 'image/svg+xml'});
+                var url = URL.createObjectURL(svg_blob);
+
+                var svg_win = window.open(url, "svg_win");
+            } catch (e) {
+                helper_.addMsgToGrowl(e);
+                helper_.growlMsgs(
+                    {
+                        severity: 'error',
+                        summary: 'Failed to export map to SVG',
                         detail: 'Check the console log to know more...',
                         sticky: true
                     }
