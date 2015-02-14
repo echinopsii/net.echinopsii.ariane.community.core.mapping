@@ -373,7 +373,7 @@ define(
 
                     case dic.mapLayout.MANUAL:
                     case dic.mapLayout.TREE:
-                        var i, ii;
+                        var i, ii, j, jj;
                         if (containerRegistry.length > 0) {
                             mapTopLeftX = containerRegistry[0].rectTopLeftX;
                             mapTopLeftY = containerRegistry[0].rectTopLeftY;
@@ -390,15 +390,35 @@ define(
                                 if (container.rectBottomRightY > mapBottomRightY)
                                     mapBottomRightY = container.rectBottomRightY;
                             }
+
+                            for (i=0, ii=transportRegistry.length; i < ii; i++) {
+                                var transport = transportRegistry[i];
+                                if (transport.isMulticast()) {
+                                    var multicastBusRegistry = transport.getMulticastBusRegistry();
+                                    for(j=0, jj=multicastBusRegistry.length; j < jj; j++) {
+                                        var multicastBus = multicastBusRegistry[j];
+                                        var topLeftCoord = multicastBus.getBusCoords();
+                                        var size = multicastBus.getBusSize();
+                                        if (topLeftCoord.x < mapTopLeftX)
+                                            mapTopLeftX = topLeftCoord.x;
+                                        if (topLeftCoord.y < mapTopLeftY)
+                                            mapTopLeftY = topLeftCoord.y;
+                                        if (topLeftCoord.x + size.width > mapBottomRightX)
+                                            mapBottomRightX = topLeftCoord.x + size.width;
+                                        if (topLeftCoord.y + size.height > mapBottomRightY)
+                                            mapBottomRightY = topLeftCoord.y + size.height;
+                                    }
+                                }
+                            }
                         }
                         if (mapTopLeftX<0)
-                            mapWidth = mapBottomRightX - mapTopLeftX;
+                            mapWidth = mapBottomRightX - mapTopLeftX + 2*mbrdSpan;
                         else
-                            mapWidth = mapBottomRightX;
+                            mapWidth = mapBottomRightX + 2*mbrdSpan;
                         if (mapTopLeftY<0)
-                            mapHeight = mapBottomRightY - mapTopLeftY;
+                            mapHeight = mapBottomRightY - mapTopLeftY + 2*mbrdSpan;
                         else
-                            mapHeight = mapBottomRightY;
+                            mapHeight = mapBottomRightY + 2*mbrdSpan;
                         break;
                 }
             };
@@ -492,7 +512,7 @@ define(
                 }
 
                 if (this.isEditionMode())
-                    this.editionMode(options_)
+                    this.editionMode(options_);
                 mapmatrix.displayDC(options_.displayDC);
                 mapmatrix.displayArea(options_.displayAREA);
                 mapmatrix.displayLan(options_.displayLAN);
@@ -546,30 +566,63 @@ define(
                 }
             };
 
+            var moveTreeMap = function(dx, dy) {
+                var i, ii, j, jj, multicastBusRegistry;
+
+                for (i = 0, ii=containerRegistry.length; i < ii; i++) containerRegistry[i].moveInit();
+                for (i = 0, ii = transportRegistry.length; i < ii; i++) {
+                    if (transportRegistry[i].isMulticast()) {
+                        multicastBusRegistry = transportRegistry[i].getMulticastBusRegistry();
+                        for(j=0, jj=multicastBusRegistry.length; j < jj; j++)
+                            multicastBusRegistry[j].mbus.moveInit();
+                    }
+                }
+
+                for (i = 0, ii=containerRegistry.length; i < ii; i++) containerRegistry[i].move(dx,dy);
+                for (i = 0, ii = transportRegistry.length; i < ii; i++) {
+                    if (transportRegistry[i].isMulticast()) {
+                        multicastBusRegistry = transportRegistry[i].getMulticastBusRegistry();
+                        for(j=0, jj=multicastBusRegistry.length; j < jj; j++)
+                            multicastBusRegistry[j].mbus.move(dx,dy);
+                    }
+                }
+
+                for (i = 0, ii=containerRegistry.length; i < ii; i++) containerRegistry[i].up();
+                for (i = 0, ii = transportRegistry.length; i < ii; i++) {
+                    if (transportRegistry[i].isMulticast()) {
+                        multicastBusRegistry = transportRegistry[i].getMulticastBusRegistry();
+                        for(j=0, jj=multicastBusRegistry.length; j < jj; j++)
+                            multicastBusRegistry[j].mbus.up();
+                    }
+                }
+            };
+
             this.rePozTo0Canvas = function() {
                 var layout = options.getLayout();
+                var dx = (mapTopLeftX - mbrdSpan == 0 ) ? 0 : -mapTopLeftX + mbrdSpan;
+                var dy = (mapTopLeftY - mbrdSpan == 0 ) ? 0 : -mapTopLeftY + mbrdSpan;
                 switch (layout) {
                     case dic.mapLayout.NTWWW:
-                        var dx = (mapTopLeftX - mbrdSpan == 0 ) ? 0 : -mapTopLeftX + mbrdSpan;
-                        var dy = (mapTopLeftX - mbrdSpan == 0 ) ? 0 :-mapTopLeftY + mbrdSpan;
-                        mapmatrix.translate(dx, dy)
+                        mapmatrix.translate(dx, dy);
                         break;
                     case dic.mapLayout.MANUAL:
                     case dic.mapLayout.TREE:
+                        moveTreeMap(dx, dy);
                         break;
                 }
             };
 
             this.reInitToInitalPoz = function() {
                 var layout = options.getLayout();
+                var dx = (mapTopLeftX - mbrdSpan == 0 ) ? 0 : mapTopLeftX - mbrdSpan;
+                var dy = (mapTopLeftY - mbrdSpan == 0 ) ? 0 : mapTopLeftY - mbrdSpan;
                 switch (layout) {
                     case dic.mapLayout.NTWWW:
-                        var dx = (mapTopLeftX - mbrdSpan == 0 ) ? 0 : mapTopLeftX;
-                        var dy = (mapTopLeftX - mbrdSpan == 0 ) ? 0 : mapTopLeftY;
-                        mapmatrix.translate(dx, dy)
+                        mapmatrix.translate(dx, dy);
                         break;
                     case dic.mapLayout.MANUAL:
                     case dic.mapLayout.TREE:
+                        moveTreeMap(dx, dy);
                         break;
                 }
             }

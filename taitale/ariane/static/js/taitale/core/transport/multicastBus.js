@@ -40,8 +40,8 @@ define(
 
             this.mbus = null;
 
-            this.linkedTreeObjects         = [];
-            this.sortOrdering              = 1;
+            this.linkedTreeObjects = [];
+            this.sortOrdering      = 1;
 
             this.menu              = null;
             this.menuSet           = null;

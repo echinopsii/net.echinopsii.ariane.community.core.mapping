@@ -322,39 +322,55 @@ define(
                     }
                 };
 
+            var mover = function(containerRef, dx, dy) {
+                //helper_.debug("move: " + containerRef.rightClick);
+                if (!containerRef.rightClick) {
+                    var rx = containerRef.extrx,
+                        ry = containerRef.extry;
+
+                    if (!containerRef.rightClick) {
+                        if (containerRef.isJailed) {
+                            if (containerRef.minTopLeftX > rx + dx)
+                                dx = containerRef.minTopLeftX - rx;
+                            if (containerRef.minTopLeftY > ry + dy)
+                                dy = containerRef.minTopLeftY - ry;
+                            if (containerRef.maxTopLeftX < rx + dx)
+                                dx = containerRef.maxTopLeftX - rx;
+                            if (containerRef.maxTopLeftY < ry + dy)
+                                dy = containerRef.maxTopLeftY - ry;
+                        }
+
+                        containerRef.r.move(dx, dy);
+                        containerRef.r.safari();
+                    }
+                }
+            };
+
+            var upper = function(containerRef) {
+                //helper_.debug("up: " + containerRef.rightClick);
+                if (!containerRef.rightClick)
+                    containerRef.r.up();
+            };
+
             var containerDragger = function() {
                     //helper_.debug("drag: " + containerRef.rightClick);
                     if (!containerRef.rightClick)
                         containerRef.moveInit();
                 },
                 containerMove = function(dx,dy) {
-                    //helper_.debug("move: " + containerRef.rightClick);
-                    if (!containerRef.rightClick) {
-                        var rx = containerRef.extrx,
-                            ry = containerRef.extry;
-
-                        if (!containerRef.rightClick) {
-                            if (containerRef.isJailed) {
-                                if (containerRef.minTopLeftX > rx + dx)
-                                    dx = containerRef.minTopLeftX - rx;
-                                if (containerRef.minTopLeftY > ry + dy)
-                                    dy = containerRef.minTopLeftY - ry;
-                                if (containerRef.maxTopLeftX < rx + dx)
-                                    dx = containerRef.maxTopLeftX - rx;
-                                if (containerRef.maxTopLeftY < ry + dy)
-                                    dy = containerRef.maxTopLeftY - ry;
-                            }
-
-                            containerRef.r.move(dx, dy);
-                            containerRef.r.safari();
-                        }
-                    }
+                    mover(containerRef, dx, dy)
                 },
                 containerUP =  function() {
-                    //helper_.debug("up: " + containerRef.rightClick);
-                    if (!containerRef.rightClick)
-                        containerRef.r.up();
+                    upper(containerRef);
                 };
+
+            this.move = function(dx, dy) {
+                mover(this, dx, dy);
+            };
+
+            this.up = function() {
+                upper(this);
+            };
 
             this.toString = function() {
                 return "{\n Container " + this.containerName + " : ("+this.rectMiddleX+","+this.rectMiddleY+")\n}";

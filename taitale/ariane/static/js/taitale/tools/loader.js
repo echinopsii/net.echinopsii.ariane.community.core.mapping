@@ -149,8 +149,7 @@ define(
                 }
             };
 
-            var rrect,
-                mapCanvasWidth,
+            var mapCanvasWidth,
                 mapCanvasHeight;
 
             this.loadMappy = function() {
@@ -180,11 +179,6 @@ define(
                 menuSet = r.getMainMenuSet();
                 zpd = new RaphaelZPD(r, { zoom: true, pan: true, drag: false }, mappy);
                 mappy.print(r);
-
-                //rrect = r.rect(0, 0, mapCanvasWidth, mapCanvasHeight);
-                //rrect.attr("fill", "#555");
-                //rrect.attr("stroke", "#555");
-                //rrect.toBack();
 
                 if (refreshZPDOffset!=null) {
                     zpd.ZPDRefreshLastOffset(refreshZPDOffset.x,refreshZPDOffset.y);
@@ -332,21 +326,19 @@ define(
             this.exportToSVG = function() {
                 var svg = null;
                 if (r!=null && mappy !=null) {
-                    //rrect.remove();
                     mappy.updateMapSize();
                     var mapSize         = mappy.getMapSize();
                     r.setSize(mapSize.width, mapSize.height);
                     mappy.rePozTo0Canvas();
 
-                    rrect = r.rect(0, 0, mapSize.width, mapSize.height);
+                    var rrect = r.rect(0, 0, mapSize.width, mapSize.height);
                     rrect.attr("fill", "#fff");
-                    rrect.attr("stroke", "#fff");
+                    rrect.attr("stroke", "#000");
                     rrect.toBack();
                     svg = r.toSVG();
                     mappy.reInitToInitalPoz();
 
                     rrect.remove();
-                    //rrect.attr("fill", "#555");
                 }
                 return svg;
             };

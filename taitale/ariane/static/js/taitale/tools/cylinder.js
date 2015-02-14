@@ -94,29 +94,45 @@ define(
 
             var cylinderRef = this;
 
+            var mover = function(cylinderRef, dx, dy) {
+                if (!cylinderRef.root.rightClick) {
+                    if (cylinderRef.isJailed) {
+                        if (cylinderRef.extox1+dx<cylinderRef.boundary.minX)
+                            dx=cylinderRef.boundary.minX-cylinderRef.extox1;
+                        else if (cylinderRef.extox3+dx>cylinderRef.boundary.maxX)
+                            dx=cylinderRef.boundary.maxX-cylinderRef.extox3;
+                        if (cylinderRef.extoy1+dy>cylinderRef.boundary.maxY)
+                            dy=cylinderRef.boundary.maxY-cylinderRef.extoy1;
+                        else if (cylinderRef.extoy3+dy<cylinderRef.boundary.minY)
+                            dy=cylinderRef.boundary.minY-cylinderRef.extoy3;
+                    }
+                    cylinderRef.r.move(dx,dy);
+                }
+            };
+
+            var upper = function(cylinderRef) {
+                if (!cylinderRef.root.rightClick)
+                    cylinderRef.r.up();
+            };
+
             var cyDragger = function() {
                     if (!cylinderRef.root.rightClick)
                         cylinderRef.moveInit();
                 },
                 cyMove = function(dx,dy) {
-                    if (!cylinderRef.root.rightClick) {
-                        if (cylinderRef.isJailed) {
-                            if (cylinderRef.extox1+dx<cylinderRef.boundary.minX)
-                                dx=cylinderRef.boundary.minX-cylinderRef.extox1;
-                            else if (cylinderRef.extox3+dx>cylinderRef.boundary.maxX)
-                                dx=cylinderRef.boundary.maxX-cylinderRef.extox3;
-                            if (cylinderRef.extoy1+dy>cylinderRef.boundary.maxY)
-                                dy=cylinderRef.boundary.maxY-cylinderRef.extoy1;
-                            else if (cylinderRef.extoy3+dy<cylinderRef.boundary.minY)
-                                dy=cylinderRef.boundary.minY-cylinderRef.extoy3;
-                        }
-                        cylinderRef.r.move(dx,dy);
-                    }
+                    mover(cylinderRef, dx, dy);
                 },
                 cyUP = function() {
-                    if (!cylinderRef.root.rightClick)
-                        cylinderRef.r.up();
+                    upper(cylinderRef);
                 };
+
+            this.move = function(dx, dy){
+                mover(this, dx, dy);
+            };
+
+            this.up = function() {
+                upper(this);
+            };
 
             var mouseDown = function(e) {
                     if (e.which == 3) {
@@ -569,7 +585,7 @@ define(
                 this.ctrX = this.x + this.height/2;
                 this.ctrY = this.y + this.diameter/2;
                 this.vcpath = this.extvcpath;
-                this.translateForm=""
+                this.translateForm="";
 
                 this.bindingPt1X = this.x;
                 this.bindingPt1Y = this.y;
@@ -584,7 +600,7 @@ define(
                 this.bindingPt6X = this.x+this.height/2;
                 this.bindingPt6Y = this.y-this.diameter;
                 this.changeUp();
-            }
+            };
 
         }
 
