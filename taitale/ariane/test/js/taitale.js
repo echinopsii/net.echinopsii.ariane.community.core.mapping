@@ -120,6 +120,7 @@ requirejs (
             nsize = $('#nsize'),
             center = $('#center'),
             details = $('#details'),
+            JPG = $('#JPG'),
             PNG = $('#PNG'),
             SVG = $('#SVG'),
             mapExport = $('#mapExport'),
@@ -274,15 +275,38 @@ requirejs (
             height:800
         });
 
+        JPG.click([loader_, dic], function() {
+            try {
+                var svg          = loader_.exportToSVG(),
+                    exportCanvas = '<canvas id="exportCanvas" title="jpgMap"></canvas>';
+                imgExport.empty();
+                imgExport.append(exportCanvas);
+                canvg('exportCanvas', svg);
+                document.getElementById("exportCanvas").toDataURL("image/jpeg", 1.0);
+                mapExport.puidialog('show');
+            } catch (e) {
+                helper_.addMsgToGrowl(e);
+                helper_.growlMsgs(
+                    {
+                        severity: 'error',
+                        summary: 'Failed to export map to PNG',
+                        detail: 'Check the console log to know more...',
+                        sticky: true
+                    }
+                );
+                console.log(e.stack);
+            }
+        });
+
         PNG.click([loader_, dic], function() {
             try {
                 var svg    = loader_.exportToSVG(),
                     imgsrc = "data:image/svg+xml," + encodeURIComponent(svg),
-                    img    = '<canvas id="exportCanvas" title="pngMap"></canvas>';
+                    img    = '<canvas id="exportPngCanvas" title="pngMap"></canvas>';
                 imgExport.empty();
                 imgExport.append(img);
-                canvg('exportCanvas', svg);
-                document.getElementById("exportCanvas").toDataURL("image/png");
+                canvg('exportPngCanvas', svg);
+                document.getElementById("exportPngCanvas").toDataURL("image/png");
                 mapExport.puidialog('show');
                 //open(imgsrc);
             } catch (e) {

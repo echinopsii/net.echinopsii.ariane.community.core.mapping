@@ -314,6 +314,31 @@ requirejs (
                         }
                     }
                 });
+                $(JPG.jqId).click([loader_, dic], function() {
+                    try {
+                        var inProgress = document.getElementById('exportInProgress');
+                        $("#imgExport").empty();
+                        mapExport.show();
+                        inProgress.style.display = "";
+                        var svg          = loader_.exportToSVG(),
+                            exportCanvas = '<canvas id="exportCanvas" title="jpgMap"></canvas>';
+                        inProgress.style.display = "none";
+                        $("#imgExport").append(exportCanvas);
+                        canvg('exportCanvas', svg);
+                        document.getElementById("exportCanvas").toDataURL("image/jpeg");
+                    } catch (e) {
+                        helper_.addMsgToGrowl(e);
+                        helper_.growlMsgs(
+                            {
+                                severity: 'error',
+                                summary: 'Failed to export map to PNG',
+                                detail: 'Check the console log to know more...',
+                                sticky: true
+                            }
+                        );
+                        console.log(e.stack);
+                    }
+                });
                 $(PNG.jqId).click([loader_, dic], function() {
                     try {
                         var inProgress = document.getElementById('exportInProgress');
