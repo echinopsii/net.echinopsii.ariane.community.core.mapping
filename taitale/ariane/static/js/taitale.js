@@ -32,6 +32,7 @@ require.config({
         'raphael-vml': 'ajs/raphael/raphael.vml',
         'raphael': 'ajs/raphael/raphael.amd',
         'raphael-zpd': 'ajs/raphael/raphael.zpd',
+        'raphael-svg-export': 'ajs/raphael/raphael.svg.export',
 
         /*taitale tools*/
         'taitale-cylinder': 'ajs/taitale/tools/cylinder',
@@ -305,6 +306,31 @@ requirejs (
                         }
                     }
                 });
+                $(SVG.jqId).click([loader_, dic], function(){
+                    try {
+                        var inProgress = document.getElementById('exportInProgress');
+                        inProgress.style.display = "";
+                        var svg    = loader_.exportToSVG(),
+                            imgsrc = "data:image/svg+xml," + encodeURIComponent(svg),
+                            img    = '<img src="'+imgsrc+'" title="Map2SVG">';
+                        inProgress.style.display = "none";
+                        $("#imgSVG").empty();
+                        $("#imgSVG").append(img);
+                        mappySVG.show();
+                    } catch (e) {
+                        helper_.addMsgToGrowl(e);
+                        helper_.growlMsgs(
+                            {
+                                severity: 'error',
+                                summary: 'Failed to export map to SVG',
+                                detail: 'Check the console log to know more...',
+                                sticky: true
+                            }
+                        );
+                        console.log(e.stack);
+                    }
+                });
+
                 for (i = 0, ii = notificationsOptions.inputs.length; i < ii; i++) {
                     input = notificationsOptions.inputs[i];
                     if (input.value==="notifyInfos") {

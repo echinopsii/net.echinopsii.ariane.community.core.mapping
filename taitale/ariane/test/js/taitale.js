@@ -113,6 +113,8 @@ requirejs (
             center = $('#center'),
             details = $('#details'),
             SVG = $('#SVG'),
+            mappySVG = $('#mappySVG'),
+            imgSVG = $('#imgSVG'),
             displayDC = $("#displayDC"),
             displayArea = $("#displayArea"),
             displayLan = $("#displayLan"),
@@ -256,16 +258,22 @@ requirejs (
             }
         });
 
+        mappySVG.puidialog({
+            showEffect: 'fade',
+            hideEffect: 'fade',
+            width: 1000,
+            height:800
+        });
+
         SVG.click([loader_, dic], function() {
             try {
-                var svg = loader_.exportToSVG();
-                //var serializer = new XMLSerializer();
-                //var svg_blob = new Blob([serializer.serializeToString(svg)],
-                //    {'type': "image/svg+xml"});
-                var svg_blob = new Blob([svg], {'type': 'image/svg+xml'});
-                var url = URL.createObjectURL(svg_blob);
-
-                var svg_win = window.open(url, "svg_win");
+                var svg    = loader_.exportToSVG(),
+                    imgsrc = "data:image/svg+xml," + encodeURIComponent(svg),
+                    img    = '<img src="'+imgsrc+'" title="Map2SVG">';
+                imgSVG.empty();
+                imgSVG.append(img);
+                mappySVG.puidialog('show');
+                //open(imgsrc);
             } catch (e) {
                 helper_.addMsgToGrowl(e);
                 helper_.growlMsgs(
