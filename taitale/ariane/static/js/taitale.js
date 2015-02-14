@@ -26,6 +26,9 @@ require.config({
         'jquery-ui': 'javax.faces.resource/jquery/jquery-plugins.js.jsf?ln=primefaces',
         'jquery-private': 'ajs/jquery-private',
         'prime-ui': 'ajs/primeui/primeui-0.9.6',
+        'rgbcolor': 'ajs/canvag/rgbcolor',
+        'StackBlur': 'ajs/canvag/StackBlur',
+        'canvg': 'ajs/canvag/canvg',
         'eve': 'ajs/raphael/eve',
         'raphael-core': 'ajs/raphael/raphael.core',
         'raphael-svg': 'ajs/raphael/raphael.svg',
@@ -89,6 +92,10 @@ require.config({
         "prime-ui": {
             exports: "$",
             deps: ['jquery','jquery-ui']
+        },
+        "canvg": {
+            exports: "canvg",
+            deps: ['rgbcolor', 'StackBlur']
         }
     }
 });
@@ -96,12 +103,13 @@ require.config({
 requirejs (
     [
         'prime-ui',
+        'canvg',
         'taitale-helper',
         'taitale-loader',
         'taitale-dictionaries',
         'taitale-map-options'
     ],
-    function ($, helper, loader, dictionaries, mapOptions) {
+    function ($, canvag, helper, loader, dictionaries, mapOptions) {
 
         var loader_   = new loader(),
             helper_   = new helper(),
@@ -306,17 +314,42 @@ requirejs (
                         }
                     }
                 });
+                $(PNG.jqId).click([loader_, dic], function() {
+                    try {
+                        var inProgress = document.getElementById('exportInProgress');
+                        $("#imgExport").empty();
+                        mapExport.show();
+                        inProgress.style.display = "";
+                        var svg          = loader_.exportToSVG(),
+                            exportCanvas = '<canvas id="exportCanvas" title="pngMap"></canvas>';
+                        inProgress.style.display = "none";
+                        $("#imgExport").append(exportCanvas);
+                        canvg('exportCanvas', svg);
+                        document.getElementById("exportCanvas").toDataURL("image/png");
+                    } catch (e) {
+                        helper_.addMsgToGrowl(e);
+                        helper_.growlMsgs(
+                            {
+                                severity: 'error',
+                                summary: 'Failed to export map to PNG',
+                                detail: 'Check the console log to know more...',
+                                sticky: true
+                            }
+                        );
+                        console.log(e.stack);
+                    }
+                });
                 $(SVG.jqId).click([loader_, dic], function(){
                     try {
                         var inProgress = document.getElementById('exportInProgress');
+                        $("#imgExport").empty();
+                        mapExport.show();
                         inProgress.style.display = "";
                         var svg    = loader_.exportToSVG(),
                             imgsrc = "data:image/svg+xml," + encodeURIComponent(svg),
-                            img    = '<img src="'+imgsrc+'" title="Map2SVG">';
+                            img    = '<img src="'+imgsrc+'" title="svgMap">';
                         inProgress.style.display = "none";
-                        $("#imgSVG").empty();
-                        $("#imgSVG").append(img);
-                        mappySVG.show();
+                        $("#imgExport").append(img);
                     } catch (e) {
                         helper_.addMsgToGrowl(e);
                         helper_.growlMsgs(

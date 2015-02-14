@@ -25,6 +25,9 @@ require.config({
         'jquery': 'js/jquery/jquery-1.9.1',
         'jquery-ui': 'js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom',
         'prime-ui': 'js/primeui/primeui-0.9.6',
+        'rgbcolor': 'js/canvag/rgbcolor',
+        'StackBlur': 'js/canvag/StackBlur',
+        'canvg': 'js/canvag/canvg',
         'eve': 'js/raphael/eve',
         'raphael-core': 'js/raphael/raphael.core',
         'raphael-svg': 'js/raphael/raphael.svg',
@@ -80,6 +83,10 @@ require.config({
         "prime-ui": {
             exports: "$",
             deps: ['jquery','jquery-ui']
+        },
+        "canvg": {
+            exports: "canvg",
+            deps: ['rgbcolor', 'StackBlur']
         }
     }
 });
@@ -87,12 +94,13 @@ require.config({
 requirejs (
     [
         'prime-ui',
+        'canvg',
         'taitale-helper',
         'taitale-loader',
         'taitale-dictionaries',
         'taitale-map-options'
     ],
-    function ($,helper,loader,dictionaries,mapOptions) {
+    function ($,canvg,helper,loader,dictionaries,mapOptions) {
 
         var loader_   = new loader(),
             dic       = new dictionaries(),
@@ -112,9 +120,10 @@ requirejs (
             nsize = $('#nsize'),
             center = $('#center'),
             details = $('#details'),
+            PNG = $('#PNG'),
             SVG = $('#SVG'),
-            mappySVG = $('#mappySVG'),
-            imgSVG = $('#imgSVG'),
+            mapExport = $('#mapExport'),
+            imgExport = $('#imgExport'),
             displayDC = $("#displayDC"),
             displayArea = $("#displayArea"),
             displayLan = $("#displayLan"),
@@ -258,21 +267,46 @@ requirejs (
             }
         });
 
-        mappySVG.puidialog({
+        mapExport.puidialog({
             showEffect: 'fade',
             hideEffect: 'fade',
             width: 1000,
             height:800
         });
 
+        PNG.click([loader_, dic], function() {
+            try {
+                var svg    = loader_.exportToSVG(),
+                    imgsrc = "data:image/svg+xml," + encodeURIComponent(svg),
+                    img    = '<canvas id="exportCanvas" title="pngMap"></canvas>';
+                imgExport.empty();
+                imgExport.append(img);
+                canvg('exportCanvas', svg);
+                document.getElementById("exportCanvas").toDataURL("image/png");
+                mapExport.puidialog('show');
+                //open(imgsrc);
+            } catch (e) {
+                helper_.addMsgToGrowl(e);
+                helper_.growlMsgs(
+                    {
+                        severity: 'error',
+                        summary: 'Failed to export map to PNG',
+                        detail: 'Check the console log to know more...',
+                        sticky: true
+                    }
+                );
+                console.log(e.stack);
+            }
+        });
+
         SVG.click([loader_, dic], function() {
             try {
                 var svg    = loader_.exportToSVG(),
                     imgsrc = "data:image/svg+xml," + encodeURIComponent(svg),
-                    img    = '<img src="'+imgsrc+'" title="Map2SVG">';
-                imgSVG.empty();
-                imgSVG.append(img);
-                mappySVG.puidialog('show');
+                    img    = '<img src="'+imgsrc+'" title="svgMap">';
+                imgExport.empty();
+                imgExport.append(img);
+                mapExport.puidialog('show');
                 //open(imgsrc);
             } catch (e) {
                 helper_.addMsgToGrowl(e);

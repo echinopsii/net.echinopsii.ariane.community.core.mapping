@@ -23,24 +23,12 @@
                         <p:tabView id="mappingToolsView" activeIndex="2">
 
                             <p:tab id="mappingToolsExportTab" title="Export">
-                                <h:panelGrid columns="4" cellpadding="5">
-                                    <h:panelGroup>
-                                        <h:form id="mapToolsExport">
-                                            <span class="inputTitle">Export your map to :</span><br/>
-                                            <p:commandButton value="PDF" widgetVar="PDF" icon=""/>
-                                            <p:commandButton value="PNG" widgetVar="PNG" icon=""/>
-                                            <p:commandButton value="SVG" widgetVar="SVG" icon=""/>
-                                        </h:form>
-                                    </h:panelGroup>
-                                    <h:panelGroup>
-                                        <div id="exportInProgress"  style="display:none; text-align: center;">
-                                            <br/><br/><br/>
-                                            <h:outputText value="Export in progress... Please wait ... :)" styleClass="inputTitle"/>
-                                            <br/><br/><br/>
-                                            <i class = "icon-spinner icon-spin icon-7x"/>
-                                        </div>
-                                    </h:panelGroup>
-                                </h:panelGrid>
+                                <h:form id="mapToolsExport">
+                                    <span class="inputTitle">Export your map to :</span><br/>
+                                    <p:commandButton value="PDF" widgetVar="PDF" icon=""/>
+                                    <p:commandButton value="PNG" widgetVar="PNG" icon=""/>
+                                    <p:commandButton value="SVG" widgetVar="SVG" icon=""/>
+                                </h:form>
                             </p:tab>
 
                             <p:tab id="mapToolsDisplayTab" title="Options">
@@ -146,8 +134,14 @@
             </p:layoutUnit>
         </p:layout>
 
-        <p:dialog header="Export map to SVG" widgetVar="mappySVG" showEffect="fade" hideEffect="fade" height="800" width="1000">
-            <div id="imgSVG"></div>
+        <p:dialog header="Export map" widgetVar="mapExport" showEffect="fade" hideEffect="fade" height="800" width="1000">
+            <div id="exportInProgress"  style="display:none; text-align: center;">
+                <br/><br/><br/>
+                <h:outputText value="Export in progress... Please wait ... :)" styleClass="inputTitle"/>
+                <br/><br/><br/>
+                <i class = "icon-spinner icon-spin icon-7x"/>
+            </div>
+            <div id="imgExport"></div>
         </p:dialog>
 
         <p:dialog header="Load request" widgetVar="requestLoaderDialog"
