@@ -6,7 +6,7 @@
     <groupId>net.echinopsii.ariane.community.core</groupId>
     <artifactId>net.echinopsii.ariane.community.core.mapping</artifactId>
     <name>Ariane Community Core Mapping Parent</name>
-    <version>0.6.0</version>
+    <version>0.6.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -72,10 +72,10 @@
         <version.ipojo.plugin>1.11.0</version.ipojo.plugin>
 
         <!-- Ariane versions -->
-        <version.net.echinopsii.ariane.community.core.idm>0.4.0</version.net.echinopsii.ariane.community.core.idm>
+        <version.net.echinopsii.ariane.community.core.idm>0.4.1-SNAPSHOT</version.net.echinopsii.ariane.community.core.idm>
         <version.net.echinopsii.ariane.community.core.idm.min>0.4.0</version.net.echinopsii.ariane.community.core.idm.min>
         <version.net.echinopsii.ariane.community.core.idm.max>0.5.0</version.net.echinopsii.ariane.community.core.idm.max>
-        <version.net.echinopsii.ariane.community.core.portal>0.6.0</version.net.echinopsii.ariane.community.core.portal>
+        <version.net.echinopsii.ariane.community.core.portal>0.6.1-SNAPSHOT</version.net.echinopsii.ariane.community.core.portal>
         <version.net.echinopsii.ariane.community.core.portal.min>0.6.0</version.net.echinopsii.ariane.community.core.portal.min>
         <version.net.echinopsii.ariane.community.core.portal.max>0.7.0</version.net.echinopsii.ariane.community.core.portal.max>
 
