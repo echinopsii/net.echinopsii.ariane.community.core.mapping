@@ -203,7 +203,7 @@ define(
                         sortedKeys.sort();
 
                         for (var i = 0, ii = sortedKeys.length; i < ii; i++)
-                            details += "<br/> <b>"+ sortedKeys[i] + "</b> : " + epRef.properties[sortedKeys[i]];
+                            details = helper_.propertiesDisplay(details, sortedKeys[i], epRef.properties[sortedKeys[i]])
 
                         details += "<br/>";
 

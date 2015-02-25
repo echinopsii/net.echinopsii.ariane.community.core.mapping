@@ -49,22 +49,50 @@ define(
                 }
             };
 
+            this.propertiesDisplay = function(details, propsKey, propsValue) {
+                if (Array.isArray(propsValue) || Object.prototype.toString.call(propsValue)==="[object Object]") {
+                    var jsonString = JSON.stringify(propsValue);
+                    jsonString=jsonString.split("[").join("[<br/>");
+                    jsonString=jsonString.split("{").join("{<br/>");
+                    jsonString=jsonString.split("},").join("},<br/>");
+                    jsonString=jsonString.split("],").join("],<br/>");
+                    jsonString=jsonString.split("\",").join("\",<br/>");
+                    jsonString=jsonString.split("\"]").join("\"<br/>]");
+                    jsonString=jsonString.split("\"}").join("\"<br/>}");
+                    jsonString=jsonString.split("]}").join("]<br/>}");
+                    jsonString=jsonString.split("]]").join("]<br/>]");
+                    jsonString=jsonString.split("}]").join("}<br/>]");
+                    jsonString=jsonString.split("}}").join("}<br/>}");
+                    details += "<br/> <b>"+ propsKey + "</b> : " + jsonString;
+                } else {
+                    details += "<br/> <b>"+ propsKey + "</b> : " + JSON.stringify(propsValue);
+                }
+                return details;
+            };
+
             this.dialogOpen = function(id, title, contents) {
                 //
-                $('#mappingCanvas').append("<div id=\"dialog"+ id + "\" title=\"" + title + "\" style=\"background-color: rgba(0, 0, 0, 0.2)\">"+contents+"</div>");
+                $('#mappingCanvas').append("<div id=\"content"+ id +"\" style=\"width: auto; display:inline-block\">"+title+"<br/>"+contents+"</div>");
+                var dialogWidth = $("#content"+id).width() + 100,
+                    dialogHeight = $("#content"+id).height();
+                $("#content"+id).remove();
+
+                $('#mappingCanvas').append("<div id=\"dialog"+ id + "\" title=\"" + title + "\" style=\"background-color: rgba(0, 0, 0, 0.7); z-index: 99999 !important;\">"+contents+"</div>");
                 $("#dialog"+id).puidialog({
                     showEffect: 'fade',
                     hideEffect: 'fade',
                     minimizable: true,
-                    maximizable: false,
-                    resizable: false,
+                    maximizable: true,
+                    modal: false,
+                    width: (dialogWidth > 800) ? 800 : (dialogWidth < 200) ? 200 : dialogWidth,
+                    height: (dialogHeight > 600) ? 600 : (dialogHeight < 100) ? 100 : dialogHeight,
                     afterHide: function(event) {
                         $("#dialog"+id).remove();
-                    },
-                    width: 'auto',
-                    modal: false
+                    }
                 });
                 $("#dialog"+id).puidialog('show');
+                $('#dialog'+id).children().css({"z-index":"99999 !important"});
+                $('#dialog'+id).children().css({"color":"#ffffff"});
             };
 
             this.getMappyLayoutDivSize = function() {

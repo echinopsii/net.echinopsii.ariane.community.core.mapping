@@ -14,4 +14,9 @@
     width: 100% !important;
     max-width: 100% !important;
     overflow: hidden !important;
+    z-index: 2222 !important;
+}
+
+body #mappingCanvas .ui-widget-content a {
+    color: #ffffff !important;
 }
