@@ -330,10 +330,8 @@ define(
                                     fieldRectHeight = fieldRect.attr("height");
                                     fieldRect.attr({"x": nodeRef.rectTopMiddleX - fieldRectWidth/2, "y": nodeRef.rectTopMiddleY+30 - fieldRectHeight/2});
                                     nodeRef.menuSet[i+1].attr({"x": nodeRef.rectTopMiddleX, "y": nodeRef.rectTopMiddleY+30});
-                                    if (nodeRef.nodeChildNodes.getMtxObjCount()!=0) {
-                                        if (nodeRef.isEditing) nodeRef.menuSet[i+1].attr({text: nodeRef.menuFieldStopEditTitle});
-                                        else nodeRef.menuSet[i+1].attr({text: nodeRef.menuFieldStartEditTitle});
-                                    }
+                                    if (nodeRef.isEditing) nodeRef.menuSet[i+1].attr({text: nodeRef.menuFieldStopEditTitle});
+                                    else nodeRef.menuSet[i+1].attr({text: nodeRef.menuFieldStartEditTitle});
                                     i++;
                                 } else {
                                     fieldRect = nodeRef.menuSet[i];
@@ -774,17 +772,15 @@ define(
                 defineRectPoints(this.rectTopLeftX, this.rectTopLeftY);
 
                 this.nodeMenuTitle = this.r.text(0,10,"Node menu").attr(this.nodeMainTitleTXT);
-                if (this.nodeChildNodes.getMtxObjCount()!=0) {
-                    this.menuEditionModeRect = this.r.rect(0,10,this.menuFieldStartEditTitle.width(this.nodeFieldTXT),this.menuFieldStartEditTitle.height(this.nodeFieldTXT));
-                    this.menuEditionModeRect.attr({fill: this.color, stroke: this.color, "fill-opacity": 0, "stroke-width": 0});
-                    this.menuEditionModeRect.mouseover(menuFieldOver);
-                    this.menuEditionModeRect.mouseout(menuFieldOut);
-                    this.menuEditionModeRect.mousedown(this.menuFieldEditClick);
-                    this.menuEditionMode = this.r.text(0,10,this.menuFieldStartEditTitle).attr(this.nodeFieldTXT);
-                    this.menuEditionMode.mouseover(menuFieldOver);
-                    this.menuEditionMode.mouseout(menuFieldOut);
-                    this.menuEditionMode.mousedown(this.menuFieldEditClick);
-                }
+                this.menuEditionModeRect = this.r.rect(0,10,this.menuFieldStartEditTitle.width(this.nodeFieldTXT),this.menuFieldStartEditTitle.height(this.nodeFieldTXT));
+                this.menuEditionModeRect.attr({fill: this.color, stroke: this.color, "fill-opacity": 0, "stroke-width": 0});
+                this.menuEditionModeRect.mouseover(menuFieldOver);
+                this.menuEditionModeRect.mouseout(menuFieldOut);
+                this.menuEditionModeRect.mousedown(this.menuFieldEditClick);
+                this.menuEditionMode = this.r.text(0,10,this.menuFieldStartEditTitle).attr(this.nodeFieldTXT);
+                this.menuEditionMode.mouseover(menuFieldOver);
+                this.menuEditionMode.mouseout(menuFieldOut);
+                this.menuEditionMode.mousedown(this.menuFieldEditClick);
 
                 var fieldTitle = "Display all properties";
                 this.nodeMenuPropertiesRect = this.r.rect(0,10,fieldTitle.width(this.nodeFieldTXT),fieldTitle.height(this.nodeFieldTXT));
@@ -799,10 +795,8 @@ define(
 
                 this.nodeMenuSet = this.r.set();
                 this.nodeMenuSet.push(this.nodeMenuTitle);
-                if (this.nodeChildNodes.getMtxObjCount()!=0) {
-                    this.nodeMenuSet.push(this.menuEditionModeRect);
-                    this.nodeMenuSet.push(this.menuEditionMode);
-                }
+                this.nodeMenuSet.push(this.menuEditionModeRect);
+                this.nodeMenuSet.push(this.menuEditionMode);
                 this.nodeMenuSet.push(this.nodeMenuPropertiesRect);
                 this.nodeMenuSet.push(this.nodeMenuProperties);
                 this.nodeMenuSet.toBack();
@@ -891,17 +885,15 @@ define(
             // EDITABLE
 
             this.setEditionMode = function(editionMode) {
-                if (this.nodeChildNodes.getMtxObjCount()!=0) {
-                    if (editionMode) {
-                        if (this.isEditing)
-                            this.r.scaleDone(this);
-                        this.r.scaleInit(this);
-                        this.isEditing = true;
-                    } else if (!editionMode) {
-                        if (this.isEditing)
-                            this.r.scaleDone(this);
-                        this.isEditing = false;
-                    }
+                if (editionMode) {
+                    if (this.isEditing)
+                        this.r.scaleDone(this);
+                    this.r.scaleInit(this);
+                    this.isEditing = true;
+                } else if (!editionMode) {
+                    if (this.isEditing)
+                        this.r.scaleDone(this);
+                    this.isEditing = false;
                 }
             };
 
