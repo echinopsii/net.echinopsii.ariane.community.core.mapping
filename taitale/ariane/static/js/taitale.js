@@ -147,6 +147,7 @@ requirejs (
                             document.getElementById('treeOptions').style.display = "";
                             document.getElementById('networkOptions').style.display = "none";
                         }
+                        $("#mappyCanvas").css({"background-color":"whitesmoke"});
                     } catch (e) {
                         helper_.addMsgToGrowl(e);
                         helper_.growlMsgs(
