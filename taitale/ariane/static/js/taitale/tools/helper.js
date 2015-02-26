@@ -72,17 +72,17 @@ define(
 
             this.dialogOpen = function(id, title, contents) {
                 //
-                $('#mappingCanvas').append("<div id=\"content"+ id +"\" style=\"width: auto; display:inline-block\">"+title+"<br/>"+contents+"</div>");
+                $('#mappingCanvas').append("<div id=\"content"+ id +"\" style=\"width: auto; display:inline-block\" class=\"mappingPropsDialog\">"+title+"<br/>"+contents+"</div>");
                 var dialogWidth = $("#content"+id).width() + 100,
                     dialogHeight = $("#content"+id).height();
                 $("#content"+id).remove();
 
-                $('#mappingCanvas').append("<div id=\"dialog"+ id + "\" title=\"" + title + "\" style=\"background-color: rgba(0, 0, 0, 0.7); z-index: 99999 !important;\">"+contents+"</div>");
+                $('#mappingCanvas').append("<div id=\"dialog"+ id + "\" title=\"" + title + "\" style=\"background-color: rgba(0, 0, 0, 0.7);\" class=\"mappingPropsDialog\">"+contents+"</div>");
                 $("#dialog"+id).puidialog({
                     showEffect: 'fade',
                     hideEffect: 'fade',
                     minimizable: true,
-                    maximizable: true,
+                    maximizable: false,
                     modal: false,
                     width: (dialogWidth > 800) ? 800 : (dialogWidth < 200) ? 200 : dialogWidth,
                     height: (dialogHeight > 600) ? 600 : (dialogHeight < 100) ? 100 : dialogHeight,
@@ -91,8 +91,8 @@ define(
                     }
                 });
                 $("#dialog"+id).puidialog('show');
-                $('#dialog'+id).children().css({"z-index":"99999 !important"});
                 $('#dialog'+id).children().css({"color":"#ffffff"});
+                $('#dialog'+id).children(".pui-dialog-titlebar").children(".pui-dialog-titlebar-maximize").remove();
             };
 
             this.getMappyLayoutDivSize = function() {
