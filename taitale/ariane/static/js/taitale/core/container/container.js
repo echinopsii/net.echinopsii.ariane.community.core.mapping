@@ -209,7 +209,8 @@ define(
                 containerRef.titleWidth  = containerRef.name.width(containerRef.txtFont);
                 containerRef.titleHeight = containerRef.name.height(containerRef.txtFont);
 
-                return Math.max(firstWidth,containerRef.titleWidth+containerRef.fitTextPadding);
+                return Math.max(firstWidth,Math.max(containerRef.containerHat_.width + containerRef.fitTextPadding + containerRef.containerHat_.width*2/5,
+                        containerRef.titleWidth + containerRef.fitTextPadding + containerRef.titleWidth*2/5));
             };
 
             var mouseDown = function(e) {

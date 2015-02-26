@@ -547,6 +547,9 @@ define(
                     this.maxRectHeight = this.rectHeight;
                 else
                     this.maxRectHeight = mtxMaxInterspan + mtxMaxSize.height;
+
+                if (this.name!==null && (this.rectWidth < this.name.width(this.txtTitleFont)*7/5))
+                    this.rectWidth = this.name.width(this.txtTitleFont)*7/5;
             };
 
             this.defineSize = function() {
@@ -556,6 +559,9 @@ define(
                     this.rectWidth = (this.nodeChildNodes.getMtxSize().y+1)*this.interSpan + mtxSize.width;
                 if (mtxSize.height != 0)
                     this.rectHeight = (this.nodeChildNodes.getMtxSize().x+1)*this.interSpan + this.titleHeight + mtxSize.height;
+
+                if (this.name!==null && (this.rectWidth < this.name.width(this.txtTitleFont)*7/5))
+                    this.rectWidth = this.name.width(this.txtTitleFont)*7/5;
             };
 
             this.getRectSize = function() {
