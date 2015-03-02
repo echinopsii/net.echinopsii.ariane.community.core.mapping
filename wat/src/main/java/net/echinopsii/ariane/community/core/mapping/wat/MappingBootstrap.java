@@ -146,7 +146,7 @@ public class MappingBootstrap implements FaceletsResourceResolverService {
             entity.getDisplayRoles().add("mappingreader");
             entity.getDisplayPermissions().add("mappingDB:read");
             mappingMainMenuEntityList.add(entity);
-            mainMenuEntityRegistry.registerMainMenuEntity(entity);
+            mainMenuEntityRegistry.registerMainLeftMenuEntity(entity);
             log.debug("{} has registered its main menu items", new Object[]{MAPPING_COMPONENT});
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -190,7 +190,7 @@ public class MappingBootstrap implements FaceletsResourceResolverService {
     public void invalidate() throws Exception {
         if (mainMenuEntityRegistry!=null) {
             for(MainMenuEntity entity : mappingMainMenuEntityList) {
-                mainMenuEntityRegistry.unregisterMainMenuEntity(entity);
+                mainMenuEntityRegistry.unregisterMainLeftMenuEntity(entity);
             }
         }
         mappingMainMenuEntityList.clear();
