@@ -10,129 +10,152 @@
         <script data-main="#{request.contextPath}/ajs/taitale.js" src="#{request.contextPath}/ajs/require/require.js" type="text/javascript" charset="utf-8"/>
     </ui:define>
     <ui:define name="moduleContent">
-        <p:layout widgetVar="mappingLW">
-            <!--
-            <p:layoutUnit id="mappingOuput" position="east" size="400" header="Mapping focus" resizable="true" collapsible="true" effect="fade" collapsed="true">
-                <h:outputText value="Layout for map object output (definition, monitoring ...)" /> <br/>
-                <p:commandButton value="Toggle" onclick="mappingLW.toggle('east')"/>
-            </p:layoutUnit>
-            -->
-            <p:layoutUnit id="mappingLayout" position="center" resizable="false">
-                <p:layout>
-                    <p:layoutUnit id="mappingTools" position="north" size="210" header="Mapping tools" resizable="false" collapsible="true">
-                        <p:tabView id="mappingToolsView" activeIndex="2">
+        <div id="mappingBg" class="backgroundMapping">
+            <p:layout widgetVar="mappingLW">
+                <!--
+                <p:layoutUnit id="mappingOuput" position="east" size="400" header="Mapping focus" resizable="true" collapsible="true" effect="fade" collapsed="true">
+                    <h:outputText value="Layout for map object output (definition, monitoring ...)" /> <br/>
+                    <p:commandButton value="Toggle" onclick="mappingLW.toggle('east')"/>
+                </p:layoutUnit>
+                -->
+                <p:layoutUnit id="mappingLayout" position="center" resizable="false">
+                    <p:layout>
+                        <p:layoutUnit id="mappingTools" position="north" size="210" header="Mapping tools" resizable="false" collapsible="true">
+                            <p:tabView id="mappingToolsView" activeIndex="2">
 
-                            <p:tab id="mappingToolsExportTab" title="Export">
-                                <h:form id="mapToolsExport">
-                                    <span class="inputTitle">Export your map to :</span><br/>
-                                    <p:commandButton value="JPG" widgetVar="JPG" icon="arianeico-file-jpg"/>
-                                    <p:commandButton value="PNG" widgetVar="PNG" icon="arianeico-file-png"/>
-                                    <p:commandButton value="SVG" widgetVar="SVG" icon="arianeico-file-svg"/>
-                                </h:form>
-                            </p:tab>
+                                <p:tab id="mappingToolsExportTab" title="Export">
+                                    <h:form id="mapToolsExport">
+                                        <span class="inputTitle">Export your map to :</span><br/>
+                                        <p:commandButton value="JPG" widgetVar="JPG" icon="icon-file"/>
+                                        <p:commandButton value="PNG" widgetVar="PNG" icon="icon-file"/>
+                                        <p:commandButton value="SVG" widgetVar="SVG" icon="icon-file"/>
+                                    </h:form>
+                                </p:tab>
 
-                            <p:tab id="mapToolsDisplayTab" title="Options">
-                                <h:panelGrid columns="4" cellpadding="5">
-                                    <!--
-                                    <h:panelGroup>
-                                        <span class="inputTitle">View</span><br/>
-                                        <p:selectOneButton id="viewSelector" value="#{mappingToolsDisplayController.mappingView}">
-                                            <f:selectItem itemLabel="Component" itemValue="Component"/>
-                                            <f:selectItem itemLabel="Cluster" itemValue="Cluster" />
-                                            <f:selectItem itemLabel="Application" itemValue="Application" />
-                                        </p:selectOneButton>
-                                    </h:panelGroup>
-                                    -->
-                                    <h:panelGroup>
-                                        <span class="inputTitle">Layout</span><br/>
-                                        <p:selectOneButton id="layoutSelector" widgetVar="layoutSelector" value="#{mappingToolsDisplayController.mappingLayout}">
-                                            <f:selectItem itemLabel="Tree" itemValue="Tree" />
-                                            <f:selectItem itemLabel="Network" itemValue="Network" />
-                                        </p:selectOneButton>
-                                    </h:panelGroup>
-                                    <h:panelGroup>
-                                        <span class="inputTitle">Mode</span>
-                                        <p:selectOneButton id="modeSelector" widgetVar="modeSelector" value="#{mappingToolsDisplayController.mappingMode}">
-                                            <f:selectItem itemLabel="Navigation" itemValue="Navigation"/>
-                                            <f:selectItem itemLabel="Edition" itemValue="Edition" />
-                                        </p:selectOneButton>
-                                    </h:panelGroup>
-                                    <h:panelGroup>
-                                        <span class="inputTitle">Notifications options</span>
-                                        <p:selectManyButton id="notificationsOptions" widgetVar="notificationsOptions" value="#{mappingToolsDisplayController.defaultNotifications}">
-                                            <f:selectItem itemLabel="Notify infos" itemValue="notifyInfos" />
-                                            <f:selectItem itemLabel="Notify warnings" itemValue="notifyWarns" />
-                                            <f:selectItem itemLabel="Notify errors" itemValue="notifyErrs" />
-                                        </p:selectManyButton>
-                                    </h:panelGroup>
-                                </h:panelGrid>
-                                <div id="networkOptions">
-                                    <h:panelGrid columns="2" cellpadding="5">
+                                <p:tab id="mapToolsDisplayTab" title="Options">
+                                    <h:panelGrid columns="4" cellpadding="5">
+                                        <!--
                                         <h:panelGroup>
-                                            <span class="inputTitle">Display options</span>
-                                            <p:selectManyButton id="networkLayoutDisplayOptions" widgetVar="networkLayoutDisplayOptions">
-                                                <f:selectItem itemLabel="Display datacenters" itemValue="displayDC" />
-                                                <f:selectItem itemLabel="Display areas" itemValue="displayArea" />
-                                                <f:selectItem itemLabel="Display subnets" itemValue="displayLan" />
+                                            <span class="inputTitle">View</span><br/>
+                                            <p:selectOneButton id="viewSelector" value="#{mappingToolsDisplayController.mappingView}">
+                                                <f:selectItem itemLabel="Component" itemValue="Component"/>
+                                                <f:selectItem itemLabel="Cluster" itemValue="Cluster" />
+                                                <f:selectItem itemLabel="Application" itemValue="Application" />
+                                            </p:selectOneButton>
+                                        </h:panelGroup>
+                                        -->
+                                        <h:panelGroup>
+                                            <span class="inputTitle">Layout</span><br/>
+                                            <p:selectOneButton id="layoutSelector" widgetVar="layoutSelector" value="#{mappingToolsDisplayController.mappingLayout}">
+                                                <f:selectItem itemLabel="Tree" itemValue="Tree" />
+                                                <f:selectItem itemLabel="Network" itemValue="Network" />
+                                            </p:selectOneButton>
+                                        </h:panelGroup>
+                                        <h:panelGroup>
+                                            <span class="inputTitle">Mode</span>
+                                            <p:selectOneButton id="modeSelector" widgetVar="modeSelector" value="#{mappingToolsDisplayController.mappingMode}">
+                                                <f:selectItem itemLabel="Navigation" itemValue="Navigation"/>
+                                                <f:selectItem itemLabel="Edition" itemValue="Edition" />
+                                            </p:selectOneButton>
+                                        </h:panelGroup>
+                                        <h:panelGroup>
+                                            <span class="inputTitle">Notifications options</span>
+                                            <p:selectManyButton id="notificationsOptions" widgetVar="notificationsOptions" value="#{mappingToolsDisplayController.defaultNotifications}">
+                                                <f:selectItem itemLabel="Notify infos" itemValue="notifyInfos" />
+                                                <f:selectItem itemLabel="Notify warnings" itemValue="notifyWarns" />
+                                                <f:selectItem itemLabel="Notify errors" itemValue="notifyErrs" />
                                             </p:selectManyButton>
                                         </h:panelGroup>
                                     </h:panelGrid>
-                                </div>
-                                <div id="treeOptions">
-                                    <h:panelGrid columns="2" cellpadding="5">
-                                        <h:panelGroup>
-                                            <span class="inputTitle">Root tree sorting</span>
-                                            <p:selectOneButton id="rootTreeSorting" widgetVar="rootTreeSorting">
-                                                <f:selectItem itemLabel="By maximum vertex linked" itemValue="1" />
-                                                <f:selectItem itemLabel="By minimum vertex linked" itemValue="-1" />
-                                            </p:selectOneButton>
-                                        </h:panelGroup>
-                                        <h:panelGroup>
-                                            <span class="inputTitle">Sub trees sorting</span>
-                                            <p:selectOneButton id="subTreesSorting" widgetVar="subTreesSorting">
-                                                <f:selectItem itemLabel="By maximum vertex linked" itemValue="1" />
-                                                <f:selectItem itemLabel="By minimum vertex linked" itemValue="-1" />
-                                            </p:selectOneButton>
-                                        </h:panelGroup>
-                                    </h:panelGrid>
-                                </div>
-                            </p:tab>
-                            <p:tab id="mapToolsQueryTab" title="Query" >
-                                <h:form id="mapToolsQueryForm">
-                                    <p:growl id="requestMessages" showDetail="true" />
-                                    <h:panelGrid id="mapToolsQueryGrid" columns="2" cellpadding="5">
-                                        <!--<p:inputTextarea id="mdslQuery" rows="6" cols="180" autoResize="false" widgetVar="mdslQuery"
-                                                             completeMethod="#{autoCompleteController.completeArea}" queryDelay="200" minQueryLength="4"/>-->
-                                        <p:inputTextarea id="mdslQuery" rows="6" cols="180" autoResize="false" widgetVar="mdslQuery" var="mdslQuery"
-                                                         value="#{mdslrSessionRequestController.sessionRequest}"/>
-                                        <h:panelGroup>
-                                            <p:commandButton id="execQuery" widgetVar="execQuery" type="button" value="Execute request" title="Execute"
-                                                             icon="icon-play-circle icon-large" style="width:150px"/><br/>
-                                            <p:commandButton type="button" value="Load request" title="Load" icon="icon-upload icon-large" style="width:150px"
-                                                             onclick="requestLoaderDialog.show()" update=":loadReqDirForm,:loadRequestDetail"
-                                                             actionListener="#{mdslRegistryController.reloadTree}"/><br/>
-                                            <p:commandButton type="commandButton" value="Save request" title="Save" icon="icon-download icon-large" style="width:150px"
-                                                             onclick="requestSaveDialog.show()" actionListener="#{mdslrRequestController.clear}"
-                                                             action="#{mdslRegistryController.reloadTree}"
-                                                             update=":saveReqDirForm,:saveRequestDetail"/>
-                                        </h:panelGroup>
-                                    </h:panelGrid>
-                                </h:form>
-                            </p:tab>
-                        </p:tabView>
-                    </p:layoutUnit>
-                    <p:layoutUnit id="mappingCanvas" position="center" resizable="false">
-                        <div id="mappyLoading"  style="display:none; text-align: center;">
-                            <br/><br/><br/>
-                            <h:outputText value="The map is being computed... Please wait ... :)" styleClass="inputTitle"/>
-                            <br/><br/><br/>
-                            <i class = "icon-spinner icon-spin icon-7x"/>
-                        </div>
-                        <div id="mappyCanvas" oncontextmenu="return false;"/>
-                    </p:layoutUnit>
-                </p:layout>
-            </p:layoutUnit>
-        </p:layout>
+                                    <div id="networkOptions">
+                                        <h:panelGrid columns="2" cellpadding="5">
+                                            <h:panelGroup>
+                                                <span class="inputTitle">Display options</span>
+                                                <p:selectManyButton id="networkLayoutDisplayOptions" widgetVar="networkLayoutDisplayOptions">
+                                                    <f:selectItem itemLabel="Display datacenters" itemValue="displayDC" />
+                                                    <f:selectItem itemLabel="Display areas" itemValue="displayArea" />
+                                                    <f:selectItem itemLabel="Display subnets" itemValue="displayLan" />
+                                                </p:selectManyButton>
+                                            </h:panelGroup>
+                                        </h:panelGrid>
+                                    </div>
+                                    <div id="treeOptions">
+                                        <h:panelGrid columns="2" cellpadding="5">
+                                            <h:panelGroup>
+                                                <span class="inputTitle">Root tree sorting</span>
+                                                <p:selectOneButton id="rootTreeSorting" widgetVar="rootTreeSorting">
+                                                    <f:selectItem itemLabel="By maximum vertex linked" itemValue="1" />
+                                                    <f:selectItem itemLabel="By minimum vertex linked" itemValue="-1" />
+                                                </p:selectOneButton>
+                                            </h:panelGroup>
+                                            <h:panelGroup>
+                                                <span class="inputTitle">Sub trees sorting</span>
+                                                <p:selectOneButton id="subTreesSorting" widgetVar="subTreesSorting">
+                                                    <f:selectItem itemLabel="By maximum vertex linked" itemValue="1" />
+                                                    <f:selectItem itemLabel="By minimum vertex linked" itemValue="-1" />
+                                                </p:selectOneButton>
+                                            </h:panelGroup>
+                                        </h:panelGrid>
+                                    </div>
+                                </p:tab>
+                                <p:tab id="mapToolsQueryTab" title="Query" >
+                                    <h:form id="mapToolsQueryForm">
+                                        <p:growl id="requestMessages" showDetail="true" />
+                                        <h:panelGrid id="mapToolsQueryGrid" columns="2" cellpadding="5">
+                                            <!--<p:inputTextarea id="mdslQuery" rows="6" cols="180" autoResize="false" widgetVar="mdslQuery"
+                                                                 completeMethod="#{autoCompleteController.completeArea}" queryDelay="200" minQueryLength="4"/>-->
+                                            <p:inputTextarea id="mdslQuery" rows="6" cols="180" autoResize="false" widgetVar="mdslQuery" var="mdslQuery"
+                                                             value="#{mdslrSessionRequestController.sessionRequest}"/>
+                                            <h:panelGroup>
+                                                <p:commandButton id="execQuery" widgetVar="execQuery" type="button" value="Execute request" title="Execute"
+                                                                 icon="icon-play-circle icon-large" style="width:150px"/><br/>
+                                                <p:commandButton type="button" value="Load request" title="Load" icon="icon-upload icon-large" style="width:150px"
+                                                                 onclick="requestLoaderDialog.show()" update=":loadReqDirForm,:loadRequestDetail"
+                                                                 actionListener="#{mdslRegistryController.reloadTree}"/><br/>
+                                                <p:commandButton type="commandButton" value="Save request" title="Save" icon="icon-download icon-large" style="width:150px"
+                                                                 onclick="requestSaveDialog.show()" actionListener="#{mdslrRequestController.clear}"
+                                                                 action="#{mdslRegistryController.reloadTree}"
+                                                                 update=":saveReqDirForm,:saveRequestDetail"/>
+                                            </h:panelGroup>
+                                        </h:panelGrid>
+                                    </h:form>
+                                </p:tab>
+                            </p:tabView>
+                        </p:layoutUnit>
+                        <p:layoutUnit id="mappingCanvas" position="center" resizable="false">
+                            <div id="mappyLoading"  style="display:none; text-align: center;">
+                                <br/><br/><br/>
+                                <h:outputText value="The map is being computed... Please wait ... :)" styleClass="inputTitle"/>
+                                <br/><br/><br/>
+                                <i class = "icon-spinner icon-spin icon-7x"/>
+                            </div>
+                            <div id="mappyCanvas" oncontextmenu="return false;"/>
+                        </p:layoutUnit>
+                    </p:layout>
+                </p:layoutUnit>
+            </p:layout>
+        </div>
+
+        <script type="application/javascript">
+            var readyStateCheckIntervalDir = setInterval(function(){
+                if (document.readyState === "complete") {
+                    clearInterval(readyStateCheckIntervalDir);
+                    var bg = $("#mappingBg").css("background");
+                    if (bg.indexOf("bg-ariane-mapping.jpg") > -1)
+                        $("#mappingBg").css({height: $(document).height() - 42});
+                    else
+                        $("#mappingBg").css({height: $(document).height() - 48});
+                }
+            }, 100);
+
+            window.onresize = function(event) {
+                var bg = $("#mappingBg").css("background");
+                if (bg.indexOf("bg-ariane-mapping.jpg") > -1)
+                    $("#mappingBg").css({height: $(document).height() - 42});
+                else
+                    $("#mappingBg").css({height: $(document).height() - 48});
+            };
+        </script>
 
         <p:dialog header="Export map" widgetVar="mapExport" showEffect="fade" hideEffect="fade" height="800" width="1000">
             <div id="exportInProgress"  style="display:none; text-align: center;">

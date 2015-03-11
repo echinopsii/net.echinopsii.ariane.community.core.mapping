@@ -77,7 +77,7 @@ define(
                     dialogHeight = $("#content"+id).height();
                 $("#content"+id).remove();
 
-                $('#mappingCanvas').append("<div id=\"dialog"+ id + "\" title=\"" + title + "\" style=\"background-color: rgba(0, 0, 0, 0.7);\" class=\"mappingPropsDialog\">"+contents+"</div>");
+                $('#mappingCanvas').append("<div id=\"dialog"+ id + "\" title=\"" + title + "\" class=\"mappingPropsDialog\">"+contents+"</div>");
                 $("#dialog"+id).puidialog({
                     showEffect: 'fade',
                     hideEffect: 'fade',

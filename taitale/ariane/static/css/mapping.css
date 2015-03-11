@@ -17,6 +17,19 @@
     border: 0px !important;
 }
 
-#mappyCanvas .ui-widget-content a {
+#mappingToolsView,
+#mappingToolsView .ui-widget-content {
+    border: 0px !important;
+}
+
+.mappingPropsDialog {
+    background-color: rgba(0, 0, 0, 0.7) !important
+}
+
+.mappingPropsDialog .ui-widget-content {
+    background-color: rgba(0, 0, 0, 0) !important
+}
+
+.mappingPropsDialog .ui-widget-content a {
     color: #ffffff !important;
 }
