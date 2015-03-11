@@ -22,15 +22,14 @@
                     <p:layout>
                         <p:layoutUnit id="mappingTools" position="north" size="210" header="Mapping tools" resizable="false" collapsible="true">
                             <p:tabView id="mappingToolsView" activeIndex="2">
-
-                                <p:tab id="mappingToolsExportTab" title="Export">
-                                    <h:form id="mapToolsExport">
-                                        <span class="inputTitle">Export your map to :</span><br/>
-                                        <p:commandButton value="JPG" widgetVar="JPG" icon="icon-file"/>
-                                        <p:commandButton value="PNG" widgetVar="PNG" icon="icon-file"/>
-                                        <p:commandButton value="SVG" widgetVar="SVG" icon="icon-file"/>
-                                    </h:form>
-                                </p:tab>
+                            <p:tab id="mappingToolsExportTab" title="Export">
+                                <h:form id="mapToolsExport">
+                                    <span class="inputTitle">Export your map to :</span><br/>
+                                    <p:commandButton value="JPG" widgetVar="JPG" icon="icon-file icon-large"/>
+                                    <p:commandButton value="PNG" widgetVar="PNG" icon="icon-file icon-large"/>
+                                    <p:commandButton value="SVG" widgetVar="SVG" icon="icon-file icon-large"/>
+                                </h:form>
+                            </p:tab>
 
                                 <p:tab id="mapToolsDisplayTab" title="Options">
                                     <h:panelGrid columns="4" cellpadding="5">
