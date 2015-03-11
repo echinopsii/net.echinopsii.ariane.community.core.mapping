@@ -141,7 +141,7 @@
                     clearInterval(readyStateCheckIntervalDir);
                     var bg = $("#mappingBg").css("background");
                     if (bg.indexOf("bg-ariane-mapping.jpg") > -1)
-                        $("#mappingBg").css({height: $(document).height() - 42});
+                        $("#mappingBg").css({height: $(document).height() - 43});
                     else
                         $("#mappingBg").css({height: $(document).height() - 48});
                 }
@@ -150,7 +150,7 @@
             window.onresize = function(event) {
                 var bg = $("#mappingBg").css("background");
                 if (bg.indexOf("bg-ariane-mapping.jpg") > -1)
-                    $("#mappingBg").css({height: $(document).height() - 42});
+                    $("#mappingBg").css({height: $(document).height() - 43});
                 else
                     $("#mappingBg").css({height: $(document).height() - 48});
             };
