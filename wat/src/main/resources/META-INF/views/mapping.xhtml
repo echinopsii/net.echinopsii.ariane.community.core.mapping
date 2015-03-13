@@ -18,10 +18,11 @@
                     <p:commandButton value="Toggle" onclick="mappingLW.toggle('east')"/>
                 </p:layoutUnit>
                 -->
-                <p:layoutUnit id="mappingLayout" position="center" resizable="false">
+                <p:layoutUnit id="mappingLayout" position="center" resizable="false" styleClass="arianeTransparentBg0-div-noi">
                     <p:layout>
-                        <p:layoutUnit id="mappingTools" position="north" size="210" header="Mapping tools" resizable="false" collapsible="true">
-                            <p:tabView id="mappingToolsView" activeIndex="2">
+                        <p:layoutUnit id="mappingTools" position="north" size="210" header="Mapping tools" resizable="false" collapsible="true"
+                                      styleClass="arianeTransparentBg0-div arianeTransparentBg3-uiwc-noi" style="border: 0px">
+                            <p:tabView id="mappingToolsView" activeIndex="2" styleClass="arianeTransparentBg0-div arianeTransparentBg0-uiwc">
                             <p:tab id="mappingToolsExportTab" title="Export">
                                 <h:form id="mapToolsExport">
                                     <span class="inputTitle">Export your map to :</span><br/>
@@ -121,7 +122,7 @@
                                 </p:tab>
                             </p:tabView>
                         </p:layoutUnit>
-                        <p:layoutUnit id="mappingCanvas" position="center" resizable="false">
+                        <p:layoutUnit id="mappingCanvas" position="center" resizable="false" styleClass="arianeTransparentBg0-div-noi arianeTransparentBg3-uiwc-noi">
                             <div id="mappyLoading"  style="display:none; text-align: center;">
                                 <br/><br/><br/>
                                 <h:outputText value="The map is being computed... Please wait ... :)" styleClass="inputTitle"/>
