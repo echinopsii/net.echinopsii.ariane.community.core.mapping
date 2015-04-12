@@ -85,7 +85,7 @@ define(
             };
             */
 
-            var childNodesWaitingParent = [], childNodesFoundParent = [];
+            var childNodesWaitingParent = [];
             this.addObject = function(JSONNodeDesc) {
                 var container = null;
                 var i, ii, j, jj;
@@ -105,6 +105,8 @@ define(
                     if (nodeToPush.npID!=0)
                         childNodesWaitingParent.push(nodeToPush);
 
+                    var childNodesFoundParent = [];
+
                     for (j = 0, jj = childNodesWaitingParent.length; j < jj; j++) {
                         for (i = 0, ii = nodeRegistry.length; i < ii; i++) {
                             var possibleParentNode = nodeRegistry[i];
@@ -118,7 +120,6 @@ define(
 
                     for (i = 0, ii = childNodesFoundParent.length; i < ii; i++)
                         childNodesWaitingParent.splice(childNodesWaitingParent.indexOf(childNodesFoundParent[i]),1);
-
                 } else {
                     //noinspection JSUnresolvedVariable
                     helper_.addMsgToGrowl(
