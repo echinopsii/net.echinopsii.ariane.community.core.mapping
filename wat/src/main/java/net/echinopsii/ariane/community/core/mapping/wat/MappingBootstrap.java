@@ -90,7 +90,7 @@ public class MappingBootstrap implements FaceletsResourceResolverService {
         mainMenuEntityRegistry = null;
     }
 
-    @Bind
+    @Bind(from="ArianePortalFacesMBeanRegistry")
     public void bindPortalPluginFacesMBeanRegistry(FacesMBeanRegistry r) {
         log.debug("Bound to portal plugin faces managed bean registry...");
         portalPluginFacesMBeanRegistry = r;
