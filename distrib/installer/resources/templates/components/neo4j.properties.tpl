@@ -5,29 +5,34 @@
 #neostore.propertystore.db.strings.mapped_memory=130M
 #neostore.propertystore.db.arrays.mapped_memory=130M
 
-# Enable this to be able to upgrade a store from 1.4 -> 1.5 or 1.4 -> 1.6
-#allow_store_upgrade=true
+# Enable this to be able to upgrade a store from an older version
+allow_store_upgrade=true
 
-# Enable this to specify a parser other than the default one. 1.5, 1.6, 1.7 are available
-#cypher_parser_version=1.6
+# Enable this to specify a parser other than the default one.
+#cypher_parser_version=2.0
 
 # Keep logical logs, helps debugging but uses more disk space, enabled for
 # legacy reasons To limit space needed to store historical logs use values such
 # as: "7 days" or "100M size" instead of "true"
 keep_logical_logs=true
-#read_only=true
 
 # Autoindexing
 
 # Enable auto-indexing for nodes, default is false
-#node_auto_indexing=true
+node_auto_indexing=true
 
 # The node property keys to be auto-indexed, if enabled
-#node_keys_indexable=name,age
+node_keys_indexable=MappingGraphVertexID,MappingGraphVertexType,clusterName,containerPrimaryAdminGate,nodeName,containerGatePrimaryAdminEndpoint,endpointURL,transportName
 
 # Enable auto-indexing for relationships, default is false
-#relationship_auto_indexing=true
+relationship_auto_indexing=true
 
 # The relationship property keys to be auto-indexed, if enabled
-#relationship_keys_indexable=name,age
+relationship_keys_indexable=MappingGraphEdgeID
 
+# Enable shell server so that remote clients can connect via Neo4j shell.
+remote_shell_enabled=true
+# The network interface IP the shell will listen on (use 0.0.0 for all interfaces)
+remote_shell_host=127.0.0.1
+# The port the shell will listen on, default is 1337
+remote_shell_port=1697
