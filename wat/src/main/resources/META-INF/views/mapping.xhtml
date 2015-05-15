@@ -157,7 +157,8 @@
             };
         </script>
 
-        <p:dialog header="Export map" widgetVar="mapExport" showEffect="fade" hideEffect="fade" height="800" width="1000">
+        <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Export map" widgetVar="mapExport"
+                  showEffect="fade" hideEffect="fade" height="800" width="1000" closeOnEscape="true">
             <div id="exportInProgress"  style="display:none; text-align: center;">
                 <br/><br/><br/>
                 <h:outputText value="Export in progress... Please wait ... :)" styleClass="inputTitle"/>
@@ -167,8 +168,8 @@
             <div id="imgExport"></div>
         </p:dialog>
 
-        <p:dialog header="Load request" widgetVar="requestLoaderDialog"
-                  width="1000" height="600" showEffect="fade" hideEffect="explode" resizable="false">
+        <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Load request" widgetVar="requestLoaderDialog"
+                  width="1000" height="600" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
                 <p:layout style="min-width:980px;min-height:590px;">
                     <p:layoutUnit position="west" size="240" header="NAVIGATION" resizable="false" style="border: 0px">
                         <h:form id="loadReqDirForm">
@@ -220,8 +221,8 @@
                 </p:layout>
         </p:dialog>
 
-        <p:dialog header="Save request" widgetVar="requestSaveDialog"
-                  width="1000" height="600" showEffect="fade" hideEffect="explode" resizable="false">
+        <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Save request" widgetVar="requestSaveDialog"
+                  width="1000" height="600" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
             <p:layout style="min-width:980px;min-height:590px;">
                 <p:layoutUnit position="west" size="240" header="NAVIGATION" resizable="false" style="border: 0px">
                     <h:form id="saveReqDirForm">
@@ -251,8 +252,8 @@
             <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}" update=":saveReqDirForm,:loadReqDirForm"/>
         </p:dialog>
 
-        <p:dialog header="Delete request" widgetVar="requestDeleteDialog"
-                  width="350" height="110" showEffect="fade" hideEffect="explode" resizable="false">
+        <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Delete request" widgetVar="requestDeleteDialog"
+                  width="350" height="110" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
             <h:panelGroup id="deleteRequestConfirm">
                 <h:outputText value="Are you sure you want to delete following request ?"/><br/><br/>
                 <h:outputText value="Request name : #{mdslrRequestController.name}"/><br/><br/>
@@ -272,8 +273,8 @@
             <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}" update=":saveReqDirForm,:saveRequestDetail,:loadReqDirForm,:loadRequestDetail"/>
         </p:dialog>
 
-        <p:dialog header="Update request properties" widgetVar="requestModificationDialog"
-                  width="800" height="500" showEffect="fade" hideEffect="explode" resizable="false">
+        <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Update request properties" widgetVar="requestModificationDialog"
+                  width="800" height="500" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
             <h:panelGroup id="updateRequest">
                 <h:form>
                     <ui:insert name="updateRequest" >
@@ -293,8 +294,8 @@
             <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}" update=":saveReqDirForm,:loadReqDirForm"/>
         </p:dialog>
 
-        <p:dialog header="Create new folder" widgetVar="folderNewDialog"
-                  width="800" height="400" showEffect="fade" hideEffect="explode" resizable="false">
+        <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Create new folder" widgetVar="folderNewDialog"
+                  width="800" height="400" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
             <h:panelGroup id="createFolder">
                 <h:form>
                     <ui:insert name="createDirectory" >
@@ -313,8 +314,8 @@
             <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}" update=":saveReqDirForm,:loadReqDirForm,:loadRequestDetail,:saveRequestDetail"/>
         </p:dialog>
 
-        <p:dialog header="Update folder properties" widgetVar="folderUpdateDialog"
-                  width="800" height="350" showEffect="fade" hideEffect="explode" resizable="false">
+        <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Update folder properties" widgetVar="folderUpdateDialog"
+                  width="800" height="350" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
             <h:panelGroup id="updateFolder">
                 <h:form>
                     <ui:insert name="updateDirectory" >
@@ -333,8 +334,8 @@
             <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}" update=":saveReqDirForm,:loadReqDirForm,:loadRequestDetail,:saveRequestDetail"/>
         </p:dialog>
 
-        <p:dialog header="Delete folder" widgetVar="folderDeleteDialog"
-                  width="400" height="100" showEffect="fade" hideEffect="explode" resizable="false">
+        <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Delete folder" widgetVar="folderDeleteDialog"
+                  width="400" height="100" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
             <h:panelGroup id="deleteFolderConfirm">
                 <h:outputText value="Are you sure you want to delete following folder with its contents ?"/><br/><br/>
                 <h:outputText value="Folder name : #{mdslrDirectoryController.name}"/><br/><br/>
@@ -354,8 +355,8 @@
             <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}" update=":saveReqDirForm,:loadReqDirForm,:loadRequestDetail,:saveRequestDetail"/>
         </p:dialog>
 
-        <p:dialog header="Update request permissions" widgetVar="requestPermissionCHDialog"
-                  width="450" heigh="750" showEffect="fade" hideEffect="explode" resizable="false">
+        <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Update request permissions" widgetVar="requestPermissionCHDialog"
+                  width="450" heigh="750" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
             <h:panelGroup id="chRequestPerm">
                 <h:form>
                     <ui:insert name="changeRequestPerm">
@@ -374,8 +375,8 @@
             <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}" update=":saveReqDirForm,:loadReqDirForm,:loadRequestDetail,:saveRequestDetail"/>
         </p:dialog>
 
-        <p:dialog header="Update folder permissions" widgetVar="folderPermissionCHDialog"
-                  width="450" heigh="750" showEffect="fade" hideEffect="explode" resizable="false">
+        <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Update folder permissions" widgetVar="folderPermissionCHDialog"
+                  width="450" heigh="750" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
             <h:panelGroup id="chFolderPerm">
                 <h:form>
                     <ui:insert name="changeFolderPerm">
