@@ -6,7 +6,7 @@
         <groupId>net.echinopsii.ariane.community.core.mapping</groupId>
         <artifactId>net.echinopsii.ariane.community.core.mapping.ds</artifactId>
         <relativePath>..</relativePath>
-        <version>0.6.2-SNAPSHOT</version>
+        <version>0.6.2</version>
     </parent>
 
     <groupId>net.echinopsii.ariane.community.core.mapping.ds</groupId>
