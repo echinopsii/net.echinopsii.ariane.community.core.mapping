@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.echinopsii.ariane.community.core.mapping.wat.json;
+package net.echinopsii.ariane.community.core.mapping.ds.json;
 
 public class PropertiesException extends Exception {
     private static final long serialVersionUID = -5787356297845468334L;

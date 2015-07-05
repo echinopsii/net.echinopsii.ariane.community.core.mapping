@@ -17,14 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.echinopsii.ariane.community.core.mapping.wat.json.ds.domain;
+package net.echinopsii.ariane.community.core.mapping.ds.json.domain;
 
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Cluster;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
-import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
+import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -54,13 +54,13 @@ public class ClusterJSON {
     }
 
     public final static void oneCluster2JSON(Cluster cluster, ByteArrayOutputStream outStream) throws IOException {
-        JsonGenerator jgenerator = MappingBootstrap.getjFactory().createJsonGenerator(outStream, JsonEncoding.UTF8);
+        JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         ClusterJSON.cluster2JSON(cluster, jgenerator);
         jgenerator.close();
     }
 
     public final static void manyClusters2JSON(HashSet<Cluster> clusters, ByteArrayOutputStream outStream) throws IOException {
-        JsonGenerator jgenerator = MappingBootstrap.getjFactory().createJsonGenerator(outStream, JsonEncoding.UTF8);
+        JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         jgenerator.writeStartObject();
         jgenerator.writeArrayFieldStart("clusters");
         Iterator<Cluster> iterC = clusters.iterator();

@@ -17,13 +17,13 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.echinopsii.ariane.community.core.mapping.wat.json.ds.service;
+package net.echinopsii.ariane.community.core.mapping.ds.json.service;
 
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
-import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
-import net.echinopsii.ariane.community.core.mapping.wat.json.ds.domain.*;
+import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
+import net.echinopsii.ariane.community.core.mapping.ds.json.domain.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -50,7 +50,7 @@ public class MapJSON {
                                               HashSet<Link> links, propsToInjectHolder lprps2Inject,
                                               HashSet<Transport> transports, propsToInjectHolder tprps2Inject,
                                               propsToInjectHolder mprps2Inject, ByteArrayOutputStream outStream) throws IOException {
-        JsonGenerator jgenerator = MappingBootstrap.getjFactory().createJsonGenerator(outStream, JsonEncoding.UTF8);
+        JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         jgenerator.writeStartObject();
 
         jgenerator.writeArrayFieldStart(MAP_CONTAINERS_ARRAY);

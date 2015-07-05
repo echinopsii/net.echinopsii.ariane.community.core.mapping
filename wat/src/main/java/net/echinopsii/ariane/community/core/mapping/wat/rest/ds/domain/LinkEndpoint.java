@@ -24,7 +24,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Link;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
-import net.echinopsii.ariane.community.core.mapping.wat.json.ds.domain.LinkJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.json.domain.LinkJSON;
 import net.echinopsii.ariane.community.core.mapping.wat.rest.ToolBox;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;

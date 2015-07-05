@@ -17,15 +17,15 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.echinopsii.ariane.community.core.mapping.wat.json.ds.domain;
+package net.echinopsii.ariane.community.core.mapping.ds.json.domain;
 
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
-import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
-import net.echinopsii.ariane.community.core.mapping.wat.json.PropertiesJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
+import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,13 +75,13 @@ public class EndpointJSON {
     }
 
     public final static void oneEndpoint2JSON(Endpoint endpoint, ByteArrayOutputStream outStream) throws IOException {
-        JsonGenerator jgenerator = MappingBootstrap.getjFactory().createJsonGenerator(outStream, JsonEncoding.UTF8);
+        JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         endpoint2JSON(endpoint, jgenerator);
         jgenerator.close();
     }
 
     public final static void manyEndpoints2JSON(HashSet<Endpoint> endpoints, ByteArrayOutputStream outStream) throws IOException {
-        JsonGenerator jgenerator = MappingBootstrap.getjFactory().createJsonGenerator(outStream, JsonEncoding.UTF8);
+        JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         jgenerator.writeStartObject();
         jgenerator.writeArrayFieldStart("endpoints");
         Iterator<Endpoint> iterC = endpoints.iterator();

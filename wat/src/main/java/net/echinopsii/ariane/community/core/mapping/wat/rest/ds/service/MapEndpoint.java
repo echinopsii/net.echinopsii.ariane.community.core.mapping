@@ -23,7 +23,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
 import net.echinopsii.ariane.community.core.mapping.ds.service.Map;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
-import net.echinopsii.ariane.community.core.mapping.wat.json.ds.service.MapJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.json.service.MapJSON;
 import net.echinopsii.ariane.community.core.mapping.wat.rest.ToolBox;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;

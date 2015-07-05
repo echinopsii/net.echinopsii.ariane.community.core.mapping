@@ -19,8 +19,8 @@
  */
 package net.echinopsii.ariane.community.core.mapping.wat.rest;
 
-import net.echinopsii.ariane.community.core.mapping.wat.json.PropertiesException;
-import net.echinopsii.ariane.community.core.mapping.wat.json.PropertiesJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesException;
+import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
 
 import java.io.*;
 

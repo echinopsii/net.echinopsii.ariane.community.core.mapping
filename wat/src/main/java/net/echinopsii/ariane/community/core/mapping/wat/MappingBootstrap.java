@@ -19,7 +19,6 @@
 
 package net.echinopsii.ariane.community.core.mapping.wat;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.portal.base.model.*;
 import net.echinopsii.ariane.community.core.portal.base.plugin.FaceletsResourceResolverService;
@@ -115,7 +114,6 @@ public class MappingBootstrap implements FaceletsResourceResolverService {
     }
 
     private static MappingSce mappingSce = null;
-    private static JsonFactory jFactory = new JsonFactory();
 
     @Bind
     public void bindMappingBSce(MappingSce s) {
@@ -206,10 +204,6 @@ public class MappingBootstrap implements FaceletsResourceResolverService {
 
     public static MappingSce getMappingSce() {
         return mappingSce;
-    }
-
-    public static JsonFactory getjFactory() {
-        return jFactory;
     }
 
     @Override

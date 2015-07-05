@@ -17,13 +17,13 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.echinopsii.ariane.community.core.mapping.wat.json.ds.domain;
+package net.echinopsii.ariane.community.core.mapping.ds.json.domain;
 
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
-import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
+import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -46,13 +46,13 @@ public class GateJSON {
     }
 
     public final static void oneGate2JSON(Gate gate, ByteArrayOutputStream outStream) throws IOException {
-        JsonGenerator jgenerator = MappingBootstrap.getjFactory().createJsonGenerator(outStream, JsonEncoding.UTF8);
+        JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         gate2JSON(gate, jgenerator);
         jgenerator.close();
     }
 
     public final static void manyGates2JSON(HashSet<Gate> gates, ByteArrayOutputStream outStream) throws IOException {
-        JsonGenerator jgenerator = MappingBootstrap.getjFactory().createJsonGenerator(outStream, JsonEncoding.UTF8);
+        JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         jgenerator.writeStartObject();
         jgenerator.writeArrayFieldStart("gates");
         Iterator<Gate> iterC = gates.iterator();
