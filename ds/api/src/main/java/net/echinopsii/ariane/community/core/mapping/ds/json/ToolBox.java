@@ -38,4 +38,33 @@ public class ToolBox {
         }
         return sb.toString();
     }
+
+    public static Object extractPropertyObjectValueFromString(String value, String type) throws IOException, PropertiesException {
+        Object ovalue = null;
+        switch (type.toLowerCase()) {
+            case "int":
+            case "integer":
+                ovalue = new Integer(value);
+                break;
+            case "long":
+                ovalue = new Long(value);
+                break;
+            case "double":
+                ovalue = new Double(value);
+                break;
+            case "boolean":
+                ovalue = new Boolean(value);
+                break;
+            case "array":
+            case "map":
+                ovalue = PropertiesJSON.JSONStringToPropertyObject(type, value);
+                break;
+            case "string":
+                ovalue = value;
+                break;
+            default:
+                throw new PropertiesException("Invalid property type ("+type.toLowerCase()+"). Supported property types are : array, boolean, double, int, long, map and String");
+        }
+        return ovalue;
+    }
 }

@@ -26,7 +26,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.NodeJSON;
-import net.echinopsii.ariane.community.core.mapping.wat.rest.ToolBox;
+import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
