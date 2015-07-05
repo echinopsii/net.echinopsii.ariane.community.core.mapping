@@ -98,7 +98,7 @@ public class ClusterEndpoint {
 
     @GET
     @Path("/get")
-    public Response getContainer(@QueryParam("ID") long id) {
+    public Response getCluster(@QueryParam("ID") long id) {
         return displayCluster(id);
     }
 

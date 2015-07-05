@@ -48,6 +48,8 @@ public class ContainerJSON {
     public final static String CT_TYPE_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_TYPE_KEY;
     public final static String CT_PAGTID_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_PAGATE_KEY+"ID";
     public final static String CT_GATE_URI = MappingDSGraphPropertyNames.DD_CONTAINER_GATEURI_KEY;
+    public final static String CT_CLUSTER_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_CLUSTER_KEY+"ID";
+    public final static String CT_CCID_TODKEN = MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_CHILD_CONTAINER_KEY+"ID";
     public final static String CT_NID_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_NODE_KEY+"ID";
     public final static String CT_GID_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_GATE_KEY+"ID";
     public final static String CT_PRP_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY;
@@ -87,21 +89,22 @@ public class ContainerJSON {
         jgenerator.writeStringField(CT_PRODUCT_TOKEN, cont.getContainerProduct());
         jgenerator.writeStringField(CT_TYPE_TOKEN, cont.getContainerType());
         jgenerator.writeNumberField(CT_PAGTID_TOKEN, cont.getContainerPrimaryAdminGate().getNodeID());
+        if (cont.getContainerCluster()!=null)
+            jgenerator.writeNumberField(CT_CLUSTER_TOKEN, cont.getContainerCluster().getClusterID());
+
+        jgenerator.writeArrayFieldStart(CT_CCID_TODKEN);
+        for (Container container : cont.getContainerChildContainers())
+            jgenerator.writeNumber(container.getContainerID());
+        jgenerator.writeEndArray();
 
         jgenerator.writeArrayFieldStart(CT_GID_TOKEN);
-        Iterator<? extends Gate> iterG = cont.getContainerGates().iterator();
-        while (iterG.hasNext()) {
-            Gate gate = iterG.next();
+        for (Gate gate : cont.getContainerGates())
             jgenerator.writeNumber(gate.getNodeID());
-        }
         jgenerator.writeEndArray();
 
         jgenerator.writeArrayFieldStart(CT_NID_TOKEN);
-        Iterator<? extends Node> iterN = cont.getContainerNodes(0).iterator();
-        while (iterN.hasNext()) {
-            Node node = iterN.next();
+        for (Node node : cont.getContainerNodes(0))
             jgenerator.writeNumber(node.getNodeID());
-        }
         jgenerator.writeEndArray();
 
         if (cont.getContainerProperties() != null) {
