@@ -50,7 +50,8 @@ public class ContainerJSON {
     public final static String CT_PAGTID_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_PAGATE_KEY+"ID";
     public final static String CT_GATE_URI = MappingDSGraphPropertyNames.DD_CONTAINER_GATEURI_KEY;
     public final static String CT_CLUSTER_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_CLUSTER_KEY+"ID";
-    public final static String CT_CCID_TODKEN = MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_CHILD_CONTAINER_KEY+"ID";
+    public final static String CT_PCID_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_PCONTER_KEY+"ID";
+    public final static String CT_CCID_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_CHILD_CONTAINER_KEY+"ID";
     public final static String CT_NID_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_NODE_KEY+"ID";
     public final static String CT_GID_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_GATE_KEY+"ID";
     public final static String CT_PRP_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY;
@@ -95,8 +96,10 @@ public class ContainerJSON {
         jgenerator.writeNumberField(CT_PAGTID_TOKEN, cont.getContainerPrimaryAdminGate().getNodeID());
         if (cont.getContainerCluster()!=null)
             jgenerator.writeNumberField(CT_CLUSTER_TOKEN, cont.getContainerCluster().getClusterID());
+        if (cont.getContainerParentContainer()!=null)
+            jgenerator.writeNumberField(CT_PCID_TOKEN, cont.getContainerParentContainer().getContainerID());
 
-        jgenerator.writeArrayFieldStart(CT_CCID_TODKEN);
+        jgenerator.writeArrayFieldStart(CT_CCID_TOKEN);
         for (Container container : cont.getContainerChildContainers())
             jgenerator.writeNumber(container.getContainerID());
         jgenerator.writeEndArray();
