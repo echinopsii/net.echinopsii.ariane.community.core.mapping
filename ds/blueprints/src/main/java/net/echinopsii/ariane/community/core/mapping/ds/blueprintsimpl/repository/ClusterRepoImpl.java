@@ -50,7 +50,7 @@ public class ClusterRepoImpl implements ClusterRepo<ClusterImpl> {
     }
 
     @Override
-    public ClusterImpl findClusteByID(long id) {
+    public ClusterImpl findClusterByID(long id) {
         ClusterImpl ret = null;
         MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity(id);
         if (entity != null) {

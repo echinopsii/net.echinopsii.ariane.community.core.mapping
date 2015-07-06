@@ -784,7 +784,7 @@ public class MappingDSGraphDB {
         MappingDSCacheEntity ret = MappingDSCache.getClusterFromCache(clusterName);
         if (ret == null) {
             Vertex vertex = ccgraph.getVertices(MappingDSGraphPropertyNames.DD_CLUSTER_NAME_KEY, clusterName).iterator().hasNext() ?
-                                    ccgraph.getVertices(MappingDSGraphPropertyNames.DD_CLUSTER_NAME_KEY, clusterName).iterator().next() : null;
+                                 ccgraph.getVertices(MappingDSGraphPropertyNames.DD_CLUSTER_NAME_KEY, clusterName).iterator().next() : null;
             if (vertex != null) {
                 String vertexType = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY);
                 switch (vertexType) {

@@ -43,6 +43,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 	private static final Logger log = LoggerFactory.getLogger(ContainerImpl.class);
 	
 	private long                   containerID               = 0;
+    private String                 containerName             = null;
 	private String                 containerCompany          = null;
     private String                 containerProduct          = null;
     private String                 containerType             = null;
@@ -67,6 +68,18 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 	}
 
     @Override
+    public String getContainerName() { return this.containerName; }
+
+    @Override
+    public void setContainerName(String name) {
+        if (this.containerName == null || this.containerName.equals(name)) {
+            this.containerName = name;
+            this.synchronizeCompanyToDB();
+            log.debug("Set container {} name to {}.", new Object[]{((this.containerVertex!=null)?this.containerVertex.getId():0),this.containerName});
+        }
+    }
+
+    @Override
     public String getContainerCompany() {
         return containerCompany;
     }
@@ -76,7 +89,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
         if (this.containerCompany == null || !this.containerCompany.equals(company)) {
             this.containerCompany = company;
             this.synchronizeCompanyToDB();
-            log.debug("Set container {} type to {}.", new Object[]{((this.containerVertex!=null)?this.containerVertex.getId():0),this.containerType});
+            log.debug("Set container {} company to {}.", new Object[]{((this.containerVertex!=null)?this.containerVertex.getId():0),this.containerCompany});
         }
     }
 
@@ -335,6 +348,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 	}
 	
 	public void synchronizeToDB() throws MappingDSGraphDBException {
+        synchronizeNameToDB();
         synchronizeCompanyToDB();
         synchronizeProductToDB();
         synchronizeTypeToDB();
@@ -346,6 +360,17 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 		synchronizeNodesToDB();
 		synchronizeGatesToDB();
 	}
+
+    private void synchronizeNameToDB() {
+        if (containerVertex!=null) {
+            if (this.containerName!=null) {
+                log.debug("Synchronize container name {}...", new Object[]{this.containerName});
+                containerVertex.setProperty(MappingDSGraphPropertyNames.DD_CONTAINER_NAME_KEY, this.containerName);
+                MappingDSGraphDB.autocommit();
+                log.debug("Synchronize container name {} done...", new Object[]{this.containerName});
+            }
+        }
+    }
 
     private void synchronizeCompanyToDB() {
         if (containerVertex!=null) {
@@ -515,6 +540,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 		if (!isBeingSyncFromDB) {
 			isBeingSyncFromDB = true;
 			synchronizeIDFromDB();
+            synchronizeNameFromDB();
             synchronizeCompanyFromDB();
             synchronizeProductFromDB();
 			synchronizeTypeFromDB();
@@ -533,6 +559,14 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 		if (this.containerVertex!=null)
 			this.containerID = this.containerVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
 	}
+
+    private void synchronizeNameFromDB() {
+        if (this.containerVertex!=null) {
+            Object ret = containerVertex.getProperty(MappingDSGraphPropertyNames.DD_CONTAINER_NAME_KEY);
+            if (ret!=null)
+                this.containerName = (String) ret;
+        }
+    }
 
     private void synchronizeCompanyFromDB() {
         if (containerVertex!=null) {

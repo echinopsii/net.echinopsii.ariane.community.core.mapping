@@ -132,14 +132,18 @@ public class ContainerEndpoint {
 
     @GET
     @Path("/create")
-    public Response createContainer(@QueryParam("primaryAdminURL") String primaryAdminURL, @QueryParam("primaryAdminGateName") String primaryAdminGateName) {
+    public Response createContainer(@QueryParam("name") String name, @QueryParam("primaryAdminURL") String primaryAdminURL, @QueryParam("primaryAdminGateName") String primaryAdminGateName) {
         try {
             Subject subject = SecurityUtils.getSubject();
             log.debug("[{}-{}] create container : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), primaryAdminURL, primaryAdminGateName});
             if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
-                subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
+                    subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
             {
-                Container cont = (Container) MappingBootstrap.getMappingSce().getContainerSce().createContainer(primaryAdminURL, primaryAdminGateName);
+                Container cont = null;
+                if (name != null)
+                    cont = (Container) MappingBootstrap.getMappingSce().getContainerSce().createContainer(name, primaryAdminURL, primaryAdminGateName);
+                else
+                    cont = (Container) MappingBootstrap.getMappingSce().getContainerSce().createContainer(primaryAdminURL, primaryAdminGateName);
                 try {
                     ByteArrayOutputStream outStream = new ByteArrayOutputStream();
                     ContainerJSON.oneContainer2JSON(cont, outStream);
@@ -178,6 +182,26 @@ public class ContainerEndpoint {
             }
         } catch (MappingDSException e) {
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Error while deleting container with primary admin URL " + primaryAdminURL).build();
+        }
+    }
+
+    @GET
+    @Path("/update/name")
+    public Response setContainerName(@QueryParam("ID") long id, @QueryParam("name") String name) {
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}-{}] update container name : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name});
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+                subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
+        {
+            Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
+            if (container != null) {
+                container.setContainerName(name);
+                return Response.status(Status.OK).entity("Container (" + id + ") company successfully updated to " + name + ".").build();
+            } else {
+                return Response.status(Status.NOT_FOUND).entity("Error while updating container (" + id + ") company " + name + " : container " + id + " not found.").build();
+            }
+        } else {
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
         }
     }
 

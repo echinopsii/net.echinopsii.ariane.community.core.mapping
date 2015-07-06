@@ -34,6 +34,9 @@ import java.util.Set;
  */
 public interface Container {
 	public long getContainerID();
+
+    public String getContainerName();
+    public void setContainerName(String name);
 	
 	public String getContainerCompany();
     public void   setContainerCompany(String company);

@@ -68,6 +68,13 @@ public class ContainerSceImpl implements ContainerSce<ContainerImpl> {
     }
 
     @Override
+    public ContainerImpl createContainer(String name, String primaryAdminURL, String primaryAdminGateName) throws MappingDSException {
+        ContainerImpl ret = this.createContainer(primaryAdminURL, primaryAdminGateName);
+        ret.setContainerName(name);
+        return ret;
+    }
+
+    @Override
     public void deleteContainer(String primaryAdminURL) throws MappingDSException {
         ContainerImpl remove = sce.getGlobalRepo().getContainerRepo().findContainersByPrimaryAdminURL(primaryAdminURL);
         if (remove != null) {

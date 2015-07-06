@@ -38,6 +38,7 @@ public final class MappingDSGraphPropertyNames {
     public static final String DD_CLUSTER_EDGE_CONT_KEY = "clusterContainers";
 
     public final static String DD_TYPE_CONTAINER_VALUE = "container";
+    public static final String DD_CONTAINER_NAME_KEY = "containerName";
     public static final String DD_CONTAINER_COMPANY_KEY = "containerCompany";
     public static final String DD_CONTAINER_PRODUCT_KEY = "containerProduct";
     public static final String DD_CONTAINER_TYPE_KEY = "containerType";

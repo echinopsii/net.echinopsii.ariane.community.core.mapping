@@ -43,6 +43,7 @@ public class ContainerJSON {
     private final static Logger log = LoggerFactory.getLogger(ContainerJSON.class);
 
     public final static String CT_ID_TOKEN = MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE+"ID";
+    public final static String CT_NAME_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_NAME_KEY;
     public final static String CT_COMPANY_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_COMPANY_KEY;
     public final static String CT_PRODUCT_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_PRODUCT_KEY;
     public final static String CT_TYPE_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_TYPE_KEY;
@@ -69,6 +70,7 @@ public class ContainerJSON {
     public final static void container2MapJSON(Container cont, HashMap<String, Object> props, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeStartObject();
         jgenerator.writeNumberField(CT_ID_TOKEN, cont.getContainerID());
+        jgenerator.writeStringField(CT_NAME_TOKEN, cont.getContainerName());
         jgenerator.writeStringField(CT_COMPANY_TOKEN, cont.getContainerCompany());
         jgenerator.writeStringField(CT_PRODUCT_TOKEN, cont.getContainerProduct());
         jgenerator.writeStringField(CT_TYPE_TOKEN, cont.getContainerType());
@@ -85,9 +87,11 @@ public class ContainerJSON {
     public final static void container2JSON(Container cont, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeStartObject();
         jgenerator.writeNumberField(CT_ID_TOKEN, cont.getContainerID());
+        jgenerator.writeStringField(CT_NAME_TOKEN, cont.getContainerName());
         jgenerator.writeStringField(CT_COMPANY_TOKEN, cont.getContainerCompany());
         jgenerator.writeStringField(CT_PRODUCT_TOKEN, cont.getContainerProduct());
         jgenerator.writeStringField(CT_TYPE_TOKEN, cont.getContainerType());
+        jgenerator.writeStringField(CT_GATE_URI, cont.getContainerPrimaryAdminGateURL());
         jgenerator.writeNumberField(CT_PAGTID_TOKEN, cont.getContainerPrimaryAdminGate().getNodeID());
         if (cont.getContainerCluster()!=null)
             jgenerator.writeNumberField(CT_CLUSTER_TOKEN, cont.getContainerCluster().getClusterID());
