@@ -201,6 +201,7 @@ public class ClusterEndpoint {
             if (cluster != null) {
                 Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(containerID);
                 if (container != null) {
+                    cluster.removeClusterContainer(container);
                     return Response.status(Status.OK).entity("Container " + containerID + " successfully deleted from cluster " + id + ".").build();
                 } else {
                     return Response.status(Status.NOT_FOUND).entity("Error while deleting container " + id + " from cluster (" + id + ") : container " + containerID + " not found.").build();

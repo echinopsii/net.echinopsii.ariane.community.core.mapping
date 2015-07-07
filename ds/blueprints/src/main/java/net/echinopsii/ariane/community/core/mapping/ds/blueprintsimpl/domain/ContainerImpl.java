@@ -153,7 +153,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 	@Override
 	public void setContainerCluster(Cluster cluster) {
 		if (this.containerCluster == null || !this.containerCluster.equals(cluster)) {
-			if (cluster instanceof ClusterImpl) {
+			if (cluster == null || cluster instanceof ClusterImpl) {
 				this.containerCluster = (ClusterImpl) cluster ;
 				synchronizeClusterToDB();
 			}

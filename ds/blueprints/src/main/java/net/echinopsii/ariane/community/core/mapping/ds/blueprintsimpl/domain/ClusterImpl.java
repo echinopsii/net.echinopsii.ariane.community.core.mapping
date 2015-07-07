@@ -93,7 +93,10 @@ public class ClusterImpl implements Cluster, MappingDSCacheEntity {
     public boolean removeClusterContainer(Container container) {
         if (container instanceof ContainerImpl) {
             boolean ret = this.clusterContainers.remove(container);
-            if (ret) removeContainerFromDB((ContainerImpl)container);
+            if (ret) {
+                removeContainerFromDB((ContainerImpl)container);
+                container.setContainerCluster(null);
+            }
             return ret;
         } else {
             return false;
