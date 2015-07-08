@@ -167,6 +167,8 @@ public class PropertiesJSON {
                                     JsonNode next = iter.next();
                                     if (next.isLong())
                                         ((ArrayList)ret).add(next.asLong());
+                                    else if (next.isInt())
+                                        ((ArrayList)ret).add((long)(next.asInt()));
                                     else
                                         throw new PropertiesException("Json property array badly defined. Following array value is not a long : " +next.toString() + ".\n" +
                                                                               "Array entry should be defined with following array : ['array type',['value1','value2' ...]]");
