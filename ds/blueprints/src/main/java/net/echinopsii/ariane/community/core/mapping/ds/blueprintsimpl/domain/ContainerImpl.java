@@ -192,7 +192,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
     @Override
     public void setContainerParentContainer(Container container) {
         if (this.containerParentContainer==null || !this.containerParentContainer.equals(container)) {
-            if (container instanceof ContainerImpl) {
+            if (container == null || container instanceof ContainerImpl) {
                 this.containerParentContainer = (ContainerImpl) container;
             }
         }
@@ -209,12 +209,14 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
         if (container instanceof ContainerImpl) {
             try {
                 ret = this.containerChildContainers.add((ContainerImpl)container);
+                container.setContainerParentContainer(this);
                 if (ret)
                     synchronizeChildContainersToDB();
             } catch (MappingDSGraphDBException E) {
                 E.printStackTrace();
                 log.error("Exception while adding child container {}...", new Object[]{container.getContainerID()});
-                this.containerNodes.remove((ContainerImpl)container);
+                this.containerNodes.remove((ContainerImpl) container);
+                container.setContainerParentContainer(null);
                 MappingDSGraphDB.autorollback();
             }
         }
@@ -226,8 +228,10 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
         boolean ret = false;
         if (container instanceof ContainerImpl) {
             ret = containerChildContainers.remove(container);
-            if (ret)
-                removeChildContainerFromDB((ContainerImpl)container);
+            if (ret) {
+                container.setContainerParentContainer(null);
+                removeChildContainerFromDB((ContainerImpl) container);
+            }
         }
         return ret;
     }
@@ -255,12 +259,14 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 			boolean ret = false; 
 			try {
 				ret = this.containerNodes.add((NodeImpl)node);
+                node.setNodeContainer(this);
 				if (ret)
 					synchronizeNodeToDB((NodeImpl)node);
 			} catch (MappingDSGraphDBException E) {
 				E.printStackTrace();
 				log.error("Exception while adding node {}...", new Object[]{node.getNodeID()});
 				this.containerNodes.remove((NodeImpl)node);
+                node.setNodeContainer(null);
 				MappingDSGraphDB.autorollback();
 			}
 			return ret;
@@ -273,8 +279,10 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 	public boolean removeContainerNode(Node node) {
 		if (node instanceof NodeImpl) {
 			boolean ret = this.containerNodes.remove((NodeImpl)node);
-			if (ret)
-				removeNodeFromDB((NodeImpl)node); 
+            if (ret) {
+                node.setNodeContainer(null);
+                removeNodeFromDB((NodeImpl) node);
+            }
 			return ret;
 		} else
 			return false;
@@ -295,9 +303,11 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
                 addToNodes = this.containerNodes.add((NodeImpl) gate);
                 addToGates = this.containerGates.add((GateImpl) gate);
                 if (addToNodes && addToGates) {
+                    gate.setNodeContainer(this);
                     synchronizeNodeToDB((NodeImpl) gate);
                     synchronizeGateToDB((GateImpl) gate);
                 } else {
+                    gate.setNodeContainer(null);
 					if (addToNodes) this.containerNodes.remove((NodeImpl)gate);
 					if (addToGates) this.containerGates.remove((GateImpl)gate);
 				}
@@ -306,6 +316,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 				log.error("Exception while adding gate {}...", new Object[]{gate.getNodeID()});				
 				if (addToNodes) this.containerNodes.remove((NodeImpl)gate);
 				if (addToGates) this.containerGates.remove((GateImpl)gate);
+                gate.setNodeContainer(null);
 				MappingDSGraphDB.autorollback();
 			}
 			return addToNodes && addToGates;
@@ -321,6 +332,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
             boolean removedFromNodes = this.containerNodes.remove(gate);
             boolean removedFromGates = this.containerGates.remove(gate);
             if (removedFromGates && removedFromNodes) {
+                gate.setNodeContainer(null);
                 removeNodeFromDB((NodeImpl)gate);
                 removeGateFromDB((GateImpl)gate);
             } else {
