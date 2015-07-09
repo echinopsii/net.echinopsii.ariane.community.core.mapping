@@ -317,6 +317,7 @@ public class NodeEndpoint {
                 Node twinNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(twinNodeID);
                 if (twinNode != null) {
                     node.addTwinNode(twinNode);
+                    twinNode.addTwinNode(node);
                     return Response.status(Status.OK).entity("Twin node (" + twinNodeID + ") successfully added to node " + id + ".").build();
                 } else {
                     return Response.status(Status.NOT_FOUND).entity("Error while adding twin node " + twinNodeID + " to node " + id + " : twin node " + twinNodeID + " not found.").build();
@@ -342,6 +343,7 @@ public class NodeEndpoint {
                 Node twinNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(twinNodeID);
                 if (twinNode != null) {
                     node.removeTwinNode(twinNode);
+                    twinNode.removeTwinNode(node);
                     return Response.status(Status.OK).entity("Twin node (" + twinNodeID + ") successfully deleted from node " + id + ".").build();
                 } else {
                     return Response.status(Status.NOT_FOUND).entity("Error while deleting twin node " + twinNodeID + " from node " + id + " : twin node " + twinNodeID + " not found.").build();
