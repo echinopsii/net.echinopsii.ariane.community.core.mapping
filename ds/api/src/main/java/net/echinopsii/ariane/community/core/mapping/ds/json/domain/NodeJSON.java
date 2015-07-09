@@ -42,6 +42,7 @@ public class NodeJSON {
 
     public final static String ND_ID_TOKEN    = MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE+"ID";
     public final static String ND_NAME_TOKEN  = MappingDSGraphPropertyNames.DD_NODE_NAME_KEY;
+    public final static String ND_DEPTH_TOKEN = MappingDSGraphPropertyNames.DD_NODE_DEPTH_KEY;
     public final static String ND_CONID_TOKEN = MappingDSGraphPropertyNames.DD_NODE_CONT_KEY+"ID";
     public final static String ND_PNDID_TOKEN = MappingDSGraphPropertyNames.DD_NODE_PNODE_KEY+"ID";
     public final static String ND_CNDID_TOKEN = MappingDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY+"ID";
@@ -61,6 +62,7 @@ public class NodeJSON {
         jgenerator.writeStartObject();
         jgenerator.writeNumberField(ND_ID_TOKEN, node.getNodeID());
         jgenerator.writeStringField(ND_NAME_TOKEN, node.getNodeName());
+        jgenerator.writeNumberField(ND_DEPTH_TOKEN, node.getNodeDepth());
         jgenerator.writeNumberField(ND_CONID_TOKEN, node.getNodeContainer().getContainerID());
         if (node.getNodeParentNode()!=null)
             jgenerator.writeNumberField(ND_PNDID_TOKEN, node.getNodeParentNode().getNodeID());
@@ -73,6 +75,7 @@ public class NodeJSON {
     public final static void node2JSON(Node node, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeNumberField(ND_ID_TOKEN, node.getNodeID());
         jgenerator.writeStringField(ND_NAME_TOKEN, node.getNodeName());
+        jgenerator.writeNumberField(ND_DEPTH_TOKEN, node.getNodeDepth());
         jgenerator.writeNumberField(ND_CONID_TOKEN, node.getNodeContainer().getContainerID());
         if (node.getNodeParentNode()!=null)
             jgenerator.writeNumberField(ND_PNDID_TOKEN, node.getNodeParentNode().getNodeID());
