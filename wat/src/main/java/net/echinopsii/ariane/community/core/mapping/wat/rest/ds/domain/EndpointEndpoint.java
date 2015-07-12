@@ -240,6 +240,7 @@ public class EndpointEndpoint {
                 Endpoint twinEP = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(twinEndpointID);
                 if (twinEP != null) {
                     endpoint.addTwinEndpoint(twinEP);
+                    twinEP.addTwinEndpoint(endpoint);
                     return Response.status(Status.OK).entity("Twin endpoint (" + twinEndpointID + ") successfully added to endpoint " + id + ".").build();
                 } else {
                     return Response.status(Status.NOT_FOUND).entity("Error while adding twin endpoint " + twinEndpointID + " to endpoint (" + id + ") : endpoint " + twinEndpointID + " not found.").build();
@@ -265,6 +266,7 @@ public class EndpointEndpoint {
                 Endpoint twinEP = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(twinEndpointID);
                 if (twinEP != null) {
                     endpoint.removeTwinEndpoint(twinEP);
+                    twinEP.removeTwinEndpoint(endpoint);
                     return Response.status(Status.OK).entity("Twin endpoint (" + twinEndpointID + ") successfully deleted from endpoint " + id + ".").build();
                 } else {
                     return Response.status(Status.NOT_FOUND).entity("Error while deleting twin endpoint " + twinEndpointID + " from endpoint (" + id + ") : endpoint " + twinEndpointID + " not found.").build();

@@ -55,7 +55,8 @@ public class EndpointJSON {
         }
     }
 
-    public final static void endpoint2JSON(Endpoint endpoint, JsonGenerator jgenerator) throws JsonGenerationException, IOException {
+    public final static void endpoint2JSON(Endpoint endpoint, JsonGenerator jgenerator)
+            throws JsonGenerationException, IOException {
         jgenerator.writeStartObject();
         log.debug("Ep JSON :endpoint {}", new Object[]{endpoint.getEndpointID()});
         jgenerator.writeNumberField(EP_ID_TOKEN, endpoint.getEndpointID());
@@ -74,13 +75,15 @@ public class EndpointJSON {
         jgenerator.writeEndObject();
     }
 
-    public final static void oneEndpoint2JSON(Endpoint endpoint, ByteArrayOutputStream outStream) throws IOException {
+    public final static void oneEndpoint2JSON(Endpoint endpoint, ByteArrayOutputStream outStream)
+            throws IOException {
         JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         endpoint2JSON(endpoint, jgenerator);
         jgenerator.close();
     }
 
-    public final static void manyEndpoints2JSON(HashSet<Endpoint> endpoints, ByteArrayOutputStream outStream) throws IOException {
+    public final static void manyEndpoints2JSON(HashSet<Endpoint> endpoints, ByteArrayOutputStream outStream)
+            throws IOException {
         JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         jgenerator.writeStartObject();
         jgenerator.writeArrayFieldStart("endpoints");
