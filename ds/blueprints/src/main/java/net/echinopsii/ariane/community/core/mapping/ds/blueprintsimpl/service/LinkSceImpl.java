@@ -42,13 +42,12 @@ public class LinkSceImpl implements LinkSce<LinkImpl> {
 
     @Override
     public LinkImpl createLink(long sourceEndpointID, long targetEndpointID,
-                               long transportID, long upLinkID) throws MappingDSException {
+                               long transportID) throws MappingDSException {
         LinkImpl ret = null;
 
         EndpointImpl epsource = sce.getGlobalRepo().getEndpointRepo().findEndpointByID(sourceEndpointID);
         EndpointImpl eptarget = sce.getGlobalRepo().getEndpointRepo().findEndpointByID(targetEndpointID);
         TransportImpl transport = sce.getGlobalRepo().getTransportRepo().findTransportByID(transportID);
-        LinkImpl upLink = sce.getGlobalRepo().getLinkRepo().findLinkByID(upLinkID);
 
         if (epsource != null && eptarget != null && transport != null) {
             ret = sce.getGlobalRepo().findLinkBySourceEPandDestinationEP(epsource, eptarget);
@@ -57,7 +56,6 @@ public class LinkSceImpl implements LinkSce<LinkImpl> {
                 ret.setLinkEndpointSource(epsource);
                 ret.setLinkEndpointTarget(eptarget);
                 ret.setLinkTransport(transport);
-                ret.setLinkUpLink(upLink);
                 sce.getGlobalRepo().getLinkRepo().save(ret);
                 log.debug("Unicast link ({}) saved !", new Object[]{ret.toString()});
             } else {
@@ -71,7 +69,6 @@ public class LinkSceImpl implements LinkSce<LinkImpl> {
                     ret.setLinkEndpointSource(epsource);
                     ret.setLinkEndpointTarget(eptarget);
                     ret.setLinkTransport(transport);
-                    ret.setLinkUpLink(upLink);
                     sce.getGlobalRepo().getLinkRepo().save(ret);
                     log.debug("Multicast link ({}) saved !", new Object[]{ret.toString()});
                 } else {

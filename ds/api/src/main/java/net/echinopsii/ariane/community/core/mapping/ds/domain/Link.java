@@ -19,8 +19,6 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.domain;
 
-import java.util.Set;
-
 public interface Link {
 
 	public long getLinkID();
@@ -33,10 +31,4 @@ public interface Link {
 	
 	public Endpoint getLinkEndpointTarget();
 	public void     setLinkEndpointTarget(Endpoint target);
-	
-	public Set<? extends Link>  getLinkSubLinks();
-	public boolean              addLinkSubLink(Link link);
-	
-	public Link getLinkUpLink();
-	public void setLinkUpLink(Link link);
 }

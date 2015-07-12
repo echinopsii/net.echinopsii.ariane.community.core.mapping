@@ -96,6 +96,7 @@ public class LinkImpl implements Link, MappingDSCacheEntity {
         }
     }
 
+/*
     @Override
     public Set<LinkImpl> getLinkSubLinks() {
         return this.linkSubLinks;
@@ -128,7 +129,7 @@ public class LinkImpl implements Link, MappingDSCacheEntity {
             }
         }
     }
-
+*/
     @Override
     public Element getElement() {
         return this.linkEdge;

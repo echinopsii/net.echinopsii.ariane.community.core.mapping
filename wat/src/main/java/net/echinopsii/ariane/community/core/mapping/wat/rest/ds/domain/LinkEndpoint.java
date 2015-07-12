@@ -106,15 +106,15 @@ public class LinkEndpoint {
     @GET
     @Path("/create")
     public Response createLink(@QueryParam("SEPID")long sourceEndpointID, @QueryParam("TEPID")long targetEndpointID,
-                               @QueryParam("transportID")long transportID, @QueryParam("UPLID") long upLinkID) {
+                               @QueryParam("transportID")long transportID) {
         Subject subject = SecurityUtils.getSubject();
-        log.debug("[{}-{}] create link : ({},{},{},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), sourceEndpointID, targetEndpointID, transportID, upLinkID});
+        log.debug("[{}-{}] create link : ({},{},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), sourceEndpointID, targetEndpointID, transportID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             try {
                 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-                Link link = MappingBootstrap.getMappingSce().getLinkSce().createLink(sourceEndpointID, targetEndpointID, transportID, upLinkID);
+                Link link = MappingBootstrap.getMappingSce().getLinkSce().createLink(sourceEndpointID, targetEndpointID, transportID);
                 try {
                     LinkJSON.oneLink2JSON(link, outStream);
                     String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");

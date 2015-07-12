@@ -73,7 +73,7 @@ public class MappingSceTest {
 
             transport = mappingSce.getTransportSce().createTransport(transportName);
 
-            link = mappingSce.getLinkSce().createLink(endpointLan.getEndpointID(), endpointMan.getEndpointID(), transport.getTransportID(), 0);
+            link = mappingSce.getLinkSce().createLink(endpointLan.getEndpointID(), endpointMan.getEndpointID(), transport.getTransportID());
         } catch (Exception e) {
             e.printStackTrace();
         }

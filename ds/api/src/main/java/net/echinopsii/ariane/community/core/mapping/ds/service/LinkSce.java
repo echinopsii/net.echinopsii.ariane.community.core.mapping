@@ -25,7 +25,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Link;
 import java.util.Set;
 
 public interface LinkSce<L extends Link> {
-    public L createLink(long sourceEndpointID, long targetEndpointID, long transportID, long upLinkID) throws MappingDSException;
+    public L createLink(long sourceEndpointID, long targetEndpointID, long transportID) throws MappingDSException;
 
     public void deleteLink(long linkID) throws MappingDSException;
 
