@@ -12,6 +12,5 @@
     <groupId>{{ artifactId }}</groupId>
     <artifactId>{{ artifactId }}.{{ name }}</artifactId>
     <name>Ariane Community Core Mapping Taitale Graph Render</name>
-    <packaging>bundle</packaging>
     {% endblock %}
 </project>
