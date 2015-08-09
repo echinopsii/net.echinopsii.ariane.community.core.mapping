@@ -67,4 +67,34 @@ public class ToolBox {
         }
         return ovalue;
     }
+
+    public static class JSONDeserializedProperty {
+        String propertyName;
+        String propertyType;
+        String propertyValue;
+
+        public String getPropertyName() {
+            return propertyName;
+        }
+
+        public void setPropertyName(String propertyName) {
+            this.propertyName = propertyName;
+        }
+
+        public String getPropertyType() {
+            return propertyType;
+        }
+
+        public void setPropertyType(String propertyType) {
+            this.propertyType = propertyType;
+        }
+
+        public String getPropertyValue() {
+            return propertyValue;
+        }
+
+        public void setPropertyValue(String propertyValue) {
+            this.propertyValue = propertyValue;
+        }
+    }
 }

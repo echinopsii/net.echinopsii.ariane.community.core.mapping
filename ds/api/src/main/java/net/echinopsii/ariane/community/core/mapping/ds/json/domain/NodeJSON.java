@@ -23,6 +23,8 @@ package net.echinopsii.ariane.community.core.mapping.ds.json.domain;
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
@@ -33,8 +35,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 public class NodeJSON {
 
@@ -128,5 +132,95 @@ public class NodeJSON {
         jgenerator.writeEndArray();
         jgenerator.writeEndObject();
         jgenerator.close();
+    }
+
+    public class JSONDeserializedNode {
+        private long nodeID;
+        private String nodeName;
+        private long nodeDepth;
+        private long nodeContainerID;
+        private long nodeParentNodeID;
+        private List<Long> nodeChildNodesID;
+        private List<Long> nodeTwinNodesID;
+        private List<Long> nodeEndpointsID;
+        private List<ToolBox.JSONDeserializedProperty> nodeProperties;
+
+        public long getNodeID() {
+            return nodeID;
+        }
+
+        public void setNodeID(long nodeID) {
+            this.nodeID = nodeID;
+        }
+
+        public String getNodeName() {
+            return nodeName;
+        }
+
+        public void setNodeName(String nodeName) {
+            this.nodeName = nodeName;
+        }
+
+        public long getNodeDepth() {
+            return nodeDepth;
+        }
+
+        public void setNodeDepth(long nodeDepth) {
+            this.nodeDepth = nodeDepth;
+        }
+
+        public long getNodeContainerID() {
+            return nodeContainerID;
+        }
+
+        public void setNodeContainerID(long nodeContainerID) {
+            this.nodeContainerID = nodeContainerID;
+        }
+
+        public long getNodeParentNodeID() {
+            return nodeParentNodeID;
+        }
+
+        public void setNodeParentNodeID(long nodeParentNodeID) {
+            this.nodeParentNodeID = nodeParentNodeID;
+        }
+
+        public List<Long> getNodeChildNodesID() {
+            return nodeChildNodesID;
+        }
+
+        public void setNodeChildNodesID(List<Long> nodeChildNodesID) {
+            this.nodeChildNodesID = nodeChildNodesID;
+        }
+
+        public List<Long> getNodeTwinNodesID() {
+            return nodeTwinNodesID;
+        }
+
+        public void setNodeTwinNodesID(List<Long> nodeTwinNodesID) {
+            this.nodeTwinNodesID = nodeTwinNodesID;
+        }
+
+        public List<Long> getNodeEndpointsID() {
+            return nodeEndpointsID;
+        }
+
+        public void setNodeEndpointsID(List<Long> nodeEndpointsID) {
+            this.nodeEndpointsID = nodeEndpointsID;
+        }
+
+        public List<ToolBox.JSONDeserializedProperty> getNodeProperties() {
+            return nodeProperties;
+        }
+
+        public void setNodeProperties(List<ToolBox.JSONDeserializedProperty> nodeProperties) {
+            this.nodeProperties = nodeProperties;
+        }
+    }
+
+    public final static JSONDeserializedNode JSON2Node(String payload) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return mapper.readValue(payload, JSONDeserializedNode.class);
     }
 }
