@@ -28,14 +28,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
-import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
+import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON.JSONDeserializedProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -57,7 +57,7 @@ public class NodeJSON {
     private final static void nodeProps2JSON(Node node, JsonGenerator jgenerator) throws JsonGenerationException, IOException {
         if (node.getNodeProperties()!=null && node.getNodeProperties().size()!=0) {
             jgenerator.writeObjectFieldStart(ND_PRP_TOKEN);
-            PropertiesJSON.propertiesToJSON(node.getNodeProperties(),jgenerator);
+            PropertiesJSON.propertiesToJSON(node.getNodeProperties(), jgenerator);
             jgenerator.writeEndObject();
         }
     }
@@ -134,7 +134,7 @@ public class NodeJSON {
         jgenerator.close();
     }
 
-    public class JSONDeserializedNode {
+    public static class JSONDeserializedNode {
         private long nodeID;
         private String nodeName;
         private long nodeDepth;
@@ -143,7 +143,7 @@ public class NodeJSON {
         private List<Long> nodeChildNodesID;
         private List<Long> nodeTwinNodesID;
         private List<Long> nodeEndpointsID;
-        private List<ToolBox.JSONDeserializedProperty> nodeProperties;
+        private List<JSONDeserializedProperty> nodeProperties;
 
         public long getNodeID() {
             return nodeID;
@@ -209,16 +209,16 @@ public class NodeJSON {
             this.nodeEndpointsID = nodeEndpointsID;
         }
 
-        public List<ToolBox.JSONDeserializedProperty> getNodeProperties() {
+        public List<JSONDeserializedProperty> getNodeProperties() {
             return nodeProperties;
         }
 
-        public void setNodeProperties(List<ToolBox.JSONDeserializedProperty> nodeProperties) {
+        public void setNodeProperties(List<JSONDeserializedProperty> nodeProperties) {
             this.nodeProperties = nodeProperties;
         }
     }
 
-    public final static JSONDeserializedNode JSON2Node(String payload) throws IOException {
+    public static JSONDeserializedNode JSON2Node(String payload) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return mapper.readValue(payload, JSONDeserializedNode.class);

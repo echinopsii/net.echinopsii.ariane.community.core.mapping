@@ -21,7 +21,9 @@ package net.echinopsii.ariane.community.core.mapping.ds.json;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -356,5 +358,41 @@ public class PropertiesJSON {
                 }
             }
         }
+    }
+
+    public static class JSONDeserializedProperty {
+        String propertyName;
+        String propertyType;
+        String propertyValue;
+
+        public String getPropertyName() {
+            return propertyName;
+        }
+
+        public void setPropertyName(String propertyName) {
+            this.propertyName = propertyName;
+        }
+
+        public String getPropertyType() {
+            return propertyType;
+        }
+
+        public void setPropertyType(String propertyType) {
+            this.propertyType = propertyType;
+        }
+
+        public String getPropertyValue() {
+            return propertyValue;
+        }
+
+        public void setPropertyValue(String propertyValue) {
+            this.propertyValue = propertyValue;
+        }
+    }
+
+    public static JSONDeserializedProperty JSON2Properties(String payload) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return mapper.readValue(payload, JSONDeserializedProperty.class);
     }
 }

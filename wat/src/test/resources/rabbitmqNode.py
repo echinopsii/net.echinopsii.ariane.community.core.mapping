@@ -9,6 +9,12 @@ password = getpass.getpass("%-- >> Password : ")
 srvurl = input("%-- >> Ariane server url (like http://serverFQDN:6969/) : ")
 
 # CREATE REQUESTS SESSION
+import requests
+import json
+
+username = 'yoda'
+password = 'secret'
+srvurl = 'http://localhost:6969/'
 s = requests.Session()
 s.auth = (username, password)
 
@@ -57,7 +63,7 @@ nodeParams = {"name":"/ (vhost)", "containerID":containerID, "parentNodeID":0}
 r = s.get(srvurl + 'ariane/rest/mapping/domain/nodes/create', params=nodeParams)
 vhostNodeID = r.json().get('nodeID')
 
-primaryApp = {"color":["String","852e48"], "name":["String","BPP"]}
+primaryApp = {"color": ["String", "852e48"], "name": ["String", "BPP"]}
 nodeProperty = {'ID':vhostNodeID,'propertyName':'primaryApplication','propertyValue':json.dumps(primaryApp), 'propertyType':'map'}
 r = s.get(srvurl + 'ariane/rest/mapping/domain/nodes/update/properties/add', params=nodeProperty)
 
@@ -66,3 +72,203 @@ delGetDetails = {"rate" : ["double", 0.0]}
 msgStats = { "publish_details": ["map", pubDetails], "deliver_get_details": ["map", delGetDetails], "deliver": ["double", 15072]}
 nodeProperty = {'ID':vhostNodeID, 'propertyName': 'message_stats', 'propertyValue': json.dumps(msgStats), 'propertyType': 'map'}
 r = s.get(srvurl + 'ariane/rest/mapping/domain/nodes/update/properties/add', params=nodeProperty)
+
+nodeVHJSON = {
+    "nodeName": "/ (vhost)",
+    "nodeContainerID": containerID,
+    "nodeParentNodeID": 0,
+    "nodeChildNodesID": [],
+    "nodeTwinNodesID": [],
+    "nodeEndpointsID": [],
+    "nodeProperties": [
+        {
+            "propertyName": "primaryApplication",
+            "propertyValue": str({
+                "color": ["String", "852e48"],
+                "name": ["String", "BPP"]
+            }).replace("'", '"'),
+            "propertyType": "map"
+        },
+        {
+            "propertyName": "message_stats",
+            "propertyValue": str({
+                "publish_details": [
+                    "map", {
+                        "rate": ["double", 0.0]
+                    }
+                ],
+                "deliver_get_details": [
+                    "map", {
+                        "rate": ["double", 0.0]
+                    }
+                ],
+                "deliver": ["double", 15072]
+            }).replace("'", '"'),
+            "propertyType": "map"
+        }
+    ]
+}
+
+r = s.post(srvurl + 'ariane/rest/mapping/domain/nodes', params={"payload": json.dumps(nodeVHJSON)})
+vh_node_id = r.json().get('nodeID')
+#pprint(r.json())
+#{'nodeChildNodeID': [],
+# 'nodeContainerID': 1,
+# 'nodeDepth': 0,
+# 'nodeEndpointID': [],
+# 'nodeID': 38,
+# 'nodeName': '/ (vhost)',
+# 'nodeProperties': {'message_stats': {'deliver': 15072.0,
+#                                      'deliver_get_details': {'rate': 0.0},
+#                                      'publish_details': {'rate': 0.0}},
+#                    'primaryApplication': {'color': '852e48', 'name': 'BPP'}},
+# 'nodeTwinNodeID': []}
+
+nodeQ1JSON = {
+    "nodeName": "queue A1",
+    "nodeContainerID": containerID,
+    "nodeParentNodeID": vh_node_id,
+}
+r = s.post(srvurl + 'ariane/rest/mapping/domain/nodes', params={"payload": json.dumps(nodeQ1JSON)})
+q1_node_id = r.json().get('nodeID')
+# pprint(r.json())
+#{'nodeChildNodeID': [],
+# 'nodeContainerID': 1,
+# 'nodeDepth': 0,
+# 'nodeEndpointID': [],
+# 'nodeID': 198,
+# 'nodeName': 'queue A1',
+# 'nodeParentNodeID': 38,
+# 'nodeTwinNodeID': []}
+
+nodeQ1JSON = {
+    "nodeID": q1_node_id,
+    "nodeProperties": [
+        {
+            "propertyName": "primaryApplication",
+            "propertyValue": str({
+                "color": ["String", "852e48"],
+                "name": ["String", "BPP"]
+            }).replace("'", '"'),
+            "propertyType": "map"
+        },
+        {
+            "propertyName": "message_stats",
+            "propertyValue": str({
+                "publish_details": [
+                    "map", {
+                        "rate": ["double", 0.0]
+                    }
+                ],
+                "deliver_get_details": [
+                    "map", {
+                        "rate": ["double", 0.0]
+                    }
+                ],
+                "deliver": ["double", 15072]
+            }).replace("'", '"'),
+            "propertyType": "map"
+        }
+    ]
+}
+r = s.post(srvurl + 'ariane/rest/mapping/domain/nodes', params={"payload": json.dumps(nodeQ1JSON)})
+
+#pprint(r.json())
+#{'nodeChildNodeID': [],
+# 'nodeContainerID': 194,
+# 'nodeDepth': 0,
+# 'nodeEndpointID': [],
+# 'nodeID': 198,
+# 'nodeName': 'queue A1',
+# 'nodeParentNodeID': 197,
+# 'nodeProperties': {'message_stats': {'deliver': 15072.0,
+#                                      'deliver_get_details': {'rate': 0.0},
+#                                      'publish_details': {'rate': 0.0}},
+#                    'primaryApplication': {'color': '852e48', 'name': 'BPP'}},
+# 'nodeTwinNodeID': []}
+
+nodeQ1JSON = {
+    "nodeID": q1_node_id,
+    "nodeProperties": [
+        {
+            "propertyName": "message_stats",
+            "propertyValue": str({
+                "publish_details": [
+                    "map", {
+                        "rate": ["double", 0.0]
+                    }
+                ],
+                "deliver_get_details": [
+                    "map", {
+                        "rate": ["double", 0.0]
+                    }
+                ],
+                "deliver": ["double", 15072]
+            }).replace("'", '"'),
+            "propertyType": "map"
+        }
+    ]
+}
+r = s.post(srvurl + 'ariane/rest/mapping/domain/nodes', params={"payload": json.dumps(nodeQ1JSON)})
+
+#pprint(r.json())
+#{'nodeChildNodeID': [],
+# 'nodeContainerID': 194,
+# 'nodeDepth': 0,
+# 'nodeEndpointID': [],
+# 'nodeID': 198,
+# 'nodeName': 'queue A1',
+# 'nodeParentNodeID': 197,
+# 'nodeProperties': {'message_stats': {'deliver': 15072.0,
+#                                      'deliver_get_details': {'rate': 0.0},
+#                                      'publish_details': {'rate': 0.0}}},
+# 'nodeTwinNodeID': []}
+
+nodeQ2JSON = {
+    "nodeName": "queue A2",
+    "nodeContainerID": containerID,
+    "nodeParentNodeID": vh_node_id
+}
+r = s.post(srvurl + 'ariane/rest/mapping/domain/nodes', params={"payload": json.dumps(nodeQ2JSON)})
+q2_node_id = r.json().get('nodeID')
+
+# pprint(r.json())
+#{'nodeChildNodeID': [],
+# 'nodeContainerID': 194,
+# 'nodeDepth': 0,
+# 'nodeEndpointID': [],
+# 'nodeID': 199,
+# 'nodeName': 'queue A2',
+# 'nodeParentNodeID': 197,
+# 'nodeTwinNodeID': []}
+nodeQ2JSON = {
+    "nodeName": "queue A2",
+    "nodeContainerID": containerID,
+    "nodeChildNodesID": [q1_node_id]
+}
+r = s.post(srvurl + 'ariane/rest/mapping/domain/nodes', params={"payload": json.dumps(nodeQ2JSON)})
+#pprint(r.json())
+#{'nodeChildNodeID': [198],
+# 'nodeContainerID': 194,
+# 'nodeDepth': 0,
+# 'nodeEndpointID': [],
+# 'nodeID': 199,
+# 'nodeName': 'queue A2',
+# 'nodeParentNodeID': 197,
+# 'nodeTwinNodeID': []}
+
+nodeQ2JSON = {
+    "nodeName": "queue A2",
+    "nodeContainerID": containerID,
+    "nodeChildNodesID": []
+}
+r = s.post(srvurl + 'ariane/rest/mapping/domain/nodes', params={"payload": json.dumps(nodeQ2JSON)})
+#pprint(r.json())
+#{'nodeChildNodeID': [],
+# 'nodeContainerID': 194,
+# 'nodeDepth': 0,
+# 'nodeEndpointID': [],
+# 'nodeID': 199,
+# 'nodeName': 'queue A2',
+# 'nodeParentNodeID': 197,
+# 'nodeTwinNodeID': []}

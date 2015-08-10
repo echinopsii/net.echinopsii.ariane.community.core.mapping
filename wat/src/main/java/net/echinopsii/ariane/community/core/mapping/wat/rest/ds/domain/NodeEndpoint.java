@@ -23,10 +23,11 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
-import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesException;
+import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.NodeJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.json.domain.NodeJSON.JSONDeserializedNode;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 import net.echinopsii.ariane.community.core.mapping.wat.rest.ds.JSONDeserializationResponse;
 import org.apache.shiro.SecurityUtils;
@@ -48,7 +49,7 @@ import java.util.List;
 public class NodeEndpoint {
     private static final Logger log = LoggerFactory.getLogger(NodeEndpoint.class);
 
-    public static JSONDeserializationResponse jsonFriendlyToMappingFriendly(NodeJSON.JSONDeserializedNode jsonDeserializedNode) throws MappingDSException {
+    public static JSONDeserializationResponse jsonFriendlyToMappingFriendly(JSONDeserializedNode jsonDeserializedNode) throws MappingDSException {
         JSONDeserializationResponse ret = new JSONDeserializationResponse();
 
         // DETECT POTENTIAL QUERIES ERROR FIRST
@@ -101,7 +102,7 @@ public class NodeEndpoint {
             }
         }
         if (ret.getErrorMessage() == null && jsonDeserializedNode.getNodeProperties()!=null && jsonDeserializedNode.getNodeProperties().size() > 0) {
-            for (ToolBox.JSONDeserializedProperty deserializedProperty : jsonDeserializedNode.getNodeProperties()) {
+            for (PropertiesJSON.JSONDeserializedProperty deserializedProperty : jsonDeserializedNode.getNodeProperties()) {
                 try {
                     Object oValue = ToolBox.extractPropertyObjectValueFromString(deserializedProperty.getPropertyValue(), deserializedProperty.getPropertyType());
                     reqProperties.put(deserializedProperty.getPropertyName(), oValue);
@@ -116,7 +117,7 @@ public class NodeEndpoint {
         // LOOK IF NODE MAYBE UPDATED OR CREATED
         Node deserializedNode = null;
         if (ret.getErrorMessage() == null && jsonDeserializedNode.getNodeID() != 0) {
-            deserializedNode = (Node) MappingBootstrap.getMappingSce().getNodeSce().getNode(jsonDeserializedNode.getNodeParentNodeID());
+            deserializedNode = (Node) MappingBootstrap.getMappingSce().getNodeSce().getNode(jsonDeserializedNode.getNodeID());
             if (deserializedNode == null)
                 ret.setErrorMessage("Request Error : node with provided ID " + jsonDeserializedNode.getNodeID() + " was not found.");
         }
@@ -138,36 +139,51 @@ public class NodeEndpoint {
             }
 
             if (jsonDeserializedNode.getNodeChildNodesID()!=null) {
+                List<Node> childNodesToDelete = new ArrayList<>();
                 for (Node existingChildNode : deserializedNode.getNodeChildNodes())
                     if (!reqNodeChildNodes.contains(existingChildNode))
-                        deserializedNode.removeNodeChildNode(existingChildNode);
+                        childNodesToDelete.add(existingChildNode);
+                for (Node childNodeToDelete : childNodesToDelete)
+                    deserializedNode.removeNodeChildNode(childNodeToDelete);
+
 
                 for (Node childNodeReq : reqNodeChildNodes)
                     deserializedNode.addNodeChildNode(childNodeReq);
             }
 
             if (jsonDeserializedNode.getNodeTwinNodesID()!=null) {
+                List<Node> twinNodesToDelete = new ArrayList<>();
                 for (Node existingTwinNode : deserializedNode.getTwinNodes())
                     if (!reqNodeTwinNodes.contains(existingTwinNode))
-                        deserializedNode.removeTwinNode(existingTwinNode);
+                        twinNodesToDelete.add(existingTwinNode);
+                for (Node twinNodeToDelete : twinNodesToDelete)
+                    deserializedNode.removeTwinNode(twinNodeToDelete);
 
                 for (Node twinNodeReq : reqNodeTwinNodes)
                     deserializedNode.addTwinNode(twinNodeReq);
             }
 
             if (jsonDeserializedNode.getNodeEndpointsID()!=null) {
+                List<Endpoint> endpointsToDelete = new ArrayList<>();
                 for (Endpoint existingEndpoint : deserializedNode.getNodeEndpoints())
                     if (!reqNodeEndpoints.contains(existingEndpoint))
-                        deserializedNode.removeEndpoint(existingEndpoint);
+                        endpointsToDelete.add(existingEndpoint);
+                for (Endpoint endpointToDelete : endpointsToDelete)
+                        deserializedNode.removeEndpoint(endpointToDelete);
 
                 for (Endpoint endpointReq : reqNodeEndpoints)
                     deserializedNode.addEnpoint(endpointReq);
             }
 
             if (jsonDeserializedNode.getNodeProperties()!=null) {
-                for (String propertyKey : deserializedNode.getNodeProperties().keySet())
-                    if (!reqProperties.containsKey(propertyKey))
-                        deserializedNode.removeNodeProperty(propertyKey);
+                if (deserializedNode.getNodeProperties()!=null) {
+                    List<String> propertiesToDelete = new ArrayList<>();
+                    for (String propertyKey : deserializedNode.getNodeProperties().keySet())
+                        if (!reqProperties.containsKey(propertyKey))
+                            propertiesToDelete.add(propertyKey);
+                    for (String propertyToDelete : propertiesToDelete)
+                        deserializedNode.removeNodeProperty(propertyToDelete);
+                }
 
                 for (String propertyKey : reqProperties.keySet())
                     deserializedNode.addNodeProperty(propertyKey, reqProperties.get(propertyKey));
