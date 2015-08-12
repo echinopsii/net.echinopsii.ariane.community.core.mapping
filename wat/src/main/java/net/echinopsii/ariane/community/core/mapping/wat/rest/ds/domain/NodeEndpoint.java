@@ -146,7 +146,6 @@ public class NodeEndpoint {
                 for (Node childNodeToDelete : childNodesToDelete)
                     deserializedNode.removeNodeChildNode(childNodeToDelete);
 
-
                 for (Node childNodeReq : reqNodeChildNodes)
                     deserializedNode.addNodeChildNode(childNodeReq);
             }
@@ -156,11 +155,15 @@ public class NodeEndpoint {
                 for (Node existingTwinNode : deserializedNode.getTwinNodes())
                     if (!reqNodeTwinNodes.contains(existingTwinNode))
                         twinNodesToDelete.add(existingTwinNode);
-                for (Node twinNodeToDelete : twinNodesToDelete)
+                for (Node twinNodeToDelete : twinNodesToDelete) {
                     deserializedNode.removeTwinNode(twinNodeToDelete);
+                    twinNodeToDelete.removeTwinNode(deserializedNode);
+                }
 
-                for (Node twinNodeReq : reqNodeTwinNodes)
+                for (Node twinNodeReq : reqNodeTwinNodes) {
                     deserializedNode.addTwinNode(twinNodeReq);
+                    twinNodeReq.addTwinNode(deserializedNode);
+                }
             }
 
             if (jsonDeserializedNode.getNodeEndpointsID()!=null) {
@@ -320,27 +323,31 @@ public class NodeEndpoint {
         log.debug("[{}-{}] create or update node : ({})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), payload});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
                 subject.hasRole("Jedi") || subject.isPermitted("universe:zeone")) {
-            try {
-                Response ret;
-                JSONDeserializationResponse deserializationResponse = jsonFriendlyToMappingFriendly(NodeJSON.JSON2Node(payload));
-                if (deserializationResponse.getErrorMessage()!=null) {
-                    String result = deserializationResponse.getErrorMessage();
-                    ret = Response.status(Status.BAD_REQUEST).entity(result).build();
-                } else if (deserializationResponse.getDeserializedObject()!=null) {
-                    ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-                    NodeJSON.oneNode2JSON((Node)deserializationResponse.getDeserializedObject(), outStream);
-                    String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                    ret = Response.status(Status.OK).entity(result).build();
-                } else {
-                    String result = "ERROR while deserializing !";
-                    ret = Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+            if (payload != null) {
+                try {
+                    Response ret;
+                    JSONDeserializationResponse deserializationResponse = jsonFriendlyToMappingFriendly(NodeJSON.JSON2Node(payload));
+                    if (deserializationResponse.getErrorMessage()!=null) {
+                        String result = deserializationResponse.getErrorMessage();
+                        ret = Response.status(Status.BAD_REQUEST).entity(result).build();
+                    } else if (deserializationResponse.getDeserializedObject()!=null) {
+                        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                        NodeJSON.oneNode2JSON((Node)deserializationResponse.getDeserializedObject(), outStream);
+                        String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                        ret = Response.status(Status.OK).entity(result).build();
+                    } else {
+                        String result = "ERROR while deserializing !";
+                        ret = Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                    }
+                    return ret ;
+                } catch (MappingDSException e) {
+                    log.error(e.getMessage());
+                    e.printStackTrace();
+                    String result = e.getMessage();
+                    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
                 }
-                return ret ;
-            } catch (MappingDSException e) {
-                log.error(e.getMessage());
-                e.printStackTrace();
-                String result = e.getMessage();
-                return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+            } else {
+                return Response.status(Status.BAD_REQUEST).entity("No payload attached to this POST").build();
             }
         } else {
             return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
