@@ -328,12 +328,15 @@ public class EndpointImpl implements Endpoint, MappingDSCacheEntity {
     private void removeTwinEndpointFromDB(EndpointImpl endpoint) {
         if (this.endpointVertex != null && endpoint.getElement() != null) {
             VertexQuery query = this.endpointVertex.query();
-            query.direction(Direction.OUT);
+            query.direction(Direction.BOTH);
             query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_TWIN_LABEL_KEY);
             for (Edge edge : query.edges()) {
-                if (edge.getVertex(Direction.OUT).equals(endpoint.getElement())) {
+                Vertex vo = edge.getVertex(Direction.OUT);
+                Vertex vi = edge.getVertex(Direction.IN);
+                if (vo != null && vo.equals(endpoint.getElement()))
                     MappingDSGraphDB.getDDgraph().removeEdge(edge);
-                }
+                if (vi != null && vi.equals(endpoint.getElement()))
+                    MappingDSGraphDB.getDDgraph().removeEdge(edge);
             }
             MappingDSGraphDB.autocommit();
         }
