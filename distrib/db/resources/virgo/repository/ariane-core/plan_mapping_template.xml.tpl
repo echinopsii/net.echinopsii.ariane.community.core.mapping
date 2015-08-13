@@ -7,19 +7,13 @@
     {%- endif -%}
 {% endblock %}
 {% block version %}"{{version}}"{% endblock %}
-{% block configuration -%}
+{%- block configuration -%}
         <artifact type="configuration" name="net.echinopsii.ariane.community.core.MappingRimManagedService"/>
-{% endblock -%}
-{%- block bundle -%}
+        {%- endblock -%}
+{% block bundle -%}
     {% for s in submodules -%}
-    {% if s.name == 'ds' -%}
-    {% for sub_s in s.list_submod -%}
-        {% if sub_s.name != 'dsl' -%}
-        <artifact type="bundle" name="net.echinopsii.ariane.community.core.{{module.name}}.ds.{{sub_s.name}}" version="[{{vmin}},{{vmax}})"/>
-        {% endif -%}
-    {% endfor -%}
-    {% else -%}
-        <artifact type="bundle" name="net.echinopsii.ariane.community.core.{{module.name}}.{{s.name}}" version="[{{vmin}},{{vmax}})"/>
+    {%- if s.name != 'dsl' -%}
+        <artifact type="bundle" name="{{ s.artifactId }}" version="[{{vmin}},{{vmax}})"/>
     {% endif -%}
-    {% endfor -%}
-{% endblock -%}
+    {%- endfor -%}
+{% endblock %}
