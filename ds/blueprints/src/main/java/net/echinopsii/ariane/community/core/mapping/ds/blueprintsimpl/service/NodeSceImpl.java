@@ -42,10 +42,9 @@ public class NodeSceImpl implements NodeSce<NodeImpl> {
 
     @Override
     public NodeImpl createNode(String nodeName, long containerID, long parentNodeID) throws MappingDSException {
-        ContainerImpl cont = sce.getGlobalRepo().getContainerRepo().findContainerByID(containerID);
-        NodeImpl ret = sce.getGlobalRepo().findNodeByName(cont, nodeName);
+        ContainerImpl container = sce.getGlobalRepo().getContainerRepo().findContainerByID(containerID);
+        NodeImpl ret = sce.getGlobalRepo().findNodeByName(container, nodeName);
         if (ret == null) {
-            ContainerImpl container = sce.getGlobalRepo().getContainerRepo().findContainerByID(containerID);
             if (container != null) {
                 ret = new NodeImpl();
                 ret.setNodeName(nodeName);

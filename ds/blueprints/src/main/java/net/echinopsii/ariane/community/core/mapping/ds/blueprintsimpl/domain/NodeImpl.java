@@ -567,12 +567,15 @@ public class NodeImpl implements Node, MappingDSCacheEntity {
     private void removeTwindNodeFromDB(NodeImpl node) {
         if (this.nodeVertex != null && node.getElement() != null) {
             VertexQuery query = this.nodeVertex.query();
-            query.direction(Direction.OUT);
+            query.direction(Direction.BOTH);
             query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_TWIN_LABEL_KEY);
             for (Edge edge : query.edges()) {
-                if (edge.getVertex(Direction.OUT).equals(node.getElement())) {
+                Vertex vo = edge.getVertex(Direction.OUT);
+                Vertex vi = edge.getVertex(Direction.IN);
+                if (vo != null && vo.equals(node.getElement()))
                     MappingDSGraphDB.getDDgraph().removeEdge(edge);
-                }
+                if (vi != null && vi.equals(node.getElement()))
+                    MappingDSGraphDB.getDDgraph().removeEdge(edge);
             }
             MappingDSGraphDB.autocommit();
         }
