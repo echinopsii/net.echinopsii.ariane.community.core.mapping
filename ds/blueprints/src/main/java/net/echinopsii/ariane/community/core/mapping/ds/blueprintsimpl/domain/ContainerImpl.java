@@ -74,7 +74,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
     public void setContainerName(String name) {
         if (this.containerName == null || this.containerName.equals(name)) {
             this.containerName = name;
-            this.synchronizeCompanyToDB();
+            this.synchronizeNameToDB();
             log.debug("Set container {} name to {}.", new Object[]{((this.containerVertex!=null)?this.containerVertex.getId():0),this.containerName});
         }
     }
