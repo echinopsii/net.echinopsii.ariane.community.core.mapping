@@ -22,6 +22,8 @@ package net.echinopsii.ariane.community.core.mapping.ds.json.domain;
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
@@ -34,6 +36,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 public class EndpointJSON {
 
@@ -95,5 +98,59 @@ public class EndpointJSON {
         jgenerator.writeEndArray();
         jgenerator.writeEndObject();
         jgenerator.close();
+    }
+
+    public static class JSONDeserializedEndpoint {
+        private long endpointID;
+        private String endpointURL;
+        private long endpointParentNodeID;
+        private List<Long> endpointTwinEndpointsID;
+        private List<PropertiesJSON.JSONDeserializedProperty> endpointProperties;
+
+        public long getEndpointID() {
+            return endpointID;
+        }
+
+        public void setEndpointID(long endpointID) {
+            this.endpointID = endpointID;
+        }
+
+        public String getEndpointURL() {
+            return endpointURL;
+        }
+
+        public void setEndpointURL(String endpointURL) {
+            this.endpointURL = endpointURL;
+        }
+
+        public long getEndpointParentNodeID() {
+            return endpointParentNodeID;
+        }
+
+        public void setEndpointParentNodeID(long endpointParentNodeID) {
+            this.endpointParentNodeID = endpointParentNodeID;
+        }
+
+        public List<Long> getEndpointTwinEndpointsID() {
+            return endpointTwinEndpointsID;
+        }
+
+        public void setEndpointTwinEndpointsID(List<Long> endpointTwinEndpointsID) {
+            this.endpointTwinEndpointsID = endpointTwinEndpointsID;
+        }
+
+        public List<PropertiesJSON.JSONDeserializedProperty> getEndpointProperties() {
+            return endpointProperties;
+        }
+
+        public void setEndpointProperties(List<PropertiesJSON.JSONDeserializedProperty> endpointProperties) {
+            this.endpointProperties = endpointProperties;
+        }
+    }
+
+    public static JSONDeserializedEndpoint JSON2Endpoint(String payload) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return mapper.readValue(payload, JSONDeserializedEndpoint.class);
     }
 }

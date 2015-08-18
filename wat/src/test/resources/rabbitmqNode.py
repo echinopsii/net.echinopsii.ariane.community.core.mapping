@@ -11,10 +11,11 @@ srvurl = input("%-- >> Ariane server url (like http://serverFQDN:6969/) : ")
 # CREATE REQUESTS SESSION
 import requests
 import json
+from pprint import pprint
 
 username = 'yoda'
 password = 'secret'
-srvurl = 'http://localhost:6969/'
+srvurl = 'http://env-mffrench.lab01.dev:6969/'
 s = requests.Session()
 s.auth = (username, password)
 
@@ -272,3 +273,76 @@ r = s.post(srvurl + 'ariane/rest/mapping/domain/nodes', params={"payload": json.
 # 'nodeName': 'queue A2',
 # 'nodeParentNodeID': 197,
 # 'nodeTwinNodeID': []}
+
+
+endpointQ1Consumer = {
+    "endpointURL": "rbmq-tcp://rbqnode-fake.lab01.dev.dekatonshivr.echinopsii.net:15672",
+    "endpointParentNodeID": q1_node_id,
+}
+r = s.post(srvurl + 'ariane/rest/mapping/domain/endpoints', params={"payload": json.dumps(endpointQ1Consumer)})
+eq1_node_id = r.json().get('endpointID')
+
+#pprint(r.json())
+#{'endpointID': 7,
+# 'endpointParentNodeID': 5,
+# 'endpointTwinEndpointID': [],
+# 'endpointURL': 'rbmq-tcp://rbqnode-fake.lab01.dev.dekatonshivr.echinopsii.net:15672'}
+
+endpointQ2Consumer = {
+    "endpointURL": "rbmq-tcp://rbqnode-fake.lab01.dev.dekatonshivr.echinopsii.net:15672/Q2",
+    "endpointParentNodeID": q2_node_id,
+    "endpointTwinEndpointsID": [eq1_node_id],
+    "endpointProperties": [
+        {
+            "propertyName": "message_stats",
+            "propertyValue": str({
+                "publish_details": [
+                    "map", {
+                        "rate": ["double", 0.0]
+                    }
+                ],
+                "deliver_get_details": [
+                    "map", {
+                        "rate": ["double", 0.0]
+                    }
+                ],
+                "deliver": ["double", 15072]
+            }).replace("'", '"'),
+            "propertyType": "map"
+        }
+    ]
+}
+r = s.post(srvurl + 'ariane/rest/mapping/domain/endpoints', params={"payload": json.dumps(endpointQ2Consumer)})
+eq2_node_id = r.json().get('endpointID')
+
+#pprint(r.json())
+#{'endpointID': 8,
+# 'endpointParentNodeID': 6,
+# 'endpointProperties': {'message_stats': {'deliver': 15072.0,
+#                                          'deliver_get_details': {'rate': 0.0},
+#                                          'publish_details': {'rate': 0.0}}},
+# 'endpointTwinEndpointID': [7],
+# 'endpointURL': 'rbmq-tcp://rbqnode-fake.lab01.dev.dekatonshivr.echinopsii.net:15672/Q2'}
+#r = s.get(srvurl + 'ariane/rest/mapping/domain/endpoints/get', params={"ID": eq1_node_id})
+#r.status_code
+#200
+#pprint(r.json())
+#{'endpointID': 7,
+# 'endpointParentNodeID': 5,
+# 'endpointTwinEndpointID': [8],
+# 'endpointURL': 'rbmq-tcp://rbqnode-fake.lab01.dev.dekatonshivr.echinopsii.net:15672'}
+
+endpointQ2Consumer = {
+    "endpointURL": "rbmq-tcp://rbqnode-fake.lab01.dev.dekatonshivr.echinopsii.net:15672/Q2",
+    "endpointParentNodeID": q2_node_id,
+    "endpointTwinEndpointsID": [],
+    "endpointProperties": []
+}
+r = s.post(srvurl + 'ariane/rest/mapping/domain/endpoints', params={"payload": json.dumps(endpointQ2Consumer)})
+
+endpointQ2Consumer = {
+    "endpointURL": "rbmq-tcp://rbqnode-fake.lab01.dev.dekatonshivr.echinopsii.net:15672/Q2/ConsumerToto",
+    "endpointID": eq2_node_id,
+    "endpointParentNodeID": q2_node_id
+}
+r = s.post(srvurl + 'ariane/rest/mapping/domain/endpoints', params={"payload": json.dumps(endpointQ2Consumer)})

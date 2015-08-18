@@ -22,9 +22,12 @@ package net.echinopsii.ariane.community.core.mapping.wat.rest.ds.domain;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
+import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.json.domain.NodeJSON;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.EndpointJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
+import net.echinopsii.ariane.community.core.mapping.wat.rest.ds.JSONDeserializationResponse;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
@@ -34,11 +37,111 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 @Path("/mapping/domain/endpoints")
 public class EndpointEndpoint {
     private static final Logger log = LoggerFactory.getLogger(EndpointEndpoint.class);
+
+    public static JSONDeserializationResponse jsonFriendlyToMappingFriendly(EndpointJSON.JSONDeserializedEndpoint jsonDeserializedEndpoint) throws MappingDSException {
+        JSONDeserializationResponse ret = new JSONDeserializationResponse();
+
+        // DETECT POTENTIAL QUERIES ERROR FIRST
+        Node reqEndpointParentNode = null;
+        List<Endpoint> reqEndpointTwinEndpoints = new ArrayList<>();
+        HashMap<String, Object> reqEndpointProperties = new HashMap<>();
+
+        if (jsonDeserializedEndpoint.getEndpointParentNodeID() != 0) {
+            reqEndpointParentNode =  MappingBootstrap.getMappingSce().getNodeSce().getNode(jsonDeserializedEndpoint.getEndpointParentNodeID());
+            if (reqEndpointParentNode==null) ret.setErrorMessage("Request Error : node with provided ID " + jsonDeserializedEndpoint.getEndpointParentNodeID() + " was not found.");
+        } else ret.setErrorMessage("Request Error : no parent node ID provided...");
+
+        if (ret.getErrorMessage()==null && jsonDeserializedEndpoint.getEndpointTwinEndpointsID()!=null && jsonDeserializedEndpoint.getEndpointTwinEndpointsID().size() > 0) {
+            for (long id : jsonDeserializedEndpoint.getEndpointTwinEndpointsID()) {
+                Endpoint twinEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
+                if (twinEndpoint != null)
+                    reqEndpointTwinEndpoints.add(twinEndpoint);
+                else {
+                    ret.setErrorMessage("Request Error : twin endpoint with provided ID " + id + " was not found.");
+                    break;
+                }
+            }
+        }
+
+        if (ret.getErrorMessage()==null && jsonDeserializedEndpoint.getEndpointProperties()!=null && jsonDeserializedEndpoint.getEndpointProperties().size() > 0) {
+            for (PropertiesJSON.JSONDeserializedProperty deserializedProperty : jsonDeserializedEndpoint.getEndpointProperties()) {
+                try {
+                    Object oValue = ToolBox.extractPropertyObjectValueFromString(deserializedProperty.getPropertyValue(), deserializedProperty.getPropertyType());
+                    reqEndpointProperties.put(deserializedProperty.getPropertyName(), oValue);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    ret.setErrorMessage("Request Error : invalid property " + deserializedProperty.getPropertyName() + ".");
+                    break;
+                }
+            }
+        }
+
+        // LOOK IF NODE MAYBE UPDATED OR CREATED
+        Endpoint deserializedEndpoint = null;
+        if (ret.getErrorMessage() == null && jsonDeserializedEndpoint.getEndpointID()!=0) {
+            deserializedEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(jsonDeserializedEndpoint.getEndpointID());
+            if (deserializedEndpoint==null)
+                ret.setErrorMessage("Request Error : endpoint with provided ID " + jsonDeserializedEndpoint.getEndpointID() + " was not found.");
+        }
+
+        if (ret.getErrorMessage() == null && deserializedEndpoint==null && jsonDeserializedEndpoint.getEndpointURL() != null)
+            deserializedEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(jsonDeserializedEndpoint.getEndpointID());
+
+        // APPLY REQ IF NO ERRORS
+        if (ret.getErrorMessage() == null) {
+            String reqEndpointURL = jsonDeserializedEndpoint.getEndpointURL();
+            long reqEndpointParentNodeID = jsonDeserializedEndpoint.getEndpointParentNodeID();
+            if (deserializedEndpoint == null)
+                deserializedEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().createEndpoint(reqEndpointURL, reqEndpointParentNodeID);
+            else {
+                if (reqEndpointURL!=null) deserializedEndpoint.setEndpointURL(reqEndpointURL);
+                if (reqEndpointParentNode!=null) deserializedEndpoint.setEndpointParentNode(reqEndpointParentNode);
+            }
+
+            if (jsonDeserializedEndpoint.getEndpointTwinEndpointsID()!=null) {
+                List<Endpoint> twinEndpointsToDelete = new ArrayList<>();
+                for (Endpoint existingTwinEndpoint : deserializedEndpoint.getTwinEndpoints())
+                    if (!reqEndpointTwinEndpoints.contains(existingTwinEndpoint))
+                        twinEndpointsToDelete.add(existingTwinEndpoint);
+                for (Endpoint twinEndpointToDelete : twinEndpointsToDelete) {
+                    deserializedEndpoint.removeTwinEndpoint(twinEndpointToDelete);
+                    twinEndpointToDelete.removeTwinEndpoint(deserializedEndpoint);
+                }
+
+                for (Endpoint twinEndpointToAdd : reqEndpointTwinEndpoints) {
+                    deserializedEndpoint.addTwinEndpoint(twinEndpointToAdd);
+                    twinEndpointToAdd.addTwinEndpoint(deserializedEndpoint);
+                }
+            }
+
+            if (jsonDeserializedEndpoint.getEndpointProperties()!=null) {
+                if (deserializedEndpoint.getEndpointProperties()!=null) {
+                    List<String> propertiesToDelete = new ArrayList<>();
+                    for (String propertyKey : deserializedEndpoint.getEndpointProperties().keySet())
+                        if (!reqEndpointProperties.containsKey(propertyKey))
+                            propertiesToDelete.add(propertyKey);
+                    for (String propertyKeyToDelete : propertiesToDelete)
+                        deserializedEndpoint.removeEndpointProperty(propertyKeyToDelete);
+                }
+
+                for (String propertyKey : reqEndpointProperties.keySet())
+                    deserializedEndpoint.addEndpointProperty(propertyKey, reqEndpointProperties.get(propertyKey));
+            }
+
+            ret.setDeserializedObject(deserializedEndpoint);
+        }
+
+        return ret;
+    }
 
     @GET
     @Path("/{param:[0-9][0-9]*}")
@@ -154,6 +257,43 @@ public class EndpointEndpoint {
                 e.printStackTrace();
                 String result = e.getMessage();
                 return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+            }
+        } else {
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
+        }
+    }
+
+    @POST
+    public Response postNode(@QueryParam("payload") String payload) throws IOException {
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}-{}] create or update endpoint : ({})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), payload});
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+                    subject.hasRole("Jedi") || subject.isPermitted("universe:zeone")) {
+            if (payload != null) {
+                try {
+                    Response ret;
+                    JSONDeserializationResponse deserializationResponse = jsonFriendlyToMappingFriendly(EndpointJSON.JSON2Endpoint(payload));
+                    if (deserializationResponse.getErrorMessage()!=null) {
+                        String result = deserializationResponse.getErrorMessage();
+                        ret = Response.status(Status.BAD_REQUEST).entity(result).build();
+                    } else if (deserializationResponse.getDeserializedObject()!=null) {
+                        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                        EndpointJSON.oneEndpoint2JSON((Endpoint) deserializationResponse.getDeserializedObject(), outStream);
+                        String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                        ret = Response.status(Status.OK).entity(result).build();
+                    } else {
+                        String result = "ERROR while deserializing !";
+                        ret = Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                    }
+                    return ret ;
+                } catch (MappingDSException e) {
+                    log.error(e.getMessage());
+                    e.printStackTrace();
+                    String result = e.getMessage();
+                    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                }
+            } else {
+                return Response.status(Status.BAD_REQUEST).entity("No payload attached to this POST").build();
             }
         } else {
             return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();

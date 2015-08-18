@@ -61,7 +61,7 @@ public class EndpointImpl implements Endpoint, MappingDSCacheEntity {
 
     @Override
     public void setEndpointURL(String url) {
-        if (this.endpointURL == null || this.endpointURL.equals(url)) {
+        if (this.endpointURL == null || !this.endpointURL.equals(url)) {
             this.endpointURL = url;
             synchronizeURLToDB();
         }
