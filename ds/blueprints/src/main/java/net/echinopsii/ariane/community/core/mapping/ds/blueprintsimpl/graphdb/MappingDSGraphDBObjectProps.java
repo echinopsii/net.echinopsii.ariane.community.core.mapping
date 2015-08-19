@@ -53,7 +53,7 @@ public class MappingDSGraphDBObjectProps {
                 flatObjectProperties(vertex, key + "_ArrayList." + ((ArrayList<Object>) value).indexOf(aValue), aValue, mappingObjPropsKey);
             return;
         }
-        log.debug("Synchronize property {}_{} : {}...", new Object[]{mappingObjPropsKey,key,value.toString()});
+        log.debug("Synchronize property {}_{} : {}...", new Object[]{mappingObjPropsKey, key, value.toString()});
         vertex.setProperty(mappingObjPropsKey+"_"+key, value);
     }
 
@@ -81,13 +81,25 @@ public class MappingDSGraphDBObjectProps {
 
     private static void unflatVertexPropertyToObject(Vertex vertex, String key, String prefixObjKey, String splittedKey, String parentObjKey,
                                                     HashMap<String, Object> props,  HashMap<String, Object> objectsMap) {
-        String keyName = splittedKey.split(prefixObjKey + "_|\\.")[1].split("_")[0];
+        String keyName = null;
         String type    = null;
         String subKey  = null;
 
+        keyName = splittedKey.split(prefixObjKey + "_|\\.")[1].split("_")[0];
         if (splittedKey.split("_|\\.").length>2) {
             type = splittedKey.split(keyName + "_")[1].split("_|\\.")[0];
-            subKey = splittedKey.split(keyName + "_")[1];
+            String[] splittedKeyTab = splittedKey.split(keyName + "_");
+            if (splittedKeyTab.length == 1)
+                subKey = splittedKey.split(keyName + "_")[1];
+            else {
+                subKey = "";
+                for (int idx = 0; idx < splittedKeyTab.length; idx ++) {
+                    if (idx == 1)
+                        subKey += splittedKeyTab[idx];
+                    else if (idx > 0)
+                        subKey += keyName + "_" + splittedKeyTab[idx];
+                }
+            }
         }
 
         if (type!=null) {
