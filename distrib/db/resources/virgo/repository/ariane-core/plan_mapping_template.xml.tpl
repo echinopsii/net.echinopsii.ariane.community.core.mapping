@@ -1,7 +1,5 @@
 {% extends "plan_module_parent_tpl.xml" %}
-{% block name %}
-        "net.echinopsii.ariane.community.core.{{module.name}}"
-{% endblock %}
+{% block name -%}"net.echinopsii.ariane.community.core.{{module.name}}"{% endblock %}
 {% block version %}"{{version}}"{% endblock %}
 {% block configuration -%}
         <artifact type="configuration" name="net.echinopsii.ariane.community.core.MappingRimManagedService"/>
