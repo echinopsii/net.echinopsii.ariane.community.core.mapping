@@ -7,13 +7,13 @@
     {%- endif -%}
 {% endblock %}
 {% block version %}"{{version}}"{% endblock %}
-{%- block configuration -%}
+{% block configuration -%}
         <artifact type="configuration" name="net.echinopsii.ariane.community.core.MappingRimManagedService"/>
-        {%- endblock -%}
+        {% endblock -%}
 {% block bundle -%}
     {% for s in submodules -%}
-    {%- if s.name != 'dsl' -%}
+    {% if s.name != 'dsl' -%}
         <artifact type="bundle" name="{{ s.artifactId }}" version="[{{vmin}},{{vmax}})"/>
     {% endif -%}
-    {%- endfor -%}
+    {% endfor -%}
 {% endblock %}
