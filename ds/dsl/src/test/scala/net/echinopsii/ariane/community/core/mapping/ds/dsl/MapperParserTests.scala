@@ -21,14 +21,17 @@ class MapperParserTests extends FunSuite {
         println("custom path : " + mapperQuery.linkBlock.path + "\n")
     }
 
-    mapperQuery.endBlock.mapPointsPredicate foreach {case (endObjID, (endObjType, endObjPredicate)) => println("End OBJ ID: " + endObjID + "\n" +
-      "End OBJ Type: " + endObjType + "\n" +
-      "End OBJ Predicate: " + endObjPredicate)}
+    if (mapperQuery.endBlock!=null) {
+      mapperQuery.endBlock.mapPointsPredicate foreach { case (endObjID, (endObjType, endObjPredicate)) => println("End OBJ ID: " + endObjID + "\n" +
+        "End OBJ Type: " + endObjType + "\n" +
+        "End OBJ Predicate: " + endObjPredicate)
+      }
+    }
   }
 
-  test("mapperQuery10.ccmon") {
-    val req = Source.fromURL(getClass.getResource("/mapperQuery10.ccmon")).mkString
-    val res = Source.fromURL(getClass.getResource("/mapperQuery1Result.cypher")).mkString
+  test("mdsl/mapperQuery10.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQuery10.ccmon")).mkString
+    val res = Source.fromURL(getClass.getResource("/cypher/mapperQuery1Result.cypher")).mkString
     val mapperQuery:MapperQueryGen = new MapperParser("cypher").parse(req)
 
     //traceMapperQuery(mapperQuery)
@@ -47,9 +50,9 @@ class MapperParserTests extends FunSuite {
     assert(mapperQuery.genQuery===res)
   }
 
-  test("mapperQuery11.ccmon") {
-    val req = Source.fromURL(getClass.getResource("/mapperQuery11.ccmon")).mkString
-    val res = Source.fromURL(getClass.getResource("/mapperQuery1Result.cypher")).mkString
+  test("mdsl/mapperQuery11.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQuery11.ccmon")).mkString
+    val res = Source.fromURL(getClass.getResource("/cypher/mapperQuery1Result.cypher")).mkString
     val mapperQuery:MapperQueryGen = new MapperParser("cypher").parse(req)
 
     //traceMapperQuery(mapperQuery)
@@ -68,9 +71,9 @@ class MapperParserTests extends FunSuite {
     assert(mapperQuery.genQuery===res)
   }
 
-  test("mapperQuery20.ccmon") {
-    val req = Source.fromURL(getClass.getResource("/mapperQuery20.ccmon")).mkString
-    val res = Source.fromURL(getClass.getResource("/mapperQuery2Result.cypher")).mkString
+  test("mdsl/mapperQuery20.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQuery20.ccmon")).mkString
+    val res = Source.fromURL(getClass.getResource("/cypher/mapperQuery2Result.cypher")).mkString
     val mapperQuery:MapperQueryGen = new MapperParser("cypher").parse(req)
 
     //traceMapperQuery(mapperQuery)
@@ -89,9 +92,9 @@ class MapperParserTests extends FunSuite {
     assert(mapperQuery.genQuery===res)
   }
 
-  test("mapperQuery21.ccmon") {
-    val req = Source.fromURL(getClass.getResource("/mapperQuery21.ccmon")).mkString
-    val res = Source.fromURL(getClass.getResource("/mapperQuery2Result.cypher")).mkString
+  test("mdsl/mapperQuery21.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQuery21.ccmon")).mkString
+    val res = Source.fromURL(getClass.getResource("/cypher/mapperQuery2Result.cypher")).mkString
     val mapperQuery:MapperQueryGen = new MapperParser("cypher").parse(req)
 
     //traceMapperQuery(mapperQuery)
@@ -110,9 +113,9 @@ class MapperParserTests extends FunSuite {
     assert(mapperQuery.genQuery===res)
   }
 
-  test("mapperQuery30.ccmon") {
-    val req = Source.fromURL(getClass.getResource("/mapperQuery30.ccmon")).mkString
-    val res = Source.fromURL(getClass.getResource("/mapperQuery3Result.cypher")).mkString
+  test("mdsl/mapperQuery30.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQuery30.ccmon")).mkString
+    val res = Source.fromURL(getClass.getResource("/cypher/mapperQuery3Result.cypher")).mkString
     val mapperQuery:MapperQueryGen = new MapperParser("cypher").parse(req)
 
     //traceMapperQuery(mapperQuery)
@@ -131,9 +134,9 @@ class MapperParserTests extends FunSuite {
     assert(mapperQuery.genQuery===res)
   }
 
-  test("mapperQuery31.ccmon") {
-    val req = Source.fromURL(getClass.getResource("/mapperQuery31.ccmon")).mkString
-    val res = Source.fromURL(getClass.getResource("/mapperQuery3Result.cypher")).mkString
+  test("mdsl/mapperQuery31.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQuery31.ccmon")).mkString
+    val res = Source.fromURL(getClass.getResource("/cypher/mapperQuery3Result.cypher")).mkString
     val mapperQuery:MapperQueryGen = new MapperParser("cypher").parse(req)
 
     //traceMapperQuery(mapperQuery)
@@ -152,9 +155,9 @@ class MapperParserTests extends FunSuite {
     assert(mapperQuery.genQuery===res)
   }
 
-  test("mapperQuery40.ccmon") {
-    val req = Source.fromURL(getClass.getResource("/mapperQuery40.ccmon")).mkString
-    val res = Source.fromURL(getClass.getResource("/mapperQuery4Result.cypher")).mkString
+  test("mdsl/mapperQuery40.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQuery40.ccmon")).mkString
+    val res = Source.fromURL(getClass.getResource("/cypher/mapperQuery4Result.cypher")).mkString
     val mapperQuery:MapperQueryGen = new MapperParser("cypher").parse(req)
 
     //traceMapperQuery(mapperQuery)
@@ -173,9 +176,9 @@ class MapperParserTests extends FunSuite {
     assert(mapperQuery.genQuery===res)
   }
 
-  test("mapperQuery41.ccmon") {
-    val req = Source.fromURL(getClass.getResource("/mapperQuery41.ccmon")).mkString
-    val res = Source.fromURL(getClass.getResource("/mapperQuery4Result.cypher")).mkString
+  test("mdsl/mapperQuery41.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQuery41.ccmon")).mkString
+    val res = Source.fromURL(getClass.getResource("/cypher/mapperQuery4Result.cypher")).mkString
     val mapperQuery:MapperQueryGen = new MapperParser("cypher").parse(req)
 
     //traceMapperQuery(mapperQuery)
@@ -194,9 +197,9 @@ class MapperParserTests extends FunSuite {
     assert(mapperQuery.genQuery===res)
   }
 
-  test("mapperQuery50.ccmon") {
-    val req = Source.fromURL(getClass.getResource("/mapperQuery50.ccmon")).mkString
-    val res = Source.fromURL(getClass.getResource("/mapperQuery5Result.cypher")).mkString
+  test("mdsl/mapperQuery50.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQuery50.ccmon")).mkString
+    val res = Source.fromURL(getClass.getResource("/cypher/mapperQuery5Result.cypher")).mkString
     val mapperQuery:MapperQueryGen = new MapperParser("cypher").parse(req)
 
     //traceMapperQuery(mapperQuery)
@@ -215,9 +218,9 @@ class MapperParserTests extends FunSuite {
     assert(mapperQuery.genQuery===res)
   }
 
-  test("mapperQuery51.ccmon") {
-    val req = Source.fromURL(getClass.getResource("/mapperQuery51.ccmon")).mkString
-    val res = Source.fromURL(getClass.getResource("/mapperQuery5Result.cypher")).mkString
+  test("mdsl/mapperQuery51.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQuery51.ccmon")).mkString
+    val res = Source.fromURL(getClass.getResource("/cypher/mapperQuery5Result.cypher")).mkString
     val mapperQuery:MapperQueryGen = new MapperParser("cypher").parse(req)
 
     //traceMapperQuery(mapperQuery)
@@ -236,9 +239,9 @@ class MapperParserTests extends FunSuite {
     assert(mapperQuery.genQuery===res)
   }
 
-  test("mapperQuery60.ccmon") {
-    val req = Source.fromURL(getClass.getResource("/mapperQuery60.ccmon")).mkString
-    val res = Source.fromURL(getClass.getResource("/mapperQuery6Result.cypher")).mkString
+  test("mdsl/mapperQuery60.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQuery60.ccmon")).mkString
+    val res = Source.fromURL(getClass.getResource("/cypher/mapperQuery6Result.cypher")).mkString
     val mapperQuery:MapperQueryGen = new MapperParser("cypher").parse(req)
 
     //traceMapperQuery(mapperQuery)
@@ -260,9 +263,9 @@ class MapperParserTests extends FunSuite {
     assert(mapperQuery.genQuery===res)
   }
 
-  test("mapperQuery61.ccmon") {
-    val req = Source.fromURL(getClass.getResource("/mapperQuery61.ccmon")).mkString
-    val res = Source.fromURL(getClass.getResource("/mapperQuery6Result.cypher")).mkString
+  test("mdsl/mapperQuery61.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQuery61.ccmon")).mkString
+    val res = Source.fromURL(getClass.getResource("/cypher/mapperQuery6Result.cypher")).mkString
     val mapperQuery:MapperQueryGen = new MapperParser("cypher").parse(req)
 
     //traceMapperQuery(mapperQuery)
@@ -284,9 +287,9 @@ class MapperParserTests extends FunSuite {
     assert(mapperQuery.genQuery===res)
   }
 
-  test("mapperQuery70.ccmon") {
-    val req = Source.fromURL(getClass.getResource("/mapperQuery70.ccmon")).mkString
-    val res = Source.fromURL(getClass.getResource("/mapperQuery7Result.cypher")).mkString
+  test("mdsl/mapperQuery70.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQuery70.ccmon")).mkString
+    val res = Source.fromURL(getClass.getResource("/cypher/mapperQuery7Result.cypher")).mkString
     val mapperQuery:MapperQueryGen = new MapperParser("cypher").parse(req)
 
     //traceMapperQuery(mapperQuery)
@@ -308,9 +311,9 @@ class MapperParserTests extends FunSuite {
     assert(mapperQuery.genQuery===res)
   }
 
-  test("mapperQuery71.ccmon") {
-    val req = Source.fromURL(getClass.getResource("/mapperQuery71.ccmon")).mkString
-    val res = Source.fromURL(getClass.getResource("/mapperQuery7Result.cypher")).mkString
+  test("mdsl/mapperQuery71.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQuery71.ccmon")).mkString
+    val res = Source.fromURL(getClass.getResource("/cypher/mapperQuery7Result.cypher")).mkString
     val mapperQuery:MapperQueryGen = new MapperParser("cypher").parse(req)
 
     //traceMapperQuery(mapperQuery)
@@ -332,9 +335,9 @@ class MapperParserTests extends FunSuite {
     assert(mapperQuery.genQuery===res)
   }
 
-  test("mapperQuery80.ccmon") {
-    val req = Source.fromURL(getClass.getResource("/mapperQuery80.ccmon")).mkString
-    val res = Source.fromURL(getClass.getResource("/mapperQuery8Result.cypher")).mkString
+  test("mdsl/mapperQuery80.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQuery80.ccmon")).mkString
+    val res = Source.fromURL(getClass.getResource("/cypher/mapperQuery8Result.cypher")).mkString
     val mapperQuery: MapperQueryGen = new MapperParser("cypher").parse(req)
 
     //traceMapperQuery(mapperQuery)
@@ -358,9 +361,9 @@ class MapperParserTests extends FunSuite {
     assert(mapperQuery.genQuery===res)
   }
 
-  test("mapperQuery81.ccmon") {
-    val req = Source.fromURL(getClass.getResource("/mapperQuery81.ccmon")).mkString
-    val res = Source.fromURL(getClass.getResource("/mapperQuery8Result.cypher")).mkString
+  test("mdsl/mapperQuery81.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQuery81.ccmon")).mkString
+    val res = Source.fromURL(getClass.getResource("/cypher/mapperQuery8Result.cypher")).mkString
     val mapperQuery: MapperQueryGen = new MapperParser("cypher").parse(req)
 
     //traceMapperQuery(mapperQuery)
@@ -384,9 +387,9 @@ class MapperParserTests extends FunSuite {
     assert(mapperQuery.genQuery===res)
   }
 
-  test("mapperQuery90.ccmon") {
-    val req = Source.fromURL(getClass.getResource("/mapperQuery90.ccmon")).mkString
-    val res = Source.fromURL(getClass.getResource("/mapperQuery9Result.cypher")).mkString
+  test("mdsl/mapperQuery90.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQuery90.ccmon")).mkString
+    val res = Source.fromURL(getClass.getResource("/cypher/mapperQuery9Result.cypher")).mkString
     val mapperQuery: MapperQueryGen = new MapperParser("cypher").parse(req)
 
     //traceMapperQuery(mapperQuery)
@@ -413,9 +416,9 @@ class MapperParserTests extends FunSuite {
     assert(mapperQuery.genQuery===res)
   }
 
-  test("mapperQuery91.ccmon") {
-    val req = Source.fromURL(getClass.getResource("/mapperQuery91.ccmon")).mkString
-    val res = Source.fromURL(getClass.getResource("/mapperQuery9Result.cypher")).mkString
+  test("mdsl/mapperQuery91.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQuery91.ccmon")).mkString
+    val res = Source.fromURL(getClass.getResource("/cypher/mapperQuery9Result.cypher")).mkString
     val mapperQuery: MapperQueryGen = new MapperParser("cypher").parse(req)
 
     //traceMapperQuery(mapperQuery)
@@ -442,9 +445,9 @@ class MapperParserTests extends FunSuite {
     assert(mapperQuery.genQuery===res)
   }
 
-  test("mapperQuery100.ccmon") {
-    val req = Source.fromURL(getClass.getResource("/mapperQuery100.ccmon")).mkString
-    val res = Source.fromURL(getClass.getResource("/mapperQuery10Result.cypher")).mkString
+  test("mdsl/mapperQuery100.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQuery100.ccmon")).mkString
+    val res = Source.fromURL(getClass.getResource("/cypher/mapperQuery10Result.cypher")).mkString
     val mapperQuery: MapperQueryGen = new MapperParser("cypher").parse(req)
 
     //traceMapperQuery(mapperQuery)
@@ -471,9 +474,9 @@ class MapperParserTests extends FunSuite {
     assert(mapperQuery.genQuery===res)
   }
 
-  test("mapperQuery110.ccmon") {
-    val req = Source.fromURL(getClass.getResource("/mapperQuery110.ccmon")).mkString
-    val res = Source.fromURL(getClass.getResource("/mapperQuery11Result.cypher")).mkString
+  test("mdsl/mapperQuery110.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQuery110.ccmon")).mkString
+    val res = Source.fromURL(getClass.getResource("/cypher/mapperQuery11Result.cypher")).mkString
     val mapperQuery: MapperQueryGen = new MapperParser("cypher").parse(req)
 
     //traceMapperQuery(mapperQuery)
@@ -500,9 +503,9 @@ class MapperParserTests extends FunSuite {
     assert(mapperQuery.genQuery===res)
   }
 
-  test("mapperQuery120.ccmon") {
-    val req = Source.fromURL(getClass.getResource("/mapperQuery120.ccmon")).mkString
-    val res = Source.fromURL(getClass.getResource("/mapperQuery12Result.cypher")).mkString
+  test("mdsl/mapperQuery120.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQuery120.ccmon")).mkString
+    val res = Source.fromURL(getClass.getResource("/cypher/mapperQuery12Result.cypher")).mkString
     val mapperQuery: MapperQueryGen = new MapperParser("cypher").parse(req)
 
     //traceMapperQuery(mapperQuery)
@@ -533,18 +536,34 @@ class MapperParserTests extends FunSuite {
 
   }
 
-  test("mapperQuery140.ccmon") {
-    val req = Source.fromURL(getClass.getResource("/mapperQuery140.ccmon")).mkString
-    val res = Source.fromURL(getClass.getResource("/mapperQuery14Result.cypher")).mkString
+  test("mdsl/mapperQuery140.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQuery140.ccmon")).mkString
+    val res = Source.fromURL(getClass.getResource("/cypher/mapperQuery14Result.cypher")).mkString
     val parsedQ : String = MapperExecutorUtil.mapperQueryToCypherQuery(req)._1
     assert(parsedQ===res)
   }
 
-  test("mapperQuery150.ccmon") {
-    val req = Source.fromURL(getClass.getResource("/mapperQuery150.ccmon")).mkString
-    val res = Source.fromURL(getClass.getResource("/mapperQuery15Result.cypher")).mkString
+  test("mdsl/mapperQuery150.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQuery150.ccmon")).mkString
+    val res = Source.fromURL(getClass.getResource("/cypher/mapperQuery15Result.cypher")).mkString
     val parsedQ : String = MapperExecutorUtil.mapperQueryToCypherQuery(req)._1
     assert(parsedQ===res)
+  }
+
+  test("mdsl/mapperQuery160.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQuery160.ccmon")).mkString
+    val res = Source.fromURL(getClass.getResource("/cypher/mapperQuery16Result.cypher")).mkString
+    val mapperQuery:MapperQueryGen = new MapperParser("cypher").parse(req)
+
+    //traceMapperQuery(mapperQuery)
+    //println(mapperQuery.genQuery)
+
+    assert(mapperQuery.startBlock.mapPointsPredicate.size===1)
+    assert(mapperQuery.startBlock.mapPointsPredicate.get("startContainer")!=None)
+    assert(mapperQuery.startBlock.mapPointsPredicate.get("startContainer").get._1.toString==="container")
+    assert(mapperQuery.startBlock.mapPointsPredicate.get("startContainer").get._2.toString==="startContainer.containerPrimaryAdminGate.nodeName =~ \".*tibrvrdl03prd01.*\"")
+
+    assert(mapperQuery.genQuery===res)
   }
 
 }

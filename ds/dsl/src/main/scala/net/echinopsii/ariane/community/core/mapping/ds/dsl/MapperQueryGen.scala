@@ -126,6 +126,7 @@ case class MapperToCypherQueryGen(override val startBlock: Block, override val l
   def genQuery(): String = {
     var cypher : String = ""
     var withList : mutable.MutableList[String] = mutable.MutableList()
+    var returnList : mutable.MutableList[String] = mutable.MutableList()
     var startLinkPointsCount : Int = 0
     var startLinkPoint : String = ""
     var endLinkPointsCount : Int = 0
@@ -134,74 +135,89 @@ case class MapperToCypherQueryGen(override val startBlock: Block, override val l
     var passThroughLinkPoint : String = ""
     var customPath : String = ""
 
-    for (lineVal:String <- startBlock.mapPointsPredicate.keySet) {
-      cypher += cypherBlockBorder((lineVal, startBlock.mapPointsPredicate.get(lineVal).get))
-      withList += lineVal
-      cypher += "WITH "
-      withList foreach (withVal => if (withList.last==withVal) {
-        cypher += withVal + "\n"
-      } else {
-        cypher += withVal + ", "
-      })
-    }
-
-    startLinkPointsCount = withList.length
-    if (startLinkPointsCount==1) startLinkPoint = withList.get(0).get
-    else {
-      startLinkPoint = "startUnion"
-      cypher += cypherBlockUnion(withList, 0, startLinkPointsCount, startLinkPoint)
-      startLinkPointsCount = 1
-    }
-
-    for (lineVal:String <- endBlock.mapPointsPredicate.keySet) {
-      cypher += cypherBlockBorder((lineVal, endBlock.mapPointsPredicate.get(lineVal).get))
-      withList += lineVal
-      cypher += "WITH "
-      withList foreach ( withVal => if (withList.last==withVal) {
-        cypher += withVal + "\n"
-      } else {
-        cypher += withVal + ", "
-      })
-    }
-
-    endLinkPointsCount = withList.length-startLinkPointsCount
-    if (endLinkPointsCount==1) endLinkPoint = withList.last
-    else {
-      endLinkPoint = "endUnion"
-      cypher += cypherBlockUnion(withList, startLinkPointsCount, endLinkPointsCount, endLinkPoint)
-      endLinkPointsCount = 1
-    }
-
-    if (linkBlock!=null) {
-      for (lineVal:String <- linkBlock.mapPointsPredicate.keySet) {
-        cypher += cypherBlockLink((lineVal,linkBlock.mapPointsPredicate.get(lineVal).get))
-        linkBlock.mapPointsPredicate.get(lineVal).get._1 match {
-          case MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE | MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE => withList += lineVal
-          case MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE | MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE => withList += lineVal+"EPs"
-        }
-
+    if (startBlock!=null && endBlock!=null) {
+      for (lineVal: String <- startBlock.mapPointsPredicate.keySet) {
+        cypher += cypherBlockBorder((lineVal, startBlock.mapPointsPredicate.get(lineVal).get))
+        withList += lineVal
         cypher += "WITH "
-        withList foreach ( withVal => if (withList.last==withVal) {
+        withList foreach (withVal => if (withList.last == withVal) {
           cypher += withVal + "\n"
         } else {
           cypher += withVal + ", "
         })
       }
 
-      if (linkBlock.path!=null && linkBlock.path!="") customPath = linkBlock.path else {
-        passThroughPointsCount = withList.length - (startLinkPointsCount + endLinkPointsCount)
-        if (passThroughPointsCount==1) passThroughLinkPoint = withList.last
+      startLinkPointsCount = withList.length
+      if (startLinkPointsCount == 1) startLinkPoint = withList.get(0).get
+      else {
+        startLinkPoint = "startUnion"
+        cypher += cypherBlockUnion(withList, 0, startLinkPointsCount, startLinkPoint)
+        startLinkPointsCount = 1
+      }
+
+      for (lineVal: String <- endBlock.mapPointsPredicate.keySet) {
+        cypher += cypherBlockBorder((lineVal, endBlock.mapPointsPredicate.get(lineVal).get))
+        withList += lineVal
+        cypher += "WITH "
+        withList foreach (withVal => if (withList.last == withVal) {
+          cypher += withVal + "\n"
+        } else {
+          cypher += withVal + ", "
+        })
+      }
+
+      endLinkPointsCount = withList.length - startLinkPointsCount
+      if (endLinkPointsCount == 1) endLinkPoint = withList.last
+      else {
+        endLinkPoint = "endUnion"
+        cypher += cypherBlockUnion(withList, startLinkPointsCount, endLinkPointsCount, endLinkPoint)
+        endLinkPointsCount = 1
+      }
+
+      if (linkBlock != null) {
+        for (lineVal: String <- linkBlock.mapPointsPredicate.keySet) {
+          cypher += cypherBlockLink((lineVal, linkBlock.mapPointsPredicate.get(lineVal).get))
+          linkBlock.mapPointsPredicate.get(lineVal).get._1 match {
+            case MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE | MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE => withList += lineVal
+            case MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE | MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE => withList += lineVal + "EPs"
+          }
+
+          cypher += "WITH "
+          withList foreach (withVal => if (withList.last == withVal) {
+            cypher += withVal + "\n"
+          } else {
+            cypher += withVal + ", "
+          })
+        }
+
+        if (linkBlock.path != null && linkBlock.path != "") customPath = linkBlock.path
         else {
-          passThroughLinkPoint = "ptUnion"
-          cypher += cypherBlockUnion(withList, startLinkPointsCount+endLinkPointsCount, passThroughPointsCount, passThroughLinkPoint)
+          passThroughPointsCount = withList.length - (startLinkPointsCount + endLinkPointsCount)
+          if (passThroughPointsCount == 1) passThroughLinkPoint = withList.last
+          else {
+            passThroughLinkPoint = "ptUnion"
+            cypher += cypherBlockUnion(withList, startLinkPointsCount + endLinkPointsCount, passThroughPointsCount, passThroughLinkPoint)
+          }
         }
       }
-    }
 
-    if (customPath!=null && customPath!="")
-      cypher+=cypherCustomLinkMatch(startLinkPoint, customPath, endLinkPoint)
-    else
-      cypher+=cypherLinkMatch(startLinkPoint, passThroughLinkPoint, endLinkPoint)
+      if (customPath!=null && customPath!="")
+        cypher+=cypherCustomLinkMatch(startLinkPoint, customPath, endLinkPoint)
+      else
+        cypher+=cypherLinkMatch(startLinkPoint, passThroughLinkPoint, endLinkPoint)
+
+    } else if (startBlock!=null && linkBlock==null && endBlock==null) {
+      for (lineVal: String <- startBlock.mapPointsPredicate.keySet) {
+        cypher += cypherBlockBorder((lineVal, startBlock.mapPointsPredicate.get(lineVal).get))
+        returnList += lineVal
+        cypher += "RETURN "
+        returnList foreach (returnVal => if (returnList.last == returnVal) {
+          cypher += returnVal + "\n"
+        } else {
+          cypher += returnVal + ", "
+        })
+      }
+    }
 
     cypher
   }
