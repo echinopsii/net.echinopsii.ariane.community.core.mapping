@@ -555,13 +555,32 @@ class MapperParserTests extends FunSuite {
     val res = Source.fromURL(getClass.getResource("/cypher/mapperQuery16Result.cypher")).mkString
     val mapperQuery:MapperQueryGen = new MapperParser("cypher").parse(req)
 
-    //traceMapperQuery(mapperQuery)
-    //println(mapperQuery.genQuery)
+    traceMapperQuery(mapperQuery)
+    println(mapperQuery.genQuery)
 
     assert(mapperQuery.startBlock.mapPointsPredicate.size===1)
     assert(mapperQuery.startBlock.mapPointsPredicate.get("startContainer")!=None)
     assert(mapperQuery.startBlock.mapPointsPredicate.get("startContainer").get._1.toString==="container")
     assert(mapperQuery.startBlock.mapPointsPredicate.get("startContainer").get._2.toString==="startContainer.containerPrimaryAdminGate.nodeName =~ \".*tibrvrdl03prd01.*\"")
+
+    assert(mapperQuery.genQuery===res)
+  }
+
+  test("mdsl/mapperQuery170.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQuery170.ccmon")).mkString
+    val res = Source.fromURL(getClass.getResource("/cypher/mapperQuery17Result.cypher")).mkString
+    val mapperQuery:MapperQueryGen = new MapperParser("cypher").parse(req)
+
+    //traceMapperQuery(mapperQuery)
+    //println(mapperQuery.genQuery)
+
+    assert(mapperQuery.startBlock.mapPointsPredicate.size===2)
+    assert(mapperQuery.startBlock.mapPointsPredicate.get("startContainer")!=None)
+    assert(mapperQuery.startBlock.mapPointsPredicate.get("startContainer").get._1.toString==="container")
+    assert(mapperQuery.startBlock.mapPointsPredicate.get("startContainer").get._2.toString==="startContainer.containerPrimaryAdminGate.nodeName =~ \".*tibrvrdl03prd01.*\"")
+    assert(mapperQuery.startBlock.mapPointsPredicate.get("startNode")!=None)
+    assert(mapperQuery.startBlock.mapPointsPredicate.get("startNode").get._1.toString==="node")
+    assert(mapperQuery.startBlock.mapPointsPredicate.get("startNode").get._2.toString==="startNode.nodeName = \"APP6969.tibrvrdl03prd01\"")
 
     assert(mapperQuery.genQuery===res)
   }
