@@ -207,12 +207,20 @@ case class MapperToCypherQueryGen(override val startBlock: Block, override val l
         cypher+=cypherLinkMatch(startLinkPoint, passThroughLinkPoint, endLinkPoint)
 
     } else if (startBlock!=null && linkBlock==null && endBlock==null) {
+      var startBlockCounter = startBlock.mapPointsPredicate.size
       for (lineVal: String <- startBlock.mapPointsPredicate.keySet) {
+        startBlockCounter-=1
         cypher += cypherBlockBorder((lineVal, startBlock.mapPointsPredicate.get(lineVal).get))
         returnList += lineVal
-        cypher += "RETURN "
+        if (startBlockCounter==0)
+          cypher += "RETURN "
+        else
+          cypher += "WITH "
         returnList foreach (returnVal => if (returnList.last == returnVal) {
-          cypher += returnVal + "\n"
+          if (startBlockCounter==0)
+            cypher += returnVal
+          else
+            cypher += returnVal + "\n"
         } else {
           cypher += returnVal + ", "
         })

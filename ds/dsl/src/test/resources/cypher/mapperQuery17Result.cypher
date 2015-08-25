@@ -3,4 +3,9 @@ MATCH (startContainer:container)-[:owns]->startContainerContainerPrimaryAdminGat
 WHERE
 startContainerContainerPrimaryAdminGate.MappingGraphVertexID = startContainer.containerPrimaryAdminGate AND
 (startContainerContainerPrimaryAdminGate.nodeName =~ ".*tibrvrdl03prd01.*")
-RETURN startContainer
+WITH startContainer
+
+MATCH (startNode:node)
+WHERE
+(startNode.nodeName = "APP6969.tibrvrdl03prd01")
+RETURN startContainer, startNode
