@@ -1,0 +1,3 @@
+-{
+    'moulticast': 'FROM transport WHERE moulticast.transportName =~ ".*239.69.69.69.*"'
+}-

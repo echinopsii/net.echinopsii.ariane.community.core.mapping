@@ -1,0 +1,5 @@
+-
+{
+	'firefox_dekatonmac': 'FROM node WHERE firefox_dekatonmac.nodeName = "[9626] firefox"'
+}
+-

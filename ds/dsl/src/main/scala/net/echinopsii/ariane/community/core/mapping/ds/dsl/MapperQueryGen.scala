@@ -27,9 +27,21 @@ abstract class MapperQueryGen(val startBlock: Block, val linkBlock: Block, val e
 }
 
 case class MapperToCypherQueryGen(override val startBlock: Block, override val linkBlock: Block, override val endBlock: Block) extends MapperQueryGen(startBlock, linkBlock, endBlock) {
-  private def cypherBlockBorder(blockLine:(String,(String,Predicate))):String = {
+
+  private def cypherWithConcat(withList: mutable.MutableList[String]): String = {
+    var cypher : String = ""
+    cypher += "WITH "
+    withList foreach (withVal => if (withList.last == withVal) {
+      cypher += withVal + "\n"
+    } else {
+      cypher += withVal + ", "
+    })
+    cypher
+  }
+
+  private def cypherBlockBorderMatch(blockLine:(String,(String,Predicate))):String = {
     val matcher = blockLine._2._2.toCypherMatch(blockLine._2._1)
-    var cypher = ""
+    var cypher : String = ""
     if (matcher._1 != "")
       cypher = "\nMATCH " + matcher._1 + "\n"
     else
@@ -43,10 +55,20 @@ case class MapperToCypherQueryGen(override val startBlock: Block, override val l
     cypher
   }
 
-  private def cypherBlockLink(blockLine:(String,(String,Predicate))):String = {
-    var cypher = ""
+  private def cypherBlockBorkerMatchLoop(block: Block, withList: mutable.MutableList[String]): String = {
+    var cypher : String = ""
+    for (lineVal: String <- block.mapPointsPredicate.keySet) {
+      cypher += cypherBlockBorderMatch((lineVal, block.mapPointsPredicate.get(lineVal).get))
+      withList += lineVal
+      cypher += cypherWithConcat(withList)
+    }
+    cypher
+  }
+
+  private def cypherBlockLinkMatch(blockLine:(String,(String,Predicate))):String = {
+    var cypher : String = ""
     blockLine._2._1 match {
-      case MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE | MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE => cypher = cypherBlockBorder(blockLine)
+      case MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE | MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE => cypher = cypherBlockBorderMatch(blockLine)
       case MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE | MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE => {
         val matcher = blockLine._2._2.toCypherMatch(blockLine._2._1)
         cypher += "\nMATCH (" + blockLine._1 + ":" + blockLine._2._1 +") -[:"+MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY +"*]-> (" + blockLine._1 + "EPs:endpoint)"
@@ -62,7 +84,19 @@ case class MapperToCypherQueryGen(override val startBlock: Block, override val l
         cypher += "(" + blockLine._2._2.toCypherWhere + ")\n"
       }
     }
+    cypher
+  }
 
+  private def cypherBlockLinkMatchLoop(block: Block, withList: mutable.MutableList[String]):String = {
+    var cypher : String = ""
+    for (lineVal: String <- block.mapPointsPredicate.keySet) {
+      cypher += cypherBlockLinkMatch((lineVal, block.mapPointsPredicate.get(lineVal).get))
+      linkBlock.mapPointsPredicate.get(lineVal).get._1 match {
+        case MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE | MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE => withList += lineVal
+        case MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE | MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE => withList += lineVal + "EPs"
+      }
+      cypher += cypherWithConcat(withList)
+    }
     cypher
   }
 
@@ -82,19 +116,27 @@ case class MapperToCypherQueryGen(override val startBlock: Block, override val l
     })
 
     val dropList: mutable.MutableList[String] = clean(withList, idxBegin, unionCount)
-    dropList += unionName; withList.clear ; withList ++= dropList
+    dropList += unionName; withList.clear() ; withList ++= dropList
 
-    cypher += "WITH "
-    withList foreach (withVal => if (withList.last==withVal) {
-      cypher += withVal + "\n"
-    } else {
-      cypher += withVal + ", "
-    })
+    cypher += cypherWithConcat(withList)
 
     cypher
   }
 
-  private def cypherLinkMatch(startLink: String, passThroughLink: String, endLink: String):String = {
+  private def cypherMakeBlockUnion(block: Block, withList: mutable.MutableList[String], unionName: String, unionStart: Int): (String, String, Int) = {
+    var cypher : String = ""
+    var linkPoint = ""
+    var withListLength = withList.length - unionStart
+    if (withListLength == 1) linkPoint = withList.get(unionStart).get
+    else {
+      linkPoint = unionName
+      cypher += cypherBlockUnion(withList, unionStart, withListLength, linkPoint)
+      withListLength = 1
+    }
+    (cypher, linkPoint, withListLength)
+  }
+
+  private def cypherLinkReturn(startLink: String, passThroughLink: String, endLink: String):String = {
     var cypher : String = "\nMATCH path = " + startLink + " -[:"+MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY+"|"+MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY+"*]- "
     if (passThroughLink!=null && passThroughLink!="")
       cypher += passThroughLink + " -[:"+MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY+"|"+MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY+"*]- "
@@ -111,7 +153,7 @@ case class MapperToCypherQueryGen(override val startBlock: Block, override val l
     cypher
   }
 
-  private def cypherCustomLinkMatch(startLink: String, customPath: String, endLink: String):String = {
+  private def cypherCustomLinkReturn(startLink: String, customPath: String, endLink: String):String = {
     var cypher : String = "\nMATCH path = " + startLink + customPath + endLink + "\n"
     cypher += "RETURN DISTINCT\n"
     cypher += "EXTRACT(co in FILTER( n in nodes(path) WHERE n." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY + " = \""+MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE+"\")| co." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID + ") as CID,\n"
@@ -123,126 +165,81 @@ case class MapperToCypherQueryGen(override val startBlock: Block, override val l
     cypher
   }
 
-  private def cypherStandaloneBlockReturn(union: String): String = {
+  private def cypherStandaloneBorderBlockReturn(union: String): String = {
     var cypher : String = "\nRETURN DISTINCT\n"
     cypher += "EXTRACT(co in FILTER( n in nodes("+union+") WHERE n." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY + " = \""+MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE+"\")| co." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID + ") as CID,\n"
     cypher += "EXTRACT(no in FILTER( n in nodes("+union+") WHERE n." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY + " = \""+MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE+"\")| no." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID + ") as NID,\n"
     cypher += "EXTRACT(e in FILTER( n in nodes("+union+") WHERE n." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY + " = \""+MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE+"\")| e." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID + ") as EID,\n"
-    cypher += "EXTRACT(t in FILTER( n in nodes("+union+") WHERE n." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY + " = \""+MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE+"\")| t." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID + ") as TID;"
+    cypher += "EXTRACT(t in FILTER( n in nodes("+union+") WHERE n." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY + " = \""+MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE+"\")| t." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID + ") as TID,\n"
+    cypher += "EXTRACT(l in FILTER( r in relationships("+union+") WHERE type(r) = \""+MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY+"\")| l." + MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID + ") as LID;"
+
+    cypher
+  }
+
+  private def cypherStandaloneLinkBlockReturn(union: String): String = {
+    var cypher : String = "\nMATCH path = " + union + " -[:"+MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY+"]- remoteEPs\n"
+    cypher += "RETURN DISTINCT\n"
+    cypher += "EXTRACT(co in FILTER( n in nodes(path) WHERE n." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY + " = \""+MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE+"\")| co." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID + ") as CID,\n"
+    cypher += "EXTRACT(no in FILTER( n in nodes(path) WHERE n." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY + " = \""+MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE+"\")| no." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID + ") as NID,\n"
+    cypher += "EXTRACT(e in FILTER( n in nodes(path) WHERE n." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY + " = \""+MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE+"\")| e." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID + ") as EID,\n"
+    cypher += "EXTRACT(t in FILTER( n in nodes(path) WHERE n." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY + " = \""+MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE+"\")| t." + MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID + ") as TID,\n"
+    cypher += "EXTRACT(l in FILTER( r in relationships(path) WHERE type(r) = \""+MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY+"\")| l." + MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID + ") as LID;"
 
     cypher
   }
 
   def genQuery(): String = {
     var cypher : String = ""
-    var withList : mutable.MutableList[String] = mutable.MutableList()
-    var returnList : mutable.MutableList[String] = mutable.MutableList()
-    var startLinkPointsCount : Int = 0
-    var startLinkPoint : String = ""
-    var endLinkPointsCount : Int = 0
-    var endLinkPoint : String = ""
-    var passThroughPointsCount : Int = 0
-    var passThroughLinkPoint : String = ""
-    var customPath : String = ""
-
-    var standAloneBlockPointsCount : Int = 0
-    var standAloneBlockPoint : String = ""
+    val withList : mutable.MutableList[String] = mutable.MutableList()
 
     if (startBlock!=null && endBlock!=null) {
-      for (lineVal: String <- startBlock.mapPointsPredicate.keySet) {
-        cypher += cypherBlockBorder((lineVal, startBlock.mapPointsPredicate.get(lineVal).get))
-        withList += lineVal
-        cypher += "WITH "
-        withList foreach (withVal => if (withList.last == withVal) {
-          cypher += withVal + "\n"
-        } else {
-          cypher += withVal + ", "
-        })
+      var startLinkGroupCount : Int = 0
+      var startLinkGroup : String = ""
+      var endLinkGroupCount : Int = 0
+      var endLinkGroup : String = ""
+      var passThroughLinkGroup : String = ""
+      var customPath : String = ""
+
+      cypher += cypherBlockBorkerMatchLoop(startBlock, withList)
+      cypherMakeBlockUnion(startBlock, withList, "startUnion", 0) match {
+        case(a,b,c) => cypher += a; startLinkGroup = b; startLinkGroupCount = c;
       }
 
-      startLinkPointsCount = withList.length
-      if (startLinkPointsCount == 1) startLinkPoint = withList.get(0).get
-      else {
-        startLinkPoint = "startUnion"
-        cypher += cypherBlockUnion(withList, 0, startLinkPointsCount, startLinkPoint)
-        startLinkPointsCount = 1
-      }
-
-      for (lineVal: String <- endBlock.mapPointsPredicate.keySet) {
-        cypher += cypherBlockBorder((lineVal, endBlock.mapPointsPredicate.get(lineVal).get))
-        withList += lineVal
-        cypher += "WITH "
-        withList foreach (withVal => if (withList.last == withVal) {
-          cypher += withVal + "\n"
-        } else {
-          cypher += withVal + ", "
-        })
-      }
-
-      endLinkPointsCount = withList.length - startLinkPointsCount
-      if (endLinkPointsCount == 1) endLinkPoint = withList.last
-      else {
-        endLinkPoint = "endUnion"
-        cypher += cypherBlockUnion(withList, startLinkPointsCount, endLinkPointsCount, endLinkPoint)
-        endLinkPointsCount = 1
+      cypher += cypherBlockBorkerMatchLoop(endBlock, withList)
+      cypherMakeBlockUnion(startBlock, withList, "endUnion", startLinkGroupCount) match {
+        case(a,b,c) => cypher += a; endLinkGroup = b; endLinkGroupCount = c;
       }
 
       if (linkBlock != null) {
-        for (lineVal: String <- linkBlock.mapPointsPredicate.keySet) {
-          cypher += cypherBlockLink((lineVal, linkBlock.mapPointsPredicate.get(lineVal).get))
-          linkBlock.mapPointsPredicate.get(lineVal).get._1 match {
-            case MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE | MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE => withList += lineVal
-            case MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE | MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE => withList += lineVal + "EPs"
-          }
-
-          cypher += "WITH "
-          withList foreach (withVal => if (withList.last == withVal) {
-            cypher += withVal + "\n"
-          } else {
-            cypher += withVal + ", "
-          })
-        }
-
+        cypher += cypherBlockLinkMatchLoop(linkBlock, withList)
         if (linkBlock.path != null && linkBlock.path != "") customPath = linkBlock.path
         else {
-          passThroughPointsCount = withList.length - (startLinkPointsCount + endLinkPointsCount)
-          if (passThroughPointsCount == 1) passThroughLinkPoint = withList.last
-          else {
-            passThroughLinkPoint = "ptUnion"
-            cypher += cypherBlockUnion(withList, startLinkPointsCount + endLinkPointsCount, passThroughPointsCount, passThroughLinkPoint)
+          cypherMakeBlockUnion(linkBlock, withList, "ptUnion", startLinkGroupCount + endLinkGroupCount) match {
+            case(a,b,c) => cypher += a; passThroughLinkGroup = b;
           }
         }
       }
 
       if (customPath!=null && customPath!="")
-        cypher+=cypherCustomLinkMatch(startLinkPoint, customPath, endLinkPoint)
+        cypher+=cypherCustomLinkReturn(startLinkGroup, customPath, endLinkGroup)
       else
-        cypher+=cypherLinkMatch(startLinkPoint, passThroughLinkPoint, endLinkPoint)
+        cypher+=cypherLinkReturn(startLinkGroup, passThroughLinkGroup, endLinkGroup)
 
     } else if (startBlock!=null && linkBlock==null && endBlock==null) {
-      for (lineVal: String <- startBlock.mapPointsPredicate.keySet) {
-        cypher += cypherBlockBorder((lineVal, startBlock.mapPointsPredicate.get(lineVal).get))
-        withList += lineVal
-        cypher += "WITH "
-        withList foreach (withVal => if (withList.last == withVal) {
-          cypher += withVal + "\n"
-        } else {
-          cypher += withVal + ", "
-        })
+      var standAloneBlockGroup : String = ""
+      cypher += cypherBlockBorkerMatchLoop(startBlock, withList)
+      cypherMakeBlockUnion(startBlock, withList, "standaloneBlockUnion", 0) match {
+        case(a,b,c) => cypher += a; standAloneBlockGroup = b;
       }
-
-      standAloneBlockPointsCount = withList.length
-      if (standAloneBlockPointsCount == 1) standAloneBlockPoint = withList.get(0).get
-      else {
-        standAloneBlockPoint = "standaloneBlockUnion"
-        cypher += cypherBlockUnion(withList, 0, standAloneBlockPointsCount, standAloneBlockPoint)
-      }
-
-      cypher += cypherStandaloneBlockReturn(standAloneBlockPoint)
+      cypher += cypherStandaloneBorderBlockReturn(standAloneBlockGroup)
 
     } else if (startBlock==null && linkBlock!=null && endBlock==null) {
-
-
+      var standAloneLinkGroup : String = ""
+      cypher += cypherBlockLinkMatchLoop(linkBlock, withList)
+      cypherMakeBlockUnion(startBlock, withList, "standaloneLinkUnion", 0) match {
+        case(a,b,c) => cypher += a; standAloneLinkGroup = b;
+      }
+      cypher += cypherStandaloneLinkBlockReturn(standAloneLinkGroup)
     }
 
     cypher

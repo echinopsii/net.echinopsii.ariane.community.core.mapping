@@ -9,9 +9,12 @@ import scala.io.Source
 class MapperParserTests extends FunSuite {
 
   private def traceMapperQuery(mapperQuery: MapperQueryGen) = {
-    mapperQuery.startBlock.mapPointsPredicate foreach {case (startObjID, (startObjType, startObjPredicate)) => println("Start OBJ ID: " + startObjID + "\n" +
-      "Start OBJ Type: " + startObjType + "\n" +
-      "Start OBJ Predicate: " + startObjPredicate)}
+    if (mapperQuery.startBlock!=null) {
+      mapperQuery.startBlock.mapPointsPredicate foreach { case (startObjID, (startObjType, startObjPredicate)) => println("Start OBJ ID: " + startObjID + "\n" +
+        "Start OBJ Type: " + startObjType + "\n" +
+        "Start OBJ Predicate: " + startObjPredicate)
+      }
+    }
 
     if (mapperQuery.linkBlock!=null) {
       mapperQuery.linkBlock.mapPointsPredicate foreach {case (startObjID, (startObjType, startObjPredicate)) => println("PassThrough OBJ ID: " + startObjID + "\n" +
@@ -555,8 +558,8 @@ class MapperParserTests extends FunSuite {
     val res = Source.fromURL(getClass.getResource("/cypher/mapperQuery16Result.cypher")).mkString
     val mapperQuery:MapperQueryGen = new MapperParser("cypher").parse(req)
 
-    traceMapperQuery(mapperQuery)
-    println(mapperQuery.genQuery)
+    //traceMapperQuery(mapperQuery)
+    //println(mapperQuery.genQuery)
 
     assert(mapperQuery.startBlock.mapPointsPredicate.size===1)
     assert(mapperQuery.startBlock.mapPointsPredicate.get("startContainer")!=None)
@@ -581,6 +584,90 @@ class MapperParserTests extends FunSuite {
     assert(mapperQuery.startBlock.mapPointsPredicate.get("startNode")!=None)
     assert(mapperQuery.startBlock.mapPointsPredicate.get("startNode").get._1.toString==="node")
     assert(mapperQuery.startBlock.mapPointsPredicate.get("startNode").get._2.toString==="startNode.nodeName = \"APP6969.tibrvrdl03prd01\"")
+
+    assert(mapperQuery.genQuery===res)
+  }
+
+  test("mdsl/mapperQuery180.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQuery180.ccmon")).mkString
+    val res = Source.fromURL(getClass.getResource("/cypher/mapperQuery18Result.cypher")).mkString
+    val mapperQuery:MapperQueryGen = new MapperParser("cypher").parse(req)
+
+    //traceMapperQuery(mapperQuery)
+    //println(mapperQuery.genQuery)
+
+    assert(mapperQuery.linkBlock.mapPointsPredicate.size===1)
+    assert(mapperQuery.linkBlock.mapPointsPredicate.get("dekatonmac")!=None)
+    assert(mapperQuery.linkBlock.mapPointsPredicate.get("dekatonmac").get._1.toString==="container")
+    assert(mapperQuery.linkBlock.mapPointsPredicate.get("dekatonmac").get._2.toString==="dekatonmac.containerName = \"dekatonmac\"")
+
+    assert(mapperQuery.genQuery===res)
+  }
+
+  test("mdsl/mapperQuery190.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQuery190.ccmon")).mkString
+    val res = Source.fromURL(getClass.getResource("/cypher/mapperQuery19Result.cypher")).mkString
+    val mapperQuery:MapperQueryGen = new MapperParser("cypher").parse(req)
+
+    //traceMapperQuery(mapperQuery)
+    //println(mapperQuery.genQuery)
+
+    assert(mapperQuery.linkBlock.mapPointsPredicate.size===1)
+    assert(mapperQuery.linkBlock.mapPointsPredicate.get("firefox_dekatonmac")!=None)
+    assert(mapperQuery.linkBlock.mapPointsPredicate.get("firefox_dekatonmac").get._1.toString==="node")
+    assert(mapperQuery.linkBlock.mapPointsPredicate.get("firefox_dekatonmac").get._2.toString==="firefox_dekatonmac.nodeName = \"[9626] firefox\"")
+
+    assert(mapperQuery.genQuery===res)
+  }
+
+  test("mdsl/mapperQuery200.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQuery200.ccmon")).mkString
+    val res = Source.fromURL(getClass.getResource("/cypher/mapperQuery20Result.cypher")).mkString
+    val mapperQuery:MapperQueryGen = new MapperParser("cypher").parse(req)
+
+    //traceMapperQuery(mapperQuery)
+    //println(mapperQuery.genQuery)
+
+    assert(mapperQuery.linkBlock.mapPointsPredicate.size===1)
+    assert(mapperQuery.linkBlock.mapPointsPredicate.get("unkown_remote_endpoint")!=None)
+    assert(mapperQuery.linkBlock.mapPointsPredicate.get("unkown_remote_endpoint").get._1.toString==="endpoint")
+    assert(mapperQuery.linkBlock.mapPointsPredicate.get("unkown_remote_endpoint").get._2.toString==="unkown_remote_endpoint.endpointURL = \"tcp://178.236.6.191:443\"")
+
+    assert(mapperQuery.genQuery===res)
+  }
+
+  test("mdsl/mapperQuery210.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQuery210.ccmon")).mkString
+    val res = Source.fromURL(getClass.getResource("/cypher/mapperQuery21Result.cypher")).mkString
+    val mapperQuery:MapperQueryGen = new MapperParser("cypher").parse(req)
+
+    //traceMapperQuery(mapperQuery)
+    //println(mapperQuery.genQuery)
+
+    assert(mapperQuery.linkBlock.mapPointsPredicate.size===1)
+    assert(mapperQuery.linkBlock.mapPointsPredicate.get("moulticast")!=None)
+    assert(mapperQuery.linkBlock.mapPointsPredicate.get("moulticast").get._1.toString==="transport")
+    assert(mapperQuery.linkBlock.mapPointsPredicate.get("moulticast").get._2.toString==="moulticast.transportName =~ \".*239.69.69.69.*\"")
+
+    assert(mapperQuery.genQuery===res)
+  }
+
+  test("mdsl/mapperQuery220.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQuery220.ccmon")).mkString
+    val res = Source.fromURL(getClass.getResource("/cypher/mapperQuery22Result.cypher")).mkString
+    val mapperQuery:MapperQueryGen = new MapperParser("cypher").parse(req)
+
+    //traceMapperQuery(mapperQuery)
+    //println(mapperQuery.genQuery)
+
+    assert(mapperQuery.linkBlock.mapPointsPredicate.size===2)
+    assert(mapperQuery.linkBlock.mapPointsPredicate.get("firefox_dekatonmac")!=None)
+    assert(mapperQuery.linkBlock.mapPointsPredicate.get("firefox_dekatonmac").get._1.toString==="node")
+    assert(mapperQuery.linkBlock.mapPointsPredicate.get("firefox_dekatonmac").get._2.toString==="firefox_dekatonmac.nodeName = \"[9626] firefox\"")
+    assert(mapperQuery.linkBlock.mapPointsPredicate.get("unkown_remote_endpoint")!=None)
+    assert(mapperQuery.linkBlock.mapPointsPredicate.get("unkown_remote_endpoint").get._1.toString==="endpoint")
+    assert(mapperQuery.linkBlock.mapPointsPredicate.get("unkown_remote_endpoint").get._2.toString==="unkown_remote_endpoint.endpointURL = \"tcp://178.236.6.191:443\"")
+
 
     assert(mapperQuery.genQuery===res)
   }
