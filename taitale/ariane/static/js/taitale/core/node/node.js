@@ -546,15 +546,18 @@ define(
                 if (mtxMaxSize.height == 0)
                     this.maxRectHeight = this.rectHeight;
                 else
-                    this.maxRectHeight = mtxMaxInterspan + mtxMaxSize.height;
+                    this.maxRectHeight = mtxMaxInterspan + this.titleHeight + mtxMaxSize.height;
 
                 if (this.name!==null && (this.rectWidth < this.name.width(this.txtTitleFont)*7/5))
-                    this.rectWidth = this.name.width(this.txtTitleFont)*7/5;
+                    this.maxRectWidth = this.name.width(this.txtTitleFont)*7/5;
+
+                //helper_.debug("[Node.defineMaxSize] " + this.name + " : {" + this.maxRectWidth + "," +  this.maxRectHeight + "}")
             };
 
             this.defineSize = function() {
                 this.nodeChildNodes.defineMtxContentSize();
                 var mtxSize = this.nodeChildNodes.getMtxContentSize();
+
                 if (mtxSize.width != 0)
                     this.rectWidth = (this.nodeChildNodes.getMtxSize().y+1)*this.interSpan + mtxSize.width;
                 if (mtxSize.height != 0)
@@ -562,6 +565,8 @@ define(
 
                 if (this.name!==null && (this.rectWidth < this.name.width(this.txtTitleFont)*7/5))
                     this.rectWidth = this.name.width(this.txtTitleFont)*7/5;
+
+                //helper_.debug("[Node.defineSize] " + this.name + " : {" + this.rectWidth + "," +  this.rectHeight + "}")
             };
 
             this.getRectSize = function() {

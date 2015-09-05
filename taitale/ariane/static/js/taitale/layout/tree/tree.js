@@ -33,7 +33,7 @@ define(
                 treeHeight        = 0  ,
                 treeCenterX       = 0  ,
                 treeCenterY       = 0  ;
-             //var helper_           = new helper();
+             var helper_           = new helper();
 
             this.findVertexByID = function(vertexID) {
                 for (var i = 0, ii = vertexRegistry.length; i < ii ; i++) {
@@ -52,10 +52,10 @@ define(
                     rvertex.incrementRepulsionFactor(treeObject.getLinkedTreeObjects().length);
                     vertexRegistry.push(rvertex);
                     treeObject.isInserted=true;
-                    //helper_.debug("[tree.addVertex] New root vertex " + rvertex.getVertexID() + " added (" + treeObject.getName() + "). Floor =  " + 0 );
+                    //helper_.debug("[tree.addVertex] New root vertex " + rvertex.getVertexID() + " added (" + treeObject.name + "). Floor =  " + 0 );
                 } else {
                     rvertex = this.findVertexByID(treeObject.ID);
-                    //helper_.debug("[tree.addVertex] Parent vertex " + rvertex.getVertexID() + " retrieved (" + treeObject.getName() + "). Floor =  " + rvertex.getFloor() );
+                    //helper_.debug("[tree.addVertex] Parent vertex " + rvertex.getVertexID() + " retrieved (" + treeObject.name + "). Floor =  " + rvertex.getFloor() );
                 }
 
                 var linkedContainers  = ((treeObject instanceof container) ? treeObject.getLinkedContainers():treeObject.linkedTreeObjects),
@@ -74,7 +74,7 @@ define(
                         linkedContainer.isInserted = true;
                         //helper_.debug(
                         //    "[tree.addVertex] New vertex " + linkedVertex.getVertexID() +
-                        //    " added (" + linkedContainer.getName() + "). Floor =  " + linkedVertex.getFloor() +
+                        //    " added (" + linkedContainer.name + "). Floor =  " + linkedVertex.getFloor() +
                         //    ", ID from root = " + linkedVertex.getIdFromRoot());
                         if (linkedContainer.getLinkedTreeObjects().length!=0)
                             childMulticastBus = childMulticastBus.concat(this.addVertex(linkedContainer));

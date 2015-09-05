@@ -20,12 +20,17 @@
 // └──────────────────────────────────────────────────────────────────────────────────────┘ \\
 
 define(
-    function() {
+    [
+        'taitale-helper'
+    ],
+    function(helper) {
         function vertex(/*vertexid_*/object_) {
             var object         = object_,
                 vertexid       = object.ID,
                 rootV          = null,
                 floor          = 0;
+
+            var helper_ = new helper();
 
             var idFromRoot     = 0;
 
@@ -108,7 +113,7 @@ define(
 
             this.getLinkedVertex = function() {
                 return linkedVertexx;
-            }
+            };
 
             this.setObject = function(object_) {
                 object = object_;
@@ -158,8 +163,8 @@ define(
                 }
 
                 // be sure there is no overstep with current object
-                if (rad1 < this.getObject().getMaxBoxSize().width) {
-                    rad1 = rad1+ this.getObject().getMaxBoxSize().width/1.3;
+                while (rad1 < this.getObject().getMaxBoxSize().width+100) {
+                    rad1 += this.getObject().getMaxBoxSize().width/2;
                 }
                 return rad1;
             };
@@ -182,8 +187,8 @@ define(
                 }
 
                 // be sure there is no overstep with current object
-                if (rad2 < this.getObject().getMaxBoxSize().height) {
-                    rad2 = rad2+ this.getObject().getMaxBoxSize().height/1.3;
+                while (rad2 < this.getObject().getMaxBoxSize().height+100) {
+                    rad2 += this.getObject().getMaxBoxSize().height/2;
                 }
                 return rad2;
             };
@@ -208,6 +213,9 @@ define(
                         radY        = this.defineRadYValue(this.getMaxChildSize());
                         relFirstChT = 0;
                     }
+                    //helper_.debug("[defineRelativePoz] " + object.name + " : {orientStep: " + orientStep +
+                    //    ", radX: " + radX + ", radY: " + radY + ", orientV: " + orientV +
+                    //    ", relX: " + relX + ", relY: " + relY + ", relFirstChT: " + relFirstChT);
                     isPlaced=true;
                 }
             };
@@ -216,7 +224,7 @@ define(
                 object.setTopLeftCoord(relX+treeCenterX,relY+treeCenterY);
                 object.definedNodesPoz();
             };
-        };
+        }
 
         return vertex;
     });

@@ -263,6 +263,8 @@ define(
                 for (j = 0, jj = containerRegistry.length; j < jj; j++)
                     containerRegistry[j].defineMaxSize();
 
+
+
                 // third : layout policy
                 var layout = options.getLayout();
                 switch (layout) {

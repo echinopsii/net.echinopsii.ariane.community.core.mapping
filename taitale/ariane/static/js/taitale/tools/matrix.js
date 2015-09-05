@@ -783,29 +783,18 @@ define(
             var tmpHeight, tmpWidth, block;
             var i, ii, j, jj;
             for (i = 0, ii = this.nbColumns; i < ii ; i++) {
-                tmpHeight = 0;
                 for (j = 0, jj = this.nbLines; j < jj; j++) {
                     block = this.zemtx[i][j];
                     if (block!=null && block!==this.FREE && block!==this.LOCKED) {
-                        if (block.obj.getMaxRectSize().height==0)
+                        if (block.obj.getMaxRectSize().width==0)
                             block.obj.defineMaxSize();
-                        tmpHeight += block.obj.getMaxRectSize().height;
+                        this.contentHeight += block.obj.getMaxRectSize().height;
+                        this.contentWidth += block.obj.getMaxRectSize().width;
 
                     }
                 }
-                if (tmpHeight > this.contentHeight)
-                    this.contentHeight=tmpHeight;
             }
-            for (i = 0, ii = this.nbLines; i < ii ; i++) {
-                tmpWidth = 0;
-                for (j = 0, jj = this.nbColumns; j < jj; j++) {
-                    block = this.zemtx[j][i];
-                    if (block!=null && block!==this.FREE && block!==this.LOCKED)
-                        tmpWidth += block.obj.getMaxRectSize().width;
-                }
-                if (tmpWidth > this.contentWidth)
-                    this.contentWidth = tmpWidth;
-            }
+            //this.helper.debug("[matrix.defineMtxContentMaxSize] {contentHeight:"+this.contentHeight+", contentWidth:"+this.contentWidth+"}");
         };
 
         // Optimisation
@@ -1171,6 +1160,7 @@ define(
                 }
                 this.contentHeight+=maxLineHeight[i];
             }
+            //this.helper.debug("[matrix.defineMtxContentSize] {contentHeight:"+this.contentHeight+", contentWidth:"+this.contentWidth+"}");
         };
 
         return Matrix;

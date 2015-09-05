@@ -439,6 +439,9 @@ define(
                     mtxY        = this.containerNodes.getMtxSize().y;
                 this.rectWidth  = getMaxWidth(this.interSpan*(mtxY+1) + mtxSize.width);
                 this.rectHeight = containerRef.containerHat_.height + this.titleHeight + this.interSpan*(mtxX+1) + mtxSize.height;
+                //helper_.debug("[Container.defineSize] " + this.name + " : {mtxSize.width: " + mtxSize.width +
+                //    ", mtxSize.height:" + mtxSize.height + ", mtxX:" + mtxX + ", mtxY: " + mtxY + ", interSpan: " + this.interSpan+"}");
+                //helper_.debug("[Container.defineSize] " + this.name + " : {" + this.rectWidth + "," +  this.rectHeight + "}");
                 //defineRectPoints(this.X,this.Y);
             };
 
@@ -458,8 +461,11 @@ define(
                 this.containerNodes.defineMtxContentMaxSize();
                 var mtxMaxSize = this.containerNodes.getMtxContentSize();
                 var nodesCount = this.containerNodes.getMtxObjCount();
-                this.maxRectWidth = getMaxWidth(mtxMaxSize.width + (nodesCount+1)*this.interSpan);
+                this.maxRectWidth = getMaxWidth(this.interSpan*(nodesCount+1) + mtxMaxSize.width);
                 this.maxRectHeight = this.containerHat_.height + this.titleHeight + this.interSpan*(nodesCount+1) + mtxMaxSize.height;
+                //helper_.debug("[Container.defineMaxSize] " + this.name + " : {mtxMaxSize.width: " + mtxMaxSize.width +
+                //    ", mtxMaxSize.height:" + mtxMaxSize.height + ", nodesCount:" + nodesCount + ", interSpan: " + this.interSpan+" }");
+                //helper_.debug("[Container.defineMaxSize] " + this.name + " : {" + this.maxRectWidth + "," +  this.maxRectHeight + "}");
             };
 
             this.setTopLeftCoord = function(x,y) {
