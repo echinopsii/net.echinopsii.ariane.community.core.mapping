@@ -463,7 +463,7 @@ define(
 
                 var curarea         = container.layoutData.area,
                     alreadyInserted = curarea.isInserted,
-                    networkType     = curarea.getAreaDef().type;
+                    networkType     = curarea.getAreaDef().ratype;
 
                 var wanColCount     = rows[3][0];
                 var manColCount     = rows[3][1];

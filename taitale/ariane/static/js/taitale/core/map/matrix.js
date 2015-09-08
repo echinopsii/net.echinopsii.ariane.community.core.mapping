@@ -122,7 +122,6 @@ define(
             };
 
             this.defineMapContentSize = function() {
-                var i, ii, j, jj;
                 topLeftX = rows[0][0].topLeftX;
                 topLeftY = rows[0][0].topLeftY;
                 bottomRightX = rows[nbLines-1][nbColumns-1].topLeftX + rows[nbLines-1][nbColumns-1].getZoneSize().width;
@@ -223,7 +222,7 @@ define(
                             }
                         }
 
-                        var datacenterDef = location.getDatacenter(),
+                        var datacenterDef = location.getPLocation(),
                             areaDef       = location.getArea(),
                             lanDef        = location.getLan();
 
@@ -255,36 +254,36 @@ define(
                                 }
                             }
 
-                            var linkedDatacenterDef = linkedLocation.getDatacenter(),
-                                linkedLanDef        = linkedLocation.getLan();
+                            var linkedPLocationDef = linkedLocation.getPLocation(),
+                                linkedLanDef       = linkedLocation.getLan();
 
                             /*
                              * define the current known linking data
                              */
                             if (location.equal(linkedLocation))
                                 isConnectedInsideLan = true;
-                            else if (location.equalArea(linkedLocation) && lanDef.lan!=linkedLanDef.lan) {
+                            else if (location.equalArea(linkedLocation) && lanDef.sname!=linkedLanDef.sname) {
                                 isConnectedInsideArea = true;
                             } else {
-                                if (lanDef.type!=linkedLanDef.type) {
-                                    switch(lanDef.type) {
+                                if (lanDef.ratype!=linkedLanDef.ratype) {
+                                    switch(lanDef.ratype) {
                                         case dic.networkType.WAN:
-                                            if (linkedLanDef.type===dic.networkType.MAN || linkedLanDef.type===dic.networkType.LAN) {
+                                            if (linkedLanDef.ratype===dic.networkType.MAN || linkedLanDef.ratype===dic.networkType.LAN) {
                                                 isConnectedToDownArea = true;
                                                 isConnectedToDownLan  = true;
                                             }
                                             break;
                                         case dic.networkType.MAN:
-                                            if (linkedLanDef.type===dic.networkType.LAN) {
+                                            if (linkedLanDef.ratype===dic.networkType.LAN) {
                                                 isConnectedToDownArea = true;
                                                 isConnectedToDownLan  = true;
-                                            } else if (linkedLanDef.type===dic.networkType.WAN) {
+                                            } else if (linkedLanDef.ratype===dic.networkType.WAN) {
                                                 isConnectedToUpArea = true;
                                                 isConnectedToUpLan  = true;
                                             }
                                             break;
                                         case dic.networkType.LAN:
-                                            if (linkedLanDef.type===dic.networkType.WAN || linkedLanDef.type===dic.networkType.MAN) {
+                                            if (linkedLanDef.ratype===dic.networkType.WAN || linkedLanDef.ratype===dic.networkType.MAN) {
                                                 isConnectedToUpArea = true;
                                                 isConnectedToUpLan  = true;
                                             }
@@ -293,7 +292,7 @@ define(
                                             break;
                                     }
                                 } else if (lanDef.dc!=linkedLanDef.dc) {
-                                    var linkedLng = parseFloat(linkedDatacenterDef.gpsLng),
+                                    var linkedLng = parseFloat(linkedPLocationDef.gpsLng),
                                         localLng  = parseFloat(datacenterDef.gpsLng);
                                     if (linkedLng > localLng) {
                                         isConnectedToLeftDC   = true;
@@ -389,9 +388,10 @@ define(
             };
 
             this.translate = function(mvx, mvy) {
-                for (var i=0, ii=nbColumns; i<ii; i++) rows[0][i].moveInit();
-                for (var i=0, ii=nbColumns; i<ii; i++) rows[0][i].move(mvx, mvy);
-                for (var i=0, ii=nbColumns; i<ii; i++) rows[0][i].up();
+                var i, ii;
+                for (i=0, ii=nbColumns; i<ii; i++) rows[0][i].moveInit();
+                for (i=0, ii=nbColumns; i<ii; i++) rows[0][i].move(mvx, mvy);
+                for (i=0, ii=nbColumns; i<ii; i++) rows[0][i].up();
             };
 
             this.displayDC = function(display) {
@@ -420,7 +420,7 @@ define(
                     }
                 }
             };
-        };
+        }
 
         return mapMatrix;
     });

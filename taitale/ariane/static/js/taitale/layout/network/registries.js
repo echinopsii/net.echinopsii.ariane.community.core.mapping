@@ -28,14 +28,15 @@ define(
         function registries() {
             var dcRegistry   = [],
                 areaRegistry = [],
-                lanRegistry  = [];
+                lanRegistry  = [],
+                i = 0, ii = 0;
 
             var getDatacenterFromRegistry = function(id) {
                 for (i = 0, ii = dcRegistry.length ; i < ii ; i++) {
                     if (dcRegistry[i].geoDCLocEqual(id))
                         return dcRegistry[i];
                 }
-            }
+            };
 
             this.getDatacenterFromRegistry = function(id) {
                  return getDatacenterFromRegistry(id);
@@ -46,7 +47,7 @@ define(
                     if (areaRegistry[i].defEqual(id))
                         return areaRegistry[i];
                 }
-            }
+            };
 
             this.getAreaFromRegistry = function(id) {
                 return getAreaFromRegistry(id);
@@ -58,7 +59,7 @@ define(
                     if (lanRegistry[i].defEqual(id))
                         return lanRegistry[i];
                 }
-            }
+            };
 
             this.getLanFromRegistry = function(id) {
                 return getLanFromRegistry(id);
@@ -90,7 +91,7 @@ define(
                 }
                 return ret;
             };
-        };
+        }
 
         return registries;
     });

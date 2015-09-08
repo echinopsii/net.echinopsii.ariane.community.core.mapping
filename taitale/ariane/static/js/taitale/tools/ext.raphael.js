@@ -496,30 +496,30 @@ define(
                 moveSet = this.set();
 
             var sourceLan  = link.getEpSource().epNode.nodeContainer.localisation.lan,
-                sourceArea = link.getEpSource().epNode.nodeContainer.localisation.dcproto.dc + "-" +
+                sourceArea = link.getEpSource().epNode.nodeContainer.localisation.plocation.pname + "-" +
                     link.getEpSource().epNode.nodeContainer.localisation.type + " area | " +
                     ((link.getEpSource().epNode.nodeContainer.localisation.rarea != null) ?
                         link.getEpSource().epNode.nodeContainer.localisation.rarea : "no multicast area"),
-                sourceDC   = link.getEpSource().epNode.nodeContainer.localisation.dcproto.dc;
+                sourceDC   = link.getEpSource().epNode.nodeContainer.localisation.plocation.pname;
 
             var targetLan, targetArea, targetDC;
             if (link.getEpTarget()!=null) {
                 targetLan  = link.getEpTarget().epNode.nodeContainer.localisation.lan;
-                targetArea = link.getEpTarget().epNode.nodeContainer.localisation.dcproto.dc + "-" +
+                targetArea = link.getEpTarget().epNode.nodeContainer.localisation.plocation.pname + "-" +
                     link.getEpTarget().epNode.nodeContainer.localisation.type + " area | " +
                     ((link.getEpTarget().epNode.nodeContainer.localisation.rarea != null) ?
                         link.getEpTarget().epNode.nodeContainer.localisation.rarea : "no multicast area");
-                targetDC   = link.getEpTarget().epNode.nodeContainer.localisation.dcproto.dc;
+                targetDC   = link.getEpTarget().epNode.nodeContainer.localisation.plocation.pname;
             } else {
                 targetLan  = null;
                 targetArea = link.getMulticastBus().areaLongName;
-                targetDC   = link.getMulticastBus().dcName;
+                targetDC   = link.getMulticastBus().pName;
             }
 
             if (!isOnMove && dcsOnMove!=null) {
                 for (i = 0, ii = dcsOnMove.length; i < ii; i++) {
                     dc = dcsOnMove[i];
-                    if (sourceDC === dc.dcName && targetDC === dc.dcName) {
+                    if (sourceDC === dc.pName && targetDC === dc.pName) {
                         linksOnMove.push(link);
                         moveSet.push(link.line);
                         moveSet.push(link.bg);

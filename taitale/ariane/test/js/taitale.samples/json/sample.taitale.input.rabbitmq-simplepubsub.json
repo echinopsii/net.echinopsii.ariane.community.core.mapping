@@ -7,15 +7,15 @@
             "containerProduct":"Feeder APP",
             "containerProperties":{
                 "Network":{
-                    "lan":"lab01.lan2",
-                    "rarea":"angelsMind",
-                    "multicast":"NOLIMIT",
-                    "subnetmask":"255.255.255.0",
-                    "type":"LAN",
-                    "subnetip":"192.168.36.0"
+                    "sname":"lab01.lan2",
+                    "raname":"angelsMind",
+                    "ramulticast":"NOLIMIT",
+                    "smask":"255.255.255.0",
+                    "ratype":"LAN",
+                    "sip":"192.168.36.0"
                 },
                 "Datacenter":{
-                    "dc":"My little paradise",
+                    "pname":"My little paradise",
                     "gpsLng":2.246621,
                     "address":"26 rue de Belfort",
                     "gpsLat":48.895308,
@@ -43,15 +43,15 @@
             "containerProduct":"FrontOffice APP 1",
             "containerProperties":{
                 "Network":{
-                    "lan":"lab01.lan2",
-                    "rarea":"angelsMind",
-                    "multicast":"NOLIMIT",
-                    "subnetmask":"255.255.255.0",
-                    "type":"LAN",
-                    "subnetip":"192.168.36.0"
+                    "sname":"lab01.lan2",
+                    "raname":"angelsMind",
+                    "ramulticast":"NOLIMIT",
+                    "smask":"255.255.255.0",
+                    "ratype":"LAN",
+                    "sip":"192.168.36.0"
                 },
                 "Datacenter":{
-                    "dc":"My little paradise",
+                    "pname":"My little paradise",
                     "gpsLng":2.246621,
                     "address":"26 rue de Belfort",
                     "gpsLat":48.895308,
@@ -80,15 +80,15 @@
             "containerType":"Node",
             "containerProperties":{
                 "Network":{
-                    "lan":"lab01.lan2",
-                    "rarea":"angelsMind",
-                    "multicast":"NOLIMIT",
-                    "subnetmask":"255.255.255.0",
-                    "type":"LAN",
-                    "subnetip":"192.168.36.0"
+                    "sname":"lab01.lan2",
+                    "raname":"angelsMind",
+                    "ramulticast":"NOLIMIT",
+                    "smask":"255.255.255.0",
+                    "ratype":"LAN",
+                    "sip":"192.168.36.0"
                 },
                 "Datacenter":{
-                    "dc":"My little paradise",
+                    "pname":"My little paradise",
                     "gpsLng":2.246621,
                     "address":"26 rue de Belfort",
                     "gpsLat":48.895308,
@@ -116,15 +116,15 @@
             "containerProduct":"FrontOffice APP 2",
             "containerProperties":{
                 "Network":{
-                    "lan":"lab01.lan2",
-                    "rarea":"angelsMind",
-                    "multicast":"NOLIMIT",
-                    "subnetmask":"255.255.255.0",
-                    "type":"LAN",
-                    "subnetip":"192.168.36.0"
+                    "sname":"lab01.lan2",
+                    "raname":"angelsMind",
+                    "ramulticast":"NOLIMIT",
+                    "smask":"255.255.255.0",
+                    "ratype":"LAN",
+                    "sip":"192.168.36.0"
                 },
                 "Datacenter":{
-                    "dc":"My little paradise",
+                    "pname":"My little paradise",
                     "gpsLng":2.246621,
                     "address":"26 rue de Belfort",
                     "gpsLat":48.895308,

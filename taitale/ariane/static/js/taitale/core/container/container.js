@@ -44,31 +44,59 @@ define(
             //noinspection JSUnresolvedVariable
             this.gateURI      = JSONContainerDesc.containerGateURI;
             //noinspection JSUnresolvedVariable
-            this.name         = JSONContainerDesc.containerGateURI;
+            this.name         = JSONContainerDesc.name;
+            if (this.name == null) {
+                this.name  = this.gateURI.split("://")[1].split(":")[0];
+                if (!helper_.isValidIPAddress(this.name)) {
+                    var tmp1 = this.name.split(".")[0], tmp2 = this.name.split(".")[1].split(".")[0];
+                    this.name = tmp1 + "." +tmp2;
+                }
+            }
+
             //noinspection JSUnresolvedVariable
             this.properties   = JSONContainerDesc.containerProperties;
             this.localisation = null;
 
             //noinspection JSUnresolvedVariable
-            var tmpDatacenter = this.properties.Datacenter,
-                tmpNetwork    = this.properties.Network;
-            if (tmpDatacenter != null && tmpNetwork != null) {
-                this.localisation = prototypes_.create(prototypes_.ntprototype, {
-                        dcproto:    prototypes_.create(prototypes_.dcprototype, tmpDatacenter),
-                        type:       tmpNetwork.type,
-                        rarea:      tmpNetwork.rarea,
-                        multicast:  tmpNetwork.multicast,
-                        lan:        tmpNetwork.lan,
-                        subnetip:   tmpNetwork.subnetip,
-                        subnetmask: tmpNetwork.subnetmask
-                });
-            }
+            var tmpDatacenter = (this.properties!=null) ? this.properties.Datacenter : null,
+                tmpNetwork    = (this.properties!=null) ? ((this.properties.Network.constructor === Array) ? this.properties.Network[0] : this.properties.Network ): null;
+            if (tmpDatacenter==null)
+                tmpDatacenter = {
+                    pname: "SOME_COOL_PLACE",
+                    address: "probably somewhere on earth",
+                    town: "probably somewhere on earth",
+                    country: "probably somewhere on earth",
+                    gpsLat: "90",
+                    gpsLng: "0"
+                };
+            if (tmpNetwork==null)
+                tmpNetwork = {
+                    ratype: "EXTERNAL",
+                    raname: "WORLD WIDE INTERNET",
+                    ramulticast: "FILTERED",
+                    sname: "NOT MY CONCERN",
+                    sip: "NOT MY CONCERN",
+                    smask: "NOT MY CONCERN"
+                };
+            this.localisation = prototypes_.create(prototypes_.standaloneNetwork, {
+                plocation:    prototypes_.create(prototypes_.physicalLocation, tmpDatacenter),
+                rarea: prototypes_.create(prototypes_.simpleRoutingArea, {
+                    raname: tmpNetwork.raname,
+                    ratype: tmpNetwork.ratype,
+                    ramulticast: tmpNetwork.ramulticast
+                }),
+                subnet: prototypes_.create(prototypes_.simpleSubnet, {
+                    sname: tmpNetwork.sname,
+                    sip: tmpNetwork.sip,
+                    smask: tmpNetwork.smask
+                })
+            });
 
             this.layoutData        = null;
 
             this.r                 = null;
             //noinspection JSUnresolvedVariable
-            this.color             = (this.properties.supportTeam!=null && this.properties.supportTeam.color!=null) ? "#"+this.properties.supportTeam.color : Raphael.getColor();
+            this.color             = (this.properties != null && this.properties.supportTeam!=null && this.properties.supportTeam.color!=null) ? "#"+this.properties.supportTeam.color : Raphael.getColor();
             this.txtFont           = params.container_txtTitle;
             this.X                 = x_;
             this.Y                 = y_;
@@ -296,12 +324,12 @@ define(
                             ((containerRef.properties.supportTeam!=null) ? "<br/> <b>Support team</b> : " + containerRef.properties.supportTeam.name + "<br/>": "") +
                             ((containerRef.properties.Server!=null) ? "<br/> <b>OS instance hostname</b> : " + containerRef.properties.Server.hostname +
                                 "<br/> <b>OS instance type</b> : " + containerRef.properties.Server.os + "<br/>": "") +
-                            ((containerRef.properties.Network!=null) ? "<br/> <b>Network ID</b> : " + containerRef.properties.Network.lan +
-                                "<br/> <b>Network type</b> : " + containerRef.properties.Network.type +
-                                "<br/> <b>Network subnet IP</b> : " + containerRef.properties.Network.subnetip +
-                                "<br/> <b>Network subnet mask</b> : " + containerRef.properties.Network.subnetmask +
-                                "<br/> <b>Network routing area</b> : " + containerRef.properties.Network.rarea :  "") +
-                            ((containerRef.properties.Datacenter!=null) ? "<br> <b>Datacenter ID </b> : " + containerRef.properties.Datacenter.dc +
+                            ((containerRef.properties.Network!=null) ? "<br/> <b>Network ID</b> : " + containerRef.properties.Network.sname +
+                                "<br/> <b>Network type</b> : " + containerRef.properties.Network.ratype +
+                                "<br/> <b>Network subnet IP</b> : " + containerRef.properties.Network.sip +
+                                "<br/> <b>Network subnet mask</b> : " + containerRef.properties.Network.smask +
+                                "<br/> <b>Network routing area</b> : " + containerRef.properties.Network.raname :  "") +
+                            ((containerRef.properties.Datacenter!=null) ? "<br> <b>Datacenter ID </b> : " + containerRef.properties.Datacenter.pname +
                                 "<br/> <b>Datacenter address</b> : " + containerRef.properties.Datacenter.address +
                                 "<br/> <b>Datacenter town</b> : " + containerRef.properties.Datacenter.town +
                                 "<br/> <b>Datacenter country</b> : " + containerRef.properties.Datacenter.country + "<br/>": "");
@@ -844,10 +872,6 @@ define(
 
                 this.changeUp();
             };
-
-            this.name  = this.name.split("://")[1].split(":")[0];
-            var tmp1 = this.name.split(".")[0], tmp2 = this.name.split(".")[1].split(".")[0];
-            this.name = tmp1 + "." +tmp2;
         }
 
         return container;

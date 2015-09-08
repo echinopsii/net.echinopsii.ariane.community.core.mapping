@@ -9,15 +9,15 @@
             "containerProperties":{
                 "RVRD_HOSTNAME":"tibrvrdl03prd01.lab01.dev.dekatonshivr.echinopsii.net",
                 "Network":{
-                    "subnetmask":"255.255.255.0",
-                    "lan":"05",
-                    "rarea":"mon lobe temporal droit (LAN)",
-                    "multicast":"NOLIMIT",
-                    "type":"LAN",
-                    "subnetip":"192.168.33.0"
+                    "smask":"255.255.255.0",
+                    "sname":"05",
+                    "raname":"mon lobe temporal droit (LAN)",
+                    "ramulticast":"NOLIMIT",
+                    "ratype":"LAN",
+                    "sip":"192.168.33.0"
                 },
                 "Datacenter":{
-                    "dc":"HQ",
+                    "pname":"HQ",
                     "gpsLng":2.246390,
                     "address":"26 rue de Belfort",
                     "gpsLat":48.894944,
@@ -53,15 +53,15 @@
             "containerProperties":{
                 "RVRD_HOSTNAME":"tibrvrdmprd01.lab01.dev.dekatonshivr.echinopsii.net",
                 "Network":{
-                    "subnetmask":"255.255.255.255",
-                    "lan":"02",
-                    "rarea":"cervelet (MAN)",
-                    "multicast":"FILTERED",
-                    "type":"MAN",
-                    "subnetip":"192.168.33.6"
+                    "smask":"255.255.255.255",
+                    "sname":"02",
+                    "raname":"cervelet (MAN)",
+                    "ramulticast":"FILTERED",
+                    "ratype":"MAN",
+                    "sip":"192.168.33.6"
                 },
                 "Datacenter":{
-                    "dc":"HQ",
+                    "pname":"HQ",
                     "gpsLng":2.246390,
                     "address":"26 rue de Belfort",
                     "gpsLat":48.894944,
@@ -97,15 +97,15 @@
             "containerProperties":{
                 "RVRD_HOSTNAME":"tibrvrdwprd01.lab01.dev.dekatonshivr.echinopsii.net",
                 "Network":{
-                    "subnetmask":"255.255.255.255",
-                    "rarea":"Moelle epiniere (WAN)",
-                    "multicast":"FILTERED",
-                    "lan":"01",
-                    "type":"WAN",
-                    "subnetip":"192.168.33.5"
+                    "smask":"255.255.255.255",
+                    "raname":"Moelle epiniere (WAN)",
+                    "ramulticast":"FILTERED",
+                    "sname":"01",
+                    "ratype":"WAN",
+                    "sip":"192.168.33.5"
                 },
                 "Datacenter":{
-                    "dc":"HQ",
+                    "pname":"HQ",
                     "gpsLng":2.246390,
                     "address":"26 rue de Belfort",
                     "gpsLat":48.894944,
@@ -141,15 +141,15 @@
             "containerProperties":{
                 "RVRD_HOSTNAME":"tibrvrdl05prd01.lab01.dev.dekatonshivr.echinopsii.net",
                 "Network":{
-                    "subnetmask":"255.255.255.0",
-                    "lan":"05",
-                    "rarea":"mon lobe temporal droit",
-                    "multicast":"NOLIMIT",
-                    "type":"LAN",
-                    "subnetip":"192.168.33.0"
+                    "smask":"255.255.255.0",
+                    "sname":"05",
+                    "raname":"mon lobe temporal droit",
+                    "ramulticast":"NOLIMIT",
+                    "ratype":"LAN",
+                    "sip":"192.168.33.0"
                 },
                 "Datacenter":{
-                    "dc":"HQ",
+                    "pname":"HQ",
                     "gpsLng":2.246390,
                     "address":"26 rue de Belfort",
                     "gpsLat":48.894944,

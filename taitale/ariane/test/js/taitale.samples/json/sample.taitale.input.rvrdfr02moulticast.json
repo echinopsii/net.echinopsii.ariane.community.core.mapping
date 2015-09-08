@@ -9,15 +9,15 @@
             "containerProperties":{
                 "RVRD_HOSTNAME":"tibrvrdl05prd01.lab01.dev.dekatonshivr.echinopsii.net",
                 "Network":{
-                    "subnetmask":"255.255.255.0",
-                    "lan":"05",
-                    "rarea":"mon lobe temporal droit",
-                    "multicast": "NOLIMIT",
-                    "type":"LAN",
-                    "subnetip":"192.168.33.0"
+                    "smask":"255.255.255.0",
+                    "sname":"05",
+                    "raname":"mon lobe temporal droit",
+                    "ramulticast": "NOLIMIT",
+                    "ratype":"LAN",
+                    "sip":"192.168.33.0"
                 },
                 "Datacenter":{
-                    "dc":"HQ",
+                    "pname":"HQ",
                     "gpsLng":"France",
                     "address":"26 rue de Belfort",
                     "gpsLat":"France",
@@ -53,15 +53,15 @@
             "containerProperties":{
                 "RVRD_HOSTNAME":"tibrvrdl03prd01.lab01.dev.dekatonshivr.echinopsii.net",
                 "Network":{
-                    "subnetmask":"255.255.255.0",
-                    "lan":"05",
-                    "rarea":"mon lobe temporal droit",
-                    "multicast": "NOLIMIT",
-                    "type":"LAN",
-                    "subnetip":"192.168.33.0"
+                    "smask":"255.255.255.0",
+                    "sname":"05",
+                    "raname":"mon lobe temporal droit",
+                    "ramulticast": "NOLIMIT",
+                    "ratype":"LAN",
+                    "sip":"192.168.33.0"
                 },
                 "Datacenter":{
-                    "dc":"HQ",
+                    "pname":"HQ",
                     "gpsLng":"France",
                     "address":"26 rue de Belfort",
                     "gpsLat":"France",
@@ -96,15 +96,15 @@
             "containerGateURI":"http://app6969rvd1.lab01.dev.dekatonshivr.echinopsii.net:7580",
             "containerProperties":{
                 "Network":{
-                    "subnetmask":"255.255.255.0",
-                    "lan":"06",
-                    "rarea":"mon lobe temporal droit",
-                    "multicast": "NOLIMIT",
-                    "type":"LAN",
-                    "subnetip":"192.168.34.0"
+                    "smask":"255.255.255.0",
+                    "sname":"06",
+                    "raname":"mon lobe temporal droit",
+                    "ramulticast": "NOLIMIT",
+                    "ratype":"LAN",
+                    "sip":"192.168.34.0"
                 },
                 "Datacenter":{
-                    "dc":"HQ",
+                    "pname":"HQ",
                     "gpsLng":"France",
                     "address":"26 rue de Belfort",
                     "gpsLat":"France",
@@ -133,15 +133,15 @@
             "containerGateURI":"http://app6969rvd2.lab01.dev.dekatonshivr.echinopsii.net:7580",
             "containerProperties":{
                 "Network":{
-                    "subnetmask":"255.255.255.0",
-                    "lan":"07",
-                    "rarea":"mon lobe temporal droit",
-                    "multicast": "NOLIMIT",
-                    "type":"LAN",
-                    "subnetip":"192.168.35.0"
+                    "smask":"255.255.255.0",
+                    "sname":"07",
+                    "raname":"mon lobe temporal droit",
+                    "ramulticast": "NOLIMIT",
+                    "ratype":"LAN",
+                    "sip":"192.168.35.0"
                 },
                 "Datacenter":{
-                    "dc":"HQ",
+                    "pname":"HQ",
                     "gpsLng":"France",
                     "address":"26 rue de Belfort",
                     "gpsLat":"France",
@@ -170,15 +170,15 @@
             "containerGateURI":"http://app6969rvd3.lab01.dev.dekatonshivr.echinopsii.net:7580",
             "containerProperties":{
                 "Network":{
-                    "subnetmask":"255.255.255.0",
-                    "lan":"08",
-                    "rarea":"mon lobe temporal droit",
-                    "multicast": "NOLIMIT",
-                    "type":"LAN",
-                    "subnetip":"192.168.36.0"
+                    "smask":"255.255.255.0",
+                    "sname":"08",
+                    "raname":"mon lobe temporal droit",
+                    "ramulticast": "NOLIMIT",
+                    "ratype":"LAN",
+                    "sip":"192.168.36.0"
                 },
                 "Datacenter":{
-                    "dc":"HQ",
+                    "pname":"HQ",
                     "gpsLng":"France",
                     "address":"26 rue de Belfort",
                     "gpsLat":"France",
@@ -207,15 +207,15 @@
             "containerGateURI":"http://app6669rvd1.lab01.dev.dekatonshivr.echinopsii.net:7580",
             "containerProperties":{
                 "Network":{
-                    "subnetmask":"255.255.255.0",
-                    "lan":"03",
-                    "rarea":"mon lobe temporal droit",
-                    "multicast": "NOLIMIT",
-                    "type":"LAN",
-                    "subnetip":"192.168.32.0"
+                    "smask":"255.255.255.0",
+                    "sname":"03",
+                    "raname":"mon lobe temporal droit",
+                    "ramulticast": "NOLIMIT",
+                    "ratype":"LAN",
+                    "sip":"192.168.32.0"
                 },
                 "Datacenter":{
-                    "dc":"HQ",
+                    "pname":"HQ",
                     "gpsLng":"France",
                     "address":"26 rue de Belfort",
                     "gpsLat":"France",
@@ -244,15 +244,15 @@
             "containerGateURI":"http://app6669rvd2.lab01.dev.dekatonshivr.echinopsii.net:7580",
             "containerProperties":{
                 "Network":{
-                    "subnetmask":"255.255.255.0",
-                    "lan":"02",
-                    "rarea":"mon lobe temporal droit",
-                    "multicast": "NOLIMIT",
-                    "type":"LAN",
-                    "subnetip":"192.168.31.0"
+                    "smask":"255.255.255.0",
+                    "sname":"02",
+                    "raname":"mon lobe temporal droit",
+                    "ramulticast": "NOLIMIT",
+                    "ratype":"LAN",
+                    "sip":"192.168.31.0"
                 },
                 "Datacenter":{
-                    "dc":"HQ",
+                    "pname":"HQ",
                     "gpsLng":"France",
                     "address":"26 rue de Belfort",
                     "gpsLat":"France",

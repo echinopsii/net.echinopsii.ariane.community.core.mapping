@@ -8,15 +8,15 @@
             "containerGateURI":"http://app6969rvd23.lab02.dev.dekatonshivr.echinopsii.net:7580",
             "containerProperties":{
                 "Network":{
-                    "lan":"lab02.lan4",
-                    "rarea":"devilsMindLAN",
-                    "multicast":"NOLIMIT",
-                    "subnetmask":"255.255.255.0",
-                    "type":"LAN",
-                    "subnetip":"192.168.48.0"
+                    "sname":"lab02.lan4",
+                    "raname":"devilsMindLAN",
+                    "ramulticast":"NOLIMIT",
+                    "smask":"255.255.255.0",
+                    "ratype":"LAN",
+                    "sip":"192.168.48.0"
                 },
                 "Datacenter":{
-                    "dc":"Somewhere in hell [DR]",
+                    "pname":"Somewhere in hell [DR]",
                     "gpsLng":-52.582179,
                     "address":"Devil's Island",
                     "gpsLat":5.295366,
@@ -42,15 +42,15 @@
             "containerProperties":{
                 "RVRD_HOSTNAME":"tibrvrdl03prd01.lab01.dev.dekatonshivr.echinopsii.net",
                 "Network":{
-                    "subnetmask":"255.255.255.0",
-                    "lan":"lab01.lan1",
-                    "rarea":"angelsMindLAN",
-                    "multicast":"NOLIMIT",
-                    "type":"LAN",
-                    "subnetip":"192.168.33.0"
+                    "smask":"255.255.255.0",
+                    "sname":"lab01.lan1",
+                    "raname":"angelsMindLAN",
+                    "ramulticast":"NOLIMIT",
+                    "ratype":"LAN",
+                    "sip":"192.168.33.0"
                 },
                 "Datacenter":{
-                    "dc":"My little paradise",
+                    "pname":"My little paradise",
                     "gpsLng":2.24639,
                     "address":"26 rue de Belfort",
                     "gpsLat":48.894944,
@@ -82,15 +82,15 @@
             "containerProperties":{
                 "RVRD_HOSTNAME":"tibrvrdwprd01.lab01.dev.dekatonshivr.echinopsii.net",
                 "Network":{
-                    "subnetmask":"255.255.255.0",
-                    "lan":"lab01.wan",
-                    "rarea":"angelsMindWAN",
-                    "multicast":"FILTERED",
-                    "type":"WAN",
-                    "subnetip":"192.168.35.0"
+                    "smask":"255.255.255.0",
+                    "sname":"lab01.wan",
+                    "raname":"angelsMindWAN",
+                    "ramulticast":"FILTERED",
+                    "ratype":"WAN",
+                    "sip":"192.168.35.0"
                 },
                 "Datacenter":{
-                    "dc":"My little paradise",
+                    "pname":"My little paradise",
                     "gpsLng":2.24639,
                     "address":"26 rue de Belfort",
                     "gpsLat":48.894944,
@@ -121,15 +121,15 @@
             "containerGateURI":"http://app6969rvd21.lab02.dev.dekatonshivr.echinopsii.net:7580",
             "containerProperties":{
                 "Network":{
-                    "lan":"lab02.lan3",
-                    "rarea":"devilsMindLAN",
-                    "multicast":"NOLIMIT",
-                    "subnetmask":"255.255.255.0",
-                    "type":"LAN",
-                    "subnetip":"192.168.47.0"
+                    "sname":"lab02.lan3",
+                    "raname":"devilsMindLAN",
+                    "ramulticast":"NOLIMIT",
+                    "smask":"255.255.255.0",
+                    "ratype":"LAN",
+                    "sip":"192.168.47.0"
                 },
                 "Datacenter":{
-                    "dc":"Somewhere in hell [DR]",
+                    "pname":"Somewhere in hell [DR]",
                     "gpsLng":-52.582179,
                     "address":"Devil's Island",
                     "gpsLat":5.295366,
@@ -155,15 +155,15 @@
             "containerProperties":{
                 "RVRD_HOSTNAME":"tibrvrdm02prd01.lab02.dev.dekatonshivr.echinopsii.net",
                 "Network":{
-                    "lan":"lab02.man",
-                    "subnetmask":"255.255.255.0",
-                    "rarea": "devilsMindMAN",
-                    "multicast":"FILTERED",
-                    "type":"MAN",
-                    "subnetip":"192.168.45.0"
+                    "sname":"lab02.man",
+                    "smask":"255.255.255.0",
+                    "raname": "devilsMindMAN",
+                    "ramulticast":"FILTERED",
+                    "ratype":"MAN",
+                    "sip":"192.168.45.0"
                 },
                 "Datacenter":{
-                    "dc":"Somewhere in hell [DR]",
+                    "pname":"Somewhere in hell [DR]",
                     "gpsLng":-52.582179,
                     "address":"Devil's Island",
                     "gpsLat":5.295366,
@@ -194,15 +194,15 @@
             "containerGateURI":"http://app6969rvd24.lab02.dev.dekatonshivr.echinopsii.net:7580",
             "containerProperties":{
                 "Network":{
-                    "lan":"lab02.lan4",
-                    "rarea":"devilsMindLAN",
-                    "multicast":"NOLIMIT",
-                    "subnetmask":"255.255.255.0",
-                    "type":"LAN",
-                    "subnetip":"192.168.48.0"
+                    "sname":"lab02.lan4",
+                    "raname":"devilsMindLAN",
+                    "ramulticast":"NOLIMIT",
+                    "smask":"255.255.255.0",
+                    "ratype":"LAN",
+                    "sip":"192.168.48.0"
                 },
                 "Datacenter":{
-                    "dc":"Somewhere in hell [DR]",
+                    "pname":"Somewhere in hell [DR]",
                     "gpsLng":-52.582179,
                     "address":"Devil's Island",
                     "gpsLat":5.295366,
@@ -228,15 +228,15 @@
             "containerProperties":{
                 "RVRD_HOSTNAME":"tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net",
                 "Network":{
-                    "rarea":"devilsMindLAN",
-                    "multicast":"NOLIMIT",
-                    "lan":"lab02.lan1",
-                    "subnetmask":"255.255.255.0",
-                    "type":"LAN",
-                    "subnetip":"192.168.43.0"
+                    "raname":"devilsMindLAN",
+                    "ramulticast":"NOLIMIT",
+                    "sname":"lab02.lan1",
+                    "smask":"255.255.255.0",
+                    "ratype":"LAN",
+                    "sip":"192.168.43.0"
                 },
                 "Datacenter":{
-                    "dc":"Somewhere in hell [DR]",
+                    "pname":"Somewhere in hell [DR]",
                     "gpsLng":-52.582179,
                     "address":"Devil's Island",
                     "gpsLat":5.295366,
@@ -268,15 +268,15 @@
             "containerProperties":{
                 "RVRD_HOSTNAME":"tibrvrdl05prd01.lab01.dev.dekatonshivr.echinopsii.net",
                 "Network":{
-                    "subnetmask":"255.255.255.0",
-                    "lan":"lab01.lan1",
-                    "rarea":"angelsMindLAN",
-                    "multicast":"NOLIMIT",
-                    "type":"LAN",
-                    "subnetip":"192.168.33.0"
+                    "smask":"255.255.255.0",
+                    "sname":"lab01.lan1",
+                    "raname":"angelsMindLAN",
+                    "ramulticast":"NOLIMIT",
+                    "ratype":"LAN",
+                    "sip":"192.168.33.0"
                 },
                 "Datacenter":{
-                    "dc":"My little paradise",
+                    "pname":"My little paradise",
                     "gpsLng":2.24639,
                     "address":"26 rue de Belfort",
                     "gpsLat":48.894944,
@@ -308,15 +308,15 @@
             "containerProperties":{
                 "RVRD_HOSTNAME":"tibrvrdmprd01.lab01.dev.dekatonshivr.echinopsii.net",
                 "Network":{
-                    "subnetmask":"255.255.255.0",
-                    "rarea": "angelsMindMAN",
-                    "multicast":"FILTERED",
-                    "lan":"lab01.man",
-                    "type":"MAN",
-                    "subnetip":"192.168.34.0"
+                    "smask":"255.255.255.0",
+                    "raname": "angelsMindMAN",
+                    "ramulticast":"FILTERED",
+                    "sname":"lab01.man",
+                    "ratype":"MAN",
+                    "sip":"192.168.34.0"
                 },
                 "Datacenter":{
-                    "dc":"My little paradise",
+                    "pname":"My little paradise",
                     "gpsLng":2.24639,
                     "address":"26 rue de Belfort",
                     "gpsLat":48.894944,
@@ -348,15 +348,15 @@
             "containerProperties":{
                 "RVRD_HOSTNAME":"tibrvrdw02prd01.lab02.dev.dekatonshivr.echinopsii.net",
                 "Network":{
-                    "lan":"lab02.wan",
-                    "rarea":"devilsMindWAN",
-                    "multicast":"FILTERED",
-                    "subnetmask":"255.255.255.0",
-                    "type":"WAN",
-                    "subnetip":"192.168.46.0"
+                    "sname":"lab02.wan",
+                    "raname":"devilsMindWAN",
+                    "ramulticast":"FILTERED",
+                    "smask":"255.255.255.0",
+                    "ratype":"WAN",
+                    "sip":"192.168.46.0"
                 },
                 "Datacenter":{
-                    "dc":"Somewhere in hell [DR]",
+                    "pname":"Somewhere in hell [DR]",
                     "gpsLng":-52.582179,
                     "address":"Devil's Island",
                     "gpsLat":5.295366,
@@ -388,15 +388,15 @@
             "containerProperties":{
                 "RVRD_HOSTNAME":"tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net",
                 "Network":{
-                    "rarea":"devilsMindLAN",
-                    "multicast":"NOLIMIT",
-                    "lan":"lab02.lan2",
-                    "subnetmask":"255.255.255.0",
-                    "type":"LAN",
-                    "subnetip":"192.168.44.0"
+                    "raname":"devilsMindLAN",
+                    "ramulticast":"NOLIMIT",
+                    "sname":"lab02.lan2",
+                    "smask":"255.255.255.0",
+                    "ratype":"LAN",
+                    "sip":"192.168.44.0"
                 },
                 "Datacenter":{
-                    "dc":"Somewhere in hell [DR]",
+                    "pname":"Somewhere in hell [DR]",
                     "gpsLng":-52.582179,
                     "address":"Devil's Island",
                     "gpsLat":5.295366,
@@ -427,15 +427,15 @@
             "containerGateURI":"http://app6969rvd22.lab02.dev.dekatonshivr.echinopsii.net:7580",
             "containerProperties":{
                 "Network":{
-                    "lan":"lab02.lan3",
-                    "rarea":"devilsMindLAN",
-                    "multicast":"NOLIMIT",
-                    "subnetmask":"255.255.255.0",
-                    "type":"LAN",
-                    "subnetip":"192.168.47.0"
+                    "sname":"lab02.lan3",
+                    "raname":"devilsMindLAN",
+                    "ramulticast":"NOLIMIT",
+                    "smask":"255.255.255.0",
+                    "ratype":"LAN",
+                    "sip":"192.168.47.0"
                 },
                 "Datacenter":{
-                    "dc":"Somewhere in hell [DR]",
+                    "pname":"Somewhere in hell [DR]",
                     "gpsLng":-52.582179,
                     "address":"Devil's Island",
                     "gpsLat":5.295366,

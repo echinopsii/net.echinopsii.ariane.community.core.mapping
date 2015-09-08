@@ -23,17 +23,17 @@ class sagittariusRVDsTest:
         containerType = {'ID':containerID,'type':'RV Daemon'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/type', params=containerType)
 
-        datacenter = {"dc":["String","Sagittarius"], "gpsLng":["double",2.251088], "address":["String","2 rue Baudin"], "gpsLat":["double",48.895345], "town":["String","Courbevoie"], "country":["String","France"]}
+        datacenter = {"pname":["String","Sagittarius"], "gpsLng":["double",2.251088], "address":["String","2 rue Baudin"], "gpsLat":["double",48.895345], "town":["String","Courbevoie"], "country":["String","France"]}
         containerProperty = {'ID':containerID,'propertyName':'Datacenter','propertyValue':json.dumps(datacenter),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
 
         network = {
-            'subnetip': ['String', '192.168.34.0'],
-            'subnetmask': ['String', '255.255.255.0'],
-            'type': ['String', 'LAN'],
-            'lan': ['String', 'Sagittarius Lan 2'],
-            'rarea': ['String', "Sagittarius LAN RA"],
-            'multicast':['String', "NOLIMIT"]
+            'sip': ['String', '192.168.34.0'],
+            'smask': ['String', '255.255.255.0'],
+            'ratype': ['String', 'sname'],
+            'sname': ['String', 'Sagittarius Lan 2'],
+            'raname': ['String', "Sagittarius LAN RA"],
+            'ramulticast':['String', "NOLIMIT"]
         }
         containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
@@ -105,17 +105,17 @@ class sagittariusRVDsTest:
         containerType = {'ID':containerID,'type':'RV Daemon'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/type', params=containerType)
 
-        datacenter = {"dc":["String","Sagittarius"], "gpsLng":["double",2.251088], "address":["String","2 rue Baudin"], "gpsLat":["double",48.895345], "town":["String","Courbevoie"], "country":["String","France"]}
+        datacenter = {"pname":["String","Sagittarius"], "gpsLng":["double",2.251088], "address":["String","2 rue Baudin"], "gpsLat":["double",48.895345], "town":["String","Courbevoie"], "country":["String","France"]}
         containerProperty = {'ID':containerID,'propertyName':'Datacenter','propertyValue':json.dumps(datacenter),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
 
         network = {
-            'subnetip': ['String', '192.168.34.0'],
-            'subnetmask': ['String', '255.255.255.0'],
-            'type': ['String', 'LAN'],
-            'lan': ['String', 'Sagittarius Lan 2'],
-            'rarea': ['String', "Sagittarius LAN RA"],
-            'multicast':['String', "NOLIMIT"]
+            'sip': ['String', '192.168.34.0'],
+            'smask': ['String', '255.255.255.0'],
+            'ratype': ['String', 'sname'],
+            'sname': ['String', 'Sagittarius Lan 2'],
+            'raname': ['String', "Sagittarius LAN RA"],
+            'ramulticast':['String', "NOLIMIT"]
         }
         containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
@@ -186,17 +186,17 @@ class sagittariusRVDsTest:
         containerType = {'ID':containerID,'type':'RV Daemon'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/type', params=containerType)
 
-        datacenter = {"dc":["String","Sagittarius"], "gpsLng":["double",2.251088], "address":["String","2 rue Baudin"], "gpsLat":["double",48.895345], "town":["String","Courbevoie"], "country":["String","France"]}
+        datacenter = {"pname":["String","Sagittarius"], "gpsLng":["double",2.251088], "address":["String","2 rue Baudin"], "gpsLat":["double",48.895345], "town":["String","Courbevoie"], "country":["String","France"]}
         containerProperty = {'ID':containerID,'propertyName':'Datacenter','propertyValue':json.dumps(datacenter),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
 
         network = {
-            'subnetip': ['String', '192.168.35.0'],
-            'subnetmask': ['String', '255.255.255.0'],
-            'type': ['String', 'LAN'],
-            'lan': ['String', 'Sagittarius Lan 3'],
-            'rarea': ['String', "Sagittarius LAN RA"],
-            'multicast':['String', "NOLIMIT"]
+            'sip': ['String', '192.168.35.0'],
+            'smask': ['String', '255.255.255.0'],
+            'ratype': ['String', 'sname'],
+            'sname': ['String', 'Sagittarius Lan 3'],
+            'raname': ['String', "Sagittarius LAN RA"],
+            'ramulticast':['String', "NOLIMIT"]
         }
         containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
@@ -267,17 +267,17 @@ class sagittariusRVDsTest:
         containerType = {'ID':containerID,'type':'RV Daemon'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/type', params=containerType)
 
-        datacenter = {"dc":["String","Sagittarius"], "gpsLng":["double",2.251088], "address":["String","2 rue Baudin"], "gpsLat":["double",48.895345], "town":["String","Courbevoie"], "country":["String","France"]}
+        datacenter = {"pname":["String","Sagittarius"], "gpsLng":["double",2.251088], "address":["String","2 rue Baudin"], "gpsLat":["double",48.895345], "town":["String","Courbevoie"], "country":["String","France"]}
         containerProperty = {'ID':containerID,'propertyName':'Datacenter','propertyValue':json.dumps(datacenter),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
 
         network = {
-            'subnetip': ['String', '192.168.35.0'],
-            'subnetmask': ['String', '255.255.255.0'],
-            'type': ['String', 'LAN'],
-            'lan': ['String', 'Sagittarius Lan 3'],
-            'rarea': ['String', "Sagittarius LAN RA"],
-            'multicast':['String', "NOLIMIT"]
+            'sip': ['String', '192.168.35.0'],
+            'smask': ['String', '255.255.255.0'],
+            'ratype': ['String', 'sname'],
+            'sname': ['String', 'Sagittarius Lan 3'],
+            'raname': ['String', "Sagittarius LAN RA"],
+            'ramulticast':['String', "NOLIMIT"]
         }
         containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
@@ -347,17 +347,17 @@ class sagittariusRVDsTest:
         containerType = {'ID':containerID,'type':'RV Daemon'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/type', params=containerType)
 
-        datacenter = {"dc":["String","Sagittarius"], "gpsLng":["double",2.251088], "address":["String","2 rue Baudin"], "gpsLat":["double",48.895345], "town":["String","Courbevoie"], "country":["String","France"]}
+        datacenter = {"pname":["String","Sagittarius"], "gpsLng":["double",2.251088], "address":["String","2 rue Baudin"], "gpsLat":["double",48.895345], "town":["String","Courbevoie"], "country":["String","France"]}
         containerProperty = {'ID':containerID,'propertyName':'Datacenter','propertyValue':json.dumps(datacenter),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
 
         network = {
-            'subnetip': ['String', '192.168.36.0'],
-            'subnetmask': ['String', '255.255.255.0'],
-            'type': ['String', 'LAN'],
-            'lan': ['String', 'Sagittarius Lan 4'],
-            'rarea': ['String', "Sagittarius LAN RA"],
-            'multicast':['String', "NOLIMIT"]
+            'sip': ['String', '192.168.36.0'],
+            'smask': ['String', '255.255.255.0'],
+            'ratype': ['String', 'sname'],
+            'sname': ['String', 'Sagittarius Lan 4'],
+            'raname': ['String', "Sagittarius LAN RA"],
+            'ramulticast':['String', "NOLIMIT"]
         }
         containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
@@ -431,17 +431,17 @@ class sagittariusRVDsTest:
         containerType = {'ID':containerID,'type':'RV Daemon'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/type', params=containerType)
 
-        datacenter = {"dc":["String","Sagittarius"], "gpsLng":["double",2.251088], "address":["String","2 rue Baudin"], "gpsLat":["double",48.895345], "town":["String","Courbevoie"], "country":["String","France"]}
+        datacenter = {"pname":["String","Sagittarius"], "gpsLng":["double",2.251088], "address":["String","2 rue Baudin"], "gpsLat":["double",48.895345], "town":["String","Courbevoie"], "country":["String","France"]}
         containerProperty = {'ID':containerID,'propertyName':'Datacenter','propertyValue':json.dumps(datacenter),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
 
         network = {
-            'subnetip': ['String', '192.168.36.0'],
-            'subnetmask': ['String', '255.255.255.0'],
-            'type': ['String', 'LAN'],
-            'lan': ['String', 'Sagittarius Lan 4'],
-            'rarea': ['String', "Sagittarius LAN RA"],
-            'multicast':['String', "NOLIMIT"]
+            'sip': ['String', '192.168.36.0'],
+            'smask': ['String', '255.255.255.0'],
+            'ratype': ['String', 'sname'],
+            'sname': ['String', 'Sagittarius Lan 4'],
+            'raname': ['String', "Sagittarius LAN RA"],
+            'ramulticast':['String', "NOLIMIT"]
         }
         containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
@@ -534,17 +534,17 @@ class sagittariusRVDsTest:
         containerType = {'ID':containerID,'type':'RV Daemon'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/type', params=containerType)
 
-        datacenter = {"dc":["String","Sagittarius"], "gpsLng":["double",2.251088], "address":["String","2 rue Baudin"], "gpsLat":["double",48.895345], "town":["String","Courbevoie"], "country":["String","France"]}
+        datacenter = {"pname":["String","Sagittarius"], "gpsLng":["double",2.251088], "address":["String","2 rue Baudin"], "gpsLat":["double",48.895345], "town":["String","Courbevoie"], "country":["String","France"]}
         containerProperty = {'ID':containerID,'propertyName':'Datacenter','propertyValue':json.dumps(datacenter),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
 
         network = {
-            'subnetip': ['String', '192.168.39.0'],
-            'subnetmask': ['String', '255.255.255.0'],
-            'type': ['String', 'LAN'],
-            'lan': ['String', 'Sagittarius Lan 5'],
-            'rarea': ['String', "Sagittarius LAN RA"],
-            'multicast':['String', "NOLIMIT"]
+            'sip': ['String', '192.168.39.0'],
+            'smask': ['String', '255.255.255.0'],
+            'ratype': ['String', 'sname'],
+            'sname': ['String', 'Sagittarius Lan 5'],
+            'raname': ['String', "Sagittarius LAN RA"],
+            'ramulticast':['String', "NOLIMIT"]
         }
         containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
@@ -608,17 +608,17 @@ class sagittariusRVDsTest:
         containerType = {'ID':containerID,'type':'RV Daemon'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/type', params=containerType)
 
-        datacenter = {"dc":["String","Sagittarius"], "gpsLng":["double",2.251088], "address":["String","2 rue Baudin"], "gpsLat":["double",48.895345], "town":["String","Courbevoie"], "country":["String","France"]}
+        datacenter = {"pname":["String","Sagittarius"], "gpsLng":["double",2.251088], "address":["String","2 rue Baudin"], "gpsLat":["double",48.895345], "town":["String","Courbevoie"], "country":["String","France"]}
         containerProperty = {'ID':containerID,'propertyName':'Datacenter','propertyValue':json.dumps(datacenter),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
 
         network = {
-            'subnetip': ['String', '192.168.39.0'],
-            'subnetmask': ['String', '255.255.255.0'],
-            'type': ['String', 'LAN'],
-            'lan': ['String', 'Sagittarius Lan 5'],
-            'rarea': ['String', "Sagittarius LAN RA"],
-            'multicast':['String', "NOLIMIT"]
+            'sip': ['String', '192.168.39.0'],
+            'smask': ['String', '255.255.255.0'],
+            'ratype': ['String', 'sname'],
+            'sname': ['String', 'Sagittarius Lan 5'],
+            'raname': ['String', "Sagittarius LAN RA"],
+            'ramulticast':['String', "NOLIMIT"]
         }
         containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)

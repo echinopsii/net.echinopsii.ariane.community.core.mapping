@@ -63,8 +63,8 @@ define(
             this.sDasharray  = params.lan_strokeDasharray;
             this.color       = params.lan_color;
 
-            this.lanName        = this.lanDef.lan;
-            this.lanNameHat     = "Lan " + this.lanDef.lan + " - " + this.lanDef.subnetip + "/" + this.lanDef.subnetmask
+            this.lanName        = this.lanDef.sname;
+            this.lanNameHat     = "Lan " + this.lanDef.sname + " - " + this.lanDef.sip + "/" + this.lanDef.smask;
 
             this.lanHat  = new lanHat(this.lanNameHat, params.lan_txtTitle, this.color);
 
@@ -294,12 +294,12 @@ define(
 
             this.defEqual = function(lanDef_) {
                 return (
-                        this.lanDef.dc===lanDef_.dc &&
-                        this.lanDef.type===lanDef_.type &&
-                        this.lanDef.area===lanDef_.area &&
-                        this.lanDef.lan===lanDef_.lan &&
-                        this.lanDef.subnetip===lanDef_.subnetip &&
-                        this.lanDef.subnetmask===lanDef_.subnetmask
+                        this.lanDef.pname===lanDef_.pname &&
+                        this.lanDef.ratype===lanDef_.ratype &&
+                        this.lanDef.raname===lanDef_.raname &&
+                        this.lanDef.sname===lanDef_.sname &&
+                        this.lanDef.sip===lanDef_.sip &&
+                        this.lanDef.smask===lanDef_.smask
                     );
             };
 
@@ -332,7 +332,7 @@ define(
 
             this.print = function(r_) {
                 this.r = r_;
-                var lanTitle = "Lan " + this.lanDef.lan + " - " + this.lanDef.subnetip + "/" + this.lanDef.subnetmask;
+                var lanTitle = "Lan " + this.lanDef.sname + " - " + this.lanDef.sip + "/" + this.lanDef.smask;
 
                 this.lanR    = this.r.set();
                 this.lanHat.print(this.r, this.topLeftX + (this.lanwidth/2), this.topLeftY + this.lbrdSpan/5);

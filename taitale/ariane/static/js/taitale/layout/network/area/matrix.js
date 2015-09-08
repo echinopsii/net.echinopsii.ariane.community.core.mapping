@@ -138,7 +138,7 @@ define(
             };
 
             var removeColumnFromMtx = function(index) {
-                var i, ii, j, jj;
+                var i, ii;
                 for (i=index, ii=nbColumns; i < ii; i++)
                     rows[i] = rows[i+1]
                 rows.pop();
@@ -837,7 +837,7 @@ define(
             };
 
             var optimizeLanCoord = function() {
-                var i, ii, j, jj, k, kk;
+                var i, ii, j, jj;
                 var lan, connectedObjects, averageLine = 0, mtxAverageLine = Math.round(nbLines/2), connectedWeight = 0;
                 //var stillNeedFinalPoz = [];
 
@@ -858,7 +858,7 @@ define(
                             if (connectedObjects[j].obj.layoutData.areaPozFinal) {
                                 averageLine += (connectedObjects[j].obj.layoutData.areaMtxCoord.x-mtxAverageLine)*connectedObjects[j].weight;
                                 connectedWeight += connectedObjects[j].weight;
-                                //helper_.debug('['+lan.lanDef.subnetip+'] : connectectObj['+i+'], averageLine:'+averageLine+', connectedWeight:'+connectedWeight);
+                                //helper_.debug('['+lan.lanDef.sip+'] : connectectObj['+i+'], averageLine:'+averageLine+', connectedWeight:'+connectedWeight);
                             }
                         }
 
@@ -866,7 +866,7 @@ define(
                         if (connectedWeight!=0) {
                             averageLine = Math.round(averageLine/connectedWeight) + mtxAverageLine ;
                             lan.layoutData.averageLine = averageLine;
-                            //helper_.debug('['+lan.lanDef.subnetip+'] : connectectObj['+i+'], averageLine:'+averageLine+', connectedWeight:'+connectedWeight);
+                            //helper_.debug('['+lan.lanDef.sip+'] : connectectObj['+i+'], averageLine:'+averageLine+', connectedWeight:'+connectedWeight);
                             if (averageLine!=lan.layoutData.areaMtxCoord.x)
                                 swapInternalCoordToAverageLine(rows[lan.layoutData.areaMtxCoord.y][lan.layoutData.areaMtxCoord.x], averageLine);
                             lan.layoutData.areaPozFinal = true;

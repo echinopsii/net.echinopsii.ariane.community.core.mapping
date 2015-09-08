@@ -8,15 +8,15 @@
             "containerGateURI":"http://app6969rvd12.lab01.dev.dekatonshivr.echinopsii.net:7580",
             "containerProperties":{
                 "Network":{
-                    "lan":"lab01.lan2",
-                    "rarea":"angelsMindLAN",
-                    "multicast": "NOLIMIT",
-                    "subnetmask":"255.255.255.0",
-                    "type":"LAN",
+                    "sname":"lab01.lan2",
+                    "raname":"angelsMindLAN",
+                    "ramulticast": "NOLIMIT",
+                    "smask":"255.255.255.0",
+                    "ratype":"LAN",
                     "subnetip":"192.168.36.0"
                 },
                 "Datacenter":{
-                    "dc":"My little paradise",
+                    "pname":"My little paradise",
                     "gpsLng":2.246621,
                     "address":"26 rue de Belfort",
                     "gpsLat":48.895308,
@@ -41,15 +41,15 @@
             "containerGateURI":"jmx://bpphisto11.lab01.dev.dekatonshivr.echinopsii.net:9010",
             "containerProperties":{
                 "Network":{
-                    "subnetmask":"255.255.255.0",
-                    "lan":"lab01.lan4",
-                    "rarea":"angelsMindLAN",
-                    "multicast": "NOLIMIT",
-                    "type":"LAN",
-                    "subnetip":"192.168.38.0"
+                    "smask":"255.255.255.0",
+                    "sname":"lab01.lan4",
+                    "raname":"angelsMindLAN",
+                    "ramulticast": "NOLIMIT",
+                    "ratype":"LAN",
+                    "sip":"192.168.38.0"
                 },
                 "Datacenter":{
-                    "dc":"My little paradise",
+                    "pname":"My little paradise",
                     "gpsLng":2.246621,
                     "address":"26 rue de Belfort",
                     "gpsLat":48.895308,
@@ -74,15 +74,15 @@
             "containerGateURI":"http://bpp6669rvd11.lab01.dev.dekatonshivr.echinopsii.net:7580",
             "containerProperties":{
                 "Network":{
-                    "lan":"lab01.lan4",
-                    "rarea":"angelsMindLAN",
-                    "multicast": "NOLIMIT",
-                    "subnetmask":"255.255.255.0",
-                    "type":"LAN",
-                    "subnetip":"192.168.38.0"
+                    "sname":"lab01.lan4",
+                    "raname":"angelsMindLAN",
+                    "ramulticast": "NOLIMIT",
+                    "smask":"255.255.255.0",
+                    "ratype":"LAN",
+                    "sip":"192.168.38.0"
                 },
                 "Datacenter":{
-                    "dc":"My little paradise",
+                    "pname":"My little paradise",
                     "gpsLng":2.246621,
                     "address":"26 rue de Belfort",
                     "gpsLat":48.895308,
@@ -107,15 +107,15 @@
             "containerGateURI":"http://app6969rvd13.lab01.dev.dekatonshivr.echinopsii.net:7580",
             "containerProperties":{
                 "Network":{
-                    "lan":"lab01.lan3",
-                    "rarea":"angelsMindLAN",
-                    "multicast": "NOLIMIT",
-                    "subnetmask":"255.255.255.0",
-                    "type":"LAN",
-                    "subnetip":"192.168.37.0"
+                    "sname":"lab01.lan3",
+                    "raname":"angelsMindLAN",
+                    "ramulticast": "NOLIMIT",
+                    "smask":"255.255.255.0",
+                    "ratype":"LAN",
+                    "sip":"192.168.37.0"
                 },
                 "Datacenter":{
-                    "dc":"My little paradise",
+                    "pname":"My little paradise",
                     "gpsLng":2.246621,
                     "address":"26 rue de Belfort",
                     "gpsLat":48.895308,
@@ -140,15 +140,15 @@
             "containerGateURI":"mysql://bppmariadb11.lab01.dev.dekatonshivr.echinopsii.net:3306",
             "containerProperties":{
                 "Network":{
-                    "subnetmask":"255.255.255.0",
-                    "lan":"lab01.lan4",
-                    "rarea":"angelsMindLAN",
-                    "multicast": "NOLIMIT",
-                    "type":"LAN",
-                    "subnetip":"192.168.38.0"
+                    "smask":"255.255.255.0",
+                    "sname":"lab01.lan4",
+                    "raname":"angelsMindLAN",
+                    "ramulticast": "NOLIMIT",
+                    "ratype":"LAN",
+                    "sip":"192.168.38.0"
                 },
                 "Datacenter":{
-                    "dc":"My little paradise",
+                    "pname":"My little paradise",
                     "gpsLng":2.246621,
                     "address":"26 rue de Belfort",
                     "gpsLat":48.895308,
@@ -173,15 +173,15 @@
             "containerGateURI":"http://app6969rvd11.lab01.dev.dekatonshivr.echinopsii.net:7580",
             "containerProperties":{
                 "Network":{
-                    "lan":"lab01.lan2",
-                    "rarea":"angelsMindLAN",
-                    "multicast": "NOLIMIT",
-                    "subnetmask":"255.255.255.0",
-                    "type":"LAN",
-                    "subnetip":"192.168.36.0"
+                    "sname":"lab01.lan2",
+                    "raname":"angelsMindLAN",
+                    "ramulticast": "NOLIMIT",
+                    "smask":"255.255.255.0",
+                    "ratype":"LAN",
+                    "sip":"192.168.36.0"
                 },
                 "Datacenter":{
-                    "dc":"My little paradise",
+                    "pname":"My little paradise",
                     "gpsLng":2.246621,
                     "address":"26 rue de Belfort",
                     "gpsLat":48.895308,
@@ -206,15 +206,15 @@
             "containerGateURI":"http://app6969rvd14.lab01.dev.dekatonshivr.echinopsii.net:7580",
             "containerProperties":{
                 "Network":{
-                    "lan":"lab01.lan3",
-                    "rarea":"angelsMindLAN",
-                    "multicast": "NOLIMIT",
-                    "subnetmask":"255.255.255.0",
-                    "type":"LAN",
-                    "subnetip":"192.168.37.0"
+                    "sname":"lab01.lan3",
+                    "raname":"angelsMindLAN",
+                    "ramulticast": "NOLIMIT",
+                    "smask":"255.255.255.0",
+                    "ratype":"LAN",
+                    "sip":"192.168.37.0"
                 },
                 "Datacenter":{
-                    "dc":"My little paradise",
+                    "pname":"My little paradise",
                     "gpsLng":2.246621,
                     "address":"26 rue de Belfort",
                     "gpsLat":48.895308,
@@ -239,15 +239,15 @@
             "containerGateURI":"http://bpp6669rvd12.lab01.dev.dekatonshivr.echinopsii.net:7580",
             "containerProperties":{
                 "Network":{
-                    "lan":"lab01.lan4",
-                    "rarea":"angelsMindLAN",
-                    "multicast": "NOLIMIT",
-                    "subnetmask":"255.255.255.0",
-                    "type":"LAN",
-                    "subnetip":"192.168.38.0"
+                    "sname":"lab01.lan4",
+                    "raname":"angelsMindLAN",
+                    "ramulticast": "NOLIMIT",
+                    "smask":"255.255.255.0",
+                    "ratype":"LAN",
+                    "sip":"192.168.38.0"
                 },
                 "Datacenter":{
-                    "dc":"My little paradise",
+                    "pname":"My little paradise",
                     "gpsLng":2.246621,
                     "address":"26 rue de Belfort",
                     "gpsLat":48.895308,
@@ -272,15 +272,15 @@
             "containerGateURI":"http://bpp6669rvd14.lab01.dev.dekatonshivr.echinopsii.net:7580",
             "containerProperties":{
                 "Network":{
-                    "lan":"lab01.lan5",
-                    "rarea":"angelsMindLAN",
-                    "multicast": "NOLIMIT",
-                    "subnetmask":"255.255.255.0",
-                    "type":"LAN",
-                    "subnetip":"192.168.39.0"
+                    "raname":"angelsMindLAN",
+                    "ramulticast": "NOLIMIT",
+                    "sname":"lab01.lan5",
+                    "smask":"255.255.255.0",
+                    "ratype":"LAN",
+                    "sip":"192.168.39.0"
                 },
                 "Datacenter":{
-                    "dc":"My little paradise",
+                    "pname":"My little paradise",
                     "gpsLng":2.246621,
                     "address":"26 rue de Belfort",
                     "gpsLat":48.895308,

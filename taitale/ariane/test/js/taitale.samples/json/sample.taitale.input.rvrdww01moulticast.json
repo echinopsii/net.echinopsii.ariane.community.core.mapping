@@ -8,7 +8,7 @@
             "containerGateURI":"http://tibrvrdwprd01.us.echinopsii.net:7580",
             "containerProperties":{
                 "Datacenter":{
-                    "dc":"SOMEWHERE IN NY",
+                    "pname":"SOMEWHERE IN NY",
                     "gpsLng":-73.963224,
                     "address":"some watter in NY",
                     "gpsLat":40.786482,
@@ -16,12 +16,12 @@
                     "country":"USA"
                 },
                 "Network":{
-                    "subnetmask":"255.255.255.0",
-                    "lan":"11",
-                    "type":"WAN",
-                    "rarea": "NY WAN",
-                    "multicast": "FILTERED",
-                    "subnetip":"192.168.11.0"
+                    "smask":"255.255.255.0",
+                    "sname":"11",
+                    "ratype":"WAN",
+                    "raname": "NY WAN",
+                    "ramulticast": "FILTERED",
+                    "sip":"192.168.11.0"
                 },
                 "manualCoord":{
                     "x":275,
@@ -41,7 +41,7 @@
             "containerType":"RV Router Daemon",
             "containerProperties":{
                 "Datacenter":{
-                    "dc":"SOMEWHERE IN NY",
+                    "pname":"SOMEWHERE IN NY",
                     "gpsLng":-73.963224,
                     "address":"some watter in NY",
                     "gpsLat":40.786482,
@@ -49,12 +49,12 @@
                     "country":"USA"
                 },
                 "Network":{
-                    "subnetmask":"255.255.255.0",
-                    "lan":"12",
-                    "type":"MAN",
-                    "rarea": "NY MAN",
-                    "multicast": "FILTERED",
-                    "subnetip":"192.168.12.0"
+                    "smask":"255.255.255.0",
+                    "sname":"12",
+                    "ratype":"MAN",
+                    "raname": "NY MAN",
+                    "ramulticast": "FILTERED",
+                    "sip":"192.168.12.0"
                 },
                 "manualCoord":{
                     "x":275,
@@ -74,7 +74,7 @@
             "containerType":"RV Router Daemon",
             "containerProperties":{
                 "Datacenter":{
-                    "dc":"SOMEWHERE IN NY",
+                    "pname":"SOMEWHERE IN NY",
                     "gpsLng":-73.963224,
                     "address":"some watter in NY",
                     "gpsLat":40.786482,
@@ -82,12 +82,12 @@
                     "country":"USA"
                 },
                 "Network":{
-                    "subnetmask":"255.255.255.0",
-                    "lan":"13",
-                    "type":"LAN",
-                    "rarea": "lobe temporal droit du ricain",
-                    "multicast": "NOLIMIT",
-                    "subnetip":"192.168.13.0"
+                    "smask":"255.255.255.0",
+                    "sname":"13",
+                    "ratype":"LAN",
+                    "raname": "lobe temporal droit du ricain",
+                    "ramulticast": "NOLIMIT",
+                    "sip":"192.168.13.0"
                 },
                 "manualCoord":{
                     "x":150,
@@ -107,7 +107,7 @@
             "containerType":"RV Router Daemon",
             "containerProperties":{
                 "Datacenter":{
-                    "dc":"SOMEWHERE IN NY",
+                    "pname":"SOMEWHERE IN NY",
                     "gpsLng":-73.963224,
                     "address":"some watter in NY",
                     "gpsLat":40.786482,
@@ -115,12 +115,12 @@
                     "country":"USA"
                 },
                 "Network":{
-                    "subnetmask":"255.255.255.0",
-                    "lan":"15",
-                    "type":"LAN",
-                    "rarea": "lobe temporal gauche du ricain",
-                    "multicast": "NOLIMIT",
-                    "subnetip":"192.168.15.0"
+                    "smask":"255.255.255.0",
+                    "sname":"15",
+                    "ratype":"LAN",
+                    "raname": "lobe temporal gauche du ricain",
+                    "ramulticast": "NOLIMIT",
+                    "sip":"192.168.15.0"
                 },
                 "manualCoord":{
                     "x":400,
@@ -140,7 +140,7 @@
             "containerType":"RV Router Daemon",
             "containerProperties":{
                 "Datacenter":{
-                    "dc":"HQ",
+                    "pname":"HQ",
                     "gpsLng":2.246390,
                     "address":"26 rue de Belfort",
                     "gpsLat":48.894944,
@@ -148,12 +148,12 @@
                     "country":"France"
                 },
                 "Network":{
-                    "subnetmask":"255.255.255.255",
-                    "lan":"01",
-                    "type":"WAN",
-                    "rarea": "PARIS WAN",
-                    "multicast": "FILTERED",
-                    "subnetip":"192.168.33.5"
+                    "smask":"255.255.255.255",
+                    "sname":"01",
+                    "ratype":"WAN",
+                    "raname": "PARIS WAN",
+                    "ramulticast": "FILTERED",
+                    "sip":"192.168.33.5"
                 },
                 "manualCoord":{
                     "x":875,
@@ -173,7 +173,7 @@
             "containerType":"RV Router Daemon",
             "containerProperties":{
                 "Datacenter":{
-                    "dc":"HQ",
+                    "pname":"HQ",
                     "gpsLng":2.246390,
                     "address":"26 rue de Belfort",
                     "gpsLat":48.894944,
@@ -181,12 +181,12 @@
                     "country":"France"
                 },
                 "Network":{
-                    "subnetmask":"255.255.255.255",
-                    "lan":"02",
-                    "type":"MAN",
-                    "rarea": "PARIS MAN",
-                    "multicast": "FILTERED",
-                    "subnetip":"192.168.33.6"
+                    "smask":"255.255.255.255",
+                    "sname":"02",
+                    "ratype":"MAN",
+                    "raname": "PARIS MAN",
+                    "ramulticast": "FILTERED",
+                    "sip":"192.168.33.6"
                 },
                 "manualCoord":{
                     "x":875,
@@ -206,7 +206,7 @@
             "containerType":"RV Router Daemon",
             "containerProperties":{
                 "Datacenter":{
-                    "dc":"HQ",
+                    "pname":"HQ",
                     "gpsLng":2.246390,
                     "address":"26 rue de Belfort",
                     "gpsLat":48.894944,
@@ -214,12 +214,12 @@
                     "country":"France"
                 },
                 "Network":{
-                    "subnetmask":"255.255.255.0",
-                    "lan":"05",
-                    "rarea":"mon lobe temporal droit",
-                    "multicast": "NOLIMIT",
-                    "type":"LAN",
-                    "subnetip":"192.168.33.0"
+                    "smask":"255.255.255.0",
+                    "sname":"05",
+                    "raname":"mon lobe temporal droit",
+                    "ramulticast": "NOLIMIT",
+                    "ratype":"LAN",
+                    "sip":"192.168.33.0"
                 },
                 "manualCoord":{
                     "x":750,
@@ -239,7 +239,7 @@
             "containerType":"RV Router Daemon",
             "containerProperties":{
                 "Datacenter":{
-                    "dc":"HQ",
+                    "pname":"HQ",
                     "gpsLng":2.246390,
                     "address":"26 rue de Belfort",
                     "gpsLat":48.894944,
@@ -247,12 +247,12 @@
                     "country":"France"
                 },
                 "Network":{
-                    "subnetmask":"255.255.255.0",
-                    "lan":"05",
-                    "rarea":"mon lobe temporal droit",
-                    "multicast": "NOLIMIT",
-                    "type":"LAN",
-                    "subnetip":"192.168.33.0"
+                    "smask":"255.255.255.0",
+                    "sname":"05",
+                    "raname":"mon lobe temporal droit",
+                    "ramulticast": "NOLIMIT",
+                    "ratype":"LAN",
+                    "sip":"192.168.33.0"
                 },
                 "manualCoord":{
                     "x":1000,
@@ -272,7 +272,7 @@
             "containerType":"RV Router Daemon",
             "containerProperties":{
                 "Datacenter":{
-                    "dc":"SOMEWHERE IN HK",
+                    "pname":"SOMEWHERE IN HK",
                     "gpsLng":114.15696,
                     "address":"Guess!",
                     "gpsLat":22.325348,
@@ -280,12 +280,12 @@
                     "country":"CHINA"
                 },
                 "Network":{
-                    "subnetmask":"255.255.255.255",
-                    "lan":"21",
-                    "type":"WAN",
-                    "rarea":"HK WAN",
-                    "multicast": "FILTERED",
-                    "subnetip":"192.168.21.5"
+                    "smask":"255.255.255.255",
+                    "sname":"21",
+                    "ratype":"WAN",
+                    "raname":"HK WAN",
+                    "ramulticast": "FILTERED",
+                    "sip":"192.168.21.5"
                 },
                 "manualCoord":{
                     "x":1475,
@@ -305,7 +305,7 @@
             "containerType":"RV Router Daemon",
             "containerProperties":{
                 "Datacenter":{
-                    "dc":"SOMEWHERE IN HK",
+                    "pname":"SOMEWHERE IN HK",
                     "gpsLng":114.15696,
                     "address":"Guess!",
                     "gpsLat":22.325348,
@@ -313,12 +313,12 @@
                     "country":"CHINA"
                 },
                 "Network":{
-                    "subnetmask":"255.255.255.255",
-                    "lan":"22",
-                    "type":"MAN",
-                    "rarea":"HK MAN",
-                    "multicast": "NOLIMIT",
-                    "subnetip":"192.168.22.5"
+                    "smask":"255.255.255.255",
+                    "sname":"22",
+                    "ratype":"MAN",
+                    "raname":"HK MAN",
+                    "ramulticast": "NOLIMIT",
+                    "sip":"192.168.22.5"
                 },
                 "manualCoord":{
                     "x":1475,
@@ -338,7 +338,7 @@
             "containerType":"RV Router Daemon",
             "containerProperties":{
                 "Datacenter":{
-                    "dc":"SOMEWHERE IN HK",
+                    "pname":"SOMEWHERE IN HK",
                     "gpsLng":114.15696,
                     "address":"Guess!",
                     "gpsLat":22.325348,
@@ -346,12 +346,12 @@
                     "country":"CHINA"
                 },
                 "Network":{
-                    "subnetmask":"255.255.255.255",
-                    "lan":"23",
-                    "type":"LAN",
-                    "rarea": "lobe temporal droit du bridé",
-                    "multicast": "NOLIMIT",
-                    "subnetip":"192.168.23.5"
+                    "smask":"255.255.255.255",
+                    "sname":"23",
+                    "ratype":"LAN",
+                    "raname": "lobe temporal droit du bridé",
+                    "ramulticast": "NOLIMIT",
+                    "sip":"192.168.23.5"
                 },
                 "manualCoord":{
                     "x":1350,
@@ -371,7 +371,7 @@
             "containerType":"RV Router Daemon",
             "containerProperties":{
                 "Datacenter":{
-                    "dc":"SOMEWHERE IN HK",
+                    "pname":"SOMEWHERE IN HK",
                     "gpsLng":114.15696,
                     "address":"Guess!",
                     "gpsLat":22.325348,
@@ -379,12 +379,12 @@
                     "country":"CHINA"
                 },
                 "Network":{
-                    "subnetmask":"255.255.255.255",
-                    "lan":"23",
-                    "type":"LAN",
-                    "rarea": "lobe temporal droit du bridé",
-                    "multicast": "NOLIMIT",
-                    "subnetip":"192.168.23.5"
+                    "smask":"255.255.255.255",
+                    "sname":"23",
+                    "ratype":"LAN",
+                    "raname": "lobe temporal droit du bridé",
+                    "ramulticast": "NOLIMIT",
+                    "sip":"192.168.23.5"
                 },
                 "manualCoord":{
                     "x":1600,

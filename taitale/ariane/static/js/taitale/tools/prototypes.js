@@ -23,13 +23,13 @@ define( function() {
 
     function prototypes () {
 
-        this.dcprototype = {
+        this.physicalLocation = {
             equal: function(that) {
-                return(this.dc===that.dc);
+                return(this.pname===that.pname);
             },
             toString: function() {
                 return 'Datacenter:'   +
-                    '\n\t Name : '     + this.dc +
+                    '\n\t Name : '     + this.pname +
                     '\n\t Address : '  + this.address +
                     '\n\t Town : '     + this.town +
                     '\n\t Country : '  + this.country +
@@ -38,60 +38,75 @@ define( function() {
             }
         };
 
-        this.ntprototype = {
+        this.simpleRoutingArea = {
+            equal: function(that) {
+                return (this.raname===that.raname)
+            },
+            toString: function() {
+                return 'RoutingArea:' +
+                        '\n\t Name: ' + this.raname +
+                        '\n\t Type: ' + this.ratype +
+                        '\n\t Multicast filter: ' + this.ramulticast
+            }
+        };
+
+        this.simpleSubnet = {
+            equal: function(that) {
+                return (this.sname===that.sname)
+            },
+            toString: function() {
+                return 'Subnet:' +
+                        '\n\t Name: ' + this.sname +
+                        '\n\t SubnetIP: ' + this.sip +
+                        '\n\t SubnetMask: ' + this.smask
+            }
+        };
+
+        var ret = null;
+        this.standaloneNetwork = {
             equal : function(that) {
-                var ret =
+                ret =
                     (
-                        this.dcproto.equal(that.dcproto) &&
-                        this.type===that.type &&
-                        this.rarea===that.rarea &&
-                        this.lan===that.lan &&
-                        this.subnetip===that.subnetip &&
-                        this.subnetmask===that.subnetmask &&
-                        this.multicast===that.multicast
+                        this.plocation.equal(that.plocation) &&
+                        this.rarea.equal(that.rarea) &&
+                        this.subnet.equal(that.subnet)
                     );
                 return ret;
             },
             toString: function() {
-                return 'Network location:'   +
-                    '\n\t Datacenter : \n\t' + this.dcproto.toString() +
-                    '\n\t Type : '           + this.type +
-                    '\n\t Routing Area: '    + this.rarea +
-                    '\n\t Multicast:'        + this.multicast +
-                    '\n\t LAN : '            + this.lan +
-                    '\n\t Subnet IP: '       + this.subnetip +
-                    '\n\t Subnet Mask: '     + this.subnetmask;
+                return 'Standalone Network:'   +
+                    '\n\t Physical location : \n\t' + this.plocation.toString() +
+                    '\n\t Routing area : \n\t' + this.rarea.toString() +
+                    '\n\t Subnet : \n\t' + this.subnet.toString()
             },
-            getDatacenter: function () {
-                return this.dcproto;
+            getPLocation: function () {
+                return this.plocation;
             },
             getArea: function() {
                 return {
-                    dc   : this.dcproto.dc,
-                    type : this.type,
-                    rarea: this.rarea,
-                    multicast: this.multicast
+                    pname: this.plocation.pname,
+                    raname: this.rarea.raname,
+                    ratype : this.rarea.ratype,
+                    ramulticast: this.rarea.ramulticast
                 };
             },
             equalArea: function(that) {
-                var ret =
+                ret =
                     (
-                        this.dcproto.equal(that.dcproto) &&
-                        this.type === that.type &&
-                        this.rarea === that.rarea &&
-                        this.multicast === that.multicast
-                    )
+                        this.plocation.equal(that.plocation) &&
+                        this.rarea.equal(that.rarea)
+                    );
                 return ret;
             },
             getLan: function() {
                 return {
-                    dc         : this.dcproto.dc,
-                    type       : this.type,
-                    area       : this.rarea,
-                    multicast  : this.multicast,
-                    lan        : this.lan,
-                    subnetip   : this.subnetip,
-                    subnetmask : this.subnetmask
+                    pname       : this.plocation.pname,
+                    ratype      : this.rarea.ratype,
+                    raname      : this.rarea.raname,
+                    ramulticast : this.rarea.ramulticast,
+                    sname       : this.subnet.sname,
+                    sip         : this.subnet.sip,
+                    smask       : this.subnet.smask
                 };
             }
         };

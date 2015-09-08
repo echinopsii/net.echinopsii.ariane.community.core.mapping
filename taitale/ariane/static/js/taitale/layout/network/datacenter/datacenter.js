@@ -64,8 +64,8 @@ define(
             this.color       = params.dc_color;
 
 
-            this.dcName = this.geoDCLoc.dc;
-            this.dcHat  = new datacenterHat(this.geoDCLoc.dc, params.dc_txtTitle, this.color);
+            this.pName = this.geoDCLoc.pname;
+            this.dcHat  = new datacenterHat(this.geoDCLoc.pname, params.dc_txtTitle, this.color);
 
             this.menu              = null;
             this.menuSet           = null;
@@ -285,7 +285,7 @@ define(
             };
 
             this.geoDCLocEqual = function (geoDCLoc_) {
-                return (this.geoDCLoc.dc==geoDCLoc_.dc);
+                return (this.geoDCLoc.pname==geoDCLoc_.pname);
             };
 
             this.getZoneMaxSize = function() {
@@ -563,7 +563,7 @@ define(
                 var i, ii;
 
                 //noinspection JSUnresolvedVariable
-                var nameHeight = this.geoDCLoc.dc.height(params.dc_txtTitle),
+                var nameHeight = this.geoDCLoc.pname.height(params.dc_txtTitle),
                     townHeight = this.geoDCLoc.town.height(params.dc_txtTitle);
 
                 areaSet = this.r.set();

@@ -31,14 +31,14 @@
                 "proc_total":1048576,
                 "mem_used":129358080,
                 "disk_free_limit":50000000,
-                "type":"disc",
+                "ratype":"disc",
                 "management_version":"3.3.5",
                 "running":true,
                 "mem_limit":205381632,
                 "sockets_total":943626,
                 "name":"rabbit@rbmq_70_90",
                 "Datacenter":{
-                    "dc":"FoO-01",
+                    "pname":"FoO-01",
                     "gpsLng":2.0,
                     "address":"rue Championnet",
                     "gpsLat":48.0,
@@ -197,12 +197,12 @@
                 "fd_total":1048576,
                 "disk_free_alarm":false,
                 "Network":{
-                    "rarea":"FoO-01 LAN RA",
-                    "subnetmask":"255.255.255.0",
-                    "lan":"FoO-01 Lan 1",
-                    "multicast":"NOLIMIT",
-                    "type":"LAN",
-                    "subnetip":"192.168.70.0"
+                    "raname":"FoO-01 LAN RA",
+                    "smask":"255.255.255.0",
+                    "sname":"FoO-01 Lan 1",
+                    "ramulticast":"NOLIMIT",
+                    "ratype":"LAN",
+                    "sip":"192.168.70.0"
                 },
                 "exchange_types":[
                     {
@@ -247,15 +247,15 @@
             "containerGateURI":"jmx://fo_70_10.fo-pool13.lab13.dev.dekatonshivr.echinopsii.net:9069",
             "containerProperties":{
                 "Network":{
-                    "rarea":"FoO-01 LAN RA",
-                    "subnetmask":"255.255.255.0",
-                    "lan":"FoO-01 Lan 1",
-                    "multicast":"NOLIMIT",
-                    "type":"LAN",
-                    "subnetip":"192.168.70.0"
+                    "raname":"FoO-01 LAN RA",
+                    "smask":"255.255.255.0",
+                    "sname":"FoO-01 Lan 1",
+                    "ramulticast":"NOLIMIT",
+                    "ratype":"LAN",
+                    "sip":"192.168.70.0"
                 },
                 "Datacenter":{
-                    "dc":"FoO-01",
+                    "pname":"FoO-01",
                     "gpsLng":2.0,
                     "address":"rue Championnet",
                     "gpsLat":48.0,
@@ -303,14 +303,14 @@
                 "proc_total":1048576,
                 "mem_used":128983944,
                 "disk_free_limit":50000000,
-                "type":"disc",
+                "ratype":"disc",
                 "management_version":"3.3.5",
                 "running":true,
                 "mem_limit":205381632,
                 "sockets_total":943626,
                 "name":"rabbit@rbmq_80_90",
                 "Datacenter":{
-                    "dc":"FoO-02",
+                    "pname":"FoO-02",
                     "gpsLng":2.0,
                     "address":"1 Boulevard Haussmann",
                     "gpsLat":48.0,
@@ -469,12 +469,12 @@
                 "fd_total":1048576,
                 "disk_free_alarm":false,
                 "Network":{
-                    "rarea":"FoO-02 LAN RA",
-                    "subnetmask":"255.255.255.0",
-                    "lan":"FoO-02 Lan 1",
-                    "multicast":"NOLIMIT",
-                    "type":"LAN",
-                    "subnetip":"192.168.80.0"
+                    "raname":"FoO-02 LAN RA",
+                    "smask":"255.255.255.0",
+                    "sname":"FoO-02 Lan 1",
+                    "ramulticast":"NOLIMIT",
+                    "ratype":"LAN",
+                    "sip":"192.168.80.0"
                 },
                 "exchange_types":[
                     {
@@ -542,14 +542,14 @@
                 "proc_total":1048576,
                 "mem_used":135285992,
                 "disk_free_limit":50000000,
-                "type":"disc",
+                "ratype":"disc",
                 "management_version":"3.3.5",
                 "running":true,
                 "mem_limit":205381632,
                 "sockets_total":943626,
                 "name":"rabbit@rbmq_33_90",
                 "Datacenter":{
-                    "dc":"Sagittarius",
+                    "pname":"Sagittarius",
                     "gpsLng":2.251088,
                     "address":"2 rue Baudin",
                     "gpsLat":48.895345,
@@ -708,12 +708,12 @@
                 "fd_total":1048576,
                 "disk_free_alarm":false,
                 "Network":{
-                    "rarea":"Sagittarius LAN RA",
-                    "subnetmask":"255.255.255.0",
-                    "lan":"Sagittarius Lan 1",
-                    "multicast":"NOLIMIT",
-                    "type":"LAN",
-                    "subnetip":"192.168.33.0"
+                    "raname":"Sagittarius LAN RA",
+                    "smask":"255.255.255.0",
+                    "sname":"Sagittarius Lan 1",
+                    "ramulticast":"NOLIMIT",
+                    "ratype":"LAN",
+                    "sip":"192.168.33.0"
                 },
                 "exchange_types":[
                     {
@@ -758,15 +758,15 @@
             "containerGateURI":"jmx://fo_80_10.fo-pool17.lab17.dev.dekatonshivr.echinopsii.net:9069",
             "containerProperties":{
                 "Network":{
-                    "rarea":"FoO-02 LAN RA",
-                    "subnetmask":"255.255.255.0",
-                    "lan":"FoO-02 Lan 1",
-                    "multicast":"NOLIMIT",
-                    "type":"LAN",
-                    "subnetip":"192.168.80.0"
+                    "raname":"FoO-02 LAN RA",
+                    "smask":"255.255.255.0",
+                    "sname":"FoO-02 Lan 1",
+                    "ramulticast":"NOLIMIT",
+                    "ratype":"LAN",
+                    "sip":"192.168.80.0"
                 },
                 "Datacenter":{
-                    "dc":"FoO-02",
+                    "pname":"FoO-02",
                     "gpsLng":2.0,
                     "address":"1 Boulevard Haussmann",
                     "gpsLat":48.0,
@@ -791,15 +791,15 @@
             "containerGateURI":"jmx://fd_33_110.fd-pool01.lab01.dev.dekatonshivr.echinopsii.net:9069",
             "containerProperties":{
                 "Network":{
-                    "rarea":"Sagittarius LAN RA",
-                    "subnetmask":"255.255.255.0",
-                    "lan":"Sagittarius Lan 1",
-                    "multicast":"NOLIMIT",
-                    "type":"LAN",
-                    "subnetip":"192.168.33.0"
+                    "raname":"Sagittarius LAN RA",
+                    "smask":"255.255.255.0",
+                    "sname":"Sagittarius Lan 1",
+                    "ramulticast":"NOLIMIT",
+                    "ratype":"LAN",
+                    "sip":"192.168.33.0"
                 },
                 "Datacenter":{
-                    "dc":"Sagittarius",
+                    "pname":"Sagittarius",
                     "gpsLng":2.251088,
                     "address":"2 rue Baudin",
                     "gpsLat":48.895345,
@@ -848,7 +848,7 @@
                     "publish_out":6666,
                     "publish_in":3806
                 },
-                "type":"topic",
+                "ratype":"topic",
                 "durable":false,
                 "internal":false
             }

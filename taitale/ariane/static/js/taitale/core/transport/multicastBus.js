@@ -27,9 +27,9 @@ define(
         function multicastBus(tid, ridx, localisation, multicastAddr_, properties_) {
             this.ID            = tid*1000+ridx;
 
-            this.dcName        = localisation.getDatacenter().dc;
-            this.areaName      = localisation.getArea().rarea;
-            this.areaLongName  = localisation.dcproto.dc + "-" + localisation.type + " area | " + localisation.rarea;
+            this.pName        = localisation.getPLocation().pname;
+            this.areaName      = localisation.getArea().raname;
+            this.areaLongName  = localisation.plocation.pname + "-" + localisation.type + " area | " + localisation.raname;
             this.multicastAddr = multicastAddr_;
             this.properties    = properties_;
             this.isInserted    = false;
@@ -79,7 +79,7 @@ define(
             };
 
             this.getName = function() {
-                return "Multicast bus " + this.multicastAddr + " ({" + this.dcName + "," + this.areaName + "})"
+                return "Multicast bus " + this.multicastAddr + " ({" + this.pName + "," + this.areaName + "})"
             };
 
             this.getLinkedTreeObjectsCount = function() {
@@ -99,7 +99,7 @@ define(
             };
 
             this.equal = function(multicastBus) {
-                return (this.dcName        === multicastBus.dcName &&
+                return (this.pName        === multicastBus.pName &&
                         this.areaName      === multicastBus.areaName &&
                         this.multicastAddr === multicastBus.multicastAddr)
             };

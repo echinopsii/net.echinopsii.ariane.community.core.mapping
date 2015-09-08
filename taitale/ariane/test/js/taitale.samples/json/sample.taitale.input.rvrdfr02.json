@@ -9,15 +9,15 @@
             "containerProperties":{
                 "RVRD_HOSTNAME":"tibrvrdl05prd01.lab01.dev.dekatonshivr.echinopsii.net",
                 "Network":{
-                    "subnetmask":"255.255.255.0",
-                    "lan":"lab01.lan",
-                    "rarea":"lab01.rarea",
-                    "multicast":"NOLIMIT",
-                    "type":"LAN",
-                    "subnetip":"192.168.33.0"
+                    "smask":"255.255.255.0",
+                    "sname":"lab01.lan",
+                    "raname":"lab01.rarea",
+                    "ramulticast":"NOLIMIT",
+                    "ratype":"LAN",
+                    "sip":"192.168.33.0"
                 },
                 "Datacenter":{
-                    "dc":"lab.dekatonshivr.echinopsii.net",
+                    "pname":"lab.dekatonshivr.echinopsii.net",
                     "gpsLng":2.246621,
                     "address":"26 rue de Belfort",
                     "gpsLat":48.895308,
@@ -49,15 +49,15 @@
             "containerProperties":{
                 "RVRD_HOSTNAME":"tibrvrdl03prd01.lab01.dev.dekatonshivr.echinopsii.net",
                 "Network":{
-                    "subnetmask":"255.255.255.0",
-                    "lan":"lab01.lan",
-                    "rarea":"lab01.rarea",
-                    "multicast":"NOLIMIT",
-                    "type":"LAN",
-                    "subnetip":"192.168.33.0"
+                    "smask":"255.255.255.0",
+                    "sname":"lab01.lan",
+                    "raname":"lab01.rarea",
+                    "ramulticast":"NOLIMIT",
+                    "ratype":"LAN",
+                    "sip":"192.168.33.0"
                 },
                 "Datacenter":{
-                    "dc":"lab.dekatonshivr.echinopsii.net",
+                    "pname":"lab.dekatonshivr.echinopsii.net",
                     "gpsLng":2.246621,
                     "address":"26 rue de Belfort",
                     "gpsLat":48.895308,
@@ -89,15 +89,15 @@
             "containerProperties":{
                 "RVRD_HOSTNAME":"tibrvrdmprd01.lab01.dev.dekatonshivr.echinopsii.net",
                 "Network":{
-                    "subnetmask":"255.255.255.255",
-                    "lan":"lab01.man",
-                    "rarea":"lab01 (MAN)",
-                    "multicast":"FILTERED",
-                    "type":"MAN",
-                    "subnetip":"192.168.33.6"
+                    "smask":"255.255.255.255",
+                    "sname":"lab01.man",
+                    "raname":"lab01 (MAN)",
+                    "ramulticast":"FILTERED",
+                    "ratype":"MAN",
+                    "sip":"192.168.33.6"
                 },
                 "Datacenter":{
-                    "dc":"lab.dekatonshivr.echinopsii.net",
+                    "pname":"lab.dekatonshivr.echinopsii.net",
                     "gpsLng":2.246621,
                     "address":"26 rue de Belfort",
                     "gpsLat":48.895308,

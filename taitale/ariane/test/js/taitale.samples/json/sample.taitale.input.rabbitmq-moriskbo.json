@@ -8,12 +8,12 @@
             "containerGateURI":"jmx://bo01.tradeflow-mbrfsrv.lab01.dev.dekatonshivr.echinopsii.net:9069",
             "containerProperties":{
                 "Network":{
-                    "subnetmask":"255.255.255.0",
-                    "lan":"lab01.lan1",
-                    "rarea":"angelsMindLAN",
-                    "multicast":"NOLIMIT",
-                    "type":"LAN",
-                    "subnetip":"192.168.33.0"
+                    "smask":"255.255.255.0",
+                    "sname":"lab01.lan1",
+                    "raname":"angelsMindLAN",
+                    "ramulticast":"NOLIMIT",
+                    "ratype":"LAN",
+                    "sip":"192.168.33.0"
                 },
                 "Datacenter":{
                     "dc":"My little paradise",
@@ -41,12 +41,12 @@
             "containerGateURI":"jmx://risk01.tradeflow-mbrfsrv.lab01.dev.dekatonshivr.echinopsii.net:8069",
             "containerProperties":{
                 "Network":{
-                    "subnetmask":"255.255.255.0",
-                    "lan":"lab01.lan1",
-                    "rarea":"angelsMindLAN",
-                    "multicast":"NOLIMIT",
-                    "type":"LAN",
-                    "subnetip":"192.168.33.0"
+                    "smask":"255.255.255.0",
+                    "sname":"lab01.lan1",
+                    "raname":"angelsMindLAN",
+                    "ramulticast":"NOLIMIT",
+                    "ratype":"LAN",
+                    "sip":"192.168.33.0"
                 },
                 "Datacenter":{
                     "dc":"My little paradise",
@@ -97,7 +97,7 @@
                 "proc_total":1048576,
                 "mem_used":34888624,
                 "disk_free_limit":50000000,
-                "type":"disc",
+                "ratype":"disc",
                 "running":true,
                 "mem_limit":839720960,
                 "management_version":"3.3.5",
@@ -263,12 +263,12 @@
                 "fd_total":1024,
                 "disk_free_alarm":false,
                 "Network":{
-                    "subnetmask":"255.255.255.0",
-                    "lan":"lab01.lan1",
-                    "rarea":"angelsMindLAN",
-                    "multicast":"NOLIMIT",
-                    "type":"LAN",
-                    "subnetip":"192.168.33.0"
+                    "smask":"255.255.255.0",
+                    "sname":"lab01.lan1",
+                    "raname":"angelsMindLAN",
+                    "ramulticast":"NOLIMIT",
+                    "ratype":"LAN",
+                    "sip":"192.168.33.0"
                 },
                 "exchange_types":[
                     {
@@ -313,12 +313,12 @@
             "containerGateURI":"jmx://mo01.tradeflow-mbrfsrv.lab01.dev.dekatonshivr.echinopsii.net:7069",
             "containerProperties":{
                 "Network":{
-                    "subnetmask":"255.255.255.0",
-                    "lan":"lab01.lan1",
-                    "rarea":"angelsMindLAN",
-                    "multicast":"NOLIMIT",
-                    "type":"LAN",
-                    "subnetip":"192.168.33.0"
+                    "smask":"255.255.255.0",
+                    "sname":"lab01.lan1",
+                    "raname":"angelsMindLAN",
+                    "ramulticast":"NOLIMIT",
+                    "ratype":"LAN",
+                    "sip":"192.168.33.0"
                 },
                 "Datacenter":{
                     "dc":"My little paradise",
@@ -401,7 +401,7 @@
             "nodeContainerID":25,
             "nodeParentNodeID":37,
             "nodeProperties":{
-                "type":"direct",
+                "ratype":"direct",
                 "durable":false,
                 "internal":false
             }

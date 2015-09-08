@@ -23,17 +23,17 @@ class scorpiusRVRDNetworkTest:
         containerType = {'ID': containerID, 'type': 'RV Router Daemon'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/type', params=containerType)
         
-        datacenter = {"dc": ["String", "Scorpius"], "gpsLng": ["double", 2.375285], "address": ["String", "72 Rue Jean-Pierre Timbaud"], "gpsLat": ["double", 48.867797], "town": ["String", "Paris"], "country": ["String", "France"]}
+        datacenter = {"pname": ["String", "Scorpius"], "gpsLng": ["double", 2.375285], "address": ["String", "72 Rue Jean-Pierre Timbaud"], "gpsLat": ["double", 48.867797], "town": ["String", "Paris"], "country": ["String", "France"]}
         containerProperty = {'ID': containerID, 'propertyName': 'Datacenter', 'propertyValue': json.dumps(datacenter), 'propertyType': 'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
         
         network = {
-            'subnetip': ['String', '192.168.40.0'],
-            'subnetmask': ['String', '255.255.255.0'],
-            'type': ['String', 'LAN'],
-            'lan': ['String', 'Scorpius Lan 1'],
-            'rarea': ['String', "Scorpius LAN RA"],
-            'multicast':['String', "NOLIMIT"]
+            'sip': ['String', '192.168.40.0'],
+            'smask': ['String', '255.255.255.0'],
+            'ratype': ['String', 'LAN'],
+            'sname': ['String', 'Scorpius Lan 1'],
+            'raname': ['String', "Scorpius LAN RA"],
+            'ramulticast':['String', "NOLIMIT"]
         }
         containerProperty = {'ID': containerID, 'propertyName': 'Network', 'propertyValue': json.dumps(network), 'propertyType': 'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
@@ -84,17 +84,17 @@ class scorpiusRVRDNetworkTest:
         #  'containerNodesID': [3],
         #  'containerPrimaryAdminGateID': 3,
         #  'containerProduct': 'Tibco Rendez Vous',
-        #  'containerProperties': {'Datacenter': {'address': "Devil's Island",
+        #  'containerProperties': {'Datacenter': {'address': "Devil's Issnamed",
         #                                         'country': 'France',
-        #                                         'dc': 'Somewhere in hell [DR]',
+        #                                         'pname': 'Somewhere in hell [DR]',
         #                                         'gpsLat': 5.295366,
         #                                         'gpsLng': -52.582179,
-        #                                         'town': "Devil's Island"},
-        #                          'Network': {'lan': 'lab02.lan1',
-        #                                      'rarea': "Scorpius LAN RA",
-        #                                      'subnetip': '192.168.44.0',
-        #                                      'subnetmask': '255.255.255.0',
-        #                                      'type': 'LAN'},
+        #                                         'town': "Devil's Issnamed"},
+        #                          'Network': {'sname': 'lab02.sname1',
+        #                                      'raname': "Scorpius LAN RA",
+        #                                      'sip': '192.168.44.0',
+        #                                      'smask': '255.255.255.0',
+        #                                      'ratype': 'LAN'},
         #                          'RVRD_HOSTNAME': 'tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net',
         #                          'RVRD_INBOX_PORT': '0',
         #                          'RVRD_IPADDR': '192.168.44.8',
@@ -115,17 +115,17 @@ class scorpiusRVRDNetworkTest:
         #                  'containerNodesID': [3],
         #                  'containerPrimaryAdminGateID': 3,
         #                  'containerProduct': 'Tibco Rendez Vous',
-        #                  'containerProperties': {'Datacenter': {'address': "Devil's Island",
+        #                  'containerProperties': {'Datacenter': {'address': "Devil's Issnamed",
         #                                                         'country': 'France',
-        #                                                         'dc': 'Somewhere in hell [DR]',
+        #                                                         'pname': 'Somewhere in hell [DR]',
         #                                                         'gpsLat': 5.295366,
         #                                                         'gpsLng': -52.582179,
-        #                                                         'town': "Devil's Island"},
-        #                                          'Network': {'lan': 'lab02.lan1',
-        #                                                      'rarea': "Scorpius LAN RA",
-        #                                                      'subnetip': '192.168.44.0',
-        #                                                      'subnetmask': '255.255.255.0',
-        #                                                      'type': 'LAN'},
+        #                                                         'town': "Devil's Issnamed"},
+        #                                          'Network': {'sname': 'lab02.sname1',
+        #                                                      'raname': "Scorpius LAN RA",
+        #                                                      'sip': '192.168.44.0',
+        #                                                      'smask': '255.255.255.0',
+        #                                                      'ratype': 'LAN'},
         #                                          'RVRD_HOSTNAME': 'tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net',
         #                                          'RVRD_INBOX_PORT': '0',
         #                                          'RVRD_IPADDR': '192.168.44.8',
@@ -177,17 +177,17 @@ class scorpiusRVRDNetworkTest:
         #                  'containerNodesID': [3, 5],
         #                  'containerPrimaryAdminGateID': 3,
         #                  'containerProduct': 'Tibco Rendez Vous',
-        #                  'containerProperties': {'Datacenter': {'address': "Devil's Island",
+        #                  'containerProperties': {'Datacenter': {'address': "Devil's Issnamed",
         #                                                         'country': 'France',
-        #                                                         'dc': 'Somewhere in hell [DR]',
+        #                                                         'pname': 'Somewhere in hell [DR]',
         #                                                         'gpsLat': 5.295366,
         #                                                         'gpsLng': -52.582179,
-        #                                                         'town': "Devil's Island"},
-        #                                          'Network': {'lan': 'lab02.lan1',
-        #                                                      'rarea': "Scorpius LAN RA",
-        #                                                      'subnetip': '192.168.44.0',
-        #                                                      'subnetmask': '255.255.255.0',
-        #                                                      'type': 'LAN'},
+        #                                                         'town': "Devil's Issnamed"},
+        #                                          'Network': {'sname': 'lab02.sname1',
+        #                                                      'raname': "Scorpius LAN RA",
+        #                                                      'sip': '192.168.44.0',
+        #                                                      'smask': '255.255.255.0',
+        #                                                      'ratype': 'LAN'},
         #                                          'RVRD_HOSTNAME': 'tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net',
         #                                          'RVRD_INBOX_PORT': '0',
         #                                          'RVRD_IPADDR': '192.168.44.8',
@@ -257,17 +257,17 @@ class scorpiusRVRDNetworkTest:
         #                  'containerNodesID': [3, 5, 6],
         #                  'containerPrimaryAdminGateID': 3,
         #                  'containerProduct': 'Tibco Rendez Vous',
-        #                  'containerProperties': {'Datacenter': {'address': "Devil's Island",
+        #                  'containerProperties': {'Datacenter': {'address': "Devil's Issnamed",
         #                                                         'country': 'France',
-        #                                                         'dc': 'Somewhere in hell [DR]',
+        #                                                         'pname': 'Somewhere in hell [DR]',
         #                                                         'gpsLat': 5.295366,
         #                                                         'gpsLng': -52.582179,
-        #                                                         'town': "Devil's Island"},
-        #                                          'Network': {'lan': 'lab02.lan1',
-        #                                                      'rarea': "Scorpius LAN RA",
-        #                                                      'subnetip': '192.168.44.0',
-        #                                                      'subnetmask': '255.255.255.0',
-        #                                                      'type': 'LAN'},
+        #                                                         'town': "Devil's Issnamed"},
+        #                                          'Network': {'sname': 'lab02.sname1',
+        #                                                      'raname': "Scorpius LAN RA",
+        #                                                      'sip': '192.168.44.0',
+        #                                                      'smask': '255.255.255.0',
+        #                                                      'ratype': 'LAN'},
         #                                          'RVRD_HOSTNAME': 'tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net',
         #                                          'RVRD_INBOX_PORT': '0',
         #                                          'RVRD_IPADDR': '192.168.44.8',
@@ -353,9 +353,9 @@ class scorpiusRVRDNetworkTest:
         
         ## ADD ENDPOINTS TO PREVIOUS NODE
         
-        endpointParams = {"endpointURL": "multicast-udp-tibrv://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969", "parentNodeID": nodeID}
+        endpointParams = {"endpointURL": "ramulticast-udp-tibrv://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969", "parentNodeID": nodeID}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/create', params=endpointParams)
-        multicastSourceEndpoint1 = r.json().get('endpointID')
+        ramulticastSourceEndpoint1 = r.json().get('endpointID')
         
         # getParams = {'ID':nodeID}
         # r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/get', params=getParams)
@@ -381,33 +381,33 @@ class scorpiusRVRDNetworkTest:
         #                {'endpointID': 7,
         #                 'endpointParentNodeID': 6,
         #                 'endpointTwinEndpointID': [],
-        #                 'endpointURL': 'multicast-udp-tibrv://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969'}]}
+        #                 'endpointURL': 'ramulticast-udp-tibrv://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969'}]}
         
         importSubjects = ["String", ["FR.APP.>-weight:10", "FR.BPP.>-weight:10"]]
-        endpointProperty = {'ID': multicastSourceEndpoint1, 'propertyName': 'RVRD_LOCALNT_ISUB', 'propertyValue': json.dumps(importSubjects), 'propertyType': 'array'}
+        endpointProperty = {'ID': ramulticastSourceEndpoint1, 'propertyName': 'RVRD_LOCALNT_ISUB', 'propertyValue': json.dumps(importSubjects), 'propertyType': 'array'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
         exportSubjects = ["String", ["FR.APP.>", "FR.BPP.>"]]
-        endpointProperty = {'ID': multicastSourceEndpoint1, 'propertyName': 'RVRD_LOCALNT_ESUB', 'propertyValue': json.dumps(exportSubjects), 'propertyType': 'array'}
+        endpointProperty = {'ID': ramulticastSourceEndpoint1, 'propertyName': 'RVRD_LOCALNT_ESUB', 'propertyValue': json.dumps(exportSubjects), 'propertyType': 'array'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
-        endpointProperty = {'ID': multicastSourceEndpoint1, 'propertyName': 'RVRD_LOCALNT_SERVICE', 'propertyValue': 6969, 'propertyType': 'int'}
+        endpointProperty = {'ID': ramulticastSourceEndpoint1, 'propertyName': 'RVRD_LOCALNT_SERVICE', 'propertyValue': 6969, 'propertyType': 'int'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
-        endpointProperty = {'ID': multicastSourceEndpoint1, 'propertyName': 'RVRD_LOCALNT_NETWORK', 'propertyValue': ';239.69.69.69'}
+        endpointProperty = {'ID': ramulticastSourceEndpoint1, 'propertyName': 'RVRD_LOCALNT_NETWORK', 'propertyValue': ';239.69.69.69'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
-        endpointProperty = {'ID': multicastSourceEndpoint1, 'propertyName': 'RVRD_LOCALNT_NAME', 'propertyValue': 'APP6969.Scorpius'}
+        endpointProperty = {'ID': ramulticastSourceEndpoint1, 'propertyName': 'RVRD_LOCALNT_NAME', 'propertyValue': 'APP6969.Scorpius'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
-        endpointProperty = {'ID': multicastSourceEndpoint1, 'propertyName': 'busDescription', 'propertyValue': 'APP FX prices diffusion'}
+        endpointProperty = {'ID': ramulticastSourceEndpoint1, 'propertyName': 'busDescription', 'propertyValue': 'APP FX prices diffusion'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
         primaryApp = {"color": ["String", "e8a25d"], "name": ["String", "APP"]}
-        endpointProperty = {'ID': multicastSourceEndpoint1, 'propertyName': 'primaryApplication', 'propertyValue': json.dumps(primaryApp), 'propertyType': 'map'}
+        endpointProperty = {'ID': ramulticastSourceEndpoint1, 'propertyName': 'primaryApplication', 'propertyValue': json.dumps(primaryApp), 'propertyType': 'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
-        # getParams = {'URL':'multicast-udp-tibrv://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969'}
+        # getParams = {'URL':'ramulticast-udp-tibrv://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969'}
         # r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/get', params=getParams)
         # pprint(r.json())
         # {'endpointID': 7,
@@ -422,7 +422,7 @@ class scorpiusRVRDNetworkTest:
         #                         'primaryApplication': {'color': 'e8a25d',
         #                                                'name': 'APP'}},
         #  'endpointTwinEndpointID': [],
-        #  'endpointURL': 'multicast-udp-tibrv://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969'}
+        #  'endpointURL': 'ramulticast-udp-tibrv://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969'}
         
         endpointParams = {"endpointURL": "tcp-tibrvrd://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net:6969", "parentNodeID": nodeID}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/create', params=endpointParams)
@@ -461,7 +461,7 @@ class scorpiusRVRDNetworkTest:
         #                                        'primaryApplication': {'color': 'e8a25d',
         #                                                               'name': 'APP'}},
         #                 'endpointTwinEndpointID': [],
-        #                 'endpointURL': 'multicast-udp-tibrv://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969'},
+        #                 'endpointURL': 'ramulticast-udp-tibrv://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969'},
         #                {'endpointID': 8,
         #                 'endpointParentNodeID': 6,
         #                 'endpointTwinEndpointID': [],
@@ -543,17 +543,17 @@ class scorpiusRVRDNetworkTest:
         containerType = {'ID': containerID, 'type': 'RV Router Daemon'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/type', params=containerType)
         
-        datacenter = {"dc": ["String", "Scorpius"], "gpsLng": ["double", 2.375285], "address": ["String", "72 Rue Jean-Pierre Timbaud"], "gpsLat": ["double", 48.867797], "town": ["String", "Paris"], "country": ["String", "France"]}
+        datacenter = {"pname": ["String", "Scorpius"], "gpsLng": ["double", 2.375285], "address": ["String", "72 Rue Jean-Pierre Timbaud"], "gpsLat": ["double", 48.867797], "town": ["String", "Paris"], "country": ["String", "France"]}
         containerProperty = {'ID': containerID, 'propertyName': 'Datacenter', 'propertyValue': json.dumps(datacenter), 'propertyType': 'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
         
         network = {
-            'subnetip': ['String', '192.168.41.0'],
-            'subnetmask': ['String', '255.255.255.0'],
-            'type': ['String', 'LAN'],
-            'lan': ['String', 'Scorpius Lan 2'],
-            'rarea': ['String', "Scorpius LAN RA"],
-            'multicast':['String', "NOLIMIT"]
+            'sip': ['String', '192.168.41.0'],
+            'smask': ['String', '255.255.255.0'],
+            'ratype': ['String', 'LAN'],
+            'sname': ['String', 'Scorpius Lan 2'],
+            'raname': ['String', "Scorpius LAN RA"],
+            'ramulticast':['String', "NOLIMIT"]
         }
         containerProperty = {'ID': containerID, 'propertyName': 'Network', 'propertyValue': json.dumps(network), 'propertyType': 'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
@@ -603,17 +603,17 @@ class scorpiusRVRDNetworkTest:
         #                  'containerNodesID': [3, 5, 6],
         #                  'containerPrimaryAdminGateID': 3,
         #                  'containerProduct': 'Tibco Rendez Vous',
-        #                  'containerProperties': {'Datacenter': {'address': "Devil's Island",
+        #                  'containerProperties': {'Datacenter': {'address': "Devil's Issnamed",
         #                                                         'country': 'France',
-        #                                                         'dc': 'Somewhere in hell [DR]',
+        #                                                         'pname': 'Somewhere in hell [DR]',
         #                                                         'gpsLat': 5.295366,
         #                                                         'gpsLng': -52.582179,
-        #                                                         'town': "Devil's Island"},
-        #                                          'Network': {'lan': 'lab02.lan1',
-        #                                                      'rarea': "Scorpius LAN RA",
-        #                                                      'subnetip': '192.168.44.0',
-        #                                                      'subnetmask': '255.255.255.0',
-        #                                                      'type': 'LAN'},
+        #                                                         'town': "Devil's Issnamed"},
+        #                                          'Network': {'sname': 'lab02.sname1',
+        #                                                      'raname': "Scorpius LAN RA",
+        #                                                      'sip': '192.168.44.0',
+        #                                                      'smask': '255.255.255.0',
+        #                                                      'ratype': 'LAN'},
         #                                          'RVRD_HOSTNAME': 'tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net',
         #                                          'RVRD_INBOX_PORT': '0',
         #                                          'RVRD_IPADDR': '192.168.44.8',
@@ -632,17 +632,17 @@ class scorpiusRVRDNetworkTest:
         #                  'containerNodesID': [11],
         #                  'containerPrimaryAdminGateID': 11,
         #                  'containerProduct': 'Tibco Rendez Vous',
-        #                  'containerProperties': {'Datacenter': {'address': "Devil's Island",
+        #                  'containerProperties': {'Datacenter': {'address': "Devil's Issnamed",
         #                                                         'country': 'France',
-        #                                                         'dc': 'Somewhere in hell [DR]',
+        #                                                         'pname': 'Somewhere in hell [DR]',
         #                                                         'gpsLat': 5.295366,
         #                                                         'gpsLng': -52.582179,
-        #                                                         'town': "Devil's Island"},
-        #                                          'Network': {'lan': 'lab02.lan2',
-        #                                                      'rarea': "Scorpius LAN RA",
-        #                                                      'subnetip': '192.168.45.0',
-        #                                                      'subnetmask': '255.255.255.0',
-        #                                                      'type': 'LAN'},
+        #                                                         'town': "Devil's Issnamed"},
+        #                                          'Network': {'sname': 'lab02.sname2',
+        #                                                      'raname': "Scorpius LAN RA",
+        #                                                      'sip': '192.168.45.0',
+        #                                                      'smask': '255.255.255.0',
+        #                                                      'ratype': 'LAN'},
         #                                          'RVRD_HOSTNAME': 'tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net',
         #                                          'RVRD_INBOX_PORT': '0',
         #                                          'RVRD_IPADDR': '192.168.45.8',
@@ -701,17 +701,17 @@ class scorpiusRVRDNetworkTest:
         #  'containerNodesID': [11, 13],
         #  'containerPrimaryAdminGateID': 11,
         #  'containerProduct': 'Tibco Rendez Vous',
-        #  'containerProperties': {'Datacenter': {'address': "Devil's Island",
+        #  'containerProperties': {'Datacenter': {'address': "Devil's Issnamed",
         #                                         'country': 'France',
-        #                                         'dc': 'Somewhere in hell [DR]',
+        #                                         'pname': 'Somewhere in hell [DR]',
         #                                         'gpsLat': 5.295366,
         #                                         'gpsLng': -52.582179,
-        #                                         'town': "Devil's Island"},
-        #                          'Network': {'lan': 'lab02.lan2',
-        #                                      'rarea': "Scorpius LAN RA",
-        #                                      'subnetip': '192.168.45.0',
-        #                                      'subnetmask': '255.255.255.0',
-        #                                      'type': 'LAN'},
+        #                                         'town': "Devil's Issnamed"},
+        #                          'Network': {'sname': 'lab02.sname2',
+        #                                      'raname': "Scorpius LAN RA",
+        #                                      'sip': '192.168.45.0',
+        #                                      'smask': '255.255.255.0',
+        #                                      'ratype': 'LAN'},
         #                          'RVRD_HOSTNAME': 'tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net',
         #                          'RVRD_INBOX_PORT': '0',
         #                          'RVRD_IPADDR': '192.168.45.8',
@@ -803,7 +803,7 @@ class scorpiusRVRDNetworkTest:
         #                                        'primaryApplication': {'color': 'e8a25d',
         #                                                               'name': 'APP'}},
         #                 'endpointTwinEndpointID': [],
-        #                 'endpointURL': 'multicast-udp-tibrv://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969'},
+        #                 'endpointURL': 'ramulticast-udp-tibrv://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969'},
         #                {'endpointID': 8,
         #                 'endpointParentNodeID': 6,
         #                 'endpointProperties': {'RVRD_NEIGHBD_COMP': False,
@@ -861,17 +861,17 @@ class scorpiusRVRDNetworkTest:
         #  'containerNodesID': [11, 13, 14],
         #  'containerPrimaryAdminGateID': 11,
         #  'containerProduct': 'Tibco Rendez Vous',
-        #  'containerProperties': {'Datacenter': {'address': "Devil's Island",
+        #  'containerProperties': {'Datacenter': {'address': "Devil's Issnamed",
         #                                         'country': 'France',
-        #                                         'dc': 'Somewhere in hell [DR]',
+        #                                         'pname': 'Somewhere in hell [DR]',
         #                                         'gpsLat': 5.295366,
         #                                         'gpsLng': -52.582179,
-        #                                         'town': "Devil's Island"},
-        #                          'Network': {'lan': 'lab02.lan2',
-        #                                      'rarea': "Scorpius LAN RA",
-        #                                      'subnetip': '192.168.45.0',
-        #                                      'subnetmask': '255.255.255.0',
-        #                                      'type': 'LAN'},
+        #                                         'town': "Devil's Issnamed"},
+        #                          'Network': {'sname': 'lab02.sname2',
+        #                                      'raname': "Scorpius LAN RA",
+        #                                      'sip': '192.168.45.0',
+        #                                      'smask': '255.255.255.0',
+        #                                      'ratype': 'LAN'},
         #                          'RVRD_HOSTNAME': 'tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net',
         #                          'RVRD_INBOX_PORT': '0',
         #                          'RVRD_IPADDR': '192.168.45.8',
@@ -902,32 +902,32 @@ class scorpiusRVRDNetworkTest:
         
         ## ADD ENDPOINTS TO PREVIOUS NODE
         
-        endpointParams = {"endpointURL": "multicast-udp-tibrv://tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969", "parentNodeID": nodeID}
+        endpointParams = {"endpointURL": "ramulticast-udp-tibrv://tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969", "parentNodeID": nodeID}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/create', params=endpointParams)
-        multicastSourceEndpoint2 = r.json().get('endpointID')
+        ramulticastSourceEndpoint2 = r.json().get('endpointID')
         
         importSubjects = ["String", ["FR.APP.>-weight:10", "FR.BPP.>-weight:10"]]
-        endpointProperty = {'ID': multicastSourceEndpoint2, 'propertyName': 'RVRD_LOCALNT_ISUB', 'propertyValue': json.dumps(importSubjects), 'propertyType': 'array'}
+        endpointProperty = {'ID': ramulticastSourceEndpoint2, 'propertyName': 'RVRD_LOCALNT_ISUB', 'propertyValue': json.dumps(importSubjects), 'propertyType': 'array'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
         exportSubjects = ["String", ["FR.APP.>", "FR.BPP.>"]]
-        endpointProperty = {'ID': multicastSourceEndpoint2, 'propertyName': 'RVRD_LOCALNT_ESUB', 'propertyValue': json.dumps(exportSubjects), 'propertyType': 'array'}
+        endpointProperty = {'ID': ramulticastSourceEndpoint2, 'propertyName': 'RVRD_LOCALNT_ESUB', 'propertyValue': json.dumps(exportSubjects), 'propertyType': 'array'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
-        endpointProperty = {'ID': multicastSourceEndpoint2, 'propertyName': 'RVRD_LOCALNT_SERVICE', 'propertyValue': 6969, 'propertyType': 'int'}
+        endpointProperty = {'ID': ramulticastSourceEndpoint2, 'propertyName': 'RVRD_LOCALNT_SERVICE', 'propertyValue': 6969, 'propertyType': 'int'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
-        endpointProperty = {'ID': multicastSourceEndpoint2, 'propertyName': 'RVRD_LOCALNT_NETWORK', 'propertyValue': ';239.69.69.69'}
+        endpointProperty = {'ID': ramulticastSourceEndpoint2, 'propertyName': 'RVRD_LOCALNT_NETWORK', 'propertyValue': ';239.69.69.69'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
-        endpointProperty = {'ID': multicastSourceEndpoint2, 'propertyName': 'RVRD_LOCALNT_NAME', 'propertyValue': 'APP6969.Scorpius'}
+        endpointProperty = {'ID': ramulticastSourceEndpoint2, 'propertyName': 'RVRD_LOCALNT_NAME', 'propertyValue': 'APP6969.Scorpius'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
-        endpointProperty = {'ID': multicastSourceEndpoint2, 'propertyName': 'busDescription', 'propertyValue': 'APP FX prices diffusion'}
+        endpointProperty = {'ID': ramulticastSourceEndpoint2, 'propertyName': 'busDescription', 'propertyValue': 'APP FX prices diffusion'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
         primaryApp = {"color": ["String", "e8a25d"], "name": ["String", "APP"]}
-        endpointProperty = {'ID': multicastSourceEndpoint2, 'propertyName': 'primaryApplication', 'propertyValue': json.dumps(primaryApp), 'propertyType': 'map'}
+        endpointProperty = {'ID': ramulticastSourceEndpoint2, 'propertyName': 'primaryApplication', 'propertyValue': json.dumps(primaryApp), 'propertyType': 'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
         # getParams = {'ID':nodeID}
@@ -941,7 +941,7 @@ class scorpiusRVRDNetworkTest:
         #                     'busDescription': 'APP FX prices diffusion',
         #                     'primaryApplication': {'color': 'e8a25d', 'name': 'APP'}},
         #  'nodeTwinNodeID': []}
-        # getParams = {'ID':multicastSourceEndpoint2}
+        # getParams = {'ID':ramulticastSourceEndpoint2}
         # r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/get', params=getParams)
         # pprint(r.json())
         # {'endpointID': 15,
@@ -956,7 +956,7 @@ class scorpiusRVRDNetworkTest:
         #                         'primaryApplication': {'color': 'e8a25d',
         #                                                'name': 'APP'}},
         #  'endpointTwinEndpointID': [],
-        #  'endpointURL': 'multicast-udp-tibrv://tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969'}
+        #  'endpointURL': 'ramulticast-udp-tibrv://tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969'}
         
         endpointParams = {"endpointURL": "tcp-tibrvrd://tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net:6969", "parentNodeID": nodeID}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/create', params=endpointParams)
@@ -1065,10 +1065,10 @@ class scorpiusRVRDNetworkTest:
         
         ## TWIN ENDPOINTS
         
-        twinEP = {'ID': multicastSourceEndpoint1, 'twinEndpointID': multicastSourceEndpoint2}
+        twinEP = {'ID': ramulticastSourceEndpoint1, 'twinEndpointID': ramulticastSourceEndpoint2}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/twinEndpoints/add', params=twinEP)
         
-        # getParams = {'ID':multicastSourceEndpoint1}
+        # getParams = {'ID':ramulticastSourceEndpoint1}
         # r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/get', params=getParams)
         # pprint(r.json())
         # {'endpointID': 7,
@@ -1083,8 +1083,8 @@ class scorpiusRVRDNetworkTest:
         #                         'primaryApplication': {'color': 'e8a25d',
         #                                                'name': 'APP'}},
         #  'endpointTwinEndpointID': [15],
-        #  'endpointURL': 'multicast-udp-tibrv://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969'}
-        # getParams = {'ID':multicastSourceEndpoint2}
+        #  'endpointURL': 'ramulticast-udp-tibrv://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969'}
+        # getParams = {'ID':ramulticastSourceEndpoint2}
         # r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/get', params=getParams)
         # pprint(r.json())
         # {'endpointID': 15,
@@ -1099,16 +1099,16 @@ class scorpiusRVRDNetworkTest:
         #                         'primaryApplication': {'color': 'e8a25d',
         #                                                'name': 'APP'}},
         #  'endpointTwinEndpointID': [],
-        #  'endpointURL': 'multicast-udp-tibrv://tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969'}
+        #  'endpointURL': 'ramulticast-udp-tibrv://tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969'}
         
         
         
         
         
         ## TRANSPORT
-        ## NOTE : si dans le nom du transport on a multicast => le graph render dessine un tube !
+        ## NOTE : si dans le nom du transport on a ramulticast => le graph render dessine un tube !
         
-        transportParams = {"name": "multicast-udp-tibrv://Scorpius LAN RA;239.69.69.69"}
+        transportParams = {"name": "ramulticast-udp-tibrv://Scorpius LAN RA;239.69.69.69"}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/transports/create', params=transportParams)
         transportID = r.json().get('transportID')
         
@@ -1122,7 +1122,7 @@ class scorpiusRVRDNetworkTest:
         # r = self.session.get(self.url + 'ariane/rest/mapping/domain/transports')
         # pprint(r.json())
         # {'transports': [{'transportID': 17,
-        #                  'transportName': 'multicast-udp-tibrv://;239.69.69.69',
+        #                  'transportName': 'ramulticast-udp-tibrv://;239.69.69.69',
         #                  'transportProperties': {'busDescription': 'APP FX prices diffusion',
         #                                          'primaryApplication': {'color': 'e8a25d',
         #                                                                 'name': 'APP'}}}]}
@@ -1133,10 +1133,10 @@ class scorpiusRVRDNetworkTest:
         
         ## LINK MULTICAST ENDPOINT TO MULTICAST TRANSPORT (ooOO)
         
-        linkParams = {"SEPID": multicastSourceEndpoint1, "TEPID": 0, "transportID": transportID}
+        linkParams = {"SEPID": ramulticastSourceEndpoint1, "TEPID": 0, "transportID": transportID}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/links/create', params=linkParams);
         
-        linkParams = {"SEPID": multicastSourceEndpoint2, "TEPID": 0, "transportID": transportID}
+        linkParams = {"SEPID": ramulticastSourceEndpoint2, "TEPID": 0, "transportID": transportID}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/links/create', params=linkParams);
         
         # r = self.session.get(self.url + 'ariane/rest/mapping/domain/links');
@@ -1185,17 +1185,17 @@ class scorpiusRVRDNetworkTest:
         containerType = {'ID': containerID, 'type': 'RV Router Daemon'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/type', params=containerType)
         
-        datacenter = {"dc": ["String", "Scorpius"], "gpsLng": ["double", 2.375285], "address": ["String", "72 Rue Jean-Pierre Timbaud"], "gpsLat": ["double", 48.867797], "town": ["String", "Paris"], "country": ["String", "France"]}
+        datacenter = {"pname": ["String", "Scorpius"], "gpsLng": ["double", 2.375285], "address": ["String", "72 Rue Jean-Pierre Timbaud"], "gpsLat": ["double", 48.867797], "town": ["String", "Paris"], "country": ["String", "France"]}
         containerProperty = {'ID': containerID, 'propertyName': 'Datacenter', 'propertyValue': json.dumps(datacenter), 'propertyType': 'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
         
         network = {
-            'subnetip': ['String', '192.168.45.0'],
-            'subnetmask': ['String', '255.255.255.0'],
-            'type': ['String', 'MAN'],
-            'lan': ['String', 'Scorpius MAN'],
-            'rarea': ['String', "Scorpius MAN RA"],
-            'multicast':['String', "FILTERED"]
+            'sip': ['String', '192.168.45.0'],
+            'smask': ['String', '255.255.255.0'],
+            'ratype': ['String', 'MAN'],
+            'sname': ['String', 'Scorpius MAN'],
+            'raname': ['String', "Scorpius MAN RA"],
+            'ramulticast':['String', "FILTERED"]
         }
         containerProperty = {'ID': containerID, 'propertyName': 'Network', 'propertyValue': json.dumps(network), 'propertyType': 'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
@@ -1347,17 +1347,17 @@ class scorpiusRVRDNetworkTest:
         containerType = {'ID': containerID, 'type': 'RV Router Daemon'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/type', params=containerType)
         
-        datacenter = {"dc": ["String", "Scorpius"], "gpsLng": ["double", 2.375285], "address": ["String", "72 Rue Jean-Pierre Timbaud"], "gpsLat": ["double", 48.867797], "town": ["String", "Paris"], "country": ["String", "France"]}
+        datacenter = {"pname": ["String", "Scorpius"], "gpsLng": ["double", 2.375285], "address": ["String", "72 Rue Jean-Pierre Timbaud"], "gpsLat": ["double", 48.867797], "town": ["String", "Paris"], "country": ["String", "France"]}
         containerProperty = {'ID': containerID, 'propertyName': 'Datacenter', 'propertyValue': json.dumps(datacenter), 'propertyType': 'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
         
         network = {
-            'subnetip': ['String', '192.168.46.0'],
-            'subnetmask': ['String', '255.255.255.0'],
-            'type': ['String', 'WAN'],
-            'lan': ['String', 'Scorpius WAN'],
-            'rarea': ['String', "Scorpius WAN RA"],
-            'multicast': ['String', "FILTERED"]
+            'sip': ['String', '192.168.46.0'],
+            'smask': ['String', '255.255.255.0'],
+            'ratype': ['String', 'WAN'],
+            'sname': ['String', 'Scorpius WAN'],
+            'raname': ['String', "Scorpius WAN RA"],
+            'ramulticast': ['String', "FILTERED"]
         }
         containerProperty = {'ID': containerID, 'propertyName': 'Network', 'propertyValue': json.dumps(network), 'propertyType': 'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)

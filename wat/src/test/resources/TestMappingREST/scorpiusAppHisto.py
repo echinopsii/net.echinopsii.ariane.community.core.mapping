@@ -22,17 +22,17 @@ class scorpiusAppHistoTest:
         containerType = {'ID':containerID,'type':'Historization'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/type', params=containerType)
         
-        datacenter = {"dc": ["String", "Scorpius"], "gpsLng": ["double", 2.375285], "address": ["String", "72 Rue Jean-Pierre Timbaud"], "gpsLat": ["double", 48.867797], "town": ["String", "Paris"], "country": ["String", "France"]}
+        datacenter = {"pname": ["String", "Scorpius"], "gpsLng": ["double", 2.375285], "address": ["String", "72 Rue Jean-Pierre Timbaud"], "gpsLat": ["double", 48.867797], "town": ["String", "Paris"], "country": ["String", "France"]}
         containerProperty = {'ID':containerID,'propertyName':'Datacenter','propertyValue':json.dumps(datacenter),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
         
         network = {
-            'subnetip':['String','192.168.47.0'],
-            'subnetmask':['String','255.255.255.0'],
-            'type':['String','LAN'],
-            'lan':['String','Scorpius Lan 5'],
-            'rarea': ['String', "Scorpius LAN RA"],
-            'multicast': ['String', "NOLIMIT"]
+            'sip':['String','192.168.47.0'],
+            'smask':['String','255.255.255.0'],
+            'ratype':['String','sname'],
+            'sname':['String','Scorpius sname 5'],
+            'raname': ['String', "Scorpius sname RA"],
+            'ramulticast': ['String', "NOLIMIT"]
         }
         containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
@@ -45,7 +45,7 @@ class scorpiusAppHistoTest:
         containerProperty = {'ID':containerID,'propertyName':'Server','propertyValue':json.dumps(server),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
         
-        ## ADD A NODE TO LAN BPP HISTO 11
+        ## ADD A NODE TO sname BPP HISTO 11
         nodeParams = {"name":"BPP6669.SNIFFER.ACTOR", "containerID":containerID, "parentNodeID":0}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/create', params=nodeParams)
         nodeID = r.json().get('nodeID')
@@ -72,7 +72,7 @@ class scorpiusAppHistoTest:
         #r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
         ## LINK TO BPP6669.RVD21 NODE
-        nodeParam={"endpointURL":"multicast-udp-tibrv://bpp6669rvd21.lab02.dev.dekatonshivr.echinopsii.net/;239.69.66.69:6669"}
+        nodeParam={"endpointURL":"ramulticast-udp-tibrv://bpp6669rvd21.lab02.dev.dekatonshivr.echinopsii.net/;239.69.66.69:6669"}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/get', params=nodeParam)
         targetNodeID = r.json().get("nodeID")
         
@@ -87,7 +87,7 @@ class scorpiusAppHistoTest:
         linkParams = {"SEPID":endpointID,"TEPID":targetEndpointID,"transportID":rvdTransportID}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/links/create', params=linkParams);
         
-        ## ADD A NODE TO LAN BPP HISTO 11
+        ## ADD A NODE TO sname BPP HISTO 11
         nodeParams = {"name":"BPPDB.INJECTOR.ACTOR", "containerID":containerID, "parentNodeID":0}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/create', params=nodeParams)
         nodeID = r.json().get('nodeID')
@@ -140,17 +140,17 @@ class scorpiusAppHistoTest:
         containerType = {'ID':containerID,'type':'MariaDB cluster node'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/type', params=containerType)
         
-        datacenter = {"dc": ["String", "Scorpius"], "gpsLng": ["double", 2.375285], "address": ["String", "72 Rue Jean-Pierre Timbaud"], "gpsLat": ["double", 48.867797], "town": ["String", "Paris"], "country": ["String", "France"]}
+        datacenter = {"pname": ["String", "Scorpius"], "gpsLng": ["double", 2.375285], "address": ["String", "72 Rue Jean-Pierre Timbaud"], "gpsLat": ["double", 48.867797], "town": ["String", "Paris"], "country": ["String", "France"]}
         containerProperty = {'ID':containerID,'propertyName':'Datacenter','propertyValue':json.dumps(datacenter),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
         
         network = {
-            'subnetip':['String','192.168.47.0'],
-            'subnetmask':['String','255.255.255.0'],
-            'type':['String','LAN'],
-            'lan':['String','Scorpius Lan 5'],
-            'rarea': ['String', "Scorpius LAN RA"],
-            'multicast': ['String', "NOLIMIT"]
+            'sip':['String','192.168.47.0'],
+            'smask':['String','255.255.255.0'],
+            'ratype':['String','sname'],
+            'sname':['String','Scorpius sname 5'],
+            'raname': ['String', "Scorpius sname RA"],
+            'ramulticast': ['String', "NOLIMIT"]
         }
         containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
@@ -163,7 +163,7 @@ class scorpiusAppHistoTest:
         containerProperty = {'ID':containerID,'propertyName':'Server','propertyValue':json.dumps(server),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
         
-        ## ADD A NODE TO LAN BPP HISTO 11
+        ## ADD A NODE TO sname BPP HISTO 11
         nodeParams = {"name":"BPPDB", "containerID":containerID, "parentNodeID":0}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/create', params=nodeParams)
         nodeID = r.json().get('nodeID')
@@ -208,17 +208,17 @@ class scorpiusAppHistoTest:
         containerType = {'ID':containerID,'type':'Historization'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/type', params=containerType)
         
-        datacenter = {"dc": ["String", "Scorpius"], "gpsLng": ["double", 2.375285], "address": ["String", "72 Rue Jean-Pierre Timbaud"], "gpsLat": ["double", 48.867797], "town": ["String", "Paris"], "country": ["String", "France"]}
+        datacenter = {"pname": ["String", "Scorpius"], "gpsLng": ["double", 2.375285], "address": ["String", "72 Rue Jean-Pierre Timbaud"], "gpsLat": ["double", 48.867797], "town": ["String", "Paris"], "country": ["String", "France"]}
         containerProperty = {'ID':containerID,'propertyName':'Datacenter','propertyValue':json.dumps(datacenter),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
         
         network = {
-            'subnetip':['String','192.168.48.0'],
-            'subnetmask':['String','255.255.255.0'],
-            'type':['String','LAN'],
-            'lan':['String','Scorpius Lan 6'],
-            'rarea': ['String', "Scorpius LAN RA"],
-            'multicast': ['String', "NOLIMIT"]
+            'sip':['String','192.168.48.0'],
+            'smask':['String','255.255.255.0'],
+            'ratype':['String','sname'],
+            'sname':['String','Scorpius sname 6'],
+            'raname': ['String', "Scorpius sname RA"],
+            'ramulticast': ['String', "NOLIMIT"]
         }
         containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
@@ -231,7 +231,7 @@ class scorpiusAppHistoTest:
         containerProperty = {'ID':containerID,'propertyName':'Server','propertyValue':json.dumps(server),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
         
-        ## ADD A NODE TO LAN BPP HISTO 11
+        ## ADD A NODE TO sname BPP HISTO 11
         nodeParams = {"name":"BPP6669.SNIFFER.ACTOR", "containerID":containerID, "parentNodeID":0}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/create', params=nodeParams)
         nodeID = r.json().get('nodeID')
@@ -258,7 +258,7 @@ class scorpiusAppHistoTest:
         #r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
         ## LINK TO BPP6669.RVD23 NODE
-        nodeParam={"endpointURL":"multicast-udp-tibrv://bpp6669rvd23.lab02.dev.dekatonshivr.echinopsii.net/;239.69.66.69:6669"}
+        nodeParam={"endpointURL":"ramulticast-udp-tibrv://bpp6669rvd23.lab02.dev.dekatonshivr.echinopsii.net/;239.69.66.69:6669"}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/get', params=nodeParam)
         targetNodeID = r.json().get("nodeID")
         
@@ -274,7 +274,7 @@ class scorpiusAppHistoTest:
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/links/create', params=linkParams);
         
         
-        ## ADD A NODE TO LAN BPP HISTO 11
+        ## ADD A NODE TO sname BPP HISTO 11
         nodeParams = {"name":"BPPDB.INJECTOR.ACTOR", "containerID":containerID, "parentNodeID":0}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/create', params=nodeParams)
         nodeID = r.json().get('nodeID')
@@ -326,17 +326,17 @@ class scorpiusAppHistoTest:
         containerType = {'ID':containerID,'type':'MariaDB cluster node'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/type', params=containerType)
         
-        datacenter = {"dc": ["String", "Scorpius"], "gpsLng": ["double", 2.375285], "address": ["String", "72 Rue Jean-Pierre Timbaud"], "gpsLat": ["double", 48.867797], "town": ["String", "Paris"], "country": ["String", "France"]}
+        datacenter = {"pname": ["String", "Scorpius"], "gpsLng": ["double", 2.375285], "address": ["String", "72 Rue Jean-Pierre Timbaud"], "gpsLat": ["double", 48.867797], "town": ["String", "Paris"], "country": ["String", "France"]}
         containerProperty = {'ID':containerID,'propertyName':'Datacenter','propertyValue':json.dumps(datacenter),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
         
         network = {
-            'subnetip':['String','192.168.48.0'],
-            'subnetmask':['String','255.255.255.0'],
-            'type':['String','LAN'],
-            'lan':['String','Scorpius Lan 6'],
-            'rarea': ['String', "Scorpius LAN RA"],
-            'multicast': ['String', "NOLIMIT"]
+            'sip':['String','192.168.48.0'],
+            'smask':['String','255.255.255.0'],
+            'ratype':['String','sname'],
+            'sname':['String','Scorpius sname 6'],
+            'raname': ['String', "Scorpius sname RA"],
+            'ramulticast': ['String', "NOLIMIT"]
         }
         containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
@@ -349,7 +349,7 @@ class scorpiusAppHistoTest:
         containerProperty = {'ID':containerID,'propertyName':'Server','propertyValue':json.dumps(server),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
         
-        ## ADD A NODE TO LAN BPP HISTO 22
+        ## ADD A NODE TO sname BPP HISTO 22
         nodeParams = {"name":"BPPDB", "containerID":containerID, "parentNodeID":0}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/create', params=nodeParams)
         nodeID = r.json().get('nodeID')
