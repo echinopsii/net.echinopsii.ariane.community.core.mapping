@@ -30,9 +30,9 @@ class sagittariusAppHistoTest:
         network = {
             'sip': ['String', '192.168.36.0'],
             'smask': ['String', '255.255.255.0'],
-            'ratype': ['String', 'sname'],
-            'sname': ['String', 'Sagittarius sname 4'],
-            'raname': ['String', "Sagittarius sname RA"],
+            'ratype': ['String', 'LAN'],
+            'sname': ['String', 'Sagittarius Lan 4'],
+            'raname': ['String', "Sagittarius LAN RA"],
             'ramulticast':['String', "NOLIMIT"]
         }
         containerProperty = {'ID': containerID, 'propertyName': 'Network', 'propertyValue': json.dumps(network), 'propertyType': 'map'}
@@ -46,7 +46,7 @@ class sagittariusAppHistoTest:
         containerProperty = {'ID': containerID, 'propertyName': 'Server', 'propertyValue': json.dumps(server), 'propertyType': 'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
         
-        ## ADD A NODE TO sname BPP HISTO 11
+        ## ADD A NODE TO LAN BPP HISTO 11
         nodeParams = {"name": "BPP6669.SNIFFER.ACTOR", "containerID": containerID, "parentNodeID": 0}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/create', params=nodeParams)
         nodeID = r.json().get('nodeID')
@@ -73,7 +73,7 @@ class sagittariusAppHistoTest:
         #r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
         ## LINK TO BPP6669.RVD11 NODE
-        nodeParam = {"endpointURL": "ramulticast-udp-tibrv://bpp6669rvd11.lab01.dev.dekatonshivr.echinopsii.net/;239.69.66.69:6669"}
+        nodeParam = {"endpointURL": "multicast-udp-tibrv://bpp6669rvd11.lab01.dev.dekatonshivr.echinopsii.net/;239.69.66.69:6669"}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/get', params=nodeParam)
         targetNodeID = r.json().get("nodeID")
         
@@ -88,7 +88,7 @@ class sagittariusAppHistoTest:
         linkParams = {"SEPID": endpointID, "TEPID": targetEndpointID, "transportID": rvdTransportID}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/links/create', params=linkParams);
         
-        ## ADD A NODE TO sname BPP HISTO 11
+        ## ADD A NODE TO LAN BPP HISTO 11
         nodeParams = {"name": "BPPDB.INJECTOR.ACTOR", "containerID": containerID, "parentNodeID": 0}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/create', params=nodeParams)
         nodeID = r.json().get('nodeID')
@@ -148,9 +148,9 @@ class sagittariusAppHistoTest:
         network = {
             'sip': ['String', '192.168.36.0'],
             'smask': ['String', '255.255.255.0'],
-            'ratype': ['String', 'sname'],
-            'sname': ['String', 'Sagittarius sname 4'],
-            'raname': ['String', "Sagittarius sname RA"],
+            'ratype': ['String', 'LAN'],
+            'sname': ['String', 'Sagittarius Lan 4'],
+            'raname': ['String', "Sagittarius LAN RA"],
             'ramulticast':['String', "NOLIMIT"]
         }
         containerProperty = {'ID': containerID, 'propertyName': 'Network', 'propertyValue': json.dumps(network), 'propertyType': 'map'}
@@ -164,7 +164,7 @@ class sagittariusAppHistoTest:
         containerProperty = {'ID': containerID, 'propertyName': 'Server', 'propertyValue': json.dumps(server), 'propertyType': 'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
         
-        ## ADD A NODE TO sname BPP HISTO 11
+        ## ADD A NODE TO LAN BPP HISTO 11
         nodeParams = {"name": "BPPDB", "containerID": containerID, "parentNodeID": 0}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/create', params=nodeParams)
         nodeID = r.json().get('nodeID')
@@ -216,9 +216,9 @@ class sagittariusAppHistoTest:
         network = {
             'sip': ['String', '192.168.39.0'],
             'smask': ['String', '255.255.255.0'],
-            'ratype': ['String', 'sname'],
-            'sname': ['String', 'Sagittarius sname 5'],
-            'raname': ['String', "Sagittarius sname RA"],
+            'ratype': ['String', 'LAN'],
+            'sname': ['String', 'Sagittarius Lan 5'],
+            'raname': ['String', "Sagittarius LAN RA"],
             'ramulticast':['String', "NOLIMIT"]
         }
         containerProperty = {'ID': containerID, 'propertyName': 'Network', 'propertyValue': json.dumps(network), 'propertyType': 'map'}
@@ -232,7 +232,7 @@ class sagittariusAppHistoTest:
         containerProperty = {'ID': containerID, 'propertyName': 'Server', 'propertyValue': json.dumps(server), 'propertyType': 'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
         
-        ## ADD A NODE TO sname BPP HISTO 11
+        ## ADD A NODE TO LAN BPP HISTO 11
         nodeParams = {"name": "BPP6669.SNIFFER.ACTOR", "containerID": containerID, "parentNodeID": 0}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/create', params=nodeParams)
         nodeID = r.json().get('nodeID')
@@ -259,7 +259,7 @@ class sagittariusAppHistoTest:
         #r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
         ## LINK TO BPP6669.RVD13 NODE
-        nodeParam = {"endpointURL": "ramulticast-udp-tibrv://bpp6669rvd13.lab01.dev.dekatonshivr.echinopsii.net/;239.69.66.69:6669"}
+        nodeParam = {"endpointURL": "multicast-udp-tibrv://bpp6669rvd13.lab01.dev.dekatonshivr.echinopsii.net/;239.69.66.69:6669"}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/get', params=nodeParam)
         targetNodeID = r.json().get("nodeID")
         
@@ -275,7 +275,7 @@ class sagittariusAppHistoTest:
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/links/create', params=linkParams);
         
         
-        ## ADD A NODE TO sname BPP HISTO 11
+        ## ADD A NODE TO LAN BPP HISTO 11
         nodeParams = {"name": "BPPDB.INJECTOR.ACTOR", "containerID": containerID, "parentNodeID": 0}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/create', params=nodeParams)
         nodeID = r.json().get('nodeID')
@@ -334,9 +334,9 @@ class sagittariusAppHistoTest:
         network = {
             'sip': ['String', '192.168.39.0'],
             'smask': ['String', '255.255.255.0'],
-            'ratype': ['String', 'sname'],
-            'sname': ['String', 'Sagittarius sname 5'],
-            'raname': ['String', "Sagittarius sname RA"],
+            'ratype': ['String', 'LAN'],
+            'sname': ['String', 'Sagittarius Lan 5'],
+            'raname': ['String', "Sagittarius LAN RA"],
             'ramulticast':['String', "NOLIMIT"]
         }
         containerProperty = {'ID': containerID, 'propertyName': 'Network', 'propertyValue': json.dumps(network), 'propertyType': 'map'}
@@ -350,7 +350,7 @@ class sagittariusAppHistoTest:
         containerProperty = {'ID': containerID, 'propertyName': 'Server', 'propertyValue': json.dumps(server), 'propertyType': 'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
         
-        ## ADD A NODE TO sname BPP HISTO 11
+        ## ADD A NODE TO LAN BPP HISTO 11
         nodeParams = {"name": "BPPDB", "containerID": containerID, "parentNodeID": 0}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/create', params=nodeParams)
         nodeID = r.json().get('nodeID')

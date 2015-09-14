@@ -353,9 +353,9 @@ class scorpiusRVRDNetworkTest:
         
         ## ADD ENDPOINTS TO PREVIOUS NODE
         
-        endpointParams = {"endpointURL": "ramulticast-udp-tibrv://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969", "parentNodeID": nodeID}
+        endpointParams = {"endpointURL": "multicast-udp-tibrv://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969", "parentNodeID": nodeID}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/create', params=endpointParams)
-        ramulticastSourceEndpoint1 = r.json().get('endpointID')
+        multicastSourceEndpoint1 = r.json().get('endpointID')
         
         # getParams = {'ID':nodeID}
         # r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/get', params=getParams)
@@ -381,33 +381,33 @@ class scorpiusRVRDNetworkTest:
         #                {'endpointID': 7,
         #                 'endpointParentNodeID': 6,
         #                 'endpointTwinEndpointID': [],
-        #                 'endpointURL': 'ramulticast-udp-tibrv://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969'}]}
+        #                 'endpointURL': 'multicast-udp-tibrv://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969'}]}
         
         importSubjects = ["String", ["FR.APP.>-weight:10", "FR.BPP.>-weight:10"]]
-        endpointProperty = {'ID': ramulticastSourceEndpoint1, 'propertyName': 'RVRD_LOCALNT_ISUB', 'propertyValue': json.dumps(importSubjects), 'propertyType': 'array'}
+        endpointProperty = {'ID': multicastSourceEndpoint1, 'propertyName': 'RVRD_LOCALNT_ISUB', 'propertyValue': json.dumps(importSubjects), 'propertyType': 'array'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
         exportSubjects = ["String", ["FR.APP.>", "FR.BPP.>"]]
-        endpointProperty = {'ID': ramulticastSourceEndpoint1, 'propertyName': 'RVRD_LOCALNT_ESUB', 'propertyValue': json.dumps(exportSubjects), 'propertyType': 'array'}
+        endpointProperty = {'ID': multicastSourceEndpoint1, 'propertyName': 'RVRD_LOCALNT_ESUB', 'propertyValue': json.dumps(exportSubjects), 'propertyType': 'array'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
-        endpointProperty = {'ID': ramulticastSourceEndpoint1, 'propertyName': 'RVRD_LOCALNT_SERVICE', 'propertyValue': 6969, 'propertyType': 'int'}
+        endpointProperty = {'ID': multicastSourceEndpoint1, 'propertyName': 'RVRD_LOCALNT_SERVICE', 'propertyValue': 6969, 'propertyType': 'int'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
-        endpointProperty = {'ID': ramulticastSourceEndpoint1, 'propertyName': 'RVRD_LOCALNT_NETWORK', 'propertyValue': ';239.69.69.69'}
+        endpointProperty = {'ID': multicastSourceEndpoint1, 'propertyName': 'RVRD_LOCALNT_NETWORK', 'propertyValue': ';239.69.69.69'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
-        endpointProperty = {'ID': ramulticastSourceEndpoint1, 'propertyName': 'RVRD_LOCALNT_NAME', 'propertyValue': 'APP6969.Scorpius'}
+        endpointProperty = {'ID': multicastSourceEndpoint1, 'propertyName': 'RVRD_LOCALNT_NAME', 'propertyValue': 'APP6969.Scorpius'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
-        endpointProperty = {'ID': ramulticastSourceEndpoint1, 'propertyName': 'busDescription', 'propertyValue': 'APP FX prices diffusion'}
+        endpointProperty = {'ID': multicastSourceEndpoint1, 'propertyName': 'busDescription', 'propertyValue': 'APP FX prices diffusion'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
         primaryApp = {"color": ["String", "e8a25d"], "name": ["String", "APP"]}
-        endpointProperty = {'ID': ramulticastSourceEndpoint1, 'propertyName': 'primaryApplication', 'propertyValue': json.dumps(primaryApp), 'propertyType': 'map'}
+        endpointProperty = {'ID': multicastSourceEndpoint1, 'propertyName': 'primaryApplication', 'propertyValue': json.dumps(primaryApp), 'propertyType': 'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
-        # getParams = {'URL':'ramulticast-udp-tibrv://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969'}
+        # getParams = {'URL':'multicast-udp-tibrv://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969'}
         # r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/get', params=getParams)
         # pprint(r.json())
         # {'endpointID': 7,
@@ -422,7 +422,7 @@ class scorpiusRVRDNetworkTest:
         #                         'primaryApplication': {'color': 'e8a25d',
         #                                                'name': 'APP'}},
         #  'endpointTwinEndpointID': [],
-        #  'endpointURL': 'ramulticast-udp-tibrv://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969'}
+        #  'endpointURL': 'multicast-udp-tibrv://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969'}
         
         endpointParams = {"endpointURL": "tcp-tibrvrd://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net:6969", "parentNodeID": nodeID}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/create', params=endpointParams)
@@ -461,7 +461,7 @@ class scorpiusRVRDNetworkTest:
         #                                        'primaryApplication': {'color': 'e8a25d',
         #                                                               'name': 'APP'}},
         #                 'endpointTwinEndpointID': [],
-        #                 'endpointURL': 'ramulticast-udp-tibrv://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969'},
+        #                 'endpointURL': 'multicast-udp-tibrv://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969'},
         #                {'endpointID': 8,
         #                 'endpointParentNodeID': 6,
         #                 'endpointTwinEndpointID': [],
@@ -803,7 +803,7 @@ class scorpiusRVRDNetworkTest:
         #                                        'primaryApplication': {'color': 'e8a25d',
         #                                                               'name': 'APP'}},
         #                 'endpointTwinEndpointID': [],
-        #                 'endpointURL': 'ramulticast-udp-tibrv://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969'},
+        #                 'endpointURL': 'multicast-udp-tibrv://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969'},
         #                {'endpointID': 8,
         #                 'endpointParentNodeID': 6,
         #                 'endpointProperties': {'RVRD_NEIGHBD_COMP': False,
@@ -902,7 +902,7 @@ class scorpiusRVRDNetworkTest:
         
         ## ADD ENDPOINTS TO PREVIOUS NODE
         
-        endpointParams = {"endpointURL": "ramulticast-udp-tibrv://tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969", "parentNodeID": nodeID}
+        endpointParams = {"endpointURL": "multicast-udp-tibrv://tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969", "parentNodeID": nodeID}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/create', params=endpointParams)
         ramulticastSourceEndpoint2 = r.json().get('endpointID')
         
@@ -1065,7 +1065,7 @@ class scorpiusRVRDNetworkTest:
         
         ## TWIN ENDPOINTS
         
-        twinEP = {'ID': ramulticastSourceEndpoint1, 'twinEndpointID': ramulticastSourceEndpoint2}
+        twinEP = {'ID': multicastSourceEndpoint1, 'twinEndpointID': ramulticastSourceEndpoint2}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/twinEndpoints/add', params=twinEP)
         
         # getParams = {'ID':ramulticastSourceEndpoint1}
@@ -1083,7 +1083,7 @@ class scorpiusRVRDNetworkTest:
         #                         'primaryApplication': {'color': 'e8a25d',
         #                                                'name': 'APP'}},
         #  'endpointTwinEndpointID': [15],
-        #  'endpointURL': 'ramulticast-udp-tibrv://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969'}
+        #  'endpointURL': 'multicast-udp-tibrv://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969'}
         # getParams = {'ID':ramulticastSourceEndpoint2}
         # r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/get', params=getParams)
         # pprint(r.json())
@@ -1099,7 +1099,7 @@ class scorpiusRVRDNetworkTest:
         #                         'primaryApplication': {'color': 'e8a25d',
         #                                                'name': 'APP'}},
         #  'endpointTwinEndpointID': [],
-        #  'endpointURL': 'ramulticast-udp-tibrv://tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969'}
+        #  'endpointURL': 'multicast-udp-tibrv://tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969'}
         
         
         
@@ -1108,7 +1108,7 @@ class scorpiusRVRDNetworkTest:
         ## TRANSPORT
         ## NOTE : si dans le nom du transport on a ramulticast => le graph render dessine un tube !
         
-        transportParams = {"name": "ramulticast-udp-tibrv://Scorpius LAN RA;239.69.69.69"}
+        transportParams = {"name": "multicast-udp-tibrv://Scorpius LAN RA;239.69.69.69"}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/transports/create', params=transportParams)
         transportID = r.json().get('transportID')
         
@@ -1122,7 +1122,7 @@ class scorpiusRVRDNetworkTest:
         # r = self.session.get(self.url + 'ariane/rest/mapping/domain/transports')
         # pprint(r.json())
         # {'transports': [{'transportID': 17,
-        #                  'transportName': 'ramulticast-udp-tibrv://;239.69.69.69',
+        #                  'transportName': 'multicast-udp-tibrv://;239.69.69.69',
         #                  'transportProperties': {'busDescription': 'APP FX prices diffusion',
         #                                          'primaryApplication': {'color': 'e8a25d',
         #                                                                 'name': 'APP'}}}]}
@@ -1133,7 +1133,7 @@ class scorpiusRVRDNetworkTest:
         
         ## LINK MULTICAST ENDPOINT TO MULTICAST TRANSPORT (ooOO)
         
-        linkParams = {"SEPID": ramulticastSourceEndpoint1, "TEPID": 0, "transportID": transportID}
+        linkParams = {"SEPID": multicastSourceEndpoint1, "TEPID": 0, "transportID": transportID}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/links/create', params=linkParams);
         
         linkParams = {"SEPID": ramulticastSourceEndpoint2, "TEPID": 0, "transportID": transportID}

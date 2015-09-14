@@ -30,7 +30,7 @@ class sagittariusRVDsTest:
         network = {
             'sip': ['String', '192.168.34.0'],
             'smask': ['String', '255.255.255.0'],
-            'ratype': ['String', 'sname'],
+            'ratype': ['String', 'LAN'],
             'sname': ['String', 'Sagittarius Lan 2'],
             'raname': ['String', "Sagittarius LAN RA"],
             'ramulticast':['String', "NOLIMIT"]
@@ -112,7 +112,7 @@ class sagittariusRVDsTest:
         network = {
             'sip': ['String', '192.168.34.0'],
             'smask': ['String', '255.255.255.0'],
-            'ratype': ['String', 'sname'],
+            'ratype': ['String', 'LAN'],
             'sname': ['String', 'Sagittarius Lan 2'],
             'raname': ['String', "Sagittarius LAN RA"],
             'ramulticast':['String', "NOLIMIT"]
@@ -193,7 +193,7 @@ class sagittariusRVDsTest:
         network = {
             'sip': ['String', '192.168.35.0'],
             'smask': ['String', '255.255.255.0'],
-            'ratype': ['String', 'sname'],
+            'ratype': ['String', 'LAN'],
             'sname': ['String', 'Sagittarius Lan 3'],
             'raname': ['String', "Sagittarius LAN RA"],
             'ramulticast':['String', "NOLIMIT"]
@@ -274,7 +274,7 @@ class sagittariusRVDsTest:
         network = {
             'sip': ['String', '192.168.35.0'],
             'smask': ['String', '255.255.255.0'],
-            'ratype': ['String', 'sname'],
+            'ratype': ['String', 'LAN'],
             'sname': ['String', 'Sagittarius Lan 3'],
             'raname': ['String', "Sagittarius LAN RA"],
             'ramulticast':['String', "NOLIMIT"]
@@ -354,7 +354,7 @@ class sagittariusRVDsTest:
         network = {
             'sip': ['String', '192.168.36.0'],
             'smask': ['String', '255.255.255.0'],
-            'ratype': ['String', 'sname'],
+            'ratype': ['String', 'LAN'],
             'sname': ['String', 'Sagittarius Lan 4'],
             'raname': ['String', "Sagittarius LAN RA"],
             'ramulticast':['String', "NOLIMIT"]
@@ -438,7 +438,7 @@ class sagittariusRVDsTest:
         network = {
             'sip': ['String', '192.168.36.0'],
             'smask': ['String', '255.255.255.0'],
-            'ratype': ['String', 'sname'],
+            'ratype': ['String', 'LAN'],
             'sname': ['String', 'Sagittarius Lan 4'],
             'raname': ['String', "Sagittarius LAN RA"],
             'ramulticast':['String', "NOLIMIT"]
@@ -541,7 +541,7 @@ class sagittariusRVDsTest:
         network = {
             'sip': ['String', '192.168.39.0'],
             'smask': ['String', '255.255.255.0'],
-            'ratype': ['String', 'sname'],
+            'ratype': ['String', 'LAN'],
             'sname': ['String', 'Sagittarius Lan 5'],
             'raname': ['String', "Sagittarius LAN RA"],
             'ramulticast':['String', "NOLIMIT"]
@@ -615,7 +615,7 @@ class sagittariusRVDsTest:
         network = {
             'sip': ['String', '192.168.39.0'],
             'smask': ['String', '255.255.255.0'],
-            'ratype': ['String', 'sname'],
+            'ratype': ['String', 'LAN'],
             'sname': ['String', 'Sagittarius Lan 5'],
             'raname': ['String', "Sagittarius LAN RA"],
             'ramulticast':['String', "NOLIMIT"]

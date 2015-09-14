@@ -7,7 +7,7 @@ class scorpiusRVDsTest:
         self.url = srvurl
 
     def test(self):
-        ## CREATE sname RVD APP6969 RVD 21
+        ## CREATE LAN RVD APP6969 RVD 21
         containerParams = {'primaryAdminURL':'http://app6969rvd21.lab02.dev.dekatonshivr.echinopsii.net:7580', 'primaryAdminGateName':'webadmingate.app6969rvd21'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/create', params=containerParams)
         containerID = r.json().get('containerID')
@@ -30,9 +30,9 @@ class scorpiusRVDsTest:
         network = {
             'sip':['String','192.168.42.0'],
             'smask':['String','255.255.255.0'],
-            'ratype':['String','sname'],
-            'sname':['String','Scorpius sname 3'],
-            'raname': ['String', "Scorpius sname RA"],
+            'ratype':['String','LAN'],
+            'sname':['String','Scorpius Lan 3'],
+            'raname': ['String', "Scorpius LAN RA"],
             'ramulticast': ['String', "NOLIMIT"]
         }
         containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
@@ -47,7 +47,7 @@ class scorpiusRVDsTest:
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
         
         
-        ## ADD A GATE TO sname APP6969 RVD 21
+        ## ADD A GATE TO LAN APP6969 RVD 21
         gateParams = {"URL":"http://app6969rvd21.lab02.dev.dekatonshivr.echinopsii.net:7500", "name":"rvdgate.app6969rvd21", "containerID":containerID, "isPrimaryAdmin":False}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/gates/create', params=gateParams)
         
@@ -66,7 +66,7 @@ class scorpiusRVDsTest:
         
         
         ## ADD ENDPOINT TO PREVIOUS NODE
-        endpointParams = {"endpointURL":"ramulticast-udp-tibrv://app6969rvd21.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969", "parentNodeID":nodeID}
+        endpointParams = {"endpointURL":"multicast-udp-tibrv://app6969rvd21.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969", "parentNodeID":nodeID}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/create', params=endpointParams)
         endpointID = r.json().get('endpointID')
         
@@ -76,7 +76,7 @@ class scorpiusRVDsTest:
         
         
         ## LINK ENDPOINT TO ramulticast TRANSPORT
-        transportParams = {"name": "ramulticast-udp-tibrv://Scorpius sname RA;239.69.69.69"}
+        transportParams = {"name": "multicast-udp-tibrv://Scorpius LAN RA;239.69.69.69"}
         ## if the transport already exist according the name the rest service return the existing transport
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/transports/create', params=transportParams)
         transportID = r.json().get('transportID')
@@ -89,7 +89,7 @@ class scorpiusRVDsTest:
         
         
         
-        ## CREATE sname RVD APP6969 RVD 22
+        ## CREATE LAN RVD APP6969 RVD 22
         containerParams = {'primaryAdminURL':'http://app6969rvd22.lab02.dev.dekatonshivr.echinopsii.net:7580', 'primaryAdminGateName':'webadmingate.app6969rvd22'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/create', params=containerParams)
         containerID = r.json().get('containerID')
@@ -112,9 +112,9 @@ class scorpiusRVDsTest:
         network = {
             'sip':['String','192.168.42.0'],
             'smask':['String','255.255.255.0'],
-            'ratype':['String','sname'],
-            'sname':['String','Scorpius sname 3'],
-            'raname': ['String', "Scorpius sname RA"],
+            'ratype':['String','LAN'],
+            'sname':['String','Scorpius Lan 3'],
+            'raname': ['String', "Scorpius LAN RA"],
             'ramulticast': ['String', "NOLIMIT"]
         }
         containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
@@ -129,7 +129,7 @@ class scorpiusRVDsTest:
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
         
         
-        ## ADD A GATE TO sname APP6969 RVD 22
+        ## ADD A GATE TO LAN APP6969 RVD 22
         gateParams = {"URL":"http://app6969rvd22.lab02.dev.dekatonshivr.echinopsii.net:7500", "name":"rvdgate.app6969rvd22", "containerID":containerID, "isPrimaryAdmin":False}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/gates/create', params=gateParams)
         
@@ -148,7 +148,7 @@ class scorpiusRVDsTest:
         
         
         ## ADD ENDPOINT TO PREVIOUS NODE
-        endpointParams = {"endpointURL":"ramulticast-udp-tibrv://app6969rvd22.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969", "parentNodeID":nodeID}
+        endpointParams = {"endpointURL":"multicast-udp-tibrv://app6969rvd22.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969", "parentNodeID":nodeID}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/create', params=endpointParams)
         endpointID = r.json().get('endpointID')
         
@@ -157,7 +157,7 @@ class scorpiusRVDsTest:
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
         
-        ## LINK ENDPOINT TO ramulticast TRANSPORT
+        ## LINK ENDPOINT TO multicast TRANSPORT
         linkParams = {"SEPID":endpointID,"TEPID":0,"transportID":transportID}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/links/create', params=linkParams);
         
@@ -166,7 +166,7 @@ class scorpiusRVDsTest:
         
         
         
-        ## CREATE sname RVD APP6969 RVD 23
+        ## CREATE LAN RVD APP6969 RVD 23
         containerParams = {'primaryAdminURL':'http://app6969rvd23.lab02.dev.dekatonshivr.echinopsii.net:7580', 'primaryAdminGateName':'webadmingate.app6969rvd23'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/create', params=containerParams)
         containerID = r.json().get('containerID')
@@ -189,9 +189,9 @@ class scorpiusRVDsTest:
         network = {
             'sip':['String','192.168.44.0'],
             'smask':['String','255.255.255.0'],
-            'ratype':['String','sname'],
-            'sname':['String','Scorpius sname 4'],
-            'raname': ['String', "Scorpius sname RA"],
+            'ratype':['String','LAN'],
+            'sname':['String','Scorpius Lan 4'],
+            'raname': ['String', "Scorpius LAN RA"],
             'ramulticast': ['String', "NOLIMIT"]
         }
         containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
@@ -206,7 +206,7 @@ class scorpiusRVDsTest:
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
         
         
-        ## ADD A GATE TO sname APP6969 RVD 23
+        ## ADD A GATE TO LAN APP6969 RVD 23
         gateParams = {"URL":"http://app6969rvd23.lab02.dev.dekatonshivr.echinopsii.net:7500", "name":"rvdgate.app6969rvd23", "containerID":containerID, "isPrimaryAdmin":False}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/gates/create', params=gateParams)
         
@@ -225,7 +225,7 @@ class scorpiusRVDsTest:
         
         
         ## ADD ENDPOINT TO PREVIOUS NODE
-        endpointParams = {"endpointURL":"ramulticast-udp-tibrv://app6969rvd23.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969", "parentNodeID":nodeID}
+        endpointParams = {"endpointURL":"multicast-udp-tibrv://app6969rvd23.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969", "parentNodeID":nodeID}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/create', params=endpointParams)
         endpointID = r.json().get('endpointID')
         
@@ -235,7 +235,7 @@ class scorpiusRVDsTest:
         
         
         ## LINK ENDPOINT TO ramulticast TRANSPORT
-        transportParams = {"name": "ramulticast-udp-tibrv://Scorpius sname RA;239.69.69.69"}
+        transportParams = {"name": "multicast-udp-tibrv://Scorpius LAN RA;239.69.69.69"}
         ## if the transport already exist according the name the rest service return the existing transport
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/transports/create', params=transportParams)
         transportID = r.json().get('transportID')
@@ -248,7 +248,7 @@ class scorpiusRVDsTest:
         
         
         
-        ## CREATE sname RVD APP6969 RVD 24
+        ## CREATE LAN RVD APP6969 RVD 24
         containerParams = {'primaryAdminURL':'http://app6969rvd24.lab02.dev.dekatonshivr.echinopsii.net:7580', 'primaryAdminGateName':'webadmingate.app6969rvd24'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/create', params=containerParams)
         containerID = r.json().get('containerID')
@@ -271,9 +271,9 @@ class scorpiusRVDsTest:
         network = {
             'sip':['String','192.168.44.0'],
             'smask':['String','255.255.255.0'],
-            'ratype':['String','sname'],
-            'sname':['String','Scorpius sname 4'],
-            'raname': ['String', "Scorpius sname RA"],
+            'ratype':['String','LAN'],
+            'sname':['String','Scorpius Lan 4'],
+            'raname': ['String', "Scorpius LAN RA"],
             'ramulticast': ['String', "NOLIMIT"]
         }
         containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
@@ -288,11 +288,11 @@ class scorpiusRVDsTest:
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
         
         
-        ## ADD A GATE TO sname APP6969 RVD 24
+        ## ADD A GATE TO LAN APP6969 RVD 24
         gateParams = {"URL":"http://app6969rvd24.lab02.dev.dekatonshivr.echinopsii.net:7500", "name":"rvdgate.app6969rvd24", "containerID":containerID, "isPrimaryAdmin":False}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/gates/create', params=gateParams)
         
-        ## ADD A NODE TO sname APP6969 RVD 24
+        ## ADD A NODE TO LAN APP6969 RVD 24
         nodeParams = {"name":"APP6969.RVD24", "containerID":containerID, "parentNodeID":0}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/create', params=nodeParams)
         nodeID = r.json().get('nodeID')
@@ -308,7 +308,7 @@ class scorpiusRVDsTest:
         
         
         ## ADD ENDPOINT TO PREVIOUS NODE
-        endpointParams = {"endpointURL":"ramulticast-udp-tibrv://app6969rvd24.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969", "parentNodeID":nodeID}
+        endpointParams = {"endpointURL":"multicast-udp-tibrv://app6969rvd24.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969", "parentNodeID":nodeID}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/create', params=endpointParams)
         endpointID = r.json().get('endpointID')
         
@@ -323,7 +323,7 @@ class scorpiusRVDsTest:
         
         
         
-        ## CREATE sname RVD BPP6669 RVD 21
+        ## CREATE LAN RVD BPP6669 RVD 21
         containerParams = {'primaryAdminURL':'http://bpp6669rvd21.lab02.dev.dekatonshivr.echinopsii.net:7580', 'primaryAdminGateName':'webadmingate.bpp6669rvd21'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/create', params=containerParams)
         containerID = r.json().get('containerID')
@@ -345,9 +345,9 @@ class scorpiusRVDsTest:
         network = {
             'sip':['String','192.168.47.0'],
             'smask':['String','255.255.255.0'],
-            'ratype':['String','sname'],
-            'sname':['String','Scorpius sname 5'],
-            'raname': ['String', "Scorpius sname RA"],
+            'ratype':['String','LAN'],
+            'sname':['String','Scorpius Lan 5'],
+            'raname': ['String', "Scorpius LAN RA"],
             'ramulticast': ['String', "NOLIMIT"]
         }
         containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
@@ -361,11 +361,11 @@ class scorpiusRVDsTest:
         containerProperty = {'ID':containerID,'propertyName':'Server','propertyValue':json.dumps(server),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
         
-        ## ADD A GATE TO sname BPP6669 RVD 21
+        ## ADD A GATE TO LAN BPP6669 RVD 21
         gateParams = {"URL":"http://bpp6669rvd21.lab02.dev.dekatonshivr.echinopsii.net:7500", "name":"rvdgate.bpp6669rvd21", "containerID":containerID, "isPrimaryAdmin":False}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/gates/create', params=gateParams)
         
-        ## ADD A NODE TO sname BPP6669 RVD 21
+        ## ADD A NODE TO LAN BPP6669 RVD 21
         nodeParams = {"name":"BPP6669.RVD21", "containerID":containerID, "parentNodeID":0}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/create', params=nodeParams)
         nodeID = r.json().get('nodeID')
@@ -379,7 +379,7 @@ class scorpiusRVDsTest:
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/update/properties/add', params=nodeProperty)
         
         ## ADD ENDPOINT TO PREVIOUS NODE
-        endpointParams = {"endpointURL":"ramulticast-udp-tibrv://bpp6669rvd21.lab02.dev.dekatonshivr.echinopsii.net/;239.69.66.69:6669", "parentNodeID":nodeID}
+        endpointParams = {"endpointURL":"multicast-udp-tibrv://bpp6669rvd21.lab02.dev.dekatonshivr.echinopsii.net/;239.69.66.69:6669", "parentNodeID":nodeID}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/create', params=endpointParams)
         endpointID = r.json().get('endpointID')
         
@@ -388,7 +388,7 @@ class scorpiusRVDsTest:
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
         ## LINK ENDPOINT TO ramulticast TRANSPORT
-        transportParams = {"name": "ramulticast-udp-tibrv://Scorpius sname RA;239.69.66.69"}
+        transportParams = {"name": "multicast-udp-tibrv://Scorpius LAN RA;239.69.66.69"}
         ## if the transport already exist according the name the rest service return the existing transport
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/transports/create', params=transportParams)
         transportID = r.json().get('transportID')
@@ -406,7 +406,7 @@ class scorpiusRVDsTest:
         
         
         
-        ## CREATE sname RVD BPP6669 RVD 22
+        ## CREATE LAN RVD BPP6669 RVD 22
         containerParams = {'primaryAdminURL':'http://bpp6669rvd22.lab02.dev.dekatonshivr.echinopsii.net:7580', 'primaryAdminGateName':'webadmingate.bpp6669rvd22'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/create', params=containerParams)
         containerID = r.json().get('containerID')
@@ -428,9 +428,9 @@ class scorpiusRVDsTest:
         network = {
             'sip':['String','192.168.47.0'],
             'smask':['String','255.255.255.0'],
-            'ratype':['String','sname'],
-            'sname':['String','Scorpius sname 5'],
-            'raname': ['String', "Scorpius sname RA"],
+            'ratype':['String','LAN'],
+            'sname':['String','Scorpius Lan 5'],
+            'raname': ['String', "Scorpius LAN RA"],
             'ramulticast': ['String', "NOLIMIT"]
         }
         containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
@@ -444,11 +444,11 @@ class scorpiusRVDsTest:
         containerProperty = {'ID':containerID,'propertyName':'Server','propertyValue':json.dumps(server),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
         
-        ## ADD A GATE TO sname BPP6669 RVD 22
+        ## ADD A GATE TO LAN BPP6669 RVD 22
         gateParams = {"URL":"http://bpp6669rvd22.lab02.dev.dekatonshivr.echinopsii.net:7500", "name":"rvdgate.bpp6669rvd22", "containerID":containerID, "isPrimaryAdmin":False}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/gates/create', params=gateParams)
         
-        ## ADD A NODE TO sname BPP6669 RVD 22
+        ## ADD A NODE TO LAN BPP6669 RVD 22
         nodeParams = {"name":"BPP6669.RVD22", "containerID":containerID, "parentNodeID":0}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/create', params=nodeParams)
         nodeID = r.json().get('nodeID')
@@ -462,7 +462,7 @@ class scorpiusRVDsTest:
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/update/properties/add', params=nodeProperty)
         
         ## ADD ENDPOINT TO PREVIOUS NODE
-        endpointParams = {"endpointURL":"ramulticast-udp-tibrv://bpp6669rvd22.lab02.dev.dekatonshivr.echinopsii.net/;239.69.66.69:6669", "parentNodeID":nodeID}
+        endpointParams = {"endpointURL":"multicast-udp-tibrv://bpp6669rvd22.lab02.dev.dekatonshivr.echinopsii.net/;239.69.66.69:6669", "parentNodeID":nodeID}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/create', params=endpointParams)
         endpointID = r.json().get('endpointID')
         
@@ -471,7 +471,7 @@ class scorpiusRVDsTest:
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
         ## LINK ENDPOINT TO ramulticast TRANSPORT
-        transportParams = {"name": "ramulticast-udp-tibrv://Scorpius sname RA;239.69.66.69"}
+        transportParams = {"name": "multicast-udp-tibrv://Scorpius LAN RA;239.69.66.69"}
         ## if the transport already exist according the name the rest service return the existing transport
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/transports/create', params=transportParams)
         transportID = r.json().get('transportID')
@@ -479,7 +479,7 @@ class scorpiusRVDsTest:
         linkParams = {"SEPID":endpointID,"TEPID":0,"transportID":transportID}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/links/create', params=linkParams)
         
-        ## ADD A NODE TO sname BPP6669 RVD 22
+        ## ADD A NODE TO LAN BPP6669 RVD 22
         nodeParams = {"name":"BRDG-6969-6669.RVD22", "containerID":containerID, "parentNodeID":0}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/create', params=nodeParams)
         nodeID = r.json().get('nodeID')
@@ -493,7 +493,7 @@ class scorpiusRVDsTest:
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/update/properties/add', params=nodeProperty)
         
         ## ADD ENDPOINT TO PREVIOUS NODE
-        endpointParams = {"endpointURL":"ramulticast-udp-tibrv://bpp6669rvd22.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969", "parentNodeID":nodeID}
+        endpointParams = {"endpointURL":"multicast-udp-tibrv://bpp6669rvd22.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969", "parentNodeID":nodeID}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/create', params=endpointParams)
         endpointID = r.json().get('endpointID')
         
@@ -502,7 +502,7 @@ class scorpiusRVDsTest:
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
         ## LINK ENDPOINT TO ramulticast TRANSPORT
-        transportParams = {"name": "ramulticast-udp-tibrv://Scorpius sname RA;239.69.69.69"}
+        transportParams = {"name": "multicast-udp-tibrv://Scorpius LAN RA;239.69.69.69"}
         ## if the transport already exist according the name the rest service return the existing transport
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/transports/create', params=transportParams)
         transportID = r.json().get('transportID')
@@ -511,7 +511,7 @@ class scorpiusRVDsTest:
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/links/create', params=linkParams)
         
         
-        ## CREATE sname RVD BPP6669 RVD 23
+        ## CREATE LAN RVD BPP6669 RVD 23
         containerParams = {'primaryAdminURL':'http://bpp6669rvd23.lab02.dev.dekatonshivr.echinopsii.net:7580', 'primaryAdminGateName':'webadmingate.bpp6669rvd23'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/create', params=containerParams)
         containerID = r.json().get('containerID')
@@ -533,9 +533,9 @@ class scorpiusRVDsTest:
         network = {
             'sip':['String','192.168.48.0'],
             'smask':['String','255.255.255.0'],
-            'ratype':['String','sname'],
-            'sname':['String','Scorpius sname 6'],
-            'raname': ['String', "Scorpius sname RA"],
+            'ratype':['String','LAN'],
+            'sname':['String','Scorpius Lan 6'],
+            'raname': ['String', "Scorpius LAN RA"],
             'ramulticast': ['String', "NOLIMIT"]
         }
         containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
@@ -549,11 +549,11 @@ class scorpiusRVDsTest:
         containerProperty = {'ID':containerID,'propertyName':'Server','propertyValue':json.dumps(server),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
         
-        ## ADD A GATE TO sname BPP6669 RVD 23
+        ## ADD A GATE TO LAN BPP6669 RVD 23
         gateParams = {"URL":"http://bpp6669rvd23.lab02.dev.dekatonshivr.echinopsii.net:7500", "name":"rvdgate.bpp6669rvd23", "containerID":containerID, "isPrimaryAdmin":False}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/gates/create', params=gateParams)
         
-        ## ADD A NODE TO sname BPP6669 RVD 23
+        ## ADD A NODE TO LAN BPP6669 RVD 23
         nodeParams = {"name":"BPP6669.RVD23", "containerID":containerID, "parentNodeID":0}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/create', params=nodeParams)
         nodeID = r.json().get('nodeID')
@@ -567,7 +567,7 @@ class scorpiusRVDsTest:
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/update/properties/add', params=nodeProperty)
         
         ## ADD ENDPOINT TO PREVIOUS NODE
-        endpointParams = {"endpointURL":"ramulticast-udp-tibrv://bpp6669rvd23.lab02.dev.dekatonshivr.echinopsii.net/;239.69.66.69:6669", "parentNodeID":nodeID}
+        endpointParams = {"endpointURL":"multicast-udp-tibrv://bpp6669rvd23.lab02.dev.dekatonshivr.echinopsii.net/;239.69.66.69:6669", "parentNodeID":nodeID}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/create', params=endpointParams)
         endpointID = r.json().get('endpointID')
         
@@ -576,7 +576,7 @@ class scorpiusRVDsTest:
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
         ## LINK ENDPOINT TO ramulticast TRANSPORT
-        transportParams = {"name": "ramulticast-udp-tibrv://Scorpius sname RA;239.69.66.69"}
+        transportParams = {"name": "multicast-udp-tibrv://Scorpius LAN RA;239.69.66.69"}
         ## if the transport already exist according the name the rest service return the existing transport
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/transports/create', params=transportParams)
         transportID = r.json().get('transportID')
@@ -586,7 +586,7 @@ class scorpiusRVDsTest:
         
         
         
-        ## CREATE sname RVD BPP6669 RVD 24
+        ## CREATE LAN RVD BPP6669 RVD 24
         containerParams = {'primaryAdminURL':'http://bpp6669rvd24.lab02.dev.dekatonshivr.echinopsii.net:7580', 'primaryAdminGateName':'webadmingate.bpp6669rvd24'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/create', params=containerParams)
         containerID = r.json().get('containerID')
@@ -608,9 +608,9 @@ class scorpiusRVDsTest:
         network = {
             'sip':['String','192.168.48.0'],
             'smask':['String','255.255.255.0'],
-            'ratype':['String','sname'],
-            'sname':['String','Scorpius sname 6'],
-            'raname': ['String', "Scorpius sname RA"],
+            'ratype':['String','LAN'],
+            'sname':['String','Scorpius Lan 6'],
+            'raname': ['String', "Scorpius LAN RA"],
             'ramulticast': ['String', "NOLIMIT"]
         }
         containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
@@ -624,11 +624,11 @@ class scorpiusRVDsTest:
         containerProperty = {'ID':containerID,'propertyName':'Server','propertyValue':json.dumps(server),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
         
-        ## ADD A GATE TO sname BPP6669 RVD 24
+        ## ADD A GATE TO LAN BPP6669 RVD 24
         gateParams = {"URL":"http://bpp6669rvd24.lab02.dev.dekatonshivr.echinopsii.net:7500", "name":"rvdgate.bpp6669rvd24", "containerID":containerID, "isPrimaryAdmin":False}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/gates/create', params=gateParams)
         
-        ## ADD A NODE TO sname BPP6669 RVD 24
+        ## ADD A NODE TO LAN BPP6669 RVD 24
         nodeParams = {"name":"BPP6669.RVD24", "containerID":containerID, "parentNodeID":0}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/create', params=nodeParams)
         nodeID = r.json().get('nodeID')
@@ -642,7 +642,7 @@ class scorpiusRVDsTest:
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/update/properties/add', params=nodeProperty)
         
         ## ADD ENDPOINT TO PREVIOUS NODE
-        endpointParams = {"endpointURL":"ramulticast-udp-tibrv://bpp6669rvd24.lab02.dev.dekatonshivr.echinopsii.net/;239.69.66.69:6669", "parentNodeID":nodeID}
+        endpointParams = {"endpointURL":"multicast-udp-tibrv://bpp6669rvd24.lab02.dev.dekatonshivr.echinopsii.net/;239.69.66.69:6669", "parentNodeID":nodeID}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/create', params=endpointParams)
         endpointID = r.json().get('endpointID')
         
@@ -651,7 +651,7 @@ class scorpiusRVDsTest:
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
         ## LINK ENDPOINT TO ramulticast TRANSPORT
-        transportParams = {"name": "ramulticast-udp-tibrv://Scorpius sname RA;239.69.66.69"}
+        transportParams = {"name": "multicast-udp-tibrv://Scorpius LAN RA;239.69.66.69"}
         ## if the transport already exist according the name the rest service return the existing transport
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/transports/create', params=transportParams)
         transportID = r.json().get('transportID')
@@ -659,7 +659,7 @@ class scorpiusRVDsTest:
         linkParams = {"SEPID":endpointID,"TEPID":0,"transportID":transportID}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/links/create', params=linkParams)
         
-        ## ADD A NODE TO sname BPP6669 RVD 24
+        ## ADD A NODE TO LAN BPP6669 RVD 24
         nodeParams = {"name":"BRDG-6969-6669.RVD24", "containerID":containerID, "parentNodeID":0}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/create', params=nodeParams)
         nodeID = r.json().get('nodeID')
@@ -673,7 +673,7 @@ class scorpiusRVDsTest:
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/update/properties/add', params=nodeProperty)
         
         ## ADD ENDPOINT TO PREVIOUS NODE
-        endpointParams = {"endpointURL":"ramulticast-udp-tibrv://bpp6669rvd24.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6669", "parentNodeID":nodeID}
+        endpointParams = {"endpointURL":"multicast-udp-tibrv://bpp6669rvd24.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6669", "parentNodeID":nodeID}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/create', params=endpointParams)
         endpointID = r.json().get('endpointID')
         
@@ -682,7 +682,7 @@ class scorpiusRVDsTest:
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
         ## LINK ENDPOINT TO ramulticast TRANSPORT
-        transportParams = {"name": "ramulticast-udp-tibrv://Scorpius sname RA;239.69.69.69"}
+        transportParams = {"name": "multicast-udp-tibrv://Scorpius LAN RA;239.69.69.69"}
         ## if the transport already exist according the name the rest service return the existing transport
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/transports/create', params=transportParams)
         transportID = r.json().get('transportID')
