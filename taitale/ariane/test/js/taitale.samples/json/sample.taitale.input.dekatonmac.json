@@ -18,38 +18,41 @@
       "containerProperties":{
         "Network":[
           {
-            "rarea":"DekatonshivrVPN@Mez",
-            "multicast":"FILTERED",
-            "type":"VPN",
+            "raname":"DekatonshivrVPN@Mez",
+            "ramulticast":"FILTERED",
+            "ratype":"VPN",
             "subnets":[
               {
-                "lan":"Dekatonshivr VPN",
-                "subnetmask":"255.255.255.0",
-                "subnetip":"10.8.0.0"
+                "sname":"Dekatonshivr VPN",
+                "smask":"255.255.255.0",
+                "sip":"10.8.0.0",
+                "isdefault": false
               }
             ]
           },
           {
-            "rarea":"Numericable@Mez",
-            "multicast":"NOLIMIT",
-            "type":"LAN",
+            "raname":"Free@Mez",
+            "ramulticast":"NOLIMIT",
+            "ratype":"LAN",
             "subnets":[
               {
-                "lan":"Numericable",
-                "subnetmask":"255.255.255.0",
-                "subnetip":"192.168.1.0"
+                "sname":"Free",
+                "smask":"255.255.255.0",
+                "sip":"192.168.1.0",
+                "isdefault": true
               }
             ]
           },
           {
-            "rarea":"dekatonmac.local",
-            "multicast":"NOLIMIT",
-            "type":"VIRT",
+            "raname":"dekatonmac.local",
+            "ramulticast":"NOLIMIT",
+            "ratype":"VIRT",
             "subnets":[
               {
-                "lan":"dekatonmac.loopback",
-                "subnetmask":"255.0.0.0",
-                "subnetip":"127.0.0.0"
+                "sname":"dekatonmac.loopback",
+                "smask":"255.0.0.0",
+                "sip":"127.0.0.0",
+                "isdefault": false
               }
             ]
           }

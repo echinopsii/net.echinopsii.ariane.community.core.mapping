@@ -59,7 +59,7 @@ define(
 
             //noinspection JSUnresolvedVariable
             var tmpDatacenter = (this.properties!=null) ? this.properties.Datacenter : null,
-                tmpNetwork    = (this.properties!=null) ? ((this.properties.Network.constructor === Array) ? this.properties.Network[0] : this.properties.Network ): null;
+                tmpNetwork    = (this.properties!=null) ? this.properties.Network : null;
             if (tmpDatacenter==null)
                 tmpDatacenter = {
                     pname: "SOME_COOL_PLACE",
@@ -71,26 +71,55 @@ define(
                 };
             if (tmpNetwork==null)
                 tmpNetwork = {
-                    ratype: "EXTERNAL",
+                    ratype: "LAN",
                     raname: "WORLD WIDE INTERNET",
                     ramulticast: "FILTERED",
                     sname: "NOT MY CONCERN",
                     sip: "NOT MY CONCERN",
                     smask: "NOT MY CONCERN"
                 };
-            this.localisation = prototypes_.create(prototypes_.standaloneNetwork, {
-                plocation:    prototypes_.create(prototypes_.physicalLocation, tmpDatacenter),
-                rarea: prototypes_.create(prototypes_.simpleRoutingArea, {
-                    raname: tmpNetwork.raname,
-                    ratype: tmpNetwork.ratype,
-                    ramulticast: tmpNetwork.ramulticast
-                }),
-                subnet: prototypes_.create(prototypes_.simpleSubnet, {
-                    sname: tmpNetwork.sname,
-                    sip: tmpNetwork.sip,
-                    smask: tmpNetwork.smask
+
+            if (tmpNetwork.constructor !== Array) {
+                this.localisation = prototypes_.create(prototypes_.standaloneNetwork, {
+                    plocation:    prototypes_.create(prototypes_.physicalLocation, tmpDatacenter),
+                    rarea: prototypes_.create(prototypes_.simpleRoutingArea, {
+                        raname: tmpNetwork.raname,
+                        ratype: tmpNetwork.ratype,
+                        ramulticast: tmpNetwork.ramulticast
+                    }),
+                    subnet: prototypes_.create(prototypes_.simpleSubnet, {
+                        sname: tmpNetwork.sname,
+                        sip: tmpNetwork.sip,
+                        smask: tmpNetwork.smask
+                    })
+                });
+            } else {
+                var i, ii, j, jj;
+                var rareas = [];
+                for (i = 0, ii = tmpNetwork.length ; i < ii; i++) {
+                    var rarea = tmpNetwork[i];
+                    var subnets = [];
+                    for (j = 0, jj = rarea.subnets.length; j < jj; j++) {
+                        var subnet = rarea.subnets[j];
+                        subnets.push(prototypes_.create(prototypes_.subnet, {
+                            sname: subnet.sname,
+                            sip: subnet.sip,
+                            smask: subnet.smask,
+                            isdefault: subnet.isdefault
+                        }))
+                    }
+                    rareas.push(prototypes_.create(prototypes_.routingArea, {
+                        raname: rarea.raname,
+                        ratype: rarea.ratype,
+                        ramulticast: rarea.ramulticast,
+                        subnets: subnets
+                    }))
+                }
+                this.localisation = prototypes_.create(prototypes_.multipleNetwork, {
+                    plocation: prototypes_.create(prototypes_.physicalLocation, tmpDatacenter),
+                    rareas: rareas
                 })
-            });
+            }
 
             this.layoutData        = null;
 

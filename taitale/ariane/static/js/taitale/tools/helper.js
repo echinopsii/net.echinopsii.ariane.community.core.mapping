@@ -35,6 +35,20 @@ define(
 
             var msgsToGrowl = sharedMsgToGrowl;
 
+            this.equalSortedArray = function(a, b) {
+                if (a === b) return true;
+                if (a == null || b == null) return false;
+                if (a.length != b.length) return false;
+
+                a.sort();
+                b.sort();
+
+                for (var i = 0; i < a.length; ++i) {
+                    if (a[i] !== b[i]) return false;
+                }
+                return true;
+            };
+
             this.fitText = function (fontSize, containerWidth, compressor, min) {
                 var maxFontSize = fontSize.split("px")[0],
                     minFontSize = min,
