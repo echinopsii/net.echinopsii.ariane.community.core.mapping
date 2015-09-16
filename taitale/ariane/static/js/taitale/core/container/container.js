@@ -44,7 +44,7 @@ define(
             //noinspection JSUnresolvedVariable
             this.gateURI      = JSONContainerDesc.containerGateURI;
             //noinspection JSUnresolvedVariable
-            this.name         = JSONContainerDesc.name;
+            this.name         = JSONContainerDesc.containerName;
             if (this.name == null) {
                 this.name  = this.gateURI.split("://")[1].split(":")[0];
                 if (!helper_.isValidIPAddress(this.name)) {
@@ -62,7 +62,7 @@ define(
                 tmpNetwork    = (this.properties!=null) ? this.properties.Network : null;
             if (tmpDatacenter==null)
                 tmpDatacenter = {
-                    pname: "SOME_COOL_PLACE",
+                    pname: "THE GLOBAL INTERNET",
                     address: "probably somewhere on earth",
                     town: "probably somewhere on earth",
                     country: "probably somewhere on earth",
@@ -71,8 +71,8 @@ define(
                 };
             if (tmpNetwork==null)
                 tmpNetwork = {
-                    ratype: "LAN",
-                    raname: "WORLD WIDE INTERNET",
+                    ratype: "GLOBAL INTERNET",
+                    raname: "GLOBAL INTERNET",
                     ramulticast: "FILTERED",
                     sname: "NOT MY CONCERN",
                     sip: "NOT MY CONCERN",

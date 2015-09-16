@@ -1133,8 +1133,8 @@ define(
                         lBus.isInserted=true;
                     } else {
                         lBus.layoutData.busWeight++;
-                        lBus.layoutData.toUp = lBus.layoutData.toUp || curlan.layoutData.isConnectedToUpArea;
-                        lBus.layoutData.toDown = lBus.layoutData.toDown || curlan.layoutData.isConnectedToDownArea;
+                        lBus.layoutData.toUp = lBus.layoutData.toUp || curlan.layoutData.isConnectedToUpArea || curlan.layoutData.isConnectedToUpDC;
+                        lBus.layoutData.toDown = lBus.layoutData.toDown || curlan.layoutData.isConnectedToDownArea || curlan.layoutData.isConnectedToDownDC;
                     }
                     if (lBus.layoutData.toUp)
                         upMulticastL = true;
@@ -1147,18 +1147,19 @@ define(
                 if (!alreadyInserted){
                     // if not inserted create lan and insert it in the area mtx
                     if (curlan.layoutData.isConnectedInsideArea) {
-                        if (curlan.layoutData.isConnectedToUpArea && curlan.layoutData.isConnectedToDownArea) {
+                        if ((curlan.layoutData.isConnectedToUpArea || curlan.layoutData.isConnectedToUpDC) &&
+                            (curlan.layoutData.isConnectedToDownArea || curlan.layoutData.isConnectedToDownDC)) {
                             newInternalUDC = getNewInternalUpDownColumn();
                             rows[newInternalUDC][0] = {obj:curlan,type:LAN};
                             curlan.layoutData.areaMtxCoord = {x:0, y:newInternalUDC};
                             curlan.isInserted = true;
-                        } else if (curlan.layoutData.isConnectedToUpArea) {
+                        } else if (curlan.layoutData.isConnectedToUpArea || curlan.layoutData.isConnectedToUpDC) {
                             upColumn = getInternalUpColumn();
                             rows[upColumn][upInternalLine] = {obj:curlan,type:LAN};
                             rows[upColumn][upLine]=LOCKED;
                             curlan.layoutData.areaMtxCoord = {x:upInternalLine, y:upColumn};
                             curlan.isInserted = true;
-                        } else if (curlan.layoutData.isConnectedToDownArea) {
+                        } else if (curlan.layoutData.isConnectedToDownArea || curlan.layoutData.isConnectedToDownDC) {
                             downColumn = getInternalDownColumn();
                             rows[downColumn][downInternalLine] = {obj:curlan,type:LAN};
                             rows[downColumn][downLine]=LOCKED;
@@ -1171,17 +1172,18 @@ define(
                             curlan.isInserted = true;
                         }
                     } else {
-                        if (curlan.layoutData.isConnectedToUpArea && curlan.layoutData.isConnectedToDownArea) {
+                        if ((curlan.layoutData.isConnectedToUpArea || curlan.layoutData.isConnectedToUpDC) &&
+                            (curlan.layoutData.isConnectedToDownArea || curlan.layoutData.isConnectedToDownDC)) {
                             newUDC = getNewUpDownColumn();
                             rows[newUDC][0] = {obj:curlan,type:LAN};
                             curlan.layoutData.areaMtxCoord = {x:0, y:newUDC};
                             curlan.isInserted = true;
-                        } else if (curlan.layoutData.isConnectedToUpArea) {
+                        } else if (curlan.layoutData.isConnectedToUpArea || curlan.layoutData.isConnectedToUpDC) {
                             upColumn = getUpColumn();
                             rows[upColumn][upLine] = {obj:curlan,type:LAN};
                             curlan.layoutData.areaMtxCoord = {x:upLine, y:upColumn};
                             curlan.isInserted = true;
-                        } else if (curlan.layoutData.isConnectedToDownArea) {
+                        } else if (curlan.layoutData.isConnectedToDownArea || curlan.layoutData.isConnectedToDownDC) {
                             downColumn = getDownColumn();
                             rows[downColumn][downLine] = {obj:curlan,type:LAN};
                             curlan.layoutData.areaMtxCoord = {x:downLine, y:downColumn};

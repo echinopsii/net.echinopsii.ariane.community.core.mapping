@@ -226,8 +226,10 @@ define(
                             areaDef       = location.getArea(),
                             lanDef        = location.getLan();
 
-                        var isConnectedToUpArea    = false,
+                        var isConnectedToUpDC      = false,
+                            isConnectedToUpArea    = false,
                             isConnectedToUpLan     = false,
+                            isConnectedToDownDC    = false,
                             isConnectedToDownArea  = false,
                             isConnectedToDownLan   = false,
                             isConnectedToLeftDC    = false,
@@ -265,7 +267,7 @@ define(
                             else if (location.equalArea(linkedLocation) && lanDef.sname!=linkedLanDef.sname) {
                                 isConnectedInsideArea = true;
                             } else {
-                                if (lanDef.ratype!=linkedLanDef.ratype) {
+                                if (lanDef.dc==linkedLanDef.dc && lanDef.ratype!=linkedLanDef.ratype) {
                                     switch(lanDef.ratype) {
                                         case dic.networkType.WAN:
                                             if (linkedLanDef.ratype===dic.networkType.MAN || linkedLanDef.ratype===dic.networkType.LAN) {
@@ -292,16 +294,21 @@ define(
                                             break;
                                     }
                                 } else if (lanDef.dc!=linkedLanDef.dc) {
-                                    var linkedLng = parseFloat(linkedPLocationDef.gpsLng),
-                                        localLng  = parseFloat(datacenterDef.gpsLng);
-                                    if (linkedLng > localLng) {
-                                        isConnectedToLeftDC   = true;
-                                        isConnectedToLeftArea = true;
-                                        isConnectedToLeftLan  = true;
+                                    if (lanDef.dc === "THE GLOBAL INTERNET" || linkedLanDef.dc.pName === "THE GLOBAL INTERNET") {
+                                        if (lanDef.dc === "THE GLOBAL INTERNET") isConnectedToUpDC = true;
+                                        else isConnectedToDownDC = true;
                                     } else {
-                                        isConnectedToRightDC   = true;
-                                        isConnectedToRightArea = true;
-                                        isConnectedToRightLan  = true;
+                                        var linkedLng = parseFloat(linkedPLocationDef.gpsLng),
+                                            localLng  = parseFloat(datacenterDef.gpsLng);
+                                        if (linkedLng > localLng) {
+                                            isConnectedToLeftDC   = true;
+                                            isConnectedToLeftArea = true;
+                                            isConnectedToLeftLan  = true;
+                                        } else {
+                                            isConnectedToRightDC   = true;
+                                            isConnectedToRightArea = true;
+                                            isConnectedToRightLan  = true;
+                                        }
                                     }
                                 }
                             }
@@ -315,6 +322,7 @@ define(
                             {
                                 dc: dc, area: area, lan: lan,
                                 isConnectedToLeftDC: isConnectedToLeftDC, isConnectedToRightDC: isConnectedToRightDC,
+                                isConnectedToUpDC: isConnectedToUpDC, isConnectedToDownDC: isConnectedToDownDC,
                                 isConnectedToLeftArea: isConnectedToRightArea, isConnectedToRightArea: isConnectedToRightArea,
                                 isConnectedToLeftLan: isConnectedToLeftLan, isConnectedToRightLan: isConnectedToRightLan,
                                 isConnectedToUpArea: isConnectedToUpArea, isConnectedToDownArea:isConnectedToDownArea,
@@ -326,6 +334,7 @@ define(
                         lan.setLayoutData(
                             {
                                 isConnectedToLeftDC: isConnectedToLeftDC, isConnectedToRightDC: isConnectedToRightDC,
+                                isConnectedToUpDC: isConnectedToUpDC, isConnectedToDownDC: isConnectedToDownDC,
                                 isConnectedToLeftArea: isConnectedToRightArea, isConnectedToRightArea: isConnectedToRightArea,
                                 isConnectedToLeftLan: isConnectedToLeftLan, isConnectedToRightLan: isConnectedToRightLan,
                                 isConnectedToUpArea: isConnectedToUpArea, isConnectedToDownArea: isConnectedToDownArea,
@@ -350,34 +359,51 @@ define(
                             nbLines++;
                         }
 
+                        if (container.layoutData.dc.pName === "THE GLOBAL INTERNET" && nbLines==1) {
+                            rows[nbLines] = [];
+                            nbLines++;
+                        }
                         // in that case zone is a dc which contains areas that contains lans which finally contains the containers
                         var pivotDC         = container.layoutData.dc,
                             alreadyInserted = pivotDC.isInserted;
 
                         // if DC not inserted insert in the mtx
-                        if (!alreadyInserted){
-                            //pivotDC = layoutNtwRegistries.getDatacenterFromRegistry(geoDCLoc);
+                        var i, ii;
+                        if (pivotDC.pName === "THE GLOBAL INTERNET") {
+                            // Global internet zone is placed on bottom of NTW view
+                            if (alreadyInserted) {
+                                for (i = 0, ii = nbColumns; i < ii; i++) {
+                                    rows[1][i] = null
+                                }
+                            }
+                            var middleColumn = Math.floor(nbColumns/2);
+                            rows[1][middleColumn] = pivotDC;
+                            pivotDC.isInserted = true;
+                        } else {
+                            if (!alreadyInserted) {
+                                //pivotDC = layoutNtwRegistries.getDatacenterFromRegistry(geoDCLoc);
 
-                            // in that NTW view DC shares the same line (user story RVRD 01).
-                            // they are placed depending on their GPS longitude
-                            nbColumns++;
-                            for (var i=0, ii=nbColumns; i < ii; i++) {
-                                var tmpDC = rows[0][i];
-                                if (tmpDC != null) {
-                                    var tmpLng = parseFloat(tmpDC.getGeoDCLoc().gpsLng),
-                                        pvtLng = parseFloat(pivotDC.getGeoDCLoc().gpsLng);
-                                    if (tmpLng > pvtLng) {
-                                        rows[0][i]=pivotDC;
-                                        pivotDC.isInserted=true;
-                                        pivotDC=tmpDC;
+                                // in that NTW view DC shares the same line (user story RVRD 01).
+                                // they are placed depending on their GPS longitude
+                                nbColumns++;
+                                for (i = 0, ii = nbColumns; i < ii; i++) {
+                                    var tmpDC = rows[0][i];
+                                    if (tmpDC != null) {
+                                        var tmpLng = parseFloat(tmpDC.getGeoDCLoc().gpsLng),
+                                            pvtLng = parseFloat(pivotDC.getGeoDCLoc().gpsLng);
+                                        if (tmpLng > pvtLng) {
+                                            rows[0][i] = pivotDC;
+                                            pivotDC.isInserted = true;
+                                            pivotDC = tmpDC;
+                                        }
+                                        //DONT'T ASK : SOLVE A STRANGE BEHAVIOR ON FIREFOX
+                                        if (tmpLng > pvtLng) {
+                                            ;
+                                        }
+                                    } else {
+                                        rows[0][i] = pivotDC;
+                                        pivotDC.isInserted = true;
                                     }
-                                    //DONT'T ASK : SOLVE A STRANGE BEHAVIOR ON FIREFOX
-                                    if (tmpLng > pvtLng) {
-                                        ;
-                                    }
-                                } else {
-                                    rows[0][i]=pivotDC;
-                                    pivotDC.isInserted=true;
                                 }
                             }
                         }
@@ -399,6 +425,12 @@ define(
                 if (options.getLayout() === dic.mapLayout.NTWWW) {
                     for (i= 0, ii=nbColumns; i < ii; i++) {
                         rows[0][i].displayDC(display);
+                    }
+                    if (rows[1]!=null) {
+                        for (i= 0, ii=nbColumns; i < ii; i++) {
+                            if (rows[1][i]!=null)
+                                rows[1][i].displayDC(display);
+                        }
                     }
                 }
             };

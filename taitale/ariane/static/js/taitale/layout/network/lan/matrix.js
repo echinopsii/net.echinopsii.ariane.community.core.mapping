@@ -1002,16 +1002,17 @@ define(
                 var i, ii;
 
                 if (container.layoutData.isConnectedInsideLan) {
-                    if (container.layoutData.isConnectedToUpArea && container.layoutData.isConnectedToDownArea) {
+                    if ((container.layoutData.isConnectedToUpArea || container.layoutData.isConnectedToUpDC) &&
+                        (container.layoutData.isConnectedToDownDC || container.layoutData.isConnectedToDownArea)) {
                         newInternalUDC = getNewInternalUpDownColumn();
                         rows[newInternalUDC][0] = container;
                         container.layoutData.lanMtxCoord = {x:0, y:newInternalUDC}
-                    } else if (container.layoutData.isConnectedToUpArea) {
+                    } else if (container.layoutData.isConnectedToUpArea || container.layoutData.isConnectedToUpDC) {
                         upColumn = getInternalUpColumn();
                         rows[upColumn][upInternalLine] = container;
                         rows[upColumn][upLine]=LOCKED;
                         container.layoutData.lanMtxCoord = {x:upLine, y:upColumn}
-                    } else if (container.layoutData.isConnectedToDownArea) {
+                    } else if (container.layoutData.isConnectedToDownArea || container.layoutData.isConnectedToDownDC) {
                         downColumn = getInternalDownColumn();
                         rows[downColumn][downInternalLine] = container;
                         rows[downColumn][downLine]=LOCKED;
@@ -1022,15 +1023,16 @@ define(
                         container.layoutData.lanMtxCoord = {x:newInternalCoord.line, y:newInternalCoord.column}
                     }
                 } else {
-                    if (container.layoutData.isConnectedToUpArea && container.layoutData.isConnectedToDownArea) {
+                    if ((container.layoutData.isConnectedToUpArea || container.layoutData.isConnectedToUpDC) &&
+                        (container.layoutData.isConnectedToDownDC || container.layoutData.isConnectedToDownArea)) {
                         newUDC = getNewUpDownColumn();
                         rows[newUDC][0] = container;
                         container.layoutData.lanMtxCoord = {x:0, y:newUDC}
-                    } else if (container.layoutData.isConnectedToUpArea) {
+                    } else if (container.layoutData.isConnectedToUpArea || container.layoutData.isConnectedToUpDC) {
                         upColumn = getUpColumn();
                         rows[upColumn][upLine] = container;
                         container.layoutData.lanMtxCoord = {x: upLine, y:upColumn}
-                    } else if (container.layoutData.isConnectedToDownArea) {
+                    } else if (container.layoutData.isConnectedToDownArea || container.layoutData.isConnectedToDownDC) {
                         downColumn = getDownColumn();
                         rows[downColumn][downLine] = container;
                         container.layoutData.lanMtxCoord = {x: downLine, y:downColumn}

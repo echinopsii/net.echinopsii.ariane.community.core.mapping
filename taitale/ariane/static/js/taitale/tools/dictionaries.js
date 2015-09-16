@@ -33,7 +33,11 @@ define(
             this.networkType = {
                 WAN: "WAN",
                 MAN: "MAN",
-                LAN: "LAN"
+                LAN: "LAN",
+                DMZ: "DMZ",
+                VPN: "VPN",
+                VIRT: "VIRT",
+                GLI: "GLOBAL INTERNET"
             };
         }
         return dictionaries;

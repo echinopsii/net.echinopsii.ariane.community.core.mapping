@@ -434,8 +434,11 @@ define(
                     this.man_title.attr(splitterRef.splitterTitleAttr);
                     this.man_title.hide();
                 }
-
-                this.lan_title = splitterRef.r.text(this.datacenter.getZoneCoord().x+this.datacenter.dbrdSpan/2,this.lanLineTopY+this.lanLineHeight/2,"LAN").rotate(-90);
+                if (this.datacenter.pName === "THE GLOBAL INTERNET") {
+                    this.lan_title = splitterRef.r.text(this.datacenter.getZoneCoord().x+this.datacenter.dbrdSpan/2,this.lanLineTopY+this.lanLineHeight/2,"GLOBAL INTERNET").rotate(-90);
+                } else {
+                    this.lan_title = splitterRef.r.text(this.datacenter.getZoneCoord().x+this.datacenter.dbrdSpan/2,this.lanLineTopY+this.lanLineHeight/2,"LAN").rotate(-90);
+                }
                 this.lan_title.attr(splitterRef.splitterTitleAttr);
                 this.lan_title.hide();
 

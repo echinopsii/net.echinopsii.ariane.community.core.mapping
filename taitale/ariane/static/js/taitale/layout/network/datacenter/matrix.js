@@ -456,7 +456,7 @@ define(
                 if (nbLines==0) {
                     rows[0] = [];      // WAN Area
                     rows[1] = [];      // MAN Area
-                    rows[2] = [];      // LAN or Multicast Area
+                    rows[2] = [];      // LAN or Multicast Area or GLI
                     rows[3] = [0,0,0]; // columns counters
                     nbLines = 3;
                 }
@@ -487,6 +487,7 @@ define(
                                 nbColumns = rows[3][1];
                             break;
                         case dic.networkType.LAN:
+                        case dic.networkType.GLI:
                             rows[2][lanColCount] = curarea;
                             curarea.isInserted=true;
                             rows[3][2]           = ++lanColCount;
