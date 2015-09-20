@@ -27,11 +27,12 @@ define(
         function multicastBus(tid, ridx, localisation, multicastAddr_, properties_) {
             this.ID            = tid*1000+ridx;
 
-            this.pName        = localisation.getPLocation().pname;
+            this.pName         = localisation.getPLocation().pname;
             this.areaName      = localisation.getArea().raname;
             this.areaLongName  = localisation.plocation.pname + "-" + localisation.type + " area | " + localisation.raname;
             this.multicastAddr = multicastAddr_;
             this.properties    = properties_;
+            this.name          = (this.properties != null && this.properties.busDescription != null) ? this.properties.busDescription + " " + this.multicastAddr : this.multicastAddr
             this.isInserted    = false;
             this.isMoving      = false;
 
@@ -86,6 +87,10 @@ define(
                 return this.linkedTreeObjects.length;
             };
 
+            this.setSortOrdering = function(sort) {
+                ;
+            };
+
             this.sortLinkedTreeObjects = function() {
                 this.linkedTreeObjects.sort(this.maxLinkedTreeObjectsCount);
             };
@@ -133,6 +138,14 @@ define(
 
             this.getBusCoords = function() {
                 return this.mbus.getTopLeftCoords();
+            };
+
+            this.getBubbleDiameter = function() {
+                return Math.sqrt(Math.pow(this.longg,2) + Math.pow(this.diameter,2));
+            };
+
+            this.setBubbleCoord = function(x,y) {
+                this.setTopLeftCoord(x-this.longg/2, y-this.diameter/2);
             };
 
             this.print = function(r) {

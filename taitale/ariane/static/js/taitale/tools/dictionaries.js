@@ -24,6 +24,7 @@ define(
             this.mapLayout = {
                 MANUAL: "Random",
                 TREE  : "Tree",
+                BBTREE: "BBTree",
                 NTWWW : "Network"
             };
             this.mapMode = {

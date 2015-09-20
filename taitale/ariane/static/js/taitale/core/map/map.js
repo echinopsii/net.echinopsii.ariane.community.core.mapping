@@ -31,9 +31,10 @@ define(
         'taitale-transport',
         'taitale-link',
         'taitale-tree',
+        'taitale-btree',
         'taitale-map-options'
     ],
-    function(helper, dictionaries, params, mapMatrix, container, node, endpoint, transport, link, tree) {
+    function(helper, dictionaries, params, mapMatrix, container, node, endpoint, transport, link, tree, btree) {
         function map(options) {
             var mapWidth  = 0,
                 mapHeight = 0,
@@ -64,7 +65,7 @@ define(
             var dic   = new dictionaries();
 
             this.addContainer = function(JSONContainerDesc) {
-                var x=0, y=0;
+                var cont, x=0, y=0;
                 //noinspection JSUnresolvedVariable
                 if (JSONContainerDesc.containerProperties!=null && JSONContainerDesc.containerProperties.manualCoord!=null) {
                     //noinspection JSUnresolvedVariable
@@ -72,7 +73,9 @@ define(
                     //noinspection JSUnresolvedVariable
                     y=JSONContainerDesc.containerProperties.manualCoord.y;
                 }
-                containerRegistry.push(new container(JSONContainerDesc, x, y));
+                cont = new container(JSONContainerDesc, x, y);
+                containerRegistry.push(cont);
+                treeObjects.push(cont)
             };
 
             /*
@@ -250,6 +253,13 @@ define(
 
                 for (i = 0, ii = JSONmapDesc.links.length; i < ii; i++ )
                     this.addLink(JSONmapDesc.links[i]);
+
+                for (i = 0, ii = transportRegistry.length; i < ii; i++) {
+                    var mbusRegistry = transportRegistry[i].getMulticastBusRegistry()
+                    for (var j = 0, jj = mbusRegistry.length; j < jj; j++) {
+                        treeObjects.push(mbusRegistry[j])
+                    }
+                }
             };
 
             this.buildMap = function() {
@@ -290,6 +300,8 @@ define(
                         break;
 
                     case dic.mapLayout.TREE:
+                    case dic.mapLayout.BBTREE:
+
                         // third 0 : sort all tree lists
                         sortOrdering = options.getRootTreeSorting();
                         for (i = 0, ii = treeObjects.length; i<ii; i++) {
@@ -297,11 +309,16 @@ define(
                             treeObjects[i].sortLinkedTreeObjects();
                         }
                         containerRegistry.sort(minMaxLinkedObjectsComparator);
-
+                        treeObjects.sort(minMaxLinkedObjectsComparator);
                         // third 1 : define the tree with objects
                         // TODO: manage multi tree
-                        lTree = new tree();
-                        lTree.loadTree(containerRegistry[0]);
+                        if (layout == dic.mapLayout.BBTREE){
+                            lTree = new btree();
+                            lTree.loadTree(treeObjects[0]);
+                        } else {
+                            lTree = new tree();
+                            lTree.loadTree(containerRegistry[0]);
+                        }
 
                         // third 2 : define map objects position
                         lTree.definePoz();
@@ -347,7 +364,7 @@ define(
                     mapmatrix.defineMtxZoneFinalPoz(mbrdSpan, zoneSpan);
                     mapmatrix.defineMtxZoneSize();
                     mapmatrix.defineMapContentSize();
-                } else if (layout == dic.mapLayout.TREE) {
+                } else if (layout == dic.mapLayout.TREE || layout == dic.mapLayout.BBTREE) {
                     for (j = 0, jj=containerRegistry.length; j < jj; j++) {
                         containerRegistry[j].clean();
                         containerRegistry[j].defineSize();
@@ -376,6 +393,7 @@ define(
 
                     case dic.mapLayout.MANUAL:
                     case dic.mapLayout.TREE:
+                    case dic.mapLayout.BBTREE:
                         var i, ii, j, jj;
                         if (containerRegistry.length > 0) {
                             mapTopLeftX = containerRegistry[0].rectTopLeftX;

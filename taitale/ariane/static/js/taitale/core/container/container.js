@@ -467,6 +467,14 @@ define(
                 return this.getMaxRectSize();
             };
 
+            this.getBubbleDiameter = function() {
+                return Math.sqrt(Math.pow(this.maxRectWidth,2) + Math.pow(this.maxRectHeight,2));
+            };
+
+            this.setBubbleCoord = function(x,y) {
+                this.setTopLeftCoord(x-this.rectWidth/2, y-this.rectHeight/2)
+            };
+
             this.getRectCornerPoints = function() {
                 return {
                     topLeftX: this.rectTopLeftX,
