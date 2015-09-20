@@ -147,7 +147,7 @@ requirejs (
                                 else if (input.value==="displayArea") options.displayAREA = input.checked;
                                 else if (input.value==="displayLan") options.displayLAN = input.checked;
                             }
-                        } else if (options.getLayout()===dic.mapLayout.TREE) {
+                        } else if (options.getLayout()===dic.mapLayout.TREE || options.getLayout()===dic.mapLayout.BBTREE) {
                             document.getElementById('treeOptions').style.display = "";
                             document.getElementById('networkOptions').style.display = "none";
                         }
@@ -183,7 +183,7 @@ requirejs (
                                         else if (input.value==="displayArea") options.displayAREA = input.checked;
                                         else if (input.value==="displayLan") options.displayLAN = input.checked;
                                     }
-                                } else if (options.getLayout()===dic.mapLayout.TREE) {
+                                } else if (options.getLayout()===dic.mapLayout.TREE || options.getLayout()===dic.mapLayout.BBTREE) {
                                     document.getElementById('treeOptions').style.display = "";
                                     document.getElementById('networkOptions').style.display = "none";
                                 }
@@ -443,7 +443,7 @@ requirejs (
                     //loader_.displayLan(options.displayLAN);
                 }
             }
-        } else if (options.getLayout()===dic.mapLayout.TREE) {
+        } else if (options.getLayout()===dic.mapLayout.TREE  || options.getLayout()===dic.mapLayout.BBTREE) {
             document.getElementById('treeOptions').style.display = "";
             document.getElementById('networkOptions').style.display = "none";
         }
