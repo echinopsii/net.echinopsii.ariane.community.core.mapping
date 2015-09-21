@@ -166,9 +166,9 @@ define(
                         radStep = this.defineRadStepValue(orientStep);
                         relFirstChT = 0;
                     }
-                    helper_.debug("[defineRelativePoz] " + object.name + " : {orientStep: " + orientStep +
-                        ", radStep: " + radStep + ", orientV: " + orientV +
-                        ", relX: " + relX + ", relY: " + relY + ", relFirstChT: " + relFirstChT);
+                    //helper_.debug("[defineRelativePoz] " + object.name + " : {orientStep: " + orientStep +
+                    //    ", radStep: " + radStep + ", orientV: " + orientV +
+                    //    ", relX: " + relX + ", relY: " + relY + ", relFirstChT: " + relFirstChT);
                     isPlaced=true;
                 }
             };
