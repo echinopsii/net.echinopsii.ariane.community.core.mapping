@@ -373,7 +373,7 @@ define(
         };
 
         Matrix.prototype.addMinInternalColumn = function() {
-            var column = -1, i, ii;
+            var column, i, ii;
             column = this.mtxColumnsSplitter[this.minInternalC];
             this.addColumnToMtx(column,this.FREE);
             for (i=this.maxInternalC, ii=this.maxRightUDC; i <= ii; i++)
@@ -390,7 +390,7 @@ define(
         };
 
         Matrix.prototype.addMaxInternalColumn = function() {
-            var column = -1, i, ii;
+            var column, i, ii;
             column = ++this.mtxColumnsSplitter[this.maxInternalC];
             this.addColumnToMtx(column,this.FREE);
             for (i=this.minInternalRighTudC, ii=this.maxRightUDC; i <= ii; i++)
@@ -780,7 +780,7 @@ define(
         };
 
         Matrix.prototype.defineMtxContentMaxSize = function() {
-            var tmpHeight, tmpWidth, block;
+            var block;
             var i, ii, j, jj;
             for (i = 0, ii = this.nbColumns; i < ii ; i++) {
                 for (j = 0, jj = this.nbLines; j < jj; j++) {
@@ -1034,13 +1034,47 @@ define(
                 if (newColumn!=-1 && newLine!=-1) {
                     this.zemtx[object.layoutData.mtxCoord.y][object.layoutData.mtxCoord.x] = this.FREE;
                     this.zemtx[newColumn][newLine] = {obj: object, type: object.type};
-                    object.layoutData.mtxCoord = {x:newLine, y:newColumn}
+                    object.layoutData.mtxCoord = {x:newLine, y:newColumn};
                     object.layoutData.tag = newTag;
                 }
             }
         };
 
+        Matrix.prototype.TAG_INT = "TAG_INT";
+
         Matrix.prototype.position4ObjectLinkedToInsideOnly = function() {
+            var i, ii, j, jj, object, linkedObject;
+            for (i=0, ii=this.objectLinkedToInsideOnly.length; i < ii; i++) {
+                var newColumn=-1, newLine=-1;
+                object = this.objectLinkedToInsideOnly[i];
+                if (object.linkedNodes!=null) {
+                    for (j=0, jj=object.linkedNodes.length; j < jj; j++) {
+                        var node = object.linkedNodes[j];
+                        if (node.layoutData.tag!=this.TAG_INT) {
+                            if (node.layoutData.mtxCoord.x > newLine)
+                                newLine = node.layoutData.mtxCoord.x+1
+                        }
+                    }
+                    if (newLine == -1)
+                        newLine = object.layoutData.mtxCoord.x;
+                    if (object.linkedNodes.length == 1)
+                        newColumn = object.linkedNodes[0].layoutData.mtxCoord.y;
+                    else
+                        newColumn = object.layoutData.mtxCoord.y;
+                } else {
+                    newLine = object.layoutData.mtxCoord.x;
+                    newColumn = object.layoutData.mtxCoord.y;
+                }
+                if (newLine != object.layoutData.mtxCoord.x || newColumn != object.layoutData.mtxCoord.y) {
+                    if (newLine > this.mtxLinesSplitter[this.maxInternalLine] ||
+                        newLine <  this.mtxLinesSplitter[this.minInternalLine])
+                        newLine = this.addInternalLine();
+                    this.zemtx[object.layoutData.mtxCoord.y][object.layoutData.mtxCoord.x] = this.FREE;
+                    this.zemtx[newColumn][newLine] = {obj: object, type: object.type};
+                    object.layoutData.mtxCoord = {x:newLine, y:newColumn};
+                }
+                object.layoutData.tag = this.TAG_INT;
+            }
         };
 
         Matrix.prototype.updatePosition = function() {
