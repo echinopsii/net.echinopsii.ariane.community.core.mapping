@@ -328,9 +328,13 @@ define(
                 this.updateObjectFinalPozAndSize();
                 this.updateMapSize();
 
-                // fourth : define the links
+                // fourth : define average links
                 for (i = 0, ii = linkRegistry.length; i < ii; i++)
-                    linkRegistry[i].linkEp();
+                    linkRegistry[i].linkAvgEp();
+
+                // fifth : define absolute links
+                for (i = 0, ii = linkRegistry.length; i < ii; i++)
+                    linkRegistry[i].linkAbsEp();
             };
 
             this.updateObjectFinalPozAndSize = function () {

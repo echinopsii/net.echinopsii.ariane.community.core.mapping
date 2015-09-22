@@ -93,15 +93,15 @@ define(
             var epRef = this;
 
             var calcLinkAvgT = function() {
-                var as = Math.asin(epRef.linkAvgY / (Math.sqrt(epRef.linkAvgX*epRef.linkAvgX+epRef.linkAvgY*epRef.linkAvgY)));
+                var asin = Math.asin(epRef.linkAvgY / (Math.sqrt(epRef.linkAvgX*epRef.linkAvgX+epRef.linkAvgY*epRef.linkAvgY)));
                 if (epRef.linkAvgY > 0 && epRef.linkAvgX > 0) {
-                    epRef.linkAvgT = as; // 0 =< as < PI/2  & 0 =< at < PI/2
+                    epRef.linkAvgT = asin; // 0 =< as < PI/2  & 0 =< at < PI/2
                 } else if (epRef.linkAvgY > 0 && epRef.linkAvgX < 0) {
-                    epRef.linkAvgT = Math.PI - as; // 0 < as < PI/2 & PI/2 < at < PI
+                    epRef.linkAvgT = Math.PI - asin; // 0 < as < PI/2 & PI/2 < at < PI
                 } else if (epRef.linkAvgY < 0 && epRef.linkAvgX < 0) {
-                    epRef.linkAvgT = Math.PI - as ; // -PI/2 < as < 0 & PI < at < 3PI/2
+                    epRef.linkAvgT = Math.PI - asin ; // -PI/2 < as < 0 & PI < at < 3PI/2
                 } else if (epRef.linkAvgY < 0 && epRef.linkAvgX > 0) {
-                    epRef.linkAvgT = 2*Math.PI + as ; // -PI/2 < as < 0 & 3PI/2 < at < 2PI
+                    epRef.linkAvgT = 2*Math.PI + asin ; // -PI/2 < as < 0 & 3PI/2 < at < 2PI
                 } else if (epRef.linkAvgY == 0) {
                     if (epRef.linkAvgX==0) {
                         epRef.linkAvgT=0;
@@ -420,16 +420,12 @@ define(
                 var peerEp   = link_.getPeerEp(this);
                 //helper_.debug("thisEP : " + this.toString());
                 //helper_.debug("peerEP : " + peerEp.toString());
-
                 var peerNode = peerEp.epNode;
                 //helper_.debug("this.epNode   : " + this.epNode.toString());
                 //helper_.debug("peerNode : " + peerNode.toString());
-
                 this.linkAvgX = this.linkAvgX + (peerNode.getRectMiddlePoint().x-this.epNode.getRectMiddlePoint().x); //left -> right => x>0
                 this.linkAvgY = this.linkAvgY + (this.epNode.getRectMiddlePoint().y-peerNode.getRectMiddlePoint().y); //bottom -> top => y>0
-
                 calcLinkAvgT();
-
                 //helper_.debug("linkAvgPoint: (" + this.linkAvgX + "," + this.linkAvgY + "," + this.linkAvgT + ")");
             };
 
@@ -439,6 +435,18 @@ define(
                     y: this.linkAvgY,
                     t: this.linkAvgT
                 };
+            };
+
+            this.calcLinkAbsPoz = function(link_) {
+                var peerEp = link_.getPeerEp(this);
+            };
+
+            this.getLinkAbsPoz = function() {
+                return {
+                    x: this.linkAbsX,
+                    y: this.linkAbsY,
+                    t: this.linkAbsT
+                }
             };
 
             this.setPoz = function(x_,y_) {
@@ -498,9 +506,8 @@ define(
             this.print = function(r_) {
                 this.r=r_;
 
-                if (this.epNode!=null && !this.epIsPushed) {
-                    this.epNode.pushEndpoint(this);
-                    this.epIsPushed = true;
+                if (this.epNode!=null && this.epIsPushed) {
+                    this.epNode.defineEndpointPoz(this);
                 }
 
                 this.circle = this.r.circle(this.x,this.y);
@@ -622,6 +629,12 @@ define(
                 }
                 this.isMoving = false;
             };
+
+            if (this.epNode!=null && !this.epIsPushed) {
+                this.epNode.pushEndpoint(this);
+                this.epIsPushed = true;
+            }
+
         }
 
         return endpoint;

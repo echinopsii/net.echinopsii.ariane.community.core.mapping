@@ -180,7 +180,7 @@ define(
                     + "\n}";
             };
 
-            this.linkEp = function() {
+            this.linkAvgEp = function() {
                 if (this.transport!=null && !this.transport.isMulticast() && this.epSource!=null && this.epTarget!=null) {
                     this.epSource.calcLinkAvgPoz(this);
                     this.epTarget.calcLinkAvgPoz(this);
@@ -195,6 +195,13 @@ define(
                         detail: 'Link description is invalid',
                         sticky: true
                     };
+                }
+            };
+
+            this.linkAbsEp = function() {
+                if (this.transport!=null && !this.transport.isMulticast() && this.epSource!=null && this.epTarget!=null) {
+                    this.epSource.calcLinkAbsPoz(this);
+                    this.epTarget.calcLinkAbsPoz(this);
                 }
             };
 

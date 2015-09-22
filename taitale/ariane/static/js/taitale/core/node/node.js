@@ -479,6 +479,9 @@ define(
 
             this.pushEndpoint = function(endpoint) {
                 this.nodeEndpoints.push(endpoint);
+            };
+
+            this.defineEndpointPoz = function(endpoint) {
                 defineEndpointsPoz(endpoint);
             };
 
@@ -548,6 +551,9 @@ define(
                 else
                     this.maxRectHeight = mtxMaxInterspan + this.titleHeight + mtxMaxSize.height;
 
+                if (this.rectWidth < this.nodeEndpoints.length*params.endpoint_radSelec*2)
+                    this.rectWidth = this.nodeEndpoints.length*params.endpoint_radSelec*2;
+
                 if (this.name!==null && (this.rectWidth < this.name.width(this.txtTitleFont)*7/5))
                     this.maxRectWidth = this.name.width(this.txtTitleFont)*7/5;
 
@@ -562,6 +568,9 @@ define(
                     this.rectWidth = (this.nodeChildNodes.getMtxSize().y+1)*this.interSpan + mtxSize.width;
                 if (mtxSize.height != 0)
                     this.rectHeight = (this.nodeChildNodes.getMtxSize().x+1)*this.interSpan + this.titleHeight + mtxSize.height;
+
+                if (this.rectWidth < this.nodeEndpoints.length*params.endpoint_radSelec*2)
+                    this.rectWidth = this.nodeEndpoints.length*params.endpoint_radSelec*2;
 
                 if (this.name!==null && (this.rectWidth < this.name.width(this.txtTitleFont)*7/5))
                     this.rectWidth = this.name.width(this.txtTitleFont)*7/5;
