@@ -10,8 +10,6 @@
         #mappyCanvas {
             border: solid 3px #333;
             background: #ffffff;
-            height: 885px;
-            max-height: 885px;
             width: 100%;
             max-width: 100%;
             overflow: hidden;
@@ -150,5 +148,17 @@
         <div id="imgExport"></div>
     </div>
 </div>
+<script type="application/javascript">
+    var readyStateCheckIntervalDir = setInterval(function(){
+        if (document.readyState === "complete") {
+            clearInterval(readyStateCheckIntervalDir);
+            $("#mappyCanvas").css({height: $(document).height() - 115});
+        }
+    }, 100);
+
+    window.onresize = function(event) {
+        $("#mappyCanvas").css({height: $(document).height() - 115});
+    };
+</script>
 </body>
 </html>
