@@ -460,9 +460,6 @@ define(
                 this.circle.drag(epMove, epDragger, epUP);
                 this.circle.dblclick(epdClick);
 
-                //this.avgT = this.r.set();
-                //this.avgT.push(this.r.text(this.circle.attr("cx"), this.circle.attr("cy"), this.avgTidx).attr(this.txt12));
-
                 this.label = this.r.set();
                 this.label.push(this.r.text(this.circle.attr("cx"), this.circle.attr("cy"), "Endpoint URL : ").attr(this.txt12));
                 this.label.push(this.r.text(this.circle.attr("cx"), this.circle.attr("cy"), this.epURL).attr(this.txt10));
