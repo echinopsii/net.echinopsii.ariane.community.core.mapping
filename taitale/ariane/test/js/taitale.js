@@ -23,7 +23,7 @@ require.config({
     baseUrl: window.location.protocol + "//" + window.location.host + "/" + window.location.pathname.split('/')[1],
     paths: {
         'jquery': 'js/jquery/jquery-1.9.1',
-        'jquery-ui': 'js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom',
+        'jquery-ui': 'js/jquery-ui/jquery-ui-1.10.3.custom',
         'prime-ui': 'js/primeui/primeui-0.9.6',
         'rgbcolor': 'js/canvag/rgbcolor',
         'StackBlur': 'js/canvag/StackBlur',
@@ -159,7 +159,7 @@ requirejs (
                 if (options.getLayout()===dic.mapLayout.NTWWW) {
                     document.getElementById('networkOptions').style.display = "";
                     document.getElementById('treeOptions').style.display    = "none";
-                } else if (options.getLayout()===dic.mapLayout.TREE) {
+                } else if (options.getLayout()===dic.mapLayout.TREE || options.getLayout()===dic.mapLayout.BBTREE) {
                     document.getElementById('networkOptions').style.display = "none";
                     document.getElementById('treeOptions').style.display    = "";
                 } else {
@@ -456,7 +456,7 @@ requirejs (
             if (options.getLayout()===dic.mapLayout.NTWWW) {
                 document.getElementById('networkOptions').style.display = "";
                 document.getElementById('treeOptions').style.display    = "none";
-            } else if (options.getLayout()===dic.mapLayout.TREE) {
+            } else if (options.getLayout()===dic.mapLayout.TREE || options.getLayout()===dic.mapLayout.BBTREE) {
                 document.getElementById('networkOptions').style.display = "none";
                 document.getElementById('treeOptions').style.display    = "";
             } else {
