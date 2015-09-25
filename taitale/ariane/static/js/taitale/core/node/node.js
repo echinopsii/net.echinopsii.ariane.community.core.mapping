@@ -257,60 +257,140 @@ define(
                 nodeRef.rectMiddleX = nodeRef.rectTopMiddleX;
                 nodeRef.rectMiddleY = nodeRef.rectMiddleLeftY;
             },
-            defineEndpointsPoz = function(endpoint) {
-                nodeRef.nodeEpAvgLinksT.push(endpoint);
+            defineEndpointsAvgPoz = function() {
+                var i, ii, avgTeta;
                 nodeRef.nodeEpAvgLinksT.sort(function(a,b){
                     var at = a.getLinkAvgPoz().t,
                         bt = b.getLinkAvgPoz().t;
                     return at-bt;
                 });
 
-                for (var i = 0, ii = nodeRef.nodeEpAvgLinksT.length; i < ii; i++) {
+                var rectTeta = Math.atan(nodeRef.rectHeight/nodeRef.rectWidth),
+                    countY1 = 0,
+                    countX2 = 0,
+                    countX3 = 0,
+                    countY4 = 0,
+                    countY5 = 0,
+                    countX6 = 0,
+                    countX7 = 0,
+                    countY8 = 0;
+                for (i = 0, ii = nodeRef.nodeEpAvgLinksT.length; i < ii; i++) {
                     var epX=0,epY=0;
                     //helper_.debug("EP : " + nodeRef.nodeEpAvgLinksT[i].toString());
-                    var avgTeta = nodeRef.nodeEpAvgLinksT[i].getLinkAvgPoz().t;
+                    avgTeta = nodeRef.nodeEpAvgLinksT[i].getLinkAvgPoz().t;
 
-                    if (avgTeta >= 0 && avgTeta <(Math.PI/4)) {
+                    if (avgTeta >= 0 && avgTeta < rectTeta) {
                         epX = nodeRef.rectTopRightX;
-                        epY = nodeRef.rectMiddleY - ((epX-nodeRef.rectMiddleX)/Math.cos(avgTeta))*Math.sqrt(1-Math.cos(avgTeta)*Math.cos(avgTeta));
-                        //helper_.debug(epX+","+epY+","+avgTeta);
-
-                    } else if (avgTeta >= (Math.PI/4) && avgTeta < (Math.PI/2)) {
+                        epY = nodeRef.rectMiddleY - countY1*params.endpoint_radSelec*2;
+                        if (epY < nodeRef.rectTopRightY) {
+                            epY = nodeRef.rectTopRightY;
+                            if (countX2==0)
+                                countX2++;
+                            epX = nodeRef.rectTopRightX - countX2*params.endpoint_radSelec*2;
+                            countX2++
+                        } else {
+                            countY1++;
+                            if (epY - params.endpoint_radSelec*2 < nodeRef.rectTopRightY )
+                                countX2++;
+                        }
+                    } else if (avgTeta >= rectTeta && avgTeta < Math.PI/2) {
                         epY = nodeRef.rectTopRightY;
-                        epX = nodeRef.rectMiddleX + ((epY-nodeRef.rectMiddleY)/Math.sin(avgTeta))*Math.sqrt(1-Math.sin(avgTeta)*Math.sin(avgTeta));
-                        //helper_.debug(epX+","+epY+","+avgTeta);
-
-                    } else if (avgTeta >= (Math.PI/2) && avgTeta < (3*Math.PI/4)) {
+                        epX = nodeRef.rectTopRightX - countX2*params.endpoint_radSelec*2;
+                        countX2++;
+                    } else if (avgTeta >= (Math.PI/2) && avgTeta < Math.PI - rectTeta) {
                         epY = nodeRef.rectTopRightY;
-                        epX = nodeRef.rectMiddleX - ((epY-nodeRef.rectMiddleY)/Math.sin(avgTeta))*Math.sqrt(1-Math.sin(avgTeta)*Math.sin(avgTeta));
-                        //helper_.debug(epX+","+epY+","+avgTeta);
-
-                    } else if (avgTeta >= (3*Math.PI/4) && avgTeta < (Math.PI)) {
+                        epX = nodeRef.rectTopLeftX + countX3*params.endpoint_radSelec*2;
+                        countX3++;
+                    } else if (avgTeta >= Math.PI-rectTeta && avgTeta < Math.PI) {
+                        epX = nodeRef.rectTopLeftX;
+                        epY = nodeRef.rectMiddleY - countY4*params.endpoint_radSelec*2;
+                        if (epY < nodeRef.rectTopLeftY) {
+                            if (countX3==0)
+                                countX3++;
+                            epY = nodeRef.rectTopLeftY;
+                            epX = nodeRef.rectTopLeftX + countX3*params.endpoint_radSelec*2;
+                            countX3++;
+                        } else {
+                            countY4++;
+                            if (epY - params.endpoint_radSelec*2 < nodeRef.rectTopLeftY)
+                                countX3++;
+                        }
+                    } else if (avgTeta >= Math.PI && avgTeta < Math.PI+rectTeta) {
                         epX = nodeRef.rectBottomLeftX;
-                        epY = nodeRef.rectMiddleY - ((epX-nodeRef.rectMiddleX)/Math.cos(avgTeta))*Math.sqrt(1-Math.cos(avgTeta)*Math.cos(avgTeta));
-                        //helper_.debug(epX+","+epY+","+avgTeta);
-
-                    } else if (avgTeta >= (Math.PI) && avgTeta < (5*Math.PI/4)) {
-                        epX = nodeRef.rectBottomLeftX;
-                        epY = nodeRef.rectMiddleY + ((epX-nodeRef.rectMiddleX)/Math.cos(avgTeta))*Math.sqrt(1-Math.cos(avgTeta)*Math.cos(avgTeta));
-                        //helper_.debug(epX+","+epY+","+avgTeta);
-
-                    } else if (avgTeta >= (5*Math.PI/4) && avgTeta < (3*Math.PI/2)) {
+                        epY = nodeRef.rectTopMiddleY + countY5*params.endpoint_radSelec*2;
+                        if (epY > nodeRef.rectBottomLeftY) {
+                            if (countX6==0)
+                                countX6++;
+                            epY = nodeRef.rectBottomLeftY;
+                            epX = nodeRef.rectTopLeftX + countX6*params.endpoint_radSelec*2;
+                            countX6++;
+                        } else {
+                            countY5++;
+                            if (epX + params.endpoint_radSelec*2 > nodeRef.rectBottomLeftY)
+                                countX6++;
+                        }
+                    } else if (avgTeta >= Math.PI+rectTeta && avgTeta < 3*Math.PI/2) {
                         epY = nodeRef.rectBottomLeftY;
-                        epX = nodeRef.rectMiddleX - ((epY-nodeRef.rectMiddleY)/Math.sin(avgTeta))*Math.sqrt(1-Math.sin(avgTeta)*Math.sin(avgTeta));
-                        //helper_.debug(epX+","+epY+","+avgTeta);
-
-                    } else if (avgTeta >= (3*Math.PI/2) && avgTeta < (7*Math.PI/4)) {
-                        epY = nodeRef.rectBottomLeftY;
-                        epX = nodeRef.rectMiddleX + ((epY-nodeRef.rectMiddleY)/Math.sin(avgTeta))*Math.sqrt(1-Math.sin(avgTeta)*Math.sin(avgTeta));
-                        //helper_.debug(epX+","+epY+","+avgTeta);
-
-                    } else if (avgTeta >= (7*Math.PI/4) && avgTeta <= (2*Math.PI)) {
+                        epX = nodeRef.rectBottomLeftX + countX6*params.endpoint_radSelec*2;
+                        countX6++;
+                    } else if (avgTeta >= 3*Math.PI/2 && avgTeta < 2*Math.PI-rectTeta) {
+                        epY = nodeRef.rectBottomRightY;
+                        epX = nodeRef.rectBottomRightX - countX7*params.endpoint_radSelec*2;
+                        countX7++;
+                    } else if (avgTeta >= (2*Math.PI-rectTeta) && avgTeta <= (2*Math.PI)) {
                         epX = nodeRef.rectBottomRightX;
-                        epY = nodeRef.rectMiddleY + ((epX-nodeRef.rectMiddleX)/Math.cos(avgTeta))*Math.sqrt(1-Math.cos(avgTeta)*Math.cos(avgTeta));
-                        //helper_.debug(epX+","+epY+","+avgTeta);
-
+                        epY = nodeRef.rectMiddleY + countY8*params.endpoint_radSelec*2;
+                        if (epY > nodeRef.rectBottomRightY) {
+                            if (countX7==0)
+                                countX7++;
+                            epY = nodeRef.rectBottomRightY;
+                            epX = nodeRef.rectBottomRightX - countX7*params.endpoint_radSelec*2;
+                            countX7++;
+                        } else {
+                            countY8++;
+                            if (epY + params.endpoint_radSelect*2 > nodeRef.rectBottomRightY) {
+                                   countX7++;
+                            }
+                        }
                     }
+
+                    var topLeftRadX  = nodeRef.getRectCornerPoints().TopLeftRadX,
+                        topLeftRadY  = nodeRef.getRectCornerPoints().TopLeftRadY,
+                        bottomRightRadX = nodeRef.getRectCornerPoints().BottomRightRadX,
+                        bottomRightRadY = nodeRef.getRectCornerPoints().BottomRightRadY,
+                        cornerRad = nodeRef.cornerRad;
+
+                    var dist = null;
+
+                    if (epX < topLeftRadX && epY < topLeftRadY) {
+                        dist = Math.sqrt((epX-topLeftRadX)*(epX-topLeftRadX) + (epY-topLeftRadY)*(epY-topLeftRadY));
+                        epX=(epX-topLeftRadX)*cornerRad/dist + topLeftRadX;
+                        epY=(epY-topLeftRadY)*cornerRad/dist + topLeftRadY;
+                        //helper_.debug("11 cx:"+ x_ + "; cy:" + y_ + "; r:" + ray);
+                    } else if (epX < topLeftRadX && epY > bottomRightRadY) {
+                        dist = Math.sqrt((epX-topLeftRadX)*(epX-topLeftRadX) + (epY-bottomRightRadY)*(epY-bottomRightRadY));
+                        epX=(epX-topLeftRadX)*cornerRad/dist + topLeftRadX;
+                        epY=(epY-bottomRightRadY)*cornerRad/dist + bottomRightRadY;
+                        //helper_.debug("12 cx:"+ x_ + "; cy:" + y_ + "; r:" + ray);
+                    } else if (epX >= bottomRightRadX && epY <= topLeftRadY) {
+                        dist = Math.sqrt((epX-bottomRightRadX)*(epX-bottomRightRadX)+(epY-topLeftRadY)*(epY-topLeftRadY));
+                        //helper_.debug("dist:" + dist + "; " + " rad:" + cornerRad);
+                        epX=(epX-bottomRightRadX)*cornerRad/dist + bottomRightRadX;
+                        epY=topLeftRadY - (-epY+topLeftRadY)*cornerRad/dist;
+                        //helper_.debug("13 cx:"+ x_ + "; cy:" + y_ + "; r:" + ray);
+                    } else if (epX >= bottomRightRadX && epY >= bottomRightRadY){
+                        //helper_.debug("14 cx:"+ x_ + "; cy:" + y_ + "; r:" + ray);
+                        dist = Math.sqrt((epX-bottomRightRadX)*(epX-bottomRightRadX) + (epY-bottomRightRadY)*(epY-bottomRightRadY));
+                        epX=(epX-bottomRightRadX)*cornerRad/dist + bottomRightRadX;
+                        epY=(epY-bottomRightRadY)*cornerRad/dist + bottomRightRadY;
+                        //helper_.debug("11 cx:"+ x_ + "; cy:" + y_ + "; r:" + ray);
+                    } else {
+                        //helper_.debug("12 I'm lost !");
+                    }
+
+
+
+                    //helper_.debug("["+i+"|"+nodeRef.name+"]"+epX+","+epY+","+avgTeta);
                     nodeRef.nodeEpAvgLinksT[i].setPoz(epX,epY);
                 }
             };
@@ -473,16 +553,15 @@ define(
             };
 
             this.popEndpoint = function(endpoint) {
-                var index = nodeRef.nodeEndpoints.indexOf(endpoint);
-                nodeRef.nodeEndpoints.splice(index,1)
+                var index = this.nodeEndpoints.indexOf(endpoint);
+                this.nodeEndpoints.splice(index,1);
+                index = this.nodeEpAvgLinksT.indexOf(endpoint);
+                this.nodeEpAvgLinksT.splice(index,1);
             };
 
             this.pushEndpoint = function(endpoint) {
                 this.nodeEndpoints.push(endpoint);
-            };
-
-            this.defineEndpointPoz = function(endpoint) {
-                defineEndpointsPoz(endpoint);
+                this.nodeEpAvgLinksT.push(endpoint);
             };
 
             this.getRectMiddlePoint = function() {
@@ -551,11 +630,14 @@ define(
                 else
                     this.maxRectHeight = mtxMaxInterspan + this.titleHeight + mtxMaxSize.height;
 
-                if (this.rectWidth < this.nodeEndpoints.length*params.endpoint_radSelec*2)
-                    this.rectWidth = this.nodeEndpoints.length*params.endpoint_radSelec*2;
+                if (this.maxRectWidth < this.nodeEndpoints.length*params.endpoint_radSelec*2)
+                    this.maxRectWidth = this.nodeEndpoints.length*params.endpoint_radSelec*2;
 
                 if (this.name!==null && (this.rectWidth < this.name.width(this.txtTitleFont)*7/5))
                     this.maxRectWidth = this.name.width(this.txtTitleFont)*7/5;
+
+                this.minTetaX = Math.abs(Math.atan(params.endpoint_radSelec/(this.maxRectHeight/2)));
+                this.minTetaY = Math.abs(Math.atan(params.endpoint_radSelec/(this.maxRectWidth/2)));
 
                 //helper_.debug("[Node.defineMaxSize] " + this.name + " : {" + this.maxRectWidth + "," +  this.maxRectHeight + "}")
             };
@@ -574,6 +656,9 @@ define(
 
                 if (this.name!==null && (this.rectWidth < this.name.width(this.txtTitleFont)*7/5))
                     this.rectWidth = this.name.width(this.txtTitleFont)*7/5;
+
+                this.minTetaX = Math.abs(Math.atan(params.endpoint_radSelec/(this.rectHeight/2)));
+                this.minTetaY = Math.abs(Math.atan(params.endpoint_radSelec/(this.rectWidth/2)));
 
                 //helper_.debug("[Node.defineSize] " + this.name + " : {" + this.rectWidth + "," +  this.rectHeight + "}")
             };
@@ -821,6 +906,8 @@ define(
                 this.nodeMenuSet.push(this.nodeMenuProperties);
                 this.nodeMenuSet.toBack();
                 this.nodeMenuSet.hide();
+
+                defineEndpointsAvgPoz()
             };
 
             this.toFront = function() {

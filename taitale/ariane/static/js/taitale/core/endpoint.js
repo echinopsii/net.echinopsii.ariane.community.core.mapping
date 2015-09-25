@@ -437,60 +437,7 @@ define(
                 };
             };
 
-            this.calcLinkAbsPoz = function(link_) {
-                var peerEp = link_.getPeerEp(this);
-            };
-
-            this.getLinkAbsPoz = function() {
-                return {
-                    x: this.linkAbsX,
-                    y: this.linkAbsY,
-                    t: this.linkAbsT
-                }
-            };
-
             this.setPoz = function(x_,y_) {
-                var //ray = this.rUnselected,
-                    //topLeftX = this.epNode.getRectCornerPoints().topLeftX,
-                    //topLeftY     = this.epNode.getRectCornerPoints().topLeftY,
-                    //bottomRightX = this.epNode.getRectCornerPoints().bottomRightX,
-                    //bottomRightY = this.epNode.getRectCornerPoints().bottomRightY,
-                    topLeftRadX  = this.epNode.getRectCornerPoints().TopLeftRadX,
-                    topLeftRadY  = this.epNode.getRectCornerPoints().TopLeftRadY,
-                    bottomRightRadX = this.epNode.getRectCornerPoints().BottomRightRadX,
-                    bottomRightRadY = this.epNode.getRectCornerPoints().BottomRightRadY,
-                    //middleX = this.epNode.getRectMiddlePoint().x,
-                    //middleY = this.epNode.getRectMiddlePoint().y,
-                    cornerRad = this.epNode.cornerRad;
-
-                var dist = null;
-
-                if (x_ < topLeftRadX && y_ < topLeftRadY) {
-                    dist = Math.sqrt((x_-topLeftRadX)*(x_-topLeftRadX) + (y_-topLeftRadY)*(y_-topLeftRadY));
-                    x_=(x_-topLeftRadX)*cornerRad/dist + topLeftRadX;
-                    y_=(y_-topLeftRadY)*cornerRad/dist + topLeftRadY;
-                    //helper_.debug("11 cx:"+ x_ + "; cy:" + y_ + "; r:" + ray);
-                } else if (x_ < topLeftRadX && y_ > bottomRightRadY) {
-                    dist = Math.sqrt((x_-topLeftRadX)*(x_-topLeftRadX) + (y_-bottomRightRadY)*(y_-bottomRightRadY));
-                    x_=(x_-topLeftRadX)*cornerRad/dist + topLeftRadX;
-                    y_=(y_-bottomRightRadY)*cornerRad/dist + bottomRightRadY;
-                    //helper_.debug("12 cx:"+ x_ + "; cy:" + y_ + "; r:" + ray);
-                } else if (x_ >= bottomRightRadX && y_ <= topLeftRadY) {
-                    dist = Math.sqrt((x_-bottomRightRadX)*(x_-bottomRightRadX)+(y_-topLeftRadY)*(y_-topLeftRadY));
-                    //helper_.debug("dist:" + dist + "; " + " rad:" + cornerRad);
-                    x_=(x_-bottomRightRadX)*cornerRad/dist + bottomRightRadX;
-                    y_=topLeftRadY - (-y_+topLeftRadY)*cornerRad/dist;
-                    //helper_.debug("13 cx:"+ x_ + "; cy:" + y_ + "; r:" + ray);
-                } else if (x_ >= bottomRightRadX && y_ >= bottomRightRadY){
-                    //helper_.debug("14 cx:"+ x_ + "; cy:" + y_ + "; r:" + ray);
-                    dist = Math.sqrt((x_-bottomRightRadX)*(x_-bottomRightRadX) + (y_-bottomRightRadY)*(y_-bottomRightRadY));
-                    x_=(x_-bottomRightRadX)*cornerRad/dist + bottomRightRadX;
-                    y_=(y_-bottomRightRadY)*cornerRad/dist + bottomRightRadY;
-                    //helper_.debug("11 cx:"+ x_ + "; cy:" + y_ + "; r:" + ray);
-                } else {
-                    //helper_.debug("12 I'm lost !");
-                }
-
                 this.x = x_;
                 this.y = y_;
             };
@@ -506,16 +453,15 @@ define(
             this.print = function(r_) {
                 this.r=r_;
 
-                if (this.epNode!=null && this.epIsPushed) {
-                    this.epNode.defineEndpointPoz(this);
-                }
-
                 this.circle = this.r.circle(this.x,this.y);
                 this.circle.attr({fill: this.color, stroke: this.color, "fill-opacity": this.oUnselected, "r": this.rUnselected,"stroke-width": this.strokeWidth, cursor: "crosshair"});
                 this.circle.attr({guide: this.epNode.rectPath});
                 this.circle.mousedown(mouseDown);
                 this.circle.drag(epMove, epDragger, epUP);
                 this.circle.dblclick(epdClick);
+
+                //this.avgT = this.r.set();
+                //this.avgT.push(this.r.text(this.circle.attr("cx"), this.circle.attr("cy"), this.avgTidx).attr(this.txt12));
 
                 this.label = this.r.set();
                 this.label.push(this.r.text(this.circle.attr("cx"), this.circle.attr("cy"), "Endpoint URL : ").attr(this.txt12));
@@ -546,11 +492,11 @@ define(
                 this.endpointMenuSet.push(this.endpointMenuProperties);
                 this.endpointMenuSet.toBack();
                 this.endpointMenuSet.hide();
-
             };
 
             this.toFront = function() {
                 this.circle.toFront();
+                //this.avgT.toFront();
             };
 
             this.moveInit = function() {

@@ -198,13 +198,6 @@ define(
                 }
             };
 
-            this.linkAbsEp = function() {
-                if (this.transport!=null && !this.transport.isMulticast() && this.epSource!=null && this.epTarget!=null) {
-                    this.epSource.calcLinkAbsPoz(this);
-                    this.epTarget.calcLinkAbsPoz(this);
-                }
-            };
-
             this.moveInit = function() {
                 this.r.setLinkToUpOrMove(this)
             };

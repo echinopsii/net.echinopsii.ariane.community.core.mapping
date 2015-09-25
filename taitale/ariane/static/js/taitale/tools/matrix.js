@@ -1058,8 +1058,15 @@ define(
                     if (newLine == -1)
                         newLine = object.layoutData.mtxCoord.x;
                     if (object.linkedNodes.length == 1)
-                        newColumn = object.linkedNodes[0].layoutData.mtxCoord.y;
+                        if (this.zemtx[object.linkedNodes[0].layoutData.mtxCoord.y][newLine] == this.FREE ||
+                            this.zemtx[object.linkedNodes[0].layoutData.mtxCoord.y][newLine] == this.LOCKED)
+                            newColumn = object.linkedNodes[0].layoutData.mtxCoord.y;
                     else
+                        if (this.zemtx[object.layoutData.mtxCoord.y][newLine] == this.FREE ||
+                            this.zemtx[object.layoutData.mtxCoord.y][newLine] == this.LOCKED)
+                            newColumn = object.layoutData.mtxCoord.y;
+                    else
+                        newLine = object.layoutData.mtxCoord.x;
                         newColumn = object.layoutData.mtxCoord.y;
                 } else {
                     newLine = object.layoutData.mtxCoord.x;

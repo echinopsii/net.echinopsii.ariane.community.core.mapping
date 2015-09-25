@@ -331,10 +331,6 @@ define(
                 // fourth : define average links
                 for (i = 0, ii = linkRegistry.length; i < ii; i++)
                     linkRegistry[i].linkAvgEp();
-
-                // fifth : define absolute links
-                for (i = 0, ii = linkRegistry.length; i < ii; i++)
-                    linkRegistry[i].linkAbsEp();
             };
 
             this.updateObjectFinalPozAndSize = function () {
@@ -632,6 +628,7 @@ define(
                         break;
                     case dic.mapLayout.MANUAL:
                     case dic.mapLayout.TREE:
+                    case dic.mapLayout.BBTREE:
                         moveTreeMap(dx, dy);
                         break;
                 }
@@ -647,6 +644,7 @@ define(
                         break;
                     case dic.mapLayout.MANUAL:
                     case dic.mapLayout.TREE:
+                    case dic.mapLayout.BBTREE:
                         moveTreeMap(dx, dy);
                         break;
                 }
