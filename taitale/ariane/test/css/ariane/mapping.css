@@ -1,0 +1,11 @@
+.mappingPropsDialog {
+    background-color: rgba(0, 0, 0, 0.7) !important
+}
+
+.mappingPropsDialog .ui-widget-content {
+    background-color: rgba(0, 0, 0, 0) !important
+}
+
+.mappingPropsDialog .ui-widget-content a {
+    color: #ffffff !important;
+}
