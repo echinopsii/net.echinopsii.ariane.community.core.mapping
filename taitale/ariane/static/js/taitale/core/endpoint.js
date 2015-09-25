@@ -413,6 +413,11 @@ define(
                     calcLinkAvgT();
 
                     link_.setBPMulticast({x:bp.x,y:bp.y})
+
+                    if (this.epNode!=null && !this.epIsPushed) {
+                        this.epNode.pushEndpoint(this);
+                        this.epIsPushed = true;
+                    }
                 }
             };
 
@@ -426,6 +431,11 @@ define(
                 this.linkAvgX = this.linkAvgX + (peerNode.getRectMiddlePoint().x-this.epNode.getRectMiddlePoint().x); //left -> right => x>0
                 this.linkAvgY = this.linkAvgY + (this.epNode.getRectMiddlePoint().y-peerNode.getRectMiddlePoint().y); //bottom -> top => y>0
                 calcLinkAvgT();
+
+                if (this.epNode!=null && !this.epIsPushed) {
+                    this.epNode.pushEndpoint(this);
+                    this.epIsPushed = true;
+                }
                 //helper_.debug("linkAvgPoint: (" + this.linkAvgX + "," + this.linkAvgY + "," + this.linkAvgT + ")");
             };
 

@@ -571,7 +571,10 @@ define(
                     endpointRegistry[i].resetPoz();
                 }
                 for (i = 0, ii = linkRegistry.length; i < ii; i++) {
-                    linkRegistry[i].linkEp();
+                    linkRegistry[i].linkAvgEp();
+                }
+                for (i = 0, ii = nodeRegistry.length; i < ii; i++) {
+                    nodeRegistry[i].defineEndpointsAvgPoz();
                 }
             };
 
