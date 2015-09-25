@@ -1,0 +1,268 @@
+/*
+ * Main PrimeFaces JQuery UI tuning
+ */
+input,
+select,
+textarea,
+button,
+.ui-widget,
+.ui-widget input,
+.ui-widget select,
+.ui-widget textarea,
+.ui-widget button,
+.ui-widget-header,
+.ui-widget-content,
+.ui-widget-header .ui-widget-header,
+.ui-widget-content .ui-widget-content {
+    font-family: Arial, "Trebuchet MS", Verdana, sans-serif;
+    font-size: 12px !important;
+}
+
+.colStyle10 { width: 10%; }
+
+.colStyle20 { width: 20%; }
+
+.colStyle25 { width: 25%; }
+
+.colStyle30 { width: 30%; }
+
+.colStyle70 { width: 70%; }
+
+.colStyle75 { width: 75%; }
+
+.colStyle80 { width: 80%; }
+
+.colStyle90 { width: 90%; }
+
+.ui-layout-north {
+    z-index: 20 !important;
+    overflow: visible !important;
+}
+
+.ui-layout-north .ui-layout-unit-content {
+    overflow: visible !important;
+}
+
+.ui-layout-unit {
+    margin: 0;
+    padding: 0;
+    padding-top: 0 !important;
+    padding-right:  0 !important;
+    padding-bottom:  0 !important;
+    padding-left:  0 !important;
+}
+
+#header{float: left; width: 100%;}
+a#arianeLogo{width: 30px; height: 30px; display: inline-block; background: url(../../images/ariane/logo-ariane.png) no-repeat; text-indent: -9000px; float: left; margin: 4px 20px 0 20px;
+             position: absolute; left: 0; top: 0; z-index: 1111;}
+
+body #menutop {
+    padding-left:70px;
+    font-family: Arial, "Trebuchet MS", Verdana, sans-serif;
+    font-size: 14px !important;
+    color: #8f8f8f;
+}
+body #menutop ul{ width: auto; }
+body #menutop .pui-menu, body #menutop .ui-menu{border: none; width: 50%; border: none; margin: 0; padding: 0; clear: none; background: transparent;}
+
+body #menutop .pui-menu li a .ui-icon, body #menutop .ui-menu li a .ui-icon{font-size: 13px; font-weight: bold;margin-right: 3px}
+body #menutop .pui-menu li a .ui-menuitem-text, body #menutop .ui-menu li a .ui-menuitem-text{font-size: 13px; font-weight: bold}
+
+body #menutop .pui-menu li ul li, body #menutop .ui-menu li ul li{width: auto; clear: both; min-width: 180px;}
+
+body #menuDivLeft {width: 100% ; float: left;}
+body #menuDivLeft .pui-menu,body #menuDivLeft .ui_menu {float: left;}
+body #menuDivLeft ul {float: left; width: 400px }
+body #menuDivLeft ul .ui-menu-child {float: right; width: 180px }
+
+body #menuDivRight {width: 260px; float: right;}
+body #menuDivRight .pui-menu, body #menuDivRight .ui_menu {float: right; width: 500px}
+body #menuDivRight ul {float: right; width: 260px}
+body #menuDivRight ul .ui-menu-child {float: right; width: 180px}
+
+body #mainCenter {top: 38px !important;}
+body #mainTop-resizer {display: none !important}
+
+.main-layout-unit.ui-layout-unit {
+    border-radius:0;
+    border: 0;
+    margin: 0;
+}
+
+.pui-menu .ui-menu {
+    float: left;position: relative; z-index: 222;
+    width: 100%
+}
+
+.pui-menu ul, .ui-menu ul{padding-left:70px;}
+
+.menuButton .ui-button-text {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.menuItem .ui-menuitem-text {
+    font-size: 12px;
+    font-weight: bold;
+    padding: 0.2em;
+}
+
+#mainBottom {
+    text-align: center;
+    font-weight: bold;
+}
+
+.inputTitle {
+    font-weight:bold;
+}
+
+/*
+ * Main HTML tuning
+ */
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+}
+
+h1, h2, h3 {
+    margin-top: 0;
+}
+
+h1 {
+    font-size: 1.6em;
+    font-weight: normal;
+}
+
+h2 {
+    font-size: 1.6em;
+}
+
+h3 {
+    font-size: 1em;
+    margin-top: 20px;
+}
+
+ul {
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+a img {
+    border: none;
+}
+
+img.left {
+    float: left;
+    margin: 0 20px 0 0;
+}
+
+img.right {
+    float: right;
+    margin: 0 0 0 20px;
+}
+
+@font-face {
+	font-family: 'arianeicons';
+	src:url('../../fonts/arianeicons.eot?nszrjq');
+	src:url('../../fonts/arianeicons.eot?#iefixnszrjq') format('embedded-opentype'),
+		url('../../fonts/arianeicons.woff?nszrjq') format('woff'),
+		url('../../fonts/arianeicons.ttf?nszrjq') format('truetype'),
+		url('../../fonts/arianeicons.svg?nszrjq#arianeicons') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+.icon-admin-ariane:before {
+	font-family: 'arianeicons';
+	content: "\e607";
+	font-size: 1.5em;
+}
+
+.icon-inject-ariane:before {
+	font-family: 'arianeicons';
+	content: "\e600";
+	font-size: 1.4em;
+}
+
+.icon-help-ariane:before {
+	font-family: 'arianeicons';
+	content: "\e608";
+	font-size: 1.5em;
+}
+
+.icon-mapping-ariane:before {
+	font-family: 'arianeicons';
+	content: "\e609";
+}
+
+.icon-logout-ariane:before {
+	font-family: 'arianeicons';
+	content: "\e60a";
+}
+.icon-directories-ariane:before{
+	font-family: 'arianeicons';
+	content: "\e606";	
+	font-size: 1.2em
+}
+.arianeico-datacenter-ariane:before {
+    content: "\e605";
+    font-family: 'arianeicons';
+}
+.arianeico-subnet-ariane:before {
+    content: "\e602";
+    font-family: 'arianeicons';
+}
+.arianeico-routingarea-ariane:before {
+    content: "\e604";
+    font-family: 'arianeicons';
+}
+.arianeico-appplications-ariane:before {
+    content: "\e603";
+    font-family: 'arianeicons';
+}
+.arianeico-os-instances-ariane:before {
+    content: "\e601";
+    font-family: 'arianeicons';
+}
+.arianeico-file-jpg:before {
+    content: "\e60b";
+    font-family: 'arianeicons';
+}
+.arianeico-file-svg:before {
+    content: "\e60c";
+    font-family: 'arianeicons';
+}
+.arianeico-file-png:before {
+    content: "\e60d";
+    font-family: 'arianeicons';
+}
+
+.dirPanelMenu {
+    border:0;
+    margin:0;
+    padding:0;
+}
+.dirBreadCrumb {
+    border:0;
+    margin:0;
+    padding:0;
+}
+.injPanelMenu {
+    border:0;
+    margin:0;
+    padding:0;
+}
+.injBreadCrumb {
+    border:0;
+    margin:0;
+    padding:0;
+}
