@@ -43,8 +43,8 @@
 /* Interaction Cues
 ----------------------------------*/
 .ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight  {
-    -moz-box-shadow: inset 0 1px 0 rgba(255,255,255,0.05); border: 1px solid #723c9b;
-    background: #855a7e url(../../images/ariane/ui-bg_highlight-soft_15_855a7e_1x100.png) 90% top repeat-x; color: #723c9b; }
+    -moz-box-shadow: inset 0 1px 0 rgba(255,255,255,0.05); border: 1px solid #481e18;
+    background: #f85b37 url(../../images/ariane/ui-bg_highlight-soft_15_f85b37_1x100.png) 50% top repeat-x; color: #481e18; }
 .ui-state-highlight a, .ui-widget-content .ui-state-highlight a,.ui-widget-header .ui-state-highlight a { color: #eaffb9; }
 .ui-state-error, .ui-widget-content .ui-state-error, .ui-widget-header .ui-state-error {
     border: 1px solid #ca3838; background: #ca3838 url(../../images/ariane/ui-bg_highlight-soft_15_cb3c3c_1x100.png) 50% top repeat-x; color: #ff8f8f; }
@@ -64,7 +64,7 @@
 .ui-state-default .ui-icon { background-image: url(../../images/ariane/ui-icons_fafafa_256x240.png); }
 .ui-state-hover .ui-icon, .ui-state-focus .ui-icon {background-image: url(../../images/ariane/ui-icons_481e18_256x240.png); }
 .ui-state-active .ui-icon {background-image: url(../../images/ariane/ui-icons_f85b37_256x240.png); }
-.ui-state-highlight .ui-icon {background-image: url(../../images/ariane/ui-icons_d399ff_256x240.png); }
+.ui-state-highlight .ui-icon {background-image: url(../../images/ariane/ui-icons_ff8f8f_256x240.png); }
 .ui-state-error .ui-icon, .ui-state-error-text .ui-icon {background-image: url(../../images/ariane/ui-icons_ff8f8f_256x240.png); }
 
 /* positioning */
@@ -340,4 +340,4 @@ body .pui-growl-image-error::before, body .ui-growl-image-error::before{content:
 body .ui-state-highlight .ui-icon::before{content:"\F05C" !important; font-family: 'FontAwesome' !important;font-size: 1.5em; color: #fff !important;}
 
 #header{background: #333;}
-a#arianeLogo{margin: 1px 20px 0 20px !important;}
+a#arianeLogo{margin: 40px 20px 0 20px !important;}

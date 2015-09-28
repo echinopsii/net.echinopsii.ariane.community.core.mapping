@@ -134,140 +134,147 @@ requirejs (
             rootTreeSorting = $('#rootTreeSorting'),
             subTreesSorting = $('#subTreesSorting');
 
-        test.change([loader_, dic], function(){
-            options.setURI(homeURI + "/js/taitale.samples/json/sample.taitale.input."+test.val()+".json");
-            try {
-                loader_.reloadMap(options);
-                loader_.editionMode(options);
-            } catch (e) {
-                helper_.addMsgToGrowl(e);
-                helper_.growlMsgs(
-                    {
-                        severity: 'error',
-                        summary: 'Failed to load map',
-                        detail: 'Name: '+test.val()+'<br>Layout: '+options.getLayout()+"<br>Mode: "+options.getMode(),
-                        sticky: true
-                    }
-                );
-                console.log(e.stack);
-            }
-        });
-
-        layout.change([loader_, dic], function() {
-            options.setLayout(layout.val());
-            try {
-                if (options.getLayout()===dic.mapLayout.NTWWW) {
-                    document.getElementById('networkOptions').style.display = "";
-                    document.getElementById('treeOptions').style.display    = "none";
-                } else if (options.getLayout()===dic.mapLayout.TREE || options.getLayout()===dic.mapLayout.BBTREE) {
-                    document.getElementById('networkOptions').style.display = "none";
-                    document.getElementById('treeOptions').style.display    = "";
-                } else {
-                    document.getElementById('networkOptions').style.display = "none";
-                    document.getElementById('treeOptions').style.display    = "none";
+        test.puidropdown({
+            change: function() {
+                options.setURI(homeURI + "/js/taitale.samples/json/sample.taitale.input."+test.val()+".json");
+                try {
+                    loader_.reloadMap(options);
+                    loader_.editionMode(options);
+                } catch (e) {
+                    helper_.addMsgToGrowl(e);
+                    helper_.growlMsgs(
+                        {
+                            severity: 'error',
+                            summary: 'Failed to load map',
+                            detail: 'Name: '+test.val()+'<br>Layout: '+options.getLayout()+"<br>Mode: "+options.getMode(),
+                            sticky: true
+                        }
+                    );
+                    console.log(e.stack);
                 }
-                loader_.rebuildMap(options);
-                loader_.editionMode(options);
-                loader_.displayDC(displayDC[0].checked);
-                loader_.displayArea(displayArea[0].checked);
-                loader_.displayLan(displayLan[0].checked);
-            } catch (e) {
-                helper_.addMsgToGrowl(e);
-                helper_.growlMsgs(
-                    {
-                        severity: 'error',
-                        summary: 'Failed to load map',
-                        detail: 'Name: '+test.val()+'<br>Layout: '+options.getLayout()+"<br>Mode: "+options.getMode(),
-                        sticky: true
+            }
+        });
+        layout.puidropdown({
+            change: function() {
+                options.setLayout(layout.val());
+                try {
+                    if (options.getLayout()===dic.mapLayout.NTWWW) {
+                        document.getElementById('networkOptions').style.display = "";
+                        document.getElementById('treeOptions').style.display    = "none";
+                    } else if (options.getLayout()===dic.mapLayout.TREE || options.getLayout()===dic.mapLayout.BBTREE) {
+                        document.getElementById('networkOptions').style.display = "none";
+                        document.getElementById('treeOptions').style.display    = "";
+                    } else {
+                        document.getElementById('networkOptions').style.display = "none";
+                        document.getElementById('treeOptions').style.display    = "none";
                     }
-                );
-                console.log(e.stack);
+                    loader_.rebuildMap(options);
+                    loader_.editionMode(options);
+                    loader_.displayDC(displayDC[0].checked);
+                    loader_.displayArea(displayArea[0].checked);
+                    loader_.displayLan(displayLan[0].checked);
+                } catch (e) {
+                    helper_.addMsgToGrowl(e);
+                    helper_.growlMsgs(
+                        {
+                            severity: 'error',
+                            summary: 'Failed to load map',
+                            detail: 'Name: '+test.val()+'<br>Layout: '+options.getLayout()+"<br>Mode: "+options.getMode(),
+                            sticky: true
+                        }
+                    );
+                    console.log(e.stack);
+                }
+            }
+        });
+        mode.puidropdown({
+            change: function () {
+                options.setMode(mode.val());
+                try {
+                    loader_.editionMode(options);
+                } catch (e) {
+                    helper_.addMsgToGrowl(e);
+                    helper_.growlMsgs(
+                        {
+                            severity: 'error',
+                            summary: 'Failed to refresh map',
+                            detail: 'Name: ' + test.val() + '<br>Layout: ' + options.getLayout() + "<br>Mode: " + options.getMode(),
+                            sticky: true
+                        }
+                    );
+                    console.log(e.stack);
+                }
+            }
+        });
+        notifyI.puicheckbox({
+            change: function() {
+                helper_.setNotifyInfo(notifyI.puicheckbox('isChecked'));
             }
         });
 
-        mode.change([loader_, dic], function() {
-            options.setMode(mode.val());
-            try {
-                loader_.editionMode(options);
-            } catch (e) {
-                helper_.addMsgToGrowl(e);
-                helper_.growlMsgs(
-                    {
-                        severity: 'error',
-                        summary: 'Failed to refresh map',
-                        detail: 'Name: '+test.val()+'<br>Layout: '+options.getLayout()+"<br>Mode: "+options.getMode(),
-                        sticky: true
-                    }
-                );
-                console.log(e.stack);
+        notifyW.puicheckbox({
+            change: function() {
+                helper_.setNotifyWarn(notifyW.puicheckbox('isChecked'));
             }
         });
-
-        notifyI.change(function() {
-            helper_.setNotifyInfo(notifyI[0].checked);
-        });
-
-        notifyW.change(function() {
-            helper_.setNotifyWarn(notifyW[0].checked);
-        });
-
-        notifyE.change(function() {
-            helper_.setNotifyErrs(notifyE[0].checked);
-        });
-
-        nsize.click([loader_, dic], function() {
-            try {
-                loader_.normalSize();
-            } catch (e) {
-                helper_.addMsgToGrowl(e);
-                helper_.growlMsgs(
-                    {
-                        severity: 'error',
-                        summary: 'Failed to center map',
-                        detail: 'Check the console log to know more...',
-                        sticky: true
-                    }
-                );
-                console.log(e.stack);
+        notifyE.puicheckbox({
+            change: function() {
+                helper_.setNotifyErrs(notifyE.puicheckbox('isChecked'));
             }
         });
-
-        center.click([loader_, dic], function() {
-            try {
-                loader_.centerMappy();
-            } catch (e) {
-                helper_.addMsgToGrowl(e);
-                helper_.growlMsgs(
-                    {
-                        severity: 'error',
-                        summary: 'Failed to center map',
-                        detail: 'Check the console log to know more...',
-                        sticky: true
-                    }
-                );
-                console.log(e.stack);
+        nsize.puibutton({
+            click: function() {
+                try {
+                    loader_.normalSize();
+                } catch (e) {
+                    helper_.addMsgToGrowl(e);
+                    helper_.growlMsgs(
+                        {
+                            severity: 'error',
+                            summary: 'Failed to center map',
+                            detail: 'Check the console log to know more...',
+                            sticky: true
+                        }
+                    );
+                    console.log(e.stack);
+                }
             }
         });
-
-        details.click([loader_,dic], function() {
-            $('#mapObjectDetails').puidialog('show');
+        center.puibutton({
+            click: function() {
+                try {
+                    loader_.centerMappy();
+                } catch (e) {
+                    helper_.addMsgToGrowl(e);
+                    helper_.growlMsgs(
+                        {
+                            severity: 'error',
+                            summary: 'Failed to center map',
+                            detail: 'Check the console log to know more...',
+                            sticky: true
+                        }
+                    );
+                    console.log(e.stack);
+                }
+            }
         });
-
-        reload.click([loader_, dic], function() {
-            try {
-                loader_.reloadMap(options);
-                loader_.editionMode(options);
-            } catch (e) {
-                helper_.addMsgToGrowl(e);
-                helper_.growlMsgs(
-                    {
-                        severity: 'error',
-                        summary: 'Failed to reload map',
-                        detail: 'Check the console log to know more...',
-                        sticky: true
-                    }
-                );
-                console.log(e.stack);
+        reload.puibutton({
+            click: function() {
+                try {
+                    loader_.reloadMap(options);
+                    loader_.editionMode(options);
+                } catch (e) {
+                    helper_.addMsgToGrowl(e);
+                    helper_.growlMsgs(
+                        {
+                            severity: 'error',
+                            summary: 'Failed to reload map',
+                            detail: 'Check the console log to know more...',
+                            sticky: true
+                        }
+                    );
+                    console.log(e.stack);
+                }
             }
         });
 
@@ -278,177 +285,191 @@ requirejs (
             height:800
         });
 
-        JPG.click([loader_, dic], function() {
-            try {
-                var svg          = loader_.exportToSVG(),
-                    exportCanvas = '<canvas id="exportCanvas" title="jpgMap"></canvas>';
-                imgExport.empty();
-                imgExport.append(exportCanvas);
-                canvg('exportCanvas', svg);
-                document.getElementById("exportCanvas").toDataURL("image/jpeg", 1.0);
-                mapExport.puidialog('show');
-            } catch (e) {
-                helper_.addMsgToGrowl(e);
-                helper_.growlMsgs(
-                    {
-                        severity: 'error',
-                        summary: 'Failed to export map to PNG',
-                        detail: 'Check the console log to know more...',
-                        sticky: true
-                    }
-                );
-                console.log(e.stack);
+        JPG.puibutton({
+            click: function() {
+                try {
+                    var svg          = loader_.exportToSVG(),
+                        exportCanvas = '<canvas id="exportCanvas" title="jpgMap"></canvas>';
+                    imgExport.empty();
+                    imgExport.append(exportCanvas);
+                    canvg('exportCanvas', svg);
+                    document.getElementById("exportCanvas").toDataURL("image/jpeg", 1.0);
+                    mapExport.puidialog('show');
+                } catch (e) {
+                    helper_.addMsgToGrowl(e);
+                    helper_.growlMsgs(
+                        {
+                            severity: 'error',
+                            summary: 'Failed to export map to PNG',
+                            detail: 'Check the console log to know more...',
+                            sticky: true
+                        }
+                    );
+                    console.log(e.stack);
+                }
+            }
+        });
+        PNG.puibutton({
+            click: function() {
+                try {
+                    var svg    = loader_.exportToSVG(),
+                        imgsrc = "data:image/svg+xml," + encodeURIComponent(svg),
+                        img    = '<canvas id="exportPngCanvas" title="pngMap"></canvas>';
+                    imgExport.empty();
+                    imgExport.append(img);
+                    canvg('exportPngCanvas', svg);
+                    document.getElementById("exportPngCanvas").toDataURL("image/png");
+                    mapExport.puidialog('show');
+                    //open(imgsrc);
+                } catch (e) {
+                    helper_.addMsgToGrowl(e);
+                    helper_.growlMsgs(
+                        {
+                            severity: 'error',
+                            summary: 'Failed to export map to PNG',
+                            detail: 'Check the console log to know more...',
+                            sticky: true
+                        }
+                    );
+                    console.log(e.stack);
+                }
+            }
+        });
+        SVG.puibutton({
+            click: function() {
+                try {
+                    var svg    = loader_.exportToSVG(),
+                        imgsrc = "data:image/svg+xml," + encodeURIComponent(svg),
+                        img    = '<img src="'+imgsrc+'" title="svgMap">';
+                    imgExport.empty();
+                    imgExport.append(img);
+                    mapExport.puidialog('show');
+                    //open(imgsrc);
+                } catch (e) {
+                    helper_.addMsgToGrowl(e);
+                    helper_.growlMsgs(
+                        {
+                            severity: 'error',
+                            summary: 'Failed to export map to SVG',
+                            detail: 'Check the console log to know more...',
+                            sticky: true
+                        }
+                    );
+                    console.log(e.stack);
+                }
             }
         });
 
-        PNG.click([loader_, dic], function() {
-            try {
-                var svg    = loader_.exportToSVG(),
-                    imgsrc = "data:image/svg+xml," + encodeURIComponent(svg),
-                    img    = '<canvas id="exportPngCanvas" title="pngMap"></canvas>';
-                imgExport.empty();
-                imgExport.append(img);
-                canvg('exportPngCanvas', svg);
-                document.getElementById("exportPngCanvas").toDataURL("image/png");
-                mapExport.puidialog('show');
-                //open(imgsrc);
-            } catch (e) {
-                helper_.addMsgToGrowl(e);
-                helper_.growlMsgs(
-                    {
-                        severity: 'error',
-                        summary: 'Failed to export map to PNG',
-                        detail: 'Check the console log to know more...',
-                        sticky: true
-                    }
-                );
-                console.log(e.stack);
+        displayDC.puicheckbox({
+            change: function() {
+                try {
+                    options.displayDC = displayDC[0].checked;
+                    loader_.displayDC(options.displayDC);
+                } catch (e) {
+                    helper_.addMsgToGrowl(e);
+                    helper_.growlMsgs(
+                        {
+                            severity: 'error',
+                            summary: 'Failed to display/hide DCs',
+                            detail: 'Check the console log to know more...',
+                            sticky: true
+                        }
+                    );
+                    console.log(e.stack);
+                }
+            }
+        });
+        displayArea.puicheckbox({
+            change:function() {
+                try {
+                    options.displayAREA = displayArea[0].checked;
+                    loader_.displayArea(options.displayAREA);
+                } catch (e) {
+                    helper_.addMsgToGrowl(e);
+                    helper_.growlMsgs(
+                        {
+                            severity: 'error',
+                            summary: 'Failed to display/hide Areas',
+                            detail: 'Check the console log to know more...',
+                            sticky: true
+                        }
+                    );
+                    console.log(e.stack);
+                }
+            }
+        });
+        displayLan.puicheckbox({
+            change: function() {
+                try {
+                    options.displayLAN = displayLan[0].checked;
+                    loader_.displayLan(options.displayLAN);
+                } catch (e) {
+                    helper_.addMsgToGrowl(e);
+                    helper_.growlMsgs(
+                        {
+                            severity: 'error',
+                            summary: 'Failed to display/hide Lans',
+                            detail: 'Check the console log to know more...',
+                            sticky: true
+                        }
+                    );
+                    console.log(e.stack);
+                }
             }
         });
 
-        SVG.click([loader_, dic], function() {
-            try {
-                var svg    = loader_.exportToSVG(),
-                    imgsrc = "data:image/svg+xml," + encodeURIComponent(svg),
-                    img    = '<img src="'+imgsrc+'" title="svgMap">';
-                imgExport.empty();
-                imgExport.append(img);
-                mapExport.puidialog('show');
-                //open(imgsrc);
-            } catch (e) {
-                helper_.addMsgToGrowl(e);
-                helper_.growlMsgs(
-                    {
-                        severity: 'error',
-                        summary: 'Failed to export map to SVG',
-                        detail: 'Check the console log to know more...',
-                        sticky: true
-                    }
-                );
-                console.log(e.stack);
+        rootTreeSorting.puidropdown({
+            change: function() {
+                try {
+                    options.setRootTreeSorting(rootTreeSorting.val());
+                    loader_.sortRootTree(rootTreeSorting.val());
+                    loader_.rebuildMapTreeLayout();
+                    loader_.refreshMap(options);
+                    loader_.editionMode(options);
+                } catch (e) {
+                    helper_.addMsgToGrowl(e);
+                    helper_.growlMsgs(
+                        {
+                            severity: 'error',
+                            summary: 'Failed refresh tree map with selected sub tree sorting',
+                            detail: 'Check the console log to know more...',
+                            sticky: true
+                        }
+                    );
+                    console.log(e.stack);
+                }
             }
         });
-
-        displayDC.change([loader_, dic], function() {
-            try {
-                options.displayDC = displayDC[0].checked;
-                loader_.displayDC(options.displayDC);
-            } catch (e) {
-                helper_.addMsgToGrowl(e);
-                helper_.growlMsgs(
-                    {
-                        severity: 'error',
-                        summary: 'Failed to display/hide DCs',
-                        detail: 'Check the console log to know more...',
-                        sticky: true
-                    }
-                );
-                console.log(e.stack);
-            }
-        });
-
-        displayArea.change([loader_, dic], function() {
-            try {
-                options.displayAREA = displayArea[0].checked;
-                loader_.displayArea(options.displayAREA);
-            } catch (e) {
-                helper_.addMsgToGrowl(e);
-                helper_.growlMsgs(
-                    {
-                        severity: 'error',
-                        summary: 'Failed to display/hide Areas',
-                        detail: 'Check the console log to know more...',
-                        sticky: true
-                    }
-                );
-                console.log(e.stack);
-            }
-        });
-
-        displayLan.change([loader_, dic], function() {
-            try {
-                options.displayLAN = displayLan[0].checked;
-                loader_.displayLan(options.displayLAN);
-            } catch (e) {
-                helper_.addMsgToGrowl(e);
-                helper_.growlMsgs(
-                    {
-                        severity: 'error',
-                        summary: 'Failed to display/hide Lans',
-                        detail: 'Check the console log to know more...',
-                        sticky: true
-                    }
-                );
-                console.log(e.stack);
-            }
-        });
-
-        rootTreeSorting.change([loader_, dic], function() {
-            try {
-                options.setRootTreeSorting(rootTreeSorting.val());
-                loader_.sortRootTree(rootTreeSorting.val());
-                loader_.rebuildMapTreeLayout();
-                loader_.refreshMap(options);
-                loader_.editionMode(options);
-            } catch (e) {
-                helper_.addMsgToGrowl(e);
-                helper_.growlMsgs(
-                    {
-                        severity: 'error',
-                        summary: 'Failed refresh tree map with selected sub tree sorting',
-                        detail: 'Check the console log to know more...',
-                        sticky: true
-                    }
-                );
-                console.log(e.stack);
-            }
-        });
-
-        subTreesSorting.change([loader_, dic], function() {
-            try {
-                options.setSubTreesSorting(subTreesSorting.val());
-                loader_.sortSubTrees(options.getSubTreesSorting());
-                loader_.rebuildMapTreeLayout();
-                loader_.refreshMap(options);
-                loader_.editionMode(options);
-            } catch (e) {
-                helper_.addMsgToGrowl(e);
-                helper_.growlMsgs(
-                    {
-                        severity: 'error',
-                        summary: 'Failed refresh tree map with selected sub tree sorting',
-                        detail: 'Check the console log to know more...',
-                        sticky: true
-                    }
-                );
-                console.log(e.stack);
+        subTreesSorting.puidropdown({
+            change: function() {
+                try {
+                    options.setSubTreesSorting(subTreesSorting.val());
+                    loader_.sortSubTrees(options.getSubTreesSorting());
+                    loader_.rebuildMapTreeLayout();
+                    loader_.refreshMap(options);
+                    loader_.editionMode(options);
+                } catch (e) {
+                    helper_.addMsgToGrowl(e);
+                    helper_.growlMsgs(
+                        {
+                            severity: 'error',
+                            summary: 'Failed refresh tree map with selected sub tree sorting',
+                            detail: 'Check the console log to know more...',
+                            sticky: true
+                        }
+                    );
+                    console.log(e.stack);
+                }
             }
         });
 
         try {
-            notifyI[0].checked=helper_.getNotifyInfo();
-            notifyW[0].checked=helper_.getNotifyWarn();
-            notifyE[0].checked=helper_.getNotifyErrs();
+            if (helper_.getNotifyInfo())
+                notifyI.puicheckbox('check');
+            if (helper_.getNotifyWarn())
+                notifyW.puicheckbox('check');
+            if (helper_.getNotifyErrs())
+                notifyE.puicheckbox('check');
 
             options.setLayout(layout.val());
             options.setMode(mode.val());

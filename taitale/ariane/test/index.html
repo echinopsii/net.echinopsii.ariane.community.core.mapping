@@ -21,7 +21,7 @@
 </head>
 <body>
 <div id="mainLayout">
-    <div id="header">
+    <div id="header" style="height: 120px">
         <a id="arianeLogo" href="#">Ariane</a>
         <div id="menutop">
             <div id="menuDivLeft">
@@ -62,6 +62,7 @@
                                 <option value="BBTree">BBTree</option>
                             </select>
                         </td>
+                        <!--
                         <td>
                             <strong>VIEW :</strong><br/>
                             <select name="view" id="view">
@@ -70,6 +71,7 @@
                                 <option value="Application">Application</option>
                             </select>
                         </td>
+                        -->
                         <td>
                             <strong>MODE :</strong><br/>
                             <select name="mode" id="mode">
@@ -85,15 +87,15 @@
                         </td>
                         <td>
                             <strong>MAP ACTIONS :</strong><br/>
-                            <input type="submit" name="reload" value="reload" id="reload"/>
-                            <input type="submit" name="nsize"  value="[1:1]"  id="nsize"/>
-                            <input type="submit" name="center" value="center" id="center"/>
+                            <button type="button" name="reload" id="reload">reload</button>
+                            <button type="button" name="nsize"  id="nsize">[1:1]</button>
+                            <button type="button" name="center" id="center">center</button>
                         </td>
                         <td>
                             <strong>MAP EXPORT :</strong><br/>
-                            <input type="submit" name="JPG" value="JPG" id="JPG"/>
-                            <input type="submit" name="PNG" value="PNG" id="PNG"/>
-                            <input type="submit" name="SVG" value="SVG" id="SVG"/>
+                            <button type="button" name="JPG" id="JPG">JPG</button>
+                            <button type="button" name="PNG" id="PNG">PNG</button>
+                            <button type="button" name="SVG" id="SVG">SVG</button>
                         </td>
                     </tr>
                 </table><br/>
@@ -140,12 +142,12 @@
     var readyStateCheckIntervalDir = setInterval(function(){
         if (document.readyState === "complete") {
             clearInterval(readyStateCheckIntervalDir);
-            $("#mappyCanvas").css({height: $(document).height() - 115});
+            $("#mappyCanvas").css({height: $(document).height() - 125});
         }
     }, 100);
 
     window.onresize = function(event) {
-        $("#mappyCanvas").css({height: $(document).height() - 115});
+        $("#mappyCanvas").css({height: $(document).height() - 125});
     };
 </script>
 </body>
