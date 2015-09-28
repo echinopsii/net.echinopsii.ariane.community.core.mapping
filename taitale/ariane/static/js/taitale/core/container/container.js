@@ -153,6 +153,7 @@ define(
             this.fitTextPadding    = params.container_fitTextPadding;
             this.cornerRad         = params.container_cornerRad;
             this.strokeWidth       = params.container_strokeWidth;
+            this.centerMtx         = false;
 
             this.rectWidth         = 0;
             this.rectHeight        = 0;
@@ -260,14 +261,19 @@ define(
             };
 
             var getMaxWidth = function(firstWidth) {
-                var fontSize = containerRef.txtFont["font-size"];
+                var fontSize = containerRef.txtFont["font-size"], hatWidth;
                 fontSize = helper_.fitText(fontSize,containerRef.rectWidth-containerRef.fitTextPadding,1.5,containerRef.fitTitleMinFont);
                 containerRef.txtFont["font-size"]=fontSize;
                 containerRef.titleWidth  = containerRef.name.width(containerRef.txtFont);
                 containerRef.titleHeight = containerRef.name.height(containerRef.txtFont);
 
-                return Math.max(firstWidth,Math.max(containerRef.containerHat_.width + containerRef.fitTextPadding + containerRef.containerHat_.width*2/5,
-                        containerRef.titleWidth + containerRef.fitTextPadding + containerRef.titleWidth*2/5));
+                hatWidth = Math.max(containerRef.containerHat_.width + containerRef.fitTextPadding + containerRef.containerHat_.width*2/5,
+                    containerRef.titleWidth + containerRef.fitTextPadding + containerRef.titleWidth*2/5);
+
+                return {
+                    centerMatrix: hatWidth > firstWidth,
+                    maxWidth: Math.max(firstWidth, hatWidth)
+                };
             };
 
             var mouseDown = function(e) {
@@ -501,8 +507,10 @@ define(
                 this.containerNodes.defineMtxContentSize();
                 var mtxSize = this.containerNodes.getMtxContentSize();
                 var mtxX        = this.containerNodes.getMtxSize().x,
-                    mtxY        = this.containerNodes.getMtxSize().y;
-                this.rectWidth  = getMaxWidth(this.interSpan*(mtxY+1) + mtxSize.width);
+                    mtxY        = this.containerNodes.getMtxSize().y,
+                    computeMaxWidth = getMaxWidth(this.interSpan*(mtxY+1) + mtxSize.width);
+                this.centerMtx  = computeMaxWidth.centerMatrix;
+                this.rectWidth  = computeMaxWidth.maxWidth;
                 this.rectHeight = containerRef.containerHat_.height + this.titleHeight + this.interSpan*(mtxX+1) + mtxSize.height;
                 //helper_.debug("[Container.defineSize] " + this.name + " : {mtxSize.width: " + mtxSize.width +
                 //    ", mtxSize.height:" + mtxSize.height + ", mtxX:" + mtxX + ", mtxY: " + mtxY + ", interSpan: " + this.interSpan+"}");
@@ -524,9 +532,11 @@ define(
             this.defineMaxSize = function() {
                 defineRectPoints(this.X,this.Y);
                 this.containerNodes.defineMtxContentMaxSize();
-                var mtxMaxSize = this.containerNodes.getMtxContentSize();
-                var nodesCount = this.containerNodes.getMtxObjCount();
-                this.maxRectWidth = getMaxWidth(this.interSpan*(nodesCount+1) + mtxMaxSize.width);
+                var mtxMaxSize = this.containerNodes.getMtxContentSize(),
+                    nodesCount = this.containerNodes.getMtxObjCount(),
+                    computeMaxWidth = getMaxWidth(this.interSpan*(nodesCount+1) + mtxMaxSize.width);
+                this.centerMtx  = computeMaxWidth.centerMatrix;
+                this.maxRectWidth = computeMaxWidth.maxWidth;
                 this.maxRectHeight = this.containerHat_.height + this.titleHeight + this.interSpan*(nodesCount+1) + mtxMaxSize.height;
                 //helper_.debug("[Container.defineMaxSize] " + this.name + " : {mtxMaxSize.width: " + mtxMaxSize.width +
                 //    ", mtxMaxSize.height:" + mtxMaxSize.height + ", nodesCount:" + nodesCount + ", interSpan: " + this.interSpan+" }");
@@ -555,12 +565,20 @@ define(
             };
 
             this.definedNodesPoz = function() {
-                this.containerNodes.defineMtxObjectLastPoz(this.rectTopLeftX,
+                var topLeftMtx = this.rectTopLeftX;
+                if (this.centerMtx) {
+                    var mtxMaxSize = this.containerNodes.getMtxContentSize(),
+                        nodesCount = this.containerNodes.getMtxObjCount(),
+                        mtxWidth = this.interSpan*(nodesCount+1) + mtxMaxSize.width;
+                    topLeftMtx = this.rectMiddleX - mtxWidth/2;
+                }
+                this.containerNodes.defineMtxObjectLastPoz(topLeftMtx,
                     this.rectTopLeftY + this.containerHat_.height + this.titleHeight,
-                    this.interSpan, this.interSpan, function(node, mtxSpan, objSpan, columnIdx, lineIdx, widthPointer, heightPointer) {
-                        node.setPoz(mtxSpan + objSpan * columnIdx + widthPointer, objSpan * (lineIdx+1) + heightPointer);
+                    this.interSpan, this.interSpan, function (node, mtxSpan, objSpan, columnIdx, lineIdx, widthPointer, heightPointer) {
+                        node.setPoz(mtxSpan + objSpan * columnIdx + widthPointer, objSpan * (lineIdx + 1) + heightPointer);
                         node.definedNodesPoz();
                     });
+
             };
 
             this.getLinkedTreeObjectsCount = function() {
