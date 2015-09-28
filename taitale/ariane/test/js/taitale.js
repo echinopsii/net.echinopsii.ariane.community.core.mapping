@@ -226,6 +226,7 @@ requirejs (
             click: function() {
                 try {
                     loader_.normalSize();
+                    nsize.removeClass('ui-state-focus');
                 } catch (e) {
                     helper_.addMsgToGrowl(e);
                     helper_.growlMsgs(
@@ -244,6 +245,7 @@ requirejs (
             click: function() {
                 try {
                     loader_.centerMappy();
+                    center.removeClass('ui-state-focus');
                 } catch (e) {
                     helper_.addMsgToGrowl(e);
                     helper_.growlMsgs(
@@ -263,6 +265,7 @@ requirejs (
                 try {
                     loader_.reloadMap(options);
                     loader_.editionMode(options);
+                    reload.removeClass('ui-state-focus');
                 } catch (e) {
                     helper_.addMsgToGrowl(e);
                     helper_.growlMsgs(
@@ -295,6 +298,7 @@ requirejs (
                     canvg('exportCanvas', svg);
                     document.getElementById("exportCanvas").toDataURL("image/jpeg", 1.0);
                     mapExport.puidialog('show');
+                    JPG.removeClass('ui-state-focus');
                 } catch (e) {
                     helper_.addMsgToGrowl(e);
                     helper_.growlMsgs(
@@ -320,6 +324,7 @@ requirejs (
                     canvg('exportPngCanvas', svg);
                     document.getElementById("exportPngCanvas").toDataURL("image/png");
                     mapExport.puidialog('show');
+                    PNG.removeClass('ui-state-focus');
                     //open(imgsrc);
                 } catch (e) {
                     helper_.addMsgToGrowl(e);
@@ -344,6 +349,7 @@ requirejs (
                     imgExport.empty();
                     imgExport.append(img);
                     mapExport.puidialog('show');
+                    SVG.removeClass('ui-state-focus');
                     //open(imgsrc);
                 } catch (e) {
                     helper_.addMsgToGrowl(e);
