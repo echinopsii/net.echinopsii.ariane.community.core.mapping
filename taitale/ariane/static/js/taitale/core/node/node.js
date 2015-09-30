@@ -402,9 +402,32 @@ define(
                         nodeRef.r.safari();
                     }
                 },
+                resetLinksAndEPs = function(endpoint, nodeToUp, epToUp, linkToUp) {
+                    var j, jj, remoteNodeEp;
+                    if (nodeToUp.indexOf(endpoint.epNode)<0)
+                        nodeToUp.push(endpoint.epNode);
+                    if (epToUp.indexOf(endpoint)<0) {
+                        endpoint.resetPoz();
+                        epToUp.push(endpoint);
+                    }
+                    for (j = 0, jj = endpoint.epLinks.length; j < jj; j++) {
+                        var currentLink = endpoint.epLinks[j];
+                        if (currentLink.epSource.epURL === endpoint.epURL) {
+                            remoteNodeEp = currentLink.epTarget
+                        } else {
+                            remoteNodeEp = currentLink.epSource
+                        }
+                        if (remoteNodeEp!=null && epToUp.indexOf(remoteNodeEp)<0)
+                            resetLinksAndEPs(remoteNodeEp, nodeToUp, epToUp, linkToUp);
+                        if (linkToUp.indexOf(currentLink)<0) {
+                            currentLink.linkAvgEp();
+                            linkToUp.push(currentLink);
+                        }
+                    }
+                },
                 nodeUP = function () {
                     if (!nodeRef.rightClick)
-                        nodeRef.r.up()
+                        nodeRef.r.up();
                 };
 
             this.toString = function() {
@@ -565,10 +588,33 @@ define(
                 }
             };
 
+            this.redefineLinksAndEPsPoz = function() {
+                var i, ii, nodeEp;
+                var nodeToUp = [], epToUp = [], linkToUp = [];
+                for (i = 0, ii = nodeRef.nodeEndpoints.length-1; i <= ii; ii--) {
+                    nodeEp = this.nodeEndpoints[ii];
+                    resetLinksAndEPs(nodeEp, nodeToUp, epToUp, linkToUp);
+                }
+                for (i = 0, ii=nodeToUp.length; i<ii; i++)
+                    nodeToUp[i].defineEndpointsAvgPoz();
+                for (i = 0, ii=epToUp.length; i<ii; i++) {
+                    epToUp[i].clear();
+                    epToUp[i].print(this.r);
+                }
+                for (i = 0, ii=linkToUp.length; i<ii; i++) {
+                    linkToUp[i].clear();
+                    linkToUp[i].print(this.r);
+                }
+                for (i = 0, ii=nodeToUp.length; i<ii; i++)
+                    nodeToUp[i].toFront()
+                for (i = 0, ii=epToUp.length; i<ii; i++)
+                    epToUp[i].toFront()
+            };
+
             this.getRectMiddlePoint = function() {
                 return {
-                    x: nodeRef.rectMiddleX,
-                    y: nodeRef.rectMiddleY
+                    x: this.rectMiddleX,
+                    y: this.rectMiddleY
                 };
             };
 
@@ -985,7 +1031,6 @@ define(
 
                 this.rect.animate({"fill-opacity": this.oUnselected}, 500);
                 this.changeUp();
-
                 if (this.isEditing)
                     this.r.scaleInit(this);
             };
@@ -1152,8 +1197,8 @@ define(
                 this.maxTopLeftY = this.maxTopLeftY + this.rectHeight - this.extheight;
                 this.rectWidth = this.extwidth;
                 this.rectHeight = this.extheight;
-
                 this.changeUp();
+                this.redefineLinksAndEPsPoz();
             };
         }
 

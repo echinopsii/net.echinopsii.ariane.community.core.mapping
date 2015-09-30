@@ -620,7 +620,6 @@ define(
             if (nodesOnMove!=null) {
                 for (i = 0, ii = nodesOnMove.length; i < ii; i++)
                     nodesOnMove[i].moveUp();
-                nodesOnMove = null;
             }
             if (endpointsOnMove!=null) {
                 for (i = 0, ii = endpointsOnMove.length; i < ii; i++)
@@ -629,6 +628,11 @@ define(
             }
             if (linksOnMove!=null) linksOnMove = null;
             if (linksToUp!=null) linksToUp = null;
+            if (nodesOnMove!=null) {
+                for (i = 0, ii=nodesOnMove.length; i < ii; i++)
+                    nodesOnMove[i].redefineLinksAndEPsPoz();
+                nodesOnMove = null;
+            }
         };
 
 

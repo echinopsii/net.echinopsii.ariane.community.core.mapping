@@ -152,6 +152,11 @@ define(
                 }
             };
 
+            this.clear = function() {
+                this.line.remove();
+                this.bg.remove();
+            };
+
             this.print = function(r_) {
                 /*
                  * reinit line for map refresh

@@ -268,23 +268,29 @@ define(
                                  * is outside the node
                                  */
                                 var dist = null;
-                                if (att.cx > topLeftRadX && att.cx < bottomRightRadX && att.cy < topLeftY) {
+                                if (att.cy < topLeftY) {
+                                    helper_.debug('10');
                                     att.cy = topLeftY;
-                                } else if (att.cx > topLeftRadX && att.cx < bottomRightRadX && att.cy > bottomRightY) {
+                                } else if (att.cy > bottomRightY) {
+                                    helper_.debug('11');
                                     att.cy = bottomRightY;
                                 } else if (att.cx < topLeftRadX && att.cy < topLeftRadY) {
+                                    helper_.debug('12');
                                     dist = Math.sqrt((att.cx-topLeftRadX)*(att.cx-topLeftRadX) + (att.cy-topLeftRadY)*(att.cy-topLeftRadY));
                                     att.cx=(att.cx-topLeftRadX)*cornerRad/dist + topLeftRadX;
                                     att.cy=(att.cy-topLeftRadY)*cornerRad/dist + topLeftRadY;
                                 } else if (att.cx < topLeftRadX && att.cy > bottomRightRadY) {
+                                    helper_.debug('13');
                                     dist = Math.sqrt((att.cx-topLeftRadX)*(att.cx-topLeftRadX) + (att.cy-bottomRightRadY)*(att.cy-bottomRightRadY));
                                     att.cx=(att.cx-topLeftRadX)*cornerRad/dist + topLeftRadX;
                                     att.cy=(att.cy-bottomRightRadY)*cornerRad/dist + bottomRightRadY;
                                 } else if (att.cx >= bottomRightRadX && att.cy <= topLeftRadY) {
+                                    helper_.debug('14');
                                     dist = Math.sqrt((att.cx-bottomRightRadX)*(att.cx-bottomRightRadX)+(att.cy-topLeftRadY)*(att.cy-topLeftRadY));
                                     att.cx=(att.cx-bottomRightRadX)*cornerRad/dist + bottomRightRadX;
                                     att.cy=topLeftRadY - (-att.cy+topLeftRadY)*cornerRad/dist;
                                 } else if (att.cx >= bottomRightRadX && att.cy >= bottomRightRadY){
+                                    helper_.debug('15');
                                     dist = Math.sqrt((att.cx-bottomRightRadX)*(att.cx-bottomRightRadX) + (att.cy-bottomRightRadY)*(att.cy-bottomRightRadY));
                                     att.cx=(att.cx-bottomRightRadX)*cornerRad/dist + bottomRightRadX;
                                     att.cy=(att.cy-bottomRightRadY)*cornerRad/dist + bottomRightRadY;
@@ -458,6 +464,16 @@ define(
                 this.linkAvgX   = 0;
                 this.linkAvgY   = 0;
                 this.linkAvgT   = 0;
+            };
+
+            this.clear = function() {
+                this.circle.remove();
+                this.label.remove();
+                this.frame.remove();
+                this.endpointMenuTitle.remove();
+                this.endpointMenuPropertiesRect.remove();
+                this.endpointMenuProperties.remove();
+                this.endpointMenuSet.clear();
             };
 
             this.print = function(r_) {
