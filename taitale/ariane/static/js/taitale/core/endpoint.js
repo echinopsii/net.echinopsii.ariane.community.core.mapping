@@ -52,6 +52,7 @@ define(
             this.frame      = null;
             this.x          = 0;
             this.y          = 0;
+            this.epIsPosed  = false;
 
             this.labelHided   = true;
             this.frameHided   = true;
@@ -92,33 +93,34 @@ define(
 
             var epRef = this;
 
-            var calcLinkAvgT = function() {
-                var asin = Math.asin(epRef.linkAvgY / (Math.sqrt(epRef.linkAvgX*epRef.linkAvgX+epRef.linkAvgY*epRef.linkAvgY)));
-                if (epRef.linkAvgY > 0 && epRef.linkAvgX > 0) {
-                    epRef.linkAvgT = asin; // 0 =< as < PI/2  & 0 =< at < PI/2
-                } else if (epRef.linkAvgY > 0 && epRef.linkAvgX < 0) {
-                    epRef.linkAvgT = Math.PI - asin; // 0 < as < PI/2 & PI/2 < at < PI
-                } else if (epRef.linkAvgY < 0 && epRef.linkAvgX < 0) {
-                    epRef.linkAvgT = Math.PI - asin ; // -PI/2 < as < 0 & PI < at < 3PI/2
-                } else if (epRef.linkAvgY < 0 && epRef.linkAvgX > 0) {
-                    epRef.linkAvgT = 2*Math.PI + asin ; // -PI/2 < as < 0 & 3PI/2 < at < 2PI
-                } else if (epRef.linkAvgY == 0) {
-                    if (epRef.linkAvgX==0) {
-                        epRef.linkAvgT=0;
-                    } else if (epRef.linkAvgX<0) {
-                        epRef.linkAvgT=Math.PI;
+            var calcLinkT = function(linkX, linkY) {
+                var asin = Math.asin(linkY / (Math.sqrt(linkX*linkX+linkY*linkY))), linkT;
+                if (linkY > 0 && linkX > 0) {
+                    linkT = asin; // 0 =< as < PI/2  & 0 =< at < PI/2
+                } else if (linkY > 0 && linkX < 0) {
+                    linkT = Math.PI - asin; // 0 < as < PI/2 & PI/2 < at < PI
+                } else if (linkY < 0 && linkX < 0) {
+                    linkT = Math.PI - asin ; // -PI/2 < as < 0 & PI < at < 3PI/2
+                } else if (linkY < 0 && linkX > 0) {
+                    linkT = 2*Math.PI + asin ; // -PI/2 < as < 0 & 3PI/2 < at < 2PI
+                } else if (linkY == 0) {
+                    if (linkX==0) {
+                        linkT=0;
+                    } else if (linkX<0) {
+                        linkT=Math.PI;
                     } else {
-                        epRef.linkAvgT=Math.PI*2;
+                        linkT=Math.PI*2;
                     }
-                } else if (epRef.linkAvgX == 0) {
-                    if (epRef.linkAvgY==0) {
-                        epRef.linkAvgT=0;
-                    } else if (epRef.linkAvgY>0){
-                        epRef.linkAvgT=Math.PI/2;
+                } else if (linkX == 0) {
+                    if (linkY==0) {
+                        linkT=0;
+                    } else if (linkY>0){
+                        linkT=Math.PI/2;
                     } else {
-                        epRef.linkAvgT=3*Math.PI/2;
+                        linkT=3*Math.PI/2;
                     }
                 }
+                return linkT
             };
 
             var mouseDown = function(e){
@@ -268,32 +270,34 @@ define(
                                  * is outside the node
                                  */
                                 var dist = null;
-                                if (att.cy < topLeftY) {
-                                    helper_.debug('10');
+                                if (att.cx > topLeftRadX && att.cx < bottomRightRadX && att.cy < topLeftY) {
                                     att.cy = topLeftY;
-                                } else if (att.cy > bottomRightY) {
-                                    helper_.debug('11');
+                                } else if (att.cx > topLeftRadX && att.cx < bottomRightRadX && att.cy > bottomRightY) {
                                     att.cy = bottomRightY;
                                 } else if (att.cx < topLeftRadX && att.cy < topLeftRadY) {
-                                    helper_.debug('12');
                                     dist = Math.sqrt((att.cx-topLeftRadX)*(att.cx-topLeftRadX) + (att.cy-topLeftRadY)*(att.cy-topLeftRadY));
                                     att.cx=(att.cx-topLeftRadX)*cornerRad/dist + topLeftRadX;
                                     att.cy=(att.cy-topLeftRadY)*cornerRad/dist + topLeftRadY;
                                 } else if (att.cx < topLeftRadX && att.cy > bottomRightRadY) {
-                                    helper_.debug('13');
                                     dist = Math.sqrt((att.cx-topLeftRadX)*(att.cx-topLeftRadX) + (att.cy-bottomRightRadY)*(att.cy-bottomRightRadY));
                                     att.cx=(att.cx-topLeftRadX)*cornerRad/dist + topLeftRadX;
                                     att.cy=(att.cy-bottomRightRadY)*cornerRad/dist + bottomRightRadY;
                                 } else if (att.cx >= bottomRightRadX && att.cy <= topLeftRadY) {
-                                    helper_.debug('14');
                                     dist = Math.sqrt((att.cx-bottomRightRadX)*(att.cx-bottomRightRadX)+(att.cy-topLeftRadY)*(att.cy-topLeftRadY));
                                     att.cx=(att.cx-bottomRightRadX)*cornerRad/dist + bottomRightRadX;
                                     att.cy=topLeftRadY - (-att.cy+topLeftRadY)*cornerRad/dist;
                                 } else if (att.cx >= bottomRightRadX && att.cy >= bottomRightRadY){
-                                    helper_.debug('15');
                                     dist = Math.sqrt((att.cx-bottomRightRadX)*(att.cx-bottomRightRadX) + (att.cy-bottomRightRadY)*(att.cy-bottomRightRadY));
                                     att.cx=(att.cx-bottomRightRadX)*cornerRad/dist + bottomRightRadX;
                                     att.cy=(att.cy-bottomRightRadY)*cornerRad/dist + bottomRightRadY;
+                                } else if (att.cy < topLeftY) {
+                                    att.cy = topLeftY;
+                                } else if (att.cy > bottomRightY) {
+                                    att.cy = bottomRightY;
+                                } else if (att.cx < topLeftX) {
+                                    att.cx = topLeftX;
+                                } else if (att.cx > bottomRightX) {
+                                    att.cx = bottomRightX;
                                 }
                             }
                         }
@@ -416,7 +420,7 @@ define(
                         }
                     }
 
-                    calcLinkAvgT();
+                    epRef.linkAvgT = calcLinkT(epRef.linkAvgX, epRef.linkAvgY);
 
                     link_.setBPMulticast({x:bp.x,y:bp.y})
 
@@ -436,7 +440,7 @@ define(
                 //helper_.debug("peerNode : " + peerNode.toString());
                 this.linkAvgX = this.linkAvgX + (peerNode.getRectMiddlePoint().x-this.epNode.getRectMiddlePoint().x); //left -> right => x>0
                 this.linkAvgY = this.linkAvgY + (this.epNode.getRectMiddlePoint().y-peerNode.getRectMiddlePoint().y); //bottom -> top => y>0
-                calcLinkAvgT();
+                epRef.linkAvgT = calcLinkT(epRef.linkAvgX, epRef.linkAvgY);
 
                 if (this.epNode!=null && !this.epIsPushed) {
                     this.epNode.pushEndpoint(this);
@@ -445,21 +449,57 @@ define(
                 //helper_.debug("linkAvgPoint: (" + this.linkAvgX + "," + this.linkAvgY + "," + this.linkAvgT + ")");
             };
 
-            this.getLinkAvgPoz = function() {
-                return {
-                    x: this.linkAvgX,
-                    y: this.linkAvgY,
-                    t: this.linkAvgT
-                };
+            this.calcLinkAbsPoz = function() {
+                var peerEpsPosed = true, peerEpAvgX = 0, peerEpAvgY = 0, ret = null, i, ii;
+                var linkAbsX, linkAbsY, linkAbsT;
+                for (i=0, ii=this.epLinks.length; i<ii; i++)
+                    if (this.epLinks[i].getPeerEp(this).epIsPosed) {
+                        peerEpAvgX += this.epLinks[i].getPeerEp(this).x;
+                        peerEpAvgY += this.epLinks[i].getPeerEp(this).y;
+                    } else {
+                        peerEpsPosed = false;
+                        break;
+                    }
+
+                if (peerEpsPosed) {
+                    peerEpAvgX = peerEpAvgX / this.epLinks.length;
+                    peerEpAvgY = peerEpAvgY / this.epLinks.length;
+
+                    linkAbsX = peerEpAvgX - this.epNode.getRectMiddlePoint().x;
+                    linkAbsY = this.epNode.getRectMiddlePoint().y - peerEpAvgY;
+                    linkAbsT = calcLinkT(linkAbsX, linkAbsY);
+
+                    ret = {
+                        x: linkAbsX,
+                        y: linkAbsY,
+                        t: linkAbsT
+                    }
+                }
+
+                return ret;
+            };
+
+            this.getLinkPoz = function() {
+                var ret = this.calcLinkAbsPoz();
+                if (ret == null) {
+                    ret = {
+                        x: this.linkAvgX,
+                        y: this.linkAvgY,
+                        t: this.linkAvgT
+                    };
+                }
+                return ret;
             };
 
             this.setPoz = function(x_,y_) {
                 this.x = x_;
                 this.y = y_;
+                this.epIsPosed = true;
             };
 
             this.resetPoz = function() {
                 this.epIsPushed = false;
+                this.epIsPosed = false;
                 this.epNode.popEndpoint(this);
                 this.linkAvgX   = 0;
                 this.linkAvgY   = 0;

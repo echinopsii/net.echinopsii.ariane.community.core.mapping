@@ -451,10 +451,10 @@ define(
             };
 
             this.defineEndpointsAvgPoz = function() {
-                var i, ii, avgTeta;
+                var i, ii, teta;
                 nodeRef.nodeEpAvgLinksT.sort(function(a,b){
-                    var at = a.getLinkAvgPoz().t,
-                        bt = b.getLinkAvgPoz().t;
+                    var at = a.getLinkPoz().t,
+                        bt = b.getLinkPoz().t;
                     return at-bt;
                 });
 
@@ -470,9 +470,9 @@ define(
                 for (i = 0, ii = nodeRef.nodeEpAvgLinksT.length; i < ii; i++) {
                     var epX=0,epY=0;
                     //helper_.debug("EP : " + nodeRef.nodeEpAvgLinksT[i].toString());
-                    avgTeta = nodeRef.nodeEpAvgLinksT[i].getLinkAvgPoz().t;
+                    teta = nodeRef.nodeEpAvgLinksT[i].getLinkPoz().t;
 
-                    if (avgTeta >= 0 && avgTeta < rectTeta) {
+                    if (teta >= 0 && teta < rectTeta) {
                         epX = nodeRef.rectTopRightX;
                         epY = nodeRef.rectMiddleY - countY1*params.endpoint_radSelec*2;
                         if (epY < nodeRef.rectTopRightY) {
@@ -486,15 +486,15 @@ define(
                             if (epY - params.endpoint_radSelec*2 < nodeRef.rectTopRightY )
                                 countX2++;
                         }
-                    } else if (avgTeta >= rectTeta && avgTeta < Math.PI/2) {
+                    } else if (teta >= rectTeta && teta < Math.PI/2) {
                         epY = nodeRef.rectTopRightY;
                         epX = nodeRef.rectTopRightX - countX2*params.endpoint_radSelec*2;
                         countX2++;
-                    } else if (avgTeta >= (Math.PI/2) && avgTeta < Math.PI - rectTeta) {
+                    } else if (teta >= (Math.PI/2) && teta < Math.PI - rectTeta) {
                         epY = nodeRef.rectTopRightY;
                         epX = nodeRef.rectTopLeftX + countX3*params.endpoint_radSelec*2;
                         countX3++;
-                    } else if (avgTeta >= Math.PI-rectTeta && avgTeta < Math.PI) {
+                    } else if (teta >= Math.PI-rectTeta && teta < Math.PI) {
                         epX = nodeRef.rectTopLeftX;
                         epY = nodeRef.rectMiddleY - countY4*params.endpoint_radSelec*2;
                         if (epY < nodeRef.rectTopLeftY) {
@@ -508,7 +508,7 @@ define(
                             if (epY - params.endpoint_radSelec*2 < nodeRef.rectTopLeftY)
                                 countX3++;
                         }
-                    } else if (avgTeta >= Math.PI && avgTeta < Math.PI+rectTeta) {
+                    } else if (teta >= Math.PI && teta < Math.PI+rectTeta) {
                         epX = nodeRef.rectBottomLeftX;
                         epY = nodeRef.rectTopMiddleY + countY5*params.endpoint_radSelec*2;
                         if (epY > nodeRef.rectBottomLeftY) {
@@ -522,15 +522,15 @@ define(
                             if (epX + params.endpoint_radSelec*2 > nodeRef.rectBottomLeftY)
                                 countX6++;
                         }
-                    } else if (avgTeta >= Math.PI+rectTeta && avgTeta < 3*Math.PI/2) {
+                    } else if (teta >= Math.PI+rectTeta && teta < 3*Math.PI/2) {
                         epY = nodeRef.rectBottomLeftY;
                         epX = nodeRef.rectBottomLeftX + countX6*params.endpoint_radSelec*2;
                         countX6++;
-                    } else if (avgTeta >= 3*Math.PI/2 && avgTeta < 2*Math.PI-rectTeta) {
+                    } else if (teta >= 3*Math.PI/2 && teta < 2*Math.PI-rectTeta) {
                         epY = nodeRef.rectBottomRightY;
                         epX = nodeRef.rectBottomRightX - countX7*params.endpoint_radSelec*2;
                         countX7++;
-                    } else if (avgTeta >= (2*Math.PI-rectTeta) && avgTeta <= (2*Math.PI)) {
+                    } else if (teta >= (2*Math.PI-rectTeta) && teta <= (2*Math.PI)) {
                         epX = nodeRef.rectBottomRightX;
                         epY = nodeRef.rectMiddleY + countY8*params.endpoint_radSelec*2;
                         if (epY > nodeRef.rectBottomRightY) {
