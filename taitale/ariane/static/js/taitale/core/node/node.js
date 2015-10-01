@@ -451,7 +451,7 @@ define(
             };
 
             this.defineEndpointsAvgPoz = function() {
-                var i, ii, teta;
+                var i, ii, j, jj, teta;
                 nodeRef.nodeEpAvgLinksT.sort(function(a,b){
                     var at = a.getLinkPoz().t,
                         bt = b.getLinkPoz().t;
@@ -462,96 +462,105 @@ define(
                     countY1 = 0,
                     countX2 = 0,
                     countX3 = 0,
+                    topLeftEps = [],
                     countY4 = 0,
                     countY5 = 0,
                     countX6 = 0,
                     countX7 = 0,
+                    bottomRightEps = [],
                     countY8 = 0;
                 for (i = 0, ii = nodeRef.nodeEpAvgLinksT.length; i < ii; i++) {
-                    var epX=0,epY=0;
                     //helper_.debug("EP : " + nodeRef.nodeEpAvgLinksT[i].toString());
                     teta = nodeRef.nodeEpAvgLinksT[i].getLinkPoz().t;
 
                     if (teta >= 0 && teta < rectTeta) {
-                        epX = nodeRef.rectTopRightX;
-                        epY = nodeRef.rectMiddleY - countY1*params.endpoint_radSelec*2;
-                        if (epY < nodeRef.rectTopRightY) {
-                            epY = nodeRef.rectTopRightY;
-                            if (countX2==0)
+                        nodeRef.nodeEpAvgLinksT[i].epX = nodeRef.rectTopRightX;
+                        nodeRef.nodeEpAvgLinksT[i].epY = nodeRef.rectMiddleY - countY1 * params.endpoint_radSelec * 2;
+                        if (nodeRef.nodeEpAvgLinksT[i].epY < nodeRef.rectTopRightY) {
+                            nodeRef.nodeEpAvgLinksT[i].epY = nodeRef.rectTopRightY;
+                            if (countX2 == 0)
                                 countX2++;
-                            epX = nodeRef.rectTopRightX - countX2*params.endpoint_radSelec*2;
+                            nodeRef.nodeEpAvgLinksT[i].epX = nodeRef.rectTopRightX - countX2 * params.endpoint_radSelec * 2;
                             countX2++
                         } else {
                             countY1++;
-                            if (epY - params.endpoint_radSelec*2 < nodeRef.rectTopRightY )
+                            if (nodeRef.nodeEpAvgLinksT[i].epY - params.endpoint_radSelec * 2 < nodeRef.rectTopRightY)
                                 countX2++;
                         }
-                    } else if (teta >= rectTeta && teta < Math.PI/2) {
-                        epY = nodeRef.rectTopRightY;
-                        epX = nodeRef.rectTopRightX - countX2*params.endpoint_radSelec*2;
+                    } else if (teta >= rectTeta && teta < Math.PI / 2) {
+                        nodeRef.nodeEpAvgLinksT[i].epY = nodeRef.rectTopRightY;
+                        nodeRef.nodeEpAvgLinksT[i].epX = nodeRef.rectTopRightX - countX2 * params.endpoint_radSelec * 2;
                         countX2++;
-                    } else if (teta >= (Math.PI/2) && teta < Math.PI - rectTeta) {
-                        epY = nodeRef.rectTopRightY;
-                        epX = nodeRef.rectTopLeftX + countX3*params.endpoint_radSelec*2;
-                        countX3++;
-                    } else if (teta >= Math.PI-rectTeta && teta < Math.PI) {
-                        epX = nodeRef.rectTopLeftX;
-                        epY = nodeRef.rectMiddleY - countY4*params.endpoint_radSelec*2;
-                        if (epY < nodeRef.rectTopLeftY) {
-                            if (countX3==0)
-                                countX3++;
-                            epY = nodeRef.rectTopLeftY;
-                            epX = nodeRef.rectTopLeftX + countX3*params.endpoint_radSelec*2;
-                            countX3++;
-                        } else {
-                            countY4++;
-                            if (epY - params.endpoint_radSelec*2 < nodeRef.rectTopLeftY)
-                                countX3++;
-                        }
-                    } else if (teta >= Math.PI && teta < Math.PI+rectTeta) {
-                        epX = nodeRef.rectBottomLeftX;
-                        epY = nodeRef.rectTopMiddleY + countY5*params.endpoint_radSelec*2;
-                        if (epY > nodeRef.rectBottomLeftY) {
-                            if (countX6==0)
+                    } else if (teta >= (Math.PI / 2) && teta < Math.PI - rectTeta) {
+                        topLeftEps.splice(0,0,nodeRef.nodeEpAvgLinksT[i]);
+                    } else if (teta >= Math.PI - rectTeta && teta < Math.PI) {
+                        topLeftEps.splice(0,0,nodeRef.nodeEpAvgLinksT[i]);
+                    } else if (teta >= Math.PI && teta < Math.PI + rectTeta) {
+                        nodeRef.nodeEpAvgLinksT[i].epX = nodeRef.rectBottomLeftX;
+                        nodeRef.nodeEpAvgLinksT[i].epY = nodeRef.rectTopMiddleY + countY5 * params.endpoint_radSelec * 2;
+                        if (nodeRef.nodeEpAvgLinksT[i].epY > nodeRef.rectBottomLeftY) {
+                            if (countX6 == 0)
                                 countX6++;
-                            epY = nodeRef.rectBottomLeftY;
-                            epX = nodeRef.rectTopLeftX + countX6*params.endpoint_radSelec*2;
+                            nodeRef.nodeEpAvgLinksT[i].epY = nodeRef.rectBottomLeftY;
+                            nodeRef.nodeEpAvgLinksT[i].epX = nodeRef.rectTopLeftX + countX6 * params.endpoint_radSelec * 2;
                             countX6++;
                         } else {
                             countY5++;
-                            if (epX + params.endpoint_radSelec*2 > nodeRef.rectBottomLeftY)
+                            if (nodeRef.nodeEpAvgLinksT[i].epX + params.endpoint_radSelec * 2 > nodeRef.rectBottomLeftY)
                                 countX6++;
                         }
-                    } else if (teta >= Math.PI+rectTeta && teta < 3*Math.PI/2) {
-                        epY = nodeRef.rectBottomLeftY;
-                        epX = nodeRef.rectBottomLeftX + countX6*params.endpoint_radSelec*2;
+                    } else if (teta >= Math.PI + rectTeta && teta < 3 * Math.PI / 2) {
+                        nodeRef.nodeEpAvgLinksT[i].epY = nodeRef.rectBottomLeftY;
+                        nodeRef.nodeEpAvgLinksT[i].epX = nodeRef.rectBottomLeftX + countX6 * params.endpoint_radSelec * 2;
                         countX6++;
-                    } else if (teta >= 3*Math.PI/2 && teta < 2*Math.PI-rectTeta) {
-                        epY = nodeRef.rectBottomRightY;
-                        epX = nodeRef.rectBottomRightX - countX7*params.endpoint_radSelec*2;
-                        countX7++;
-                    } else if (teta >= (2*Math.PI-rectTeta) && teta <= (2*Math.PI)) {
-                        epX = nodeRef.rectBottomRightX;
-                        epY = nodeRef.rectMiddleY + countY8*params.endpoint_radSelec*2;
-                        if (epY > nodeRef.rectBottomRightY) {
-                            if (countX7==0)
-                                countX7++;
-                            epY = nodeRef.rectBottomRightY;
-                            epX = nodeRef.rectBottomRightX - countX7*params.endpoint_radSelec*2;
+                    } else if (teta >= 3 * Math.PI / 2 && teta < 2 * Math.PI - rectTeta) {
+                        bottomRightEps.splice(0,0,nodeRef.nodeEpAvgLinksT[i]);
+                    } else if (teta >= (2 * Math.PI - rectTeta) && teta <= (2 * Math.PI)) {
+                        bottomRightEps.splice(0,0,nodeRef.nodeEpAvgLinksT[i]);
+                    }
+                }
+
+                for (i=0, ii=topLeftEps.length; i<ii; i++) {
+                    topLeftEps[i].epX = nodeRef.rectTopLeftX;
+                    topLeftEps[i].epY = nodeRef.rectMiddleY - countY4 * params.endpoint_radSelec * 2;
+                    if (topLeftEps[i].epY < nodeRef.rectTopLeftY) {
+                        if (countX3 == 0)
+                            countX3++;
+                        topLeftEps[i].epY = nodeRef.rectTopLeftY;
+                        topLeftEps[i].epX = nodeRef.rectTopLeftX + countX3 * params.endpoint_radSelec * 2;
+                        countX3++;
+                    } else {
+                        countY4++;
+                        if (topLeftEps[i].epY - params.endpoint_radSelec * 2 < nodeRef.rectTopLeftY)
+                            countX3++;
+                    }
+                }
+
+                for (i=0, ii=bottomRightEps.length; i<ii; i++) {
+                    bottomRightEps[i].epX = nodeRef.rectBottomRightX;
+                    bottomRightEps[i].epY = nodeRef.rectMiddleY + countY8 * params.endpoint_radSelec * 2;
+                    if (bottomRightEps[i].epY > nodeRef.rectBottomRightY) {
+                        if (countX7 == 0)
                             countX7++;
-                        } else {
-                            countY8++;
-                            if (epY + params.endpoint_radSelect*2 > nodeRef.rectBottomRightY) {
-                                countX7++;
-                            }
+                        bottomRightEps[i].epY = nodeRef.rectBottomRightY;
+                        bottomRightEps[i].epX = nodeRef.rectBottomRightX - countX7 * params.endpoint_radSelec * 2;
+                        countX7++;
+                    } else {
+                        countY8++;
+                        if (bottomRightEps[i].epY + params.endpoint_radSelect * 2 > nodeRef.rectBottomRightY) {
+                            countX7++;
                         }
                     }
+                }
 
+                for (i = 0, ii = nodeRef.nodeEpAvgLinksT.length; i < ii; i++) {
                     var topLeftRadX  = nodeRef.getRectCornerPoints().TopLeftRadX,
                         topLeftRadY  = nodeRef.getRectCornerPoints().TopLeftRadY,
                         bottomRightRadX = nodeRef.getRectCornerPoints().BottomRightRadX,
                         bottomRightRadY = nodeRef.getRectCornerPoints().BottomRightRadY,
-                        cornerRad = nodeRef.cornerRad;
+                        cornerRad = nodeRef.cornerRad,
+                        epX = nodeRef.nodeEpAvgLinksT[i].epX,
+                        epY = nodeRef.nodeEpAvgLinksT[i].epY;
 
                     var dist = null;
 

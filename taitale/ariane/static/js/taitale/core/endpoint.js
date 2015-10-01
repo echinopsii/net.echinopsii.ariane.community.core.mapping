@@ -453,7 +453,7 @@ define(
                 var peerEpsPosed = true, peerEpAvgX = 0, peerEpAvgY = 0, ret = null, i, ii;
                 var linkAbsX, linkAbsY, linkAbsT;
                 for (i=0, ii=this.epLinks.length; i<ii; i++)
-                    if (this.epLinks[i].getPeerEp(this).epIsPosed) {
+                    if (this.epLinks[i].getPeerEp(this)!=null && this.epLinks[i].getPeerEp(this).epIsPosed) {
                         peerEpAvgX += this.epLinks[i].getPeerEp(this).x;
                         peerEpAvgY += this.epLinks[i].getPeerEp(this).y;
                     } else {
