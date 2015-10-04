@@ -23,6 +23,8 @@ package net.echinopsii.ariane.community.core.mapping.ds.json.domain;
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
@@ -37,6 +39,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 public class ContainerJSON {
 
@@ -140,5 +143,141 @@ public class ContainerJSON {
         jgenerator.writeEndArray();
         jgenerator.writeEndObject();
         jgenerator.close();
+    }
+
+    public static class JSONDeserializedContainer {
+        private long containerID;
+        private String containerName;
+        private String containerCompany;
+        private String containerProduct;
+        private String containerType;
+        private long containerPrimaryAdminGateID;
+        private String containerGateURI;
+        private String containerGateName;
+        private long containerClusterID;
+        private long containerParentContainerID;
+        private List<Long> containerChildContainersID;
+        private List<Long> containerNodesID;
+        private List<Long> containerGatesID;
+        private List<PropertiesJSON.JSONDeserializedProperty> containerProperties;
+
+
+        public long getContainerID() {
+            return containerID;
+        }
+
+        public void setContainerID(long containerID) {
+            this.containerID = containerID;
+        }
+
+        public String getContainerName() {
+            return containerName;
+        }
+
+        public void setContainerName(String containerName) {
+            this.containerName = containerName;
+        }
+
+        public String getContainerCompany() {
+            return containerCompany;
+        }
+
+        public void setContainerCompany(String containerCompany) {
+            this.containerCompany = containerCompany;
+        }
+
+        public String getContainerProduct() {
+            return containerProduct;
+        }
+
+        public void setContainerProduct(String containerProduct) {
+            this.containerProduct = containerProduct;
+        }
+
+        public String getContainerType() {
+            return containerType;
+        }
+
+        public void setContainerType(String containerType) {
+            this.containerType = containerType;
+        }
+
+        public long getContainerPrimaryAdminGateID() {
+            return containerPrimaryAdminGateID;
+        }
+
+        public void setContainerPrimaryAdminGateID(long containerPrimaryAdminGateID) {
+            this.containerPrimaryAdminGateID = containerPrimaryAdminGateID;
+        }
+
+        public String getContainerGateURI() {
+            return containerGateURI;
+        }
+
+        public void setContainerGateURI(String containerGateURI) {
+            this.containerGateURI = containerGateURI;
+        }
+
+        public String getContainerGateName() {
+            return containerGateName;
+        }
+
+        public void setContainerGateName(String containerGateName) {
+            this.containerGateName = containerGateName;
+        }
+
+        public long getContainerClusterID() {
+            return containerClusterID;
+        }
+
+        public void setContainerClusterID(long containerClusterID) {
+            this.containerClusterID = containerClusterID;
+        }
+
+        public long getContainerParentContainerID() {
+            return containerParentContainerID;
+        }
+
+        public void setContainerParentContainerID(long containerParentContainerID) {
+            this.containerParentContainerID = containerParentContainerID;
+        }
+
+        public List<Long> getContainerChildContainersID() {
+            return containerChildContainersID;
+        }
+
+        public void setContainerChildContainersID(List<Long> containerChildContainersID) {
+            this.containerChildContainersID = containerChildContainersID;
+        }
+
+        public List<Long> getContainerNodesID() {
+            return containerNodesID;
+        }
+
+        public void setContainerNodesID(List<Long> containerNodesID) {
+            this.containerNodesID = containerNodesID;
+        }
+
+        public List<Long> getContainerGatesID() {
+            return containerGatesID;
+        }
+
+        public void setContainerGatesID(List<Long> containerGatesID) {
+            this.containerGatesID = containerGatesID;
+        }
+
+        public List<PropertiesJSON.JSONDeserializedProperty> getContainerProperties() {
+            return containerProperties;
+        }
+
+        public void setContainerProperties(List<PropertiesJSON.JSONDeserializedProperty> containerProperties) {
+            this.containerProperties = containerProperties;
+        }
+    }
+
+    public static JSONDeserializedContainer JSON2Container(String payload) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return mapper.readValue(payload, JSONDeserializedContainer.class);
     }
 }
