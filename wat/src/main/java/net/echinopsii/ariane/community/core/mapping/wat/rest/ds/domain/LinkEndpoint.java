@@ -26,23 +26,69 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.LinkJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
+import net.echinopsii.ariane.community.core.mapping.wat.rest.ds.JSONDeserializationResponse;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.HashSet;
 
 @Path("/mapping/domain/links")
 public class LinkEndpoint {
     private static final Logger log = LoggerFactory.getLogger(GateEndpoint.class);
+
+    public static JSONDeserializationResponse jsonFriendlyToMappingFriendly(LinkJSON.JSONDeserializedLink jsonDeserializedLink) throws MappingDSException {
+        JSONDeserializationResponse ret = new JSONDeserializationResponse();
+
+        // DETECT POTENTIAL QUERIES ERROR FIRST
+        Endpoint reqSourceEndpoint=null;
+        Endpoint reqTargetEndpoint=null;
+        Transport reqTransport=null;
+
+        if (jsonDeserializedLink.getLinkSEPID()!=0) {
+            reqSourceEndpoint = (Endpoint) MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(jsonDeserializedLink.getLinkSEPID());
+            if (reqSourceEndpoint==null) ret.setErrorMessage("Request Error : source endpoint with provided ID " + jsonDeserializedLink.getLinkSEPID() + " was not found.");
+        }
+        if (ret.getErrorMessage() == null && jsonDeserializedLink.getLinkTEPID()!=0) {
+            reqTargetEndpoint = (Endpoint) MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(jsonDeserializedLink.getLinkTEPID());
+            if (reqTargetEndpoint==null) ret.setErrorMessage("Request Error : target endpoint with provided ID " + jsonDeserializedLink.getLinkTEPID() + " was not found.");
+        }
+        if (ret.getErrorMessage() == null && jsonDeserializedLink.getLinkTRPID()!=0) {
+            reqTransport = (Transport) MappingBootstrap.getMappingSce().getTransportSce().getTransport(jsonDeserializedLink.getLinkTRPID());
+            if (reqTransport == null) ret.setErrorMessage("Request Error : transport with provided ID " + jsonDeserializedLink.getLinkTRPID() + " was not found.");
+        }
+
+        // LOOK IF LINK MAYBE UPDATED OR CREATED
+        Link deserializedLink = null;
+        if (ret.getErrorMessage() == null && jsonDeserializedLink.getLinkID()!=0) {
+            deserializedLink = (Link) MappingBootstrap.getMappingSce().getLinkSce().getLink(jsonDeserializedLink.getLinkID());
+            if (deserializedLink==null) ret.setErrorMessage("Request Error : link with provided ID " + jsonDeserializedLink.getLinkID() + " was not found.");
+        }
+
+        // APPLY REQ IF NO ERRORS
+        if (ret.getErrorMessage() == null) {
+            if (deserializedLink==null) {
+                deserializedLink = MappingBootstrap.getMappingSce().getLinkSce().createLink(
+                        jsonDeserializedLink.getLinkSEPID(),
+                        jsonDeserializedLink.getLinkTEPID(),
+                        jsonDeserializedLink.getLinkTRPID()
+                );
+            } else {
+                if (reqSourceEndpoint!=null) deserializedLink.setLinkEndpointSource(reqSourceEndpoint);
+                deserializedLink.setLinkEndpointTarget(reqTargetEndpoint);
+                if (reqTransport!=null) deserializedLink.setLinkTransport(reqTransport);
+            }
+            ret.setDeserializedObject(deserializedLink);
+        }
+
+        return ret;
+    }
 
     @GET
     @Path("/{param:[0-9][0-9]*}")
@@ -130,6 +176,43 @@ public class LinkEndpoint {
                 e.printStackTrace();
                 String result = e.getMessage();
                 return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+            }
+        } else {
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
+        }
+    }
+
+    @POST
+    public Response postNode(@QueryParam("payload") String payload) throws IOException {
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}-{}] create or update node : ({})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), payload});
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+                subject.hasRole("Jedi") || subject.isPermitted("universe:zeone")) {
+            if (payload != null) {
+                try {
+                    Response ret;
+                    JSONDeserializationResponse deserializationResponse = jsonFriendlyToMappingFriendly(LinkJSON.JSON2Link(payload));
+                    if (deserializationResponse.getErrorMessage()!=null) {
+                        String result = deserializationResponse.getErrorMessage();
+                        ret = Response.status(Status.BAD_REQUEST).entity(result).build();
+                    } else if (deserializationResponse.getDeserializedObject()!=null) {
+                        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                        LinkJSON.oneLink2JSON((Link)deserializationResponse.getDeserializedObject(), outStream);
+                        String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                        ret = Response.status(Status.OK).entity(result).build();
+                    } else {
+                        String result = "ERROR while deserializing !";
+                        ret = Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                    }
+                    return ret ;
+                } catch (MappingDSException e) {
+                    log.error(e.getMessage());
+                    e.printStackTrace();
+                    String result = e.getMessage();
+                    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                }
+            } else {
+                return Response.status(Status.BAD_REQUEST).entity("No payload attached to this POST").build();
             }
         } else {
             return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();

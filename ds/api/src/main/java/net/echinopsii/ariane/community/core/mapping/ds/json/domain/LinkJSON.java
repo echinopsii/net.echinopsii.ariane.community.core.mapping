@@ -23,6 +23,8 @@ package net.echinopsii.ariane.community.core.mapping.ds.json.domain;
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Link;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
@@ -68,5 +70,50 @@ public class LinkJSON {
         jgenerator.writeEndArray();
         jgenerator.writeEndObject();
         jgenerator.close();
+    }
+
+    public static class JSONDeserializedLink {
+        private long linkID;
+        private long linkSEPID;
+        private long linkTEPID;
+        private long linkTRPID;
+
+        public long getLinkID() {
+            return linkID;
+        }
+
+        public void setLinkID(long linkID) {
+            this.linkID = linkID;
+        }
+
+        public long getLinkSEPID() {
+            return linkSEPID;
+        }
+
+        public void setLinkSEPID(long linkSEPID) {
+            this.linkSEPID = linkSEPID;
+        }
+
+        public long getLinkTEPID() {
+            return linkTEPID;
+        }
+
+        public void setLinkTEPID(long linkTEPID) {
+            this.linkTEPID = linkTEPID;
+        }
+
+        public long getLinkTRPID() {
+            return linkTRPID;
+        }
+
+        public void setLinkTRPID(long linkTRPID) {
+            this.linkTRPID = linkTRPID;
+        }
+    }
+
+    public static JSONDeserializedLink JSON2Link(String payload) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return mapper.readValue(payload, JSONDeserializedLink.class);
     }
 }
