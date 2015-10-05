@@ -21,10 +21,12 @@ package net.echinopsii.ariane.community.core.mapping.wat.rest.ds.domain;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
+import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.TransportJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
+import net.echinopsii.ariane.community.core.mapping.wat.rest.ds.JSONDeserializationResponse;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
@@ -34,11 +36,65 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 @Path("/mapping/domain/transports")
 public class TransportEndpoint {
     private static final Logger log = LoggerFactory.getLogger(GateEndpoint.class);
+
+    public static JSONDeserializationResponse jsonFriendlyToMappingFriendly(TransportJSON.JSONDeserializedTransport jsonDeserializedTransport) throws MappingDSException {
+        JSONDeserializationResponse ret = new JSONDeserializationResponse();
+
+        // DETECT POTENTIAL QUERIES ERROR FIRST
+        HashMap<String, Object> reqProperties = new HashMap<>();
+
+        if (jsonDeserializedTransport.getTransportProperties()!=null && jsonDeserializedTransport.getTransportProperties().size() > 0) {
+            for (PropertiesJSON.JSONDeserializedProperty deserializedProperty : jsonDeserializedTransport.getTransportProperties()) {
+                try {
+                    Object oValue = ToolBox.extractPropertyObjectValueFromString(deserializedProperty.getPropertyValue(), deserializedProperty.getPropertyType());
+                    reqProperties.put(deserializedProperty.getPropertyName(), oValue);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    ret.setErrorMessage("Request Error : invalid property " + deserializedProperty.getPropertyName() + ".");
+                    break;
+                }
+            }
+        }
+
+        // LOOK IF TRANSPORT MAYBE UPDATED OR CREATED
+        Transport deserializedTransport = null;
+        if (ret.getErrorMessage() == null && jsonDeserializedTransport.getTransportID()!=0) {
+            deserializedTransport = (Transport) MappingBootstrap.getMappingSce().getTransportSce().getTransport(jsonDeserializedTransport.getTransportID());
+            if (deserializedTransport==null) ret.setErrorMessage("Request Error : transport with provided ID " + jsonDeserializedTransport.getTransportID() + " was not found.");
+        }
+
+        // APPLY REQ IF NO ERRORS
+        if (ret.getErrorMessage() == null) {
+            if (deserializedTransport == null) deserializedTransport = MappingBootstrap.getMappingSce().getTransportSce().createTransport(jsonDeserializedTransport.getTransportName());
+            else { if (jsonDeserializedTransport.getTransportName()!=null) deserializedTransport.setTransportName(jsonDeserializedTransport.getTransportName()); }
+
+            if (jsonDeserializedTransport.getTransportProperties()!=null) {
+                if (deserializedTransport.getTransportProperties()!=null) {
+                    List<String> propertiesToDelete = new ArrayList<>();
+                    for (String propertyKey : deserializedTransport.getTransportProperties().keySet())
+                        if (!reqProperties.containsKey(propertyKey))
+                            propertiesToDelete.add(propertyKey);
+                    for (String propertyToDelete : propertiesToDelete)
+                        deserializedTransport.removeTransportProperty(propertyToDelete);
+                }
+
+                for (String propertyKey : reqProperties.keySet())
+                    deserializedTransport.addTransportProperty(propertyKey, reqProperties.get(propertyKey));
+            }
+
+            ret.setDeserializedObject(deserializedTransport);
+        }
+        return ret;
+    }
 
     @GET
     @Path("/{param}")
@@ -121,6 +177,43 @@ public class TransportEndpoint {
                 e.printStackTrace();
                 String result = e.getMessage();
                 return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+            }
+        } else {
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
+        }
+    }
+
+    @POST
+    public Response postTransport(@QueryParam("payload") String payload) throws IOException {
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}-{}] create or update node : ({})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), payload});
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+                subject.hasRole("Jedi") || subject.isPermitted("universe:zeone")) {
+            if (payload != null) {
+                try {
+                    Response ret;
+                    JSONDeserializationResponse deserializationResponse = jsonFriendlyToMappingFriendly(TransportJSON.JSON2Transport(payload));
+                    if (deserializationResponse.getErrorMessage()!=null) {
+                        String result = deserializationResponse.getErrorMessage();
+                        ret = Response.status(Status.BAD_REQUEST).entity(result).build();
+                    } else if (deserializationResponse.getDeserializedObject()!=null) {
+                        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                        TransportJSON.oneTransport2JSON((Transport)deserializationResponse.getDeserializedObject(), outStream);
+                        String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                        ret = Response.status(Status.OK).entity(result).build();
+                    } else {
+                        String result = "ERROR while deserializing !";
+                        ret = Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                    }
+                    return ret ;
+                } catch (MappingDSException e) {
+                    log.error(e.getMessage());
+                    e.printStackTrace();
+                    String result = e.getMessage();
+                    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                }
+            } else {
+                return Response.status(Status.BAD_REQUEST).entity("No payload attached to this POST").build();
             }
         } else {
             return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();

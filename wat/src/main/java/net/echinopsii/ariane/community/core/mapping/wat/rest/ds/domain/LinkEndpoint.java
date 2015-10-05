@@ -183,7 +183,7 @@ public class LinkEndpoint {
     }
 
     @POST
-    public Response postNode(@QueryParam("payload") String payload) throws IOException {
+    public Response postLink(@QueryParam("payload") String payload) throws IOException {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create or update node : ({})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), payload});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||

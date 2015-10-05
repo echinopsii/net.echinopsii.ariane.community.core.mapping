@@ -337,7 +337,7 @@ public class ContainerEndpoint {
     }
 
     @POST
-    public Response postNode(@QueryParam("payload") String payload) throws IOException {
+    public Response postContainer(@QueryParam("payload") String payload) throws IOException {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create container", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||

@@ -23,6 +23,8 @@ package net.echinopsii.ariane.community.core.mapping.ds.json.domain;
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
@@ -35,6 +37,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 public class TransportJSON {
     private final static Logger log   = LoggerFactory.getLogger(TransportJSON.class);
@@ -80,4 +83,41 @@ public class TransportJSON {
         jgenerator.writeEndObject();
         jgenerator.close();
     }
+
+    public static class JSONDeserializedTransport {
+        private long transportID;
+        private String transportName;
+        private List<PropertiesJSON.JSONDeserializedProperty> transportProperties;
+
+        public long getTransportID() {
+            return transportID;
+        }
+
+        public void setTransportID(long transportID) {
+            this.transportID = transportID;
+        }
+
+        public String getTransportName() {
+            return transportName;
+        }
+
+        public void setTransportName(String transportName) {
+            this.transportName = transportName;
+        }
+
+        public List<PropertiesJSON.JSONDeserializedProperty> getTransportProperties() {
+            return transportProperties;
+        }
+
+        public void setTransportProperties(List<PropertiesJSON.JSONDeserializedProperty> transportProperties) {
+            this.transportProperties = transportProperties;
+        }
+    }
+
+    public static JSONDeserializedTransport JSON2Transport(String payload) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return mapper.readValue(payload, JSONDeserializedTransport.class);
+    }
+
 }
