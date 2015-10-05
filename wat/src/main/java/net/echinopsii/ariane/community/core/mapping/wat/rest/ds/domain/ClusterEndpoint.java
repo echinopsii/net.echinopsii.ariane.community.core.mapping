@@ -25,23 +25,69 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ClusterJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
+import net.echinopsii.ariane.community.core.mapping.wat.rest.ds.JSONDeserializationResponse;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 @Path("/mapping/domain/clusters")
 public class ClusterEndpoint {
     private static final Logger log = LoggerFactory.getLogger(ContainerEndpoint.class);
+
+    public static JSONDeserializationResponse jsonFriendlyToMappingFriendly(ClusterJSON.JSONDeserializedCluster jsonDeserializedCluster) throws MappingDSException {
+        JSONDeserializationResponse ret = new JSONDeserializationResponse();
+
+        // DETECT POTENTIAL QUERIES ERROR FIRST
+        List<Container> reqContainers = new ArrayList<>();
+        if (jsonDeserializedCluster.getClusterContainersID()!=null && jsonDeserializedCluster.getClusterContainersID().size()>0) {
+            for (long id : jsonDeserializedCluster.getClusterContainersID()) {
+                Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
+                if (container != null) reqContainers.add(container);
+                else {
+                    ret.setErrorMessage("Request Error : container with provided ID " + id + " was not found.");
+                    break;
+                }
+            }
+        }
+
+        // LOOK IF CLUSTER MAYBE UPDATED OR CREATED
+        Cluster deserializedCluster = null;
+        if (ret.getErrorMessage()!=null && jsonDeserializedCluster.getClusterID()!=0) {
+            deserializedCluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(jsonDeserializedCluster.getClusterID());
+            if (deserializedCluster == null) ret.setErrorMessage("Request Error : cluster with provided ID " + jsonDeserializedCluster.getClusterID() + " was not found.");
+        }
+
+        // APPLY REQ IF NO ERRORS
+        if (ret.getErrorMessage()==null) {
+            if (deserializedCluster==null) deserializedCluster = MappingBootstrap.getMappingSce().getClusterSce().createCluster(jsonDeserializedCluster.getClusterName());
+            else if (jsonDeserializedCluster.getClusterName()!=null) deserializedCluster.setClusterName(jsonDeserializedCluster.getClusterName());
+
+            if (jsonDeserializedCluster.getClusterContainersID() != null) {
+                List<Container> containersToDelete = new ArrayList<>();
+                for (Container containerToDel : deserializedCluster.getClusterContainers())
+                    if (!reqContainers.contains(containerToDel))
+                        containersToDelete.add(containerToDel);
+                for (Container containerToDel : containersToDelete)
+                    deserializedCluster.removeClusterContainer(containerToDel);
+                for (Container containerToAdd : reqContainers)
+                    deserializedCluster.addClusterContainer(containerToAdd);
+            }
+
+            ret.setDeserializedObject(deserializedCluster);
+        }
+
+        return ret;
+    }
 
     @GET
     @Path("/{param:[0-9][0-9]*}")
@@ -121,6 +167,43 @@ public class ClusterEndpoint {
                 e.printStackTrace();
                 String result = e.getMessage();
                 return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+            }
+        } else {
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
+        }
+    }
+
+    @POST
+    public Response postCluster(@QueryParam("payload") String payload) throws IOException {
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}-{}] create container", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
+        if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
+                subject.hasRole("Jedi") || subject.isPermitted("universe:zeone")) {
+            if (payload != null) {
+                try {
+                    Response ret;
+                    JSONDeserializationResponse deserializationResponse = jsonFriendlyToMappingFriendly(ClusterJSON.JSON2Cluster(payload));
+                    if (deserializationResponse.getErrorMessage()!=null) {
+                        String result = deserializationResponse.getErrorMessage();
+                        ret = Response.status(Status.BAD_REQUEST).entity(result).build();
+                    } else if (deserializationResponse.getDeserializedObject()!=null) {
+                        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                        ClusterJSON.oneCluster2JSON((Cluster) deserializationResponse.getDeserializedObject(), outStream);
+                        String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                        ret = Response.status(Status.OK).entity(result).build();
+                    } else {
+                        String result = "ERROR while deserializing !";
+                        ret = Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                    }
+                    return ret ;
+                } catch (MappingDSException e) {
+                    log.error(e.getMessage());
+                    e.printStackTrace();
+                    String result = e.getMessage();
+                    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                }
+            } else {
+                return Response.status(Status.BAD_REQUEST).entity("No payload attached to this POST").build();
             }
         } else {
             return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();

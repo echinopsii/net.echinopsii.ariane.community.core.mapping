@@ -21,6 +21,8 @@ package net.echinopsii.ariane.community.core.mapping.ds.json.domain;
 
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Cluster;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
@@ -30,6 +32,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 public class ClusterJSON {
 
@@ -71,5 +74,41 @@ public class ClusterJSON {
         jgenerator.writeEndArray();
         jgenerator.writeEndObject();
         jgenerator.close();
+    }
+
+    public static class JSONDeserializedCluster {
+        private long clusterID;
+        private String clusterName;
+        private List<Long> clusterContainersID;
+
+        public long getClusterID() {
+            return clusterID;
+        }
+
+        public void setClusterID(long clusterID) {
+            this.clusterID = clusterID;
+        }
+
+        public String getClusterName() {
+            return clusterName;
+        }
+
+        public void setClusterName(String clusterName) {
+            this.clusterName = clusterName;
+        }
+
+        public List<Long> getClusterContainersID() {
+            return clusterContainersID;
+        }
+
+        public void setClusterContainersID(List<Long> clusterContainersID) {
+            this.clusterContainersID = clusterContainersID;
+        }
+    }
+
+    public static JSONDeserializedCluster JSON2Cluster(String payload) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return mapper.readValue(payload, JSONDeserializedCluster.class);
     }
 }
