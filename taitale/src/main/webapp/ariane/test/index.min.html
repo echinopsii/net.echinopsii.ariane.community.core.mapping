@@ -1,0 +1,154 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <link rel="stylesheet" href="css/jquery-ui/jquery-ui-1.10.3.custom-min.css"/>
+    <link rel="stylesheet" href="css/fontawesome/font-awesome-min.css" />
+    <link rel="stylesheet" href="css/ariane/main-min.css" />
+    <link rel="stylesheet" href="css/ariane/theme-min.css" />
+    <link rel="stylesheet" href="css/ariane/mapping-min.css" />
+    <link rel="stylesheet" href="css/primeui/primeui-0.9.6-min.css" />
+    <style type="text/css" media="screen">
+        #mappyCanvas {
+            border: solid 2px #333;
+            background: #ffffff;
+            overflow: hidden;
+        }
+    </style>
+    <script data-main="js/taitale.min-min.js" src="./js/require/require-min.js"></script>
+    <title>Ariane Taitale Mapper</title>
+</head>
+<body>
+<div id="mainLayout">
+    <div id="header" style="height: 120px">
+        <a id="arianeLogo" href="#">Ariane</a>
+        <div id="menutop">
+            <div id="menuDivLeft">
+                <table border="0" cellpadding="3">
+                    <tr>
+                        <td>
+                            <strong>MAP SAMPLE :</strong><br/>
+                            <select name="test" id="test">
+                                <option value="dekatonmac">dekatonmac</option>
+                                <option value="rabbitmq-fdfo">RabbitMQ Feeder To Front</option>
+                                <option value="rabbitmq-moriskbo">RabbitMQ Middle / Risk / Back</option>
+                                <option value="rabbitmq-simplereqrep">RabbitMQ req/rep</option>
+                                <option value="rabbitmq-simplepubsub">RabbitMQ pub/sub</option>
+                                <option value="rvrdfr01">rvrd france 01</option>
+                                <option value="rvrdfr02">rvrd france 02</option>
+                                <option value="rvrdfr03">rvrd france 03</option>
+                                <option value="rvrdfr01moulticast">rvrd france 01 moulticast</option>
+                                <option value="rvrdfr02moulticast">rvrd france 02 moulticast</option>
+                                <option value="rvrdww01">rvrd worlwide 01</option>
+                                <option value="rvrdww01moulticast">rvrd worlwide 01 moulticast</option>
+                                <option value="rvrdww02">rvrd worlwide 02</option>
+                                <option value="rvrdww03moulticast">rvrd worlwide 03 moulticast</option>
+                                <option value="jms01">JMS 01</option>
+                                <option value="application01">Application 01</option>
+                                <option value="application02">Application 02</option>
+                                <option value="application03">Application 03</option>
+                                <option value="application04">Application 04</option>
+                                <option value="application05">Application 05</option>
+                                <option value="application06">Application 06</option>
+                                <option value="application07">Application 07</option>
+                            </select>
+                        </td>
+                        <td>
+                            <strong>LAYOUT :</strong><br/>
+                            <select name="layout" id="layout">
+                                <option value="Network">Network</option>
+                                <option value="Tree">Tree</option>
+                                <option value="BBTree">BBTree</option>
+                            </select>
+                        </td>
+                        <!--
+                        <td>
+                            <strong>VIEW :</strong><br/>
+                            <select name="view" id="view">
+                                <option value="Infrastructure">Infrastructure</option>
+                                <option value="Component">Component</option>
+                                <option value="Application">Application</option>
+                            </select>
+                        </td>
+                        -->
+                        <td>
+                            <strong>MODE :</strong><br/>
+                            <select name="mode" id="mode">
+                                <option value="Navigation">Navigation</option>
+                                <option value="Edition">Edition</option>
+                            </select>
+                        </td>
+                        <td>
+                            <strong>MAP ACTIONS :</strong><br/>
+                            <button type="button" name="reload" id="reload" style="font-weight: bold">RELOAD</button>
+                            <button type="button" name="nsize"  id="nsize" style="font-weight: bold">[1:1]</button>
+                            <button type="button" name="center" id="center" style="font-weight: bold">CENTER</button>
+                        </td>
+                        <td>
+                            <strong>MAP EXPORT :</strong><br/>
+                            <button type="button" name="JPG" id="JPG" style="font-weight: bold">JPG</button>
+                            <button type="button" name="PNG" id="PNG" style="font-weight: bold">PNG</button>
+                            <button type="button" name="SVG" id="SVG" style="font-weight: bold">SVG</button>
+                        </td>
+                        <td>
+                            <strong>NOTIFICATION OPTIONS :</strong><br/>
+                            <input type="checkbox" name="notifyInfo" value="notifyInfo" id="notifyInfo"/>Notify infos
+                            <input type="checkbox" name="notifyWarn" value="notifyWarn" id="notifyWarn"/>Notify warnings
+                            <input type="checkbox" name="notifyErrs" value="notifyErrs" id="notifyErrs"/>Notify errors
+                        </td>
+                    </tr>
+                </table><br/>
+                <div id="networkOptions">
+                    <strong>NETWORK LAYOUT OPTIONS :</strong><br/>
+                    <input type="checkbox" name="displayDC"   value="displayDC"   id="displayDC"/>Display Datacenters
+                    <input type="checkbox" name="displayArea" value="displayArea" id="displayArea"/>Display Areas
+                    <input type="checkbox" name="displayLan"  value="displayLan"  id="displayLan"/>Display Lans
+                </div>
+                <div id="treeOptions">
+                    <table border="0" cellpadding="5">
+                        <tr>
+                            <td>
+                                <strong>ROOT TREE SORTING : </strong><br/>
+                                <select name="rootTreeSorting" id="rootTreeSorting">
+                                    <option value="1">By maximum vertex linked</option>
+                                    <option value="-1">By minimum vertex linked</option>
+                                </select>
+                            </td>
+                            <td>
+                                <strong>SUB TREES SORTING : </strong><br/>
+                                <select name="subTreesSorting" id="subTreesSorting">
+                                    <option value="1">By maximum vertex linked</option>
+                                    <option value="-1">By minimum vertex linked</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="mappingCanvas">
+        <div id="mappyLoading"  style="display:none; text-align: center;"></div>
+        <div id="mappyCanvas" oncontextmenu="return false;">
+            <div id="mapGrowl"/>
+        </div>
+    </div>
+    <div id="mapExport" title="Export map">
+        <div id="imgExport"></div>
+    </div>
+</div>
+<script type="application/javascript">
+    var readyStateCheckIntervalDir = setInterval(function(){
+        if (document.readyState === "complete") {
+            clearInterval(readyStateCheckIntervalDir);
+            $("#mappyCanvas").css({height: $(document).height() - 125});
+        }
+    }, 100);
+
+    window.onresize = function(event) {
+        $("#mappyCanvas").css({height: $(document).height() - 125});
+    };
+</script>
+</body>
+</html>
