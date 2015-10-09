@@ -13,4 +13,26 @@
     <groupId>net.echinopsii.ariane.community.core.mapping</groupId>
     <artifactId>net.echinopsii.ariane.community.core.mapping.taitale</artifactId>
     <name>Ariane Community Core Mapping Taitale Graph Render</name>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>yuicompressor-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compress</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>**/*-min.js</exclude>
+                        <exclude>**/*-min.css</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
