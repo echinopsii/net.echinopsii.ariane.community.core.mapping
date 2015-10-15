@@ -93,7 +93,7 @@ UNLOCK TABLES;
 --
 
 LOCK TABLES `uxpermission` WRITE;
-INSERT INTO `uxpermission` VALUES (1,'READ.USER',0),(2,'READ.GROUP',0),(3,'READ.OTHER',0),(4,'WRITE.USER',0),(5,'WRITE.GROUP',0),(6,'WRITE.OTHER',0),(7,'CHPERM.USER',0),(8,'CHPERM.GROUP',0),(9,'CHPERM.OTHER',0);
+INSERT IGNORE INTO `uxpermission` VALUES (1,'READ.USER',0),(2,'READ.GROUP',0),(3,'READ.OTHER',0),(4,'WRITE.USER',0),(5,'WRITE.GROUP',0),(6,'WRITE.OTHER',0),(7,'CHPERM.USER',0),(8,'CHPERM.GROUP',0),(9,'CHPERM.OTHER',0);
 UNLOCK TABLES;
 
 
@@ -103,7 +103,7 @@ UNLOCK TABLES;
 --
 
 LOCK TABLES `uxResourceDirectory` WRITE;
-INSERT INTO `uxResourceDirectory` VALUES
+INSERT IGNORE INTO `uxResourceDirectory` VALUES
     (1,'The Mapping DSL Root Registry Directory','MappingDSLRegistry',1,7,NULL,1),
     (2,'The Mapping DSL Samples Directory','Samples',1,8,1,1),
     (3,'The Mapping DSL Users Directory','Users',1,9,1,1),
@@ -117,7 +117,7 @@ UNLOCK TABLES;
 --
 
 LOCK TABLES `uxResourceDirectory_uxpermission` WRITE;
-INSERT INTO `uxResourceDirectory_uxpermission` VALUES
+INSERT IGNORE INTO `uxResourceDirectory_uxpermission` VALUES
     (1,1),(1,2),(1,3),(1,4),(1,5),(1,7),
     (2,1),(2,2),(2,3),(2,4),(2,5),(2,7),
     (3,1),(3,2),(3,3),(3,4),(3,5),(3,7),
@@ -131,7 +131,7 @@ UNLOCK TABLES;
 --
 
 LOCK TABLES `uxResourceRequest` WRITE;
-INSERT INTO `uxResourceRequest` VALUES
+INSERT IGNORE INTO `uxResourceRequest` VALUES
     (1,'This template requests routes between two containers.','\0','container--container.tpl','{\r\n    \'startContainer\': \'FROM container WHERE startContainer.containerPrimaryAdminGate.nodeName =~ \"<container primary admin gate identifier>\" \'\r\n}\r\n--\r\n{\r\n    \'endContainer\': \'FROM container WHERE endContainer.containerPrimaryAdminGate.nodeName =~ \"<container primary admin gate identifier>\" \'\r\n}',5,8,4,1),
     (2,'This template requests routes between two nodes.','\0','node--node.tpl','{\r\n    \'startNode\': \'FROM node WHERE startNode.nodeName=\"<node name>\" \'\r\n}\r\n--\r\n{\r\n    \'endNode\': \'FROM node WHERE endNode.nodeName=\"<node name>\" \'\r\n}',3,8,4,1),
     (3,'This template requests routes between two endpoints.','\0','endpoint--endpoint.tpl','{\r\n    \'startEP\': \'FROM endpoint WHERE startEP.endpointURL=\"<endpoint url>\" \'\r\n}\r\n--\r\n{\r\n    \'endEP\': \'FROM endpoint WHERE endEP.endpointURL=\"<endpoint url>\" \'\r\n}',2,8,4,1),
