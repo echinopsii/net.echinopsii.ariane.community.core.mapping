@@ -1,1 +1,3 @@
-{'startContainer': 'FROM container WHERE startContainer.containerPrimaryAdminGate.nodeName =~ ".*tibrvrdl03prd01.*"'}
+{
+	'startContainer': 'FROM container WHERE startContainer.containerName = "dekatonmac"'
+}

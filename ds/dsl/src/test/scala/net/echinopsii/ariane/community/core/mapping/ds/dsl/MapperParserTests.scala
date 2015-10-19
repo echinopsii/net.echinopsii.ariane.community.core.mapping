@@ -564,7 +564,7 @@ class MapperParserTests extends FunSuite {
     assert(mapperQuery.startBlock.mapPointsPredicate.size===1)
     assert(mapperQuery.startBlock.mapPointsPredicate.get("startContainer")!=None)
     assert(mapperQuery.startBlock.mapPointsPredicate.get("startContainer").get._1.toString==="container")
-    assert(mapperQuery.startBlock.mapPointsPredicate.get("startContainer").get._2.toString==="startContainer.containerPrimaryAdminGate.nodeName =~ \".*tibrvrdl03prd01.*\"")
+    assert(mapperQuery.startBlock.mapPointsPredicate.get("startContainer").get._2.toString==="startContainer.containerName = \"dekatonmac\"")
 
     assert(mapperQuery.genQuery===res)
   }
