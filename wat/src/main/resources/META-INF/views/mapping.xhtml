@@ -137,27 +137,6 @@
             </p:layout>
         </div>
 
-        <script type="application/javascript">
-            var readyStateCheckIntervalDir = setInterval(function(){
-                if (document.readyState === "complete") {
-                    clearInterval(readyStateCheckIntervalDir);
-                    var bg = $("#mappingBg").css("background");
-                    if (bg.indexOf("bg-ariane-mapping.jpg") > -1)
-                        $("#mappingBg").css({height: $(document).height() - 43});
-                    else
-                        $("#mappingBg").css({height: $(document).height() - 48});
-                }
-            }, 100);
-
-            window.onresize = function(event) {
-                var bg = $("#mappingBg").css("background");
-                if (bg.indexOf("bg-ariane-mapping.jpg") > -1)
-                    $("#mappingBg").css({height: $(document).height() - 43});
-                else
-                    $("#mappingBg").css({height: $(document).height() - 48});
-            };
-        </script>
-
         <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Export map" widgetVar="mapExport"
                   showEffect="fade" hideEffect="fade" height="800" width="1000" closeOnEscape="true">
             <div id="exportInProgress"  style="display:none; text-align: center;">
