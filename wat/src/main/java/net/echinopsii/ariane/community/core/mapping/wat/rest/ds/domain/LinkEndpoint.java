@@ -38,10 +38,11 @@ import javax.ws.rs.core.Response.Status;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Set;
 
 @Path("/mapping/domain/links")
 public class LinkEndpoint {
-    private static final Logger log = LoggerFactory.getLogger(GateEndpoint.class);
+    private static final Logger log = LoggerFactory.getLogger(LinkEndpoint.class);
 
     public static JSONDeserializationResponse jsonFriendlyToMappingFriendly(LinkJSON.JSONDeserializedLink jsonDeserializedLink) throws MappingDSException {
         JSONDeserializationResponse ret = new JSONDeserializationResponse();
@@ -145,8 +146,58 @@ public class LinkEndpoint {
 
     @GET
     @Path("/get")
-    public Response getLink(@QueryParam("ID")long id) {
-        return displayLink(id);
+    public Response getLink(@QueryParam("ID")long id, @QueryParam("SEPID") long sepid, @QueryParam("TEPID") long tepid) {
+        if (id!=0)
+            return displayLink(id);
+        else {
+            Subject subject = SecurityUtils.getSubject();
+            log.debug("[{}-{}] get links ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), sepid, tepid});
+            if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
+                subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
+            {
+                String result = "";
+                ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                try {
+                    Endpoint sourceEndpoint = null;
+                    Endpoint targetEndpoint = null;
+                    if (sepid!=0) {
+                        sourceEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(sepid);
+                        if (sourceEndpoint==null) {
+                            result = "Unable to find source endpoint !";
+                            return Response.status(Status.BAD_REQUEST).entity(result).build();
+                        }
+                    }
+                    if (tepid!=0) {
+                        targetEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(tepid);
+                        if (targetEndpoint==null) {
+                            result = "Unable to find target endpoint !";
+                            return Response.status(Status.BAD_REQUEST).entity(result).build();
+                        }
+                    }
+
+                    if (sourceEndpoint!=null && targetEndpoint!=null) {
+                        LinkJSON.oneLink2JSON(MappingBootstrap.getMappingSce().getLinkBySourceEPandDestinationEP(sourceEndpoint, targetEndpoint), outStream);
+                        result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                        return Response.status(Status.OK).entity(result).build();
+                    } else if (sourceEndpoint!=null && targetEndpoint==null) {
+                        LinkJSON.manyLinks2JSON((HashSet<Link>) MappingBootstrap.getMappingSce().getLinksBySourceEP(sourceEndpoint), outStream);
+                        result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                        return Response.status(Status.OK).entity(result).build();
+                    } else {
+                        LinkJSON.manyLinks2JSON((HashSet<Link>) MappingBootstrap.getMappingSce().getLinksByDestinationEP(targetEndpoint), outStream);
+                        result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                        return Response.status(Status.OK).entity(result).build();
+                    }
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                    e.printStackTrace();
+                    result = e.getMessage();
+                    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                }
+            } else {
+                return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
+            }
+        }
     }
 
     @GET
@@ -185,7 +236,7 @@ public class LinkEndpoint {
     @POST
     public Response postLink(@QueryParam("payload") String payload) throws IOException {
         Subject subject = SecurityUtils.getSubject();
-        log.debug("[{}-{}] create or update node : ({})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), payload});
+        log.debug("[{}-{}] create or update link : ({})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), payload});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
                 subject.hasRole("Jedi") || subject.isPermitted("universe:zeone")) {
             if (payload != null) {
