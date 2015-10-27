@@ -264,7 +264,7 @@ public class EndpointEndpoint {
     }
 
     @POST
-    public Response postNode(@QueryParam("payload") String payload) throws IOException {
+    public Response postEndpoint(@QueryParam("payload") String payload) throws IOException {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create or update endpoint : ({})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), payload});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||

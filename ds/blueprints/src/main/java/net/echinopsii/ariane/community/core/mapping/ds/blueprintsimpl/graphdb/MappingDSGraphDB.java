@@ -541,12 +541,12 @@ public class MappingDSGraphDB {
     public static MappingDSCacheEntity getVertexEntity(long id) {
         if (id == 0)
             return null;
-        log.debug("Get cache entity {} if exists ...", new Object[]{"V"+id});
+        log.debug("Get cache entity {} if exists ...", new Object[]{"V" + id});
         MappingDSCacheEntity ret = MappingDSCache.getCachedEntity("V" + id);
         if (ret == null) {
             log.debug("Get vertex {} from graph {}...", new Object[]{id, ccgraph.toString() + "(" + ccgraph.hashCode() + ")"});
             Vertex vertex = (ccgraph.getVertices(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID, id).iterator().hasNext() ?
-                                     ccgraph.getVertices(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID, id).iterator().next() : null);
+                             ccgraph.getVertices(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID, id).iterator().next() : null);
             if (vertex != null) {
                 String vertexType = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY);
                 if (vertexType != null) {

@@ -296,6 +296,7 @@ public class EndpointImpl implements Endpoint, MappingDSCacheEntity {
                         endpointParentNode = (NodeImpl) entity;
                     } else {
                         log.error("CACHE CONSISTENCY PROBLEM : entity {} is not a node.", new Object[]{parentNodeID});
+                        log.error(entity.getClass().toString());
                     }
                 }
             }
@@ -315,7 +316,8 @@ public class EndpointImpl implements Endpoint, MappingDSCacheEntity {
                     if (entity instanceof EndpointImpl) {
                         twin = (EndpointImpl) entity;
                     } else {
-                        log.error("CONSISTENCY ERROR : entity {} is not a node.", endpointID);
+                        log.error("CONSISTENCY ERROR : entity {} is not a endpoint.", endpointID);
+                        log.error(entity.getClass().toString());
                     }
                 }
                 if (entity != null) {

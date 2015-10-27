@@ -44,7 +44,7 @@ import java.util.List;
 
 @Path("/mapping/domain/transports")
 public class TransportEndpoint {
-    private static final Logger log = LoggerFactory.getLogger(GateEndpoint.class);
+    private static final Logger log = LoggerFactory.getLogger(TransportEndpoint.class);
 
     public static JSONDeserializationResponse jsonFriendlyToMappingFriendly(TransportJSON.JSONDeserializedTransport jsonDeserializedTransport) throws MappingDSException {
         JSONDeserializationResponse ret = new JSONDeserializationResponse();
@@ -186,7 +186,7 @@ public class TransportEndpoint {
     @POST
     public Response postTransport(@QueryParam("payload") String payload) throws IOException {
         Subject subject = SecurityUtils.getSubject();
-        log.debug("[{}-{}] create or update node : ({})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), payload});
+        log.debug("[{}-{}] create or update transport : ({})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), payload});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
                 subject.hasRole("Jedi") || subject.isPermitted("universe:zeone")) {
             if (payload != null) {
