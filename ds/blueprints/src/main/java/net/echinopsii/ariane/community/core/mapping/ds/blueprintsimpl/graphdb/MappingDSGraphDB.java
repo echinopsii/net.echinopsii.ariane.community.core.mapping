@@ -482,6 +482,9 @@ public class MappingDSGraphDB {
         log.debug("Get cache entity {} if exists ...", new Object[]{"E"+id});
         MappingDSCacheEntity ret = MappingDSCache.getCachedEntity("E" + id);
         if (ret == null) {
+            if (ccgraph instanceof Neo4j2Graph)
+                //Tinkerpop Blueprint 2.5 forget to start transaction on getEdges(final String key, final Object value)
+                ((Neo4j2Graph)ccgraph).autoStartTransaction(false);
             Edge edge = (ccgraph.getEdges(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID,id).iterator().hasNext() ?
                                  ccgraph.getEdges(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID,id).iterator().next() : null);
             if (edge!=null && edge.getLabel().equals(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY)) {
@@ -800,8 +803,8 @@ public class MappingDSGraphDB {
                     ret.synchronizeFromDB();
                 }
             }
+            autocommit();
         }
-        autocommit();
         return (ClusterImpl) ret;
     }
 
@@ -881,8 +884,11 @@ public class MappingDSGraphDB {
             return null;
         MappingDSCacheEntity ret = MappingDSCache.getCachedEntity("E" + id);
         if (ret == null && ccgraph != null) {
+            if (ccgraph instanceof Neo4j2Graph)
+                //Tinkerpop Blueprint 2.5 forget to start transaction on getEdges(final String key, final Object value)
+                ((Neo4j2Graph)ccgraph).autoStartTransaction(false);
             Edge edge = ccgraph.getEdges(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID, id).iterator().hasNext() ?
-                                ccgraph.getEdges(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID, id).iterator().next() : null;
+                        ccgraph.getEdges(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID, id).iterator().next() : null;
             if (edge != null && edge.getLabel().equals(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY)) {
                 ret = new LinkImpl();
                 ret.setElement(edge);
