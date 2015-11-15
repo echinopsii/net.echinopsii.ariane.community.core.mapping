@@ -46,7 +46,8 @@ define(
                 var i, ii, j, jj;
                 for (i = 0, ii = nbColumns; i < ii ; i++) {
                     for (j = 0, jj = nbLines; j < jj ; j++) {
-                        rows[j][i].print(r);
+                        if (rows[j].length != 0)
+                            rows[j][i].print(r);
                     }
                 }
             };
@@ -84,10 +85,12 @@ define(
                 var i, ii, j, jj;
                 for (i = 0, ii = nbColumns; i < ii ; i++)
                     for (j = 0, jj = nbLines; j < jj ; j++ )
-                        rows[j][i].defineZoneObjectsMaxSize();
+                        if (rows[j].length != 0)
+                            rows[j][i].defineZoneObjectsMaxSize();
                 for (i = 0, ii = nbColumns; i < ii ; i++)
                     for (j = 0, jj = nbLines; j < jj ; j++ )
-                        rows[j][i].defineZoneMaxSize();
+                        if (rows[j].length != 0)
+                            rows[j][i].defineZoneMaxSize();
             };
 
             this.defineMtxZoneSize = function() {
@@ -95,10 +98,12 @@ define(
                 ldatacenterSplitter.init();
                 for (i = 0, ii = nbColumns; i < ii ; i++)
                     for (j = 0, jj = nbLines; j < jj ; j++ )
-                        rows[j][i].defineZoneObjectsSize();
+                        if (rows[j].length != 0)
+                            rows[j][i].defineZoneObjectsSize();
                 for (i = 0, ii = nbColumns; i < ii ; i++)
                     for (j = 0, jj = nbLines; j < jj ; j++ )
-                        rows[j][i].defineZoneSize();
+                        if (rows[j].length != 0)
+                            rows[j][i].defineZoneSize();
             };
 
             this.defineMapContentMaxSize = function() {
@@ -108,22 +113,31 @@ define(
                 for (i = 0, ii = nbColumns; i < ii ; i++) {
                     var tmpHeight = 0;
                     for (j = 0, jj = nbLines; j < jj; j++)
-                        tmpHeight = tmpHeight + rows[j][i].getZoneMaxSize().height;
+                        if (rows[j].length != 0)
+                            tmpHeight = tmpHeight + rows[j][i].getZoneMaxSize().height;
                     if (tmpHeight > contentHeight)
                         contentHeight=tmpHeight;
                 }
                 for (i = 0, ii = nbLines; i < ii ; i++) {
-                    var tmpWidth = 0;
-                    for (j = 0, jj = nbColumns; j < jj; j++)
-                        tmpWidth = tmpWidth + rows[i][j].getZoneMaxSize().width;
-                    if (tmpWidth > contentWidth)
-                        contentWidth = tmpWidth;
+                    if (rows[i].length != 0) {
+                        var tmpWidth = 0;
+                        for (j = 0, jj = nbColumns; j < jj; j++)
+                            tmpWidth = tmpWidth + rows[i][j].getZoneMaxSize().width;
+                        if (tmpWidth > contentWidth)
+                            contentWidth = tmpWidth;
+                    }
                 }
             };
 
             this.defineMapContentSize = function() {
-                topLeftX = rows[0][0].topLeftX;
-                topLeftY = rows[0][0].topLeftY;
+                var i, ii, topLeftX, topLeftY;
+                for (i = 0, ii = nbLines; i < ii; i++) {
+                    if (rows[i].length != 0) {
+                        topLeftX = rows[i][0].topLeftX;
+                        topLeftY = rows[i][0].topLeftY;
+                    }
+                }
+
                 bottomRightX = rows[nbLines-1][nbColumns-1].topLeftX + rows[nbLines-1][nbColumns-1].getZoneSize().width;
                 bottomRightY = rows[nbLines-1][nbColumns-1].topLeftY + rows[nbLines-1][nbColumns-1].getZoneSize().height;
                 contentWidth = bottomRightX - topLeftX;
@@ -157,11 +171,14 @@ define(
                 for (i = 0, ii = nbColumns; i < ii; i++) {
                     var cursorHeight = 0;
                     for (j = 0, jj = nbLines; j < jj; j++) {
-                        rows[j][i].setTopLeftCoord(borderSpan+zoneSpan*i+cursorWidth,borderSpan+zoneSpan*j+cursorHeight);
-                        rows[j][i].defineFirstPoz();
-                        cursorHeight = cursorHeight + rows[j][i].getZoneMaxSize().height;
+                        if (rows[j].length != 0) {
+                            rows[j][i].setTopLeftCoord(borderSpan + zoneSpan * i + cursorWidth, borderSpan + zoneSpan * j + cursorHeight);
+                            rows[j][i].defineFirstPoz();
+                            cursorHeight = cursorHeight + rows[j][i].getZoneMaxSize().height;
+                        }
                     }
-                    cursorWidth = cursorWidth + rows[0][i].getZoneMaxSize().width;
+                    if (rows[0].length != 0)
+                        cursorWidth = cursorWidth + rows[0][i].getZoneMaxSize().width;
                 }
             };
 
@@ -169,7 +186,8 @@ define(
                 var i, ii, j, jj;
                 for (i = 0, ii = nbColumns; i < ii; i++)
                     for (j = 0, jj = nbLines; j < jj; j++)
-                        rows[j][i].optimizeMtxCoord();
+                        if (rows[j].length != 0)
+                            rows[j][i].optimizeMtxCoord();
             };
 
             this.defineMtxZoneIntermediatePoz = function(borderSpan, zoneSpan) {
@@ -178,11 +196,14 @@ define(
                 for (i = 0, ii = nbColumns; i < ii; i++) {
                     var cursorHeight = 0;
                     for (j = 0, jj = nbLines; j < jj; j++) {
-                        rows[j][i].setTopLeftCoord(borderSpan+zoneSpan*i+cursorWidth,borderSpan+zoneSpan*j+cursorHeight);
-                        rows[j][i].defineIntermediatePoz();
-                        cursorHeight = cursorHeight + rows[j][i].getZoneSize().height;
+                        if (rows[j].length != 0) {
+                            rows[j][i].setTopLeftCoord(borderSpan + zoneSpan * i + cursorWidth, borderSpan + zoneSpan * j + cursorHeight);
+                            rows[j][i].defineIntermediatePoz();
+                            cursorHeight = cursorHeight + rows[j][i].getZoneSize().height;
+                        }
                     }
-                    cursorWidth = cursorWidth + rows[0][i].getZoneSize().width;
+                    if (rows[0].length != 0)
+                        cursorWidth = cursorWidth + rows[0][i].getZoneSize().width;
                 }
             };
 
@@ -192,11 +213,14 @@ define(
                 for (i = 0, ii = nbColumns; i < ii; i++) {
                     var cursorHeight = 0;
                     for (j = 0, jj = nbLines; j < jj; j++) {
-                        rows[j][i].setTopLeftCoord(borderSpan+zoneSpan*i+cursorWidth,borderSpan+zoneSpan*j+cursorHeight);
-                        rows[j][i].defineFinalPoz();
-                        cursorHeight = cursorHeight + rows[j][i].getZoneSize().height;
+                        if (rows[j].length != 0) {
+                            rows[j][i].setTopLeftCoord(borderSpan + zoneSpan * i + cursorWidth, borderSpan + zoneSpan * j + cursorHeight);
+                            rows[j][i].defineFinalPoz();
+                            cursorHeight = cursorHeight + rows[j][i].getZoneSize().height;
+                        }
                     }
-                    cursorWidth = cursorWidth + rows[0][i].getZoneSize().width;
+                    if (rows[0].length != 0)
+                        cursorWidth = cursorWidth + rows[0][i].getZoneSize().width;
                 }
             };
 
@@ -375,6 +399,10 @@ define(
                                 for (i = 0, ii = nbColumns; i < ii; i++) {
                                     rows[1][i] = null
                                 }
+                            } else {
+                                if (nbColumns == 0) {
+                                    nbColumns++;
+                                }
                             }
                             var middleColumn = Math.floor(nbColumns/2);
                             rows[1][middleColumn] = pivotDC;
@@ -424,7 +452,8 @@ define(
                 var i, ii;
                 if (options.getLayout() === dic.mapLayout.NTWWW) {
                     for (i= 0, ii=nbColumns; i < ii; i++) {
-                        rows[0][i].displayDC(display);
+                        if (rows[0].length != 0)
+                            rows[0][i].displayDC(display);
                     }
                     if (rows[1]!=null) {
                         for (i= 0, ii=nbColumns; i < ii; i++) {
@@ -439,7 +468,8 @@ define(
                 var i, ii;
                 if (options.getLayout() === dic.mapLayout.NTWWW) {
                     for (i= 0, ii=nbColumns; i < ii; i++) {
-                        rows[0][i].displayArea(display);
+                        if (rows[0].length != 0)
+                            rows[0][i].displayArea(display);
                     }
                 }
             };
@@ -448,7 +478,8 @@ define(
                 var i, ii;
                 if (options.getLayout() === dic.mapLayout.NTWWW) {
                     for (i= 0, ii=nbColumns; i < ii; i++) {
-                        rows[0][i].displayLan(display);
+                        if (rows[0].length != 0)
+                            rows[0][i].displayLan(display);
                     }
                 }
             };
