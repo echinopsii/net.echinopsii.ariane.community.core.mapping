@@ -683,4 +683,16 @@ class MapperParserTests extends FunSuite {
     val thrown = the [MapperParserException] thrownBy new MapperParser("cypher").parse(req)
     thrown.getMessage should equal ("[where] : invalid keyword usage.")
   }
+
+  test("mdsl/mapperQueryError03.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQueryError03.ccmon")).mkString
+    val thrown = the [MapperParserException] thrownBy new MapperParser("cypher").parse(req)
+    thrown.getMessage should equal ("acontainer expected but not found : \nFROM container WHERE >endContainer.containerPrimaryAdminGate.nodeName =~ \".*tibrvrdl05prd01.*\"")
+  }
+
+  test("mdsl/mapperQueryError04.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQueryError04.ccmon")).mkString
+    val thrown = the [MapperParserException] thrownBy new MapperParser("cypher").parse(req)
+    thrown.getMessage should equal ("container | node | endpoint | transport expected but not found : \nFROM >contNainer WHERE startContainer.containerPrimaryAdminGate.nodeName =~ \".*tibrvrdl03prd01.*\"")
+  }
 }

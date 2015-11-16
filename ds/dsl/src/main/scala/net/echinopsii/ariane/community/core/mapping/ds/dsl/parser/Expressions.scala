@@ -20,7 +20,7 @@ package net.echinopsii.ariane.community.core.mapping.ds.dsl.parser
 
 import scala.util.parsing.combinator.JavaTokenParsers
 import net.echinopsii.ariane.community.core.mapping.ds.dsl.internal.{Expression, StringExp, IdentifierExp}
-import net.echinopsii.ariane.community.core.mapping.ds.dsl.MapperParser
+import net.echinopsii.ariane.community.core.mapping.ds.dsl.{MapperParserException, MapperParser}
 
 trait Expressions extends Common with JavaTokenParsers {
   def expression(blockEntityName: String, blockEntityType: String, mapperParser: MapperParser): Parser[Expression] = {
@@ -30,9 +30,9 @@ trait Expressions extends Common with JavaTokenParsers {
 
   def identifierExp(blockEntityName: String, blockEntityType: String, mapperParser: MapperParser): Parser[String] = {
     //println("entity "+blockEntityName)
-    blockEntityName.r ~ rep("." ~> notAKeyword) ^^ {
+    blockEntityName ~ rep("." ~> notAKeyword) ^^ {
       case head ~ rest => rest.foldLeft(head)((a, b) => defineIdentifiers(blockEntityType, blockEntityName, a, b, mapperParser))
-    } | not(blockEntityName.r) ~> failure("Predicate expression identifier is not starting with block entity identifier name (" + blockEntityName + ")")
+    }
   }
 
   def stringExp: Parser[Expression] = {
@@ -43,7 +43,7 @@ trait Expressions extends Common with JavaTokenParsers {
 
   private def defineIdentifiers(blockEntityType: String, blockEntityName: String, a: String, b: String, mapperParser: MapperParser): String = {
     var identA = mapperParser.identifierRegistry.get(a)
-    if (identA==None) {
+    if (identA.isEmpty) {
       val iA = new IdentifierExp(iName = a)
       if (blockEntityName == a) {
         iA.eType = blockEntityName
@@ -53,12 +53,12 @@ trait Expressions extends Common with JavaTokenParsers {
     }
 
     var identB = mapperParser.identifierRegistry.get(a+"."+b)
-    if (identB==None) {
+    if (identB.isEmpty) {
       val iB = new IdentifierExp(iName = b, iRoot = identA)
       identB = Some(iB)
       mapperParser.identifierRegistry+=(a+"."+b -> iB)
       identA.get.iProp = identB
     }
-    identB.get.toString
+    identB.get.toString()
   }
 }

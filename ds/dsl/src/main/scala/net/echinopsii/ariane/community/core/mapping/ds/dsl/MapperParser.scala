@@ -69,7 +69,16 @@ class MapperParser(val queryType: String) extends Common with CCMon with SqlLike
                 case sqlLikeT:String =>
                   parseAll(sqlLike(objID, this), sqlLikeT) match {
                     case Success(resultT, _) => block.mapPointsPredicate += (objID -> resultT)
-                    case failure : NoSuccess => throw new MapperParserException(failure.msg)
+                    case failure : NoSuccess =>
+                      var errorMsg = failure.msg.replaceFirst("expected but `.*'", "expected but not")
+                      errorMsg = errorMsg.replaceAll("'", "")
+                      errorMsg = errorMsg.replaceAll("`", "")
+                      errorMsg = errorMsg.replaceAll("""\\b""", "")
+                      errorMsg = errorMsg.replaceAll("string matching regex ", "")
+                      errorMsg += " : \n" + failure.next.source.subSequence(0, failure.next.offset-1) +
+                        " >" + failure.next.source.charAt(failure.next.offset) +
+                        failure.next.source.subSequence(failure.next.offset+1, failure.next.source.length())
+                      throw new MapperParserException(errorMsg)
                   }
                 case _ => throw new MapperParserException("Unexpected objValue type")
               }

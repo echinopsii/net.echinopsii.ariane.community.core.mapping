@@ -40,8 +40,12 @@ class Common extends JavaTokenParsers {
   def quoteString: Parser[String] = stringLiteral ^^ (str => stripQuotesEscape(str))
   def string: Parser[String] = (quoteString | apostropheString) ^^ (str => {stripQuotes(str)})
 
-  val ccmonobjtypes = List(MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE, MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE,
-    MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE, MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE)
+  val ccmonobjtypes = List(
+    MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE, MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE,
+    MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE, MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE,
+    MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE + " | " + MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE + " | " +
+    MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE + " | " + MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE
+  )
   val ccmonkeywords = List("from","where","and","or","like","=","!=","<>",">","<",">=","<=","=~",
     MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE, MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE,
     MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE, MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE)
