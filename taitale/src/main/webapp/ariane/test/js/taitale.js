@@ -112,6 +112,7 @@ requirejs (
             homeURI   = window.location.protocol + "//" + window.location.host + "/" + window.location.pathname.split('/')[1];
 
         helper_.initGrowlMsgs('#mapGrowl');
+        helper_.initErrorBox('#mapError', '#mapErrorMsg');
 
         var test = $('#test'),
             layout = $('#layout'),
@@ -151,6 +152,14 @@ requirejs (
                         }
                     );
                     console.log(e.stack);
+                    var msg = "<h3>oO ! We have some problem here ! <br/> Let's find a way to correct it ... </h3>" +
+                        '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
+                        '<p>2) complete the ticket : <ul>' +
+                        '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
+                        '<li>specify the layout (' + options.getLayout() +')</li>' +
+                        '<li>specify the mode ('+options.getMode()+')</li></ul></p>' +
+                        "<p>3) wait the ticket to be resolved ... </p>";
+                    helper_.showErrorBox(msg);
                 }
             }
         });
@@ -184,6 +193,14 @@ requirejs (
                         }
                     );
                     console.log(e.stack);
+                    var msg = "<h3>oO ! We have some problem here ! <br/> Let's find a way to correct it ... </h3>" +
+                        '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
+                        '<p>2) complete the ticket : <ul>' +
+                        '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
+                        '<li>specify the layout (' + options.getLayout() +')</li>' +
+                        '<li>specify the mode ('+options.getMode()+')</li></ul></p>' +
+                        "<p>3) wait the ticket to be resolved ... </p>";
+                    helper_.showErrorBox(msg);
                 }
             }
         });
@@ -203,6 +220,14 @@ requirejs (
                         }
                     );
                     console.log(e.stack);
+                    var msg = "<h3>oO ! We have some problem here ! <br/> Let's find a way to correct it ... </h3>" +
+                        '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
+                        '<p>2) complete the ticket : <ul>' +
+                        '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
+                        '<li>specify the layout (' + options.getLayout() +')</li>' +
+                        '<li>specify the mode ('+options.getMode()+')</li></ul></p>' +
+                        "<p>3) wait the ticket to be resolved ... </p>";
+                    helper_.showErrorBox(msg);
                 }
             }
         });
@@ -238,6 +263,7 @@ requirejs (
                         }
                     );
                     console.log(e.stack);
+                    helper_.showErrorBox();
                 }
             }
         });
@@ -257,6 +283,7 @@ requirejs (
                         }
                     );
                     console.log(e.stack);
+                    helper_.showErrorBox();
                 }
             }
         });
@@ -277,6 +304,7 @@ requirejs (
                         }
                     );
                     console.log(e.stack);
+                    helper_.showErrorBox();
                 }
             }
         });
@@ -310,6 +338,7 @@ requirejs (
                         }
                     );
                     console.log(e.stack);
+                    helper_.showErrorBox();
                 }
             }
         });
@@ -337,6 +366,7 @@ requirejs (
                         }
                     );
                     console.log(e.stack);
+                    helper_.showErrorBox();
                 }
             }
         });
@@ -362,6 +392,7 @@ requirejs (
                         }
                     );
                     console.log(e.stack);
+                    helper_.showErrorBox();
                 }
             }
         });
@@ -382,6 +413,7 @@ requirejs (
                         }
                     );
                     console.log(e.stack);
+                    helper_.showErrorBox();
                 }
             }
         });
@@ -401,6 +433,7 @@ requirejs (
                         }
                     );
                     console.log(e.stack);
+                    helper_.showErrorBox();
                 }
             }
         });
@@ -420,6 +453,7 @@ requirejs (
                         }
                     );
                     console.log(e.stack);
+                    helper_.showErrorBox();
                 }
             }
         });
@@ -443,6 +477,7 @@ requirejs (
                         }
                     );
                     console.log(e.stack);
+                    helper_.showErrorBox();
                 }
             }
         });
@@ -465,11 +500,13 @@ requirejs (
                         }
                     );
                     console.log(e.stack);
+                    helper_.showErrorBox();
                 }
             }
         });
 
         try {
+            helper_.hideErrorBox();
             if (helper_.getNotifyInfo())
                 notifyI.puicheckbox('check');
             if (helper_.getNotifyWarn())
@@ -502,5 +539,6 @@ requirejs (
                     sticky: true
                 });
             console.log(e.stack);
+            helper_.showErrorBox();
         }
     });

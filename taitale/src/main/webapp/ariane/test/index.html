@@ -31,6 +31,7 @@
                         <td>
                             <strong>MAP SAMPLE :</strong><br/>
                             <select name="test" id="test">
+                                <option value="altan">altan</option>
                                 <option value="dekatonmac">dekatonmac</option>
                                 <option value="rabbitmq-fdfo">RabbitMQ Feeder To Front</option>
                                 <option value="rabbitmq-moriskbo">RabbitMQ Middle / Risk / Back</option>
@@ -133,6 +134,13 @@
         <div id="mappyLoading"  style="display:none; text-align: center;"></div>
         <div id="mappyCanvas" oncontextmenu="return false;">
             <div id="mapGrowl"/>
+        </div>
+    </div>
+    <div id="mapError" title="Ready to improve Ariane ? Let's find a way to correct this problem ! ">
+        <div id="mapErrorImg" style="position: absolute; left: 0; top: 0; width: 40%;">
+            <img src="images/ariane/error.png" style="width: 320px;"/>
+        </div>
+        <div id="mapErrorMsg" style="position: absolute; right: 0; top: 30px; width: 60%;">
         </div>
     </div>
     <div id="mapExport" title="Export map">

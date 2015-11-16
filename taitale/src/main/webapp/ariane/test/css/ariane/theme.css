@@ -328,6 +328,11 @@
     box-shadow: 0px 0px 5px #f85b37, inset 0 2px 2px #8f8f8f;
     color: #304915;
 }
+
+.pui-chkbox-box {
+    border: 1px solid #f85b37;
+}
+
 /*Redefine elements*/
 body .pui-notify, body .ui-shadow{box-shadow: none !important;}
 

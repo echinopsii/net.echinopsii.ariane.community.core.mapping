@@ -1,3 +1,21 @@
+#mapError {
+    font-family: Arial, "Trebuchet MS", Verdana, sans-serif;
+    color: #481e18;
+    border: solid 3px #481e18;
+    border-radius: 20px;
+    width: 800px;
+    height: 320px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%)
+}
+#mapError a {
+    font-family: Arial, "Trebuchet MS", Verdana, sans-serif;
+    color: #481e18;
+}
+
 #mappingToolsView {
     border: 0px;
 }

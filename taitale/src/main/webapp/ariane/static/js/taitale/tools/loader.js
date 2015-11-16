@@ -190,6 +190,7 @@ define(
             var httpJSONmap = null;
 
             this.buildMappy = function(options) {
+                helper_.hideErrorBox();
                 mappy       = new map(options);
                 mappy.parseJSON(httpJSONmap);
                 mappy.buildMap();
@@ -206,6 +207,7 @@ define(
             };
 
             this.loadMap = function(options) {
+
                 document.getElementById('mappyLoading').style.display = "";
                 document.getElementById('mappyCanvas').style.display = "none";
                 $.ajax({
@@ -224,29 +226,78 @@ define(
                                 try {
                                     json = JSON.parse(data);
                                 } catch (e) {
-                                    throw   {
-                                        stack: new Error("JSON parse error").stack,
-                                        severity: 'error',
-                                        summary: 'JSON parse error',
-                                        detail: 'Unable to parse JSON from following url : '.concat(options.getURI()).concat('<br> error raised: ').concat(e.message),
-                                        sticky: true
-                                    };
+                                    helper_.growlMsgs(
+                                        {
+                                            stack: new Error("JSON parse error").stack,
+                                            severity: 'error',
+                                            summary: 'JSON parse error',
+                                            detail: 'Unable to parse JSON from <a href=" '+ options.getURI() +'" target="_blank">here</a>' +
+                                            '<br/>Layout: ' + options.getLayout() +
+                                            '<br/>Mode: ' + options.getMode(),
+                                            sticky: true
+                                        });
+                                    console.log(e.stack);
+                                    var msg = "<h3>oO ! We have some problem here ! <br/> Let's find a way to correct it ... </h3>" +
+                                        '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
+                                        '<p>2) complete the ticket : <ul>' +
+                                        '<li>attach <a href="' + options.getURI() + '" target="_blank">the source of the problem</a></li>'+
+                                        '<li>specify the layout (' + options.getLayout() + ')</li>' +
+                                        '<li>specify the mode (' + options.getMode() + ')</li></ul></p>' +
+                                        "<p>3) wait the ticket to be resolved ... </p>";
+                                    helper_.showErrorBox(msg);
+                                    return;
                                 }
 
                                 httpJSONmap=json;
-                                loader.buildMappy(options);
+                                try {
+                                    loader.buildMappy(options);
+                                } catch(e) {
+                                    helper_.growlMsgs(
+                                        {
+                                            stack: new Error("Map build error").stack,
+                                            severity: 'error',
+                                            summary: 'Map build error',
+                                            detail: 'Unable to build map from <a href=" '+ options.getURI() +'" target="_blank">here</a>' +
+                                                    '<br/>Layout: ' + options.getLayout() +
+                                                    '<br/>Mode: ' + options.getMode(),
+                                            sticky: true
+                                        });
+                                    console.log(e.stack);
+                                    var msg = "<h3>oO ! We have some problem here ! <br/> Let's find a way to correct it ... </h3>" +
+                                        '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
+                                        '<p>2) complete the ticket : <ul>' +
+                                        '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
+                                        '<li>specify the layout (' + options.getLayout() +')</li>' +
+                                        '<li>specify the mode ('+options.getMode()+')</li></ul></p>' +
+                                        "<p>3) wait the ticket to be resolved ... </p>";
+                                    helper_.showErrorBox(msg);
+                                    return;
+                                }
+
                             },
                         error:
                             function (xhr, ajaxOptions, thrownError){
                                 document.getElementById('mappyLoading').style.display = "none";
                                 document.getElementById('mappyCanvas').style.display = "";
-                                throw   {
-                                    stack: new Error("JSON parse error").stack,
+                                helper_.growlMsgs(
+                                {
+                                    stack: new Error("Map loading error").stack,
                                     severity: 'error',
-                                    summary: 'JSON parse error',
-                                    detail: 'Unable to parse JSON from following url : '.concat(options.getURI()).concat('<br> error raised: ').concat(thrownError),
+                                    summary: 'Map loading error',
+                                    detail: 'Unable to parse JSON or build map from <a href=" '+ options.getURI() +'" target="_blank">here</a>' +
+                                    '<br/>Layout: ' + options.getLayout() +
+                                    '<br/>Mode: ' + options.getMode(),
                                     sticky: true
-                                };
+                                });
+                                console.log(e.stack);
+                                var msg = "<h3>oO ! We have some problem here ! <br/> Let's find a way to correct it ... </h3>" +
+                                    '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
+                                    '<p>2) complete the ticket : <ul>' +
+                                    '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
+                                    '<li>specify the layout (' + options.getLayout() +')</li>' +
+                                    '<li>specify the mode ('+options.getMode()+')</li></ul></p>' +
+                                    "<p>3) wait the ticket to be resolved ... </p>";
+                                helper_.showErrorBox(msg);
                             },
                         dataType: "text"});
             };
