@@ -46,6 +46,7 @@ class Common extends JavaTokenParsers {
     MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE, MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE,
     MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE, MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE)
   def notAKeyword: Parser[String] =
-    not(ignoreCases(ccmonkeywords: _*)) ~> ident | ignoreCases(ccmonkeywords: _*) ~> failure("Invalid keyword usage !")
-  def ccobjtype: Parser[String] = ignoreCases(ccmonobjtypes: _*)
+    not(ignoreCases(ccmonkeywords: _*)) ~> ident | ignoreCases(ccmonkeywords: _*) ~> failure("invalid keyword usage.")
+  def ccobjtype: Parser[String] =
+    ignoreCases(ccmonobjtypes: _*)
 }

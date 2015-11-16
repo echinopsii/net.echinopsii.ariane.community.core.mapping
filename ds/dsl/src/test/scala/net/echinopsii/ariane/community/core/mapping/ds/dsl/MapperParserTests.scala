@@ -1,9 +1,10 @@
 package net.echinopsii.ariane.community.core.mapping.ds.dsl
 
 import org.junit.runner.RunWith
-import org.scalatest.FunSuite
+import org.scalatest.{Matchers, FunSuite}
 import org.scalatest.junit.JUnitRunner
 import scala.io.Source
+import Matchers._
 
 @RunWith(classOf[JUnitRunner])
 class MapperParserTests extends FunSuite {
@@ -668,8 +669,18 @@ class MapperParserTests extends FunSuite {
     assert(mapperQuery.linkBlock.mapPointsPredicate.get("unkown_remote_endpoint").get._1.toString==="endpoint")
     assert(mapperQuery.linkBlock.mapPointsPredicate.get("unkown_remote_endpoint").get._2.toString==="unkown_remote_endpoint.endpointURL = \"tcp://178.236.6.191:443\"")
 
-
     assert(mapperQuery.genQuery===res)
   }
 
+  test("mdsl/mapperQueryError01.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQueryError01.ccmon")).mkString
+    val thrown = the [MapperParserException] thrownBy new MapperParser("cypher").parse(req)
+    thrown.getMessage should equal ("[from] : invalid keyword usage.")
+  }
+
+  test("mdsl/mapperQueryError02.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQueryError02.ccmon")).mkString
+    val thrown = the [MapperParserException] thrownBy new MapperParser("cypher").parse(req)
+    thrown.getMessage should equal ("[where] : invalid keyword usage.")
+  }
 }

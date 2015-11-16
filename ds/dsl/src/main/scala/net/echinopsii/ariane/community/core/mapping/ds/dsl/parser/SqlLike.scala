@@ -19,7 +19,7 @@
 package net.echinopsii.ariane.community.core.mapping.ds.dsl.parser
 
 import scala.util.parsing.combinator._
-import net.echinopsii.ariane.community.core.mapping.ds.dsl.MapperParser
+import net.echinopsii.ariane.community.core.mapping.ds.dsl.{MapperParserException, MapperParser}
 import net.echinopsii.ariane.community.core.mapping.ds.dsl.internal.Predicate
 
 trait SqlLike extends Common with Predicates with JavaTokenParsers {

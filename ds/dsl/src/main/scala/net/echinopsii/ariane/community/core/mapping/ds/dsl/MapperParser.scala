@@ -75,7 +75,7 @@ class MapperParser(val queryType: String) extends Common with CCMon with SqlLike
               }
             } else
               block.path = objValue
-          case failure : NoSuccess => throw new MapperParserException(failure.msg)
+          case failure : NoSuccess => throw new MapperParserException("[" + objID + "] : " + failure.msg)
         }
     }
     block
