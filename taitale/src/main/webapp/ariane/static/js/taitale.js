@@ -409,6 +409,7 @@ requirejs (
         }, 10);
 
         helper_.initGrowlMsgs(widget_growl.jqId);
+        helper_.initErrorBox('#mapError', '#mapErrorMsg');
 
         for (i = 0, ii = layoutSelector.inputs.length; i < ii; i++) {
             input = layoutSelector.inputs[i];

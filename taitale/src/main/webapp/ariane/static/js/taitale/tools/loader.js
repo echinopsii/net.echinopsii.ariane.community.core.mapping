@@ -276,28 +276,23 @@ define(
 
                             },
                         error:
-                            function (xhr, ajaxOptions, thrownError){
+                            function (jqXHR, textStatus, errorThrown){
                                 document.getElementById('mappyLoading').style.display = "none";
                                 document.getElementById('mappyCanvas').style.display = "";
                                 helper_.growlMsgs(
                                 {
-                                    stack: new Error("Map loading error").stack,
+                                    stack: new Error("Request failed !").stack,
                                     severity: 'error',
                                     summary: 'Map loading error',
-                                    detail: 'Unable to parse JSON or build map from <a href=" '+ options.getURI() +'" target="_blank">here</a>' +
-                                    '<br/>Layout: ' + options.getLayout() +
-                                    '<br/>Mode: ' + options.getMode(),
+                                    detail: '<a href=" '+ options.getURI() +'" target="_blank">Error</a> raised while processing the request',
                                     sticky: true
                                 });
-                                console.log(e.stack);
                                 var msg = "<h3>oO ! We have some problem here ! <br/> Let's find a way to correct it ... </h3>" +
-                                    '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
-                                    '<p>2) complete the ticket : <ul>' +
-                                    '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
-                                    '<li>specify the layout (' + options.getLayout() +')</li>' +
-                                    '<li>specify the mode ('+options.getMode()+')</li></ul></p>' +
-                                    "<p>3) wait the ticket to be resolved ... </p>";
+                                    '<p>Status : ' + textStatus + '</p>' +
+                                    '<p>Type: ' + errorThrown + '</p>' +
+                                    '<p>Description: ' + jqXHR.responseText + '</p>';
                                 helper_.showErrorBox(msg);
+                                console.log("Item", jqXHR);
                             },
                         dataType: "text"});
             };

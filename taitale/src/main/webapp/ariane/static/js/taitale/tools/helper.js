@@ -95,6 +95,10 @@ define(
             };
 
             this.dialogOpen = function(id, title, contents) {
+                $('#mappingCanvas').append("<div id=\"content"+ id +"\" style=\"width: auto; display:inline-block\" class=\"mappingPropsDialog\">"+title+"<br/>"+contents+"</div>");
+                var dialogWidth = $("#content"+id).width() + 100,
+                    dialogHeight = $("#content"+id).height();
+                $("#content"+id).remove();
                 $('#mappingCanvas').append("<div id=\"dialog"+ id + "\" title=\"" + title + "\" class=\"mappingPropsDialog\">"+contents+"</div>");
                 $("#dialog"+id).puidialog({
                     showEffect: 'fade',
