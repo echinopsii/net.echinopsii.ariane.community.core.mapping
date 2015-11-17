@@ -33,12 +33,25 @@ class MapperParser(val queryType: String) extends Common with CCMon with SqlLike
     var lexedStartBlock: Map[String, String] = null
     var lexedLinkBlock: Map[String, String] = null
     var lexedEndBlock: Map[String, String] =  null
-    parseAll(map, queryText) match {
-      case Success(result, _) =>
-        lexedStartBlock = result._1
-        lexedLinkBlock = result._2
-        lexedEndBlock = result._3
-      case failure : NoSuccess => throw new MapperParserException(failure.msg)
+
+    val lexedMap: (Boolean, Object) = map(queryText)
+    lexedMap._1 match {
+      case true =>
+        lexedMap._2 match {
+          // TODO: test next scala version to see if we can remove @unchecked
+          case parsedLexedMap : (Map[String, String] @unchecked, Map[String, String] @unchecked, Map[String, String] @unchecked) =>
+            lexedStartBlock = parsedLexedMap._1
+            lexedLinkBlock = parsedLexedMap._2
+            lexedEndBlock = parsedLexedMap._3
+          case _ => throw new ClassCastException
+        }
+      case false =>
+        var errorMsg: String = ""
+        lexedMap._2 match {
+          case errorMsg : String =>
+            throw new MapperParserException(errorMsg)
+          case _ => throw new ClassCastException
+        }
     }
 
     /*
@@ -70,15 +83,7 @@ class MapperParser(val queryType: String) extends Common with CCMon with SqlLike
                   parseAll(sqlLike(objID, this), sqlLikeT) match {
                     case Success(resultT, _) => block.mapPointsPredicate += (objID -> resultT)
                     case failure : NoSuccess =>
-                      var errorMsg = failure.msg.replaceFirst("expected but `.*'", "expected but not")
-                      errorMsg = errorMsg.replaceAll("'", "")
-                      errorMsg = errorMsg.replaceAll("`", "")
-                      errorMsg = errorMsg.replaceAll("""\\b""", "")
-                      errorMsg = errorMsg.replaceAll("string matching regex ", "")
-                      errorMsg += " : \n" + failure.next.source.subSequence(0, failure.next.offset-1) +
-                        " >" + failure.next.source.charAt(failure.next.offset) +
-                        failure.next.source.subSequence(failure.next.offset+1, failure.next.source.length())
-                      throw new MapperParserException(errorMsg)
+                      throw new MapperParserException(MapperParserUtils.parseFailureToString(failure))
                   }
                 case _ => throw new MapperParserException("Unexpected objValue type")
               }

@@ -23,6 +23,25 @@ import net.echinopsii.ariane.community.core.mapping.ds.dsl.MapperParserException
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames
 
 class Common extends JavaTokenParsers {
+
+  object MapperParserUtils {
+    def parseFailureToString(failure: NoSuccess): String = {
+      var errorMsg = failure.msg.replaceFirst("expected but `.*'", "expected but not")
+      errorMsg = errorMsg.replaceAll("'", "")
+      errorMsg = errorMsg.replaceAll("`", "")
+      errorMsg = errorMsg.replaceAll( """\\b""", "")
+      errorMsg = errorMsg.replaceAll("string matching regex ", "")
+      if (failure.next.offset > 1) {
+        errorMsg += " : \n" + failure.next.source.subSequence(0, failure.next.offset - 1) +
+          " >" + failure.next.source.charAt(failure.next.offset) +
+          failure.next.source.subSequence(failure.next.offset + 1, failure.next.source.length())
+      } else {
+        errorMsg += " : \n >" + failure.next.source
+      }
+      errorMsg
+    }
+  }
+
   def ignoreCase1(str: String): Parser[String] = ("""(?i)\b""" + str + """\b""").r ^^ (x => x.toLowerCase)
   def ignoreCase2(str: String): Parser[String] = (str + """\b""").r ^^ (x => x.toLowerCase)
   def ignoreCase(str: String): Parser[String] = ignoreCase1(str) | ignoreCase2(str) | failure(str + " expected")
