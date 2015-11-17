@@ -263,7 +263,7 @@ define(
                                             sticky: true
                                         });
                                     console.log(e.stack);
-                                    var msg = "<h3>oO ! We have some problem here ! <br/> Let's find a way to correct it ... </h3>" +
+                                    var msg = "<h2>oO ! We have some problem here ! <br/> Let's find a way to correct it ... </h2>" +
                                         '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
                                         '<p>2) complete the ticket : <ul>' +
                                         '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
@@ -287,7 +287,7 @@ define(
                                     detail: '<a href=" '+ options.getURI() +'" target="_blank">Error</a> raised while processing the request',
                                     sticky: true
                                 });
-                                var msg = "<h3>oO ! We have some problem here ! <br/> Let's find a way to correct it ... </h3>" +
+                                var msg = "<h2>oO ! We have some problem here ! <br/> Let's find a way to correct it ... </h2>" +
                                     '<p><b>Status : </b>' + textStatus + '</p>' +
                                     '<p><b>Type: </b>' + errorThrown + '</p>' +
                                     '<p><b>Description: </b><br/><br/>' + jqXHR.responseText.replace(/\n/g, "<br />") + '</p>';
