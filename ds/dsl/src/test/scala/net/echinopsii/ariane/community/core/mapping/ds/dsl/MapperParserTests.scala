@@ -701,4 +701,10 @@ class MapperParserTests extends FunSuite {
     val thrown = the [MapperParserException] thrownBy new MapperParser("cypher").parse(req)
     thrown.getMessage should equal ("{ expected but not found : \n >['startContainer': 'FROM container WHERE startContainer.containerPrimaryAdminGate.nodeName =~ \".*tibrvrdl03prd01.*\"'}\n--\n{'endContainer': 'FROM container WHERE endContainer.containerPrimaryAdminGate.nodeName =~ \".*tibrvrdl05prd01.*\"'}\n\n OR \n\n- expected but not found : \n >['startContainer': 'FROM container WHERE startContainer.containerPrimaryAdminGate.nodeName =~ \".*tibrvrdl03prd01.*\"'}\n--\n{'endContainer': 'FROM container WHERE endContainer.containerPrimaryAdminGate.nodeName =~ \".*tibrvrdl05prd01.*\"'}\n\n")
   }
+
+  test("mdsl/mapperQueryError06.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQueryError06.ccmon")).mkString
+    val thrown = the [MapperParserException] thrownBy new MapperParser("cypher").parse(req)
+    thrown.getMessage should equal ("} expected but not found : \n{'startContainer': 'FROM container WHERE startContainer.containerPrimaryAdminGate.nodeName =~ \".*tibrvrdl03prd01.*\" >]\n--\n{'endContainer': 'FROM container WHERE endContainer.containerPrimaryAdminGate.nodeName =~ \".*tibrvrdl05prd01.*\"'}\n\n OR \n\n- expected but not found : \n >{'startContainer': 'FROM container WHERE startContainer.containerPrimaryAdminGate.nodeName =~ \".*tibrvrdl03prd01.*\"']\n--\n{'endContainer': 'FROM container WHERE endContainer.containerPrimaryAdminGate.nodeName =~ \".*tibrvrdl05prd01.*\"'}\n\n")
+  }
 }
