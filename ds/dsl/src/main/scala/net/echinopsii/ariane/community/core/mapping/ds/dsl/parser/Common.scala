@@ -31,12 +31,15 @@ class Common extends JavaTokenParsers {
       errorMsg = errorMsg.replaceAll("`", "")
       errorMsg = errorMsg.replaceAll( """\\b""", "")
       errorMsg = errorMsg.replaceAll("string matching regex ", "")
-      if (failure.next.offset > 1) {
+      if (failure.next.offset > 1 && failure.next.offset < failure.next.source.length()) {
         errorMsg += " : \n" + failure.next.source.subSequence(0, failure.next.offset - 1) +
           " >" + failure.next.source.charAt(failure.next.offset) +
           failure.next.source.subSequence(failure.next.offset + 1, failure.next.source.length())
-      } else {
+      } else if (failure.next.offset == 0) {
         errorMsg += " : \n >" + failure.next.source
+      } else if (failure.next.offset == failure.next.source.length()) {
+        errorMsg += " : \n" + failure.next.source.subSequence(0, failure.next.offset) +
+          "< "
       }
       errorMsg
     }

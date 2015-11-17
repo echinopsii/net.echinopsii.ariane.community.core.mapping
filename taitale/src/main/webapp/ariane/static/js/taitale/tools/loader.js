@@ -288,9 +288,9 @@ define(
                                     sticky: true
                                 });
                                 var msg = "<h3>oO ! We have some problem here ! <br/> Let's find a way to correct it ... </h3>" +
-                                    '<p>Status : ' + textStatus + '</p>' +
-                                    '<p>Type: ' + errorThrown + '</p>' +
-                                    '<p>Description: ' + jqXHR.responseText + '</p>';
+                                    '<p><b>Status : </b>' + textStatus + '</p>' +
+                                    '<p><b>Type: </b>' + errorThrown + '</p>' +
+                                    '<p><b>Description: </b><br/><br/>' + jqXHR.responseText.replace(/\n/g, "<br />") + '</p>';
                                 helper_.showErrorBox(msg);
                                 console.log("Item", jqXHR);
                             },

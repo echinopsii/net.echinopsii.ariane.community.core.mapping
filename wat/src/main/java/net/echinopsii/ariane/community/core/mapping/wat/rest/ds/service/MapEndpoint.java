@@ -20,6 +20,7 @@
 package net.echinopsii.ariane.community.core.mapping.wat.rest.ds.service;
 
 import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
+import net.echinopsii.ariane.community.core.mapping.ds.dsl.MapperParserException;
 import net.echinopsii.ariane.community.core.mapping.ds.service.Map;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
@@ -84,12 +85,15 @@ public class MapEndpoint {
             try {
                 Map map = mapping.getMapSce().getMap(query);
                 MapJSON.allMap2JSON((HashSet<Container>) map.getContainers(),
-                                           (HashSet<Node>) map.getNodes(),
-                                           (HashSet<Endpoint>) map.getEndpoints(),
-                                           (HashSet<Link>) map.getLinks(),
-                                           (HashSet<Transport>) map.getTransports(), outStream);
+                        (HashSet<Node>) map.getNodes(),
+                        (HashSet<Endpoint>) map.getEndpoints(),
+                        (HashSet<Link>) map.getLinks(),
+                        (HashSet<Transport>) map.getTransports(), outStream);
                 String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
                 return Response.status(Status.OK).entity(result).build();
+            } catch (MapperParserException e) {
+                String result = e.getMessage();
+                return Response.status(Status.BAD_REQUEST).entity(result).build();
             } catch (Exception e) {
                 log.error("Original query is : " + query);
                 log.error(e.getMessage());

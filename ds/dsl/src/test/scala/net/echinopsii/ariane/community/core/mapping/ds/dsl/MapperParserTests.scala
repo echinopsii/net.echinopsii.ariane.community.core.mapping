@@ -707,4 +707,16 @@ class MapperParserTests extends FunSuite {
     val thrown = the [MapperParserException] thrownBy new MapperParser("cypher").parse(req)
     thrown.getMessage should equal ("} expected but not found : \n{'startContainer': 'FROM container WHERE startContainer.containerPrimaryAdminGate.nodeName =~ \".*tibrvrdl03prd01.*\" >]\n--\n{'endContainer': 'FROM container WHERE endContainer.containerPrimaryAdminGate.nodeName =~ \".*tibrvrdl05prd01.*\"'}\n\n OR \n\n- expected but not found : \n >{'startContainer': 'FROM container WHERE startContainer.containerPrimaryAdminGate.nodeName =~ \".*tibrvrdl03prd01.*\"']\n--\n{'endContainer': 'FROM container WHERE endContainer.containerPrimaryAdminGate.nodeName =~ \".*tibrvrdl05prd01.*\"'}\n\n")
   }
+
+  test("mdsl/mapperQueryError07.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQueryError07.ccmon")).mkString
+    val thrown = the [MapperParserException] thrownBy new MapperParser("cypher").parse(req)
+    thrown.getMessage should equal ("\\z expected but not found : \n{\n\t'dekatonmac': 'FROM container WHERE dekatonmac.containerName = \"dekatonmac\"'\n} >-\n\n OR \n\n-- expected but not found : \n{\n\t'dekatonmac': 'FROM container WHERE dekatonmac.containerName = \"dekatonmac\"'\n} >-\n\n OR \n\n{ expected but end of source found : \n{\n\t'dekatonmac': 'FROM container WHERE dekatonmac.containerName = \"dekatonmac\"'\n}\n-< \n\n OR \n\n- expected but not found : \n >{\n\t'dekatonmac': 'FROM container WHERE dekatonmac.containerName = \"dekatonmac\"'\n}\n-\n\n")
+  }
+
+  test("mdsl/mapperQueryError08.ccmon") {
+    val req = Source.fromURL(getClass.getResource("/mdsl/mapperQueryError08.ccmon")).mkString
+    val thrown = the [MapperParserException] thrownBy new MapperParser("cypher").parse(req)
+    thrown.getMessage should equal ("{ expected but not found : \n >-\n{\n\t'dekatonmac': 'FROM container WHERE dekatonmac.containerName = \"dekatonmac\"'\n}\n\n OR \n\n- expected but end of source found : \n-\n{\n\t'dekatonmac': 'FROM container WHERE dekatonmac.containerName = \"dekatonmac\"'\n}< \n\n")
+  }
 }

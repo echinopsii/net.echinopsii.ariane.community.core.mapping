@@ -1,0 +1,4 @@
+{
+	'dekatonmac': 'FROM container WHERE dekatonmac.containerName = "dekatonmac"'
+}
+-
