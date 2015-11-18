@@ -20,6 +20,7 @@
 package net.echinopsii.ariane.community.core.mapping.wat.rest.ds.service;
 
 import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
+import net.echinopsii.ariane.community.core.mapping.ds.dsl.MapperEmptyResultException;
 import net.echinopsii.ariane.community.core.mapping.ds.dsl.MapperParserException;
 import net.echinopsii.ariane.community.core.mapping.ds.service.Map;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
@@ -94,6 +95,9 @@ public class MapEndpoint {
             } catch (MapperParserException e) {
                 String result = e.getMessage();
                 return Response.status(Status.BAD_REQUEST).entity(result).build();
+            } catch (MapperEmptyResultException e) {
+                String result = e.getMessage();
+                return Response.status(Status.NOT_FOUND).entity(result).build();
             } catch (Exception e) {
                 log.error("Original query is : " + query);
                 log.error(e.getMessage());

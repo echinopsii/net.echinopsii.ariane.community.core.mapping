@@ -234,7 +234,6 @@ define(
                                             detail: 'Unable to parse JSON from <a href=" '+ options.getURI() +'" target="_blank">here</a>' +
                                             '<br/>Layout: ' + options.getLayout() +
                                             '<br/>Mode: ' + options.getMode(),
-                                            sticky: true
                                         });
                                     console.log(e.stack);
                                     var msg = "<h3>oO ! We have some problem here ! <br/> Let's find a way to correct it ... </h3>" +
@@ -260,7 +259,6 @@ define(
                                             detail: 'Unable to build map from <a href=" '+ options.getURI() +'" target="_blank">here</a>' +
                                                     '<br/>Layout: ' + options.getLayout() +
                                                     '<br/>Mode: ' + options.getMode(),
-                                            sticky: true
                                         });
                                     console.log(e.stack);
                                     var msg = "<h2>oO ! We have some problem here ! <br/> Let's find a way to correct it ... </h2>" +
@@ -285,14 +283,12 @@ define(
                                     severity: 'error',
                                     summary: 'Map loading error',
                                     detail: '<a href=" '+ options.getURI() +'" target="_blank">Error</a> raised while processing the request',
-                                    sticky: true
                                 });
                                 var msg = "<h2>oO ! We have some problem here ! <br/> Let's find a way to correct it ... </h2>" +
                                     '<p><b>Status : </b>' + textStatus + '</p>' +
                                     '<p><b>Type: </b>' + errorThrown + '</p>' +
                                     '<p><b>Description: </b><br/><br/>' + jqXHR.responseText.replace(/\n/g, "<br />") + '</p>';
                                 helper_.showErrorBox(msg);
-                                console.log("Item", jqXHR);
                             },
                         dataType: "text"});
             };

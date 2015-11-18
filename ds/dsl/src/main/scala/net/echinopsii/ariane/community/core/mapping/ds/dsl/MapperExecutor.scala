@@ -79,40 +79,44 @@ class MapperExecutor(val graph: Object) {
         log.debug("Cypher execution ends : " + new Date().toString)
 
         if (isMapperQuery) {
-          result foreach (row => {
-            row foreach (column => {
-              log.debug(column._1 + ":" + column._2)
-              column._1 match {
-                case "CID" => {
-                  val cidl: List[Long] = column._2.asInstanceOf[List[Long]]
-                  log.debug("ADD CIDs TO RESULT MAP " + cidl)
-                  cidl foreach (cid => resultMap += ("V" + cid.toString -> MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE))
+          if (result.nonEmpty) {
+            result foreach (row => {
+              row foreach (column => {
+                log.debug(column._1 + ":" + column._2)
+                column._1 match {
+                  case "CID" => {
+                    val cidl: List[Long] = column._2.asInstanceOf[List[Long]]
+                    log.debug("ADD CIDs TO RESULT MAP " + cidl)
+                    cidl foreach (cid => resultMap += ("V" + cid.toString -> MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE))
+                  }
+                  case "NID" => {
+                    val nidl: List[Long] = column._2.asInstanceOf[List[Long]]
+                    log.debug("ADD NIDs TO RESULT MAP " + nidl)
+                    nidl foreach (nid => resultMap += ("V" + nid.toString -> MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE))
+                  }
+                  case "EID" => {
+                    val eidl: List[Long] = column._2.asInstanceOf[List[Long]]
+                    log.debug("ADD EIDs TO RESULT MAP " + eidl)
+                    eidl foreach (eid => resultMap += ("V" + eid.toString -> MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE))
+                  }
+                  case "TID" => {
+                    val tidl: List[Long] = column._2.asInstanceOf[List[Long]]
+                    log.debug("ADD TIDs TO RESULT MAP " + tidl)
+                    tidl foreach (tid => resultMap += ("V" + tid.toString -> MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE))
+                  }
+                  case "LID" => {
+                    val lidl: List[Long] = column._2.asInstanceOf[List[Long]]
+                    log.debug("ADD LIDs TO RESULT MAP " + lidl)
+                    lidl foreach (lid => resultMap += ("E" + lid.toString -> MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY))
+                  }
+                  case _ => throw new MapperExecutorException("Unknown Column Identifier !")
                 }
-                case "NID" => {
-                  val nidl: List[Long] = column._2.asInstanceOf[List[Long]]
-                  log.debug("ADD NIDs TO RESULT MAP " + nidl)
-                  nidl foreach (nid => resultMap += ("V" + nid.toString -> MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE))
-                }
-                case "EID" => {
-                  val eidl: List[Long] = column._2.asInstanceOf[List[Long]]
-                  log.debug("ADD EIDs TO RESULT MAP " + eidl)
-                  eidl foreach (eid => resultMap += ("V" + eid.toString -> MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE))
-                }
-                case "TID" => {
-                  val tidl: List[Long] = column._2.asInstanceOf[List[Long]]
-                  log.debug("ADD TIDs TO RESULT MAP " + tidl)
-                  tidl foreach (tid => resultMap += ("V" + tid.toString -> MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE))
-                }
-                case "LID" => {
-                  val lidl: List[Long] = column._2.asInstanceOf[List[Long]]
-                  log.debug("ADD LIDs TO RESULT MAP " + lidl)
-                  lidl foreach (lid => resultMap += ("E" + lid.toString -> MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY))
-                }
-                case _ => throw new MapperExecutorException("Unknown Column Identifier !")
-              }
+              })
             })
-          })
-          log.debug("resultMap is built : " + new Date().toString)
+            log.debug("resultMap is built : " + new Date().toString)
+          } else {
+            throw new MapperEmptyResultException("No result found.")
+          }
         } else {
           resultMap += ("cypherResult:" -> result.dumpToString())
         }

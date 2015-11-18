@@ -29,3 +29,7 @@ class MapperParserException(message: String, cause: Throwable=null) extends Mapp
 class MapperExecutorException(message: String, cause: Throwable=null) extends MapperException(message,cause) {
   def this(message:String) = this(message, null)
 }
+
+class MapperEmptyResultException(message: String, cause: Throwable=null) extends MapperException(message,cause) {
+  def this(message:String) = this(message, null)
+}
