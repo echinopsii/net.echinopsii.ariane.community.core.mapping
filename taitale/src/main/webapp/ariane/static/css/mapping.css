@@ -52,6 +52,10 @@
     color: #ffffff !important;
 }
 
-.arianeContextMenu .ui-helper-reset{
+.mappingContextMenu .ui-helper-reset{
     padding-left: 0px !important;
+}
+
+.mappingContextMenu .ui-icon {
+    padding-right: 5px;
 }

@@ -34,7 +34,7 @@
             <h:outputText value="#{node.name}" />
         </p:treeNode>
     </p:tree>
-    <p:contextMenu for="reqTree" nodeType="FolderRWCH" styleClass="arianeContextMenu">
+    <p:contextMenu for="reqTree" nodeType="FolderRWCH" styleClass="mappingContextMenu">
         <p:menuitem value="Create subfolder" icon="icon-plus-sign" onclick="folderNewDialog.show()"
                     update=":createFolder" actionListener="#{mdslRegistryController.createNewFolder}"/>
         <p:menuitem value="Delete" icon="icon-remove-sign" onclick="folderDeleteDialog.show()"
@@ -44,7 +44,7 @@
         <p:menuitem value="Edit properties" icon="icon-pencil" onclick="folderUpdateDialog.show()"
                     update=":updateFolder" actionListener="#{mdslRegistryController.operationOnSelectedFolder}"/>
     </p:contextMenu>
-    <p:contextMenu for="reqTree" nodeType="FolderRW" styleClass="arianeContextMenu">
+    <p:contextMenu for="reqTree" nodeType="FolderRW" styleClass="mappingContextMenu">
         <p:menuitem value="Create subfolder" icon="icon-plus-sign" onclick="folderNewDialog.show()"
                     update=":createFolder" actionListener="#{mdslRegistryController.createNewFolder}"/>
         <p:menuitem value="Delete" icon="icon-remove-sign" onclick="folderDeleteDialog.show()"
@@ -52,7 +52,7 @@
         <p:menuitem value="Edit properties" icon="icon-pencil" onclick="folderUpdateDialog.show()"
                     update=":updateFolder" actionListener="#{mdslRegistryController.operationOnSelectedFolder}"/>
     </p:contextMenu>
-    <p:contextMenu for="reqTree" nodeType="RequestRWCH" styleClass="arianeContextMenu">
+    <p:contextMenu for="reqTree" nodeType="RequestRWCH" styleClass="mappingContextMenu">
         <p:menuitem value="Delete" icon="icon-remove-sign" onclick="requestDeleteDialog.show()"
                     update=":deleteRequestConfirm"/>
         <p:menuitem value="Edit permissions" icon="icon-pencil" onclick="requestPermissionCHDialog.show()"
@@ -60,13 +60,13 @@
         <p:menuitem value="Edit properties" icon="icon-pencil" onclick="requestModificationDialog.show()"
                     update=":updateRequest"/>
     </p:contextMenu>
-    <p:contextMenu for="reqTree" nodeType="RequestRW" styleClass="arianeContextMenu">
+    <p:contextMenu for="reqTree" nodeType="RequestRW" styleClass="mappingContextMenu">
         <p:menuitem value="Delete" icon="icon-remove-sign" onclick="requestDeleteDialog.show()"
                     update=":deleteRequestConfirm"/>
         <p:menuitem value="Edit properties" icon="icon-pencil" onclick="requestModificationDialog.show()"
                     update=":updateRequest"/>
     </p:contextMenu>
-    <p:contextMenu for="reqTree" nodeType="TemplateRWCH" styleClass="arianeContextMenu">
+    <p:contextMenu for="reqTree" nodeType="TemplateRWCH" styleClass="mappingContextMenu">
         <p:menuitem value="Delete" icon="icon-remove-sign" onclick="requestDeleteDialog.show()"
                     update=":deleteRequestConfirm"/>
         <p:menuitem value="Edit permissions" icon="icon-pencil" onclick="requestPermissionCHDialog.show()"
@@ -74,7 +74,7 @@
         <p:menuitem value="Edit properties" icon="icon-pencil" onclick="requestModificationDialog.show()"
                     update=":updateRequest"/>
     </p:contextMenu>
-    <p:contextMenu for="reqTree" nodeType="TemplateRW" styleClass="arianeContextMenu">
+    <p:contextMenu for="reqTree" nodeType="TemplateRW" styleClass="mappingContextMenu">
         <p:menuitem value="Delete" icon="icon-remove-sign" onclick="requestDeleteDialog.show()"
                     update=":deleteRequestConfirm"/>
         <p:menuitem value="Edit properties" icon="icon-pencil" onclick="requestModificationDialog.show()"
