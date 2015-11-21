@@ -51,3 +51,7 @@
 .mappingPropsDialog .ui-widget-content a {
     color: #ffffff !important;
 }
+
+.arianeContextMenu .ui-helper-reset{
+    padding-left: 0px !important;
+}
