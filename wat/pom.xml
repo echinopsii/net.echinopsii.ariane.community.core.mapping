@@ -365,6 +365,7 @@
                         </Import-Package>
                         <Export-Package>
                             net.echinopsii.ariane.community.core.mapping.wat.controller;version="${project.version}",
+                            net.echinopsii.ariane.community.core.mapping.wat.helper;version="${project.version}",
                             net.echinopsii.ariane.community.core.mapping.wat.rest.ds.domain;version="${project.version}",
                             net.echinopsii.ariane.community.core.mapping.wat.rest.ds.service;version="${project.version}"
                         </Export-Package>

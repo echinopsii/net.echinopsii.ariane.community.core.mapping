@@ -6,3 +6,4 @@ net.echinopsii.ariane.community.core.mapping.wat.rest.ds.domain.EndpointEndpoint
 net.echinopsii.ariane.community.core.mapping.wat.rest.ds.domain.LinkEndpoint
 net.echinopsii.ariane.community.core.mapping.wat.rest.ds.domain.TransportEndpoint
 net.echinopsii.ariane.community.core.mapping.wat.rest.ds.service.MapEndpoint
+net.echinopsii.ariane.community.core.mapping.wat.rest.ds.service.MDSLRegistryEndpoint
