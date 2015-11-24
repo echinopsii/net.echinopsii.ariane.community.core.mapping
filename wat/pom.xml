@@ -89,6 +89,8 @@
                         <Embed-Transitive>true</Embed-Transitive>
                         <Import-Package>
                             net.echinopsii.ariane.community.core.mapping*;version=${project.version},
+                            com.fasterxml.jackson.databind;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.core;version="${version.com.fasterxml.jackson}",
                             com.mysql.jdbc;resolution:=optional,
                             com.sun.el;version="${version.org.glassfish.web.el-impl}"
                             com.sun.faces;version="${version.javax.faces.api}",

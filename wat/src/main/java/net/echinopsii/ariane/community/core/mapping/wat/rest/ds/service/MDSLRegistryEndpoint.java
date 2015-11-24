@@ -22,6 +22,9 @@ package net.echinopsii.ariane.community.core.mapping.wat.rest.ds.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.echinopsii.ariane.community.core.mapping.ds.dsl.registry.json.MappingDSLRegistryDirectoryJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.dsl.registry.model.MappingDSLRegistryDirectory;
+import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 import net.echinopsii.ariane.community.core.mapping.wat.helper.MDSLRegistryHelper;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
@@ -41,17 +44,37 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+import java.io.ByteArrayOutputStream;
 import java.util.Set;
 
 @Path("/mapping/registry")
 public class MDSLRegistryEndpoint {
+
+    private static final Logger log = LoggerFactory.getLogger(MDSLRegistryEndpoint.class);
+    private EntityManager em;
+
+    public static Response mappingDSLRegistryDirToJSON(MappingDSLRegistryDirectory mappingDSLRegistryDirectory) {
+        Response ret = null;
+        String result;
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        try {
+            MappingDSLRegistryDirectoryJSON.oneMappingDSLRegistryDir2JSON(mappingDSLRegistryDirectory, outStream);
+            result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+            ret = Response.status(Response.Status.OK).entity(result).build();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            e.printStackTrace();
+            result = e.getMessage();
+            ret = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(result).build();
+        }
+        return ret;
+    }
 
     @GET
     @Path("/getRoot")
     public Response getRoot() throws JsonProcessingException
     {
         MDSLRegistryHelper md = new MDSLRegistryHelper();
-        ObjectMapper mapper = new ObjectMapper();
-        return Response.status(Response.Status.OK).entity(mapper.writeValueAsString(md.getRoot())).build();
+        return Response.status(Response.Status.OK).entity(mappingDSLRegistryDirToJSON(md.getRootD())).build();
     }
 }

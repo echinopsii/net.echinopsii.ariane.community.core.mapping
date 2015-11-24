@@ -73,7 +73,7 @@ public class MappingDSLRegistryDirectory implements IUXResource<UXPermission>, S
     @ManyToOne(fetch = FetchType.EAGER)
     private Group group;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @Fetch(FetchMode.SUBSELECT)
     private Set<UXPermission> uxPermissions;
 

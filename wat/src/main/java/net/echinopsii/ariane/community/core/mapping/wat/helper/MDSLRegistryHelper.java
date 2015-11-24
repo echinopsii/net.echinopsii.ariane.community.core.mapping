@@ -162,6 +162,10 @@ public class MDSLRegistryHelper {
         return root;
     }
 
+    public MappingDSLRegistryDirectory getRootD(){
+        return rootD;
+    }
+
     public void reloadTree() {
         if (subject.isAuthenticated()) {
             EntityManager em = MappingDSLRegistryBootstrap.getIDMJPAProvider().createEM();
