@@ -17,10 +17,10 @@ import java.util.Iterator;
  */
 public class MappingDSLRegistryDirectoryJSON {
 
-    public final static String MDSLDIR_ID          = "mappingDSLDirectoryID";
+    public final static String MDSLDIR_ID = "mappingDSLDirectoryID";
     public final static String MDSL_VERSION = "mappingDSLDirectoryVersion";
     public final static String MDSL_NAME = "mappingDSLDirectoryName";
-    public final static String MDSL_DESCRIPTION ="mappingDSLDirectoryDescription";
+    public final static String MDSL_DESCRIPTION = "mappingDSLDirectoryDescription";
     public final static String MDSL_ROOT_DIR_ID = "mappingDSLDirectoryRootDirID";
     public final static String MDSL_SUB_DIRS_ID = "mappingDSLDirectorySubDirsID";
     public final static String MDSL_REQUESTS_ID = "mappingDSLDirectoryRequestsID";
@@ -43,12 +43,12 @@ public class MappingDSLRegistryDirectoryJSON {
             jgenerator.writeNumber(mappingDSLRegistryDirectory1.getId());
         jgenerator.writeEndArray();
         jgenerator.writeArrayFieldStart(MDSL_REQUESTS_ID);
-        for (MappingDSLRegistryRequest mappingDSLRegistryRequest: mappingDSLRegistryDirectory.getRequests())
+        for (MappingDSLRegistryRequest mappingDSLRegistryRequest : mappingDSLRegistryDirectory.getRequests())
             jgenerator.writeNumber(mappingDSLRegistryRequest.getId());
         jgenerator.writeEndArray();
-        jgenerator.writeNumberField(MDSL_ROOT_DIR_ID, ((mappingDSLRegistryDirectory.getRootDirectory()!=null) ? mappingDSLRegistryDirectory.getRootDirectory().getId(): -1));
-        jgenerator.writeNumberField(MDSL_USER_ID, ((mappingDSLRegistryDirectory.getUser()!=null) ? mappingDSLRegistryDirectory.getUser().getId() : -1));
-        jgenerator.writeNumberField(MDSL_GROUP_ID, ((mappingDSLRegistryDirectory.getGroup()!=null) ? mappingDSLRegistryDirectory.getGroup().getId() : -1));
+        jgenerator.writeNumberField(MDSL_ROOT_DIR_ID, ((mappingDSLRegistryDirectory.getRootDirectory() != null) ? mappingDSLRegistryDirectory.getRootDirectory().getId() : -1));
+        jgenerator.writeNumberField(MDSL_USER_ID, ((mappingDSLRegistryDirectory.getUser() != null) ? mappingDSLRegistryDirectory.getUser().getId() : -1));
+        jgenerator.writeNumberField(MDSL_GROUP_ID, ((mappingDSLRegistryDirectory.getGroup() != null) ? mappingDSLRegistryDirectory.getGroup().getId() : -1));
         jgenerator.writeEndObject();
     }
 
