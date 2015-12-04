@@ -18,13 +18,13 @@
  */
 package net.echinopsii.ariane.community.core.mapping.ds.dsl.internal
 
-import com.typesafe.scalalogging.slf4j.Logging
+import com.typesafe.scalalogging.slf4j.LazyLogging
 
 abstract class Predicate extends Expression {
   override var eType: String = "Predicate"
 }
 
-case class And(left: Predicate, right: Predicate) extends Predicate with Logging {
+case class And(left: Predicate, right: Predicate) extends Predicate with LazyLogging {
   override def toString() = left.toString + " and " + right.toString
 
   def toCypherMatch(objectType: String) : (String,String) = {
@@ -55,7 +55,7 @@ case class And(left: Predicate, right: Predicate) extends Predicate with Logging
   def calcType : String = eType
 }
 
-case class Or(left: Predicate, right: Predicate) extends Predicate with Logging {
+case class Or(left: Predicate, right: Predicate) extends Predicate with LazyLogging {
   override def toString() = left.toString + " or " + right.toString
 
   def toCypherMatch(objectType: String) : (String,String) = {
@@ -86,7 +86,7 @@ case class Or(left: Predicate, right: Predicate) extends Predicate with Logging 
   def calcType : String = eType
 }
 
-case class Ops(left: Expression, right: Expression, ops: String) extends Predicate with Logging {
+case class Ops(left: Expression, right: Expression, ops: String) extends Predicate with LazyLogging {
   override def toString() = left.toString + " " + ops + " " + right.toString
 
   def toCypherMatch(objectType: String) : (String,String) = {
