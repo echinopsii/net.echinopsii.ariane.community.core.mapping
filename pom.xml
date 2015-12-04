@@ -116,8 +116,8 @@
         <!-- Technical stuff -->
         <version.org.apache.ipojo>1.11.0</version.org.apache.ipojo>
         <version.org.slf4j>1.6.4</version.org.slf4j>
-        <version.scala.logging>1.1.0</version.scala.logging>
-        <version.scala>2.10.3</version.scala>
+        <version.scala.logging>2.1.2</version.scala.logging>
+        <version.scala>2.11.7</version.scala>
         <version.org.infinispan>6.0.2.Final</version.org.infinispan>
 
         <!-- OSGI Min/Max versions -->
@@ -158,18 +158,23 @@
             <properties>
                 <com.tinkerpop.blueprints.version>2.4.0</com.tinkerpop.blueprints.version>
                 <version.osgi.com.neo4j>1.9.5</version.osgi.com.neo4j>
-                <com.tinkerpop.blueprints.blueprints-neo4j-graph.groupid>com.tinkerpop.blueprints.osgi</com.tinkerpop.blueprints.blueprints-neo4j-graph.groupid>
             </properties>
         </profile>
         <profile>
             <id>blueprints-25</id>
+            <properties>
+                <com.tinkerpop.blueprints.version>2.5.1</com.tinkerpop.blueprints.version>
+                <version.osgi.com.neo4j>2.1.2</version.osgi.com.neo4j>
+            </properties>
+        </profile>
+        <profile>
+            <id>blueprints-26</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <com.tinkerpop.blueprints.version>2.5.1</com.tinkerpop.blueprints.version>
-                <version.osgi.com.neo4j>2.1.2</version.osgi.com.neo4j>
-                <com.tinkerpop.blueprints.blueprints-neo4j-graph.groupid>com.tinkerpop.blueprints.osgi</com.tinkerpop.blueprints.blueprints-neo4j-graph.groupid>
+                <com.tinkerpop.blueprints.version>2.6.231</com.tinkerpop.blueprints.version>
+                <version.osgi.com.neo4j>2.3.1</version.osgi.com.neo4j>
             </properties>
         </profile>
     </profiles>
@@ -289,12 +294,12 @@
                 <plugin>
                     <groupId>org.scalatest</groupId>
                     <artifactId>scalatest-maven-plugin</artifactId>
-                    <version>1.0-RC2</version>
+                    <version>1.0</version>
                 </plugin>
                 <plugin>
                     <groupId>net.alchim31.maven</groupId>
                     <artifactId>scala-maven-plugin</artifactId>
-                    <version>3.1.6</version>
+                    <version>3.2.2</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -344,8 +349,8 @@
             <version>${version.com.lowagie.itext}</version>
         </dependency>
         <dependency>
-            <groupId>com.typesafe</groupId>
-            <artifactId>scalalogging-slf4j_2.10</artifactId>
+            <groupId>com.typesafe.scala-logging</groupId>
+            <artifactId>scala-logging-slf4j_2.11</artifactId>
             <version>${version.scala.logging}</version>
             <scope>provided</scope>
         </dependency>
@@ -374,7 +379,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.tinkerpop.blueprints</groupId>
+            <groupId>com.tinkerpop</groupId>
             <artifactId>net.echinopsii.3rdparty.com.tinkerpop.blueprints.blueprints-core</artifactId>
             <version>${com.tinkerpop.blueprints.version}</version>
             <scope>provided</scope>
@@ -388,7 +393,7 @@
         </dependency>
         -->
         <dependency>
-            <groupId>com.tinkerpop.blueprints</groupId>
+            <groupId>com.tinkerpop</groupId>
             <artifactId>net.echinopsii.3rdparty.com.tinkerpop.blueprints.blueprints-neo4j2-graph</artifactId>
             <version>${com.tinkerpop.blueprints.version}</version>
         </dependency>
@@ -577,8 +582,14 @@
         </dependency>
         <dependency>
             <groupId>org.scalatest</groupId>
-            <artifactId>scalatest_2.10</artifactId>
-            <version>2.1.0</version>
+            <artifactId>scalatest_2.11</artifactId>
+            <version>2.2.4</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.scalacheck</groupId>
+            <artifactId>scalacheck_2.11</artifactId>
+            <version>1.12.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
