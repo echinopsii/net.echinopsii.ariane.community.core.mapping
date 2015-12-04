@@ -18,9 +18,9 @@
  */
 package net.echinopsii.ariane.community.core.mapping.ds.dsl.internal
 
+import com.typesafe.scalalogging.slf4j.LazyLogging
 import net.echinopsii.ariane.community.core.mapping.ds.domain.{Gate, Endpoint, Node, Container}
 import net.echinopsii.ariane.community.core.mapping.ds.dsl.MapperParserException
-import com.typesafe.scalalogging.slf4j.Logging
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames
 
 abstract class Expression() {
@@ -31,7 +31,7 @@ abstract class Expression() {
   def calcType : String
 }
 
-case class IdentifierExp(var eType: String = "", iName: String, var iRoot: Option[IdentifierExp] = None, var iProp: Option[IdentifierExp] = None) extends Expression with Logging {
+case class IdentifierExp(var eType: String = "", iName: String, var iRoot: Option[IdentifierExp] = None, var iProp: Option[IdentifierExp] = None) extends Expression with LazyLogging {
   override def toString() = if (iRoot!=None) {iRoot.get.toString+"."+iName} else {iName}
 
   def toCypherMatch(objectType: String) : (String,String) = {

@@ -87,7 +87,11 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <scalaCompatVersion>2.10</scalaCompatVersion>
+                    <recompileMode>incremental</recompileMode>
+                    <scalaCompatVersion>2.11</scalaCompatVersion>
+                    <args>
+                        <arg>-deprecation</arg>
+                    </args>
                     <jvmArgs>
                         <jvmArg>-Xms64m</jvmArg>
                         <jvmArg>-Xmx1024m</jvmArg>

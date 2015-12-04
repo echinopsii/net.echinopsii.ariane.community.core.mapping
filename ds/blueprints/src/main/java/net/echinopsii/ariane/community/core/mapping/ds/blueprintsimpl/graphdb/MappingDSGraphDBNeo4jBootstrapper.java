@@ -20,47 +20,38 @@
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb;
 
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.kernel.logging.BufferingConsoleLogger;
-import org.neo4j.kernel.logging.DefaultLogging;
-import org.neo4j.kernel.logging.Logging;
-import org.neo4j.server.Bootstrapper;
-import org.neo4j.server.CommunityNeoServer;
-import org.neo4j.server.NeoServer;
-import org.neo4j.server.configuration.Configurator;
-import org.neo4j.server.configuration.PropertyFileConfigurator;
-import org.neo4j.server.configuration.validation.DatabaseLocationMustBeSpecifiedRule;
-import org.neo4j.server.configuration.validation.Validator;
+import org.neo4j.helpers.Pair;
+import org.neo4j.server.CommunityBootstrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.rmi.RMISecurityManager;
+import java.util.ArrayList;
 
 public class MappingDSGraphDBNeo4jBootstrapper {
 
     private final static Logger log = LoggerFactory.getLogger(MappingDSGraphDB.class);
 
-    private Bootstrapper bootstrapper = Bootstrapper.loadMostDerivedBootstrapper();
-    private Configurator configurator ;
-    private NeoServer    server ;
+    private CommunityBootstrapper communityBootstrapper;
     private Thread       shutdownHook ;
 
     public MappingDSGraphDBNeo4jBootstrapper start(String configFilePath) {
-        File configFile = new File(configFilePath);
-        log.debug("Create configuration from {}", configFilePath);
-        BufferingConsoleLogger console = new BufferingConsoleLogger();
-        configurator = new PropertyFileConfigurator(new Validator(new DatabaseLocationMustBeSpecifiedRule()),configFile,console);
-        Logging logging = DefaultLogging.createDefaultLogging(configurator.getDatabaseTuningProperties());
         log.debug("Create neo4j server");
-        server = new CommunityNeoServer(configurator, logging);
+        if (System.getSecurityManager() == null) {
+            System.setSecurityManager(new RMISecurityManager());
+        }
+        communityBootstrapper = new CommunityBootstrapper();
+
         log.debug("Start neo4j server");
-        server.start();
+        communityBootstrapper.start(new File(configFilePath), (Pair<String, String>[]) new ArrayList().toArray(new Pair[0]));
 
         shutdownHook = new Thread() {
             @Override
             public void run() {
-                log.info( "Neo4j Server shutdown initiated by request" );
-                if ( server != null )
-                    server.stop();
+                log.info("Neo4j Server shutdown initiated by request");
+                if (communityBootstrapper != null)
+                    communityBootstrapper.stop();
             }
         };
         Runtime.getRuntime().addShutdownHook(shutdownHook);
@@ -68,13 +59,13 @@ public class MappingDSGraphDBNeo4jBootstrapper {
     }
 
     public void stop() {
-        if (server!=null) server.stop();
+        if (communityBootstrapper!=null) communityBootstrapper.stop();
         if (shutdownHook!=null) Runtime.getRuntime().removeShutdownHook(shutdownHook);
     }
 
     public GraphDatabaseService getDatabase() {
-        if (server!=null)
-            return server.getDatabase().getGraph();
+        if (communityBootstrapper!=null)
+            return communityBootstrapper.getServer().getDatabase().getGraph();
         else
             return null;
     }
