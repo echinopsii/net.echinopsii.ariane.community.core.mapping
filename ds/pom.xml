@@ -13,12 +13,13 @@
     <artifactId>net.echinopsii.ariane.community.core.mapping.ds</artifactId>
     <name>Ariane Community Core Mapping DS</name>
     <packaging>pom</packaging>
-    
 
     <modules>
         <module>api</module>
         <module>dsl</module>
         <module>blueprints</module>
+	<module>msg-cli</module>
+	<module>msg-srv</module>
         <module>rim</module>
     </modules>
 </project>
