@@ -23,11 +23,14 @@ import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cache.Mapp
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.EndpointImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.NodeImpl;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.repository.NodeRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class NodeRepoImpl implements NodeRepo<NodeImpl> {
@@ -47,27 +50,24 @@ public class NodeRepoImpl implements NodeRepo<NodeImpl> {
 
     @Override
     public void deleteNode(NodeImpl node) {
-        for (NodeImpl childNode : node.getNodeChildNodes()) {
-            this.deleteNode(childNode);
-        }
+        Set<NodeImpl> childNodesToRemove = new HashSet<NodeImpl>(node.getNodeChildNodes());
+        for (NodeImpl childNode : childNodesToRemove) this.deleteNode(childNode);
+        childNodesToRemove.clear();
 
         Set<EndpointImpl> clonedESet = new HashSet<>(node.getNodeEndpoints());
         for (EndpointImpl endpoint : clonedESet) {
             log.debug("Deleted endpoint {} from graph({}).", new Object[]{endpoint.getEndpointURL(), MappingDSGraphDB.getVertexMaxCursor()});
             node.removeEndpoint(endpoint);
         }
+        clonedESet.clear();
 
-        for (NodeImpl twinNode : node.getTwinNodes()) {
-            twinNode.removeTwinNode(node);
-        }
+        Set<NodeImpl> twinNodesToRemove = new HashSet<NodeImpl>(node.getTwinNodes());
+        for (NodeImpl twinNode : twinNodesToRemove) twinNode.removeTwinNode(node);
+        twinNodesToRemove.clear();
 
-        if (node.getNodeParentNode() != null) {
-            node.getNodeParentNode().removeNodeChildNode(node);
-        }
+        if (node.getNodeParentNode() != null) node.getNodeParentNode().removeNodeChildNode(node);
 
-        if (node.getNodeDepth() == 1) {
-            node.getNodeContainer().removeContainerNode(node);
-        }
+        if (node.getNodeDepth() == 1) node.getNodeContainer().removeContainerNode(node);
 
         MappingDSGraphDB.deleteEntity(node);
         log.debug("Deleted node {} and all its linked entities from graph({}).", new Object[]{node.toString(), MappingDSGraphDB.getVertexMaxCursor()});
