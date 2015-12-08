@@ -6,9 +6,11 @@ import com.fasterxml.jackson.core.JsonFactory;
 import net.echinopsii.ariane.community.core.idm.base.model.jpa.UXPermission;
 import net.echinopsii.ariane.community.core.mapping.ds.dsl.registry.model.MappingDSLRegistryDirectory;
 import net.echinopsii.ariane.community.core.mapping.ds.dsl.registry.model.MappingDSLRegistryRequest;
+import org.neo4j.shell.util.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -27,6 +29,8 @@ public class MappingDSLRegistryDirectoryJSON {
     public final static String MDSL_USER_ID = "mappingDSLDirectoryUserID";
     public final static String MDSL_GROUP_ID = "mappingDSLDirectoryGroupID";
     public final static String MDSL_UXPERMISSIONS_ID = "mappingDSLDirectoryUxPermissionsID";
+    public final static String MDSL_SUB_DIR_ID = "subDirectoryID";
+    public final static String MDSL_SUB_DIR_NAME = "subDirectoryName";
 
     public final static void mappingDSLRegistryDirectory2JSON(MappingDSLRegistryDirectory mappingDSLRegistryDirectory, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeStartObject();
@@ -39,8 +43,12 @@ public class MappingDSLRegistryDirectoryJSON {
             jgenerator.writeNumber(uxPermission.getId());
         jgenerator.writeEndArray();
         jgenerator.writeArrayFieldStart(MDSL_SUB_DIRS_ID);
-        for (MappingDSLRegistryDirectory mappingDSLRegistryDirectory1 : mappingDSLRegistryDirectory.getSubDirectories())
-            jgenerator.writeNumber(mappingDSLRegistryDirectory1.getId());
+        for (MappingDSLRegistryDirectory mappingDSLRegistryDirectory1 : mappingDSLRegistryDirectory.getSubDirectories()) {
+            jgenerator.writeStartObject();
+            jgenerator.writeNumberField(MDSL_SUB_DIR_ID, mappingDSLRegistryDirectory1.getId());
+            jgenerator.writeStringField(MDSL_SUB_DIR_NAME, mappingDSLRegistryDirectory1.getName());
+            jgenerator.writeEndObject();
+        }
         jgenerator.writeEndArray();
         jgenerator.writeArrayFieldStart(MDSL_REQUESTS_ID);
         for (MappingDSLRegistryRequest mappingDSLRegistryRequest : mappingDSLRegistryDirectory.getRequests())
