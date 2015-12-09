@@ -21,10 +21,11 @@ package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
-import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cache.MappingDSCache;
-import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cache.MappingDSCacheEntity;
-import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cfg.MappingDSCfgLoader;
+import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCache;
+import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCacheEntity;
+import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cfg.MappingBlueprintsDSCfgLoader;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.*;
 import net.echinopsii.ariane.community.core.mapping.ds.dsl.MapperExecutor;
 import com.tinkerpop.blueprints.*;
@@ -56,26 +57,23 @@ public class MappingDSGraphDB {
     }
 
     public static boolean init(Dictionary<Object, Object> properties) throws JsonParseException, JsonMappingException, IOException {
-        if (properties != null) {
-            return MappingDSCfgLoader.load(properties);
-        } else {
-            return false;
-        }
+        if (properties != null) return MappingBlueprintsDSCfgLoader.load(properties);
+        else return false;
     }
 
     public static boolean start() {
-        if (MappingDSCfgLoader.getDefaultCfgEntity() != null && (MappingDSCfgLoader.getDefaultCfgEntity().getBlueprintsURL() != null ||
-            MappingDSCfgLoader.getDefaultCfgEntity().getBlueprintsGraphPath()!=null ||
-            MappingDSCfgLoader.getDefaultCfgEntity().getBlueprintsNeoConfigFile()!=null)) {
-            blpImpl = MappingDSCfgLoader.getDefaultCfgEntity().getBlueprintsImplementation();
+        if (MappingBlueprintsDSCfgLoader.getDefaultCfgEntity() != null && (MappingBlueprintsDSCfgLoader.getDefaultCfgEntity().getBlueprintsURL() != null ||
+            MappingBlueprintsDSCfgLoader.getDefaultCfgEntity().getBlueprintsGraphPath()!=null ||
+            MappingBlueprintsDSCfgLoader.getDefaultCfgEntity().getBlueprintsNeoConfigFile()!=null)) {
+            blpImpl = MappingBlueprintsDSCfgLoader.getDefaultCfgEntity().getBlueprintsImplementation();
             switch (blpImpl) {
                 case BLUEPRINTS_IMPL_N4J:
                     GraphDatabaseService graphDb   = null;
-                    if (MappingDSCfgLoader.getDefaultCfgEntity().getBlueprintsGraphPath() != null) {
-                        String  graphPath = MappingDSCfgLoader.getDefaultCfgEntity().getBlueprintsGraphPath();
+                    if (MappingBlueprintsDSCfgLoader.getDefaultCfgEntity().getBlueprintsGraphPath() != null) {
+                        String  graphPath = MappingBlueprintsDSCfgLoader.getDefaultCfgEntity().getBlueprintsGraphPath();
                         graphDb = new GraphDatabaseFactory().newEmbeddedDatabase( graphPath );
-                    } else if (MappingDSCfgLoader.getDefaultCfgEntity().getBlueprintsNeoConfigFile() != null) {
-                        String neo4jConfigFilePath = MappingDSCfgLoader.getDefaultCfgEntity().getBlueprintsNeoConfigFile();
+                    } else if (MappingBlueprintsDSCfgLoader.getDefaultCfgEntity().getBlueprintsNeoConfigFile() != null) {
+                        String neo4jConfigFilePath = MappingBlueprintsDSCfgLoader.getDefaultCfgEntity().getBlueprintsNeoConfigFile();
                         neoBootstrapper = new MappingDSGraphDBNeo4jBootstrapper().start(neo4jConfigFilePath);
                         graphDb = neoBootstrapper.getDatabase();
                     }
@@ -163,13 +161,13 @@ public class MappingDSGraphDB {
     public static void stop() {
         try {
             MappingDSCache.synchronizeToDB();
-        } catch (MappingDSGraphDBException E) {
+        } catch (MappingDSException E) {
             String msg = "Exception while synchronizing MappingDSCache...";
             E.printStackTrace();
             log.error(msg);
         } finally {
             String ddgraphinfo = ccgraph.toString();
-            if (blpImpl.equals(BLUEPRINTS_IMPL_N4J) && MappingDSCfgLoader.getDefaultCfgEntity().getBlueprintsNeoConfigFile() != null) {
+            if (blpImpl.equals(BLUEPRINTS_IMPL_N4J) && MappingBlueprintsDSCfgLoader.getDefaultCfgEntity().getBlueprintsNeoConfigFile() != null) {
                 neoBootstrapper.stop();
             } else {
                 ccgraph.shutdown();
@@ -244,7 +242,7 @@ public class MappingDSGraphDB {
         return ccgraph;
     }
 
-    private static synchronized long incrementVertexMaxCursor() throws MappingDSGraphDBException {
+    private static synchronized long incrementVertexMaxCursor() throws MappingDSException {
         try {
             long countProp = idmanager.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_MAXCUR_KEY);
             countProp++;
@@ -254,12 +252,12 @@ public class MappingDSGraphDB {
             log.error(msg);
             E.printStackTrace();
             log.error("Raise exception for rollback...");
-            throw new MappingDSGraphDBException(msg);
+            throw new MappingDSException(msg);
         }
         return getVertexMaxCursor();
     }
 
-    private static synchronized void decrementVertexMaxCursor() throws MappingDSGraphDBException {
+    private static synchronized void decrementVertexMaxCursor() throws MappingDSException {
         try {
             long countProp = idmanager.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_MAXCUR_KEY);
             countProp--;
@@ -269,7 +267,7 @@ public class MappingDSGraphDB {
             log.error(msg);
             E.printStackTrace();
             log.error("Raise exception for rollback...");
-            throw new MappingDSGraphDBException(msg);
+            throw new MappingDSException(msg);
         }
     }
 
@@ -277,7 +275,7 @@ public class MappingDSGraphDB {
         return idmanager.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_MAXCUR_KEY);
     }
 
-    private static synchronized long incrementEdgeMaxCursor() throws MappingDSGraphDBException {
+    private static synchronized long incrementEdgeMaxCursor() throws MappingDSException {
         try {
             long countProp = idmanager.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_MAXCUR_KEY);
             countProp++;
@@ -287,12 +285,12 @@ public class MappingDSGraphDB {
             log.error(msg);
             E.printStackTrace();
             log.error("Raise exception for rollback...");
-            throw new MappingDSGraphDBException(msg);
+            throw new MappingDSException(msg);
         }
         return getEdgeMaxCursor();
     }
 
-    private static synchronized void decrementEdgeMaxCursor() throws MappingDSGraphDBException {
+    private static synchronized void decrementEdgeMaxCursor() throws MappingDSException {
         try {
             long countProp = idmanager.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_MAXCUR_KEY);
             countProp--;
@@ -302,7 +300,7 @@ public class MappingDSGraphDB {
             log.error(msg);
             E.printStackTrace();
             log.error("Raise exception for rollback...");
-            throw new MappingDSGraphDBException(msg);
+            throw new MappingDSException(msg);
         }
     }
 
@@ -310,7 +308,7 @@ public class MappingDSGraphDB {
         return idmanager.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_MAXCUR_KEY);
     }
 
-    private static synchronized void addVertexFreeID(long id) throws MappingDSGraphDBException {
+    private static synchronized void addVertexFreeID(long id) throws MappingDSException {
         try {
             idmanager.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_FREE_IDS_KEY + id, id);
         } catch (Exception E) {
@@ -318,7 +316,7 @@ public class MappingDSGraphDB {
             log.error(msg);
             E.printStackTrace();
             log.error("Raise exception for rollback...");
-            throw new MappingDSGraphDBException(msg);
+            throw new MappingDSException(msg);
         }
     }
 
@@ -343,7 +341,7 @@ public class MappingDSGraphDB {
         return ret;
     }
 
-    private static synchronized void addEdgeFreeID(long id) throws MappingDSGraphDBException {
+    private static synchronized void addEdgeFreeID(long id) throws MappingDSException {
         try {
             idmanager.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_FREE_IDS_KEY + id, id);
         } catch (Exception E) {
@@ -351,7 +349,7 @@ public class MappingDSGraphDB {
             log.error(msg);
             E.printStackTrace();
             log.error("Raise exception for rollback...");
-            throw new MappingDSGraphDBException(msg);
+            throw new MappingDSException(msg);
         }
     }
 
@@ -406,7 +404,7 @@ public class MappingDSGraphDB {
         return entity;
     }
 
-    public static Edge createEdge(Vertex source, Vertex destination, String label) throws MappingDSGraphDBException {
+    public static Edge createEdge(Vertex source, Vertex destination, String label) throws MappingDSException {
         Edge edge = null;
         long id = 0;
         try {
@@ -444,7 +442,7 @@ public class MappingDSGraphDB {
             log.error(msg);
             E.printStackTrace();
             log.error("Raise exception for rollback...");
-            throw new MappingDSGraphDBException(msg);
+            throw new MappingDSException(msg);
         }
         return edge;
     }
@@ -784,7 +782,7 @@ public class MappingDSGraphDB {
     }
 
     public static ClusterImpl getIndexedCluster(String clusterName) {
-        MappingDSCacheEntity ret = MappingDSCache.getClusterFromCache(clusterName);
+        MappingDSCacheEntity ret = (ClusterImpl)MappingDSCache.getClusterFromCache(clusterName);
         if (ret == null) {
             Vertex vertex = ccgraph.getVertices(MappingDSGraphPropertyNames.DD_CLUSTER_NAME_KEY, clusterName).iterator().hasNext() ?
                                  ccgraph.getVertices(MappingDSGraphPropertyNames.DD_CLUSTER_NAME_KEY, clusterName).iterator().next() : null;
@@ -832,7 +830,7 @@ public class MappingDSGraphDB {
     }
 
     public static EndpointImpl getIndexedEndpoint(String url) {
-        MappingDSCacheEntity ret = MappingDSCache.getEndpointFromCache(url);
+        MappingDSCacheEntity ret = (EndpointImpl) MappingDSCache.getEndpointFromCache(url);
         if (ret == null && ccgraph != null) {
             Vertex vertex = ccgraph.getVertices(MappingDSGraphPropertyNames.DD_ENDPOINT_URL_KEY, url).iterator().hasNext() ?
                                     ccgraph.getVertices(MappingDSGraphPropertyNames.DD_ENDPOINT_URL_KEY, url).iterator().next() : null;
@@ -856,7 +854,7 @@ public class MappingDSGraphDB {
     }
 
     public static TransportImpl getIndexedTransport(String transportName) {
-        MappingDSCacheEntity ret = MappingDSCache.getTransportFromCache(transportName);
+        MappingDSCacheEntity ret = (TransportImpl) MappingDSCache.getTransportFromCache(transportName);
         if (ret == null && ccgraph != null) {
             Vertex vertex = ccgraph.getVertices(MappingDSGraphPropertyNames.DD_TRANSPORT_NAME_KEY, transportName).iterator().hasNext() ?
                                     ccgraph.getVertices(MappingDSGraphPropertyNames.DD_TRANSPORT_NAME_KEY, transportName).iterator().next() : null;
@@ -919,7 +917,7 @@ public class MappingDSGraphDB {
         return ret;
     }
 
-    private static void removeVertex(Vertex vertex) throws MappingDSGraphDBException {
+    private static void removeVertex(Vertex vertex) throws MappingDSException {
         long vertexID = (long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
         ccgraph.removeVertex(vertex);
         if (vertexID == getVertexMaxCursor()) {
@@ -930,7 +928,7 @@ public class MappingDSGraphDB {
         autocommit();
     }
 
-    private static void removeEdge(Edge edge) throws MappingDSGraphDBException {
+    private static void removeEdge(Edge edge) throws MappingDSException {
         long edgeID = (long) edge.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID);
         ccgraph.removeEdge(edge);
         if (edgeID == getEdgeMaxCursor()) {
@@ -942,7 +940,7 @@ public class MappingDSGraphDB {
     }
 
     public static void deleteEntity(MappingDSCacheEntity entity) {
-        Element elem = entity.getElement();
+        Element elem = (Element)entity.getElement();
         try {
             if (elem != null) {
                 if (elem instanceof Vertex) {
@@ -981,7 +979,7 @@ public class MappingDSGraphDB {
             }
             autocommit();
         } catch (Exception E) {
-            log.error("Exception catched while deleting entity " + entity.getElement().getId() + "...");
+            log.error("Exception catched while deleting entity " + ((Element)entity.getElement()).getId() + "...");
             E.printStackTrace();
             autorollback();
         }

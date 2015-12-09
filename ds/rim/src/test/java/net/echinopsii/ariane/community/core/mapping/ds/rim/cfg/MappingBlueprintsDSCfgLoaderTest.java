@@ -34,7 +34,7 @@ import org.junit.Test;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-public class MappingDSCfgLoaderTest {
+public class MappingBlueprintsDSCfgLoaderTest {
 
 	@BeforeClass 
 	public static void testSetup(){

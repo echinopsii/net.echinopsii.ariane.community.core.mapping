@@ -19,18 +19,16 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository;
 
-import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cache.MappingDSCacheEntity;
+import com.tinkerpop.blueprints.Element;
+import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.EndpointImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.NodeImpl;
-import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.repository.NodeRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class NodeRepoImpl implements NodeRepo<NodeImpl> {
@@ -81,7 +79,7 @@ public class NodeRepoImpl implements NodeRepo<NodeImpl> {
             if (entity instanceof NodeImpl) {
                 ret = (NodeImpl) entity;
             } else {
-                log.error("CONSISTENCY ERROR : entity {} is not a node.", entity.getElement().getId());
+                log.error("CONSISTENCY ERROR : entity {} is not a node.", ((Element)entity.getElement()).getId());
             }
         }
         return ret;

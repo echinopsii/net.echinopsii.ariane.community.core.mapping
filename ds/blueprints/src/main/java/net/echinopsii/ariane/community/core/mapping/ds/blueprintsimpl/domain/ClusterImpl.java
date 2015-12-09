@@ -20,9 +20,9 @@
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain;
 
 import com.tinkerpop.blueprints.impls.neo4j2.Neo4j2Vertex;
-import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cache.MappingDSCacheEntity;
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
+import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
-import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDBException;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Cluster;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ClusterImpl implements Cluster, MappingDSCacheEntity {
+public class ClusterImpl implements Cluster, MappingDSCacheEntity<Element> {
 
     private static final Logger log = LoggerFactory.getLogger(ContainerImpl.class);
 
@@ -77,7 +77,7 @@ public class ClusterImpl implements Cluster, MappingDSCacheEntity {
                     synchronizeContainerToDB((ContainerImpl) container);
                     container.setContainerCluster(this);
                 }
-            } catch (MappingDSGraphDBException E) {
+            } catch (MappingDSException E) {
                 E.printStackTrace();
                 log.error("Exception while adding container {}...", new Object[]{container.getContainerID()});
                 this.clusterContainers.remove((ContainerImpl) container);
@@ -120,7 +120,12 @@ public class ClusterImpl implements Cluster, MappingDSCacheEntity {
     }
 
     @Override
-    public void synchronizeToDB() throws MappingDSGraphDBException {
+    public String getEntityCacheID() {
+        return "V" + this.clusterID;
+    }
+
+    @Override
+    public void synchronizeToDB() throws MappingDSException {
         synchronizeNameToDB();
         synchronizeContainersToDB();
     }
@@ -132,23 +137,21 @@ public class ClusterImpl implements Cluster, MappingDSCacheEntity {
         }
     }
 
-    private void synchronizeContainersToDB() throws MappingDSGraphDBException {
+    private void synchronizeContainersToDB() throws MappingDSException {
         for (ContainerImpl cont : this.clusterContainers) {
             synchronizeContainerToDB(cont);
         }
     }
 
-    private void synchronizeContainerToDB(ContainerImpl cont) throws MappingDSGraphDBException {
+    private void synchronizeContainerToDB(ContainerImpl cont) throws MappingDSException {
         if (this.clusterVertex != null && cont.getContainerID() != 0) {
             VertexQuery query = this.clusterVertex.query();
             query.direction(Direction.OUT);
             query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_COMPOSEDBY_LABEL_KEY);
             query.has(MappingDSGraphPropertyNames.DD_CLUSTER_EDGE_CONT_KEY, true);
-            for (Vertex vertex : query.vertices()) {
-                if ((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID) == cont.getContainerID()) {
+            for (Vertex vertex : query.vertices())
+                if ((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID) == cont.getContainerID())
                     return;
-                }
-            }
             Edge owns = MappingDSGraphDB.createEdge(this.clusterVertex, cont.getElement(), MappingDSGraphPropertyNames.DD_GRAPH_EDGE_COMPOSEDBY_LABEL_KEY);
             owns.setProperty(MappingDSGraphPropertyNames.DD_CLUSTER_EDGE_CONT_KEY, true);
             MappingDSGraphDB.autocommit();
@@ -191,7 +194,7 @@ public class ClusterImpl implements Cluster, MappingDSCacheEntity {
                     if (entity instanceof ContainerImpl) {
                         cont = (ContainerImpl) entity;
                     } else {
-                        log.error("CONSISTENCY ERROR : entity {} is not a container.", entity.getElement().getId());
+                        log.error("CONSISTENCY ERROR : entity {} is not a container.", ((Element)entity.getElement()).getId());
                     }
                 }
                 if (cont != null) {

@@ -17,15 +17,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */ 
 
-package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cache;
+package net.echinopsii.ariane.community.core.mapping.ds.cache;
 
-import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDBException;
-import com.tinkerpop.blueprints.Element;
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 
-public interface MappingDSCacheEntity {
-	public Element getElement();
-	public void    setElement(Element element); //element is a vertex or an edge
+public interface MappingDSCacheEntity<E> {
+	public E      getElement();
+	public void   setElement(E element);
+
+	public String getEntityCacheID();
 	
-	public void   synchronizeToDB() throws MappingDSGraphDBException;
+	public void   synchronizeToDB() throws MappingDSException;
 	public void   synchronizeFromDB();
 }

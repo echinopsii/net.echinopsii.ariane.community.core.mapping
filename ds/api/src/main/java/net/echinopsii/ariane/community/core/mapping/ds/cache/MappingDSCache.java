@@ -1,6 +1,6 @@
 /**
- * Mapping Datastore Blueprints Implementation :
- * provide a Mapping DS domain, repository and service blueprints implementation
+ * Mapping Datastore Cache :
+ * provide a Mapping DS cache
  * Copyright (C) 2013  Mathilde Ffrench
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,17 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cache;
+package net.echinopsii.ariane.community.core.mapping.ds.cache;
 
-import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
-import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cfg.MappingDSCfgLoader;
-import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDBException;
-import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.ClusterImpl;
-import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.EndpointImpl;
-import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.TransportImpl;
-import com.tinkerpop.blueprints.Edge;
-import com.tinkerpop.blueprints.Element;
-import com.tinkerpop.blueprints.Vertex;
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
+import net.echinopsii.ariane.community.core.mapping.ds.cfg.MappingDSCfgLoader;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.Cluster;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
 import org.infinispan.Cache;
 import org.infinispan.configuration.cache.*;
 import org.infinispan.manager.DefaultCacheManager;
@@ -67,7 +63,6 @@ public class MappingDSCache {
 
             if (config == null)
                 config = MappingDSCache.class.getResourceAsStream("/META-INF/infinispan.mapping.cache.xml");
-
             return true;
         } else {
             return false;
@@ -138,7 +133,7 @@ public class MappingDSCache {
     }
 
 
-    public static synchronized void synchronizeToDB() throws MappingDSGraphDBException {
+    public static synchronized void synchronizeToDB() throws MappingDSException {
         if (ddL2cache!=null) {
             for (String key : (Set<String>)ddL2cache.keySet()) {
                 MappingDSCacheEntity entity = (MappingDSCacheEntity)ddL2cache.get(key);
@@ -156,34 +151,22 @@ public class MappingDSCache {
     }
 
     public static synchronized void putEntityToCache(MappingDSCacheEntity entity) {
-        if (ddL2cache!=null) {
-            Element element = entity.getElement();
-            if (element instanceof Vertex) {
-                ddL2cache.put("V" + entity.getElement().getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID), entity);
-            } else if (element instanceof Edge) {
-                ddL2cache.put("E" + entity.getElement().getProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID), entity);
-            }
-        }
+        if (ddL2cache!=null)
+            ddL2cache.put(entity.getEntityCacheID(), entity);
     }
 
     public static synchronized void removeEntityFromCache(MappingDSCacheEntity entity) {
-        if (ddL2cache!=null) {
-            Element element = entity.getElement();
-            if (element instanceof Vertex) {
-                ddL2cache.remove("V" + entity.getElement().getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
-            } else if (element instanceof Edge) {
-                ddL2cache.remove("E" + entity.getElement().getProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID));
-            }
-        }
+        if (ddL2cache!=null)
+            ddL2cache.remove(entity.getEntityCacheID());
     }
 
-    public static synchronized ClusterImpl getClusterFromCache(String clusterName) {
-        ClusterImpl ret = null;
+    public static synchronized Cluster getClusterFromCache(String clusterName) {
+        Cluster ret = null;
         for (String key : (Set<String>)ddL2cache.keySet()) {
             MappingDSCacheEntity entity = (MappingDSCacheEntity)ddL2cache.get(key);
-            if (entity instanceof ClusterImpl) {
-                if (((ClusterImpl) entity).getClusterName().equals(clusterName)) {
-                    ret = (ClusterImpl) entity;
+            if (entity instanceof Cluster) {
+                if (((Cluster) entity).getClusterName().equals(clusterName)) {
+                    ret = (Cluster) entity;
                     break;
                 }
             }
@@ -191,13 +174,13 @@ public class MappingDSCache {
         return ret;
     }
 
-    public static synchronized EndpointImpl getEndpointFromCache(String url) {
-        EndpointImpl ret = null;
+    public static synchronized Endpoint getEndpointFromCache(String url) {
+        Endpoint ret = null;
         for (String key : (Set<String>)ddL2cache.keySet()) {
             MappingDSCacheEntity entity = (MappingDSCacheEntity) ddL2cache.get(key);
-            if (entity instanceof EndpointImpl) {
-                if (((EndpointImpl) entity).getEndpointURL().equals(url)) {
-                    ret = (EndpointImpl) entity;
+            if (entity instanceof Endpoint) {
+                if (((Endpoint) entity).getEndpointURL().equals(url)) {
+                    ret = (Endpoint) entity;
                     break;
                 }
             }
@@ -205,13 +188,13 @@ public class MappingDSCache {
         return ret;
     }
 
-    public static synchronized TransportImpl getTransportFromCache(String transportName) {
-        TransportImpl ret = null;
+    public static synchronized Transport getTransportFromCache(String transportName) {
+        Transport ret = null;
         for (String key : (Set<String>)ddL2cache.keySet()) {
             MappingDSCacheEntity entity = (MappingDSCacheEntity) ddL2cache.get(key);
-            if (entity instanceof TransportImpl) {
-                if (((TransportImpl) entity).getTransportName().equals(transportName)) {
-                    ret = (TransportImpl) entity;
+            if (entity instanceof Transport) {
+                if (((Transport) entity).getTransportName().equals(transportName)) {
+                    ret = (Transport) entity;
                     break;
                 }
             }

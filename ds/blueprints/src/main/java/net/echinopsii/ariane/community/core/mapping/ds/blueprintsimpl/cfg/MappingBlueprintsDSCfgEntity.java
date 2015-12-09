@@ -19,9 +19,9 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cfg;
 
-public class MappingDSCfgEntity {
-    private String       cacheConfigFile          = null;
+import net.echinopsii.ariane.community.core.mapping.ds.cfg.MappingDSCfgEntity;
 
+public class MappingBlueprintsDSCfgEntity extends MappingDSCfgEntity{
     private String       blueprintsImplementation = null;
 
     private String       blueprintsGraphPath      = null;
@@ -73,15 +73,8 @@ public class MappingDSCfgEntity {
         this.blueprintsNeoConfigFile = blueprintsNeoConfigFile;
     }
 
-    public String getCacheConfigFile() {
-        return cacheConfigFile;
-    }
-    public void setCacheConfigFile(String cacheConfigFile) {
-        this.cacheConfigFile = cacheConfigFile;
-    }
-
     public String toString() {
-		return "cacheConfig File: " + cacheConfigFile +
+		return super.toString() +
                "\nblueprintsConfiguration:" +
                "\n\t + blueprintsImplementation:" + blueprintsImplementation +
                " ; \n\tblueprintsGraphPath: " + blueprintsGraphPath +

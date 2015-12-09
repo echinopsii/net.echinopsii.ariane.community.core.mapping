@@ -18,14 +18,15 @@
  */
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cfg;
 
+import net.echinopsii.ariane.community.core.mapping.ds.cfg.MappingDSCfgLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Dictionary;
 
-public class MappingDSCfgLoader {
+public class MappingBlueprintsDSCfgLoader extends MappingDSCfgLoader {
 
-    private static final Logger log = LoggerFactory.getLogger(MappingDSCfgLoader.class);
+    private static final Logger log = LoggerFactory.getLogger(MappingBlueprintsDSCfgLoader.class);
 
     private static final String MAPPING_DS_CFG_FROM_RIM_BLUEPRINTS_IMPL_KEY           = "mapping.ds.blueprints.implementation";
     private static final String MAPPING_DS_CFG_FROM_RIM_BLUEPRINTS_URL_KEY            = "mapping.ds.blueprints.url";
@@ -33,9 +34,6 @@ public class MappingDSCfgLoader {
     private static final String MAPPING_DS_CFG_FROM_RIM_BLUEPRINTS_PAWD_KEY           = "mapping.ds.blueprints.password";
     private static final String MAPPING_DS_CFG_FROM_RIM_BLUEPRINTS_GP_KEY             = "mapping.ds.blueprints.graphpath";
     private static final String MAPPING_DS_CFG_FROM_RIM_BLUEPRINTS_NEO4J_CONFFILE_KEY = "mapping.ds.blueprints.neo4j.configfile";
-    private static final String MAPPING_DS_CFG_FROM_RIM_CACHE_CONFFILE_KEY            = "mapping.ds.cache.configfile";
-
-    private static MappingDSCfgEntity defaultCfgEntity = null;
 
     public static boolean load(Dictionary<Object, Object> properties) {
         Object oimpl = properties.get(MAPPING_DS_CFG_FROM_RIM_BLUEPRINTS_IMPL_KEY);
@@ -50,41 +48,23 @@ public class MappingDSCfgLoader {
         String dir   = null;
         Object oncf  = properties.get(MAPPING_DS_CFG_FROM_RIM_BLUEPRINTS_NEO4J_CONFFILE_KEY);
         String ncf   = null;
-        Object occf  = properties.get(MAPPING_DS_CFG_FROM_RIM_CACHE_CONFFILE_KEY);
-        String ccf   = null;
 
-
-        if (oimpl != null && oimpl instanceof String) {
-            impl = (String) oimpl;
-        }
-        if (ourl != null && ourl instanceof String) {
-            url = (String) ourl;
-        }
-        if (ouser != null && ouser instanceof String) {
-            user = (String) ouser;
-        }
-        if (opwd != null && opwd instanceof String) {
-            pwd = (String) opwd;
-        }
-        if (odir != null && odir instanceof String) {
-            dir = (String) odir;
-        }
-        if (oncf != null && oncf instanceof String) {
-            ncf = (String) oncf;
-        }
-        if (occf != null && occf instanceof String) {
-            ccf = (String) occf;
-        }
+        if (oimpl != null && oimpl instanceof String) impl = (String) oimpl;
+        if (ourl != null && ourl instanceof String) url = (String) ourl;
+        if (ouser != null && ouser instanceof String) user = (String) ouser;
+        if (opwd != null && opwd instanceof String) pwd = (String) opwd;
+        if (odir != null && odir instanceof String) dir = (String) odir;
+        if (oncf != null && oncf instanceof String) ncf = (String) oncf;
 
         if (impl != null && (url != null || dir != null || ncf != null)) {
-            defaultCfgEntity = new MappingDSCfgEntity();
-            defaultCfgEntity.setCacheConfigFile(ccf);
-            defaultCfgEntity.setBlueprintsImplementation(impl);
-            defaultCfgEntity.setBlueprintsURL(url);
-            defaultCfgEntity.setBlueprintsUser(user);
-            defaultCfgEntity.setBlueprintsPassword(pwd);
-            defaultCfgEntity.setBlueprintsGraphPath(dir);
-            defaultCfgEntity.setBlueprintsNeoConfigFile(ncf);
+            defaultCfgEntity = new MappingBlueprintsDSCfgEntity();
+            MappingDSCfgLoader.load(properties);
+            ((MappingBlueprintsDSCfgEntity)defaultCfgEntity).setBlueprintsImplementation(impl);
+            ((MappingBlueprintsDSCfgEntity)defaultCfgEntity).setBlueprintsURL(url);
+            ((MappingBlueprintsDSCfgEntity)defaultCfgEntity).setBlueprintsUser(user);
+            ((MappingBlueprintsDSCfgEntity)defaultCfgEntity).setBlueprintsPassword(pwd);
+            ((MappingBlueprintsDSCfgEntity)defaultCfgEntity).setBlueprintsGraphPath(dir);
+            ((MappingBlueprintsDSCfgEntity)defaultCfgEntity).setBlueprintsNeoConfigFile(ncf);
             log.debug("{}", new Object[]{defaultCfgEntity.toString()});
             return true;
         } else {
@@ -93,7 +73,7 @@ public class MappingDSCfgLoader {
         }
     }
 
-    public static MappingDSCfgEntity getDefaultCfgEntity() {
-        return defaultCfgEntity;
+    public static MappingBlueprintsDSCfgEntity getDefaultCfgEntity() {
+        return ((MappingBlueprintsDSCfgEntity)defaultCfgEntity);
     }
 }

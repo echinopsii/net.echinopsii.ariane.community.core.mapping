@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
-import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cfg.MappingDSCfgLoader;
+import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cfg.MappingBlueprintsDSCfgLoader;
 import com.tinkerpop.blueprints.Vertex;
 import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
@@ -44,8 +44,8 @@ public class MappingDSGraphDBTest {
 
     @AfterClass
     public static void testCleanup() throws IOException {
-        if (MappingDSCfgLoader.getDefaultCfgEntity().getBlueprintsGraphPath()!=null) {
-            File dir = new File(MappingDSCfgLoader.getDefaultCfgEntity().getBlueprintsGraphPath());
+        if (MappingBlueprintsDSCfgLoader.getDefaultCfgEntity().getBlueprintsGraphPath()!=null) {
+            File dir = new File(MappingBlueprintsDSCfgLoader.getDefaultCfgEntity().getBlueprintsGraphPath());
             if (dir.isDirectory()) FileUtils.deleteDirectory(dir);
         }
     }

@@ -1,6 +1,6 @@
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service;
 
-import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cfg.MappingDSCfgLoader;
+import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cfg.MappingBlueprintsDSCfgLoader;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import org.apache.commons.io.FileUtils;
@@ -82,8 +82,8 @@ public class MappingSceTest {
 	@AfterClass
 	public static void testCleanup() throws IOException {
 		mappingSce.stop();
-        if (MappingDSCfgLoader.getDefaultCfgEntity().getBlueprintsGraphPath()!=null) {
-            File dir = new File(MappingDSCfgLoader.getDefaultCfgEntity().getBlueprintsGraphPath());
+        if (MappingBlueprintsDSCfgLoader.getDefaultCfgEntity().getBlueprintsGraphPath()!=null) {
+            File dir = new File(MappingBlueprintsDSCfgLoader.getDefaultCfgEntity().getBlueprintsGraphPath());
             if (dir.isDirectory()) FileUtils.deleteDirectory(dir);
         }
 	}

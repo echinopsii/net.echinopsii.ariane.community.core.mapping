@@ -19,7 +19,8 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository;
 
-import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cache.MappingDSCacheEntity;
+import com.tinkerpop.blueprints.Element;
+import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.LinkImpl;
@@ -61,7 +62,7 @@ public class LinkRepoImpl implements LinkRepo<LinkImpl> {
             if (entity instanceof LinkImpl) {
                 ret = (LinkImpl) entity;
             } else {
-                log.error("CONSISTENCY ERROR : entity {} is not a link.", entity.getElement().getId());
+                log.error("CONSISTENCY ERROR : entity {} is not a link.", ((Element)entity.getElement()).getId());
             }
         }
         return ret;

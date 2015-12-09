@@ -20,10 +20,10 @@
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain;
 
 import com.tinkerpop.blueprints.impls.neo4j2.Neo4j2Vertex;
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
-import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cache.MappingDSCacheEntity;
+import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
-import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDBException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDBObjectProps;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Cluster;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
@@ -38,7 +38,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public class ContainerImpl implements Container, MappingDSCacheEntity {
+public class ContainerImpl implements Container, MappingDSCacheEntity<Element> {
 
 	private static final Logger log = LoggerFactory.getLogger(ContainerImpl.class);
 	
@@ -212,7 +212,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
                 container.setContainerParentContainer(this);
                 if (ret)
                     synchronizeChildContainersToDB();
-            } catch (MappingDSGraphDBException E) {
+            } catch (MappingDSException E) {
                 E.printStackTrace();
                 log.error("Exception while adding child container {}...", new Object[]{container.getContainerID()});
                 this.containerNodes.remove((ContainerImpl) container);
@@ -262,7 +262,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
                 node.setNodeContainer(this);
 				if (ret)
 					synchronizeNodeToDB((NodeImpl)node);
-			} catch (MappingDSGraphDBException E) {
+			} catch (MappingDSException E) {
 				E.printStackTrace();
 				log.error("Exception while adding node {}...", new Object[]{node.getNodeID()});
 				this.containerNodes.remove((NodeImpl)node);
@@ -311,7 +311,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 					if (addToNodes) this.containerNodes.remove((NodeImpl)gate);
 					if (addToGates) this.containerGates.remove((GateImpl)gate);
 				}
-			} catch (MappingDSGraphDBException E) {
+			} catch (MappingDSException E) {
 				E.printStackTrace();
 				log.error("Exception while adding gate {}...", new Object[]{gate.getNodeID()});				
 				if (addToNodes) this.containerNodes.remove((NodeImpl)gate);
@@ -358,8 +358,13 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 		log.debug("Container vertex has been initialized ({},{}).", new Object[]{this.containerVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID),
 																				 this.containerVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY)});
 	}
-	
-	public void synchronizeToDB() throws MappingDSGraphDBException {
+
+    @Override
+    public String getEntityCacheID() {
+        return "V" + this.containerID;
+    }
+
+    public void synchronizeToDB() throws MappingDSException {
         synchronizeNameToDB();
         synchronizeCompanyToDB();
         synchronizeProductToDB();
@@ -465,7 +470,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
         }
     }
 
-    private void synchronizeChildContainersToDB() throws MappingDSGraphDBException {
+    private void synchronizeChildContainersToDB() throws MappingDSException {
         if (containerVertex!=null) {
             Iterator<ContainerImpl> iterCCC = this.containerChildContainers.iterator();
             while (iterCCC.hasNext()) {
@@ -475,7 +480,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
         }
     }
 
-    private void synchronizeChildContainerToDB(ContainerImpl container) throws MappingDSGraphDBException {
+    private void synchronizeChildContainerToDB(ContainerImpl container) throws MappingDSException {
         if (containerVertex!=null) {
             VertexQuery query = this.containerVertex.query();
             query.direction(Direction.OUT);
@@ -492,7 +497,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
         }
     }
 
-	private void synchronizeNodesToDB() throws MappingDSGraphDBException {
+	private void synchronizeNodesToDB() throws MappingDSException {
 		if (containerVertex!=null) {
 			Iterator<NodeImpl> iterCN = this.containerNodes.iterator();
 			while (iterCN.hasNext()) {
@@ -502,7 +507,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 		}
 	}
 	
-	private void synchronizeNodeToDB(NodeImpl node) throws MappingDSGraphDBException {
+	private void synchronizeNodeToDB(NodeImpl node) throws MappingDSException {
 		if (containerVertex!=null) {
 			if (node instanceof GateImpl)
 				return;
@@ -521,7 +526,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 		}
 	}
 	
-	private void synchronizeGatesToDB() throws MappingDSGraphDBException {
+	private void synchronizeGatesToDB() throws MappingDSException {
 		if (containerVertex!=null) {
 			Iterator<GateImpl> iterCG = this.containerGates.iterator();
 			while (iterCG.hasNext()) {
@@ -531,7 +536,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 		}
 	}
 	
-	private void synchronizeGateToDB(GateImpl gate) throws MappingDSGraphDBException {
+	private void synchronizeGateToDB(GateImpl gate) throws MappingDSException {
 		if (containerVertex!=null) {
 			VertexQuery query = this.containerVertex.query();
 			query.direction(Direction.OUT);
@@ -632,7 +637,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 					if (entity instanceof GateImpl)
 						containerPrimaryAdminGate = (GateImpl) entity;
 					else
-						log.error("CONSISTENCY ERROR : entity {} is not a gate.", entity.getElement().getId());
+						log.error("CONSISTENCY ERROR : entity {} is not a gate.", ((Element)entity.getElement()).getId());
 				}
 			}
 		}
@@ -647,7 +652,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 					if (entity instanceof ClusterImpl)
 						containerCluster = (ClusterImpl) entity;
 					else
-						log.error("CONSISTENCY ERROR : entity {} is not a cluster.", entity.getElement().getId());
+						log.error("CONSISTENCY ERROR : entity {} is not a cluster.", ((Element)entity.getElement()).getId());
 				}
 			}
 		}
@@ -662,7 +667,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
                     if (entity instanceof ContainerImpl)
                         containerParentContainer = (ContainerImpl) entity;
                     else
-                        log.error("CONSISTENCY ERROR : entity {} is not a container.", entity.getElement().getId());
+                        log.error("CONSISTENCY ERROR : entity {} is not a container.", ((Element)entity.getElement()).getId());
                 }
             }
         }
@@ -682,7 +687,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
                     if (entity instanceof ContainerImpl) {
                         container = (ContainerImpl)entity;
                     } else {
-                        log.error("CONSISTENCY ERROR : entity {} is not a container.", entity.getElement().getId());
+                        log.error("CONSISTENCY ERROR : entity {} is not a container.", ((Element)entity.getElement()).getId());
                     }
                 }
                 if (container!=null)
@@ -720,7 +725,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 					if (entity instanceof NodeImpl) {
 						node = (NodeImpl)entity;
 					} else {
-						log.error("CONSISTENCY ERROR : entity {} is not a node.", entity.getElement().getId());
+						log.error("CONSISTENCY ERROR : entity {} is not a node.", ((Element)entity.getElement()).getId());
 					}
 				}
 				if (node!=null)
@@ -758,7 +763,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity {
 					if (entity instanceof GateImpl) {
 						gate = (GateImpl)entity;
 					} else {
-						log.error("CONSISTENCY ERROR : entity {} is not a gate.", entity.getElement().getId());
+						log.error("CONSISTENCY ERROR : entity {} is not a gate.", ((Element)entity.getElement()).getId());
 					}
 				}
 				if (gate!=null) {

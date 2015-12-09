@@ -19,7 +19,8 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository;
 
-import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cache.MappingDSCacheEntity;
+import com.tinkerpop.blueprints.Element;
+import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.EndpointImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.GateImpl;
@@ -61,7 +62,7 @@ public class GateRepoImpl extends NodeRepoImpl implements GateRepo<NodeImpl, Gat
             if (entity instanceof GateImpl) {
                 ret = (GateImpl) entity;
             } else {
-                log.error("CONSISTENCY ERROR : entity {} is not a gate.", entity.getElement().getId());
+                log.error("CONSISTENCY ERROR : entity {} is not a gate.", ((Element)entity.getElement()).getId());
             }
         }
         return ret;

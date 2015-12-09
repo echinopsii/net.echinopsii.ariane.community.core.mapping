@@ -19,7 +19,7 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service;
 
-import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cache.MappingDSCache;
+import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCache;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.*;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository.MappingRepoImpl;
@@ -60,7 +60,7 @@ public class MappingSceImpl implements MappingSce {
     @Override
     public boolean init(Dictionary<Object, Object> properties) {
         try {
-            return MappingDSCache.init(properties) && MappingDSGraphDB.init(properties);
+            return MappingDSGraphDB.init(properties) && MappingDSCache.init(properties);
         } catch (Exception e) {
             e.printStackTrace();
             return false;

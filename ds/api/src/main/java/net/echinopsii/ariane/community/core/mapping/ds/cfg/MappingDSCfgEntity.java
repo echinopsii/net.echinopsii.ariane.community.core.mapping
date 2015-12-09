@@ -16,31 +16,20 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb;
 
-public class MappingDSGraphDBException extends Exception {
+package net.echinopsii.ariane.community.core.mapping.ds.cfg;
 
-	private static final long serialVersionUID = -5737356297845448334L;
-	
-	public MappingDSGraphDBException() {
-		super();
+public abstract class MappingDSCfgEntity {
+    private String       cacheConfigFile          = null;
+
+    public String getCacheConfigFile() {
+        return cacheConfigFile;
+    }
+    public void setCacheConfigFile(String cacheConfigFile) {
+        this.cacheConfigFile = cacheConfigFile;
+    }
+
+    public String toString() {
+		return "cacheConfig File: " + cacheConfigFile;
 	}
-
-	public MappingDSGraphDBException(String message) {
-        super(message);
-    }
-	
-	public MappingDSGraphDBException(String message, Throwable cause) {
-        super(message,cause);
-    }
-    
-    public MappingDSGraphDBException(Throwable cause) {
-        super(cause);
-    }
-    
-    protected MappingDSGraphDBException(String message, Throwable cause,
-                                        boolean enableSuppression,
-                                        boolean writableStackTrace) {
-    	super(message, cause, enableSuppression, writableStackTrace);
-    }
 }

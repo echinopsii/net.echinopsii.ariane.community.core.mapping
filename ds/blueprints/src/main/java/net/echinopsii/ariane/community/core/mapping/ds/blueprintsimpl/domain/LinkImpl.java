@@ -19,7 +19,7 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain;
 
-import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cache.MappingDSCacheEntity;
+import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashSet;
 import java.util.Set;
 
-public class LinkImpl implements Link, MappingDSCacheEntity {
+public class LinkImpl implements Link, MappingDSCacheEntity<Element> {
 
     private static final Logger log = LoggerFactory.getLogger(NodeImpl.class);
 
@@ -143,6 +143,11 @@ public class LinkImpl implements Link, MappingDSCacheEntity {
     }
 
     @Override
+    public String getEntityCacheID() {
+        return "E"+this.linkID;
+    }
+
+    @Override
     public void synchronizeToDB() {
         synchronizeSourceEndpointToDB();
         synchronizeTargetEndpointToDB();
@@ -217,7 +222,7 @@ public class LinkImpl implements Link, MappingDSCacheEntity {
                     if (entity instanceof EndpointImpl) {
                         linkEndpointSource = (EndpointImpl) entity;
                     } else {
-                        log.error("CACHE CONSISTENCY ERROR : entity {} is not an endpoint.", entity.getElement().getId());
+                        log.error("CACHE CONSISTENCY ERROR : entity {} is not an endpoint.", ((Element)entity.getElement()).getId());
                     }
                 }
             }
@@ -233,7 +238,7 @@ public class LinkImpl implements Link, MappingDSCacheEntity {
                     if (entity instanceof EndpointImpl) {
                         linkEndpointTarget = (EndpointImpl) entity;
                     } else {
-                        log.error("CACHE CONSISTENCY ERROR : entity {} is not an endpoint.", entity.getElement().getId());
+                        log.error("CACHE CONSISTENCY ERROR : entity {} is not an endpoint.", ((Element)entity.getElement()).getId());
                     }
                 }
             }
@@ -249,7 +254,7 @@ public class LinkImpl implements Link, MappingDSCacheEntity {
                     if (entity instanceof LinkImpl) {
                         linkUpLink = (LinkImpl) entity;
                     } else {
-                        log.error("CACHE CONSISTENCY ERROR : entity {} is not a link.", entity.getElement().getId());
+                        log.error("CACHE CONSISTENCY ERROR : entity {} is not a link.", ((Element)entity.getElement()).getId());
                     }
                 }
             }
@@ -269,7 +274,7 @@ public class LinkImpl implements Link, MappingDSCacheEntity {
                             if (entity instanceof LinkImpl) {
                                 subLink = (LinkImpl) entity;
                             } else {
-                                log.error("CACHE CONSISTENCY ERROR : entity {} is not a link.", entity.getElement().getId());
+                                log.error("CACHE CONSISTENCY ERROR : entity {} is not a link.", ((Element)entity.getElement()).getId());
                             }
                         }
                         if (subLink != null) {
@@ -290,7 +295,7 @@ public class LinkImpl implements Link, MappingDSCacheEntity {
                     if (entity instanceof TransportImpl) {
                         linkTransport = (TransportImpl) entity;
                     } else {
-                        log.error("CACHE CONSISTENCY ERROR : entity {} is not a link.", entity.getElement().getId());
+                        log.error("CACHE CONSISTENCY ERROR : entity {} is not a link.", ((Element)entity.getElement()).getId());
                     }
                 }
             }

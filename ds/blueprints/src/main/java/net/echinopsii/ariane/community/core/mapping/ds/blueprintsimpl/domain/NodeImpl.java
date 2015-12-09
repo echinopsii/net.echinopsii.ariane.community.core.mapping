@@ -20,10 +20,10 @@
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain;
 
 import com.tinkerpop.blueprints.impls.neo4j2.Neo4j2Vertex;
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
-import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cache.MappingDSCacheEntity;
+import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
-import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDBException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDBObjectProps;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
@@ -37,7 +37,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public class NodeImpl implements Node, MappingDSCacheEntity {
+public class NodeImpl implements Node, MappingDSCacheEntity<Element> {
 
     private static final Logger log = LoggerFactory.getLogger(NodeImpl.class);
 
@@ -148,7 +148,7 @@ public class NodeImpl implements Node, MappingDSCacheEntity {
                 if (ret) {
                     synchronizeChildNodeToDB((NodeImpl) node);
                 }
-            } catch (MappingDSGraphDBException E) {
+            } catch (MappingDSException E) {
                 E.printStackTrace();
                 log.error("Exception while adding child node {}...", new Object[]{node.getNodeID()});
                 this.nodeChildNodes.remove((NodeImpl) node);
@@ -187,7 +187,7 @@ public class NodeImpl implements Node, MappingDSCacheEntity {
                 if (ret) {
                     synchronizeTwinNodeToDB((NodeImpl) node);
                 }
-            } catch (MappingDSGraphDBException E) {
+            } catch (MappingDSException E) {
                 E.printStackTrace();
                 log.error("Exception while adding twin node {}...", new Object[]{node.getNodeID()});
                 this.nodeTwinNodes.remove((NodeImpl) node);
@@ -226,7 +226,7 @@ public class NodeImpl implements Node, MappingDSCacheEntity {
                 if (ret) {
                     synchronizeEndpointToDB((EndpointImpl) endpoint);
                 }
-            } catch (MappingDSGraphDBException E) {
+            } catch (MappingDSException E) {
                 E.printStackTrace();
                 log.error("Exception while adding endpoint {}...", new Object[]{endpoint.getEndpointID()});
                 this.nodeEndpoints.remove((EndpointImpl) endpoint);
@@ -265,7 +265,12 @@ public class NodeImpl implements Node, MappingDSCacheEntity {
                                                                                    this.nodeVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY)});
     }
 
-    public void synchronizeToDB() throws MappingDSGraphDBException {
+    @Override
+    public String getEntityCacheID() {
+        return "V" + this.nodeID;
+    }
+
+    public void synchronizeToDB() throws MappingDSException {
         synchronizeDepthToDB();
         synchronizeNameToDB();
         synchronizePropertiesToDB();
@@ -327,7 +332,7 @@ public class NodeImpl implements Node, MappingDSCacheEntity {
         }
     }
 
-    private void synchronizeChildNodesToDB() throws MappingDSGraphDBException {
+    private void synchronizeChildNodesToDB() throws MappingDSException {
         if (this.nodeVertex != null) {
             Iterator<NodeImpl> iterCN = this.nodeChildNodes.iterator();
             while (iterCN.hasNext()) {
@@ -337,7 +342,7 @@ public class NodeImpl implements Node, MappingDSCacheEntity {
         }
     }
 
-    private void synchronizeChildNodeToDB(NodeImpl child) throws MappingDSGraphDBException {
+    private void synchronizeChildNodeToDB(NodeImpl child) throws MappingDSException {
         if (this.nodeVertex != null && child.getElement() != null) {
             VertexQuery query = this.nodeVertex.query();
             query.direction(Direction.OUT);
@@ -355,7 +360,7 @@ public class NodeImpl implements Node, MappingDSCacheEntity {
         }
     }
 
-    private void synchronizeTwinNodesToDB() throws MappingDSGraphDBException {
+    private void synchronizeTwinNodesToDB() throws MappingDSException {
         if (this.nodeVertex != null) {
             Iterator<NodeImpl> iterTN = this.nodeTwinNodes.iterator();
             while (iterTN.hasNext()) {
@@ -365,7 +370,7 @@ public class NodeImpl implements Node, MappingDSCacheEntity {
         }
     }
 
-    private void synchronizeTwinNodeToDB(NodeImpl twin) throws MappingDSGraphDBException {
+    private void synchronizeTwinNodeToDB(NodeImpl twin) throws MappingDSException {
         if (this.nodeVertex != null && twin.getElement() != null) {
             VertexQuery query = this.nodeVertex.query();
             query.direction(Direction.BOTH);
@@ -381,7 +386,7 @@ public class NodeImpl implements Node, MappingDSCacheEntity {
         }
     }
 
-    private void synchronizeEndpointsToDB() throws MappingDSGraphDBException {
+    private void synchronizeEndpointsToDB() throws MappingDSException {
         if (this.nodeVertex != null) {
             Iterator<EndpointImpl> iterEP = this.nodeEndpoints.iterator();
             while (iterEP.hasNext()) {
@@ -391,7 +396,7 @@ public class NodeImpl implements Node, MappingDSCacheEntity {
         }
     }
 
-    private void synchronizeEndpointToDB(EndpointImpl endpoint) throws MappingDSGraphDBException {
+    private void synchronizeEndpointToDB(EndpointImpl endpoint) throws MappingDSException {
         if (this.nodeVertex != null && endpoint.getElement() != null) {
             VertexQuery query = this.nodeVertex.query();
             query.direction(Direction.OUT);
