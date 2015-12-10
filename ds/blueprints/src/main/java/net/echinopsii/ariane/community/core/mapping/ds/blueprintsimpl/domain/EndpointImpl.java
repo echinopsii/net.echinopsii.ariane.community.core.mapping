@@ -22,6 +22,7 @@ package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain;
 import com.tinkerpop.blueprints.impls.neo4j2.Neo4j2Vertex;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
+import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSBlueprintsCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDBObjectProps;
@@ -36,7 +37,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public class EndpointImpl implements Endpoint, MappingDSCacheEntity<Element> {
+public class EndpointImpl implements Endpoint, MappingDSBlueprintsCacheEntity {
 
     private static final Logger log = LoggerFactory.getLogger(EndpointImpl.class);
 

@@ -19,6 +19,7 @@
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository;
 
 import com.tinkerpop.blueprints.Element;
+import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSBlueprintsCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.TransportImpl;
@@ -53,12 +54,12 @@ public class TransportRepoImpl implements TransportRepo<TransportImpl> {
     public TransportImpl findTransportByID(long ID) {
         TransportImpl ret = null;
         log.debug("search transport for ID {}", new Object[]{ID});
-        MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity(ID);
+        MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity(ID);
         if (entity != null) {
             if (entity instanceof TransportImpl) {
                 ret = (TransportImpl) entity;
             } else {
-                log.error("CONSISTENCY ERROR : entity {} is not a transport.", ((Element)entity.getElement()).getId());
+                log.error("CONSISTENCY ERROR : entity {} is not a transport.", entity.getElement().getId());
             }
         }
         log.debug("return {}", new Object[]{(ret!=null?ret.toString():"null")});

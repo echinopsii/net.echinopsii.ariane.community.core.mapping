@@ -21,7 +21,7 @@ package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain;
 
 import com.tinkerpop.blueprints.impls.neo4j2.Neo4j2Vertex;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
-import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCacheEntity;
+import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSBlueprintsCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
@@ -102,12 +102,12 @@ public class GateImpl extends NodeImpl implements Gate {
         if (super.getElement() != null) {
             Object paEndpointID = super.getElement().getProperty(MappingDSGraphPropertyNames.DD_GATE_PAEP_KEY);
             if (paEndpointID != null) {
-                MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) paEndpointID);
+                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) paEndpointID);
                 if (entity != null) {
                     if (entity instanceof EndpointImpl) {
                         this.gatePrimaryAdminEndpoint = (EndpointImpl) entity;
                     } else {
-                        log.error("CONSISTENCY ERROR : entity {} is not an endpoint.", ((Element)entity.getElement()).getId());
+                        log.error("CONSISTENCY ERROR : entity {} is not an endpoint.", entity.getElement().getId());
                     }
                 }
             }

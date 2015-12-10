@@ -19,8 +19,7 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository;
 
-import com.tinkerpop.blueprints.Element;
-import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCacheEntity;
+import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSBlueprintsCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.EndpointImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.repository.EndpointRepo;
@@ -54,12 +53,12 @@ public class EndpointRepoImpl implements EndpointRepo<EndpointImpl> {
     @Override
     public EndpointImpl findEndpointByID(long id) {
         EndpointImpl ret = null;
-        MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity(id);
+        MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity(id);
         if (entity != null) {
             if (entity instanceof EndpointImpl) {
                 ret = (EndpointImpl) entity;
             } else {
-                log.error("CONSISTENCY ERROR : entity {} is not an endpoint.", ((Element)entity.getElement()).getId());
+                log.error("CONSISTENCY ERROR : entity {} is not an endpoint.", entity.getElement().getId());
                 log.error(entity.getClass().toString());
             }
         }

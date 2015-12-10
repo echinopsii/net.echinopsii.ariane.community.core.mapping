@@ -19,8 +19,7 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository;
 
-import com.tinkerpop.blueprints.Element;
-import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCacheEntity;
+import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSBlueprintsCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.ClusterImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.repository.ClusterRepo;
@@ -53,12 +52,12 @@ public class ClusterRepoImpl implements ClusterRepo<ClusterImpl> {
     @Override
     public ClusterImpl findClusterByID(long id) {
         ClusterImpl ret = null;
-        MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity(id);
+        MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity(id);
         if (entity != null) {
             if (entity instanceof ClusterImpl) {
                 ret = (ClusterImpl) entity;
             } else {
-                log.error("CONSISTENCY ERROR : entity {} is not a cluster.", ((Element)entity.getElement()).getId());
+                log.error("CONSISTENCY ERROR : entity {} is not a cluster.", entity.getElement().getId());
             }
         }
         return ret;

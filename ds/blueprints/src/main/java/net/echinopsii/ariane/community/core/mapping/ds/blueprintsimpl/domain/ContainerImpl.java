@@ -22,7 +22,7 @@ package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain;
 import com.tinkerpop.blueprints.impls.neo4j2.Neo4j2Vertex;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
-import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCacheEntity;
+import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSBlueprintsCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDBObjectProps;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Cluster;
@@ -38,7 +38,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public class ContainerImpl implements Container, MappingDSCacheEntity<Element> {
+public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity {
 
 	private static final Logger log = LoggerFactory.getLogger(ContainerImpl.class);
 	
@@ -632,12 +632,12 @@ public class ContainerImpl implements Container, MappingDSCacheEntity<Element> {
 		if (containerVertex!=null) {
 			Object paGateID = this.containerVertex.getProperty(MappingDSGraphPropertyNames.DD_CONTAINER_PAGATE_KEY);
 			if (paGateID!=null) {
-				MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) paGateID);
+                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) paGateID);
 				if (entity!=null) {
 					if (entity instanceof GateImpl)
 						containerPrimaryAdminGate = (GateImpl) entity;
 					else
-						log.error("CONSISTENCY ERROR : entity {} is not a gate.", ((Element)entity.getElement()).getId());
+						log.error("CONSISTENCY ERROR : entity {} is not a gate.", entity.getElement().getId());
 				}
 			}
 		}
@@ -647,12 +647,12 @@ public class ContainerImpl implements Container, MappingDSCacheEntity<Element> {
 		if (containerVertex!=null) {
 			Object clusterID = this.containerVertex.getProperty(MappingDSGraphPropertyNames.DD_CONTAINER_CLUSTER_KEY);
 			if (clusterID!=null) {
-				MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) clusterID);
+                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) clusterID);
 				if (entity!=null) {
 					if (entity instanceof ClusterImpl)
 						containerCluster = (ClusterImpl) entity;
 					else
-						log.error("CONSISTENCY ERROR : entity {} is not a cluster.", ((Element)entity.getElement()).getId());
+						log.error("CONSISTENCY ERROR : entity {} is not a cluster.", entity.getElement().getId());
 				}
 			}
 		}
@@ -662,12 +662,12 @@ public class ContainerImpl implements Container, MappingDSCacheEntity<Element> {
         if (containerVertex!=null) {
             Object containerID = this.containerVertex.getProperty(MappingDSGraphPropertyNames.DD_CONTAINER_PCONTER_KEY);
             if (containerID!=null) {
-                MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) containerID);
+                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) containerID);
                 if (entity!=null) {
                     if (entity instanceof ContainerImpl)
                         containerParentContainer = (ContainerImpl) entity;
                     else
-                        log.error("CONSISTENCY ERROR : entity {} is not a container.", ((Element)entity.getElement()).getId());
+                        log.error("CONSISTENCY ERROR : entity {} is not a container.", entity.getElement().getId());
                 }
             }
         }
@@ -682,12 +682,12 @@ public class ContainerImpl implements Container, MappingDSCacheEntity<Element> {
             this.containerChildContainers.clear();
             for (Vertex vertex : query.vertices()) {
                 ContainerImpl container = null;
-                MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
+                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
                 if (entity!=null) {
                     if (entity instanceof ContainerImpl) {
                         container = (ContainerImpl)entity;
                     } else {
-                        log.error("CONSISTENCY ERROR : entity {} is not a container.", ((Element)entity.getElement()).getId());
+                        log.error("CONSISTENCY ERROR : entity {} is not a container.", entity.getElement().getId());
                     }
                 }
                 if (container!=null)
@@ -720,12 +720,12 @@ public class ContainerImpl implements Container, MappingDSCacheEntity<Element> {
             this.containerNodes.clear();
 			for (Vertex vertex : query.vertices()) {
 				NodeImpl node = null;
-				MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
+                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
 				if (entity!=null) {
 					if (entity instanceof NodeImpl) {
 						node = (NodeImpl)entity;
 					} else {
-						log.error("CONSISTENCY ERROR : entity {} is not a node.", ((Element)entity.getElement()).getId());
+						log.error("CONSISTENCY ERROR : entity {} is not a node.", entity.getElement().getId());
 					}
 				}
 				if (node!=null)
@@ -758,12 +758,12 @@ public class ContainerImpl implements Container, MappingDSCacheEntity<Element> {
             this.containerGates.clear();
 			for (Vertex vertex : query.vertices()) {
 				GateImpl gate = null;
-				MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
+                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
 				if (entity!=null) {
 					if (entity instanceof GateImpl) {
 						gate = (GateImpl)entity;
 					} else {
-						log.error("CONSISTENCY ERROR : entity {} is not a gate.", ((Element)entity.getElement()).getId());
+						log.error("CONSISTENCY ERROR : entity {} is not a gate.", entity.getElement().getId());
 					}
 				}
 				if (gate!=null) {

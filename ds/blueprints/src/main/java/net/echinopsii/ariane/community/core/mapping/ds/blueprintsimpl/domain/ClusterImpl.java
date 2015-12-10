@@ -21,7 +21,7 @@ package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain;
 
 import com.tinkerpop.blueprints.impls.neo4j2.Neo4j2Vertex;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
-import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCacheEntity;
+import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSBlueprintsCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Cluster;
@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ClusterImpl implements Cluster, MappingDSCacheEntity<Element> {
+public class ClusterImpl implements Cluster, MappingDSBlueprintsCacheEntity {
 
     private static final Logger log = LoggerFactory.getLogger(ContainerImpl.class);
 
@@ -189,12 +189,12 @@ public class ClusterImpl implements Cluster, MappingDSCacheEntity<Element> {
             this.clusterContainers.clear();
             for (Vertex vertex : query.vertices()) {
                 ContainerImpl cont = null;
-                MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
+                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
                 if (entity != null) {
                     if (entity instanceof ContainerImpl) {
                         cont = (ContainerImpl) entity;
                     } else {
-                        log.error("CONSISTENCY ERROR : entity {} is not a container.", ((Element)entity.getElement()).getId());
+                        log.error("CONSISTENCY ERROR : entity {} is not a container.", entity.getElement().getId());
                     }
                 }
                 if (cont != null) {

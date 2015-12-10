@@ -20,6 +20,7 @@
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository;
 
 import com.tinkerpop.blueprints.Element;
+import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSBlueprintsCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.EndpointImpl;
@@ -74,12 +75,12 @@ public class NodeRepoImpl implements NodeRepo<NodeImpl> {
     @Override
     public NodeImpl findNodeByID(long ID) {
         NodeImpl ret = null;
-        MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity(ID);
+        MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity(ID);
         if (entity != null) {
             if (entity instanceof NodeImpl) {
                 ret = (NodeImpl) entity;
             } else {
-                log.error("CONSISTENCY ERROR : entity {} is not a node.", ((Element)entity.getElement()).getId());
+                log.error("CONSISTENCY ERROR : entity {} is not a node.", entity.getElement().getId());
             }
         }
         return ret;

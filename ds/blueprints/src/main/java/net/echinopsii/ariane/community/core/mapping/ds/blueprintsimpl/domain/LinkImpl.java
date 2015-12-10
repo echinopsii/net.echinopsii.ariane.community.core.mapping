@@ -19,7 +19,7 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain;
 
-import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCacheEntity;
+import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSBlueprintsCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashSet;
 import java.util.Set;
 
-public class LinkImpl implements Link, MappingDSCacheEntity<Element> {
+public class LinkImpl implements Link, MappingDSBlueprintsCacheEntity {
 
     private static final Logger log = LoggerFactory.getLogger(NodeImpl.class);
 
@@ -217,12 +217,12 @@ public class LinkImpl implements Link, MappingDSCacheEntity<Element> {
         if (this.linkEdge != null) {
             Object endpointID = this.linkEdge.getProperty(MappingDSGraphPropertyNames.DD_LINK_SOURCE_EP_KEY);
             if (endpointID != null) {
-                MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) endpointID);
+                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) endpointID);
                 if (entity != null) {
                     if (entity instanceof EndpointImpl) {
                         linkEndpointSource = (EndpointImpl) entity;
                     } else {
-                        log.error("CACHE CONSISTENCY ERROR : entity {} is not an endpoint.", ((Element)entity.getElement()).getId());
+                        log.error("CACHE CONSISTENCY ERROR : entity {} is not an endpoint.", entity.getElement().getId());
                     }
                 }
             }
@@ -233,12 +233,12 @@ public class LinkImpl implements Link, MappingDSCacheEntity<Element> {
         if (this.linkEdge != null) {
             Object endpointID = this.linkEdge.getProperty(MappingDSGraphPropertyNames.DD_LINK_TARGET_EP_KEY);
             if (endpointID != null) {
-                MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) endpointID);
+                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) endpointID);
                 if (entity != null) {
                     if (entity instanceof EndpointImpl) {
                         linkEndpointTarget = (EndpointImpl) entity;
                     } else {
-                        log.error("CACHE CONSISTENCY ERROR : entity {} is not an endpoint.", ((Element)entity.getElement()).getId());
+                        log.error("CACHE CONSISTENCY ERROR : entity {} is not an endpoint.", entity.getElement().getId());
                     }
                 }
             }
@@ -249,12 +249,12 @@ public class LinkImpl implements Link, MappingDSCacheEntity<Element> {
         if (this.linkEdge != null) {
             Object upLinkID = this.linkEdge.getProperty(MappingDSGraphPropertyNames.DD_LINK_UPLINK_KEY);
             if (upLinkID != null) {
-                MappingDSCacheEntity entity = MappingDSGraphDB.getLink((long) upLinkID);
+                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getLink((long) upLinkID);
                 if (entity != null) {
                     if (entity instanceof LinkImpl) {
                         linkUpLink = (LinkImpl) entity;
                     } else {
-                        log.error("CACHE CONSISTENCY ERROR : entity {} is not a link.", ((Element)entity.getElement()).getId());
+                        log.error("CACHE CONSISTENCY ERROR : entity {} is not a link.", entity.getElement().getId());
                     }
                 }
             }
@@ -269,12 +269,12 @@ public class LinkImpl implements Link, MappingDSCacheEntity<Element> {
                     long subLinkID = this.linkEdge.getProperty(key);
                     if (subLinkID != 0) {
                         LinkImpl subLink = null;
-                        MappingDSCacheEntity entity = MappingDSGraphDB.getLink(subLinkID);
+                        MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getLink(subLinkID);
                         if (entity != null) {
                             if (entity instanceof LinkImpl) {
                                 subLink = (LinkImpl) entity;
                             } else {
-                                log.error("CACHE CONSISTENCY ERROR : entity {} is not a link.", ((Element)entity.getElement()).getId());
+                                log.error("CACHE CONSISTENCY ERROR : entity {} is not a link.", entity.getElement().getId());
                             }
                         }
                         if (subLink != null) {
@@ -290,12 +290,12 @@ public class LinkImpl implements Link, MappingDSCacheEntity<Element> {
         if (this.linkEdge != null) {
             Object transportID = this.linkEdge.getProperty(MappingDSGraphPropertyNames.DD_LINK_TRANSPORT_KEY);
             if (transportID != null) {
-                MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) transportID);
+                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) transportID);
                 if (entity != null) {
                     if (entity instanceof TransportImpl) {
                         linkTransport = (TransportImpl) entity;
                     } else {
-                        log.error("CACHE CONSISTENCY ERROR : entity {} is not a link.", ((Element)entity.getElement()).getId());
+                        log.error("CACHE CONSISTENCY ERROR : entity {} is not a link.", entity.getElement().getId());
                     }
                 }
             }

@@ -374,7 +374,7 @@ public class MappingDSGraphDB {
         return ret;
     }
 
-    public static MappingDSCacheEntity saveVertexEntity(MappingDSCacheEntity entity) {
+    public static MappingDSBlueprintsCacheEntity saveVertexEntity(MappingDSBlueprintsCacheEntity entity) {
         Vertex entityV = null;
         long id = 0;
         try {
@@ -447,7 +447,7 @@ public class MappingDSGraphDB {
         return edge;
     }
 
-    public static MappingDSCacheEntity saveEdgeEntity(MappingDSCacheEntity entity, Vertex source, Vertex destination, String label) {
+    public static MappingDSBlueprintsCacheEntity saveEdgeEntity(MappingDSBlueprintsCacheEntity entity, Vertex source, Vertex destination, String label) {
         try {
             Edge entityE = createEdge(source, destination, label);
             entity.setElement(entityE);
@@ -462,9 +462,9 @@ public class MappingDSGraphDB {
         return entity;
     }
 
-    private static MappingDSCacheEntity getEdgeEntity(Edge edge) {
+    private static MappingDSBlueprintsCacheEntity getEdgeEntity(Edge edge) {
         long id = (long) edge.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID);
-        MappingDSCacheEntity ret = MappingDSCache.getCachedEntity("E" + id);
+        MappingDSBlueprintsCacheEntity ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("E" + id);
         if (ret == null) {
             if (edge.getLabel().equals(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY)) {
                 ret = new LinkImpl();
@@ -476,9 +476,9 @@ public class MappingDSGraphDB {
         return ret;
     }
 
-    public static MappingDSCacheEntity getEdgeEntity(long id) {
+    public static MappingDSBlueprintsCacheEntity getEdgeEntity(long id) {
         log.debug("Get cache entity {} if exists ...", new Object[]{"E"+id});
-        MappingDSCacheEntity ret = MappingDSCache.getCachedEntity("E" + id);
+        MappingDSBlueprintsCacheEntity ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("E" + id);
         if (ret == null) {
             if (ccgraph instanceof Neo4j2Graph)
                 //Tinkerpop Blueprint 2.5 forget to start transaction on getEdges(final String key, final Object value)
@@ -495,10 +495,10 @@ public class MappingDSGraphDB {
         return ret;
     }
 
-    private static MappingDSCacheEntity getVertexEntity(Vertex vertex) {
+    private static MappingDSBlueprintsCacheEntity getVertexEntity(Vertex vertex) {
         long id = (long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
         String vertexType = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY);
-        MappingDSCacheEntity ret = MappingDSCache.getCachedEntity("V" + id);
+        MappingDSBlueprintsCacheEntity ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("V" + id);
         if (ret == null) {
             if (vertexType != null) {
                 switch (vertexType) {
@@ -539,11 +539,11 @@ public class MappingDSGraphDB {
         return ret;
     }
 
-    public static MappingDSCacheEntity getVertexEntity(long id) {
+    public static MappingDSBlueprintsCacheEntity getVertexEntity(long id) {
         if (id == 0)
             return null;
         log.debug("Get cache entity {} if exists ...", new Object[]{"V" + id});
-        MappingDSCacheEntity ret = MappingDSCache.getCachedEntity("V" + id);
+        MappingDSBlueprintsCacheEntity ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("V" + id);
         if (ret == null) {
             log.debug("Get vertex {} from graph {}...", new Object[]{id, ccgraph.toString() + "(" + ccgraph.hashCode() + ")"});
             Vertex vertex = (ccgraph.getVertices(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID, id).iterator().hasNext() ?
@@ -782,7 +782,7 @@ public class MappingDSGraphDB {
     }
 
     public static ClusterImpl getIndexedCluster(String clusterName) {
-        MappingDSCacheEntity ret = (ClusterImpl)MappingDSCache.getClusterFromCache(clusterName);
+        MappingDSBlueprintsCacheEntity ret = (ClusterImpl)MappingDSCache.getClusterFromCache(clusterName);
         if (ret == null) {
             Vertex vertex = ccgraph.getVertices(MappingDSGraphPropertyNames.DD_CLUSTER_NAME_KEY, clusterName).iterator().hasNext() ?
                                  ccgraph.getVertices(MappingDSGraphPropertyNames.DD_CLUSTER_NAME_KEY, clusterName).iterator().next() : null;
@@ -830,7 +830,7 @@ public class MappingDSGraphDB {
     }
 
     public static EndpointImpl getIndexedEndpoint(String url) {
-        MappingDSCacheEntity ret = (EndpointImpl) MappingDSCache.getEndpointFromCache(url);
+        MappingDSBlueprintsCacheEntity ret = (EndpointImpl) MappingDSCache.getEndpointFromCache(url);
         if (ret == null && ccgraph != null) {
             Vertex vertex = ccgraph.getVertices(MappingDSGraphPropertyNames.DD_ENDPOINT_URL_KEY, url).iterator().hasNext() ?
                                     ccgraph.getVertices(MappingDSGraphPropertyNames.DD_ENDPOINT_URL_KEY, url).iterator().next() : null;
@@ -854,7 +854,7 @@ public class MappingDSGraphDB {
     }
 
     public static TransportImpl getIndexedTransport(String transportName) {
-        MappingDSCacheEntity ret = (TransportImpl) MappingDSCache.getTransportFromCache(transportName);
+        MappingDSBlueprintsCacheEntity ret = (TransportImpl) MappingDSCache.getTransportFromCache(transportName);
         if (ret == null && ccgraph != null) {
             Vertex vertex = ccgraph.getVertices(MappingDSGraphPropertyNames.DD_TRANSPORT_NAME_KEY, transportName).iterator().hasNext() ?
                                     ccgraph.getVertices(MappingDSGraphPropertyNames.DD_TRANSPORT_NAME_KEY, transportName).iterator().next() : null;
@@ -877,10 +877,10 @@ public class MappingDSGraphDB {
         return (TransportImpl) ret;
     }
 
-    public static MappingDSCacheEntity getLink(long id) {
+    public static MappingDSBlueprintsCacheEntity getLink(long id) {
         if (id == 0)
             return null;
-        MappingDSCacheEntity ret = MappingDSCache.getCachedEntity("E" + id);
+        MappingDSBlueprintsCacheEntity ret = (MappingDSBlueprintsCacheEntity) MappingDSCache.getCachedEntity("E" + id);
         if (ret == null && ccgraph != null) {
             if (ccgraph instanceof Neo4j2Graph)
                 //Tinkerpop Blueprint 2.5 forget to start transaction on getEdges(final String key, final Object value)
@@ -939,7 +939,7 @@ public class MappingDSGraphDB {
         autocommit();
     }
 
-    public static void deleteEntity(MappingDSCacheEntity entity) {
+    public static void deleteEntity(MappingDSBlueprintsCacheEntity entity) {
         Element elem = (Element)entity.getElement();
         try {
             if (elem != null) {
