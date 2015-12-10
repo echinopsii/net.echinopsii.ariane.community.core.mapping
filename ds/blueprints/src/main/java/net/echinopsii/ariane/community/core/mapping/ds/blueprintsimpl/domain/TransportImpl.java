@@ -39,7 +39,7 @@ public class TransportImpl implements Transport, MappingDSCacheEntity<Element> {
 
 	private long   transportID     = 0;
 	private String transportName   = null;	
-	private Vertex transportVertex = null;
+	private transient Vertex transportVertex = null;
 
     private HashMap<String,Object> transportProperties = null;
 	

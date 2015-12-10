@@ -46,7 +46,7 @@ public class EndpointImpl implements Endpoint, MappingDSCacheEntity<Element> {
     private HashMap<String, Object> endpointProperties = null;
     private Set<EndpointImpl> endpointTwinEndpoints = new HashSet<EndpointImpl>();
 
-    private Vertex endpointVertex = null;
+    private transient Vertex endpointVertex = null;
     private boolean isBeingSyncFromDB = false;
 
     @Override

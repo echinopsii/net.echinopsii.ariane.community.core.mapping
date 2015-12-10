@@ -41,7 +41,7 @@ public class ClusterImpl implements Cluster, MappingDSCacheEntity<Element> {
     private String clusterName = null;
     private Set<ContainerImpl> clusterContainers = new HashSet<ContainerImpl>();
 
-    private Vertex clusterVertex = null;
+    private transient Vertex clusterVertex = null;
     private boolean isBeingSyncFromDB = false;
 
     @Override

@@ -59,7 +59,7 @@ public class ContainerImpl implements Container, MappingDSCacheEntity<Element> {
 	private Set<NodeImpl>          containerNodes            = new HashSet<NodeImpl>();
 	private Set<GateImpl>          containerGates            = new HashSet<GateImpl>();
 	
-	private Vertex                 containerVertex           = null;
+	private transient Vertex       containerVertex           = null;
 	private boolean                isBeingSyncFromDB         = false;
 	
 	@Override

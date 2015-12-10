@@ -51,7 +51,7 @@ public class NodeImpl implements Node, MappingDSCacheEntity<Element> {
     private Set<NodeImpl> nodeTwinNodes = new HashSet<NodeImpl>();
     private Set<EndpointImpl> nodeEndpoints = new HashSet<EndpointImpl>();
 
-    private Vertex nodeVertex = null;
+    private transient Vertex nodeVertex = null;
     private boolean isBeingSyncFromDB = false;
 
     @Override

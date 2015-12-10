@@ -44,7 +44,7 @@ public class LinkImpl implements Link, MappingDSCacheEntity<Element> {
     private Set<LinkImpl> linkSubLinks = new HashSet<LinkImpl>();
     private LinkImpl linkUpLink = null;
 
-    private Edge linkEdge = null;
+    private transient Edge linkEdge = null;
 
     @Override
     public long getLinkID() {
