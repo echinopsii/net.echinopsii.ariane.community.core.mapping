@@ -3,17 +3,18 @@ var app = angular.module("application");
 
 app.factory('apiMethods', function($http) {
         return {
-            apiGETReq : function(url) {
+            apiGETReq : function(url, obj) {
                 return $http({
                     method : 'GET',
-                    url : url
+                    url : url,
+                    params: obj
                 });
             },
             apiPOSTReq : function(url, obj) {
                 return $http({
                     method : 'POST',
                     url : url,
-                    data : obj
+                    params : obj
                 });
             }
         }

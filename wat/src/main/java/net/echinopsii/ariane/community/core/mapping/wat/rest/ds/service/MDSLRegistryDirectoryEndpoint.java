@@ -21,6 +21,8 @@
 package net.echinopsii.ariane.community.core.mapping.wat.rest.ds.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.echinopsii.ariane.community.core.mapping.ds.dsl.registry.json.MappingDSLRegistryDirectoryJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.dsl.registry.model.MappingDSLRegistryDirectory;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
@@ -32,6 +34,8 @@ import javax.persistence.EntityManager;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Map;
 
 @Path("/mapping/registry")
 public class MDSLRegistryDirectoryEndpoint {
@@ -63,5 +67,16 @@ public class MDSLRegistryDirectoryEndpoint {
         MDSLRegistryHelper md = new MDSLRegistryHelper();
         Response ret = mappingDSLRegistryDirToJSON(md.getRootD());
         return  ret;
+    }
+
+    @POST
+    @Path("/getChild")
+    public Response getChild(@QueryParam("data") String params) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String,Object> postData = mapper.readValue(params, Map.class);
+        int subDirID= Integer.valueOf((String) postData.get("subDirID"));
+        MDSLRegistryHelper md = new MDSLRegistryHelper();
+        Response ret = mappingDSLRegistryDirToJSON(md.getChild(subDirID)) ;
+        return ret;
     }
 }

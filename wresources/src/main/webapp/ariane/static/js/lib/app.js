@@ -1,5 +1,5 @@
 // Declare app level module which depends on filters, and services
-var app = angular.module('application',[]);
+var app = angular.module('application',['jsTree.directive']);
 
 /*    app.factory('apiMethods', ['$http',function($http) {
         return {

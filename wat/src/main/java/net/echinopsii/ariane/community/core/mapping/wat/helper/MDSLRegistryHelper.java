@@ -47,12 +47,17 @@ public class MDSLRegistryHelper {
     public final static String FACES_CONTEXT_APPMAP_SELECTED_NODE = "MAPPING_REGISTRY_SELECTED_NODE";
     public final static String FACES_CONTEXT_APPMAP_OPS_ON_FOLDER = "MAPPING_REGISTRY_OPS_ON_FOLDER";
 
+    private EntityManager em;
+
     public MDSLRegistryHelper() {
+    }
+
+    public void initRoot() {
         subject = SecurityUtils.getSubject();
         if (subject.isAuthenticated()) {
-            EntityManager em = MappingDSLRegistryBootstrap.getIDMJPAProvider().createEM();
+            em = MappingDSLRegistryBootstrap.getIDMJPAProvider().createEM();
 
-            user = UsersListController.getUserByUserName(em, subject.getPrincipal().toString());
+            user  = UsersListController.getUserByUserName(em, subject.getPrincipal().toString());
 
             CriteriaBuilder builder = em.getCriteriaBuilder();
             CriteriaQuery<MappingDSLRegistryDirectory> rootDCriteria = builder.createQuery(MappingDSLRegistryDirectory.class);
@@ -73,6 +78,7 @@ public class MDSLRegistryHelper {
                 root = new DefaultTreeNode(rootD, null);
                 buildTree(em, rootD, root);
             }
+
             em.close();
         }
     }
@@ -163,7 +169,28 @@ public class MDSLRegistryHelper {
     }
 
     public MappingDSLRegistryDirectory getRootD(){
+        initRoot();
         return rootD;
+    }
+
+    public MappingDSLRegistryDirectory getChild(int subDirID){
+        em = MappingDSLRegistryBootstrap.getIDMJPAProvider().createEM();
+
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<MappingDSLRegistryDirectory> rootDCriteria = builder.createQuery(MappingDSLRegistryDirectory.class);
+        Root<MappingDSLRegistryDirectory> rootDRoot = rootDCriteria.from(MappingDSLRegistryDirectory.class);
+        rootDCriteria.select(rootDRoot).where(builder.equal(rootDRoot.get("id"), subDirID));
+        TypedQuery<MappingDSLRegistryDirectory> rootDQuery = em.createQuery(rootDCriteria);
+        MappingDSLRegistryDirectory dir = null;
+        try {
+            dir = rootDQuery.getSingleResult();
+        } catch (NoResultException e) {
+            log.error("Mapping DSL Registry directory has not been defined correctly ! You may have some problem during installation... ");
+        } catch (Exception e) {
+            throw e;
+        }
+        em.close();
+        return dir;
     }
 
     public void reloadTree() {

@@ -26,6 +26,8 @@ public class MappingDSLRegistryDirectoryJSON {
     public final static String MDSL_ROOT_DIR_ID = "mappingDSLDirectoryRootDirID";
     public final static String MDSL_SUB_DIRS_ID = "mappingDSLDirectorySubDirsID";
     public final static String MDSL_REQUESTS_ID = "mappingDSLDirectoryRequestsID";
+    public final static String MDSL_REQUEST_ID = "dirRequestID";
+    public final static String MDSL_REQUEST_NAME = "dirRequestName";
     public final static String MDSL_USER_ID = "mappingDSLDirectoryUserID";
     public final static String MDSL_GROUP_ID = "mappingDSLDirectoryGroupID";
     public final static String MDSL_UXPERMISSIONS_ID = "mappingDSLDirectoryUxPermissionsID";
@@ -51,8 +53,12 @@ public class MappingDSLRegistryDirectoryJSON {
         }
         jgenerator.writeEndArray();
         jgenerator.writeArrayFieldStart(MDSL_REQUESTS_ID);
-        for (MappingDSLRegistryRequest mappingDSLRegistryRequest : mappingDSLRegistryDirectory.getRequests())
-            jgenerator.writeNumber(mappingDSLRegistryRequest.getId());
+        for (MappingDSLRegistryRequest mappingDSLRegistryRequest : mappingDSLRegistryDirectory.getRequests()) {
+            jgenerator.writeStartObject();
+            jgenerator.writeNumberField(MDSL_REQUEST_ID, mappingDSLRegistryRequest.getId());
+            jgenerator.writeStringField(MDSL_REQUEST_NAME, mappingDSLRegistryRequest.getName());
+            jgenerator.writeEndObject();
+        }
         jgenerator.writeEndArray();
         jgenerator.writeNumberField(MDSL_ROOT_DIR_ID, ((mappingDSLRegistryDirectory.getRootDirectory() != null) ? mappingDSLRegistryDirectory.getRootDirectory().getId() : -1));
         jgenerator.writeNumberField(MDSL_USER_ID, ((mappingDSLRegistryDirectory.getUser() != null) ? mappingDSLRegistryDirectory.getUser().getId() : -1));
