@@ -72,15 +72,17 @@ app.controller('MyCtrl1', ['$scope', 'apiMethods', function ($scope, apiMethods)
                     });
 
                     dataObj.data.mappingDSLDirectoryRequestsID.forEach(function (child) {
-                        var childNode = {
-                            id: "child" + child.dirRequestID,
-                            parent: String(dataObj.data.mappingDSLDirectoryID),
-                            text: child.dirRequestName,
-                            icon: "jstree-custom-file"
+                        if (!(child.dirRequestID in $scope.lookupFileObj)) {
+                            var childNode = {
+                                id: "child" + child.dirRequestID,
+                                parent: String(dataObj.data.mappingDSLDirectoryID),
+                                text: child.dirRequestName,
+                                icon: "jstree-custom-file"
+                            }
+                            $scope.treeData.push(childNode);
+                            $scope.lookupFileObj[child.dirRequestID] = childNode;
                         }
-                        $scope.treeData.push(childNode);
                     })
-
                 }, function (error) {
                     console.error("failed to fetch childs")
                 })

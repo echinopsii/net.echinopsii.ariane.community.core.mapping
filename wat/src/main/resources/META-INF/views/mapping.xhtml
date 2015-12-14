@@ -17,6 +17,6 @@
 </head>
 <body ng-app="application" ng-controller="MyCtrl1">
     <!-- in this example the tree is populated from inline HTML -->
-    <js-tree tree-data="scope" tree-model="treeData" tree-events="changed:changedCB;open_node:openNodeCB"></js-tree>
+    <js-tree tree-data="scope" tree-plugins="search" tree-model="treeData" tree-events="changed:changedCB;open_node:openNodeCB"></js-tree>
 </body>
 </html>
