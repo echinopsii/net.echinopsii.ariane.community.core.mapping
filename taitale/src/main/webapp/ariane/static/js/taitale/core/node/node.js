@@ -943,23 +943,27 @@ define(
                 this.menuEditionMode.mouseout(menuFieldOut);
                 this.menuEditionMode.mousedown(this.menuFieldEditClick);
 
-                var fieldTitle = "Display all properties";
-                this.nodeMenuPropertiesRect = this.r.rect(0,10,fieldTitle.width(this.nodeFieldTXT),fieldTitle.height(this.nodeFieldTXT));
-                this.nodeMenuPropertiesRect.attr({fill: this.color, stroke: this.color, "fill-opacity": 0, "stroke-width": 0});
-                this.nodeMenuPropertiesRect.mouseover(menuFieldOver);
-                this.nodeMenuPropertiesRect.mouseout(menuFieldOut);
-                this.nodeMenuPropertiesRect.mousedown(menuFieldPropertyClick);
-                this.nodeMenuProperties = this.r.text(0,10,fieldTitle).attr(this.nodeFieldTXT);
-                this.nodeMenuProperties.mouseover(menuFieldOver);
-                this.nodeMenuProperties.mouseout(menuFieldOut);
-                this.nodeMenuProperties.mousedown(menuFieldPropertyClick);
+                if (this.properties != null) {
+                    var fieldTitle = "Display all properties";
+                    this.nodeMenuPropertiesRect = this.r.rect(0, 10, fieldTitle.width(this.nodeFieldTXT), fieldTitle.height(this.nodeFieldTXT));
+                    this.nodeMenuPropertiesRect.attr({fill: this.color, stroke: this.color, "fill-opacity": 0, "stroke-width": 0});
+                    this.nodeMenuPropertiesRect.mouseover(menuFieldOver);
+                    this.nodeMenuPropertiesRect.mouseout(menuFieldOut);
+                    this.nodeMenuPropertiesRect.mousedown(menuFieldPropertyClick);
+                    this.nodeMenuProperties = this.r.text(0, 10, fieldTitle).attr(this.nodeFieldTXT);
+                    this.nodeMenuProperties.mouseover(menuFieldOver);
+                    this.nodeMenuProperties.mouseout(menuFieldOut);
+                    this.nodeMenuProperties.mousedown(menuFieldPropertyClick);
+                }
 
                 this.nodeMenuSet = this.r.set();
                 this.nodeMenuSet.push(this.nodeMenuTitle);
                 this.nodeMenuSet.push(this.menuEditionModeRect);
                 this.nodeMenuSet.push(this.menuEditionMode);
-                this.nodeMenuSet.push(this.nodeMenuPropertiesRect);
-                this.nodeMenuSet.push(this.nodeMenuProperties);
+                if (this.properties != null) {
+                    this.nodeMenuSet.push(this.nodeMenuPropertiesRect);
+                    this.nodeMenuSet.push(this.nodeMenuProperties);
+                }
                 this.nodeMenuSet.toBack();
                 this.nodeMenuSet.hide();
 

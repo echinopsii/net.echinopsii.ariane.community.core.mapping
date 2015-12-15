@@ -125,7 +125,14 @@ define(
 
             this.r                 = null;
             //noinspection JSUnresolvedVariable
-            this.color             = (this.properties != null && this.properties.supportTeam!=null && this.properties.supportTeam.color!=null) ? "#"+this.properties.supportTeam.color : Raphael.getColor();
+            this.color             =
+                (this.properties != null && this.properties.supportTeam!=null) ?
+                    (this.properties.supportTeam.constructor !== Array) ?
+                        (this.properties.supportTeam.color != null) ?
+                            "#"+this.properties.supportTeam.color : "#333"
+                    : (this.properties.supportTeam[0].color != null) ?
+                        "#"+this.properties.supportTeam[0].color : "#333"
+                : "#333";
             this.txtFont           = params.container_txtTitle;
             this.X                 = x_;
             this.Y                 = y_;
@@ -139,8 +146,8 @@ define(
             this.containerNodes    = new containerMatrix();
             this.containerHat_     = new containerHat(this.company,this.product,this.type);
 
-            this.linkedTreeObjects                  = [];
-            this.sortOrdering                       = 1;
+            this.linkedTreeObjects = [];
+            this.sortOrdering      = 1;
 
             this.linkedBus         = [];
             this.linkedContainers  = [];
@@ -346,6 +353,7 @@ define(
                 menuFieldOut = function() {
                     this.attr(containerRef.menuFieldTXT);
                 },
+
                 menuFieldPropertyClick = function(e) {
                     if (e.which != 3) {
                         //noinspection JSUnresolvedVariable
@@ -356,18 +364,14 @@ define(
                             "<br/> <b>Product</b> : " + containerRef.product +
                             "<br/> <b>Type</b> : " + containerRef.type +
                             "<br/>" +
-                            ((containerRef.properties.supportTeam!=null) ? "<br/> <b>Support team</b> : " + containerRef.properties.supportTeam.name + "<br/>": "") +
+                            containerRef.multiSupportPrint() +
                             ((containerRef.properties.Server!=null) ? "<br/> <b>OS instance hostname</b> : " + containerRef.properties.Server.hostname +
                                 "<br/> <b>OS instance type</b> : " + containerRef.properties.Server.os + "<br/>": "") +
-                            ((containerRef.properties.Network!=null) ? "<br/> <b>Network ID</b> : " + containerRef.properties.Network.sname +
-                                "<br/> <b>Network type</b> : " + containerRef.properties.Network.ratype +
-                                "<br/> <b>Network subnet IP</b> : " + containerRef.properties.Network.sip +
-                                "<br/> <b>Network subnet mask</b> : " + containerRef.properties.Network.smask +
-                                "<br/> <b>Network routing area</b> : " + containerRef.properties.Network.raname :  "") +
                             ((containerRef.properties.Datacenter!=null) ? "<br> <b>Datacenter ID </b> : " + containerRef.properties.Datacenter.pname +
                                 "<br/> <b>Datacenter address</b> : " + containerRef.properties.Datacenter.address +
                                 "<br/> <b>Datacenter town</b> : " + containerRef.properties.Datacenter.town +
-                                "<br/> <b>Datacenter country</b> : " + containerRef.properties.Datacenter.country + "<br/>": "");
+                                "<br/> <b>Datacenter country</b> : " + containerRef.properties.Datacenter.country + "<br/>": "") +
+                            containerRef.multiNetworkPrint();
 
                         var sortedKeys = [];
 
@@ -430,6 +434,44 @@ define(
 
             this.move = function(dx, dy) {
                 mover(this, dx, dy);
+            };
+
+            this.multiSupportPrint = function() {
+                var i, ii, ret = "";
+                if (this.properties.supportTeam != null) {
+                    if (this.properties.supportTeam.constructor !== Array) {
+                        ret += "<br/> <b>Support team </b> : " + this.properties.supportTeam.name
+                    } else {
+                        for (i = 0, ii = this.properties.supportTeam.length; i < ii; i++)
+                            ret += "<br/> <b>Support team #" + i + "</b> : " + this.properties.supportTeam[i].name
+                    }
+                    ret += "<br/>";
+                }
+                return ret;
+            };
+
+            this.multiNetworkPrint = function() {
+                var i, ii, j, jj,ret = "";
+                if (this.properties.Network != null) {
+                    if (this.properties.Network.constructor !== Array) {
+                        ret += "<br/> <b>Network routing area</b> : " + this.properties.Network.raname +
+                            "<br/> <b>Network type</b> : " + this.properties.Network.ratype +
+                            "<br/> <b>Network subnet ID</b> : " + this.properties.Network.sname +
+                            "<br/> <b>Network subnet IP</b> : " + this.properties.Network.sip +
+                            "<br/> <b>Network subnet mask</b> : " + this.properties.Network.smask
+                    } else {
+                        for (i = 0, ii = this.properties.Network.length; i < ii; i++) {
+                            ret += "<br/> <b>Network #" + i + " routing area</b> : " + containerRef.properties.Network[i].raname +
+                                "<br/> <b>Network #" + i + " type</b> : " + containerRef.properties.Network[i].ratype;
+                            for (j = 0, jj = this.properties.Network[i].subnets.length; j < jj; j++)
+                                ret += "<br/> <b>Network #" + i + "." + j + " ID</b> : " + containerRef.properties.Network[i].subnets[j].sname +
+                                    "<br/> <b>Network #" + i + "." + j + " subnet IP</b> : " + containerRef.properties.Network[i].subnets[j].sip +
+                                    "<br/> <b>Network #" + i + "." + j + " subnet mask</b> : " + containerRef.properties.Network[i].subnets[j].smask
+                        }
+                    }
+                    ret += "<br/>";
+                }
+                return ret;
             };
 
             this.up = function() {
@@ -669,23 +711,27 @@ define(
                 this.menuEditionMode.mouseout(menuFieldOut);
                 this.menuEditionMode.mousedown(this.menuFieldEditClick);
 
-                var fieldTitle = "Display all properties";
-                this.menuPropertiesRect = this.r.rect(0,10,fieldTitle.width(this.menuFieldTXT),fieldTitle.height(this.menuFieldTXT));
-                this.menuPropertiesRect.attr({fill: this.color, stroke: this.color, "fill-opacity": 0, "stroke-width": 0});
-                this.menuPropertiesRect.mouseover(menuFieldOver);
-                this.menuPropertiesRect.mouseout(menuFieldOut);
-                this.menuPropertiesRect.mousedown(menuFieldPropertyClick);
-                this.menuProperties = this.r.text(0,10,fieldTitle).attr(this.menuFieldTXT);
-                this.menuProperties.mouseover(menuFieldOver);
-                this.menuProperties.mouseout(menuFieldOut);
-                this.menuProperties.mousedown(menuFieldPropertyClick);
+                if (this.properties != null) {
+                    var fieldTitle = "Display all properties";
+                    this.menuPropertiesRect = this.r.rect(0, 10, fieldTitle.width(this.menuFieldTXT), fieldTitle.height(this.menuFieldTXT));
+                    this.menuPropertiesRect.attr({fill: this.color, stroke: this.color, "fill-opacity": 0, "stroke-width": 0});
+                    this.menuPropertiesRect.mouseover(menuFieldOver);
+                    this.menuPropertiesRect.mouseout(menuFieldOut);
+                    this.menuPropertiesRect.mousedown(menuFieldPropertyClick);
+                    this.menuProperties = this.r.text(0, 10, fieldTitle).attr(this.menuFieldTXT);
+                    this.menuProperties.mouseover(menuFieldOver);
+                    this.menuProperties.mouseout(menuFieldOut);
+                    this.menuProperties.mousedown(menuFieldPropertyClick);
+                }
 
                 this.menuSet = this.r.set();
                 this.menuSet.push(this.menuTitle);
                 this.menuSet.push(this.menuEditionModeRect);
                 this.menuSet.push(this.menuEditionMode);
-                this.menuSet.push(this.menuPropertiesRect);
-                this.menuSet.push(this.menuProperties);
+                if (this.properties != null) {
+                    this.menuSet.push(this.menuPropertiesRect);
+                    this.menuSet.push(this.menuProperties);
+                }
                 //menuSet.push(this.text(0,30,"Highlight cluster").attr(menuFieldTXT));
                 //menuSet.push(this.text(0,45,"Show gates").attr(menuFieldTXT));
                 //menuSet.push(this.text(0,60,"Hide gates").attr(menuFieldTXT));
