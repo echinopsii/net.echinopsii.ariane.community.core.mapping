@@ -46,7 +46,7 @@ define(
                 var i, ii, j, jj;
                 for (i = 0, ii = nbColumns; i < ii ; i++) {
                     for (j = 0, jj = nbLines; j < jj ; j++) {
-                        if (rows[j].length != 0)
+                        if (rows[j].length != 0 && rows[j][i] != null)
                             rows[j][i].print(r);
                     }
                 }
@@ -69,7 +69,7 @@ define(
                 var i, ii, j, jj;
                 for (i = 0, ii = nbColumns; i < ii ; i++)
                     for (j = 0, jj = nbLines; j < jj ; j++ )
-                        if (rows[j][i].isElemMoving())
+                        if (rows[j][i] != null && rows[j][i].isElemMoving())
                             return true;
                 return false;
             };
@@ -78,18 +78,19 @@ define(
                 var i, ii, j, jj;
                 for (i = 0, ii = nbColumns; i < ii ; i++)
                     for (j = 0, jj = nbLines; j < jj ; j++ )
-                        rows[j][i].setEditionMode(editionMode);
+                        if (rows[j][i] != null)
+                            rows[j][i].setEditionMode(editionMode);
             };
 
             this.defineMtxZoneMaxSize = function() {
                 var i, ii, j, jj;
                 for (i = 0, ii = nbColumns; i < ii ; i++)
                     for (j = 0, jj = nbLines; j < jj ; j++ )
-                        if (rows[j].length != 0)
+                        if (rows[j].length != 0 && rows[j][i] != null)
                             rows[j][i].defineZoneObjectsMaxSize();
                 for (i = 0, ii = nbColumns; i < ii ; i++)
                     for (j = 0, jj = nbLines; j < jj ; j++ )
-                        if (rows[j].length != 0)
+                        if (rows[j].length != 0 && rows[j][i] != null)
                             rows[j][i].defineZoneMaxSize();
             };
 
@@ -98,11 +99,11 @@ define(
                 ldatacenterSplitter.init();
                 for (i = 0, ii = nbColumns; i < ii ; i++)
                     for (j = 0, jj = nbLines; j < jj ; j++ )
-                        if (rows[j].length != 0)
+                        if (rows[j].length != 0 && rows[j][i] != null)
                             rows[j][i].defineZoneObjectsSize();
                 for (i = 0, ii = nbColumns; i < ii ; i++)
                     for (j = 0, jj = nbLines; j < jj ; j++ )
-                        if (rows[j].length != 0)
+                        if (rows[j].length != 0 && rows[j][i] != null)
                             rows[j][i].defineZoneSize();
             };
 
@@ -113,7 +114,7 @@ define(
                 for (i = 0, ii = nbColumns; i < ii ; i++) {
                     var tmpHeight = 0;
                     for (j = 0, jj = nbLines; j < jj; j++)
-                        if (rows[j].length != 0)
+                        if (rows[j].length != 0 && rows[j][i] != null)
                             tmpHeight = tmpHeight + rows[j][i].getZoneMaxSize().height;
                     if (tmpHeight > contentHeight)
                         contentHeight=tmpHeight;
@@ -122,7 +123,8 @@ define(
                     if (rows[i].length != 0) {
                         var tmpWidth = 0;
                         for (j = 0, jj = nbColumns; j < jj; j++)
-                            tmpWidth = tmpWidth + rows[i][j].getZoneMaxSize().width;
+                            if (rows[i][j] != null)
+                                tmpWidth = tmpWidth + rows[i][j].getZoneMaxSize().width;
                         if (tmpWidth > contentWidth)
                             contentWidth = tmpWidth;
                     }
@@ -132,7 +134,7 @@ define(
             this.defineMapContentSize = function() {
                 var i, ii, topLeftX, topLeftY;
                 for (i = 0, ii = nbLines; i < ii; i++) {
-                    if (rows[i].length != 0) {
+                    if (rows[i].length != 0 && rows[i][0] != null) {
                         topLeftX = rows[i][0].topLeftX;
                         topLeftY = rows[i][0].topLeftY;
                     }
@@ -171,7 +173,7 @@ define(
                 for (i = 0, ii = nbColumns; i < ii; i++) {
                     var cursorHeight = 0;
                     for (j = 0, jj = nbLines; j < jj; j++) {
-                        if (rows[j].length != 0) {
+                        if (rows[j].length != 0 && rows[j][i] != null) {
                             rows[j][i].setTopLeftCoord(borderSpan + zoneSpan * i + cursorWidth, borderSpan + zoneSpan * j + cursorHeight);
                             rows[j][i].defineFirstPoz();
                             cursorHeight = cursorHeight + rows[j][i].getZoneMaxSize().height;
@@ -186,7 +188,7 @@ define(
                 var i, ii, j, jj;
                 for (i = 0, ii = nbColumns; i < ii; i++)
                     for (j = 0, jj = nbLines; j < jj; j++)
-                        if (rows[j].length != 0)
+                        if (rows[j].length != 0 && rows[j][i] != null)
                             rows[j][i].optimizeMtxCoord();
             };
 
@@ -196,7 +198,7 @@ define(
                 for (i = 0, ii = nbColumns; i < ii; i++) {
                     var cursorHeight = 0;
                     for (j = 0, jj = nbLines; j < jj; j++) {
-                        if (rows[j].length != 0) {
+                        if (rows[j].length != 0 && rows[j][i] != null) {
                             rows[j][i].setTopLeftCoord(borderSpan + zoneSpan * i + cursorWidth, borderSpan + zoneSpan * j + cursorHeight);
                             rows[j][i].defineIntermediatePoz();
                             cursorHeight = cursorHeight + rows[j][i].getZoneSize().height;
@@ -213,7 +215,7 @@ define(
                 for (i = 0, ii = nbColumns; i < ii; i++) {
                     var cursorHeight = 0;
                     for (j = 0, jj = nbLines; j < jj; j++) {
-                        if (rows[j].length != 0) {
+                        if (rows[j].length != 0 && rows[j][i] != null) {
                             rows[j][i].setTopLeftCoord(borderSpan + zoneSpan * i + cursorWidth, borderSpan + zoneSpan * j + cursorHeight);
                             rows[j][i].defineFinalPoz();
                             cursorHeight = cursorHeight + rows[j][i].getZoneSize().height;
