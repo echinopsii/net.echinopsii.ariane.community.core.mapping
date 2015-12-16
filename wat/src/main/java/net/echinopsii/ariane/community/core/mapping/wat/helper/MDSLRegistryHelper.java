@@ -193,6 +193,35 @@ public class MDSLRegistryHelper {
         return dir;
     }
 
+    public Boolean deleteDirectory(long directoryID){
+        EntityManager em = MappingDSLRegistryBootstrap.getIDMJPAProvider().createEM();
+        MappingDSLRegistryDirectory entity = null;
+        try {
+            em.getTransaction().begin();
+            entity = em.find(MappingDSLRegistryDirectory.class, directoryID);
+            entity.getRootDirectory().getSubDirectories().remove(entity);
+            em.remove(entity);
+            em.getTransaction().commit();
+/*
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,
+                    "Mapping DSL registry folder deleted successfully !",
+                    "Mapping DSL registry folder name : " + entity.getName());
+            FacesContext.getCurrentInstance().addMessage(null, msg);*/
+        } catch (Throwable t) {
+            log.debug("Throwable catched !");
+            t.printStackTrace();
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    "Throwable raised while creating mapping dsl registry folder " + ((entity!=null) ? entity.getName() : "null") + " !",
+                    "Throwable message : " + t.getMessage());
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+            if (em.getTransaction().isActive())
+                em.getTransaction().rollback();
+        } finally {
+            em.close();
+        }
+        return Boolean.TRUE;
+    }
+
     public void reloadTree() {
         if (subject.isAuthenticated()) {
             EntityManager em = MappingDSLRegistryBootstrap.getIDMJPAProvider().createEM();

@@ -20,6 +20,7 @@
 
 package net.echinopsii.ariane.community.core.mapping.wat.rest.ds.service;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
 import javax.ws.rs.*;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -62,21 +64,31 @@ public class MDSLRegistryDirectoryEndpoint {
 
     @GET
     @Path("/getRoot")
-    public Response getRoot() throws JsonProcessingException
-    {
+    public Response getRoot() throws JsonProcessingException {
         MDSLRegistryHelper md = new MDSLRegistryHelper();
         Response ret = mappingDSLRegistryDirToJSON(md.getRootD());
-        return  ret;
+        return ret;
     }
 
     @POST
     @Path("/getChild")
     public Response getChild(@QueryParam("data") String params) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        Map<String,Object> postData = mapper.readValue(params, Map.class);
-        int subDirID= Integer.valueOf((String) postData.get("subDirID"));
+        Map<String, Object> postData = mapper.readValue(params, Map.class);
+        int subDirID = Integer.valueOf((String) postData.get("subDirID"));
         MDSLRegistryHelper md = new MDSLRegistryHelper();
-        Response ret = mappingDSLRegistryDirToJSON(md.getChild(subDirID)) ;
+        Response ret = mappingDSLRegistryDirToJSON(md.getChild(subDirID));
         return ret;
+    }
+
+    @POST
+    @Path("/deleteDirectory")
+    public Response deleteDirectory(@QueryParam("data") String params) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> postData = mapper.readValue(params, Map.class);
+        long directoryID = Long.valueOf((String) postData.get("directoryID"));
+        MDSLRegistryHelper md = new MDSLRegistryHelper();
+        Boolean responseVal = md.deleteDirectory(directoryID);
+        return Response.status(Response.Status.OK).entity("Directory " + directoryID + "has been successfully deleted").build();
     }
 }

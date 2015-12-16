@@ -40,28 +40,26 @@ app.controller('MyCtrl1', ['$scope', 'apiMethods', function ($scope, apiMethods)
         if (data.node.icon !== "jstree-custom-file") {
             // parent
             $scope.contextMenu = {
-                "Menu 1": {
+                "dirCreateSubfolder": {
                     "label": "Create subfolder",
                     "action": function (obj) {
-                        console.log(obj);
                         alert("You clicked " + obj.item.label);
                     }
                 },
-                "Menu 2": {
+                "dirDelete": {
                     "label": "Delete",
-                    "action": function (obj) {
-                        console.log(obj);
-                        alert("You clicked " + obj.item.label);
+                    "action": function(obj){
+                        deleteDirectory(data.node.id)
                     }
                 },
-                "Menu 3": {
+                "dirEditPermissions": {
                     "label": "Edit Permissions",
                     "action": function (obj) {
                         console.log(obj);
                         alert("You clicked " + obj.item.label);
                     }
                 },
-                "Menu 4": {
+                "dirEditProperties": {
                     "label": "Edit Properties",
                     "action": function (obj) {
                         console.log(obj);
@@ -72,21 +70,21 @@ app.controller('MyCtrl1', ['$scope', 'apiMethods', function ($scope, apiMethods)
         } else {
             // children
             $scope.contextMenu = {
-                "Menu 1": {
+                "fileDelete": {
                     "label": "Delete",
                     "action": function (obj) {
                         console.log(obj);
                         alert("You clicked " + obj.item.label);
                     }
                 },
-                "Menu 2": {
+                "fileEditPermissions": {
                     "label": "Edit Permissions",
                     "action": function (obj) {
                         console.log(obj);
                         alert("You clicked " + obj.item.label);
                     }
                 },
-                "Menu 3": {
+                "fileEditProperties": {
                     "label": "Edit Properties",
                     "action": function (obj) {
                         console.log(obj);
@@ -96,6 +94,20 @@ app.controller('MyCtrl1', ['$scope', 'apiMethods', function ($scope, apiMethods)
             };
         }
     };
+
+    var deleteDirectory = function (directoryID) {
+        var postObj = {
+            "data": {
+                "directoryID": directoryID
+            }
+        };
+
+        apiMethods.apiPOSTReq('/ariane/rest/mapping/registry/deleteDirectory', postObj).then(function () {
+            console.log("directory deleted successfully");
+        }, function (error) {
+            console.error("failed to delete directory");
+        })
+    }
 
     $scope.openNodeCB = function (e, data) {
         // User can open Node without selecting node
