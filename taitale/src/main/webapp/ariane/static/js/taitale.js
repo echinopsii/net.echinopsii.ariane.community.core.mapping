@@ -66,19 +66,19 @@ require.config({
         'taitale-btree': 'ajs/taitale/layout/bubbletree/btree-min',
         'taitale-bvertex': 'ajs/taitale/layout/bubbletree/bvertex-min',
 
-        /*taitale network layout*/
-        'taitale-map-splitter': 'ajs/taitale/layout/network/mapSplitter-min',
-        'taitale-layoutntw-registries' : 'ajs/taitale/layout/network/registries-min',
-        'taitale-datacenter': 'ajs/taitale/layout/network/datacenter/datacenter-min',
-        'taitale-datacenter-splitter': 'ajs/taitale/layout/network/datacenter/dcSplitter-min',
-        'taitale-datacenter-hat': 'ajs/taitale/layout/network/datacenter/hat-min',
-        'taitale-datacenter-matrix': 'ajs/taitale/layout/network/datacenter/matrix-min',
-        'taitale-area': 'ajs/taitale/layout/network/area/area-min',
-        'taitale-area-matrix': 'ajs/taitale/layout/network/area/matrix-min',
-        'taitale-area-hat': 'ajs/taitale/layout/network/area/hat-min',
-        'taitale-lan': 'ajs/taitale/layout/network/lan/lan-min',
-        'taitale-lan-matrix': 'ajs/taitale/layout/network/lan/matrix-min',
-        'taitale-lan-hat': 'ajs/taitale/layout/network/lan/hat-min'
+        /*taitale middleware layout*/
+        'taitale-map-splitter': 'ajs/taitale/layout/middleware/mapSplitter-min',
+        'taitale-layoutntw-registries' : 'ajs/taitale/layout/middleware/registries-min',
+        'taitale-datacenter': 'ajs/taitale/layout/middleware/datacenter/datacenter-min',
+        'taitale-datacenter-splitter': 'ajs/taitale/layout/middleware/datacenter/dcSplitter-min',
+        'taitale-datacenter-hat': 'ajs/taitale/layout/middleware/datacenter/hat-min',
+        'taitale-datacenter-matrix': 'ajs/taitale/layout/middleware/datacenter/matrix-min',
+        'taitale-area': 'ajs/taitale/layout/middleware/area/area-min',
+        'taitale-area-matrix': 'ajs/taitale/layout/middleware/area/matrix-min',
+        'taitale-area-hat': 'ajs/taitale/layout/middleware/area/hat-min',
+        'taitale-lan': 'ajs/taitale/layout/middleware/lan/lan-min',
+        'taitale-lan-matrix': 'ajs/taitale/layout/middleware/lan/matrix-min',
+        'taitale-lan-hat': 'ajs/taitale/layout/middleware/lan/hat-min'
     },
     map: {
         '*': { 'jquery': 'jquery-private' },
@@ -126,10 +126,14 @@ requirejs (
                  * object events related to map
                  */
 
+                helper_.initGrowlMsgs(widget_growl.jqId);
+                helper_.initErrorBox('#mapError', '#mapErrorMsg');
+
                 $(execQuery.jqId).click([loader_, dic], function(){
                     var request = $(mdslQuery.jqId)[0].value
                     var requestURI = homeURI + "/rest/mapping/service/map/query?mdsl="+encodeURI(request)
                     helper_.debug(requestURI.toString());
+                    helper_.hideErrorBox();
                     options.setURI(requestURI);
                     try {
                         loader_.reloadMap(options);
@@ -159,9 +163,18 @@ requirejs (
                             }
                         );
                         console.log(e.stack);
+                        var msg = "<h3>oO ! We have some problem here ! <br/> Let's find a way to correct it ... </h3>" +
+                            '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
+                            '<p>2) complete the ticket : <ul>' +
+                            '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
+                            '<li>specify the layout (' + options.getLayout() +')</li>' +
+                            '<li>specify the mode ('+options.getMode()+')</li></ul></p>' +
+                            "<p>3) wait the ticket to be resolved ... </p>";
+                        helper_.showErrorBox(msg);
                     }
                 });
                 $(layoutSelector.jqId).change([loader_, dic], function() {
+                    helper_.hideErrorBox();
                     for (i = 0, ii = layoutSelector.inputs.length; i < ii; i++) {
                         input = layoutSelector.inputs[i];
                         if (input.checked) {
@@ -194,12 +207,21 @@ requirejs (
                                     }
                                 );
                                 console.log(e.stack);
+                                var msg = "<h3>oO ! We have some problem here ! <br/> Let's find a way to correct it ... </h3>" +
+                                    '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
+                                    '<p>2) complete the ticket : <ul>' +
+                                    '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
+                                    '<li>specify the layout (' + options.getLayout() +')</li>' +
+                                    '<li>specify the mode ('+options.getMode()+')</li></ul></p>' +
+                                    "<p>3) wait the ticket to be resolved ... </p>";
+                                helper_.showErrorBox(msg);
                             }
                             break;
                         }
                     }
                 });
                 $(modeSelector.jqId).change([loader_, dic], function() {
+                    helper_.hideErrorBox();
                     for (i = 0, ii = modeSelector.inputs.length; i < ii; i++) {
                         input = modeSelector.inputs[i];
                         if (input.checked) {
@@ -225,6 +247,14 @@ requirejs (
                                         sticky: true
                                     });
                                 console.log(e.stack);
+                                var msg = "<h3>oO ! We have some problem here ! <br/> Let's find a way to correct it ... </h3>" +
+                                    '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
+                                    '<p>2) complete the ticket : <ul>' +
+                                    '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
+                                    '<li>specify the layout (' + options.getLayout() +')</li>' +
+                                    '<li>specify the mode ('+options.getMode()+')</li></ul></p>' +
+                                    "<p>3) wait the ticket to be resolved ... </p>";
+                                helper_.showErrorBox(msg);
                             }
                         }
                     }
@@ -277,6 +307,14 @@ requirejs (
                                     }
                                 );
                                 console.log(e.stack);
+                                var msg = "<h3>oO ! We have some problem here ! <br/> Let's find a way to correct it ... </h3>" +
+                                    '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
+                                    '<p>2) complete the ticket : <ul>' +
+                                    '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
+                                    '<li>specify the layout (' + options.getLayout() +')</li>' +
+                                    '<li>specify the mode ('+options.getMode()+')</li></ul></p>' +
+                                    "<p>3) wait the ticket to be resolved ... </p>";
+                                helper_.showErrorBox(msg);
                             }
                             break;
                         }
@@ -310,6 +348,14 @@ requirejs (
                                     }
                                 );
                                 console.log(e.stack);
+                                var msg = "<h3>oO ! We have some problem here ! <br/> Let's find a way to correct it ... </h3>" +
+                                    '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
+                                    '<p>2) complete the ticket : <ul>' +
+                                    '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
+                                    '<li>specify the layout (' + options.getLayout() +')</li>' +
+                                    '<li>specify the mode ('+options.getMode()+')</li></ul></p>' +
+                                    "<p>3) wait the ticket to be resolved ... </p>";
+                                helper_.showErrorBox(msg);
                             }
                             break;
                         }
@@ -403,9 +449,6 @@ requirejs (
                 clearInterval(readyStateCheckInterval);
             }
         }, 10);
-
-        helper_.initGrowlMsgs(widget_growl.jqId);
-        helper_.initErrorBox('#mapError', '#mapErrorMsg');
 
         for (i = 0, ii = layoutSelector.inputs.length; i < ii; i++) {
             input = layoutSelector.inputs[i];

@@ -134,6 +134,7 @@ requirejs (
 
         test.puidropdown({
             change: function() {
+                helper_.hideErrorBox();
                 options.setURI(homeURI + "/js/taitale.samples/json/sample.taitale.input."+test.val()+".json");
                 try {
                     loader_.reloadMap(options);
@@ -162,6 +163,7 @@ requirejs (
         });
         layout.puidropdown({
             change: function() {
+                helper_.hideErrorBox();
                 options.setLayout(layout.val());
                 try {
                     if (options.getLayout()===dic.mapLayout.MDW) {
@@ -203,6 +205,7 @@ requirejs (
         });
         mode.puidropdown({
             change: function () {
+                helper_.hideErrorBox();
                 options.setMode(mode.val());
                 try {
                     loader_.editionMode(options);

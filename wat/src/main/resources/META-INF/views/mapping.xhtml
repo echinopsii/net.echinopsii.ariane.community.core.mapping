@@ -67,7 +67,7 @@
                                             </p:selectManyButton>
                                         </h:panelGroup>
                                     </h:panelGrid>
-                                    <div id="networkOptions" style="display:'none'">
+                                    <div id="networkOptions">
                                         <h:panelGrid columns="2" cellpadding="5">
                                             <h:panelGroup>
                                                 <span class="inputTitle">Display options</span>
@@ -79,7 +79,7 @@
                                             </h:panelGroup>
                                         </h:panelGrid>
                                     </div>
-                                    <div id="treeOptions" style="display:'none'">
+                                    <div id="treeOptions">
                                         <h:panelGrid columns="2" cellpadding="5">
                                             <h:panelGroup>
                                                 <span class="inputTitle">Root tree sorting</span>
@@ -100,7 +100,7 @@
                                 </p:tab>
                                 <p:tab id="mapToolsQueryTab" title="Query" >
                                     <h:form id="mapToolsQueryForm">
-                                        <p:growl id="requestMessages" showDetail="true" />
+                                        <p:growl id="requestMessages" showDetail="true"/>
                                         <h:panelGrid id="mapToolsQueryGrid" columns="2" cellpadding="5">
                                             <!--<p:inputTextarea id="mdslQuery" rows="6" cols="180" autoResize="false" widgetVar="mdslQuery"
                                                                  completeMethod="#{autoCompleteController.completeArea}" queryDelay="200" minQueryLength="4"/>-->
@@ -221,7 +221,7 @@
                     <h:panelGroup id="saveRequestDetail">
                         <br/>
                         <h:form>
-                            <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+                            <p:messages id="messages_req_sage" showDetail="true" autoUpdate="true" closable="true" />
                             <h:panelGroup rendered="#{mdslRegistryController.selectedDirectoryOrRequestNode!=null and mdslRegistryController.hasWriteAccess()}">
                                 <ui:insert name="createRequest" >
                                     <ui:include src="/templates/mdslRequestForm.xhtml" />
@@ -244,7 +244,7 @@
                 <h:outputText value="Are you sure you want to delete following request ?"/><br/><br/>
                 <h:outputText value="Request name : #{mdslrRequestController.name}"/><br/><br/>
                 <h:form>
-                    <h:inputHidden id="id" value="#{mdslrRequestController.id}" rendered="#{mdslrRequestController.rootDirectory!=null}"/>
+                    <h:inputHidden id="req_id" value="#{mdslrRequestController.id}" rendered="#{mdslrRequestController.rootDirectory!=null}"/>
                     <h:panelGrid id="requestDeleteGrid" columns="2" cellpadding="5"
                                  styleClass="ui-widget-content-grid" style="border: 0px">
                         <p:commandButton value="Yes" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
@@ -269,7 +269,7 @@
                     <h:panelGroup rendered="#{mdslRegistryController.selectedDirectoryOrRequestNode!=null}">
                         <p:separator/>
                         <br/>
-                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+                        <p:messages id="messages_request_update" showDetail="true" autoUpdate="true" closable="true" />
                         <p:commandButton value="Save" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
                                          oncomplete="requestModificationDialog.hide();" actionListener="#{mdslrRequestController.save}"
                                          update=":mappingToolsView:mapToolsQueryForm:requestMessages"/>
@@ -326,8 +326,8 @@
                 <h:outputText value="Are you sure you want to delete following folder with its contents ?"/><br/><br/>
                 <h:outputText value="Folder name : #{mdslrDirectoryController.name}"/><br/><br/>
                 <h:form>
-                    <h:inputHidden id="id" value="#{mdslrDirectoryController.id}" rendered="#{mdslrDirectoryController.rootDirectory!=null}"/>
-                    <h:panelGrid id="requestDeleteGrid" columns="2" cellpadding="5"
+                    <h:inputHidden id="folder_id" value="#{mdslrDirectoryController.id}" rendered="#{mdslrDirectoryController.rootDirectory!=null}"/>
+                    <h:panelGrid id="folderDeleteGrid" columns="2" cellpadding="5"
                                  styleClass="ui-widget-content-grid" style="border: 0px">
                         <p:commandButton value="Yes" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
                                          oncomplete="folderDeleteDialog.hide();" actionListener="#{mdslrDirectoryController.delete}"
