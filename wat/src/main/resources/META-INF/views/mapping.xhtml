@@ -47,9 +47,8 @@
                                         <h:panelGroup>
                                             <span class="inputTitle">Layout</span><br/>
                                             <p:selectOneButton id="layoutSelector" widgetVar="layoutSelector" value="#{mappingToolsDisplayController.mappingLayout}">
-                                                <f:selectItem itemLabel="BubbleTree" itemValue="BBTree" />
-                                                <f:selectItem itemLabel="Tree" itemValue="Tree" />
-                                                <f:selectItem itemLabel="Network" itemValue="Network" />
+                                                <f:selectItem itemLabel="Tree" itemValue="BBTree" />
+                                                <f:selectItem itemLabel="Middleware" itemValue="Middleware" />
                                             </p:selectOneButton>
                                         </h:panelGroup>
                                         <h:panelGroup>
@@ -68,7 +67,7 @@
                                             </p:selectManyButton>
                                         </h:panelGroup>
                                     </h:panelGrid>
-                                    <div id="networkOptions">
+                                    <div id="networkOptions" style="display:'none'">
                                         <h:panelGrid columns="2" cellpadding="5">
                                             <h:panelGroup>
                                                 <span class="inputTitle">Display options</span>
@@ -80,7 +79,7 @@
                                             </h:panelGroup>
                                         </h:panelGrid>
                                     </div>
-                                    <div id="treeOptions">
+                                    <div id="treeOptions" style="display:'none'">
                                         <h:panelGrid columns="2" cellpadding="5">
                                             <h:panelGroup>
                                                 <span class="inputTitle">Root tree sorting</span>
