@@ -23,9 +23,8 @@ define(
         function dictionaries() {
             this.mapLayout = {
                 MANUAL: "Random",
-                TREE  : "Tree",
                 BBTREE: "BBTree",
-                NTWWW : "Network"
+                MDW : "Middleware"
             };
             this.mapMode = {
                 NAVIGATION: "Navigation",

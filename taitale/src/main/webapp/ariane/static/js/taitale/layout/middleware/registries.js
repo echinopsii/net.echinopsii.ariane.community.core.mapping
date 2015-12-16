@@ -1,5 +1,5 @@
 // ┌──────────────────────────────────────────────────────────────────────────────────────┐ \\
-// │ Taitale - JavaScript Taitale Library - NTWWW module - registries                     │ \\
+// │ Taitale - JavaScript Taitale Library - MDW module - registries                     │ \\
 // │ Use Raphael.js                                                                       │ \\
 // │ -------------------------------------------------------------------------------------│ \\
 // │ Taitale - provide an infrastructure mapping graph engine                             │ \\

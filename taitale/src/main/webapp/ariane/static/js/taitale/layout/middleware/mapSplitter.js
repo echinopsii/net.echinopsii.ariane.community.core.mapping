@@ -1,5 +1,5 @@
 // ┌──────────────────────────────────────────────────────────────────────────────────────┐ \\
-// │ Taitale - JavaScript Taitale Library - NTWWW module - mapSplitter                    │ \\
+// │ Taitale - JavaScript Taitale Library - MDW module - mapSplitter                    │ \\
 // │ Use Raphael.js                                                                       │ \\
 // │ -------------------------------------------------------------------------------------│ \\
 // │ Taitale - provide an infrastructure mapping graph engine                             │ \\

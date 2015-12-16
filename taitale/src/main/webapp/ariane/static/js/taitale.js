@@ -62,10 +62,6 @@ require.config({
         'taitale-transport-multicastbus': 'ajs/taitale/core/transport/multicastBus-min',
         'taitale-link': 'ajs/taitale/core/link-min',
 
-        /*taitale tree layout*/
-        'taitale-tree': 'ajs/taitale/layout/tree/tree-min',
-        'taitale-vertex': 'ajs/taitale/layout/tree/vertex-min',
-
         /*taitale bubble tree layout*/
         'taitale-btree': 'ajs/taitale/layout/bubbletree/btree-min',
         'taitale-bvertex': 'ajs/taitale/layout/bubbletree/bvertex-min',
@@ -138,7 +134,7 @@ requirejs (
                     try {
                         loader_.reloadMap(options);
                         loader_.editionMode(options);
-                        if (options.getLayout()===dic.mapLayout.NTWWW) {
+                        if (options.getLayout()===dic.mapLayout.MDW) {
                             document.getElementById('treeOptions').style.display = "none";
                             document.getElementById('networkOptions').style.display = "";
                             for (i = 0, ii = networkLayoutDisplayOptions.inputs.length; i < ii; i++) {
@@ -147,7 +143,7 @@ requirejs (
                                 else if (input.value==="displayArea") options.displayAREA = input.checked;
                                 else if (input.value==="displayLan") options.displayLAN = input.checked;
                             }
-                        } else if (options.getLayout()===dic.mapLayout.TREE || options.getLayout()===dic.mapLayout.BBTREE) {
+                        } else if (options.getLayout()===dic.mapLayout.BBTREE) {
                             document.getElementById('treeOptions').style.display = "";
                             document.getElementById('networkOptions').style.display = "none";
                         }
@@ -174,7 +170,7 @@ requirejs (
                             try {
                                 loader_.rebuildMap(options);
                                 loader_.editionMode(options);
-                                if (options.getLayout()===dic.mapLayout.NTWWW) {
+                                if (options.getLayout()===dic.mapLayout.MDW) {
                                     document.getElementById('treeOptions').style.display = "none";
                                     document.getElementById('networkOptions').style.display = "";
                                     for (var i = 0, ii = networkLayoutDisplayOptions.inputs.length; i < ii; i++) {
@@ -183,7 +179,7 @@ requirejs (
                                         else if (input.value==="displayArea") options.displayAREA = input.checked;
                                         else if (input.value==="displayLan") options.displayLAN = input.checked;
                                     }
-                                } else if (options.getLayout()===dic.mapLayout.TREE || options.getLayout()===dic.mapLayout.BBTREE) {
+                                } else if (options.getLayout()===dic.mapLayout.BBTREE) {
                                     document.getElementById('treeOptions').style.display = "";
                                     document.getElementById('networkOptions').style.display = "none";
                                 }
@@ -211,7 +207,7 @@ requirejs (
                             try {
                                 //loader_.refreshMap(options);
                                 loader_.editionMode(options);
-                                if (options.getLayout()===dic.mapLayout.NTWWW) {
+                                if (options.getLayout()===dic.mapLayout.MDW) {
                                     for (var i = 0, ii = networkLayoutDisplayOptions.inputs.length; i < ii; i++) {
                                         var input = networkLayoutDisplayOptions.inputs[i];
                                         if (input.value==="displayDC") options.displayDC = input.checked;
@@ -428,7 +424,7 @@ requirejs (
             }
         }
 
-        if (options.getLayout()===dic.mapLayout.NTWWW) {
+        if (options.getLayout()===dic.mapLayout.MDW) {
             document.getElementById('treeOptions').style.display = "none";
             document.getElementById('networkOptions').style.display = "";
             for (i = 0, ii = networkLayoutDisplayOptions.inputs.length; i < ii; i++) {
@@ -444,7 +440,7 @@ requirejs (
                     //loader_.displayLan(options.displayLAN);
                 }
             }
-        } else if (options.getLayout()===dic.mapLayout.TREE  || options.getLayout()===dic.mapLayout.BBTREE) {
+        } else if (options.getLayout()===dic.mapLayout.BBTREE) {
             document.getElementById('treeOptions').style.display = "";
             document.getElementById('networkOptions').style.display = "none";
         }

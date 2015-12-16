@@ -30,11 +30,10 @@ define(
         'taitale-endpoint',
         'taitale-transport',
         'taitale-link',
-        'taitale-tree',
         'taitale-btree',
         'taitale-map-options'
     ],
-    function(helper, dictionaries, params, mapMatrix, container, node, endpoint, transport, link, tree, btree) {
+    function(helper, dictionaries, params, mapMatrix, container, node, endpoint, transport, link, btree) {
         function map(options) {
             var mapWidth  = 0,
                 mapHeight = 0,
@@ -278,7 +277,7 @@ define(
                 // third : layout policy
                 var layout = options.getLayout();
                 switch (layout) {
-                    case dic.mapLayout.NTWWW:
+                    case dic.mapLayout.MDW:
                         containerRegistry.sort(minMaxLinkedObjectsComparator);
                         // third 0 : populate DC, Area and Lan registries and enrich the objects
                         for (j = 0, jj = containerRegistry.length; j < jj; j++)
@@ -299,7 +298,6 @@ define(
                     //        containerRegistry[j].definedNodesPoz();
                         break;
 
-                    case dic.mapLayout.TREE:
                     case dic.mapLayout.BBTREE:
 
                         // third 0 : sort all tree lists
@@ -337,7 +335,7 @@ define(
                 var j, jj;
                 var layout = options.getLayout();
 
-                if (layout === dic.mapLayout.NTWWW)
+                if (layout === dic.mapLayout.MDW)
                     mapmatrix.optimizeMtxCoord();
 
                 // Set final container size
@@ -346,7 +344,7 @@ define(
                     containerRegistry[j].defineSize();
                 }
 
-                if (layout === dic.mapLayout.NTWWW) {
+                if (layout === dic.mapLayout.MDW) {
                     // Set final map matrix size and poz
                     mapmatrix.defineMtxZoneSize();
                     mapmatrix.defineMapContentSize();
@@ -364,7 +362,7 @@ define(
                     mapmatrix.defineMtxZoneFinalPoz(mbrdSpan, zoneSpan);
                     mapmatrix.defineMtxZoneSize();
                     mapmatrix.defineMapContentSize();
-                } else if (layout == dic.mapLayout.TREE || layout == dic.mapLayout.BBTREE) {
+                } else if (layout == dic.mapLayout.BBTREE) {
                     for (j = 0, jj=containerRegistry.length; j < jj; j++) {
                         containerRegistry[j].clean();
                         containerRegistry[j].defineSize();
@@ -377,7 +375,7 @@ define(
                 var layout = options.getLayout();
                 //noinspection FallthroughInSwitchStatementJS
                 switch (layout) {
-                    case dic.mapLayout.NTWWW:
+                    case dic.mapLayout.MDW:
                         mapmatrix.defineMapContentSize();
 
                         mapWidth = mbrdSpan*2 + mapmatrix.getMapContentSize().width;
@@ -392,7 +390,6 @@ define(
                         break;
 
                     case dic.mapLayout.MANUAL:
-                    case dic.mapLayout.TREE:
                     case dic.mapLayout.BBTREE:
                         var i, ii, j, jj;
                         if (containerRegistry.length > 0) {
@@ -498,7 +495,7 @@ define(
 
             this.print = function (r) {
                 var i, ii, j, jj;
-                if (options.getLayout()===dic.mapLayout.NTWWW)
+                if (options.getLayout()===dic.mapLayout.MDW)
                     mapmatrix.printMtx(r);
 
                 for (i = 0, ii = containerRegistry.length; i < ii; i++) {
@@ -626,11 +623,10 @@ define(
                 var dx = (mapTopLeftX - mbrdSpan == 0 ) ? 0 : -mapTopLeftX + mbrdSpan;
                 var dy = (mapTopLeftY - mbrdSpan == 0 ) ? 0 : -mapTopLeftY + mbrdSpan;
                 switch (layout) {
-                    case dic.mapLayout.NTWWW:
+                    case dic.mapLayout.MDW:
                         mapmatrix.translate(dx, dy);
                         break;
                     case dic.mapLayout.MANUAL:
-                    case dic.mapLayout.TREE:
                     case dic.mapLayout.BBTREE:
                         moveTreeMap(dx, dy);
                         break;
@@ -642,11 +638,10 @@ define(
                 var dx = (mapTopLeftX - mbrdSpan == 0 ) ? 0 : mapTopLeftX - mbrdSpan;
                 var dy = (mapTopLeftY - mbrdSpan == 0 ) ? 0 : mapTopLeftY - mbrdSpan;
                 switch (layout) {
-                    case dic.mapLayout.NTWWW:
+                    case dic.mapLayout.MDW:
                         mapmatrix.translate(dx, dy);
                         break;
                     case dic.mapLayout.MANUAL:
-                    case dic.mapLayout.TREE:
                     case dic.mapLayout.BBTREE:
                         moveTreeMap(dx, dy);
                         break;

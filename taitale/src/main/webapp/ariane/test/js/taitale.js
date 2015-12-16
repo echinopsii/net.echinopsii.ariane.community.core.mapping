@@ -58,25 +58,22 @@ require.config({
         'taitale-transport': 'js/taitale/core/transport/transport',
         'taitale-transport-multicastbus': 'js/taitale/core/transport/multicastBus',
         'taitale-link': 'js/taitale/core/link',
-        /*taitale tree layout*/
-        'taitale-tree': 'js/taitale/layout/tree/tree',
-        'taitale-vertex': 'js/taitale/layout/tree/vertex',
         /*taitale bubble tree layout*/
         'taitale-btree': 'js/taitale/layout/bubbletree/btree',
         'taitale-bvertex': 'js/taitale/layout/bubbletree/bvertex',
-        /*taitale network layout*/
-        'taitale-map-splitter': 'js/taitale/layout/network/mapSplitter',
-        'taitale-layoutntw-registries' : 'js/taitale/layout/network/registries',
-        'taitale-datacenter': 'js/taitale/layout/network/datacenter/datacenter',
-        'taitale-datacenter-splitter': 'js/taitale/layout/network/datacenter/dcSplitter',
-        'taitale-datacenter-hat': 'js/taitale/layout/network/datacenter/hat',
-        'taitale-datacenter-matrix': 'js/taitale/layout/network/datacenter/matrix',
-        'taitale-area': 'js/taitale/layout/network/area/area',
-        'taitale-area-hat': 'js/taitale/layout/network/area/hat',
-        'taitale-area-matrix': 'js/taitale/layout/network/area/matrix',
-        'taitale-lan': 'js/taitale/layout/network/lan/lan',
-        'taitale-lan-matrix': 'js/taitale/layout/network/lan/matrix',
-        'taitale-lan-hat': 'js/taitale/layout/network/lan/hat'
+        /*taitale middleware layout*/
+        'taitale-map-splitter': 'js/taitale/layout/middleware/mapSplitter',
+        'taitale-layoutntw-registries' : 'js/taitale/layout/middleware/registries',
+        'taitale-datacenter': 'js/taitale/layout/middleware/datacenter/datacenter',
+        'taitale-datacenter-splitter': 'js/taitale/layout/middleware/datacenter/dcSplitter',
+        'taitale-datacenter-hat': 'js/taitale/layout/middleware/datacenter/hat',
+        'taitale-datacenter-matrix': 'js/taitale/layout/middleware/datacenter/matrix',
+        'taitale-area': 'js/taitale/layout/middleware/area/area',
+        'taitale-area-hat': 'js/taitale/layout/middleware/area/hat',
+        'taitale-area-matrix': 'js/taitale/layout/middleware/area/matrix',
+        'taitale-lan': 'js/taitale/layout/middleware/lan/lan',
+        'taitale-lan-matrix': 'js/taitale/layout/middleware/lan/matrix',
+        'taitale-lan-hat': 'js/taitale/layout/middleware/lan/hat'
     },
     shim: {
         "jquery-ui": {
@@ -167,10 +164,10 @@ requirejs (
             change: function() {
                 options.setLayout(layout.val());
                 try {
-                    if (options.getLayout()===dic.mapLayout.NTWWW) {
+                    if (options.getLayout()===dic.mapLayout.MDW) {
                         document.getElementById('networkOptions').style.display = "";
                         document.getElementById('treeOptions').style.display    = "none";
-                    } else if (options.getLayout()===dic.mapLayout.TREE || options.getLayout()===dic.mapLayout.BBTREE) {
+                    } else if (options.getLayout()===dic.mapLayout.BBTREE) {
                         document.getElementById('networkOptions').style.display = "none";
                         document.getElementById('treeOptions').style.display    = "";
                     } else {
@@ -517,10 +514,10 @@ requirejs (
             options.setLayout(layout.val());
             options.setMode(mode.val());
             options.setURI(homeURI + "/js/taitale.samples/json/sample.taitale.input."+test.val()+".json");
-            if (options.getLayout()===dic.mapLayout.NTWWW) {
+            if (options.getLayout()===dic.mapLayout.MDW) {
                 document.getElementById('networkOptions').style.display = "";
                 document.getElementById('treeOptions').style.display    = "none";
-            } else if (options.getLayout()===dic.mapLayout.TREE || options.getLayout()===dic.mapLayout.BBTREE) {
+            } else if (options.getLayout()===dic.mapLayout.BBTREE) {
                 document.getElementById('networkOptions').style.display = "none";
                 document.getElementById('treeOptions').style.display    = "";
             } else {

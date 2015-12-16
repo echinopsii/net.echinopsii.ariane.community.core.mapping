@@ -37,7 +37,7 @@ define(
                 bottomRightX  = 0,
                 bottomRightY  = 0;
 
-            var ldatacenterSplitter = null, //for NTWWW map type
+            var ldatacenterSplitter = null, //for MDW map type
                 layoutNtwRegistries = null;
 
             var dic  = new dictionaries();
@@ -228,7 +228,7 @@ define(
                 var layout = options.getLayout();
                 //noinspection FallthroughInSwitchStatementJS
                 switch(layout) {
-                    case dic.mapLayout.NTWWW:
+                    case dic.mapLayout.MDW:
                     default:
                         if (layoutNtwRegistries==null)
                             layoutNtwRegistries = new ntwRegistries();
@@ -376,7 +376,7 @@ define(
                 var layout = options.getLayout();
                 //noinspection FallthroughInSwitchStatementJS
                 switch(layout) {
-                    case dic.mapLayout.NTWWW:
+                    case dic.mapLayout.MDW:
                     default:
                         if (nbLines==0) {
                             rows[nbLines] = [];
@@ -450,7 +450,7 @@ define(
 
             this.displayDC = function(display) {
                 var i, ii;
-                if (options.getLayout() === dic.mapLayout.NTWWW) {
+                if (options.getLayout() === dic.mapLayout.MDW) {
                     for (i= 0, ii=nbColumns; i < ii; i++) {
                         if (rows[0].length != 0)
                             rows[0][i].displayDC(display);
@@ -466,7 +466,7 @@ define(
 
             this.displayArea = function(display) {
                 var i, ii;
-                if (options.getLayout() === dic.mapLayout.NTWWW) {
+                if (options.getLayout() === dic.mapLayout.MDW) {
                     for (i= 0, ii=nbColumns; i < ii; i++) {
                         if (rows[0].length != 0)
                             rows[0][i].displayArea(display);
@@ -476,7 +476,7 @@ define(
 
             this.displayLan = function(display) {
                 var i, ii;
-                if (options.getLayout() === dic.mapLayout.NTWWW) {
+                if (options.getLayout() === dic.mapLayout.MDW) {
                     for (i= 0, ii=nbColumns; i < ii; i++) {
                         if (rows[0].length != 0)
                             rows[0][i].displayLan(display);
