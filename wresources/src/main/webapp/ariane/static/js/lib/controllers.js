@@ -5,7 +5,6 @@
 var app = angular.module('application');
 
 app.controller('MyCtrl1', ['$scope', 'apiMethods', function ($scope, apiMethods) {
-
     $scope.treeData = [];
     $scope.subDirID = null;
     $scope.subDirName = null;
@@ -35,8 +34,67 @@ app.controller('MyCtrl1', ['$scope', 'apiMethods', function ($scope, apiMethods)
         console.log("Error occured. " + err);
     });
 
-    $scope.changedCB = function (e, data) {
-        console.log(data);
+    $scope.selectNodeCB = function (e, data) {
+        // if Selected node has children then it's a directory else child
+        // according to that switch context Menu
+        if (data.node.icon !== "jstree-custom-file") {
+            // parent
+            $scope.contextMenu = {
+                "Menu 1": {
+                    "label": "Create subfolder",
+                    "action": function (obj) {
+                        console.log(obj);
+                        alert("You clicked " + obj.item.label);
+                    }
+                },
+                "Menu 2": {
+                    "label": "Delete",
+                    "action": function (obj) {
+                        console.log(obj);
+                        alert("You clicked " + obj.item.label);
+                    }
+                },
+                "Menu 3": {
+                    "label": "Edit Permissions",
+                    "action": function (obj) {
+                        console.log(obj);
+                        alert("You clicked " + obj.item.label);
+                    }
+                },
+                "Menu 4": {
+                    "label": "Edit Properties",
+                    "action": function (obj) {
+                        console.log(obj);
+                        alert("You clicked " + obj.item.label);
+                    }
+                }
+            };
+        } else {
+            // children
+            $scope.contextMenu = {
+                "Menu 1": {
+                    "label": "Delete",
+                    "action": function (obj) {
+                        console.log(obj);
+                        alert("You clicked " + obj.item.label);
+                    }
+                },
+                "Menu 2": {
+                    "label": "Edit Permissions",
+                    "action": function (obj) {
+                        console.log(obj);
+                        alert("You clicked " + obj.item.label);
+                    }
+                },
+                "Menu 3": {
+                    "label": "Edit Properties",
+                    "action": function (obj) {
+                        console.log(obj);
+                        alert("You clicked " + obj.item.label);
+                    }
+                }
+            };
+        }
     };
 
     $scope.openNodeCB = function (e, data) {
@@ -46,12 +104,12 @@ app.controller('MyCtrl1', ['$scope', 'apiMethods', function ($scope, apiMethods)
         $scope.subDirName = data.node.text;
 
         $scope.lookupObj[$scope.subDirID].state = {
-            "opened" : true
+            "opened": true
         };
 
         data.node.children.forEach(function (id) {
             // retrieve node for child upfront
-            if(id.indexOf("child") === -1) {
+            if (id.indexOf("child") === -1) {
                 var postObj = {
                     "data": {
                         "subDirID": id
