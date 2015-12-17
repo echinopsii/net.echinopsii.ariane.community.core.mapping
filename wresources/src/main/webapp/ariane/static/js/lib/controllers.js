@@ -11,7 +11,7 @@ app.controller('MyCtrl1', ['$scope', 'apiMethods', function ($scope, apiMethods)
     $scope.lookupObj = {};
     $scope.lookupFileObj = {};
 
-    apiMethods.apiGETReq('/ariane/rest/mapping/registry/getRoot').then(function (dataObj) {
+    apiMethods.apiGETReq('/ariane/rest/mapping/registryDirectory/getRoot').then(function (dataObj) {
         var parentNode = {
             id: dataObj.data.mappingDSLDirectoryID,
             parent: "#",
@@ -73,8 +73,7 @@ app.controller('MyCtrl1', ['$scope', 'apiMethods', function ($scope, apiMethods)
                 "fileDelete": {
                     "label": "Delete",
                     "action": function (obj) {
-                        console.log(obj);
-                        alert("You clicked " + obj.item.label);
+                        deleteRequest(data.node.id)
                     }
                 },
                 "fileEditPermissions": {
@@ -102,10 +101,31 @@ app.controller('MyCtrl1', ['$scope', 'apiMethods', function ($scope, apiMethods)
             }
         };
 
-        apiMethods.apiPOSTReq('/ariane/rest/mapping/registry/deleteDirectory', postObj).then(function () {
+        apiMethods.apiPOSTReq('/ariane/rest/mapping/registryDirectory/deleteDirectory', postObj).then(function () {
             console.log("directory deleted successfully");
+            console.log($scope.treeData)
+            var id = $scope.treeData
+                .filter(function (el) {
+                    return el.id !== directoryID;
+                });
+            $scope.treeData.splice(id, 1);
+            console.log($scope.treeData)
         }, function (error) {
             console.error("failed to delete directory");
+        })
+    }
+
+    var deleteRequest = function (requestID) {
+        var postObj = {
+            "data": {
+                "requestID": requestID
+            }
+        };
+
+        apiMethods.apiPOSTReq('/ariane/rest/mapping/registryRequest/deleteRequest', postObj).then(function () {
+            console.log("Request deleted successfully");
+        }, function (error) {
+            console.error("failed to Request directory");
         })
     }
 
@@ -128,7 +148,7 @@ app.controller('MyCtrl1', ['$scope', 'apiMethods', function ($scope, apiMethods)
                     }
                 };
 
-                apiMethods.apiPOSTReq('/ariane/rest/mapping/registry/getChild', postObj).then(function (dataObj) {
+                apiMethods.apiPOSTReq('/ariane/rest/mapping/registryDirectory/getChild', postObj).then(function (dataObj) {
                     dataObj.data.mappingDSLDirectorySubDirsID.forEach(function (child) {
                         if (!(child.subDirectoryID in $scope.lookupObj)) {
                             var childNode = {

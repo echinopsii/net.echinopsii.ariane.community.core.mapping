@@ -15,7 +15,6 @@ import org.primefaces.model.TreeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.persistence.EntityManager;
@@ -28,9 +27,9 @@ import java.util.Set;
 /**
  * Created by sagar on 23/11/15.
  */
-public class MDSLRegistryHelper {
+public class MDSLRegistryDirectoryHelper {
 
-    private static final Logger log = LoggerFactory.getLogger(MDSLRegistryHelper.class);
+    private static final Logger log = LoggerFactory.getLogger(MDSLRegistryDirectoryHelper.class);
     private MappingDSLRegistryDirectory rootD;
 
     private TreeNode root;
@@ -49,7 +48,7 @@ public class MDSLRegistryHelper {
 
     private EntityManager em;
 
-    public MDSLRegistryHelper() {
+    public MDSLRegistryDirectoryHelper() {
     }
 
     public void initRoot() {
@@ -76,7 +75,6 @@ public class MDSLRegistryHelper {
 
             if (subject.hasRole("Jedi") || hasRight(em, rootD, UXPermission.UX_LIKE_RD_PERM)) {
                 root = new DefaultTreeNode(rootD, null);
-                buildTree(em, rootD, root);
             }
 
             em.close();
@@ -136,38 +134,6 @@ public class MDSLRegistryHelper {
         return false;
     }
 
-    private void buildTree(EntityManager em, MappingDSLRegistryDirectory rootDir, TreeNode rootNode) {
-        for (IUXResource child : rootDir.getOrderedChildsList()) {
-            if (child instanceof MappingDSLRegistryDirectory) {
-                if (subject.hasRole("Jedi") || hasRight(em, child, UXPermission.UX_LIKE_RD_PERM)) {
-                    TreeNode subNode;
-                    if (subject.hasRole("Jedi") || (hasRight(em, child, UXPermission.UX_LIKE_WR_PERM) && hasRight(em, child, UXPermission.UX_LIKE_CH_PERM))) {
-                        subNode = new DefaultTreeNode("FolderRWCH", child, rootNode);
-                    } else if (hasRight(em, child, UXPermission.UX_LIKE_WR_PERM)) {
-                        subNode = new DefaultTreeNode("FolderRW", child, rootNode);
-                    } else {
-                        subNode = new DefaultTreeNode("Folder", child, rootNode);
-                    }
-                    buildTree(em, (MappingDSLRegistryDirectory)child, subNode);
-                }
-            } else if (child instanceof MappingDSLRegistryRequest) {
-                if (subject.hasRole("Jedi") || hasRight(em, child, UXPermission.UX_LIKE_RD_PERM)) {
-                    if (subject.hasRole("Jedi") || (hasRight(em, child, UXPermission.UX_LIKE_WR_PERM) && hasRight(em, child, UXPermission.UX_LIKE_CH_PERM))) {
-                        new DefaultTreeNode(((MappingDSLRegistryRequest)child).isTemplate() ? "TemplateRWCH" : "RequestRWCH", child, rootNode);
-                    } else if (hasRight(em, child, UXPermission.UX_LIKE_WR_PERM)) {
-                        new DefaultTreeNode(((MappingDSLRegistryRequest)child).isTemplate() ? "TemplateRW" : "RequestRW", child, rootNode);
-                    } else {
-                        new DefaultTreeNode(((MappingDSLRegistryRequest)child).isTemplate() ? "Template" : "Request", child, rootNode);
-                    }
-                }
-            }
-        }
-    }
-
-    public TreeNode getRoot() {
-        return root;
-    }
-
     public MappingDSLRegistryDirectory getRootD(){
         initRoot();
         return rootD;
@@ -207,6 +173,7 @@ public class MDSLRegistryHelper {
                     "Mapping DSL registry folder deleted successfully !",
                     "Mapping DSL registry folder name : " + entity.getName());
             FacesContext.getCurrentInstance().addMessage(null, msg);*/
+            return Boolean.TRUE;
         } catch (Throwable t) {
             log.debug("Throwable catched !");
             t.printStackTrace();
@@ -219,25 +186,6 @@ public class MDSLRegistryHelper {
         } finally {
             em.close();
         }
-        return Boolean.TRUE;
-    }
-
-    public void reloadTree() {
-        if (subject.isAuthenticated()) {
-            EntityManager em = MappingDSLRegistryBootstrap.getIDMJPAProvider().createEM();
-            rootD = em.find(rootD.getClass(), rootD.getId());
-            if (subject.hasRole("Jedi") || hasRight(em, rootD, UXPermission.UX_LIKE_RD_PERM)) {
-                root = new DefaultTreeNode(rootD, null);
-                buildTree(em, rootD, root);
-            }
-            em.close();
-            this.selectedDirectoryOrRequestNode = null;
-            this.selectedRequestNode = null;
-            this.selectedRequestReq  = "";
-            this.selectedRequestDesc = "";
-            this.selectedFolderDesc  = "";
-            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put(FACES_CONTEXT_APPMAP_SELECTED_REQ, null);
-            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put(FACES_CONTEXT_APPMAP_SELECTED_NODE, null);
-        }
+        return Boolean.FALSE;
     }
 }

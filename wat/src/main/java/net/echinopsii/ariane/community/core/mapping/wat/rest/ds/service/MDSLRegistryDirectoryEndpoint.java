@@ -20,26 +20,23 @@
 
 package net.echinopsii.ariane.community.core.mapping.wat.rest.ds.service;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.echinopsii.ariane.community.core.mapping.ds.dsl.registry.json.MappingDSLRegistryDirectoryJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.dsl.registry.model.MappingDSLRegistryDirectory;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
-import net.echinopsii.ariane.community.core.mapping.wat.helper.MDSLRegistryHelper;
+import net.echinopsii.ariane.community.core.mapping.wat.helper.MDSLRegistryDirectoryHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
 import javax.ws.rs.*;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Map;
 
-@Path("/mapping/registry")
+@Path("/mapping/registryDirectory")
 public class MDSLRegistryDirectoryEndpoint {
 
     private static final Logger log = LoggerFactory.getLogger(MDSLRegistryDirectoryEndpoint.class);
@@ -65,7 +62,7 @@ public class MDSLRegistryDirectoryEndpoint {
     @GET
     @Path("/getRoot")
     public Response getRoot() throws JsonProcessingException {
-        MDSLRegistryHelper md = new MDSLRegistryHelper();
+        MDSLRegistryDirectoryHelper md = new MDSLRegistryDirectoryHelper();
         Response ret = mappingDSLRegistryDirToJSON(md.getRootD());
         return ret;
     }
@@ -76,7 +73,7 @@ public class MDSLRegistryDirectoryEndpoint {
         ObjectMapper mapper = new ObjectMapper();
         Map<String, Object> postData = mapper.readValue(params, Map.class);
         int subDirID = Integer.valueOf((String) postData.get("subDirID"));
-        MDSLRegistryHelper md = new MDSLRegistryHelper();
+        MDSLRegistryDirectoryHelper md = new MDSLRegistryDirectoryHelper();
         Response ret = mappingDSLRegistryDirToJSON(md.getChild(subDirID));
         return ret;
     }
@@ -87,7 +84,7 @@ public class MDSLRegistryDirectoryEndpoint {
         ObjectMapper mapper = new ObjectMapper();
         Map<String, Object> postData = mapper.readValue(params, Map.class);
         long directoryID = Long.valueOf((String) postData.get("directoryID"));
-        MDSLRegistryHelper md = new MDSLRegistryHelper();
+        MDSLRegistryDirectoryHelper md = new MDSLRegistryDirectoryHelper();
         Boolean responseVal = md.deleteDirectory(directoryID);
         return Response.status(Response.Status.OK).entity("Directory " + directoryID + "has been successfully deleted").build();
     }
