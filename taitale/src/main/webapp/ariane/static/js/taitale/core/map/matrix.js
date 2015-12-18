@@ -137,11 +137,16 @@ define(
                     if (rows[i].length != 0 && rows[i][0] != null) {
                         topLeftX = rows[i][0].topLeftX;
                         topLeftY = rows[i][0].topLeftY;
+                        break;
                     }
                 }
 
-                bottomRightX = rows[nbLines-1][nbColumns-1].topLeftX + rows[nbLines-1][nbColumns-1].getZoneSize().width;
-                bottomRightY = rows[nbLines-1][nbColumns-1].topLeftY + rows[nbLines-1][nbColumns-1].getZoneSize().height;
+                var last_column;
+                for (i = nbColumns-1, ii = 0; i >= ii; i--)
+                    if (rows[nbLines-1][i] != null)
+                        last_column = i;
+                bottomRightX = rows[nbLines-1][last_column].topLeftX + rows[nbLines-1][last_column].getZoneSize().width;
+                bottomRightY = rows[nbLines-1][last_column].topLeftY + rows[nbLines-1][last_column].getZoneSize().height;
                 contentWidth = bottomRightX - topLeftX;
                 contentHeight = bottomRightY - topLeftY;
             };
