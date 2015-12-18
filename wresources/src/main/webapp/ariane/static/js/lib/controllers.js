@@ -43,7 +43,7 @@ app.controller('MyCtrl1', ['$scope', 'apiMethods', function ($scope, apiMethods)
                 "dirCreateSubfolder": {
                     "label": "Create subfolder",
                     "action": function (obj) {
-                        alert("You clicked " + obj.item.label);
+
                     }
                 },
                 "dirDelete": {
@@ -73,13 +73,13 @@ app.controller('MyCtrl1', ['$scope', 'apiMethods', function ($scope, apiMethods)
                 "fileDelete": {
                     "label": "Delete",
                     "action": function (obj) {
-                        deleteRequest(data.node.id)
+                        deleteRequest(data.node.id.split("child")[1])
                     }
                 },
                 "fileEditPermissions": {
                     "label": "Edit Permissions",
                     "action": function (obj) {
-                        console.log(obj);
+                        console.log(data.node);
                         alert("You clicked " + obj.item.label);
                     }
                 },
@@ -102,14 +102,14 @@ app.controller('MyCtrl1', ['$scope', 'apiMethods', function ($scope, apiMethods)
         };
 
         apiMethods.apiPOSTReq('/ariane/rest/mapping/registryDirectory/deleteDirectory', postObj).then(function () {
-            console.log("directory deleted successfully");
-            console.log($scope.treeData)
-            var id = $scope.treeData
-                .filter(function (el) {
-                    return el.id !== directoryID;
-                });
-            $scope.treeData.splice(id, 1);
-            console.log($scope.treeData)
+            for(var i = 0; i < $scope.treeData.length; i++) {
+                var obj = $scope.treeData[i];
+
+                if(obj.id === parseInt(directoryID)) {
+                    $scope.treeData.splice(i, 1);
+                    i--;
+                }
+            }
         }, function (error) {
             console.error("failed to delete directory");
         })
@@ -123,7 +123,14 @@ app.controller('MyCtrl1', ['$scope', 'apiMethods', function ($scope, apiMethods)
         };
 
         apiMethods.apiPOSTReq('/ariane/rest/mapping/registryRequest/deleteRequest', postObj).then(function () {
-            console.log("Request deleted successfully");
+            for(var i = 0; i < $scope.treeData.length; i++) {
+                var obj = $scope.treeData[i];
+
+                if(obj.id === "child"+requestID) {
+                    $scope.treeData.splice(i, 1);
+                    i--;
+                }
+            }
         }, function (error) {
             console.error("failed to Request directory");
         })
