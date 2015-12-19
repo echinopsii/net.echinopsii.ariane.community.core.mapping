@@ -90,21 +90,6 @@ define(
             this.maxRectWidth  = 0;
             this.maxRectHeight = 0;
 
-            this.menu              = null;
-            this.menuSet           = null;
-            this.menuFillColor     = params.node_menuFillColor;
-            //this.menuStrokeColor   = params.node_menuStrokeColor;
-            this.menuOpacity       = params.node_menuOpacity;
-            this.menuStrokeWidth   = params.node_menuStrokeWidth;
-            //this.menuMainTitleTXT  = params.node_menuMainTitle;
-            //this.menuFieldTXT      = params.node_menuFields;
-            this.menuHided         = true;
-
-            this.menuEditionMode     = null;
-            this.menuEditionModeRect = null;
-            this.menuFieldStartEditTitle  = "Edition mode ON";
-            this.menuFieldStopEditTitle   = "Edition mode OFF";
-
             this.oUnselected = params.node_opacUnselec;
             this.oSelected   = params.node_opacSelec;
             this.cornerRad   = params.node_cornerRad;
@@ -178,14 +163,35 @@ define(
             this.mvx = 0;
             this.mvy = 0;
 
+            this.menu              = null;
+            this.menuSet           = null;
+            this.menuFillColor     = params.node_menuFillColor;
+            //this.menuStrokeColor   = params.node_menuStrokeColor;
+            this.menuOpacity       = params.node_menuOpacity;
+            this.menuStrokeWidth   = params.node_menuStrokeWidth;
+            //this.menuMainTitleTXT  = params.node_menuMainTitle;
+            //this.menuFieldTXT      = params.node_menuFields;
+            this.menuHided         = true;
+
+            this.nodeMainTitleTXT  = params.node_menuMainTitle;
+            this.nodeFieldTXT      = params.node_menuFields;
+            this.nodeFieldTXTOver  = params.node_menuFieldsOver;
+
             this.nodeMenuSet = null;
             this.nodeMenuTitle = null;
             this.nodeMenuProperties = null;
             this.nodeMenuPropertiesRect = null;
 
-            this.nodeMainTitleTXT  = params.node_menuMainTitle;
-            this.nodeFieldTXT      = params.node_menuFields;
-            this.nodeFieldTXTOver  = params.node_menuFieldsOver;
+            this.menuEditionMode     = null;
+            this.menuEditionModeRect = null;
+            this.menuFieldStartEditTitle  = "Edition mode ON";
+            this.menuFieldStopEditTitle   = "Edition mode OFF";
+
+            this.nodeEndpointsResetOnChangeON = false;
+            this.nodeMenuEpResetOnChange = null;
+            this.nodeMenuEpResetOnChangeRect = null;
+            this.menuFieldEpResetON  = "Endpoints reset ON";
+            this.menuFieldEpResetOFF = "Endpoints reset OFF";
 
             var nodeRef = this;
 
@@ -271,10 +277,19 @@ define(
                                     fieldRect = nodeRef.menuSet[i];
                                     fieldRectWidth = fieldRect.attr("width");
                                     fieldRectHeight = fieldRect.attr("height");
-                                    fieldRect.attr({"x": nodeRef.rectTopMiddleX - fieldRectWidth/2, "y": nodeRef.rectTopMiddleY+30 - fieldRectHeight/2});
-                                    nodeRef.menuSet[i+1].attr({"x": nodeRef.rectTopMiddleX, "y": nodeRef.rectTopMiddleY+30});
-                                    if (nodeRef.isEditing) nodeRef.menuSet[i+1].attr({text: nodeRef.menuFieldStopEditTitle});
-                                    else nodeRef.menuSet[i+1].attr({text: nodeRef.menuFieldStartEditTitle});
+                                    fieldRect.attr({"x": nodeRef.rectTopMiddleX - fieldRectWidth / 2, "y": nodeRef.rectTopMiddleY + 30 - fieldRectHeight / 2});
+                                    nodeRef.menuSet[i + 1].attr({"x": nodeRef.rectTopMiddleX, "y": nodeRef.rectTopMiddleY + 30});
+                                    if (nodeRef.isEditing) nodeRef.menuSet[i + 1].attr({text: nodeRef.menuFieldStopEditTitle});
+                                    else nodeRef.menuSet[i + 1].attr({text: nodeRef.menuFieldStartEditTitle});
+                                    i++;
+                                } else if (i==3) {
+                                    fieldRect = nodeRef.menuSet[i];
+                                    fieldRectWidth = fieldRect.attr("width");
+                                    fieldRectHeight = fieldRect.attr("height");
+                                    fieldRect.attr({"x": nodeRef.rectTopMiddleX - fieldRectWidth / 2, "y": nodeRef.rectTopMiddleY + 45 - fieldRectHeight / 2});
+                                    nodeRef.menuSet[i + 1].attr({"x": nodeRef.rectTopMiddleX, "y": nodeRef.rectTopMiddleY + 45});
+                                    if (nodeRef.nodeEndpointsResetOnChangeON) nodeRef.menuSet[i + 1].attr({text: nodeRef.menuFieldEpResetOFF});
+                                    else nodeRef.menuSet[i + 1].attr({text: nodeRef.menuFieldEpResetON});
                                     i++;
                                 } else {
                                     fieldRect = nodeRef.menuSet[i];
@@ -590,34 +605,34 @@ define(
                         //helper_.debug("12 I'm lost !");
                     }
 
-
-
                     //helper_.debug("["+i+"|"+nodeRef.name+"]"+epX+","+epY+","+avgTeta);
                     nodeRef.nodeEpAvgLinksT[i].setPoz(epX,epY);
                 }
             };
 
             this.redefineLinksAndEPsPoz = function() {
-                var i, ii, nodeEp;
-                var nodeToUp = [], epToUp = [], linkToUp = [];
-                for (i = 0, ii = nodeRef.nodeEndpoints.length-1; i <= ii; ii--) {
-                    nodeEp = this.nodeEndpoints[ii];
-                    resetLinksAndEPs(nodeEp, nodeToUp, epToUp, linkToUp);
+                if (this.nodeEndpointsResetOnChangeON) {
+                    var i, ii, nodeEp;
+                    var nodeToUp = [], epToUp = [], linkToUp = [];
+                    for (i = 0, ii = nodeRef.nodeEndpoints.length - 1; i <= ii; ii--) {
+                        nodeEp = this.nodeEndpoints[ii];
+                        resetLinksAndEPs(nodeEp, nodeToUp, epToUp, linkToUp);
+                    }
+                    for (i = 0, ii = nodeToUp.length; i < ii; i++)
+                        nodeToUp[i].defineEndpointsAvgPoz();
+                    for (i = 0, ii = epToUp.length; i < ii; i++) {
+                        epToUp[i].clear();
+                        epToUp[i].print(this.r);
+                    }
+                    for (i = 0, ii = linkToUp.length; i < ii; i++) {
+                        linkToUp[i].clear();
+                        linkToUp[i].print(this.r);
+                    }
+                    for (i = 0, ii = nodeToUp.length; i < ii; i++)
+                        nodeToUp[i].toFront()
+                    for (i = 0, ii = epToUp.length; i < ii; i++)
+                        epToUp[i].toFront()
                 }
-                for (i = 0, ii=nodeToUp.length; i<ii; i++)
-                    nodeToUp[i].defineEndpointsAvgPoz();
-                for (i = 0, ii=epToUp.length; i<ii; i++) {
-                    epToUp[i].clear();
-                    epToUp[i].print(this.r);
-                }
-                for (i = 0, ii=linkToUp.length; i<ii; i++) {
-                    linkToUp[i].clear();
-                    linkToUp[i].print(this.r);
-                }
-                for (i = 0, ii=nodeToUp.length; i<ii; i++)
-                    nodeToUp[i].toFront()
-                for (i = 0, ii=epToUp.length; i<ii; i++)
-                    epToUp[i].toFront()
             };
 
             this.getRectMiddlePoint = function() {
@@ -943,6 +958,16 @@ define(
                 this.menuEditionMode.mouseout(menuFieldOut);
                 this.menuEditionMode.mousedown(this.menuFieldEditClick);
 
+                this.nodeMenuEpResetOnChangeRect = this.r.rect(0, 10, this.menuFieldEpResetON.width(this.nodeFieldTXT), this.menuFieldEpResetON.height(this.nodeFieldTXT));
+                this.nodeMenuEpResetOnChangeRect.attr({fill: this.color, stroke: this.color, "fill-opacity": 0, "stroke-width": 0});
+                this.nodeMenuEpResetOnChangeRect.mouseover(menuFieldOver);
+                this.nodeMenuEpResetOnChangeRect.mouseout(menuFieldOut);
+                this.nodeMenuEpResetOnChangeRect.mousedown(this.menuFieldEpResetClick);
+                this.nodeMenuEpResetOnChange = this.r.text(0, 10, this.menuFieldEpResetON).attr(this.nodeFieldTXT);
+                this.nodeMenuEpResetOnChange.mouseover(menuFieldOver);
+                this.nodeMenuEpResetOnChange.mouseout(menuFieldOut);
+                this.nodeMenuEpResetOnChange.mousedown(this.menuFieldEpResetClick);
+
                 if (this.properties != null) {
                     var fieldTitle = "Display all properties";
                     this.nodeMenuPropertiesRect = this.r.rect(0, 10, fieldTitle.width(this.nodeFieldTXT), fieldTitle.height(this.nodeFieldTXT));
@@ -960,6 +985,8 @@ define(
                 this.nodeMenuSet.push(this.nodeMenuTitle);
                 this.nodeMenuSet.push(this.menuEditionModeRect);
                 this.nodeMenuSet.push(this.menuEditionMode);
+                this.nodeMenuSet.push(this.nodeMenuEpResetOnChangeRect);
+                this.nodeMenuSet.push(this.nodeMenuEpResetOnChange);
                 if (this.properties != null) {
                     this.nodeMenuSet.push(this.nodeMenuPropertiesRect);
                     this.nodeMenuSet.push(this.nodeMenuProperties);
@@ -1077,6 +1104,16 @@ define(
                     nodeRef.r.scaleDone(nodeRef);
                     nodeRef.isEditing = false;
                 }
+            };
+
+            this.menuFieldEpResetClick = function() {
+                if (nodeRef.nodeEndpointsResetOnChangeON) nodeRef.nodeEndpointsResetOnChangeON = false;
+                else nodeRef.nodeEndpointsResetOnChangeON = true;
+                nodeRef.menu.toBack();
+                nodeRef.menuSet.toBack();
+                nodeRef.menu.hide();
+                nodeRef.menuSet.hide();
+                nodeRef.menuHided=true;
             };
 
             this.getBBox = function() {

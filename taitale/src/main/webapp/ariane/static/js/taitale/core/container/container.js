@@ -229,6 +229,12 @@ define(
             this.menuFieldStartEditTitle  = "Edition mode ON";
             this.menuFieldStopEditTitle   = "Edition mode OFF";
 
+            this.endpointsResetOnChangeON = false;
+            this.menuEpResetOnChange = null;
+            this.menuEpResetOnChangeRect = null;
+            this.menuFieldEpResetON  = "Endpoints reset ON";
+            this.menuFieldEpResetOFF = "Endpoints reset OFF";
+
             var containerRef = this;
 
             var minMaxLinkedTreedObjectsComparator = function(linkedObject1, linkedObject2) {
@@ -295,10 +301,19 @@ define(
                                     fieldRect = containerRef.menuSet[i];
                                     fieldRectWidth = fieldRect.attr("width");
                                     fieldRectHeight = fieldRect.attr("height");
-                                    fieldRect.attr({"x": containerRef.rectTopMiddleX - fieldRectWidth/2, "y": containerRef.rectTopMiddleY+30 - fieldRectHeight/2});
-                                    containerRef.menuSet[i+1].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY+30});
-                                    if (containerRef.isEditing) containerRef.menuSet[i+1].attr({text: containerRef.menuFieldStopEditTitle});
-                                    else containerRef.menuSet[i+1].attr({text: containerRef.menuFieldStartEditTitle});
+                                    fieldRect.attr({"x": containerRef.rectTopMiddleX - fieldRectWidth / 2, "y": containerRef.rectTopMiddleY + 30 - fieldRectHeight / 2});
+                                    containerRef.menuSet[i + 1].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY + 30});
+                                    if (containerRef.isEditing) containerRef.menuSet[i + 1].attr({text: containerRef.menuFieldStopEditTitle});
+                                    else containerRef.menuSet[i + 1].attr({text: containerRef.menuFieldStartEditTitle});
+                                    i++;
+                                } else if (i==3) {
+                                    fieldRect = containerRef.menuSet[i];
+                                    fieldRectWidth = fieldRect.attr("width");
+                                    fieldRectHeight = fieldRect.attr("height");
+                                    fieldRect.attr({"x": containerRef.rectTopMiddleX - fieldRectWidth / 2, "y": containerRef.rectTopMiddleY + 45 - fieldRectHeight / 2});
+                                    containerRef.menuSet[i + 1].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY + 45});
+                                    if (containerRef.endpointsResetOnChangeON) containerRef.menuSet[i + 1].attr({text: containerRef.menuFieldEpResetOFF});
+                                    else containerRef.menuSet[i + 1].attr({text: containerRef.menuFieldEpResetON});
                                     i++;
                                 } else {
                                     fieldRect = containerRef.menuSet[i];
@@ -711,6 +726,16 @@ define(
                 this.menuEditionMode.mouseout(menuFieldOut);
                 this.menuEditionMode.mousedown(this.menuFieldEditClick);
 
+                this.menuEpResetOnChangeRect = this.r.rect(0, 10, this.menuFieldEpResetON.width(this.menuFieldTXT), this.menuFieldEpResetON.height(this.menuFieldTXT));
+                this.menuEpResetOnChangeRect.attr({fill: this.color, stroke: this.color, "fill-opacity": 0, "stroke-width": 0});
+                this.menuEpResetOnChangeRect.mouseover(menuFieldOver);
+                this.menuEpResetOnChangeRect.mouseout(menuFieldOut);
+                this.menuEpResetOnChangeRect.mousedown(this.menuFieldEpResetClick);
+                this.menuEpResetOnChange = this.r.text(0, 10, this.menuFieldEpResetON).attr(this.menuFieldTXT);
+                this.menuEpResetOnChange.mouseover(menuFieldOver);
+                this.menuEpResetOnChange.mouseout(menuFieldOut);
+                this.menuEpResetOnChange.mousedown(this.menuFieldEpResetClick);
+
                 if (this.properties != null) {
                     var fieldTitle = "Display all properties";
                     this.menuPropertiesRect = this.r.rect(0, 10, fieldTitle.width(this.menuFieldTXT), fieldTitle.height(this.menuFieldTXT));
@@ -728,6 +753,8 @@ define(
                 this.menuSet.push(this.menuTitle);
                 this.menuSet.push(this.menuEditionModeRect);
                 this.menuSet.push(this.menuEditionMode);
+                this.menuSet.push(this.menuEpResetOnChangeRect);
+                this.menuSet.push(this.menuEpResetOnChange);
                 if (this.properties != null) {
                     this.menuSet.push(this.menuPropertiesRect);
                     this.menuSet.push(this.menuProperties);
@@ -849,6 +876,27 @@ define(
                     containerRef.r.scaleDone(containerRef);
                     containerRef.isEditing = false;
                 }
+            };
+
+            this.menuFieldEpResetClick = function() {
+                var i, ii, j, jj;
+                var mtxX        = containerRef.containerNodes.getMtxSize().x,
+                    mtxY        = containerRef.containerNodes.getMtxSize().y;
+
+                if (containerRef.endpointsResetOnChangeON) containerRef.endpointsResetOnChangeON = false;
+                else containerRef.endpointsResetOnChangeON = true;
+
+                for (i = 0, ii = mtxX; i < ii; i++)
+                    for (j = 0, jj = mtxY; j < jj; j++)
+                        if (containerRef.containerNodes.getObjectFromMtx(i, j)!=null)
+                            containerRef.containerNodes.getObjectFromMtx(i, j).nodeEndpointsResetOnChangeON = containerRef.endpointsResetOnChangeON;
+
+                containerRef.menu.toBack();
+                containerRef.menuSet.toBack();
+                containerRef.menu.hide();
+                containerRef.menuSet.hide();
+                containerRef.menuHided=true;
+
             };
 
             this.getBBox = function() {
