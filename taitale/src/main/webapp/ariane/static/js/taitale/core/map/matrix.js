@@ -132,23 +132,27 @@ define(
             };
 
             this.defineMapContentSize = function() {
-                var i, ii, topLeftX, topLeftY;
-                for (i = 0, ii = nbLines; i < ii; i++) {
-                    if (rows[i].length != 0 && rows[i][0] != null) {
-                        topLeftX = rows[i][0].topLeftX;
-                        topLeftY = rows[i][0].topLeftY;
-                        break;
+                var i, ii, j, jj;
+                contentWidth = 0;
+                contentHeight = 0;
+                for (i = 0, ii = nbColumns; i < ii ; i++) {
+                    var tmpHeight = 0;
+                    for (j = 0, jj = nbLines; j < jj; j++)
+                        if (rows[j].length != 0 && rows[j][i] != null)
+                            tmpHeight = tmpHeight + rows[j][i].getZoneSize().height;
+                    if (tmpHeight > contentHeight)
+                        contentHeight=tmpHeight;
+                }
+                for (i = 0, ii = nbLines; i < ii ; i++) {
+                    if (rows[i].length != 0) {
+                        var tmpWidth = 0;
+                        for (j = 0, jj = nbColumns; j < jj; j++)
+                            if (rows[i][j] != null)
+                                tmpWidth = tmpWidth + rows[i][j].getZoneSize().width;
+                        if (tmpWidth > contentWidth)
+                            contentWidth = tmpWidth;
                     }
                 }
-
-                var last_column;
-                for (i = nbColumns-1, ii = 0; i >= ii; i--)
-                    if (rows[nbLines-1][i] != null)
-                        last_column = i;
-                bottomRightX = rows[nbLines-1][last_column].topLeftX + rows[nbLines-1][last_column].getZoneSize().width;
-                bottomRightY = rows[nbLines-1][last_column].topLeftY + rows[nbLines-1][last_column].getZoneSize().height;
-                contentWidth = bottomRightX - topLeftX;
-                contentHeight = bottomRightY - topLeftY;
             };
 
             this.getMapContentSize = function() {
