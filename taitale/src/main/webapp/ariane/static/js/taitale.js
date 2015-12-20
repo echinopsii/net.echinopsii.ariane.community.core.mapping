@@ -158,7 +158,7 @@ requirejs (
                             {
                                 severity: 'error',
                                 summary: 'Failed to load map',
-                                detail: 'Layout: '+options.getLayout() +"<br>Mode: "+options.getMode(),
+                                detail: 'Layout: '+options.getLayout(),
                                 sticky: true
                             }
                         );
@@ -167,8 +167,7 @@ requirejs (
                             '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
                             '<p>2) complete the ticket : <ul>' +
                             '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
-                            '<li>specify the layout (' + options.getLayout() +')</li>' +
-                            '<li>specify the mode ('+options.getMode()+')</li></ul></p>' +
+                            '<li>specify the layout (' + options.getLayout() +')</li></ul></p>' +
                             "<p>3) wait the ticket to be resolved ... </p>";
                         helper_.showErrorBox(msg);
                     }
@@ -202,7 +201,7 @@ requirejs (
                                     {
                                         severity: 'error',
                                         summary: 'Failed to load map',
-                                        detail: 'Layout: '+options.getLayout() + "<br>Mode: "+options.getMode(),
+                                        detail: 'Layout: '+options.getLayout(),
                                         sticky: true
                                     }
                                 );
@@ -211,8 +210,7 @@ requirejs (
                                     '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
                                     '<p>2) complete the ticket : <ul>' +
                                     '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
-                                    '<li>specify the layout (' + options.getLayout() +')</li>' +
-                                    '<li>specify the mode ('+options.getMode()+')</li></ul></p>' +
+                                    '<li>specify the layout (' + options.getLayout() +')</li></ul></p>' +
                                     "<p>3) wait the ticket to be resolved ... </p>";
                                 helper_.showErrorBox(msg);
                             }
@@ -225,7 +223,7 @@ requirejs (
                     for (i = 0, ii = modeSelector.inputs.length; i < ii; i++) {
                         input = modeSelector.inputs[i];
                         if (input.checked) {
-                            options.setMode(input.value);
+                            options.edition = (input.value === dic.mapMode.EDITION);
                             try {
                                 //loader_.refreshMap(options);
                                 loader_.editionMode(options);
@@ -243,7 +241,7 @@ requirejs (
                                     {
                                         severity: 'error',
                                         summary: 'Failed to refresh map',
-                                        detail: 'Layout: '+options.getLayout()+"<br>Mode: "+options.getMode(),
+                                        detail: 'Layout: '+options.getLayout(),
                                         sticky: true
                                     });
                                 console.log(e.stack);
@@ -251,8 +249,7 @@ requirejs (
                                     '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
                                     '<p>2) complete the ticket : <ul>' +
                                     '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
-                                    '<li>specify the layout (' + options.getLayout() +')</li>' +
-                                    '<li>specify the mode ('+options.getMode()+')</li></ul></p>' +
+                                    '<li>specify the layout (' + options.getLayout() +')</li></ul></p>' +
                                     "<p>3) wait the ticket to be resolved ... </p>";
                                 helper_.showErrorBox(msg);
                             }
@@ -311,8 +308,7 @@ requirejs (
                                     '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
                                     '<p>2) complete the ticket : <ul>' +
                                     '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
-                                    '<li>specify the layout (' + options.getLayout() +')</li>' +
-                                    '<li>specify the mode ('+options.getMode()+')</li></ul></p>' +
+                                    '<li>specify the layout (' + options.getLayout() +')</li></ul></p>' +
                                     "<p>3) wait the ticket to be resolved ... </p>";
                                 helper_.showErrorBox(msg);
                             }
@@ -334,7 +330,7 @@ requirejs (
                                     {
                                         severity: 'info',
                                         summary: 'Map successfully refreshed ',
-                                        detail: 'Name: '+$('#test').val()+'<br>Layout: '+options.getLayout() +"<br>Mode: "+options.getMode()
+                                        detail: 'Name: '+$('#test').val()+'<br>Layout: '+options.getLayout()
                                     }
                                 );
                             } catch (e) {
@@ -352,8 +348,7 @@ requirejs (
                                     '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
                                     '<p>2) complete the ticket : <ul>' +
                                     '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
-                                    '<li>specify the layout (' + options.getLayout() +')</li>' +
-                                    '<li>specify the mode ('+options.getMode()+')</li></ul></p>' +
+                                    '<li>specify the layout (' + options.getLayout() +')</li></ul></p>' +
                                     "<p>3) wait the ticket to be resolved ... </p>";
                                 helper_.showErrorBox(msg);
                             }
@@ -462,9 +457,8 @@ requirejs (
 
         for (i = 0, ii = modeSelector.inputs.length; i < ii; i++) {
             input = modeSelector.inputs[i];
-            if (input.checked) {
-                options.setMode(input.value);
-            }
+            if (input.checked)
+                options.edition = (input.value === dic.mapMode.EDITION);
         }
 
         if (options.getLayout()===dic.mapLayout.MDW) {

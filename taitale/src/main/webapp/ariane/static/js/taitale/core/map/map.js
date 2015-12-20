@@ -490,7 +490,7 @@ define(
             };
 
             this.isEditionMode = function() {
-                return (options.getMode()==dic.mapMode.EDITION)
+                return options.edition
             };
 
             this.print = function (r) {
@@ -538,7 +538,7 @@ define(
 
             this.editionMode = function(options_) {
                 var i, ii;
-                var editionMode = (options_.getMode()==dic.mapMode.EDITION);
+                var editionMode = options_.edition;
                 for (i = 0, ii = containerRegistry.length; i < ii; i++) {
                     containerRegistry[i].propagateEditionMode(editionMode);
                     var linkedBus = containerRegistry[i].getLinkedBus();

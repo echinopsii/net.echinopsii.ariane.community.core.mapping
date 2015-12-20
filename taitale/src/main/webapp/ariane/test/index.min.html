@@ -31,7 +31,10 @@
                         <td>
                             <strong>MAP SAMPLE :</strong><br/>
                             <select name="test" id="test">
-                                <option value="dekatonmac">dekatonmac</option>
+                                <option value="altan">altan</option>
+                                <option value="dekatonmac_linux">Dekatonmac on linux</option>
+                                <option value="dekatonmac_osx">Dekatonmac on osx</option>
+                                <option value="dekatonmac_osx_2">Dekatonmac on osx 2</option>
                                 <option value="rabbitmq-fdfo">RabbitMQ Feeder To Front</option>
                                 <option value="rabbitmq-moriskbo">RabbitMQ Middle / Risk / Back</option>
                                 <option value="rabbitmq-simplereqrep">RabbitMQ req/rep</option>
@@ -58,9 +61,8 @@
                         <td>
                             <strong>LAYOUT :</strong><br/>
                             <select name="layout" id="layout">
-                                <option value="Network">Network</option>
-                                <option value="Tree">Tree</option>
-                                <option value="BBTree">BBTree</option>
+                                <option value="Middleware">Middleware</option>
+                                <option value="BBTree">Tree</option>
                             </select>
                         </td>
                         <!--
@@ -74,20 +76,18 @@
                         </td>
                         -->
                         <td>
-                            <strong>MODE :</strong><br/>
-                            <select name="mode" id="mode">
-                                <option value="Navigation">Navigation</option>
-                                <option value="Edition">Edition</option>
-                            </select>
+                            <strong>TOOLS :</strong><br/>
+                            <input type="checkbox" name="edition" id="edition" value="edition"/>Edit
+                            <input type="checkbox" name="epreset" id="epreset" value="epreset"/>EP auto reset
                         </td>
                         <td>
-                            <strong>MAP ACTIONS :</strong><br/>
+                            <strong>ACTIONS :</strong><br/>
                             <button type="button" name="reload" id="reload" style="font-weight: bold">RELOAD</button>
                             <button type="button" name="nsize"  id="nsize" style="font-weight: bold">[1:1]</button>
                             <button type="button" name="center" id="center" style="font-weight: bold">CENTER</button>
                         </td>
                         <td>
-                            <strong>MAP EXPORT :</strong><br/>
+                            <strong>EXPORT :</strong><br/>
                             <button type="button" name="JPG" id="JPG" style="font-weight: bold">JPG</button>
                             <button type="button" name="PNG" id="PNG" style="font-weight: bold">PNG</button>
                             <button type="button" name="SVG" id="SVG" style="font-weight: bold">SVG</button>
@@ -100,8 +100,8 @@
                         </td>
                     </tr>
                 </table><br/>
-                <div id="networkOptions">
-                    <strong>NETWORK LAYOUT OPTIONS :</strong><br/>
+                <div id="middlewareOptions">
+                    <strong>MIDDLEWARE LAYOUT OPTIONS :</strong><br/>
                     <input type="checkbox" name="displayDC"   value="displayDC"   id="displayDC"/>Display Datacenters
                     <input type="checkbox" name="displayArea" value="displayArea" id="displayArea"/>Display Areas
                     <input type="checkbox" name="displayLan"  value="displayLan"  id="displayLan"/>Display Lans

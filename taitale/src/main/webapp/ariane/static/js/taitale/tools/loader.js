@@ -201,7 +201,7 @@ define(
                     {
                         severity: 'info',
                         summary: 'Map successfully loaded ',
-                        detail: 'Layout: '+options.getLayout() +"<br>Mode: "+options.getMode()
+                        detail: 'Layout: '+options.getLayout()
                     }
                 );
             };
@@ -232,16 +232,14 @@ define(
                                             severity: 'error',
                                             summary: 'JSON parse error',
                                             detail: 'Unable to parse JSON from <a href=" '+ options.getURI() +'" target="_blank">here</a>' +
-                                            '<br/>Layout: ' + options.getLayout() +
-                                            '<br/>Mode: ' + options.getMode(),
+                                            '<br/>Layout: ' + options.getLayout()
                                         });
                                     console.log(e.stack);
                                     var msg = "<h3>oO ! We have some problem here ! <br/> Let's find a way to correct it ... </h3>" +
                                         '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
                                         '<p>2) complete the ticket : <ul>' +
                                         '<li>attach <a href="' + options.getURI() + '" target="_blank">the source of the problem</a></li>'+
-                                        '<li>specify the layout (' + options.getLayout() + ')</li>' +
-                                        '<li>specify the mode (' + options.getMode() + ')</li></ul></p>' +
+                                        '<li>specify the layout (' + options.getLayout() + ')</ul></p>' +
                                         "<p>3) wait the ticket to be resolved ... </p>";
                                     helper_.showErrorBox(msg);
                                     return;
@@ -257,16 +255,14 @@ define(
                                             severity: 'error',
                                             summary: 'Map build error',
                                             detail: 'Unable to build map from <a href=" '+ options.getURI() +'" target="_blank">here</a>' +
-                                                    '<br/>Layout: ' + options.getLayout() +
-                                                    '<br/>Mode: ' + options.getMode(),
+                                                    '<br/>Layout: ' + options.getLayout()
                                         });
                                     console.log(e.stack);
                                     var msg = "<h2>oO ! We have some problem here ! <br/> Let's find a way to correct it ... </h2>" +
                                         '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
                                         '<p>2) complete the ticket : <ul>' +
                                         '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
-                                        '<li>specify the layout (' + options.getLayout() +')</li>' +
-                                        '<li>specify the mode ('+options.getMode()+')</li></ul></p>' +
+                                        '<li>specify the layout (' + options.getLayout() +')</li></ul></p>' +
                                         "<p>3) wait the ticket to be resolved ... </p>";
                                     helper_.showErrorBox(msg);
                                     return;
@@ -282,7 +278,7 @@ define(
                                     stack: new Error("Request failed !").stack,
                                     severity: 'error',
                                     summary: 'Map loading error',
-                                    detail: '<a href=" '+ options.getURI() +'" target="_blank">Error</a> raised while processing the request',
+                                    detail: '<a href=" '+ options.getURI() +'" target="_blank">Error</a> raised while processing the request'
                                 });
                                 var msg = "<h2>oO ! We have some problem here ! <br/> Let's find a way to correct it ... </h2>" +
                                     '<p><b>Status : </b>' + textStatus + '</p>' +
@@ -332,7 +328,7 @@ define(
                     {
                         severity: 'info',
                         summary: 'Map successfully refreshed ',
-                        detail: '<br>Layout: '+options.getLayout()+"<br>Mode: "+options.getMode()
+                        detail: '<br>Layout: '+options.getLayout()
                     }
                 );
             };

@@ -23,7 +23,6 @@ define(
     function () {
         function mapOptions() {
             var layout,
-                mode,
                 uri,
                 view;
 
@@ -34,17 +33,14 @@ define(
             this.displayAREA = false;
             this.displayLAN  = false;
 
+            this.edition = false;
+            this.epreset = false;
+
             this.getLayout = function() {
                 return layout;
             };
             this.setLayout = function(layout_) {
                 layout = layout_;
-            };
-            this.getMode = function () {
-                return mode;
-            };
-            this.setMode = function(mode_) {
-                mode = mode_;
             };
             this.getURI = function () {
                 return uri;

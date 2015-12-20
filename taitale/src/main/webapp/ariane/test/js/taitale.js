@@ -113,7 +113,8 @@ requirejs (
 
         var test = $('#test'),
             layout = $('#layout'),
-            mode = $('#mode'),
+            edition = $('#edition'),
+            epreset = $('#epreset'),
             notifyI = $('#notifyInfo'),
             notifyW = $('#notifyWarn'),
             notifyE = $('#notifyErrs'),
@@ -145,7 +146,7 @@ requirejs (
                         {
                             severity: 'error',
                             summary: 'Failed to load map',
-                            detail: 'Name: '+test.val()+'<br>Layout: '+options.getLayout()+"<br>Mode: "+options.getMode(),
+                            detail: 'Name: '+test.val()+'<br>Layout: '+options.getLayout(),
                             sticky: true
                         }
                     );
@@ -154,8 +155,7 @@ requirejs (
                         '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
                         '<p>2) complete the ticket : <ul>' +
                         '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
-                        '<li>specify the layout (' + options.getLayout() +')</li>' +
-                        '<li>specify the mode ('+options.getMode()+')</li></ul></p>' +
+                        '<li>specify the layout (' + options.getLayout() +')</li></ul></p>' +
                         "<p>3) wait the ticket to be resolved ... </p>";
                     helper_.showErrorBox(msg);
                 }
@@ -187,7 +187,7 @@ requirejs (
                         {
                             severity: 'error',
                             summary: 'Failed to load map',
-                            detail: 'Name: '+test.val()+'<br>Layout: '+options.getLayout()+"<br>Mode: "+options.getMode(),
+                            detail: 'Name: '+test.val()+'<br>Layout: '+options.getLayout(),
                             sticky: true
                         }
                     );
@@ -196,17 +196,15 @@ requirejs (
                         '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
                         '<p>2) complete the ticket : <ul>' +
                         '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
-                        '<li>specify the layout (' + options.getLayout() +')</li>' +
-                        '<li>specify the mode ('+options.getMode()+')</li></ul></p>' +
+                        '<li>specify the layout (' + options.getLayout() +')</li></ul></p>' +
                         "<p>3) wait the ticket to be resolved ... </p>";
                     helper_.showErrorBox(msg);
                 }
             }
         });
-        mode.puidropdown({
-            change: function () {
-                helper_.hideErrorBox();
-                options.setMode(mode.val());
+        edition.puicheckbox({
+            change: function() {
+                options.edition = edition[0].checked;
                 try {
                     loader_.editionMode(options);
                 } catch (e) {
@@ -215,7 +213,7 @@ requirejs (
                         {
                             severity: 'error',
                             summary: 'Failed to refresh map',
-                            detail: 'Name: ' + test.val() + '<br>Layout: ' + options.getLayout() + "<br>Mode: " + options.getMode(),
+                            detail: 'Name: ' + test.val() + '<br>Layout: ' + options.getLayout(),
                             sticky: true
                         }
                     );
@@ -224,8 +222,7 @@ requirejs (
                         '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
                         '<p>2) complete the ticket : <ul>' +
                         '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
-                        '<li>specify the layout (' + options.getLayout() +')</li>' +
-                        '<li>specify the mode ('+options.getMode()+')</li></ul></p>' +
+                        '<li>specify the layout (' + options.getLayout() +')</li></ul></p>' +
                         "<p>3) wait the ticket to be resolved ... </p>";
                     helper_.showErrorBox(msg);
                 }
@@ -236,7 +233,6 @@ requirejs (
                 helper_.setNotifyInfo(notifyI.puicheckbox('isChecked'));
             }
         });
-
         notifyW.puicheckbox({
             change: function() {
                 helper_.setNotifyWarn(notifyW.puicheckbox('isChecked'));
@@ -515,16 +511,16 @@ requirejs (
                 notifyE.puicheckbox('check');
 
             options.setLayout(layout.val());
-            options.setMode(mode.val());
+            options.edition = edition[0].checked;
             options.setURI(homeURI + "/js/taitale.samples/json/sample.taitale.input."+test.val()+".json");
             if (options.getLayout()===dic.mapLayout.MDW) {
-                document.getElementById('networkOptions').style.display = "";
+                document.getElementById('middlewareOptions').style.display = "";
                 document.getElementById('treeOptions').style.display    = "none";
             } else if (options.getLayout()===dic.mapLayout.BBTREE) {
-                document.getElementById('networkOptions').style.display = "none";
+                document.getElementById('middlewareOptions').style.display = "none";
                 document.getElementById('treeOptions').style.display    = "";
             } else {
-                document.getElementById('networkOptions').style.display = "none";
+                document.getElementById('middlewareOptions').style.display = "none";
                 document.getElementById('treeOptions').style.display    = "none";
             }
             loader_.loadMap(options);
@@ -535,7 +531,7 @@ requirejs (
                 {
                     severity: 'error',
                     summary: 'Failed to load map',
-                    detail: 'Name: '+test.val()+'<br>Layout: '+options.getLayout()+"<br>Mode: "+options.getMode(),
+                    detail: 'Name: '+test.val()+'<br>Layout: '+options.getLayout(),
                     sticky: true
                 });
             console.log(e.stack);
