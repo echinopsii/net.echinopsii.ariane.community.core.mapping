@@ -540,7 +540,7 @@ define(
                 var i, ii;
                 var editionMode = (options_.getMode()==dic.mapMode.EDITION);
                 for (i = 0, ii = containerRegistry.length; i < ii; i++) {
-                    containerRegistry[i].setEditionMode(editionMode);
+                    containerRegistry[i].propagateEditionMode(editionMode);
                     var linkedBus = containerRegistry[i].getLinkedBus();
                     for (var j = 0, jj = linkedBus.length; j<jj; j++)
                         linkedBus[j].mbus.setEditionMode(editionMode);

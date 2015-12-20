@@ -1090,6 +1090,19 @@ define(
                 }
             };
 
+            this.propagateEditionMode = function(editionMode) {
+                var i, ii, j, jj;
+                var mtxX        = this.nodeChildNodes.getMtxSize().x,
+                    mtxY        = this.nodeChildNodes.getMtxSize().y;
+
+                this.setEditionMode(editionMode);
+
+                for (i = 0, ii = mtxX; i < ii; i++)
+                    for (j = 0, jj = mtxY; j < jj; j++)
+                        if (this.nodeChildNodes.getObjectFromMtx(i, j)!=null)
+                            this.nodeChildNodes.getObjectFromMtx(i, j).propagateEditionMode(editionMode);
+            };
+
             this.menuFieldEditClick = function() {
                 nodeRef.menu.toBack();
                 nodeRef.menuSet.toBack();

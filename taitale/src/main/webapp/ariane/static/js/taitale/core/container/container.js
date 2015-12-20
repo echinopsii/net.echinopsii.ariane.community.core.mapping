@@ -862,6 +862,19 @@ define(
                 }
             };
 
+            this.propagateEditionMode = function(editionMode) {
+                var i, ii, j, jj;
+                var mtxX        = this.containerNodes.getMtxSize().x,
+                    mtxY        = this.containerNodes.getMtxSize().y;
+
+                this.setEditionMode(editionMode);
+
+                for (i = 0, ii = mtxX; i < ii; i++)
+                    for (j = 0, jj = mtxY; j < jj; j++)
+                        if (this.containerNodes.getObjectFromMtx(i, j)!=null)
+                            this.containerNodes.getObjectFromMtx(i, j).propagateEditionMode(editionMode);
+            };
+
             this.menuFieldEditClick = function() {
                 containerRef.menu.toBack();
                 containerRef.menuSet.toBack();
