@@ -2,14 +2,24 @@
 /* Controllers */
 
 
-var app = angular.module('application');
+var app = angular.module('application', ['ngDialog']);
 
-app.controller('MyCtrl1', ['$scope', 'apiMethods', function ($scope, apiMethods) {
+app.controller('MyCtrl1', ['$scope', 'apiMethods', 'ngDialog', function ($scope, apiMethods, ngDialog) {
     $scope.treeData = [];
     $scope.subDirID = null;
     $scope.subDirName = null;
     $scope.lookupObj = {};
     $scope.lookupFileObj = {};
+
+    $scope.firstName = "Sagar";
+
+    $scope.ShowNgDialog = function () {
+        ngDialog.open({
+            template: '<div><ul><li>Root node 1<ul><li>{{firstName}}</li><li>Child node 2</li></ul></li><li>Root node 2</li></ul> </div>',
+            plain: true,
+            scope:$scope
+        });
+    }
 
     apiMethods.apiGETReq('/ariane/rest/mapping/registryDirectory/getRoot').then(function (dataObj) {
         var parentNode = {
