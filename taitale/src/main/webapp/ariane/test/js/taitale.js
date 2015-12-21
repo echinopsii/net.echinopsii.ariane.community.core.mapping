@@ -167,13 +167,13 @@ requirejs (
                 options.setLayout(layout.val());
                 try {
                     if (options.getLayout()===dic.mapLayout.MDW) {
-                        document.getElementById('networkOptions').style.display = "";
+                        document.getElementById('middlewareOptions').style.display = "";
                         document.getElementById('treeOptions').style.display    = "none";
                     } else if (options.getLayout()===dic.mapLayout.BBTREE) {
-                        document.getElementById('networkOptions').style.display = "none";
+                        document.getElementById('middlewareOptions').style.display = "none";
                         document.getElementById('treeOptions').style.display    = "";
                     } else {
-                        document.getElementById('networkOptions').style.display = "none";
+                        document.getElementById('middlewareOptions').style.display = "none";
                         document.getElementById('treeOptions').style.display    = "none";
                     }
                     loader_.rebuildMap(options);
