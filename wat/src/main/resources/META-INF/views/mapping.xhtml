@@ -33,7 +33,7 @@
                             </p:tab>
 
                                 <p:tab id="mapToolsDisplayTab" title="Options">
-                                    <h:panelGrid columns="4" cellpadding="5">
+                                    <h:panelGrid columns="5" cellpadding="5">
                                         <!--
                                         <h:panelGroup>
                                             <span class="inputTitle">View</span><br/>
@@ -52,10 +52,17 @@
                                             </p:selectOneButton>
                                         </h:panelGroup>
                                         <h:panelGroup>
-                                            <span class="inputTitle">Edition</span>
+                                            <span class="inputTitle">Edition helper</span>
                                             <p:selectOneButton id="modeSelector" widgetVar="modeSelector" value="#{mappingToolsDisplayController.mappingMode}">
                                                 <f:selectItem itemLabel="OFF" itemValue="Navigation"/>
                                                 <f:selectItem itemLabel="ON" itemValue="Edition" />
+                                            </p:selectOneButton>
+                                        </h:panelGroup>
+                                        <h:panelGroup>
+                                            <span class="inputTitle">Endpoint helper</span>
+                                            <p:selectOneButton id="endpointHelper" widgetVar="endpointHelper" value="#{mappingToolsDisplayController.mappingEPH}">
+                                                <f:selectItem itemLabel="OFF" itemValue="OFF"/>
+                                                <f:selectItem itemLabel="ON" itemValue="ON" />
                                             </p:selectOneButton>
                                         </h:panelGroup>
                                         <h:panelGroup>
@@ -67,11 +74,11 @@
                                             </p:selectManyButton>
                                         </h:panelGroup>
                                     </h:panelGrid>
-                                    <div id="networkOptions">
+                                    <div id="middlewareOptions">
                                         <h:panelGrid columns="2" cellpadding="5">
                                             <h:panelGroup>
                                                 <span class="inputTitle">Display options</span>
-                                                <p:selectManyButton id="networkLayoutDisplayOptions" widgetVar="networkLayoutDisplayOptions">
+                                                <p:selectManyButton id="middlewareLayoutDisplayOptions" widgetVar="middlewareLayoutDisplayOptions">
                                                     <f:selectItem itemLabel="Display datacenters" itemValue="displayDC" />
                                                     <f:selectItem itemLabel="Display areas" itemValue="displayArea" />
                                                     <f:selectItem itemLabel="Display subnets" itemValue="displayLan" />

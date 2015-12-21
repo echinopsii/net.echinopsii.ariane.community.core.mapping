@@ -21,6 +21,10 @@
 define(
     function () {
         function dictionaries() {
+            this.mapToolActivation = {
+                ON: "ON",
+                OFF: "OFF"
+            };
             this.mapLayout = {
                 MANUAL: "Random",
                 BBTREE: "BBTree",
