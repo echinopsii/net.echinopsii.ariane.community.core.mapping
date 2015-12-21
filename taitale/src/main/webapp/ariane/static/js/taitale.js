@@ -163,9 +163,10 @@ requirejs (
                             }
                         );
                         console.log(e.stack);
-                        var msg = "<h3>oO ! We have some problem here ! <br/> Let's find a way to correct it ... </h3>" +
+                        var msg = "<h3>oO ! We have some problem to load the map here ! <br/> Let's find a way to correct it ... </h3>" +
                             '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
                             '<p>2) complete the ticket : <ul>' +
+                            '<li>setup ticket title as "map loading error"</li>' +
                             '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
                             '<li>specify the layout (' + options.getLayout() +')</li></ul></p>' +
                             "<p>3) wait the ticket to be resolved ... </p>";
@@ -206,9 +207,10 @@ requirejs (
                                     }
                                 );
                                 console.log(e.stack);
-                                var msg = "<h3>oO ! We have some problem here ! <br/> Let's find a way to correct it ... </h3>" +
+                                var msg = "<h3>oO ! We have some problem to load the map here ! <br/> Let's find a way to correct it ... </h3>" +
                                     '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
                                     '<p>2) complete the ticket : <ul>' +
+                                    '<li>setup ticket title as "map loading error"</li>' +
                                     '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
                                     '<li>specify the layout (' + options.getLayout() +')</li></ul></p>' +
                                     "<p>3) wait the ticket to be resolved ... </p>";
@@ -232,14 +234,15 @@ requirejs (
                                 helper_.growlMsgs(
                                     {
                                         severity: 'error',
-                                        summary: 'Failed to refresh map',
+                                        summary: 'Failed to activate edition helper',
                                         detail: 'Layout: '+options.getLayout(),
                                         sticky: true
                                     });
                                 console.log(e.stack);
-                                var msg = "<h3>oO ! We have some problem here ! <br/> Let's find a way to correct it ... </h3>" +
+                                var msg = "<h3>oO ! We have some problem to activate edition helper here ! <br/> Let's find a way to correct it ... </h3>" +
                                     '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
                                     '<p>2) complete the ticket : <ul>' +
+                                    '<li>setup ticket title as "edition helper activation error"</li>' +
                                     '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
                                     '<li>specify the layout (' + options.getLayout() +')</li></ul></p>' +
                                     "<p>3) wait the ticket to be resolved ... </p>";
@@ -262,14 +265,15 @@ requirejs (
                                 helper_.growlMsgs(
                                     {
                                         severity: 'error',
-                                        summary: 'Failed to refresh map',
+                                        summary: 'Failed to activate endpoint helper',
                                         detail: 'Layout: '+options.getLayout(),
                                         sticky: true
                                     });
                                 console.log(e.stack);
-                                var msg = "<h3>oO ! We have some problem here ! <br/> Let's find a way to correct it ... </h3>" +
+                                var msg = "<h3>oO ! We have some problem to activate endpoint helper here ! <br/> Let's find a way to correct it ... </h3>" +
                                     '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
                                     '<p>2) complete the ticket : <ul>' +
+                                    '<li>setup ticket title as "endpoint helper activation error"</li>' +
                                     '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
                                     '<li>specify the layout (' + options.getLayout() +')</li></ul></p>' +
                                     "<p>3) wait the ticket to be resolved ... </p>";
@@ -326,13 +330,6 @@ requirejs (
                                     }
                                 );
                                 console.log(e.stack);
-                                var msg = "<h3>oO ! We have some problem here ! <br/> Let's find a way to correct it ... </h3>" +
-                                    '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
-                                    '<p>2) complete the ticket : <ul>' +
-                                    '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
-                                    '<li>specify the layout (' + options.getLayout() +')</li></ul></p>' +
-                                    "<p>3) wait the ticket to be resolved ... </p>";
-                                helper_.showErrorBox(msg);
                             }
                             break;
                         }
@@ -366,13 +363,6 @@ requirejs (
                                     }
                                 );
                                 console.log(e.stack);
-                                var msg = "<h3>oO ! We have some problem here ! <br/> Let's find a way to correct it ... </h3>" +
-                                    '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
-                                    '<p>2) complete the ticket : <ul>' +
-                                    '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
-                                    '<li>specify the layout (' + options.getLayout() +')</li></ul></p>' +
-                                    "<p>3) wait the ticket to be resolved ... </p>";
-                                helper_.showErrorBox(msg);
                             }
                             break;
                         }
@@ -395,7 +385,7 @@ requirejs (
                         helper_.growlMsgs(
                             {
                                 severity: 'error',
-                                summary: 'Failed to export map to PNG',
+                                summary: 'Failed to export map to JPG',
                                 detail: 'Check the console log to know more...',
                                 sticky: true
                             }
