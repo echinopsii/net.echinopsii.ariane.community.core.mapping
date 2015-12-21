@@ -1120,13 +1120,31 @@ define(
             };
 
             this.menuFieldEpResetClick = function() {
-                if (nodeRef.nodeEndpointsResetOnChangeON) nodeRef.nodeEndpointsResetOnChangeON = false;
-                else nodeRef.nodeEndpointsResetOnChangeON = true;
+                var epreset ;
+
+                if (nodeRef.nodeEndpointsResetOnChangeON) epreset = false;
+                else epreset = true;
+
+                this.propagateEndpointReset(epreset);
+
                 nodeRef.menu.toBack();
                 nodeRef.menuSet.toBack();
                 nodeRef.menu.hide();
                 nodeRef.menuSet.hide();
                 nodeRef.menuHided=true;
+            };
+
+            this.propagateEndpointReset = function(epreset) {
+                var i, ii, j, jj;
+                var mtxX        = this.nodeChildNodes.getMtxSize().x,
+                    mtxY        = this.nodeChildNodes.getMtxSize().y;
+
+                nodeRef.nodeEndpointsResetOnChangeON = epreset;
+
+                for (i = 0, ii = mtxX; i < ii; i++)
+                    for (j = 0, jj = mtxY; j < jj; j++)
+                        if (this.nodeChildNodes.getObjectFromMtx(i, j)!=null)
+                            this.nodeChildNodes.getObjectFromMtx(i, j).propagateEndpointReset(epreset);
             };
 
             this.getBBox = function() {

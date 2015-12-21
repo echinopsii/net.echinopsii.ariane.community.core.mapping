@@ -892,24 +892,31 @@ define(
             };
 
             this.menuFieldEpResetClick = function() {
-                var i, ii, j, jj;
-                var mtxX        = containerRef.containerNodes.getMtxSize().x,
-                    mtxY        = containerRef.containerNodes.getMtxSize().y;
+                var epreset;
 
-                if (containerRef.endpointsResetOnChangeON) containerRef.endpointsResetOnChangeON = false;
-                else containerRef.endpointsResetOnChangeON = true;
+                if (containerRef.endpointsResetOnChangeON) epreset = false;
+                else epreset = true;
 
-                for (i = 0, ii = mtxX; i < ii; i++)
-                    for (j = 0, jj = mtxY; j < jj; j++)
-                        if (containerRef.containerNodes.getObjectFromMtx(i, j)!=null)
-                            containerRef.containerNodes.getObjectFromMtx(i, j).nodeEndpointsResetOnChangeON = containerRef.endpointsResetOnChangeON;
+                this.propagateEndpointReset(epreset);
 
                 containerRef.menu.toBack();
                 containerRef.menuSet.toBack();
                 containerRef.menu.hide();
                 containerRef.menuSet.hide();
                 containerRef.menuHided=true;
+            };
 
+            this.propagateEndpointReset = function(epreset) {
+                var i, ii, j, jj;
+                var mtxX        = containerRef.containerNodes.getMtxSize().x,
+                    mtxY        = containerRef.containerNodes.getMtxSize().y;
+
+                containerRef.endpointsResetOnChangeON = epreset;
+
+                for (i = 0, ii = mtxX; i < ii; i++)
+                    for (j = 0, jj = mtxY; j < jj; j++)
+                        if (containerRef.containerNodes.getObjectFromMtx(i, j)!=null)
+                            containerRef.containerNodes.getObjectFromMtx(i, j).nodeEndpointsResetOnChangeON = containerRef.endpointsResetOnChangeON;
             };
 
             this.getBBox = function() {

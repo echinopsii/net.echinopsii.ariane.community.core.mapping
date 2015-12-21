@@ -337,6 +337,10 @@ define(
                 if (mappy!=null) mappy.editionMode(options);
             };
 
+            this.endpointReset = function(options) {
+                if (mappy!=null) mappy.endpointReset(options);
+            };
+
             this.displayDC = function(display) {
                 if (mappy!=null && display!=null) mappy.displayDC(display);
             };

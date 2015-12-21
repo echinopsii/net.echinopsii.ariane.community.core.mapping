@@ -548,6 +548,13 @@ define(
                 return mapmatrix.setEditionMode(editionMode);
             };
 
+            this.endpointReset = function(options_) {
+                var i, ii;
+                var epreset = options_.epreset;
+                for (i = 0, ii = containerRegistry.length; i < ii; i++)
+                    containerRegistry[i].propagateEndpointReset(epreset);
+            };
+
             this.displayDC = function(display) {
                 mapmatrix.displayDC(display);
             };
