@@ -2,7 +2,7 @@
 /* Controllers */
 
 
-var app = angular.module('application', ['ngDialog']);
+var app = angular.module('application', ['jsTree.directive','ngDialog']);
 
 app.controller('MyCtrl1', ['$scope', 'apiMethods', 'ngDialog', function ($scope, apiMethods, ngDialog) {
     $scope.treeData = [];
@@ -11,12 +11,9 @@ app.controller('MyCtrl1', ['$scope', 'apiMethods', 'ngDialog', function ($scope,
     $scope.lookupObj = {};
     $scope.lookupFileObj = {};
 
-    $scope.firstName = "Sagar";
-
     $scope.ShowNgDialog = function () {
         ngDialog.open({
-            template: '<div><ul><li>Root node 1<ul><li>{{firstName}}</li><li>Child node 2</li></ul></li><li>Root node 2</li></ul> </div>',
-            plain: true,
+            template: '../../ariane/ahtml/templates/load.html',
             scope:$scope
         });
     }
