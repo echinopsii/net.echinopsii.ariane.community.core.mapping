@@ -1,5 +1,5 @@
 /**
- * Mapping Registry Endpoint
+ * Mapping Registry Directory Endpoint
  * Copyright (C) 23/11/15 echinopsii
  *
  * author : Sagar Ghuge
