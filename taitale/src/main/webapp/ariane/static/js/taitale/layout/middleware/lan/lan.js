@@ -187,6 +187,9 @@ define(
                     lanRef.rect.animate({"fill-opacity": lanRef.oSelected}, 500);
                 },
                 lanMove = function (dx, dy) {
+                    var zoomedMoveCoord = lanRef.r.getZPDZoomedMoveCoord(dx, dy);
+                    dx = zoomedMoveCoord.dx; dy = zoomedMoveCoord.dy;
+
                     var rx  = lanRef.extrx,
                         ry  = lanRef.extry;
                     var minTopLeftX = lanRef.minTopLeftX,

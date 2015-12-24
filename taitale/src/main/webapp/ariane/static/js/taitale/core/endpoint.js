@@ -218,6 +218,8 @@ define(
                         epRef.moveInit();
                 },
                 epMove = function (dx, dy) {
+                    var zoomedMoveCoord = epRef.r.getZPDZoomedMoveCoord(dx, dy);
+                    dx = zoomedMoveCoord.dx; dy = zoomedMoveCoord.dy;
                     if (!epRef.rightClick) {
                         var att = {cx: epRef.cx + dx, cy: epRef.cy + dy};//,
 

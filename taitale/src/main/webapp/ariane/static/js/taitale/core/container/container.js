@@ -441,6 +441,8 @@ define(
                         containerRef.moveInit();
                 },
                 containerMove = function(dx,dy) {
+                    var zoomedMoveCoord = containerRef.r.getZPDZoomedMoveCoord(dx, dy);
+                    dx = zoomedMoveCoord.dx; dy = zoomedMoveCoord.dy;
                     mover(containerRef, dx, dy)
                 },
                 containerUP =  function() {

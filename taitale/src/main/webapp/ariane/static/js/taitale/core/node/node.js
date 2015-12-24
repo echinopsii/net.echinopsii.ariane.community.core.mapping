@@ -370,6 +370,8 @@ define(
                         nodeRef.moveInit();
                 },
                 nodeMove = function (dx, dy) {
+                    var zoomedMoveCoord = nodeRef.r.getZPDZoomedMoveCoord(dx, dy);
+                    dx = zoomedMoveCoord.dx; dy = zoomedMoveCoord.dy;
                     if (!nodeRef.rightClick) {
                         var rx = nodeRef.extrx,
                             ry = nodeRef.extry;
