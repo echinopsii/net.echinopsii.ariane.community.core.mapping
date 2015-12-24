@@ -10,7 +10,6 @@
         <link type="text/css" rel="stylesheet" href="#{request.contextPath}/acss/jstree/style.min.css" />
         <link type="text/css" rel="stylesheet" href="#{request.contextPath}/acss/ngDialog/ngDialog.css" />
         <link type="text/css" rel="stylesheet" href="#{request.contextPath}/acss/ngDialog/ngDialog-theme-default.css" />
-        <script data-main="#{request.contextPath}/ajs/taitale.js" src="#{request.contextPath}/ajs/require/require-min.js" type="text/javascript" charset="utf-8"/>
         <script src="#{request.contextPath}/ajs/primeui/primeui-0.9.6.js"/>
         <script src="#{request.contextPath}/ajs/angular/angular.js"></script>
         <script src="#{request.contextPath}/ajs/angular/angular-resource.min.js"></script>
@@ -20,6 +19,8 @@
         <script src="#{request.contextPath}/ajs/lib/app.js"></script>
         <script src="#{request.contextPath}/ajs/lib/controllers.js"></script>
         <script src="#{request.contextPath}/ajs/lib/services.js"></script>
+        <script data-main="#{request.contextPath}/ajs/taitale.js" src="#{request.contextPath}/ajs/require/require-min.js" type="text/javascript" charset="utf-8"/>
+
     </ui:define>
     <ui:define name="moduleContent">
         <div id="mappingBg" class="backgroundMapping" ng-app="application" ng-controller="MyCtrl1">
@@ -128,7 +129,7 @@
                                                                  onclick="requestSaveDialog.show()" actionListener="#{mdslrRequestController.clear}"
                                                                  action="#{mdslRegistryController.reloadTree}"
                                                                  update=":saveReqDirForm,:saveRequestDetail"/>
-                                                <button style="width:150px" type="button" ng-click="ShowNgDialog()" ng-dialog-class="ngdialog-theme-default" ng-dialog-show-close="false">Load Request</button>
+                                                <button style="width:150px" type="button" ng-click="ShowNgDialog()" ng-dialog-class="ngdialog-theme-default">Load Request</button>
                                             </h:panelGroup>
                                         </h:panelGrid>
                                     </h:form>

@@ -81,6 +81,8 @@
   -webkit-backface-visibility: hidden;
   -webkit-animation: ngdialog-fadein 0.5s;
   animation: ngdialog-fadein 0.5s;
+  width: 800px !important;
+  height: 450px !important;
 }
 
 .ngdialog.ngdialog-closing .ngdialog-content {
