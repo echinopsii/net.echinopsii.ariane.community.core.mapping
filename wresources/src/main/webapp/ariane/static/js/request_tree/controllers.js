@@ -13,7 +13,7 @@ app.controller('MyCtrl1', ['$scope', 'apiMethods', 'ngDialog', function ($scope,
 
     $scope.ShowNgDialog = function () {
         ngDialog.open({
-            template: '../../ariane/ahtml/templates/load.html',
+            template: '../../ariane/ahtml/templates/loadRequest.html',
             scope:$scope
         });
     }
