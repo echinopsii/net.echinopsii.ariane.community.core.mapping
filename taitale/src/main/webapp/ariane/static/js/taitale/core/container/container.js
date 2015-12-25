@@ -899,7 +899,7 @@ define(
                 if (containerRef.endpointsResetOnChangeON) epreset = false;
                 else epreset = true;
 
-                this.propagateEndpointReset(epreset);
+                containerRef.propagateEndpointReset(epreset);
 
                 containerRef.menu.toBack();
                 containerRef.menuSet.toBack();

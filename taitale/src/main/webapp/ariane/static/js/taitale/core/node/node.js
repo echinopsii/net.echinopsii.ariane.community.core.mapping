@@ -1127,7 +1127,7 @@ define(
                 if (nodeRef.nodeEndpointsResetOnChangeON) epreset = false;
                 else epreset = true;
 
-                this.propagateEndpointReset(epreset);
+                nodeRef.propagateEndpointReset(epreset);
 
                 nodeRef.menu.toBack();
                 nodeRef.menuSet.toBack();
