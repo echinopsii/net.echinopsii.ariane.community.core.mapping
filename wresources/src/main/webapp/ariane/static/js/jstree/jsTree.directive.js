@@ -1,3 +1,11 @@
+/*
+ * jstree.directive [http://www.jstree.com]
+ * http://arvindr21.github.io/jsTree-Angular-Directive
+ *
+ * Copyright (c) 2014 Arvind Ravulavaru
+ * Licensed under the MIT license.
+ */
+
 var ngJSTree = angular.module('jsTree.directive', []);
 ngJSTree.directive('jsTree', ['$http', function ($http) {
 
