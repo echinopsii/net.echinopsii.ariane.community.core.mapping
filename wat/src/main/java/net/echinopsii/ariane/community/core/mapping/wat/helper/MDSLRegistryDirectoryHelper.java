@@ -43,6 +43,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
 import java.util.Set;
 
@@ -80,6 +81,9 @@ public class MDSLRegistryDirectoryHelper {
             CriteriaBuilder builder = em.getCriteriaBuilder();
             CriteriaQuery<MappingDSLRegistryDirectory> rootDCriteria = builder.createQuery(MappingDSLRegistryDirectory.class);
             Root<MappingDSLRegistryDirectory> rootDRoot = rootDCriteria.from(MappingDSLRegistryDirectory.class);
+            rootDRoot.fetch("uxPermissions", JoinType.LEFT);
+            rootDRoot.fetch("subDirectories",JoinType.LEFT);
+            rootDRoot.fetch("requests", JoinType.LEFT);
             rootDCriteria.select(rootDRoot).where(builder.equal(rootDRoot.<String>get("name"), MappingDSLRegistryBootstrap.MAPPING_DSL_REGISTRY_ROOT_DIR_NAME));
             TypedQuery<MappingDSLRegistryDirectory> rootDQuery = em.createQuery(rootDCriteria);
 
@@ -164,6 +168,9 @@ public class MDSLRegistryDirectoryHelper {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<MappingDSLRegistryDirectory> rootDCriteria = builder.createQuery(MappingDSLRegistryDirectory.class);
         Root<MappingDSLRegistryDirectory> rootDRoot = rootDCriteria.from(MappingDSLRegistryDirectory.class);
+        rootDRoot.fetch("uxPermissions", JoinType.LEFT);
+        rootDRoot.fetch("subDirectories",JoinType.LEFT);
+        rootDRoot.fetch("requests", JoinType.LEFT);
         rootDCriteria.select(rootDRoot).where(builder.equal(rootDRoot.get("id"), subDirID));
         TypedQuery<MappingDSLRegistryDirectory> rootDQuery = em.createQuery(rootDCriteria);
         MappingDSLRegistryDirectory dir = null;

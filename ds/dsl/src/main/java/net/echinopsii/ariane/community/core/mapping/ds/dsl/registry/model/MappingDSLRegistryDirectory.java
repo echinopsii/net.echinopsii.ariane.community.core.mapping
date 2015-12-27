@@ -59,11 +59,11 @@ public class MappingDSLRegistryDirectory implements IUXResource<UXPermission>, S
     @ManyToOne(fetch = FetchType.EAGER)
     private MappingDSLRegistryDirectory rootDirectory;
 
-    @OneToMany(mappedBy = "rootDirectory", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "rootDirectory", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Fetch(FetchMode.SUBSELECT)
     private Set<MappingDSLRegistryDirectory> subDirectories;
 
-    @OneToMany(mappedBy = "rootDirectory", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "rootDirectory", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Fetch(FetchMode.SUBSELECT)
     private Set<MappingDSLRegistryRequest> requests;
 
@@ -73,7 +73,7 @@ public class MappingDSLRegistryDirectory implements IUXResource<UXPermission>, S
     @ManyToOne(fetch = FetchType.EAGER)
     private Group group;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @Fetch(FetchMode.SUBSELECT)
     private Set<UXPermission> uxPermissions;
 
