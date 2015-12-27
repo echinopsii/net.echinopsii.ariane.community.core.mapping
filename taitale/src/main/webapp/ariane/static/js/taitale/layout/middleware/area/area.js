@@ -182,6 +182,9 @@ define(
                     areaRef.rect.animate({"fill-opacity": areaRef.oSelected}, 500);
                 },
                 areaMove = function (dx, dy) {
+                    var zoomedMoveCoord = areaRef.r.getZPDZoomedMoveCoord(dx, dy);
+                    dx = zoomedMoveCoord.dx; dy = zoomedMoveCoord.dy;
+
                     areaRef.minTopLeftX = areaRef.minJailX;
                     areaRef.minTopLeftY = areaRef.minJailY;
                     areaRef.maxTopLeftX = areaRef.maxJailX - areaRef.areawidth;

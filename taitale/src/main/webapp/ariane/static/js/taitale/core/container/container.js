@@ -441,6 +441,8 @@ define(
                         containerRef.moveInit();
                 },
                 containerMove = function(dx,dy) {
+                    var zoomedMoveCoord = containerRef.r.getZPDZoomedMoveCoord(dx, dy);
+                    dx = zoomedMoveCoord.dx; dy = zoomedMoveCoord.dy;
                     mover(containerRef, dx, dy)
                 },
                 containerUP =  function() {
@@ -897,7 +899,7 @@ define(
                 if (containerRef.endpointsResetOnChangeON) epreset = false;
                 else epreset = true;
 
-                this.propagateEndpointReset(epreset);
+                containerRef.propagateEndpointReset(epreset);
 
                 containerRef.menu.toBack();
                 containerRef.menuSet.toBack();

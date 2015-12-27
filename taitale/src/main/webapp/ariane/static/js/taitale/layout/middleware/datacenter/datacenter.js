@@ -184,6 +184,8 @@ define(
                     dcRef.moveInit();
                 },
                 dcMove = function (dx, dy) {
+                    var zoomedMoveCoord = dcRef.r.getZPDZoomedMoveCoord(dx, dy);
+                    dx = zoomedMoveCoord.dx; dy = zoomedMoveCoord.dy;
                     dcRef.r.move(dx,dy);
                     dcRef.r.safari();
                 },

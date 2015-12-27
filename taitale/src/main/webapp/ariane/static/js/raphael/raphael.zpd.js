@@ -176,7 +176,7 @@ define(
             this.ZPDScaleTo = function(delta, svgDoc, pt) {
                 var dfactor = 1;
 
-                //logOnFirbugConsole("delta : " + delta);
+                //logOnFirbugConsole("[RaphaelZPD.ZPDScaleTo] input delta : " + delta);
                 if (delta > 0) {
                     if (me.opts.zoomThreshold)
                         if (me.opts.zoomThreshold[1] <= me.zoomCurrent) return;
@@ -199,14 +199,13 @@ define(
                     }
                 }
 
-                //logOnFirbugConsole("dfactor: " + dfactor);
-                //logOnFirbugConsole("delta:" + delta + " ; zoomCurrent:" + me.zoomCurrent);
+                //logOnFirbugConsole("[RaphaelZPD.ZPDScaleTo] dfactor: " + dfactor);
+                //logOnFirbugConsole("[RaphaelZPD.ZPDScaleTo] delta:" + delta + " ; zoomCurrent:" + me.zoomCurrent);
 
-                //logOnFirbugConsole("[RaphaelZPD.zoomer] zoom:"+me.zoomCurrent);
                 var z = 1 + delta; // delta on mousewheel : +/- 0.05
-                currentZoom += delta;
+                currentZoom += delta*dfactor;
                 currentZoom = Math.round(currentZoom*100)/100;
-                //logOnFirbugConsole("[RaphaelZPD.zoomer]zoom factor:"+currentZoom+","+z);
+                //logOnFirbugConsole("[RaphaelZPD.ZPDScaleTo] currentZoom:"+currentZoom+", z:"+z);
 
                 if (dfactor > 1)
                     for (var i = 0, ii = dfactor; i < ii; i++)
@@ -519,8 +518,13 @@ define(
             }
         };
 
-        Raphael.fn.getZPDCurrentZoom = function() {
-            return currentZoom;
+        Raphael.fn.getZPDZoomedMoveCoord = function(dx, dy) {
+            var rdx = dx * Math.exp(-currentZoom),
+                rdy = dy * Math.exp(-currentZoom);
+            return {
+                dx: rdx,
+                dy: rdy
+            };
         };
 
         return this.RaphaelZPD;
