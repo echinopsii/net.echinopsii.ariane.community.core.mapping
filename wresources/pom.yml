@@ -27,6 +27,7 @@
                 </executions>
                 <configuration>
                     <excludes>
+                        <exclude>**/angular*</exclude>
                         <exclude>**/*-min.js</exclude>
                         <exclude>**/*-min.css</exclude>
                         <exclude>**/*.min.js</exclude>
