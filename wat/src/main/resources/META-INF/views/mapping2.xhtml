@@ -7,10 +7,23 @@
     <ui:define name="moduleHeader">
         <link type="text/css" rel="stylesheet" href="#{request.contextPath}/acss/primeui/primeui-0.9.6-min.css" />
         <link type="text/css" rel="stylesheet" href="#{request.contextPath}/acss/mapping-min.css" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/acss/jstree/style.min.css" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/acss/ngDialog/ngDialog.css" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/acss/ngDialog/ngDialog-theme-default.css" />
+        <script src="#{request.contextPath}/ajs/primeui/primeui-0.9.6.js"/>
+        <script src="#{request.contextPath}/ajs/angular/angular.js"></script>
+        <script src="#{request.contextPath}/ajs/angular/angular-resource.min.js"></script>
+        <script src="#{request.contextPath}/ajs/jstree/jstree.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="#{request.contextPath}/ajs/jstree/jsTree.directive.js"></script>
+        <script src="#{request.contextPath}/ajs/ngDialog/ngDialog.js"/>
+        <script src="#{request.contextPath}/ajs/request_tree/app.js"></script>
+        <script src="#{request.contextPath}/ajs/request_tree/controllers.js"></script>
+        <script src="#{request.contextPath}/ajs/request_tree/services.js"></script>
         <script data-main="#{request.contextPath}/ajs/taitale.js" src="#{request.contextPath}/ajs/require/require-min.js" type="text/javascript" charset="utf-8"/>
+
     </ui:define>
     <ui:define name="moduleContent">
-        <div id="mappingBg" class="backgroundMapping">
+        <div id="mappingBg" class="backgroundMapping" ng-app="application" ng-controller="MyCtrl1">
             <p:layout widgetVar="mappingLW">
                 <!--
                 <p:layoutUnit id="mappingOuput" position="east" size="400" header="Mapping focus" resizable="true" collapsible="true" effect="fade" collapsed="true">
@@ -123,6 +136,7 @@
                                                                  onclick="requestSaveDialog.show()" actionListener="#{mdslrRequestController.clear}"
                                                                  action="#{mdslRegistryController.reloadTree}"
                                                                  update=":saveReqDirForm,:saveRequestDetail"/>
+                                                <button style="width:150px" type="button" ng-click="ShowNgDialog()" ng-dialog-class="ngdialog-theme-default">Load Request</button>
                                             </h:panelGroup>
                                         </h:panelGrid>
                                     </h:form>

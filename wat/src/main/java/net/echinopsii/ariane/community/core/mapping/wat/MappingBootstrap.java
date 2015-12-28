@@ -141,11 +141,12 @@ public class MappingBootstrap implements FaceletsResourceResolverService {
         MAIN_MENU_MAPPING_CONTEXT = portalPluginFacesMBeanRegistry.getRegisteredServletContext().getContextPath()+"/";
 
         try {
-            MainMenuEntity entity = new MainMenuEntity("mappingMItem", "Mapping", MAIN_MENU_MAPPING_CONTEXT+"views/mapping.jsf", MenuEntityType.TYPE_MENU_ITEM, MAIN_MENU_MAP_RANK, "icon-mapping-ariane icon-large");
+            MainMenuEntity entity = new MainMenuEntity("mappingMItem", "Mapping", MAIN_MENU_MAPPING_CONTEXT+"views/mapping2.jsf", MenuEntityType.TYPE_MENU_ITEM, MAIN_MENU_MAP_RANK, "icon-mapping-ariane icon-large");
             entity.getDisplayRoles().add("mappingreader");
             entity.getDisplayPermissions().add("mappingDB:read");
             mappingMainMenuEntityList.add(entity);
             mainMenuEntityRegistry.registerMainLeftMenuEntity(entity);
+
             log.debug("{} has registered its main menu items", new Object[]{MAPPING_COMPONENT});
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.

@@ -126,7 +126,8 @@
                         <Export-Package>
                             net.echinopsii.ariane.community.core.mapping.ds.dsl;version=${project.version},
                             net.echinopsii.ariane.community.core.mapping.ds.dsl.registry;version=${project.version},
-                            net.echinopsii.ariane.community.core.mapping.ds.dsl.registry.model;version=${project.version}
+                            net.echinopsii.ariane.community.core.mapping.ds.dsl.registry.model;version=${project.version},
+                            net.echinopsii.ariane.community.core.mapping.ds.dsl.registry.json;version=${project.version}
                         </Export-Package>
                         <Import-Package>
                             javassist.util.proxy,
