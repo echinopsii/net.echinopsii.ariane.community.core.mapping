@@ -248,6 +248,9 @@ define(
                                 httpJSONmap=json;
                                 try {
                                     loader.buildMappy(options);
+                                    loader.editionMode(options);
+                                    loader.endpointReset(options);
+                                    loader.legend(options);
                                 } catch(e) {
                                     helper_.growlMsgs(
                                         {
@@ -290,6 +293,7 @@ define(
             };
 
             this.reloadMap = function(options) {
+                mappy.hideLegend();
                 if (zpd!=null)
                     zpd.ZPDClearEvents();
                 if (r!=null) {
@@ -297,10 +301,12 @@ define(
                     r.clear();
                 }
                 refreshZPDOffset=null;
+                mappy = null;
                 this.loadMap(options);
             };
 
             this.rebuildMap = function(options) {
+                mappy.hideLegend();
                 if (zpd!=null)
                     zpd.ZPDClearEvents();
                 if (r!=null) {
@@ -308,10 +314,15 @@ define(
                     r.clear();
                 }
                 refreshZPDOffset=null;
+                mappy = null;
                 this.buildMappy(options);
+                this.editionMode(options);
+                this.endpointReset(options);
+                this.legend(options);
             };
 
             this.refreshMap = function(options) {
+                mappy.hideLegend();
                 if (zpd!=null) {
                     if (r!=null) {
                         refreshZPDOffset = r.getZPDoffsets();
@@ -322,6 +333,7 @@ define(
                     //r.raphael.unmousedown(mainMouseDown);
                     r.clear();
                 }
+                mappy = null;
                 loader.loadMappy();
 
                 helper_.growlMsgs(

@@ -140,7 +140,6 @@ requirejs (
                 options.setURI(homeURI + "/js/taitale.samples/json/sample.taitale.input."+test.val()+".json");
                 try {
                     loader_.reloadMap(options);
-                    loader_.editionMode(options);
                 } catch (e) {
                     helper_.addMsgToGrowl(e);
                     helper_.growlMsgs(
@@ -179,7 +178,6 @@ requirejs (
                         document.getElementById('treeOptions').style.display    = "none";
                     }
                     loader_.rebuildMap(options);
-                    loader_.editionMode(options);
                     loader_.displayDC(displayDC[0].checked);
                     loader_.displayArea(displayArea[0].checked);
                     loader_.displayLan(displayLan[0].checked);
@@ -269,7 +267,7 @@ requirejs (
                     helper_.growlMsgs(
                         {
                             severity: 'error',
-                            summary: 'Failed to activate endpoint helper',
+                            summary: 'Failed to display legend',
                             detail: 'Name: ' + test.val() + '<br>Layout: ' + options.getLayout(),
                             sticky: true
                         }
@@ -337,7 +335,6 @@ requirejs (
             click: function() {
                 try {
                     loader_.reloadMap(options);
-                    loader_.editionMode(options);
                     reload.removeClass('ui-state-focus');
                 } catch (e) {
                     helper_.addMsgToGrowl(e);
@@ -511,7 +508,6 @@ requirejs (
                     loader_.sortRootTree(rootTreeSorting.val());
                     loader_.rebuildMapTreeLayout();
                     loader_.refreshMap(options);
-                    loader_.editionMode(options);
                 } catch (e) {
                     helper_.addMsgToGrowl(e);
                     helper_.growlMsgs(
@@ -534,7 +530,6 @@ requirejs (
                     loader_.sortSubTrees(options.getSubTreesSorting());
                     loader_.rebuildMapTreeLayout();
                     loader_.refreshMap(options);
-                    loader_.editionMode(options);
                 } catch (e) {
                     helper_.addMsgToGrowl(e);
                     helper_.growlMsgs(
@@ -563,6 +558,7 @@ requirejs (
             options.setLayout(layout.val());
             options.edition = edition[0].checked;
             options.epreset = epreset[0].checked;
+            options.displayLegend = legend[0].checked;
             options.setURI(homeURI + "/js/taitale.samples/json/sample.taitale.input."+test.val()+".json");
             if (options.getLayout()===dic.mapLayout.MDW) {
                 document.getElementById('middlewareOptions').style.display = "";
@@ -575,7 +571,6 @@ requirejs (
                 document.getElementById('treeOptions').style.display    = "none";
             }
             loader_.loadMap(options);
-            loader_.editionMode(options);
         } catch (e) {
             helper_.addMsgToGrowl(e);
             helper_.growlMsgs(

@@ -118,8 +118,37 @@ define(
             };
 
             this.dialogClose = function(id) {
-                $("#dialog"+id).puidialog('hide');
                 $("#dialog"+id).remove();
+            };
+
+            this.legendOpen = function(contents) {
+                $('#mappingCanvas').append("<div id=\"legendContent\" style=\"width: auto; display:inline-block\" class=\"mappingLegendPropsDialog\">Map Legend<br/>"+contents+"</div>");
+                var dialogWidth = $("#legendContent").width() + 100,
+                    dialogHeight = $("#legendContent").height();
+                $("#legendContent").remove();
+                $('#mappingCanvas').append("<div id=\"legendContent\" title=\"Map Legend\" class=\"mappingLegendPropsDialog\">"+contents+"</div>");
+                $("#legendContent").puidialog({
+                    showEffect: 'fade',
+                    hideEffect: 'fade',
+                    minimizable: true,
+                    maximizable: false,
+                    modal: false,
+                    location: "left",
+                    width: (dialogWidth > 800) ? 800 : (dialogWidth < 200) ? 200 : dialogWidth,
+                    height: (dialogHeight > 600) ? 600 : (dialogHeight < 100) ? 100 : dialogHeight,
+                    afterHide: function(event) {
+                        $("#legendContent").remove();
+                    }
+                });
+                $("#legendContent").puidialog('show');
+                $("#legendContent").children().css({"color":"#ffffff"});
+                $("#legendContent").children(".pui-dialog-titlebar").children(".pui-dialog-titlebar-maximize").remove();
+                $("#legendContent").children(".pui-dialog-titlebar").children(".pui-dialog-titlebar-close").remove();
+                $("#legendContent").children(".pui-dialog-titlebar").children(".pui-dialog-titlebar-minimize").remove();
+            };
+
+            this.legendClose = function(id) {
+                $("#legendContent").remove();
             };
 
             this.getMappyLayoutDivSize = function() {

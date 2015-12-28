@@ -40,3 +40,14 @@
     color: #ffffff !important;
 }
 
+.mappingLegendPropsDialog {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+.mappingLegendPropsDialog.pui-shadow {
+    box-shadow: 0px 0px 0px 0px #333 !important;
+}
+
+.mappingLegendPropsDialog.ui-widget-content {
+    border: 0px !important;
+}

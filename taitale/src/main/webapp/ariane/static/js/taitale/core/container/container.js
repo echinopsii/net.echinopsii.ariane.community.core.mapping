@@ -411,9 +411,6 @@ define(
                     var rx = containerRef.extrx,
                         ry = containerRef.extry;
 
-                    var zoomed_move = containerRef.r.getZoomedMove(dx, dy);
-                    dx = zoomed_move.dx ; dy = zoomed_move.dy;
-
                     if (!containerRef.rightClick) {
                         if (containerRef.isJailed) {
                             if (containerRef.minTopLeftX > rx + dx)
@@ -937,7 +934,7 @@ define(
                 for (i = 0, ii = mtxX; i < ii; i++)
                     for (j = 0, jj = mtxY; j < jj; j++)
                         if (containerRef.containerNodes.getObjectFromMtx(i, j)!=null)
-                            containerRef.containerNodes.getObjectFromMtx(i, j).nodeEndpointsResetOnChangeON = containerRef.endpointsResetOnChangeON;
+                            containerRef.containerNodes.getObjectFromMtx(i, j).propagateEndpointReset(containerRef.endpointsResetOnChangeON);
             };
 
             this.getBBox = function() {

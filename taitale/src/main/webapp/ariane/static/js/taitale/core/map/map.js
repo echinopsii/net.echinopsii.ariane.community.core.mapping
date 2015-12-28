@@ -681,29 +681,29 @@ define(
                 }
             };
 
-            this.displayLegend = function(r) {
+            this.displayLegend = function() {
                 var html_applications, html_teams, i, ii;
                 if (teams.length > 0 && teams[0] !=null) {
-                    html_teams = "<b>Teams : </b><ul>";
+                    html_teams = "<b style='color: #333'>Teams : </b><ul>";
                     for (i=0, ii=teams.length; i<ii; i++)
-                        html_teams += "<li style='color: #"+ teams[i].color +"'><p style='color: #fff'>" + teams[i].name + "</p></li>"
+                        html_teams += "<li style='color: #"+ teams[i].color +"'><p style='color: #333'>" + teams[i].name + "</p></li>"
                     html_teams += "</ul>";
                 }
 
                 if (applications.length > 0 && applications[0] != null) {
-                    html_applications = "<b>Applications : </b><ul>";
+                    html_applications = "<b style='color: #333'>Applications : </b><ul>";
                     for (i=0, ii=applications.length; i<ii; i++)
-                        html_applications += "<li style='color: #"+ applications[i].color +"'><p style='color: #fff'>" + applications[i].name + "</p></li>"
+                        html_applications += "<li style='color: #"+ applications[i].color +"'><p style='color: #333'>" + applications[i].name + "</p></li>"
                     html_applications += "</ul>";
                 }
 
 
                 var details = ((html_teams!=null) ? html_teams : "") + ((html_applications!=null) ? html_applications : "");
-                helper_.dialogOpen("legend", "Map Legend", details);
+                helper_.legendOpen(details);
             };
 
-            this.hideLegend = function(r) {
-                helper_.dialogClose("legend")
+            this.hideLegend = function() {
+                helper_.legendClose()
             };
         }
 
