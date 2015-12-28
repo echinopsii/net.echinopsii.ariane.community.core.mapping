@@ -293,7 +293,7 @@ define(
             };
 
             this.reloadMap = function(options) {
-                mappy.hideLegend();
+                if (mappy!=null) mappy.hideLegend();
                 if (zpd!=null)
                     zpd.ZPDClearEvents();
                 if (r!=null) {
@@ -306,7 +306,7 @@ define(
             };
 
             this.rebuildMap = function(options) {
-                mappy.hideLegend();
+                if (mappy!=null) mappy.hideLegend();
                 if (zpd!=null)
                     zpd.ZPDClearEvents();
                 if (r!=null) {
@@ -322,7 +322,7 @@ define(
             };
 
             this.refreshMap = function(options) {
-                mappy.hideLegend();
+                if (mappy!=null) mappy.hideLegend();
                 if (zpd!=null) {
                     if (r!=null) {
                         refreshZPDOffset = r.getZPDoffsets();

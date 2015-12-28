@@ -27,6 +27,7 @@
                 </executions>
                 <configuration>
                     <excludes>
+                        <exclude>**/*-debug.js</exclude>
                         <exclude>**/*-min.js</exclude>
                         <exclude>**/*-min.css</exclude>
                     </excludes>

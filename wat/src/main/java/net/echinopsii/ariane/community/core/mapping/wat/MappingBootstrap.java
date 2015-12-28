@@ -133,6 +133,7 @@ public class MappingBootstrap implements FaceletsResourceResolverService {
     public static final String MAPPING_USER_PREF_VIEW   = "mappingDisplayView";
     public static final String MAPPING_USER_PREF_MODE   = "mappingDisplayMode";
     public static final String MAPPING_USER_PREF_EPH    = "mappingDisplayEPH";
+    public static final String MAPPING_USER_PREF_LEGEND = "mappingDisplayLegend";
 
     @Validate
     public void validate() throws Exception {
@@ -172,7 +173,14 @@ public class MappingBootstrap implements FaceletsResourceResolverService {
                                                                                                             UserPreferenceEntityType.TYPE_USR_PREF_ENTITY_ONEBUTTON_SELECT,
                                                                                                             "Define endpoint helper status").
                                                                                                             addSelectValue("ON").addSelectValue("OFF").
-                                                                                                            setFieldDefault("OFF"));
+                                                                                                            setFieldDefault("OFF")).
+                                                                        addEntity(new UserPreferenceEntity(MAPPING_USER_PREF_LEGEND,
+                                                                                UserPreferenceEntityType.TYPE_USR_PREF_ENTITY_ONEBUTTON_SELECT,
+                                                                                "Define legend status").
+                                                                                addSelectValue("ON").addSelectValue("OFF").
+                                                                                setFieldDefault("OFF"));
+
+
         /*.
                                                                          addEntity(new UserPreferenceEntity(MAPPING_USER_PREF_VIEW,
                                                                                                             UserPreferenceEntityType.TYPE_USR_PREF_ENTITY_ONEBUTTON_SELECT,
