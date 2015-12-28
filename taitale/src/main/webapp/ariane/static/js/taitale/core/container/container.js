@@ -411,6 +411,9 @@ define(
                     var rx = containerRef.extrx,
                         ry = containerRef.extry;
 
+                    var zoomed_move = containerRef.r.getZoomedMove(dx, dy);
+                    dx = zoomed_move.dx ; dy = zoomed_move.dy;
+
                     if (!containerRef.rightClick) {
                         if (containerRef.isJailed) {
                             if (containerRef.minTopLeftX > rx + dx)
@@ -455,7 +458,7 @@ define(
                 var i, ii, ret = "";
                 if (this.properties.supportTeam != null) {
                     if (this.properties.supportTeam.constructor !== Array) {
-                        ret += "<br/> <b>Support team </b> : " + this.properties.supportTeam.name
+                        ret += "<br/> <b>Support team </b> : <ul></li style='color: "+ this.properties.supportTeam.color +"'>" + this.properties.supportTeam.name + "</li></ul>"
                     } else {
                         for (i = 0, ii = this.properties.supportTeam.length; i < ii; i++)
                             ret += "<br/> <b>Support team #" + i + "</b> : " + this.properties.supportTeam[i].name
@@ -694,6 +697,17 @@ define(
 
             this.getLinkedBus = function() {
                 return this.linkedBus;
+            };
+
+            this.getSupportTeam = function() {
+
+                if (this.properties != null && this.properties.supportTeam!=null)
+                    return this.properties.supportTeam;
+                else
+                    return {
+                        name: "External support team",
+                        color: "#333"
+                    };
             };
 
             this.print = function(r_) {
