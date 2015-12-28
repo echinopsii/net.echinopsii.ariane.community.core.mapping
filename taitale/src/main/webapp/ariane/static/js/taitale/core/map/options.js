@@ -29,9 +29,10 @@ define(
             var rootTreeSorting = 1,
                 subTreesSorting = 1;
 
-            this.displayDC   = false;
-            this.displayAREA = false;
-            this.displayLAN  = false;
+            this.displayDC     = false;
+            this.displayAREA   = false;
+            this.displayLAN    = false;
+            this.displayLegend = false;
 
             this.edition = false;
             this.epreset = false;

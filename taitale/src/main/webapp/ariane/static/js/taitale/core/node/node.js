@@ -934,6 +934,13 @@ define(
                 this.nodeChildNodes.updatePosition();
             };
 
+            this.getPrimaryApplication = function() {
+                if (this.properties != null && this.properties.primaryApplication != null)
+                    return this.properties.primaryApplication;
+                else
+                    return null;
+            };
+
             this.print = function(r_) {
                 this.r        = r_;
 

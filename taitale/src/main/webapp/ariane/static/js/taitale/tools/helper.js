@@ -117,6 +117,11 @@ define(
                 $('#dialog'+id).children(".pui-dialog-titlebar").children(".pui-dialog-titlebar-maximize").remove();
             };
 
+            this.dialogClose = function(id) {
+                $("#dialog"+id).puidialog('hide');
+                $("#dialog"+id).remove();
+            };
+
             this.getMappyLayoutDivSize = function() {
                 var mappyLayoutDiv = document.getElementById("mappyLayout");
                 if (mappyLayoutDiv!=null)
