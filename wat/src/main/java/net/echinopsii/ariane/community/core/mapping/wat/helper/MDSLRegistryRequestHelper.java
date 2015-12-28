@@ -44,11 +44,6 @@ public class MDSLRegistryRequestHelper {
             entity.getRootDirectory().getRequests().remove(entity);
             em.remove(entity);
             em.getTransaction().commit();
-/*
-            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,
-                    "Mapping DSL request deleted successfully !",
-                    "Mapping DSL request name : " + entity.getName());
-            FacesContext.getCurrentInstance().addMessage(null, msg);*/
             return Boolean.TRUE;
         }  catch (Throwable t) {
             log.debug("Throwable catched !");
