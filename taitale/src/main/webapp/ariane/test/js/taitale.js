@@ -115,6 +115,7 @@ requirejs (
             layout = $('#layout'),
             edition = $('#edition'),
             epreset = $('#epreset'),
+            legend = $('#legend'),
             notifyI = $('#notifyInfo'),
             notifyW = $('#notifyWarn'),
             notifyE = $('#notifyErrs'),
@@ -236,7 +237,7 @@ requirejs (
                 options.epreset = epreset[0].checked;
                 try {
                     loader_.endpointReset(options);
-                }catch (e) {
+                } catch (e) {
                     helper_.addMsgToGrowl(e);
                     helper_.growlMsgs(
                         {
@@ -255,6 +256,25 @@ requirejs (
                         '<li>specify the layout (' + options.getLayout() +')</li></ul></p>' +
                         "<p>3) wait the ticket to be resolved ... </p>";
                     helper_.showErrorBox(msg);
+                }
+            }
+        });
+        legend.puicheckbox({
+            change: function () {
+                options.displayLegend = legend[0].checked;
+                try {
+                    loader_.legend(options)
+                } catch (e) {
+                    helper_.addMsgToGrowl(e);
+                    helper_.growlMsgs(
+                        {
+                            severity: 'error',
+                            summary: 'Failed to activate endpoint helper',
+                            detail: 'Name: ' + test.val() + '<br>Layout: ' + options.getLayout(),
+                            sticky: true
+                        }
+                    );
+                    console.log(e.stack);
                 }
             }
         });

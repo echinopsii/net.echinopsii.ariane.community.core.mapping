@@ -459,13 +459,14 @@ define(
             this.multiSupportPrint = function() {
                 var i, ii, ret = "";
                 if (this.properties.supportTeam != null) {
+                    ret += "<br/> <b>Support team(s) </b> : <ul>";
                     if (this.properties.supportTeam.constructor !== Array) {
-                        ret += "<br/> <b>Support team </b> : <ul></li style='color: "+ this.properties.supportTeam.color +"'>" + this.properties.supportTeam.name + "</li></ul>"
+                        ret += "<li style='color: #"+ this.properties.supportTeam.color +"'><p style='color: #fff'>" + this.properties.supportTeam.name + "</p></li>"
                     } else {
                         for (i = 0, ii = this.properties.supportTeam.length; i < ii; i++)
-                            ret += "<br/> <b>Support team #" + i + "</b> : " + this.properties.supportTeam[i].name
+                            ret += "<li style='color: #"+ this.properties.supportTeam[i].color +"'><p style='color: #fff'>" + this.properties.supportTeam[i].name + "</p></li>"
                     }
-                    ret += "<br/>";
+                    ret += "</ul>";
                 }
                 return ret;
             };
@@ -473,23 +474,25 @@ define(
             this.multiNetworkPrint = function() {
                 var i, ii, j, jj,ret = "";
                 if (this.properties.Network != null) {
+                    ret += "<br/> <b>Network(s)</b> : <ul>";
                     if (this.properties.Network.constructor !== Array) {
-                        ret += "<br/> <b>Network routing area</b> : " + this.properties.Network.raname +
-                            "<br/> <b>Network type</b> : " + this.properties.Network.ratype +
-                            "<br/> <b>Network subnet ID</b> : " + this.properties.Network.sname +
-                            "<br/> <b>Network subnet IP</b> : " + this.properties.Network.sip +
-                            "<br/> <b>Network subnet mask</b> : " + this.properties.Network.smask
+                        ret += "<li><b>routing area</b> : " + this.properties.Network.raname +
+                               "<br/> <b>type</b> : " + this.properties.Network.ratype +
+                               "<br/> <b>subnet ID</b> : " + this.properties.Network.sname +
+                               "<br/> <b>subnet IP</b> : " + this.properties.Network.sip +
+                               "<br/> <b>subnet mask</b> : " + this.properties.Network.smask + "</li>"
                     } else {
                         for (i = 0, ii = this.properties.Network.length; i < ii; i++) {
-                            ret += "<br/> <b>Network #" + i + " routing area</b> : " + containerRef.properties.Network[i].raname +
-                                "<br/> <b>Network #" + i + " type</b> : " + containerRef.properties.Network[i].ratype;
+                            ret += "<li> <b>routing area</b> : " + containerRef.properties.Network[i].raname +
+                                   "<br/> <b>type</b> : " + containerRef.properties.Network[i].ratype + "<ul>";
                             for (j = 0, jj = this.properties.Network[i].subnets.length; j < jj; j++)
-                                ret += "<br/> <b>Network #" + i + "." + j + " ID</b> : " + containerRef.properties.Network[i].subnets[j].sname +
-                                    "<br/> <b>Network #" + i + "." + j + " subnet IP</b> : " + containerRef.properties.Network[i].subnets[j].sip +
-                                    "<br/> <b>Network #" + i + "." + j + " subnet mask</b> : " + containerRef.properties.Network[i].subnets[j].smask
+                                ret += "<li><b>subnet ID</b> : " + containerRef.properties.Network[i].subnets[j].sname +
+                                       "<br/> <b>subnet IP</b> : " + containerRef.properties.Network[i].subnets[j].sip +
+                                       "<br/> <b>subnet mask</b> : " + containerRef.properties.Network[i].subnets[j].smask + "</li>"
+                            ret += "</ul></li>"
                         }
                     }
-                    ret += "<br/>";
+                    ret += "</ul>";
                 }
                 return ret;
             };
@@ -702,13 +705,15 @@ define(
             };
 
             this.getSupportTeam = function() {
-
                 if (this.properties != null && this.properties.supportTeam!=null)
-                    return this.properties.supportTeam;
+                    if (this.properties.supportTeam.constructor !== Array)
+                        return this.properties.supportTeam;
+                    else
+                        return this.properties.supportTeam[0];
                 else
                     return {
                         name: "External support team",
-                        color: "#333"
+                        color: "333"
                     };
             };
 

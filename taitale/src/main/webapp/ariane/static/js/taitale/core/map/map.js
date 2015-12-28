@@ -63,8 +63,33 @@ define(
             var lTree = null;
             var dic   = new dictionaries();
 
+            var applications = [],
+                isApplicationRegistered = function(app) {
+                    var i, ii, isRegistered = false;
+                    for (i=0, ii=applications.length; i<ii; i++) {
+                        if (applications[i] != null && applications[i].name === app.name &&
+                            applications[i].color === app.color) {
+                            isRegistered = true;
+                            break;
+                        }
+                    }
+                    return isRegistered;
+                },
+                teams = [],
+                isTeamRegistered = function(team) {
+                    var i, ii, isRegistered = false;
+                    for (i=0, ii=teams.length; i<ii; i++) {
+                        if (teams[i] != null && teams[i].name === team.name &&
+                            teams[i].color === team.color) {
+                            isRegistered = true;
+                            break;
+                        }
+                    }
+                    return isRegistered;
+                };
+
             this.addContainer = function(JSONContainerDesc) {
-                var cont, x=0, y=0;
+                var cont, steam, x=0, y=0;
                 //noinspection JSUnresolvedVariable
                 if (JSONContainerDesc.containerProperties!=null && JSONContainerDesc.containerProperties.manualCoord!=null) {
                     //noinspection JSUnresolvedVariable
@@ -72,9 +97,9 @@ define(
                     //noinspection JSUnresolvedVariable
                     y=JSONContainerDesc.containerProperties.manualCoord.y;
                 }
-                cont = new container(JSONContainerDesc, x, y);
-                containerRegistry.push(cont);
-                treeObjects.push(cont)
+                cont = new container(JSONContainerDesc, x, y); steam = cont.getSupportTeam();
+                containerRegistry.push(cont); treeObjects.push(cont);
+                if (steam !=null && !isTeamRegistered(steam)) teams.push(steam);
             };
 
             /*
@@ -102,8 +127,9 @@ define(
                 }
 
                 if (container != null) {
-                    var nodeToPush = new node(JSONNodeDesc, container);
+                    var nodeToPush = new node(JSONNodeDesc, container), papp = nodeToPush.getPrimaryApplication();
                     nodeRegistry.push(nodeToPush);
+                    if (papp!=null && !isApplicationRegistered(papp)) applications.push(papp);
                     if (nodeToPush.npID!=0)
                         childNodesWaitingParent.push(nodeToPush);
 
@@ -653,7 +679,32 @@ define(
                         moveTreeMap(dx, dy);
                         break;
                 }
-            }
+            };
+
+            this.displayLegend = function(r) {
+                var html_applications, html_teams, i, ii;
+                if (teams.length > 0 && teams[0] !=null) {
+                    html_teams = "<b>Teams : </b><ul>";
+                    for (i=0, ii=teams.length; i<ii; i++)
+                        html_teams += "<li style='color: #"+ teams[i].color +"'><p style='color: #fff'>" + teams[i].name + "</p></li>"
+                    html_teams += "</ul>";
+                }
+
+                if (applications.length > 0 && applications[0] != null) {
+                    html_applications = "<b>Applications : </b><ul>";
+                    for (i=0, ii=applications.length; i<ii; i++)
+                        html_applications += "<li style='color: #"+ applications[i].color +"'><p style='color: #fff'>" + applications[i].name + "</p></li>"
+                    html_applications += "</ul>";
+                }
+
+
+                var details = ((html_teams!=null) ? html_teams : "") + ((html_applications!=null) ? html_applications : "");
+                helper_.dialogOpen("legend", "Map Legend", details);
+            };
+
+            this.hideLegend = function(r) {
+                helper_.dialogClose("legend")
+            };
         }
 
         return map;

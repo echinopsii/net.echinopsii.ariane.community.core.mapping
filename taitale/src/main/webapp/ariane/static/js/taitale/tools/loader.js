@@ -341,6 +341,14 @@ define(
                 if (mappy!=null) mappy.endpointReset(options);
             };
 
+            this.legend = function(options) {
+                if (mappy!=null)
+                    if (options.displayLegend)
+                        mappy.displayLegend();
+                    else
+                        mappy.hideLegend();
+            };
+
             this.displayDC = function(display) {
                 if (mappy!=null && display!=null) mappy.displayDC(display);
             };
