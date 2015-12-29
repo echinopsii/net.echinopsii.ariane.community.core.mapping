@@ -1,10 +1,28 @@
+// ┌──────────────────────────────────────────────────────────────────────────────────────┐ \\
+// │ TreeController- Angular Tree controller                                              │ \\
+// │ Use Angular.js                                                                       │ \\
+// │ -------------------------------------------------------------------------------------│ \\
+// │ Copyright (C) 2015  Echinopsii      												  │ \\
+// │ Author : Sagar Ghuge                                                                 │ \\
+// │																                      │ \\
+// │ This program is free software: you can redistribute it and/or modify                 │ \\
+// │ it under the terms of the GNU Affero General Public License as                       │ \\
+// │ published by the Free Software Foundation, either version 3 of the                   │ \\
+// │ License, or (at your option) any later version.									  │ \\
+// │																					  │ \\
+// │ This program is distributed in the hope that it will be useful,					  │ \\
+// │ but WITHOUT ANY WARRANTY; without even the implied warranty of						  │ \\
+// │ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the						  │ \\
+// │ GNU Affero General Public License for more details.								  │ \\
+// │																					  │ \\
+// │ You should have received a copy of the GNU Affero General Public License			  │ \\
+// │ along with this program.  If not, see <http://www.gnu.org/licenses/>.				  │ \\
+// └──────────────────────────────────────────────────────────────────────────────────────┘ \\
 'use strict'
-/* Controllers */
 
+var app = angular.module('treeApp', ['jsTree.directive','ngDialog']);
 
-var app = angular.module('application', ['jsTree.directive','ngDialog']);
-
-app.controller('MyCtrl1', ['$scope', 'apiMethods', 'ngDialog', function ($scope, apiMethods, ngDialog) {
+app.controller('treeController', ['$scope', 'serviceMethods', 'ngDialog', function ($scope, serviceMethods, ngDialog) {
     $scope.treeData = [];
     $scope.subDirID = null;
     $scope.subDirName = null;
@@ -18,7 +36,7 @@ app.controller('MyCtrl1', ['$scope', 'apiMethods', 'ngDialog', function ($scope,
         });
     }
 
-    apiMethods.apiGETReq('/ariane/rest/mapping/registryDirectory/getRoot').then(function (dataObj) {
+    serviceMethods.apiGETReq('/ariane/rest/mapping/registryDirectory/getRoot').then(function (dataObj) {
         var parentNode = {
             id: dataObj.data.mappingDSLDirectoryID,
             parent: "#",
@@ -108,7 +126,7 @@ app.controller('MyCtrl1', ['$scope', 'apiMethods', 'ngDialog', function ($scope,
             }
         };
 
-        apiMethods.apiPOSTReq('/ariane/rest/mapping/registryDirectory/deleteDirectory', postObj).then(function () {
+        serviceMethods.apiPOSTReq('/ariane/rest/mapping/registryDirectory/deleteDirectory', postObj).then(function () {
             for(var i = 0; i < $scope.treeData.length; i++) {
                 var obj = $scope.treeData[i];
 
@@ -129,7 +147,7 @@ app.controller('MyCtrl1', ['$scope', 'apiMethods', 'ngDialog', function ($scope,
             }
         };
 
-        apiMethods.apiPOSTReq('/ariane/rest/mapping/registryRequest/deleteRequest', postObj).then(function () {
+        serviceMethods.apiPOSTReq('/ariane/rest/mapping/registryRequest/deleteRequest', postObj).then(function () {
             for(var i = 0; i < $scope.treeData.length; i++) {
                 var obj = $scope.treeData[i];
 
@@ -162,7 +180,7 @@ app.controller('MyCtrl1', ['$scope', 'apiMethods', 'ngDialog', function ($scope,
                     }
                 };
 
-                apiMethods.apiPOSTReq('/ariane/rest/mapping/registryDirectory/getChild', postObj).then(function (dataObj) {
+                serviceMethods.apiPOSTReq('/ariane/rest/mapping/registryDirectory/getChild', postObj).then(function (dataObj) {
                     dataObj.data.mappingDSLDirectorySubDirsID.forEach(function (child) {
                         if (!(child.subDirectoryID in $scope.lookupObj)) {
                             var childNode = {
