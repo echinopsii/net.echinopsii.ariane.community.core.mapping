@@ -79,8 +79,8 @@
   animation: ngdialog-flyin .5s;
   background: #FFF none repeat scroll 0% 0% !important;
   color: #444;
-  font-family: 'Helvetica',sans-serif;
-  font-size: 1.1em;
+  font-family: Arial,"Trebuchet MS",Verdana,sans-serif;
+  font-size: 12px !important;
   line-height: 1.5em;
   margin: 0 auto;
   max-width: 100%;

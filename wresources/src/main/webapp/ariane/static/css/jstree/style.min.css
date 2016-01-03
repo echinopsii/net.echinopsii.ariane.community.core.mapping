@@ -502,7 +502,7 @@
 }
 
 .jstree-default .jstree-closed > .jstree-ocl {
-    background-position: -28px -14px
+    background-position: -28px -13px
 }
 
 .jstree-default .jstree-leaf > .jstree-ocl {
@@ -510,7 +510,8 @@
 }
 
 .jstree-default .jstree-themeicon {
-    background-position: -260px -4px
+    background-position: -262px -4px;
+    background-image:url("../../aimages/jstree/32px.png") !important;
 }
 
 .jstree-default > .jstree-no-dots .jstree-node, .jstree-default > .jstree-no-dots .jstree-leaf > .jstree-ocl {
@@ -601,8 +602,8 @@
 
 .jstree-default .jstree-themeicon-custom {
     background-color: transparent;
-    background-image: url("/ariane/javax.faces.resource/images/ui-icons_f85b37_256x240.png.jsf?ln=primefaces-ariane")
-    background-position: -102px -68px
+    background-image: url("../../aimages/jstree/32px.png");
+    background-position: -102px -66px !important;
 }
 
 .jstree-default > .jstree-container-ul .jstree-loading > .jstree-ocl {
@@ -610,11 +611,11 @@
 }
 
 .jstree-default .jstree-file {
-    background: url("/ariane/javax.faces.resource/images/ui-icons_f85b37_256x240.png.jsf?ln=primefaces-ariane") -100px -68px no-repeat
+    background: url("../../aimages/jstree/32px.png") -100px -68px no-repeat
 }
 
 .jstree-default .jstree-folder {
-    background: url("/ariane/javax.faces.resource/images/ui-icons_f85b37_256x240.png.jsf?ln=primefaces-ariane") -260px -4px no-repeat
+    background: url("../../aimages/jstree/32px.png") -260px -4px no-repeat
 }
 
 .jstree-default.jstree-rtl .jstree-node {
