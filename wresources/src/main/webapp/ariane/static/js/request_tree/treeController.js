@@ -37,15 +37,6 @@ app.controller('treeController', ['$scope', 'serviceMethods', 'ngDialog', functi
     }
 
     serviceMethods.apiGETReq('/ariane/rest/mapping/registryDirectory/getRoot').then(function (dataObj) {
-        /*var parentNode = {
-            id: dataObj.data.mappingDSLDirectoryID,
-            parent: "#",
-            text: dataObj.data.mappingDSLDirectoryName
-        }
-        $scope.treeData.push(parentNode);
-
-        $scope.lookupObj[dataObj.data.mappingDSLDirectoryID] = parentNode;
-*/
         dataObj.data.mappingDSLDirectorySubDirsID.forEach(function (child) {
             var childNode = {
                 id: child.subDirectoryID,
@@ -54,17 +45,14 @@ app.controller('treeController', ['$scope', 'serviceMethods', 'ngDialog', functi
             };
             $scope.treeData.push(childNode);
             $scope.lookupObj[child.subDirectoryID] = childNode;
-            loadData(""+child.subDirectoryID, child.subDirectoryName)
+            initTree(child.subDirectoryID, child.subDirectoryName)
         })
     }, function (err) {
         console.log("Error occured. " + err);
     });
 
-    var loadData = function(id, text){
-        $scope.subDirID = id;
-        $scope.subDirName = text;
-
-            // retrieve node for child upfront
+    var initTree = function(id, text){
+        // retrieve node for child upfront
         var postObj = {
             "data": {
                 "subDirID": id
@@ -219,7 +207,7 @@ app.controller('treeController', ['$scope', 'serviceMethods', 'ngDialog', functi
             if (id.indexOf("child") === -1) {
                 var postObj = {
                     "data": {
-                        "subDirID": id
+                        "subDirID": parseInt(id)
                     }
                 };
 
