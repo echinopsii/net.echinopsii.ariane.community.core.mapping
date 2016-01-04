@@ -45,6 +45,7 @@ define(
             this.options     = options_;
             this.isInserted  = false;
             this.dispArea    = false;
+            this.dispAreaOD  = false;
 
             this.areaR    = null;
             this.rect     = null;
@@ -132,7 +133,7 @@ define(
                             areaRef.menuSet.show();
                             areaRef.menuHided=false;
                         } else {
-                            if (!areaRef.isEditing) {
+                            if (!areaRef.isEditing && !areaRef.dispAreaOD) {
                                 areaRef.rect.animate({"stroke-width": 0}, 0);
                                 areaRef.areaR.hide();
                                 areaRef.dispArea = false;
@@ -152,7 +153,7 @@ define(
                 },
                 menuMouseDown = function(e) {
                     if (e.which == 3) {
-                        if (!areaRef.isEditing) {
+                        if (!areaRef.isEditing && !areaRef.dispAreaOD) {
                             areaRef.rect.animate({"stroke-width": 0}, 0);
                             areaRef.areaR.hide();
                             areaRef.dispArea = false;
@@ -392,6 +393,7 @@ define(
 
             this.displayArea = function(display) {
                 this.dispArea=display;
+                this.dispAreaOD=display;
                 if (display) {
                     this.rect.animate({"stroke-width": params.area_strokeWidthShow}, 1);
                     this.areaR.show();
@@ -544,10 +546,12 @@ define(
                 } else {
                     areaRef.r.scaleDone(areaRef);
                     areaRef.isEditing = false;
-                    areaRef.rect.animate({"fill-opacity": areaRef.oUnselected, "stroke-width": 0}, 0);
-                    areaRef.areaHat.hide();
-                    areaRef.areaR.hide();
-                    areaRef.dispArea = false;
+                    if (!areaRef.dispAreaOD) {
+                        areaRef.rect.animate({"fill-opacity": areaRef.oUnselected, "stroke-width": 0}, 0);
+                        areaRef.areaHat.hide();
+                        areaRef.areaR.hide();
+                        areaRef.dispArea = false;
+                    }
                 }
             };
 

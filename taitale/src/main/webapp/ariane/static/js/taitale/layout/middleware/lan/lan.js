@@ -43,6 +43,7 @@ define(
             //this.helper_    = new helper();
             this.isInserted = false;
             this.dispLan    = false;
+            this.dispLanOD  = false;
             this.layoutData = null;
 
             this.lanR    = null;
@@ -139,10 +140,12 @@ define(
                             lanRef.menuSet.show();
                             lanRef.menuHided=false;
                         } else {
-                            lanRef.rect.animate({"fill-opacity": lanRef.oUnselected, "stroke-width": 0}, 1);
-                            lanRef.lanR.hide();
-                            lanRef.lanHat.hide();
-                            lanRef.dispLan = false;
+                            if (!lanRef.isEditing && !lanRef.dispLanOD) {
+                                lanRef.rect.animate({"fill-opacity": lanRef.oUnselected, "stroke-width": 0}, 1);
+                                lanRef.lanR.hide();
+                                lanRef.lanHat.hide();
+                                lanRef.dispLan = false;
+                            }
                             lanRef.menu.toBack();
                             lanRef.menuSet.toBack();
                             lanRef.menu.hide();
@@ -158,10 +161,12 @@ define(
                 },
                 menuMouseDown = function(e) {
                     if (e.which == 3) {
-                        lanRef.rect.animate({"fill-opacity": lanRef.oUnselected, "stroke-width": 0}, 1);
-                        lanRef.lanR.hide();
-                        lanRef.lanHat.hide();
-                        lanRef.dispLan = false;
+                        if (!lanRef.isEditing && !lanRef.dispLanOD) {
+                            lanRef.rect.animate({"fill-opacity": lanRef.oUnselected, "stroke-width": 0}, 1);
+                            lanRef.lanR.hide();
+                            lanRef.lanHat.hide();
+                            lanRef.dispLan = false;
+                        }
                         lanRef.menu.toBack();
                         lanRef.menuSet.toBack();
                         lanRef.menu.hide();
@@ -393,6 +398,7 @@ define(
 
             this.displayLan = function(display) {
                 this.dispLan=display;
+                this.dispLanOD=display;
                 if (this.dispLan) {
                     this.rect.animate({"fill-opacity": this.oUnselected, "stroke-width": params.lan_strokeWidthShow}, 1);
                     this.lanR.show();
@@ -530,10 +536,12 @@ define(
                 } else {
                     lanRef.r.scaleDone(lanRef);
                     lanRef.isEditing = false;
-                    lanRef.rect.animate({"fill-opacity": this.oUnselected, "stroke-width": 0}, 1);
-                    lanRef.lanR.hide();
-                    lanRef.lanHat.hide();
-                    lanRef.dispLan = false;
+                    if (!lanRef.dispLanOD) {
+                        lanRef.rect.animate({"fill-opacity": this.oUnselected, "stroke-width": 0}, 1);
+                        lanRef.lanR.hide();
+                        lanRef.lanHat.hide();
+                        lanRef.dispLan = false;
+                    }
                 }
             };
 

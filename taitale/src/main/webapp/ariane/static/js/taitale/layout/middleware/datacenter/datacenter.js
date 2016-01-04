@@ -45,6 +45,7 @@ define(
             this.msplitter  = mapSplitter;
             this.isInserted = false;
             this.dispDC     = false;
+            this.dispDCOD   = false;
 
             this.dcsplitter = null;
             this.dcmatrix   = new datacenterMatrix(this.msplitter, registries, options);
@@ -132,7 +133,7 @@ define(
                             dcRef.menuSet.show();
                             dcRef.menuHided=false;
                         } else {
-                            if (!dcRef.isEditing) {
+                            if (!dcRef.isEditing && !dcRef.dispDCOD) {
                                 dcRef.rect.animate({"fill-opacity": dcRef.oUnselected, "stroke-width": 0}, 0);
                                 dcRef.dcR.hide();
                                 dcRef.dcsplitter.hide();
@@ -154,7 +155,7 @@ define(
                 },
                 menuMouseDown = function(e) {
                     if (e.which == 3) {
-                        if (!dcRef.isEditing) {
+                        if (!dcRef.isEditing && !dcRef.dispDCOD) {
                             dcRef.rect.animate({"fill-opacity": dcRef.oUnselected, "stroke-width": 0}, 0);
                             dcRef.dcR.hide();
                             dcRef.dcsplitter.hide();
@@ -216,7 +217,7 @@ define(
 
             this.up = function() {
                 this.r.up();
-            }
+            };
 
             this.isEditionMode = function() {
                 return this.isEditing;
@@ -359,6 +360,7 @@ define(
 
             this.displayDC = function(display) {
                 this.dispDC = display;
+                this.dispDCOD = display;
                 if (this.dispDC) {
                     this.rect.animate({"fill-opacity": this.oUnselected, "stroke-width": this.sWidth}, 1);
                     this.dcR.show();
@@ -548,11 +550,13 @@ define(
                 } else {
                     dcRef.r.scaleDone(dcRef);
                     dcRef.isEditing = false;
-                    dcRef.rect.animate({"fill-opacity": dcRef.oUnselected, "stroke-width": 0}, 0);
-                    dcRef.dcR.hide();
-                    dcRef.dcsplitter.hide();
-                    dcRef.dcHat.hide();
-                    dcRef.dispDC = false;
+                    if (!dcRef.dispDCOD) {
+                        dcRef.rect.animate({"fill-opacity": dcRef.oUnselected, "stroke-width": 0}, 0);
+                        dcRef.dcR.hide();
+                        dcRef.dcsplitter.hide();
+                        dcRef.dcHat.hide();
+                        dcRef.dispDC = false;
+                    }
                 }
             };
 
