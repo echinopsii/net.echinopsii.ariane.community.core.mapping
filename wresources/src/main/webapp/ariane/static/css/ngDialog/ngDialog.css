@@ -1,3 +1,9 @@
+/*
+ * ngDialog - easy modals and popup windows
+ * http://github.com/likeastore/ngDialog
+ * (c) 2013 MIT License, https://likeastore.com
+ */
+
 @-webkit-keyframes ngdialog-fadeout {
   0% {
     opacity: 1;

@@ -16,14 +16,14 @@
         <script src="#{request.contextPath}/ajs/jstree/jstree.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="#{request.contextPath}/ajs/jstree/jsTree.directive.js"></script>
         <script src="#{request.contextPath}/ajs/ngDialog/ngDialog.js"/>
-        <script src="#{request.contextPath}/ajs/request_tree/app.js"></script>
-        <script src="#{request.contextPath}/ajs/request_tree/controllers.js"></script>
+        <script src="#{request.contextPath}/ajs/request_tree/treeApp.js"></script>
+        <script src="#{request.contextPath}/ajs/request_tree/treeController.js"></script>
         <script src="#{request.contextPath}/ajs/request_tree/services.js"></script>
         <script data-main="#{request.contextPath}/ajs/taitale.js" src="#{request.contextPath}/ajs/require/require-min.js" type="text/javascript" charset="utf-8"/>
 
     </ui:define>
     <ui:define name="moduleContent">
-        <div id="mappingBg" class="backgroundMapping" ng-app="application" ng-controller="MyCtrl1">
+        <div id="mappingBg" class="backgroundMapping" ng-app="treeApp" ng-controller="treeController">
             <p:layout widgetVar="mappingLW">
                 <!--
                 <p:layoutUnit id="mappingOuput" position="east" size="400" header="Mapping focus" resizable="true" collapsible="true" effect="fade" collapsed="true">

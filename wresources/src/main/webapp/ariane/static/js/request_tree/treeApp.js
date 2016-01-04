@@ -1,7 +1,8 @@
 // ┌──────────────────────────────────────────────────────────────────────────────────────┐ \\
-// │ Service   - Wrapper for HTTP services                                                │ \\
+// │ TreeApp   - JavaScript Tree construction lib                                         │ \\
 // │ Use Angular.js                                                                       │ \\
 // │ -------------------------------------------------------------------------------------│ \\
+// │ TreeApp - provide a way to construct tree using angular                              │ \\
 // │ Copyright (C) 2015  Echinopsii      												  │ \\
 // │ Author : Sagar Ghuge                                                                 │ \\
 // │																                      │ \\
@@ -18,23 +19,4 @@
 // │ You should have received a copy of the GNU Affero General Public License			  │ \\
 // │ along with this program.  If not, see <http://www.gnu.org/licenses/>.				  │ \\
 // └──────────────────────────────────────────────────────────────────────────────────────┘ \\
-var app = angular.module("treeApp");
-
-app.factory('serviceMethods', function($http) {
-        return {
-            apiGETReq : function(url, obj) {
-                return $http({
-                    method : 'GET',
-                    url : url,
-                    params: obj
-                });
-            },
-            apiPOSTReq : function(url, obj) {
-                return $http({
-                    method : 'POST',
-                    url : url,
-                    params : obj
-                });
-            }
-        }
-    });
+var app = angular.module('treeApp',['jsTree.directive', 'ngDialog']);
