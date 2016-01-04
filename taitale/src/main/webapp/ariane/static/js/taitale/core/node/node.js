@@ -490,7 +490,7 @@ define(
                     //helper_.debug("EP : " + nodeRef.nodeEpAvgLinksT[i].toString());
                     teta = nodeRef.nodeEpAvgLinksT[i].getLinkPoz().t;
 
-                    if (teta >= 0 && teta < rectTeta) {
+                    if (teta == null || (teta >= 0 && teta < rectTeta)) {
                         nodeRef.nodeEpAvgLinksT[i].epX = nodeRef.rectTopRightX;
                         nodeRef.nodeEpAvgLinksT[i].epY = nodeRef.rectMiddleY - countY1 * params.endpoint_radSelec * 2;
                         if (nodeRef.nodeEpAvgLinksT[i].epY < nodeRef.rectTopRightY) {
