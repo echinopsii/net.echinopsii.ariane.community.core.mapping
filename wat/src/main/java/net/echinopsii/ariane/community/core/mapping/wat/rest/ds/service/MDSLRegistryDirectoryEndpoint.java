@@ -72,7 +72,7 @@ public class MDSLRegistryDirectoryEndpoint {
     public Response getChild(@QueryParam("data") String params) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         Map<String, Object> postData = mapper.readValue(params, Map.class);
-        int subDirID = Integer.valueOf((String) postData.get("subDirID"));
+        int subDirID = (int) postData.get("subDirID");
         MDSLRegistryDirectoryHelper md = new MDSLRegistryDirectoryHelper();
         Response ret = mappingDSLRegistryDirToJSON(md.getChild(subDirID));
         return ret;
