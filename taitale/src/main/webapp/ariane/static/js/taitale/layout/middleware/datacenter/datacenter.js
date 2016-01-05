@@ -65,8 +65,8 @@ define(
             this.color       = params.dc_color;
 
 
-            this.pName = this.geoDCLoc.pname;
-            this.dcHat  = new datacenterHat(this.geoDCLoc.pname, params.dc_txtTitle, this.color);
+            this.pName = (this.geoDCLoc.pname != null) ? this.geoDCLoc.pname : "undefined !";
+            this.dcHat  = new datacenterHat(this.pName, params.dc_txtTitle, this.color);
 
             this.menu              = null;
             this.menuSet           = null;
@@ -133,13 +133,8 @@ define(
                             dcRef.menuSet.show();
                             dcRef.menuHided=false;
                         } else {
-                            if (!dcRef.isEditing && !dcRef.dispDCOD) {
-                                dcRef.rect.animate({"fill-opacity": dcRef.oUnselected, "stroke-width": 0}, 0);
-                                dcRef.dcR.hide();
-                                dcRef.dcsplitter.hide();
-                                dcRef.dcHat.hide();
+                            if (!dcRef.isEditing && !dcRef.dispDCOD)
                                 dcRef.dispDC = false;
-                            }
                             dcRef.menu.toBack();
                             dcRef.menuSet.toBack();
                             dcRef.menu.hide();
@@ -569,8 +564,8 @@ define(
                 var i, ii;
 
                 //noinspection JSUnresolvedVariable
-                var nameHeight = this.geoDCLoc.pname.height(params.dc_txtTitle),
-                    townHeight = this.geoDCLoc.town.height(params.dc_txtTitle);
+                var nameHeight = this.pName.height(params.dc_txtTitle),
+                    townHeight = (this.geoDCLoc.town !=null) ? this.geoDCLoc.town.height(params.dc_txtTitle) : 0;
 
                 areaSet = this.r.set();
 

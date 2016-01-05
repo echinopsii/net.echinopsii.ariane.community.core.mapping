@@ -133,11 +133,8 @@ define(
                             areaRef.menuSet.show();
                             areaRef.menuHided=false;
                         } else {
-                            if (!areaRef.isEditing && !areaRef.dispAreaOD) {
-                                areaRef.rect.animate({"stroke-width": 0}, 0);
-                                areaRef.areaR.hide();
+                            if (!areaRef.isEditing && !areaRef.dispAreaOD)
                                 areaRef.dispArea = false;
-                            }
                             areaRef.menu.toBack();
                             areaRef.menuSet.toBack();
                             areaRef.menu.hide();

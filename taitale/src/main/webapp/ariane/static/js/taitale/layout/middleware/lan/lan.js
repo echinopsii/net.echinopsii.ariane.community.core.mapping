@@ -140,12 +140,8 @@ define(
                             lanRef.menuSet.show();
                             lanRef.menuHided=false;
                         } else {
-                            if (!lanRef.isEditing && !lanRef.dispLanOD) {
-                                lanRef.rect.animate({"fill-opacity": lanRef.oUnselected, "stroke-width": 0}, 1);
-                                lanRef.lanR.hide();
-                                lanRef.lanHat.hide();
+                            if (!lanRef.isEditing && !lanRef.dispLanOD)
                                 lanRef.dispLan = false;
-                            }
                             lanRef.menu.toBack();
                             lanRef.menuSet.toBack();
                             lanRef.menu.hide();
