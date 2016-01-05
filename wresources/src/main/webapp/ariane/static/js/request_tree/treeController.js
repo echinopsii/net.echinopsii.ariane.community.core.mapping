@@ -37,27 +37,58 @@ app.controller('treeController', ['$scope', 'serviceMethods', 'ngDialog', functi
     }
 
     serviceMethods.apiGETReq('/ariane/rest/mapping/registryDirectory/getRoot').then(function (dataObj) {
-        var parentNode = {
-            id: dataObj.data.mappingDSLDirectoryID,
-            parent: "#",
-            text: dataObj.data.mappingDSLDirectoryName
-        }
-        $scope.treeData.push(parentNode);
-
-        $scope.lookupObj[dataObj.data.mappingDSLDirectoryID] = parentNode;
-
         dataObj.data.mappingDSLDirectorySubDirsID.forEach(function (child) {
             var childNode = {
                 id: child.subDirectoryID,
-                parent: String(dataObj.data.mappingDSLDirectoryID),
+                parent: "#",
                 text: child.subDirectoryName
             };
             $scope.treeData.push(childNode);
             $scope.lookupObj[child.subDirectoryID] = childNode;
+            initTree(child.subDirectoryID, child.subDirectoryName)
         })
     }, function (err) {
         console.log("Error occured. " + err);
     });
+
+    var initTree = function(id, text){
+        // retrieve node for child upfront
+        var postObj = {
+            "data": {
+                "subDirID": id
+            }
+        };
+
+        serviceMethods.apiPOSTReq('/ariane/rest/mapping/registryDirectory/getChild', postObj).then(function (dataObj) {
+            dataObj.data.mappingDSLDirectorySubDirsID.forEach(function (child) {
+                if (!(child.subDirectoryID in $scope.lookupObj)) {
+                    var childNode = {
+                        id: child.subDirectoryID,
+                        parent: String(dataObj.data.mappingDSLDirectoryID),
+                        text: child.subDirectoryName
+                    }
+                    $scope.treeData.push(childNode);
+                    $scope.lookupObj[child.subDirectoryID] = childNode;
+                }
+            });
+
+            dataObj.data.mappingDSLDirectoryRequestsID.forEach(function (child) {
+                if (!(child.dirRequestID in $scope.lookupFileObj)) {
+                    var childNode = {
+                        id: "child" + child.dirRequestID,
+                        parent: String(dataObj.data.mappingDSLDirectoryID),
+                        text: child.dirRequestName,
+                        icon: "jstree-custom-file"
+                    }
+                    $scope.treeData.push(childNode);
+                    $scope.lookupFileObj[child.dirRequestID] = childNode;
+                }
+            })
+        }, function (error) {
+            console.error("failed to fetch childs")
+        })
+    }
+
 
     $scope.selectNodeCB = function (e, data) {
         // if Selected node has children then it's a directory else child
@@ -176,7 +207,7 @@ app.controller('treeController', ['$scope', 'serviceMethods', 'ngDialog', functi
             if (id.indexOf("child") === -1) {
                 var postObj = {
                     "data": {
-                        "subDirID": id
+                        "subDirID": parseInt(id)
                     }
                 };
 
