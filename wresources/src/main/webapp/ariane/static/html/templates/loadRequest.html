@@ -1,11 +1,16 @@
 <div class="div-title">
     <h3>Load Request</h3>
 </div>
-<div id="navigationHeader" ng-controller="treeController"><h3 style="margin-top: 5px">NAVIGATION</h3>
-<div>
-    <div class="div-Navigation">
-
+<div style="width: 100%;">
+<div style="float:left;" class="divHeader navigation" ng-controller="treeController">
+    <h3 style="margin-top: 5px">NAVIGATION</h3>
+    <div>
+        <div class="div-Navigation">
             <js-tree tree-data="scope" tree-plugins="contextmenu"  tree-contextmenu="contextMenu" tree-model="treeData" tree-events="select_node:selectNodeCB;open_node:openNodeCB"></js-tree>
         </div>
     </div>
+</div>
+<div style="float:right;" class="divHeader selection">
+    <h3 style="margin-top: 5px">SELECTION DETAILS</h3>
+</div>
 </div>

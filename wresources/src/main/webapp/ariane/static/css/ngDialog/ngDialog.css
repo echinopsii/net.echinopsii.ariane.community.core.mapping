@@ -87,8 +87,8 @@
   -webkit-backface-visibility: hidden;
   -webkit-animation: ngdialog-fadein 0.5s;
   animation: ngdialog-fadein 0.5s;
-  width: 800px !important;
-  height: 450px !important;
+  width: 980px !important;
+  height: 520px !important;
   overflow: auto
 }
 
@@ -112,7 +112,7 @@ body.ngdialog-open {
     margin: -24px 0 !important;
 }
 
-#navigationHeader {
+.divHeader {
     background: #333 none repeat scroll 0% 0%;
     height: 28px;
     box-shadow: none !important;;
@@ -120,17 +120,34 @@ body.ngdialog-open {
     color : white;
 }
 
+.navigation{
+    left: 12px;
+    right: auto;
+    top: 30px !important;
+    z-index: 0;
+    width: 30%;
+    margin: 23px 0px !important;
+    display: block;
+}
+
+.selection{
+    width: 70%;
+    top: 30px !important;
+    margin: 23px -6px !important;
+}
+
+
 .div-Navigation{
     border: 0px none;
     position: absolute;
     margin: 0px;
     left: 11px;
     right: auto;
-    top: 32px;
+    top: 64px;
     bottom: 0px;
-    height: 92.7%;
+    height: 87.7%;
     z-index: 0;
-    width: 240px !important;
+    width: 29.5%;
     display: block;
     visibility: visible;
     overflow: auto;
