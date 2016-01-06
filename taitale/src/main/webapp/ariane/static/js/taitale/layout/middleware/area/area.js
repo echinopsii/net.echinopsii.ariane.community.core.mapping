@@ -150,11 +150,8 @@ define(
                 },
                 menuMouseDown = function(e) {
                     if (e.which == 3) {
-                        if (!areaRef.isEditing && !areaRef.dispAreaOD) {
-                            areaRef.rect.animate({"stroke-width": 0}, 0);
-                            areaRef.areaR.hide();
+                        if (!areaRef.isEditing && !areaRef.dispAreaOD)
                             areaRef.dispArea = false;
-                        }
                         areaRef.menu.toBack();
                         areaRef.menuSet.toBack();
                         areaRef.menu.hide();
@@ -443,30 +440,35 @@ define(
             //MOVEABLE
 
             this.moveInit = function() {
-                if (this.isEditing)
-                    this.r.scaleDone(this);
+                if (!this.rightClick) {
+                    if (this.isEditing)
+                        this.r.scaleDone(this);
 
-                if (!this.hasMoveHdl)
-                    this.areaHat.hide();
+                    if (!this.hasMoveHdl)
+                        this.areaHat.hide();
 
-                this.r.areasOnMovePush(this);
-                this.r.moveSetPush(this.rect);
+                    this.r.areasOnMovePush(this);
+                    this.r.moveSetPush(this.rect);
 
-                var mtxX, mtxY, i, ii, j, jj;
-                mtxX = this.armatrix.getMtxSize().x;
-                mtxY = this.armatrix.getMtxSize().y;
-                for (i = 0, ii =  mtxX; i < ii; i++)
-                    for (j = 0, jj =  mtxY; j < jj; j++) {
-                        var areaObj = this.armatrix.getObjFromMtx(i,j);
-                        var areaObjType = this.armatrix.getObjTypeFromMtx(i,j);
-                        if (areaObjType==="LAN")
-                            areaObj.moveInit();
-                        else if (areaObjType==="BUS")
-                            areaObj.mbus.moveInit();
-                    }
+                    var mtxX, mtxY, i, ii, j, jj;
+                    mtxX = this.armatrix.getMtxSize().x;
+                    mtxY = this.armatrix.getMtxSize().y;
+                    for (i = 0, ii =  mtxX; i < ii; i++)
+                        for (j = 0, jj =  mtxY; j < jj; j++) {
+                            var areaObj = this.armatrix.getObjFromMtx(i,j);
+                            var areaObjType = this.armatrix.getObjTypeFromMtx(i,j);
+                            if (areaObjType==="LAN") {
+                                areaObj.rightClick = false;
+                                areaObj.moveInit();
+                            } else if (areaObjType==="BUS") {
+                                areaObj.rightClick = false;
+                                areaObj.mbus.moveInit();
+                            }
+                        }
 
-                this.changeInit();
-                this.isMoving = true;
+                    this.changeInit();
+                    this.isMoving = true;
+                }
             };
 
             this.moveAction = function(dx, dy) {

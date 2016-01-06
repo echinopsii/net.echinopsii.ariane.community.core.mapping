@@ -456,14 +456,21 @@ define(
                     this.r.moveSetPush(this.rect);
 
                     mtxS = this.dcmatrix.getWanMtxSize();
-                    for (i = 0, ii =  mtxS; i < ii; i++)
+                    for (i = 0, ii =  mtxS; i < ii; i++) {
+                        this.dcmatrix.getAreaFromWanMtx(i).rightClick = false;
                         this.dcmatrix.getAreaFromWanMtx(i).moveInit();
+                    }
+
                     mtxS = this.dcmatrix.getManMtxSize();
-                    for (i = 0, ii =  mtxS; i < ii; i++)
+                    for (i = 0, ii =  mtxS; i < ii; i++) {
+                        this.dcmatrix.getAreaFromManMtx(i).rightClick = false;
                         this.dcmatrix.getAreaFromManMtx(i).moveInit();
+                    }
                     mtxS = this.dcmatrix.getLanMtxSize();
-                    for (i = 0, ii =  mtxS; i < ii; i++)
+                    for (i = 0, ii =  mtxS; i < ii; i++) {
+                        this.dcmatrix.getAreaFromLanMtx(i).rightClick = false;
                         this.dcmatrix.getAreaFromLanMtx(i).moveInit();
+                    }
 
                     this.changeInit();
 
