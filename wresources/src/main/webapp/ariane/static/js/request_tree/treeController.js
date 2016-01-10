@@ -20,7 +20,7 @@
 // └──────────────────────────────────────────────────────────────────────────────────────┘ \\
 'use strict'
 
-var app = angular.module('treeApp', ['jsTree.directive','ngDialog']);
+var app = angular.module('treeApp', ['jsTree.directive', 'ngDialog']);
 
 app.controller('treeController', ['$scope', 'serviceMethods', 'ngDialog', function ($scope, serviceMethods, ngDialog) {
     $scope.treeData = [];
@@ -28,11 +28,15 @@ app.controller('treeController', ['$scope', 'serviceMethods', 'ngDialog', functi
     $scope.subDirName = null;
     $scope.lookupObj = {};
     $scope.lookupFileObj = {};
+    $scope.directoryDescription = null;
+    $scope.isDirectory;
+    $scope.initVal = true;
+    $scope.requestDetail;
 
     $scope.ShowNgDialog = function () {
         ngDialog.open({
             template: '../../ariane/ahtml/templates/loadRequest.html',
-            scope:$scope
+            scope: $scope
         });
     }
 
@@ -41,8 +45,12 @@ app.controller('treeController', ['$scope', 'serviceMethods', 'ngDialog', functi
             var childNode = {
                 id: child.subDirectoryID,
                 parent: "#",
-                text: child.subDirectoryName
+                text: child.subDirectoryName,
+                data: {
+                    "directoryDesc": child.subDirectoryDesc
+                }
             };
+            console.log(child)
             $scope.treeData.push(childNode);
             $scope.lookupObj[child.subDirectoryID] = childNode;
             initTree(child.subDirectoryID, child.subDirectoryName)
@@ -51,7 +59,7 @@ app.controller('treeController', ['$scope', 'serviceMethods', 'ngDialog', functi
         console.log("Error occured. " + err);
     });
 
-    var initTree = function(id, text){
+    var initTree = function (id, text) {
         // retrieve node for child upfront
         var postObj = {
             "data": {
@@ -65,7 +73,10 @@ app.controller('treeController', ['$scope', 'serviceMethods', 'ngDialog', functi
                     var childNode = {
                         id: child.subDirectoryID,
                         parent: String(dataObj.data.mappingDSLDirectoryID),
-                        text: child.subDirectoryName
+                        text: child.subDirectoryName,
+                        data: {
+                            "directoryDesc": child.subDirectoryDesc
+                        }
                     }
                     $scope.treeData.push(childNode);
                     $scope.lookupObj[child.subDirectoryID] = childNode;
@@ -78,7 +89,11 @@ app.controller('treeController', ['$scope', 'serviceMethods', 'ngDialog', functi
                         id: "child" + child.dirRequestID,
                         parent: String(dataObj.data.mappingDSLDirectoryID),
                         text: child.dirRequestName,
-                        icon: "jstree-custom-file"
+                        icon: "jstree-custom-file",
+                        data: {
+                            "requestReq": child.dirRequestReq,
+                            "requestDesc": child.dirRequestDescription
+                        }
                     }
                     $scope.treeData.push(childNode);
                     $scope.lookupFileObj[child.dirRequestID] = childNode;
@@ -93,8 +108,12 @@ app.controller('treeController', ['$scope', 'serviceMethods', 'ngDialog', functi
     $scope.selectNodeCB = function (e, data) {
         // if Selected node has children then it's a directory else child
         // according to that switch context Menu
+        console.log(data)
         if (data.node.icon !== "jstree-custom-file") {
             // parent
+            $scope.directoryDescription = data.node.data.directoryDesc
+            $scope.isDirectory = true;
+            $scope.initVal = true;
             $scope.contextMenu = {
                 "dirCreateSubfolder": {
                     "label": "Create subfolder",
@@ -104,7 +123,7 @@ app.controller('treeController', ['$scope', 'serviceMethods', 'ngDialog', functi
                 },
                 "dirDelete": {
                     "label": "Delete",
-                    "action": function(obj){
+                    "action": function (obj) {
                         deleteDirectory(data.node.id)
                     }
                 },
@@ -125,6 +144,9 @@ app.controller('treeController', ['$scope', 'serviceMethods', 'ngDialog', functi
             };
         } else {
             // children
+            $scope.isDirectory = false
+            $scope.initVal = false;
+            $scope.requestDetail = data.node.data;
             $scope.contextMenu = {
                 "fileDelete": {
                     "label": "Delete",
@@ -148,6 +170,7 @@ app.controller('treeController', ['$scope', 'serviceMethods', 'ngDialog', functi
                 }
             };
         }
+        $scope.$apply()
     };
 
     var deleteDirectory = function (directoryID) {
@@ -158,10 +181,10 @@ app.controller('treeController', ['$scope', 'serviceMethods', 'ngDialog', functi
         };
 
         serviceMethods.apiPOSTReq('/ariane/rest/mapping/registryDirectory/deleteDirectory', postObj).then(function () {
-            for(var i = 0; i < $scope.treeData.length; i++) {
+            for (var i = 0; i < $scope.treeData.length; i++) {
                 var obj = $scope.treeData[i];
 
-                if(obj.id === parseInt(directoryID)) {
+                if (obj.id === parseInt(directoryID)) {
                     $scope.treeData.splice(i, 1);
                     i--;
                 }
@@ -179,10 +202,10 @@ app.controller('treeController', ['$scope', 'serviceMethods', 'ngDialog', functi
         };
 
         serviceMethods.apiPOSTReq('/ariane/rest/mapping/registryRequest/deleteRequest', postObj).then(function () {
-            for(var i = 0; i < $scope.treeData.length; i++) {
+            for (var i = 0; i < $scope.treeData.length; i++) {
                 var obj = $scope.treeData[i];
 
-                if(obj.id === "child"+requestID) {
+                if (obj.id === "child" + requestID) {
                     $scope.treeData.splice(i, 1);
                     i--;
                 }
@@ -217,7 +240,10 @@ app.controller('treeController', ['$scope', 'serviceMethods', 'ngDialog', functi
                             var childNode = {
                                 id: child.subDirectoryID,
                                 parent: String(dataObj.data.mappingDSLDirectoryID),
-                                text: child.subDirectoryName
+                                text: child.subDirectoryName,
+                                data: {
+                                    "directoryDesc": child.subDirectoryDesc
+                                }
                             }
                             $scope.treeData.push(childNode);
                             $scope.lookupObj[child.subDirectoryID] = childNode;
@@ -230,7 +256,11 @@ app.controller('treeController', ['$scope', 'serviceMethods', 'ngDialog', functi
                                 id: "child" + child.dirRequestID,
                                 parent: String(dataObj.data.mappingDSLDirectoryID),
                                 text: child.dirRequestName,
-                                icon: "jstree-custom-file"
+                                icon: "jstree-custom-file",
+                                data: {
+                                    "requestReq": child.dirRequestReq,
+                                    "requestDesc": child.dirRequestDescription
+                                }
                             }
                             $scope.treeData.push(childNode);
                             $scope.lookupFileObj[child.dirRequestID] = childNode;

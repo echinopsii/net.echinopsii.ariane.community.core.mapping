@@ -88,7 +88,7 @@
   -webkit-animation: ngdialog-fadein 0.5s;
   animation: ngdialog-fadein 0.5s;
   width: 980px !important;
-  height: 520px !important;
+  height: 570px !important;
   overflow: auto
 }
 
@@ -118,6 +118,7 @@ body.ngdialog-open {
     box-shadow: none !important;;
     border : 1px solid #DF513D !important;
     color : white;
+    border-radius: 4px;
 }
 
 .navigation{
@@ -138,14 +139,14 @@ body.ngdialog-open {
 
 
 .div-Navigation{
-    border: 0px none;
+    border: 4px ;
     position: absolute;
     margin: 0px;
     left: 11px;
     right: auto;
     top: 64px;
     bottom: 0px;
-    height: 87.7%;
+    height: 88.8%;
     z-index: 0;
     width: 29.5%;
     display: block;
