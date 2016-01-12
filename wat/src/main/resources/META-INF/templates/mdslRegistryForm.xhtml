@@ -5,7 +5,7 @@
 <ui:composition>
     <p:tree id="reqTree" value="#{mdslRegistryController.root}" var="node" animate="true" style="width: 230px; border: 0px"
             selectionMode="single" selection="#{mdslRegistryController.selectedDirectoryOrRequestNode}" >
-        <p:ajax event="select" update=":saveRequestDetail" listener="#{mdslRegistryController.warnOnSave}"/>
+        <p:ajax event="select" update=":loadRequestDetail,:saveRequestDetail" listener="#{mdslRegistryController.warnOnSave}"/>
         <p:treeNode type="FolderRWCH" expandedIcon="icon-folder-open" collapsedIcon="icon-folder-close">
             <h:outputText value="#{node.name}"/>
         </p:treeNode>
