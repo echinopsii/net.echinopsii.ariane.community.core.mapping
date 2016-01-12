@@ -20,9 +20,9 @@
 // └──────────────────────────────────────────────────────────────────────────────────────┘ \\
 'use strict'
 
-var app = angular.module('treeApp', ['jsTree.directive', 'ngDialog']);
+var app = angular.module('treeApp', ['jsTree.directive']);
 
-app.controller('treeController', ['$scope', 'serviceMethods', 'ngDialog', function ($scope, serviceMethods, ngDialog) {
+app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, serviceMethods) {
     $scope.treeData = [];
     $scope.subDirID = null;
     $scope.subDirName = null;
@@ -32,13 +32,6 @@ app.controller('treeController', ['$scope', 'serviceMethods', 'ngDialog', functi
     $scope.isDirectory;
     $scope.initVal = true;
     $scope.requestDetail;
-
-    $scope.ShowNgDialog = function () {
-        ngDialog.open({
-            template: '../../ariane/ahtml/templates/loadRequest.html',
-            scope: $scope
-        });
-    }
 
     serviceMethods.apiGETReq('/ariane/rest/mapping/registryDirectory/getRoot').then(function (dataObj) {
         dataObj.data.mappingDSLDirectorySubDirsID.forEach(function (child) {
