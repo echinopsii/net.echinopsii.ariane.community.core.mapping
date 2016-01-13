@@ -79,6 +79,13 @@
                                             </p:selectOneButton>
                                         </h:panelGroup>
                                         <h:panelGroup>
+                                            <span class="inputTitle">Map Legend</span>
+                                            <p:selectOneButton id="mapLegend" widgetVar="mapLegend" value="#{mappingToolsDisplayController.mappingLegend}">
+                                                <f:selectItem itemLabel="OFF" itemValue="OFF"/>
+                                                <f:selectItem itemLabel="ON" itemValue="ON" />
+                                            </p:selectOneButton>
+                                        </h:panelGroup>
+                                        <h:panelGroup>
                                             <span class="inputTitle">Notifications options</span>
                                             <p:selectManyButton id="notificationsOptions" widgetVar="notificationsOptions" value="#{mappingToolsDisplayController.defaultNotifications}">
                                                 <f:selectItem itemLabel="Notify infos" itemValue="notifyInfos" />
