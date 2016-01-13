@@ -130,14 +130,15 @@
                                                 <p:commandButton id="execQuery" widgetVar="execQuery" type="button" value="Execute request" title="Execute"
                                                                  icon="icon-play-circle icon-large" style="width:150px"/><br/>
                                                 <p:commandButton type="button" value="Load request" title="Load" icon="icon-upload icon-large" style="width:150px"
-                                                                 onclick="requestLoaderDialog.show()" update=":loadReqDirForm,:loadRequestDetail"
+                                                                 onclick="requestLoaderDialog.show()"  update=":loadReqDirForm,:loadRequestDetail"
                                                                  actionListener="#{mdslRegistryController.reloadTree}"/><br/>
                                                 <p:commandButton type="commandButton" value="Save request" title="Save" icon="icon-download icon-large" style="width:150px"
                                                                  onclick="requestSaveDialog.show()" actionListener="#{mdslrRequestController.clear}"
                                                                  action="#{mdslRegistryController.reloadTree}"
                                                                  update=":saveReqDirForm,:saveRequestDetail"/>
-                                                <button style="width:150px" type="button" ng-click="ShowNgDialog()" ng-dialog-class="ngdialog-theme-default">Load Request</button>
-                                            </h:panelGroup>
+                                                <p:commandButton type="button" value="Load request 2" title="Load" icon="icon-upload icon-large" style="width:150px"
+                                                                 onclick="requestLoaderDialog2.show()"/><br/>
+                                               </h:panelGroup>
                                         </h:panelGrid>
                                     </h:form>
                                 </p:tab>
@@ -162,6 +163,59 @@
                     </p:layout>
                 </p:layoutUnit>
             </p:layout>
+
+        <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Load request" widgetVar="requestLoaderDialog2"
+                  width="1000" height="600" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
+                <p:layout style="min-width:980px;min-height:590px;">
+                    <p:layoutUnit position="west" size="240" header="NAVIGATION" resizable="false" style="border: 0px;">
+                        <js-tree tree-data="scope" tree-plugins="contextmenu" tree-contextmenu="contextMenu"
+                         tree-model="treeData" tree-events="select_node:selectNodeCB;open_node:openNodeCB"></js-tree>
+                    </p:layoutUnit>
+                    <p:layoutUnit position="center" resizable="false" header="SELECTION DETAILS" style="border: 0px">
+                        <h:panelGroup>
+                            <br/>
+                            <h:panelGroup ng-show="initVal">
+                                <h:outputText value="Choose a request or template from navigation pane."/>
+                                <br/>
+                                <p:separator/>
+                                <br/>
+                                <div ng-show="isDirectory">
+                                <p:fieldset legend="Folder description" style="width: 700px; height: 155px">
+                                    <p:scrollPanel style="width: 700px; height: 120px; border: 0px; overflow: auto">
+                                        <h:outputText value="{{directoryDescription}}"/>
+                                    </p:scrollPanel>
+                                </p:fieldset>
+                                </div>
+                            </h:panelGroup>
+                            <div ng-show="!isDirectory&amp;&amp;!initVal">
+                            <h:form>
+                                <br/>
+                                <p:fieldset legend="Request" style="width: 700px; height: 155px">
+                                    <p:scrollPanel style="width: 700px; height: 120px; border: 0px; overflow: auto">
+                                    <pre>
+                                        {{requestDetail.requestReq}}
+                                    </pre>
+                                    </p:scrollPanel>
+                                </p:fieldset>
+                                <br/>
+                                <p:fieldset legend="Description" style="width: 700px; height: 155px">
+                                    <p:scrollPanel style="width: 700px; height: 120px; border: 0px; overflow: auto">
+                                        <h:outputText value="{{requestDetail.requestDesc}}"/>
+                                    </p:scrollPanel>
+                                </p:fieldset>
+                                <br/>
+                                <p:separator/>
+                                <br/>
+                                <p:commandButton value="Use that one !" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+                                                 oncomplete="requestLoaderDialog.hide();"
+                                                 update=":mappingToolsView:mapToolsQueryForm:mdslQuery"
+                                                 actionListener="#{mdslrSessionRequestController.loadSelectedRequest}"/>
+                            </h:form>
+                            </div>
+                        </h:panelGroup>
+                     </p:layoutUnit>
+                </p:layout>
+        </p:dialog>
         </div>
 
         <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Export map" widgetVar="mapExport"
@@ -177,55 +231,55 @@
 
         <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Load request" widgetVar="requestLoaderDialog"
                   width="1000" height="600" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
-                <p:layout style="min-width:980px;min-height:590px;">
-                    <p:layoutUnit position="west" size="240" header="NAVIGATION" resizable="false" style="border: 0px">
-                        <h:form id="loadReqDirForm">
-                            <ui:insert name="mdslRegistryForm">
-                                <ui:include src="/templates/mdslRegistryForm.xhtml" />
-                            </ui:insert>
-                        </h:form>
-                    </p:layoutUnit>
-                    <p:layoutUnit position="center" resizable="false" header="SELECTION DETAILS" style="border: 0px">
-                        <h:panelGroup id="loadRequestDetail">
+            <p:layout style="min-width:980px;min-height:590px;">
+                <p:layoutUnit position="west" size="240" header="NAVIGATION" resizable="false" style="border: 0px">
+                    <h:form id="loadReqDirForm">
+                        <ui:insert name="mdslRegistryForm">
+                            <ui:include src="/templates/mdslRegistryForm.xhtml" />
+                        </ui:insert>
+                    </h:form>
+                </p:layoutUnit>
+                <p:layoutUnit position="center" resizable="false" header="SELECTION DETAILS" style="border: 0px">
+                    <h:panelGroup id="loadRequestDetail">
+                        <br/>
+                        <h:panelGroup  rendered="#{mdslRegistryController.selectedRequestNode==null}">
+                            <h:outputText value="Choose a request or template from navigation pane."/>
                             <br/>
-                            <h:panelGroup  rendered="#{mdslRegistryController.selectedRequestNode==null}">
-                                <h:outputText value="Choose a request or template from navigation pane."/>
-                                <br/>
-                                <p:separator/>
-                                <br/>
-                                <p:fieldset legend="Folder description" style="width: 700px; height: 155px"
-                                            rendered="#{mdslRegistryController.selectedDirectoryOrRequestNode!=null}">
-                                    <p:scrollPanel style="width: 700px; height: 120px; border: 0px">
-                                        <h:outputText value="#{mdslRegistryController.selectedFolderDesc}"/>
-                                    </p:scrollPanel>
-                                </p:fieldset>
-                            </h:panelGroup>
-                            <h:form rendered="#{mdslRegistryController.selectedRequestNode!=null}">
-                                <br/>
-                                <p:fieldset legend="Request" style="width: 700px; height: 155px">
-                                    <p:scrollPanel style="width: 700px; height: 120px; border: 0px">
+                            <p:separator/>
+                            <br/>
+                            <p:fieldset legend="Folder description" style="width: 700px; height: 155px"
+                                        rendered="#{mdslRegistryController.selectedDirectoryOrRequestNode!=null}">
+                                <p:scrollPanel style="width: 700px; height: 120px; border: 0px">
+                                    <h:outputText value="#{mdslRegistryController.selectedFolderDesc}"/>
+                                </p:scrollPanel>
+                            </p:fieldset>
+                        </h:panelGroup>
+                        <h:form rendered="#{mdslRegistryController.selectedRequestNode!=null}">
+                            <br/>
+                            <p:fieldset legend="Request" style="width: 700px; height: 155px">
+                                <p:scrollPanel style="width: 700px; height: 120px; border: 0px">
 <pre>
 #{mdslRegistryController.selectedRequestReq}
 </pre>
-                                    </p:scrollPanel>
-                                </p:fieldset>
-                                <br/>
-                                <p:fieldset legend="Description" style="width: 700px; height: 155px">
-                                    <p:scrollPanel style="width: 700px; height: 120px; border: 0px">
-                                        <h:outputText value="#{mdslRegistryController.selectedRequestDesc}"/>
-                                    </p:scrollPanel>
-                                </p:fieldset>
-                                <br/>
-                                <p:separator/>
-                                <br/>
-                                <p:commandButton value="Use that one !" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
-                                                 oncomplete="requestLoaderDialog.hide();"
-                                                 update=":mappingToolsView:mapToolsQueryForm:mdslQuery"
-                                                 actionListener="#{mdslrSessionRequestController.loadSelectedRequest}"/>
-                            </h:form>
-                        </h:panelGroup>
-                     </p:layoutUnit>
-                </p:layout>
+                                </p:scrollPanel>
+                            </p:fieldset>
+                            <br/>
+                            <p:fieldset legend="Description" style="width: 700px; height: 155px">
+                                <p:scrollPanel style="width: 700px; height: 120px; border: 0px">
+                                    <h:outputText value="#{mdslRegistryController.selectedRequestDesc}"/>
+                                </p:scrollPanel>
+                            </p:fieldset>
+                            <br/>
+                            <p:separator/>
+                            <br/>
+                            <p:commandButton value="Use that one !" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+                                             oncomplete="requestLoaderDialog.hide();"
+                                             update=":mappingToolsView:mapToolsQueryForm:mdslQuery"
+                                             actionListener="#{mdslrSessionRequestController.loadSelectedRequest}"/>
+                        </h:form>
+                    </h:panelGroup>
+                </p:layoutUnit>
+            </p:layout>
         </p:dialog>
 
         <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Save request" widgetVar="requestSaveDialog"
@@ -318,7 +372,7 @@
                 </h:form>
             </h:panelGroup>
 
-            <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}" update=":saveReqDirForm,:loadReqDirForm,:loadRequestDetail,:saveRequestDetail"/>
+            <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}" update=":saveReqDirForm,:saveRequestDetail,:loadReqDirForm,:loadRequestDetail"/>
         </p:dialog>
 
         <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Update folder properties" widgetVar="folderUpdateDialog"
@@ -338,7 +392,7 @@
                 </h:form>
             </h:panelGroup>
 
-            <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}" update=":saveReqDirForm,:loadReqDirForm,:loadRequestDetail,:saveRequestDetail"/>
+            <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}" update=":saveReqDirForm,:saveRequestDetail,:loadReqDirForm,:loadRequestDetail"/>
         </p:dialog>
 
         <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Delete folder" widgetVar="folderDeleteDialog"
@@ -359,7 +413,7 @@
                 </h:form>
             </h:panelGroup>
 
-            <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}" update=":saveReqDirForm,:loadReqDirForm,:loadRequestDetail,:saveRequestDetail"/>
+            <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}" update=":saveReqDirForm,:saveRequestDetail,:loadReqDirForm,:loadRequestDetail"/>
         </p:dialog>
 
         <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Update request permissions" widgetVar="requestPermissionCHDialog"
@@ -379,7 +433,7 @@
                 </h:form>
             </h:panelGroup>
 
-            <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}" update=":saveReqDirForm,:loadReqDirForm,:loadRequestDetail,:saveRequestDetail"/>
+            <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}" update=":saveReqDirForm,:saveRequestDetail,:loadReqDirForm,:loadRequestDetail"/>
         </p:dialog>
 
         <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Update folder permissions" widgetVar="folderPermissionCHDialog"
@@ -399,7 +453,7 @@
                 </h:form>
             </h:panelGroup>
 
-            <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}" update=":saveReqDirForm,:loadReqDirForm,:loadRequestDetail,:saveRequestDetail"/>
+            <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}" update=":saveReqDirForm,:saveRequestDetail,:loadReqDirForm,:loadRequestDetail"/>
         </p:dialog>
 
     </ui:define>
