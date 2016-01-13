@@ -160,9 +160,8 @@ public class MappingBootstrap implements FaceletsResourceResolverService {
                                                                                                             UserPreferenceEntityType.TYPE_USR_PREF_ENTITY_ONEBUTTON_SELECT,
                                                                                                             "Define your prefered layout").
                                                                                                             addSelectValue("BBTree").
-                                                                                                            addSelectValue("Tree").
-                                                                                                            addSelectValue("Network")./*addSelectValue("Random").*/
-                                                                                                            setFieldDefault("Tree")).
+                                                                                                            addSelectValue("Middleware")./*addSelectValue("Random").*/
+                                                                                                            setFieldDefault("BBTree")).
                                                                          addEntity(new UserPreferenceEntity(MAPPING_USER_PREF_MODE,
                                                                                                             UserPreferenceEntityType.TYPE_USR_PREF_ENTITY_ONEBUTTON_SELECT,
                                                                                                             "Define your prefered mode").
