@@ -97,11 +97,9 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
         })
     }
 
-
     $scope.selectNodeCB = function (e, data) {
         // if Selected node has children then it's a directory else child
         // according to that switch context Menu
-        console.log(data)
         if (data.node.icon !== "jstree-custom-file") {
             // parent
             $scope.directoryDescription = data.node.data.directoryDesc
@@ -111,7 +109,7 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
                 "dirCreateSubfolder": {
                     "label": "Create subfolder",
                     "action": function (obj) {
-
+                        saveDirectory(data.node.id)
                     }
                 },
                 "dirDelete": {
@@ -165,6 +163,23 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
         }
         $scope.$apply()
     };
+
+    var saveDirectory = function(rootId){
+        var postObj = {
+            "data": {
+                "directoryID" : '0',
+                "rootId": rootId,
+                "name": "sagarghuge121132",
+                "description": "awesome1122"
+            }
+        };
+
+        serviceMethods.apiPOSTReq('/ariane/rest/mapping/registryDirectory/saveDirectory', postObj).then(function (data) {
+            console.log("saved successfully "+ JSON.stringify(data))
+        }, function (error) {
+            console.error("failed to delete directory");
+        })
+    }
 
     var deleteDirectory = function (directoryID) {
         var postObj = {

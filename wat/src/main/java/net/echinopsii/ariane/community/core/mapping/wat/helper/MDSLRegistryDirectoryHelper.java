@@ -22,12 +22,15 @@
 
 package net.echinopsii.ariane.community.core.mapping.wat.helper;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.echinopsii.ariane.community.core.idm.base.model.jpa.Group;
 import net.echinopsii.ariane.community.core.idm.base.model.jpa.UXPermission;
 import net.echinopsii.ariane.community.core.idm.base.model.jpa.User;
 import net.echinopsii.ariane.community.core.mapping.ds.dsl.registry.MappingDSLRegistryBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.dsl.registry.model.MappingDSLRegistryDirectory;
 import net.echinopsii.ariane.community.core.mapping.ds.dsl.registry.model.MappingDSLRegistryRequest;
+import net.echinopsii.ariane.community.core.portal.idmwat.controller.group.GroupsListController;
 import net.echinopsii.ariane.community.core.portal.idmwat.controller.user.UsersListController;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
@@ -45,6 +48,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
+import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
 
 public class MDSLRegistryDirectoryHelper {
@@ -55,14 +60,14 @@ public class MDSLRegistryDirectoryHelper {
     private TreeNode root;
     private TreeNode selectedDirectoryOrRequestNode;
     private TreeNode selectedRequestNode;
-    private String   selectedRequestReq;
-    private String   selectedRequestDesc;
-    private String   selectedFolderDesc;
+    private String selectedRequestReq;
+    private String selectedRequestDesc;
+    private String selectedFolderDesc;
 
     private Subject subject;
-    private User       user;
+    private User user;
 
-    public final static String FACES_CONTEXT_APPMAP_SELECTED_REQ  = "MAPPING_REGISTRY_SELECTED_REQUEST";
+    public final static String FACES_CONTEXT_APPMAP_SELECTED_REQ = "MAPPING_REGISTRY_SELECTED_REQUEST";
     public final static String FACES_CONTEXT_APPMAP_SELECTED_NODE = "MAPPING_REGISTRY_SELECTED_NODE";
     public final static String FACES_CONTEXT_APPMAP_OPS_ON_FOLDER = "MAPPING_REGISTRY_OPS_ON_FOLDER";
 
@@ -76,13 +81,13 @@ public class MDSLRegistryDirectoryHelper {
         if (subject.isAuthenticated()) {
             em = MappingDSLRegistryBootstrap.getIDMJPAProvider().createEM();
 
-            user  = UsersListController.getUserByUserName(em, subject.getPrincipal().toString());
+            user = UsersListController.getUserByUserName(em, subject.getPrincipal().toString());
 
             CriteriaBuilder builder = em.getCriteriaBuilder();
             CriteriaQuery<MappingDSLRegistryDirectory> rootDCriteria = builder.createQuery(MappingDSLRegistryDirectory.class);
             Root<MappingDSLRegistryDirectory> rootDRoot = rootDCriteria.from(MappingDSLRegistryDirectory.class);
             rootDRoot.fetch("uxPermissions", JoinType.LEFT);
-            rootDRoot.fetch("subDirectories",JoinType.LEFT);
+            rootDRoot.fetch("subDirectories", JoinType.LEFT);
             rootDRoot.fetch("requests", JoinType.LEFT);
             rootDCriteria.select(rootDRoot).where(builder.equal(rootDRoot.<String>get("name"), MappingDSLRegistryBootstrap.MAPPING_DSL_REGISTRY_ROOT_DIR_NAME));
             TypedQuery<MappingDSLRegistryDirectory> rootDQuery = em.createQuery(rootDCriteria);
@@ -106,8 +111,8 @@ public class MDSLRegistryDirectoryHelper {
 
     private boolean hasRight(EntityManager em, Object registryObject, String right) {
         boolean emToClose = false;
-        User              regObjUser;
-        Group             regObjGroup;
+        User regObjUser;
+        Group regObjGroup;
         Set<UXPermission> regObjPermissions;
 
         if (subject.hasRole("Jedi"))
@@ -120,13 +125,13 @@ public class MDSLRegistryDirectoryHelper {
         user = em.find(User.class, user.getId());
 
         if (registryObject instanceof MappingDSLRegistryDirectory) {
-            regObjUser = ((MappingDSLRegistryDirectory)registryObject).getUser();
-            regObjGroup = ((MappingDSLRegistryDirectory)registryObject).getGroup();
-            regObjPermissions = ((MappingDSLRegistryDirectory)registryObject).getUxPermissions();
+            regObjUser = ((MappingDSLRegistryDirectory) registryObject).getUser();
+            regObjGroup = ((MappingDSLRegistryDirectory) registryObject).getGroup();
+            regObjPermissions = ((MappingDSLRegistryDirectory) registryObject).getUxPermissions();
         } else if (registryObject instanceof MappingDSLRegistryRequest) {
-            regObjUser = ((MappingDSLRegistryRequest)registryObject).getUser();
-            regObjGroup = ((MappingDSLRegistryRequest)registryObject).getGroup();
-            regObjPermissions = ((MappingDSLRegistryRequest)registryObject).getUxPermissions();
+            regObjUser = ((MappingDSLRegistryRequest) registryObject).getUser();
+            regObjGroup = ((MappingDSLRegistryRequest) registryObject).getGroup();
+            regObjPermissions = ((MappingDSLRegistryRequest) registryObject).getUxPermissions();
         } else {
             if (emToClose)
                 em.close();
@@ -157,19 +162,19 @@ public class MDSLRegistryDirectoryHelper {
         return false;
     }
 
-    public MappingDSLRegistryDirectory getRootD(){
+    public MappingDSLRegistryDirectory getRootD() {
         initRoot();
         return rootD;
     }
 
-    public MappingDSLRegistryDirectory getChild(int subDirID){
+    public MappingDSLRegistryDirectory getChild(int subDirID) {
         em = MappingDSLRegistryBootstrap.getIDMJPAProvider().createEM();
 
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<MappingDSLRegistryDirectory> rootDCriteria = builder.createQuery(MappingDSLRegistryDirectory.class);
         Root<MappingDSLRegistryDirectory> rootDRoot = rootDCriteria.from(MappingDSLRegistryDirectory.class);
         rootDRoot.fetch("uxPermissions", JoinType.LEFT);
-        rootDRoot.fetch("subDirectories",JoinType.LEFT);
+        rootDRoot.fetch("subDirectories", JoinType.LEFT);
         rootDRoot.fetch("requests", JoinType.LEFT);
         rootDCriteria.select(rootDRoot).where(builder.equal(rootDRoot.get("id"), subDirID));
         TypedQuery<MappingDSLRegistryDirectory> rootDQuery = em.createQuery(rootDCriteria);
@@ -185,7 +190,7 @@ public class MDSLRegistryDirectoryHelper {
         return dir;
     }
 
-    public Boolean deleteDirectory(long directoryID){
+    public Boolean deleteDirectory(long directoryID) {
         EntityManager em = MappingDSLRegistryBootstrap.getIDMJPAProvider().createEM();
         MappingDSLRegistryDirectory entity = null;
         try {
@@ -199,13 +204,57 @@ public class MDSLRegistryDirectoryHelper {
             log.debug("Throwable catched !");
             t.printStackTrace();
             FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                    "Throwable raised while creating mapping dsl registry folder " + ((entity!=null) ? entity.getName() : "null") + " !",
+                    "Throwable raised while creating mapping dsl registry folder " + ((entity != null) ? entity.getName() : "null") + " !",
                     "Throwable message : " + t.getMessage());
             FacesContext.getCurrentInstance().addMessage(null, msg);
             if (em.getTransaction().isActive())
                 em.getTransaction().rollback();
         } finally {
             em.close();
+        }
+        return Boolean.FALSE;
+    }
+
+    public Boolean saveDirectory(String payload) throws IOException {
+        Subject subject = SecurityUtils.getSubject();
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> postData = mapper.readValue(payload, Map.class);
+        // if id is null then create new directory else update with that id
+        long directoryID = Long.valueOf((String) postData.get("directoryID"));
+        long rootId = Long.valueOf((String) postData.get("rootId"));
+        String name = (String) postData.get("name");
+        String description = (String) postData.get("description");
+
+        if (subject.isAuthenticated()) {
+            EntityManager em = MappingDSLRegistryBootstrap.getIDMJPAProvider().createEM();
+            MappingDSLRegistryDirectory entity = null;
+            try {
+                em.getTransaction().begin();
+                MappingDSLRegistryDirectory rootDirectory = em.find(MappingDSLRegistryDirectory.class, rootId);
+                if (directoryID == 0) {
+                    entity = new MappingDSLRegistryDirectory().setNameR(name).setDescriptionR(description).setRootDirectoryR(rootDirectory);
+                    entity.setRootDirectory(rootDirectory);
+                    rootDirectory.getSubDirectories().add(entity);
+                    em.persist(entity);
+                } else {
+                    entity = em.find(MappingDSLRegistryDirectory.class, directoryID);
+                    if (name != null) entity.setName(name);
+                    if (description != null) entity.setDescription(description);
+                    if (entity.getRootDirectory() != null && rootDirectory != null && !entity.getRootDirectory().equals(rootDirectory)) {
+                        entity.getRootDirectory().getSubDirectories().remove(entity);
+                        rootDirectory.getSubDirectories().add(entity);
+                    }
+                }
+                em.getTransaction().commit();
+                return Boolean.TRUE;
+            } catch (Throwable t) {
+                log.debug("Throwable catched !");
+                t.printStackTrace();
+                if (em.getTransaction().isActive())
+                    em.getTransaction().rollback();
+            } finally {
+                em.close();
+            }
         }
         return Boolean.FALSE;
     }
