@@ -43,7 +43,6 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
                     "directoryDesc": child.subDirectoryDesc
                 }
             };
-            console.log(child)
             $scope.treeData.push(childNode);
             $scope.lookupObj[child.subDirectoryID] = childNode;
             initTree(child.subDirectoryID, child.subDirectoryName)
@@ -121,14 +120,12 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
                 "dirEditPermissions": {
                     "label": "Edit Permissions",
                     "action": function (obj) {
-                        console.log(obj);
                         alert("You clicked " + obj.item.label);
                     }
                 },
                 "dirEditProperties": {
                     "label": "Edit Properties",
                     "action": function (obj) {
-                        console.log(obj);
                         alert("You clicked " + obj.item.label);
                     }
                 }
@@ -148,14 +145,12 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
                 "fileEditPermissions": {
                     "label": "Edit Permissions",
                     "action": function (obj) {
-                        console.log(data.node);
                         alert("You clicked " + obj.item.label);
                     }
                 },
                 "fileEditProperties": {
                     "label": "Edit Properties",
                     "action": function (obj) {
-                        console.log(obj);
                         alert("You clicked " + obj.item.label);
                     }
                 }
@@ -167,15 +162,25 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
     var saveDirectory = function(rootId){
         var postObj = {
             "data": {
-                "directoryID" : '0',
+                "directoryId" : '0',
                 "rootId": rootId,
-                "name": "sagarghuge121132",
-                "description": "awesome1122"
+                "name": "lakhu",
+                "description": "ramu"
             }
         };
 
-        serviceMethods.apiPOSTReq('/ariane/rest/mapping/registryDirectory/saveDirectory', postObj).then(function (data) {
-            console.log("saved successfully "+ JSON.stringify(data))
+        serviceMethods.apiPOSTReq('/ariane/rest/mapping/registryDirectory/saveDirectory', postObj).then(function (result) {
+            var childNode = {
+                id: result.data,
+                parent: rootId,
+                text: postObj.data.name,
+                data: {
+                    "directoryDesc": postObj.data.description
+                }
+            }
+
+            $scope.treeData.push(childNode);
+            $scope.lookupObj[result.data] = childNode;
         }, function (error) {
             console.error("failed to delete directory");
         })

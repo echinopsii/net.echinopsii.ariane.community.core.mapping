@@ -49,8 +49,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
 import java.io.IOException;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class MDSLRegistryDirectoryHelper {
 
@@ -72,8 +71,25 @@ public class MDSLRegistryDirectoryHelper {
     public final static String FACES_CONTEXT_APPMAP_OPS_ON_FOLDER = "MAPPING_REGISTRY_OPS_ON_FOLDER";
 
     private EntityManager em;
+    private List<String> UXresourcesLikePermissions;
+    private Set<UXPermission> uxPermissions;
+    private Set<UXPermission> uxDefaultPermissions;
 
     public MDSLRegistryDirectoryHelper() {
+        UXresourcesLikePermissions = new ArrayList<String>();
+        UXresourcesLikePermissions.add(UXPermission.UX_LIKE_RD_PERM);
+        UXresourcesLikePermissions.add(UXPermission.UX_LIKE_WR_PERM);
+        UXresourcesLikePermissions.add(UXPermission.UX_LIKE_CH_PERM);
+
+        uxPermissions =  new HashSet<UXPermission>();
+
+        uxDefaultPermissions = new HashSet<UXPermission>();
+        uxDefaultPermissions.add(MappingDSLRegistryBootstrap.getIDMJPAProvider().getUXLikeResourcesPermissionsFromName(UXPermission.UX_LIKE_RD_PERM, UXPermission.UX_LIKE_U_ACTOR_TYPE));
+        uxDefaultPermissions.add(MappingDSLRegistryBootstrap.getIDMJPAProvider().getUXLikeResourcesPermissionsFromName(UXPermission.UX_LIKE_WR_PERM, UXPermission.UX_LIKE_U_ACTOR_TYPE));
+        uxDefaultPermissions.add(MappingDSLRegistryBootstrap.getIDMJPAProvider().getUXLikeResourcesPermissionsFromName(UXPermission.UX_LIKE_CH_PERM, UXPermission.UX_LIKE_U_ACTOR_TYPE));
+        uxDefaultPermissions.add(MappingDSLRegistryBootstrap.getIDMJPAProvider().getUXLikeResourcesPermissionsFromName(UXPermission.UX_LIKE_RD_PERM, UXPermission.UX_LIKE_G_ACTOR_TYPE));
+        uxDefaultPermissions.add(MappingDSLRegistryBootstrap.getIDMJPAProvider().getUXLikeResourcesPermissionsFromName(UXPermission.UX_LIKE_WR_PERM, UXPermission.UX_LIKE_G_ACTOR_TYPE));
+        uxDefaultPermissions.add(MappingDSLRegistryBootstrap.getIDMJPAProvider().getUXLikeResourcesPermissionsFromName(UXPermission.UX_LIKE_RD_PERM, UXPermission.UX_LIKE_O_ACTOR_TYPE));
     }
 
     public void initRoot() {
@@ -215,38 +231,46 @@ public class MDSLRegistryDirectoryHelper {
         return Boolean.FALSE;
     }
 
-    public Boolean saveDirectory(String payload) throws IOException {
+    public long saveDirectory(String payload) throws IOException {
         Subject subject = SecurityUtils.getSubject();
         ObjectMapper mapper = new ObjectMapper();
         Map<String, Object> postData = mapper.readValue(payload, Map.class);
         // if id is null then create new directory else update with that id
-        long directoryID = Long.valueOf((String) postData.get("directoryID"));
+        long directoryId = Long.valueOf((String) postData.get("directoryId"));
         long rootId = Long.valueOf((String) postData.get("rootId"));
         String name = (String) postData.get("name");
         String description = (String) postData.get("description");
 
         if (subject.isAuthenticated()) {
             EntityManager em = MappingDSLRegistryBootstrap.getIDMJPAProvider().createEM();
+            User reqUser = UsersListController.getUserByUserName(em, subject.getPrincipal().toString());
+            Group reqGroup = GroupsListController.getGroupByName(em, subject.getPrincipal().toString());
             MappingDSLRegistryDirectory entity = null;
             try {
                 em.getTransaction().begin();
                 MappingDSLRegistryDirectory rootDirectory = em.find(MappingDSLRegistryDirectory.class, rootId);
-                if (directoryID == 0) {
+                if (directoryId == 0) {
                     entity = new MappingDSLRegistryDirectory().setNameR(name).setDescriptionR(description).setRootDirectoryR(rootDirectory);
+                    entity.setUser(reqUser);
+                    entity.setGroup(reqGroup);
+                    entity.setUxPermissions(uxDefaultPermissions);
                     entity.setRootDirectory(rootDirectory);
                     rootDirectory.getSubDirectories().add(entity);
                     em.persist(entity);
                 } else {
-                    entity = em.find(MappingDSLRegistryDirectory.class, directoryID);
+                    entity = em.find(MappingDSLRegistryDirectory.class, directoryId);
                     if (name != null) entity.setName(name);
                     if (description != null) entity.setDescription(description);
+                    entity.setUser(rootDirectory.getUser());
+                    entity.setGroup(rootDirectory.getGroup());
+                    entity.setUxPermissions(rootDirectory.getUxPermissions());
                     if (entity.getRootDirectory() != null && rootDirectory != null && !entity.getRootDirectory().equals(rootDirectory)) {
                         entity.getRootDirectory().getSubDirectories().remove(entity);
                         rootDirectory.getSubDirectories().add(entity);
                     }
                 }
                 em.getTransaction().commit();
-                return Boolean.TRUE;
+                return entity.getId();
             } catch (Throwable t) {
                 log.debug("Throwable catched !");
                 t.printStackTrace();
@@ -256,6 +280,6 @@ public class MDSLRegistryDirectoryHelper {
                 em.close();
             }
         }
-        return Boolean.FALSE;
+        return 0;
     }
 }

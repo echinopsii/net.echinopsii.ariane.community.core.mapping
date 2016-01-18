@@ -97,9 +97,9 @@ public class MDSLRegistryDirectoryEndpoint {
     public Response saveDirectory(@QueryParam("data") String params) throws IOException {
         System.out.print(params);
         MDSLRegistryDirectoryHelper md = new MDSLRegistryDirectoryHelper();
-        Boolean responseVal = md.saveDirectory(params);
-        if (responseVal)
-            return Response.status(Response.Status.OK).entity("Directory has been saved successfully").build();
+        long id = md.saveDirectory(params);
+        if (id != 0)
+            return Response.status(Response.Status.OK).entity(id).build();
         else
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Failed to save directory.").build();
     }
