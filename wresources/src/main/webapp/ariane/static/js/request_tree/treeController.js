@@ -32,6 +32,9 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
     $scope.isDirectory;
     $scope.initVal = true;
     $scope.requestDetail;
+    $scope.folderName;
+    $scope.folderDescription;
+    $scope.rootId;
 
     serviceMethods.apiGETReq('/ariane/rest/mapping/registryDirectory/getRoot').then(function (dataObj) {
         dataObj.data.mappingDSLDirectorySubDirsID.forEach(function (child) {
@@ -108,7 +111,8 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
                 "dirCreateSubfolder": {
                     "label": "Create subfolder",
                     "action": function (obj) {
-                        saveDirectory(data.node.id)
+                        $scope.rootId = data.node.id
+                        folderNewDialog.show()
                     }
                 },
                 "dirDelete": {
@@ -159,20 +163,21 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
         $scope.$apply()
     };
 
-    var saveDirectory = function(rootId){
+    $scope.saveDirectory = function () {
+        console.log("clicked me")
         var postObj = {
             "data": {
-                "directoryId" : '0',
-                "rootId": rootId,
-                "name": "lakhu",
-                "description": "ramu"
+                "directoryId": '0',
+                "rootId": $scope.rootId,
+                "name": $scope.folderName,
+                "description": $scope.folderDescription
             }
         };
 
         serviceMethods.apiPOSTReq('/ariane/rest/mapping/registryDirectory/saveDirectory', postObj).then(function (result) {
             var childNode = {
                 id: result.data,
-                parent: rootId,
+                parent: postObj.data.rootId,
                 text: postObj.data.name,
                 data: {
                     "directoryDesc": postObj.data.description

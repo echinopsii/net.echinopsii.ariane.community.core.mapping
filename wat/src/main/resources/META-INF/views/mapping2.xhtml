@@ -168,6 +168,27 @@
                 </p:layoutUnit>
             </p:layout>
 
+        <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Create new folder" widgetVar="folderNewDialog"
+                  width="800" height="400" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
+            <h:panelGroup id="createFolder">
+                <h:form>
+                    <ui:insert name="createDirectory" >
+                        <ui:include src="/templates/mdslDirectoryForm2.xhtml" />
+                    </ui:insert>
+                    <div ng-show="isDirectory">
+                    <h:panelGroup>
+                        <p:separator/>
+                        <br/>
+                        <input value="Create this folder" class="ui-confirmdialog-yes" data-icon="ui-icon-check"
+                                         ng-click="saveDirectory()" type="button"/>
+                    </h:panelGroup>
+                    </div>
+                </h:form>
+            </h:panelGroup>
+
+            <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}" update=":saveReqDirForm,:saveRequestDetail,:loadReqDirForm,:loadRequestDetail"/>
+        </p:dialog>
+
         <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Load request" widgetVar="requestLoaderDialog2"
                   width="1000" height="600" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
                 <p:layout style="min-width:980px;min-height:590px;">
@@ -262,9 +283,9 @@
                             <br/>
                             <p:fieldset legend="Request" style="width: 700px; height: 155px">
                                 <p:scrollPanel style="width: 700px; height: 120px; border: 0px">
-<pre>
-#{mdslRegistryController.selectedRequestReq}
-</pre>
+                                <pre>
+                                #{mdslRegistryController.selectedRequestReq}
+                                </pre>
                                 </p:scrollPanel>
                             </p:fieldset>
                             <br/>
@@ -359,25 +380,6 @@
             <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}" update=":saveReqDirForm,:loadReqDirForm"/>
         </p:dialog>
 
-        <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Create new folder" widgetVar="folderNewDialog"
-                  width="800" height="400" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
-            <h:panelGroup id="createFolder">
-                <h:form>
-                    <ui:insert name="createDirectory" >
-                        <ui:include src="/templates/mdslDirectoryForm.xhtml" />
-                    </ui:insert>
-                    <h:panelGroup rendered="#{mdslRegistryController.selectedDirectoryOrRequestNode!=null}">
-                        <p:separator/>
-                        <br/>
-                        <p:commandButton value="Create this folder" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
-                                         oncomplete="folderNewDialog.hide();" actionListener="#{mdslrDirectoryController.save}"
-                                         update=":mappingToolsView:mapToolsQueryForm:requestMessages"/>
-                    </h:panelGroup>
-                </h:form>
-            </h:panelGroup>
-
-            <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}" update=":saveReqDirForm,:saveRequestDetail,:loadReqDirForm,:loadRequestDetail"/>
-        </p:dialog>
 
         <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Update folder properties" widgetVar="folderUpdateDialog"
                   width="800" height="350" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
