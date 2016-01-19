@@ -38,7 +38,7 @@ class scorpiusRVDsTest:
         containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
         
-        supportTeam = {"color":["String","71ab90"], "name":["String","DEV APP"]}
+        supportTeam = {"color":["String","e8a25d"], "name":["String","DEV APP"]}
         containerProperty = {'ID':containerID,'propertyName':'supportTeam','propertyValue':json.dumps(supportTeam),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
         
@@ -60,7 +60,7 @@ class scorpiusRVDsTest:
         nodeProperty = {'ID':nodeID,'propertyName':'busDescription','propertyValue':'APP FX prices diffusion'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/update/properties/add', params=nodeProperty)
         
-        primaryApp = {"color":["String","e3a164"], "name":["String","APP"]}
+        primaryApp = {"color":["String","e8a25d"], "name":["String","APP"]}
         nodeProperty = {'ID':nodeID,'propertyName':'primaryApplication','propertyValue':json.dumps(primaryApp), 'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/update/properties/add', params=nodeProperty)
         
@@ -70,7 +70,7 @@ class scorpiusRVDsTest:
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/create', params=endpointParams)
         endpointID = r.json().get('endpointID')
         
-        primaryApp = {"color":["String","e3a164"], "name":["String","APP"]}
+        primaryApp = {"color":["String","e8a25d"], "name":["String","APP"]}
         endpointProperty = {'ID':endpointID,'propertyName':'primaryApplication','propertyValue':json.dumps(primaryApp), 'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
@@ -120,7 +120,7 @@ class scorpiusRVDsTest:
         containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
         
-        supportTeam = {"color":["String","71ab90"], "name":["String","DEV APP"]}
+        supportTeam = {"color":["String","e8a25d"], "name":["String","DEV APP"]}
         containerProperty = {'ID':containerID,'propertyName':'supportTeam','propertyValue':json.dumps(supportTeam),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
         
@@ -142,7 +142,7 @@ class scorpiusRVDsTest:
         nodeProperty = {'ID':nodeID,'propertyName':'busDescription','propertyValue':'APP FX prices diffusion'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/update/properties/add', params=nodeProperty)
         
-        primaryApp = {"color":["String","e3a164"], "name":["String","APP"]}
+        primaryApp = {"color":["String","e8a25d"], "name":["String","APP"]}
         nodeProperty = {'ID':nodeID,'propertyName':'primaryApplication','propertyValue':json.dumps(primaryApp), 'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/update/properties/add', params=nodeProperty)
         
@@ -152,7 +152,7 @@ class scorpiusRVDsTest:
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/create', params=endpointParams)
         endpointID = r.json().get('endpointID')
         
-        primaryApp = {"color":["String","e3a164"], "name":["String","APP"]}
+        primaryApp = {"color":["String","e8a25d"], "name":["String","APP"]}
         endpointProperty = {'ID':endpointID,'propertyName':'primaryApplication','propertyValue':json.dumps(primaryApp), 'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
@@ -197,7 +197,7 @@ class scorpiusRVDsTest:
         containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
         
-        supportTeam = {"color":["String","71ab90"], "name":["String","DEV APP"]}
+        supportTeam = {"color":["String","e8a25d"], "name":["String","DEV APP"]}
         containerProperty = {'ID':containerID,'propertyName':'supportTeam','propertyValue':json.dumps(supportTeam),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
         
@@ -219,7 +219,7 @@ class scorpiusRVDsTest:
         nodeProperty = {'ID':nodeID,'propertyName':'busDescription','propertyValue':'APP FX prices diffusion'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/update/properties/add', params=nodeProperty)
         
-        primaryApp = {"color":["String","e3a164"], "name":["String","APP"]}
+        primaryApp = {"color":["String","e8a25d"], "name":["String","APP"]}
         nodeProperty = {'ID':nodeID,'propertyName':'primaryApplication','propertyValue':json.dumps(primaryApp), 'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/update/properties/add', params=nodeProperty)
         
@@ -229,7 +229,7 @@ class scorpiusRVDsTest:
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/create', params=endpointParams)
         endpointID = r.json().get('endpointID')
         
-        primaryApp = {"color":["String","e3a164"], "name":["String","APP"]}
+        primaryApp = {"color":["String","e8a25d"], "name":["String","APP"]}
         endpointProperty = {'ID':endpointID,'propertyName':'primaryApplication','propertyValue':json.dumps(primaryApp), 'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
@@ -279,7 +279,7 @@ class scorpiusRVDsTest:
         containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
         
-        supportTeam = {"color":["String","71ab90"], "name":["String","DEV APP"]}
+        supportTeam = {"color":["String","e8a25d"], "name":["String","DEV APP"]}
         containerProperty = {'ID':containerID,'propertyName':'supportTeam','propertyValue':json.dumps(supportTeam),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
         
@@ -302,7 +302,7 @@ class scorpiusRVDsTest:
         nodeProperty = {'ID':nodeID,'propertyName':'busDescription','propertyValue':'APP FX prices diffusion'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/update/properties/add', params=nodeProperty)
         
-        primaryApp = {"color":["String","e3a164"], "name":["String","APP"]}
+        primaryApp = {"color":["String","e8a25d"], "name":["String","APP"]}
         nodeProperty = {'ID':nodeID,'propertyName':'primaryApplication','propertyValue':json.dumps(primaryApp), 'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/nodes/update/properties/add', params=nodeProperty)
         
@@ -312,7 +312,7 @@ class scorpiusRVDsTest:
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/create', params=endpointParams)
         endpointID = r.json().get('endpointID')
         
-        primaryApp = {"color":["String","e3a164"], "name":["String","APP"]}
+        primaryApp = {"color":["String","e8a25d"], "name":["String","APP"]}
         endpointProperty = {'ID':endpointID,'propertyName':'primaryApplication','propertyValue':json.dumps(primaryApp), 'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/endpoints/update/properties/add', params=endpointProperty)
         
