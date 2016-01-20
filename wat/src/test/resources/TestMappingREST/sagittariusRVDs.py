@@ -362,7 +362,7 @@ class sagittariusRVDsTest:
         containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
 
-        supportTeam = {"color":["String","ad853b"], "name":["String","DEV BPP"]}
+        supportTeam = {"color":["String","852e48"], "name":["String","DEV BPP"]}
         containerProperty = {'ID':containerID,'propertyName':'supportTeam','propertyValue':json.dumps(supportTeam),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
 
@@ -446,7 +446,7 @@ class sagittariusRVDsTest:
         containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
 
-        supportTeam = {"color":["String","ad853b"], "name":["String","DEV BPP"]}
+        supportTeam = {"color":["String","852e48"], "name":["String","DEV BPP"]}
         containerProperty = {'ID':containerID,'propertyName':'supportTeam','propertyValue':json.dumps(supportTeam),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
 
@@ -549,7 +549,7 @@ class sagittariusRVDsTest:
         containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
 
-        supportTeam = {"color":["String","ad853b"], "name":["String","DEV BPP"]}
+        supportTeam = {"color":["String","852e48"], "name":["String","DEV BPP"]}
         containerProperty = {'ID':containerID,'propertyName':'supportTeam','propertyValue':json.dumps(supportTeam),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
 
@@ -623,7 +623,7 @@ class sagittariusRVDsTest:
         containerProperty = {'ID':containerID,'propertyName':'Network','propertyValue':json.dumps(network),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
 
-        supportTeam = {"color":["String","ad853b"], "name":["String","DEV BPP"]}
+        supportTeam = {"color":["String","852e48"], "name":["String","DEV BPP"]}
         containerProperty = {'ID':containerID,'propertyName':'supportTeam','propertyValue':json.dumps(supportTeam),'propertyType':'map'}
         r = self.session.get(self.url + 'ariane/rest/mapping/domain/containers/update/properties/add', params=containerProperty)
 
