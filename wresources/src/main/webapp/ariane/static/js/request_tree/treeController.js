@@ -31,12 +31,14 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
     $scope.directoryDescription = null;
     $scope.isDirectory;
     $scope.initVal = true;
-    $scope.requestDetail;
-    $scope.folderName;
-    $scope.folderDescription;
-    $scope.rootId;
+    $scope.requestDetail = null;
+    $scope.folderName = null;
+    $scope.folderDescription = null;
+    $scope.rootId = null;
+    $scope.rootName = null;
 
     serviceMethods.apiGETReq('/ariane/rest/mapping/registryDirectory/getRoot').then(function (dataObj) {
+        $scope.rootName = dataObj;
         dataObj.data.mappingDSLDirectorySubDirsID.forEach(function (child) {
             var childNode = {
                 id: child.subDirectoryID,
@@ -164,7 +166,6 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
     };
 
     $scope.saveDirectory = function () {
-        console.log("clicked me")
         var postObj = {
             "data": {
                 "directoryId": '0',
@@ -183,12 +184,12 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
                     "directoryDesc": postObj.data.description
                 }
             }
-
             $scope.treeData.push(childNode);
             $scope.lookupObj[result.data] = childNode;
         }, function (error) {
             console.error("failed to delete directory");
         })
+        folderNewDialog.hide()
     }
 
     var deleteDirectory = function (directoryID) {

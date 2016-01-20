@@ -7,12 +7,11 @@
                  styleClass="ui-widget-content grid" style="border: 0px">
         <p:outputLabel value="Root folder : " styleClass="inputTitle"/>
         <h:panelGroup>
-            <h:outputText id="targetDirectory1" value=""/>
-            <h:outputText id="targetDirectory2" value="Choose a target from navigation pane."/>
+            <h:outputText id="targetDirectory1" value="{{}}"/>
         </h:panelGroup>
 
         <p:outputLabel value="Root folder description : " styleClass="inputTitle"/>
-        <h:outputText />
+        <h:outputText value="{{directoryDescription}}"/>
 
         <p:outputLabel value="New folder name : " styleClass="inputTitle"/>
         <input type="text" id="name" required="true" size="80" ng-model="folderName"/>
