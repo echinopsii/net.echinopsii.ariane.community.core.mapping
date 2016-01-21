@@ -36,9 +36,10 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
     $scope.folderDescription = null;
     $scope.rootId = null;
     $scope.rootName = null;
+    $scope.pathToNode = null;
 
     serviceMethods.apiGETReq('/ariane/rest/mapping/registryDirectory/getRoot').then(function (dataObj) {
-        $scope.rootName = dataObj;
+        $scope.rootName = dataObj.data.mappingDSLDirectoryName;
         dataObj.data.mappingDSLDirectorySubDirsID.forEach(function (child) {
             var childNode = {
                 id: child.subDirectoryID,
@@ -107,6 +108,11 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
         if (data.node.icon !== "jstree-custom-file") {
             // parent
             $scope.directoryDescription = data.node.data.directoryDesc
+            if(data.node.parent !== "#"){
+                $scope.pathToNode = "/" + $scope.rootName + "/" + $('#jstree_demo_div').jstree(true).get_path(data.node.parents[0], "/");
+            } else{
+                $scope.pathToNode = "/" + $scope.rootName
+            }
             $scope.isDirectory = true;
             $scope.initVal = true;
             $scope.contextMenu = {
@@ -189,6 +195,8 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
         }, function (error) {
             console.error("failed to delete directory");
         })
+        $scope.folderName = null;
+        $scope.folderDescription = null;
         folderNewDialog.hide()
     }
 

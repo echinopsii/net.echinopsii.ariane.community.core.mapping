@@ -179,8 +179,8 @@
                     <h:panelGroup>
                         <p:separator/>
                         <br/>
-                        <input value="Create this folder" class="ui-confirmdialog-yes" data-icon="ui-icon-check"
-                                         ng-click="saveDirectory()" type="button"/>
+                        <input type="button" value="Create this folder" style="height: 30px" class="ui-confirmdialog-yes"
+                               data-icon="ui-icon-check"  ng-click="saveDirectory()"/>
                     </h:panelGroup>
                     </div>
                 </h:form>
@@ -193,7 +193,7 @@
                   width="1000" height="600" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
                 <p:layout style="min-width:980px;min-height:590px;">
                     <p:layoutUnit position="west" size="240" header="NAVIGATION" resizable="false" style="border: 0px;">
-                        <js-tree tree-data="scope" tree-plugins="sort,contextmenu" tree-contextmenu="contextMenu"
+                        <js-tree id="jstree_demo_div" tree-data="scope" tree-plugins="sort,contextmenu" tree-contextmenu="contextMenu"
                          tree-model="treeData" tree-events="select_node:selectNodeCB;open_node:openNodeCB"></js-tree>
                     </p:layoutUnit>
                     <p:layoutUnit position="center" resizable="false" header="SELECTION DETAILS" style="border: 0px">

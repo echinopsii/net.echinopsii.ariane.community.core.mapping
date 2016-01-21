@@ -7,17 +7,19 @@
                  styleClass="ui-widget-content grid" style="border: 0px">
         <p:outputLabel value="Root folder : " styleClass="inputTitle"/>
         <h:panelGroup>
-            <h:outputText id="targetDirectory1" value="{{}}"/>
+            <h:outputText id="targetDirectory1" value="{{pathToNode}}"/>
         </h:panelGroup>
 
         <p:outputLabel value="Root folder description : " styleClass="inputTitle"/>
         <h:outputText value="{{directoryDescription}}"/>
 
         <p:outputLabel value="New folder name : " styleClass="inputTitle"/>
-        <input type="text" id="name" required="true" size="80" ng-model="folderName"/>
+        <input type="text" id="name" class="ui-inputfield ui-inputtext ui-widget ui-state-default ui-corner-all"
+               required="true" size="80" ng-model="folderName"/>
 
         <p:outputLabel value="New folder description : " styleClass="inputTitle" />
-        <textarea id="description" rows="10" cols="80" ng-model="folderDescription"/>
+        <textarea id="description" style="resize: none; border: 1px solid #404040; border-radius: 0px;"
+                  rows="10" cols="80" ng-model="folderDescription"/>
     </h:panelGrid>
     <h:inputHidden id="id"/>
 
