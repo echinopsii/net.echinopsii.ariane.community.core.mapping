@@ -32,14 +32,15 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
     $scope.isDirectory;
     $scope.initVal = true;
     $scope.requestDetail = null;
-    $scope.folderName = null;
-    $scope.folderDescription = null;
     $scope.rootId = null;
     $scope.rootName = null;
     $scope.pathToNode = null;
+    $scope.selectedNode = null;
+    $scope.isCreate = false;
 
     serviceMethods.apiGETReq('/ariane/rest/mapping/registryDirectory/getRoot').then(function (dataObj) {
         $scope.rootName = dataObj.data.mappingDSLDirectoryName;
+        $scope.rootId = dataObj.data.mappingDSLDirectoryID;
         dataObj.data.mappingDSLDirectorySubDirsID.forEach(function (child) {
             var childNode = {
                 id: child.subDirectoryID,
@@ -105,13 +106,18 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
     $scope.selectNodeCB = function (e, data) {
         // if Selected node has children then it's a directory else child
         // according to that switch context Menu
+        $scope.folderName = null;
+        $scope.folderDescription = null;
+        $scope.isCreate = false;
+        $scope.selectedNode = data;
+
         if (data.node.icon !== "jstree-custom-file") {
             // parent
             $scope.directoryDescription = data.node.data.directoryDesc
-            if(data.node.parent !== "#"){
-                $scope.pathToNode = "/" + $scope.rootName + "/" + $('#jstree_demo_div').jstree(true).get_path(data.node.parents[0], "/");
-            } else{
-                $scope.pathToNode = "/" + $scope.rootName
+            if (data.node.parent !== "#") {
+                $scope.pathToNode = "/" + $scope.rootName + "/" + $('#jstree_demo_div').jstree(true).get_path(data.node.parents[0], "/") + "/" + data.node.text;
+            } else {
+                $scope.pathToNode = "/" + $scope.rootName + "/" + data.node.text
             }
             $scope.isDirectory = true;
             $scope.initVal = true;
@@ -119,7 +125,7 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
                 "dirCreateSubfolder": {
                     "label": "Create subfolder",
                     "action": function (obj) {
-                        $scope.rootId = data.node.id
+                        $scope.isCreate = true
                         folderNewDialog.show()
                     }
                 },
@@ -138,7 +144,10 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
                 "dirEditProperties": {
                     "label": "Edit Properties",
                     "action": function (obj) {
-                        alert("You clicked " + obj.item.label);
+                        $scope.folderName = data.node.text;
+                        $scope.folderDescription = $scope.directoryDescription;
+                        $scope.$apply();
+                        folderUpdateDialog.show()
                     }
                 }
             };
@@ -174,12 +183,22 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
     $scope.saveDirectory = function () {
         var postObj = {
             "data": {
-                "directoryId": '0',
-                "rootId": $scope.rootId,
                 "name": $scope.folderName,
                 "description": $scope.folderDescription
             }
         };
+
+        if ($scope.isCreate) {
+            postObj.data.rootId = $scope.selectedNode.node.id
+            postObj.data.directoryId = '0'
+        } else {
+            if ($scope.selectedNode.node.parent === "#") {
+                postObj.data.rootId = $scope.rootId.toString()
+            } else {
+                postObj.data.rootId = $scope.selectedNode.node.parent;
+            }
+            postObj.data.directoryId = $scope.selectedNode.node.id
+        }
 
         serviceMethods.apiPOSTReq('/ariane/rest/mapping/registryDirectory/saveDirectory', postObj).then(function (result) {
             var childNode = {
@@ -190,14 +209,28 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
                     "directoryDesc": postObj.data.description
                 }
             }
-            $scope.treeData.push(childNode);
-            $scope.lookupObj[result.data] = childNode;
+            if ($scope.isCreate) {
+                $scope.treeData.push(childNode);
+                $scope.lookupObj[result.data] = childNode;
+            } else {
+                // Find object with same Id and update it
+                var obj = $scope.treeData.filter(function (v) {
+                    return v.id.toString() === result.data
+                })[0]
+                obj.data.directoryDesc = postObj.data.description;
+                obj.text = postObj.data.name
+            }
         }, function (error) {
-            console.error("failed to delete directory");
+            console.error("failed to save/update directory");
         })
         $scope.folderName = null;
         $scope.folderDescription = null;
-        folderNewDialog.hide()
+        if ($scope.isCreate) {
+            folderNewDialog.hide()
+        } else {
+            folderUpdateDialog.hide()
+        }
+
     }
 
     var deleteDirectory = function (directoryID) {

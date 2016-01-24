@@ -263,7 +263,7 @@ public class MDSLRegistryDirectoryHelper {
                     if (description != null) entity.setDescription(description);
                     entity.setUser(rootDirectory.getUser());
                     entity.setGroup(rootDirectory.getGroup());
-                    entity.setUxPermissions(rootDirectory.getUxPermissions());
+                    if (entity.getUxPermissions().size() == 0) entity.setUxPermissions(rootDirectory.getUxPermissions());
                     if (entity.getRootDirectory() != null && rootDirectory != null && !entity.getRootDirectory().equals(rootDirectory)) {
                         entity.getRootDirectory().getSubDirectories().remove(entity);
                         rootDirectory.getSubDirectories().add(entity);
