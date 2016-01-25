@@ -596,13 +596,13 @@ define(
                 defineRectPoints(this.X,this.Y);
                 this.containerChilds.defineMtxContentMaxSize();
                 var mtxMaxSize = this.containerChilds.getMtxContentSize(),
-                    nodesCount = this.containerChilds.getMtxObjCount(),
-                    computeMaxWidth = getMaxWidth(this.interSpan*(nodesCount+1) + mtxMaxSize.width);
+                    childsCount = this.containerChilds.getMtxObjCount(),
+                    computeMaxWidth = getMaxWidth(this.interSpan*(childsCount+1) + mtxMaxSize.width);
                 this.centerMtx  = computeMaxWidth.centerMatrix;
                 this.maxRectWidth = computeMaxWidth.maxWidth;
-                this.maxRectHeight = this.containerHat_.height + this.titleHeight + this.interSpan*(nodesCount+1) + mtxMaxSize.height;
+                this.maxRectHeight = this.containerHat_.height + this.titleHeight + this.interSpan*(childsCount+1) + mtxMaxSize.height;
                 //helper_.debug("[Container.defineMaxSize] " + this.name + " : {mtxMaxSize.width: " + mtxMaxSize.width +
-                //    ", mtxMaxSize.height:" + mtxMaxSize.height + ", nodesCount:" + nodesCount + ", interSpan: " + this.interSpan+" }");
+                //    ", mtxMaxSize.height:" + mtxMaxSize.height + ", childsCount:" + childsCount + ", interSpan: " + this.interSpan+" }");
                 //helper_.debug("[Container.defineMaxSize] " + this.name + " : {" + this.maxRectWidth + "," +  this.maxRectHeight + "}");
             };
 
@@ -621,9 +621,9 @@ define(
             this.defineIntermediateNodesPoz = function() {
                 this.containerChilds.defineMtxObjectIntermediatePoz(this.rectTopLeftX,
                         this.rectTopLeftY + this.containerHat_.height + this.titleHeight,
-                        this.interSpan, this.interSpan, function(node, mtxSpan, objSpan, columnIdx, lineIdx, widthPointer, heightPointer) {
-                            node.setPoz(mtxSpan + objSpan * columnIdx + widthPointer, objSpan * (lineIdx+1) + heightPointer);
-                            node.defineIntermediateNodesPoz();
+                        this.interSpan, this.interSpan, function(child, mtxSpan, objSpan, columnIdx, lineIdx, widthPointer, heightPointer) {
+                            child.setPoz(mtxSpan + objSpan * columnIdx + widthPointer, objSpan * (lineIdx+1) + heightPointer);
+                            child.defineIntermediateNodesPoz();
                         });
             };
 
@@ -631,15 +631,15 @@ define(
                 var topLeftMtx = this.rectTopLeftX;
                 if (this.centerMtx) {
                     var mtxMaxSize = this.containerChilds.getMtxContentSize(),
-                        nodesCount = this.containerChilds.getMtxObjCount(),
-                        mtxWidth = this.interSpan*(nodesCount+1) + mtxMaxSize.width;
+                        childsCount = this.containerChilds.getMtxObjCount(),
+                        mtxWidth = this.interSpan*(childsCount+1) + mtxMaxSize.width;
                     topLeftMtx = this.rectMiddleX - mtxWidth/2;
                 }
                 this.containerChilds.defineMtxObjectLastPoz(topLeftMtx,
                     this.rectTopLeftY + this.containerHat_.height + this.titleHeight,
-                    this.interSpan, this.interSpan, function (node, mtxSpan, objSpan, columnIdx, lineIdx, widthPointer, heightPointer) {
-                        node.setPoz(mtxSpan + objSpan * columnIdx + widthPointer, objSpan * (lineIdx + 1) + heightPointer);
-                        node.definedNodesPoz();
+                    this.interSpan, this.interSpan, function (child, mtxSpan, objSpan, columnIdx, lineIdx, widthPointer, heightPointer) {
+                        child.setPoz(mtxSpan + objSpan * columnIdx + widthPointer, objSpan * (lineIdx + 1) + heightPointer);
+                        child.definedNodesPoz();
                     });
 
             };
@@ -680,6 +680,23 @@ define(
 
             this.getLinkedContainers = function () {
                 return this.linkedContainers;
+            };
+
+            this.pushLinkedNode = function(node) {
+                var isAlreadyPushed = this.isLinkedNode(node);
+                if (!isAlreadyPushed) this.linkedNodes.push(node);
+            };
+
+            this.isLinkedNode = function(node) {
+                for (var i = 0, ii = this.linkedNodes.length; i < ii; i++) {
+                    if (this.linkedNodes[i].ID==node.ID)
+                        return true;
+                }
+                return false;
+            };
+
+            this.getLinkedNode = function() {
+                return this.linkedNodes;
             };
 
             this.pushLinkedBus = function(bus) {
@@ -942,27 +959,27 @@ define(
                 return this.rect.getBBox();
             };
 
-            var nodeSet;
+            var childSet;
             this.getMinBBox = function() {
                 var i, ii, j, jj;
                 var mtxX        = this.containerChilds.getMtxSize().x,
                     mtxY        = this.containerChilds.getMtxSize().y;
 
-                nodeSet = this.r.set();
+                childSet = this.r.set();
                 for (i = 0, ii = mtxX; i < ii; i++)
                     for (j = 0, jj = mtxY; j < jj; j++)
                         if (this.containerChilds.getObjectFromMtx(i, j)!=null)
-                            nodeSet.push(this.containerChilds.getObjectFromMtx(i, j).rect);
+                            childSet.push(this.containerChilds.getObjectFromMtx(i, j).rect);
 
-                var nodeBBox = nodeSet.getBBox();
+                var childBBox = childSet.getBBox();
 
                 return {
-                    x: nodeBBox.x - this.interSpan,
-                    y: nodeBBox.y - (this.containerHat_.height + this.titleHeight + this.interSpan),
-                    x2: nodeBBox.x2 + this.interSpan,
-                    y2: nodeBBox.y2 + this.interSpan,
-                    width: nodeBBox.width + 2*this.interSpan,
-                    height: nodeBBox.height + (this.containerHat_.height + this.titleHeight + this.interSpan)
+                    x: childBBox.x - this.interSpan,
+                    y: childBBox.y - (this.containerHat_.height + this.titleHeight + this.interSpan),
+                    x2: childBBox.x2 + this.interSpan,
+                    y2: childBBox.y2 + this.interSpan,
+                    width: childBBox.width + 2*this.interSpan,
+                    height: childBBox.height + (this.containerHat_.height + this.titleHeight + this.interSpan)
                 };
             };
 
