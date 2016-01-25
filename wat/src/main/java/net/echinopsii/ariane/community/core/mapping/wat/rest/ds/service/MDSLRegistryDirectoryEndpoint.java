@@ -86,6 +86,21 @@ public class MDSLRegistryDirectoryEndpoint {
         long directoryID = Long.valueOf((String) postData.get("directoryID"));
         MDSLRegistryDirectoryHelper md = new MDSLRegistryDirectoryHelper();
         Boolean responseVal = md.deleteDirectory(directoryID);
-        return Response.status(Response.Status.OK).entity("Directory " + directoryID + "has been successfully deleted").build();
+        if (responseVal)
+            return Response.status(Response.Status.OK).entity("Directory " + directoryID + "has been successfully deleted").build();
+        else
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Failed to delete directory " + directoryID).build();
+    }
+
+    @POST
+    @Path("/saveDirectory")
+    public Response saveDirectory(@QueryParam("data") String params) throws IOException {
+        System.out.print(params);
+        MDSLRegistryDirectoryHelper md = new MDSLRegistryDirectoryHelper();
+        long id = md.saveDirectory(params);
+        if (id != 0)
+            return Response.status(Response.Status.OK).entity(id).build();
+        else
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Failed to save directory.").build();
     }
 }
