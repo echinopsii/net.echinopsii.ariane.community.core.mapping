@@ -790,7 +790,7 @@ define(
                 if (this.nodeParentNode!=null)
                     this.nodeParentNode.pushChildNode(this);
                 else
-                    this.nodeContainer.pushNode(this);
+                    this.nodeContainer.pushChild(this);
             };
 
             this.pushLinkedNode = function(node) {

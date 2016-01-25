@@ -143,13 +143,14 @@ define(
             this.isEditing         = false;
             this.isInserted        = false;
 
-            this.containerNodes    = new containerMatrix();
+            this.containerChilds   = new containerMatrix();
             this.containerHat_     = new containerHat(this.company,this.product,this.type);
 
             this.linkedTreeObjects = [];
             this.sortOrdering      = 1;
 
             this.linkedBus         = [];
+            this.linkedNodes       = [];
             this.linkedContainers  = [];
 
             this.interSpan         = params.container_interSpan;
@@ -502,8 +503,8 @@ define(
                 return "{\n Container " + this.containerName + " : ("+this.rectMiddleX+","+this.rectMiddleY+")\n}";
             };
 
-            this.pushNode = function (node) {
-                this.containerNodes.addObject(node);
+            this.pushChild = function (child) {
+                this.containerChilds.addObject(child);
             };
 
             //this.updateNodesPoz = function(node) {
@@ -566,10 +567,10 @@ define(
             */
 
             this.defineSize = function () {
-                this.containerNodes.defineMtxContentSize();
-                var mtxSize = this.containerNodes.getMtxContentSize();
-                var mtxX        = this.containerNodes.getMtxSize().x,
-                    mtxY        = this.containerNodes.getMtxSize().y,
+                this.containerChilds.defineMtxContentSize();
+                var mtxSize = this.containerChilds.getMtxContentSize();
+                var mtxX        = this.containerChilds.getMtxSize().x,
+                    mtxY        = this.containerChilds.getMtxSize().y,
                     computeMaxWidth = getMaxWidth(this.interSpan*(mtxY+1) + mtxSize.width);
                 this.centerMtx  = computeMaxWidth.centerMatrix;
                 this.rectWidth  = computeMaxWidth.maxWidth;
@@ -581,21 +582,21 @@ define(
             };
 
             this.defineMtxIntermediatePoz = function() {
-                this.containerNodes.updateLayoutData(function(node1, node2){
-                    return ((node2.linkedNodes.length+node2.linkedBus.length)-(node1.linkedNodes.length+node1.linkedBus.length));
+                this.containerChilds.updateLayoutData(function(child1, child2){
+                    return ((child2.linkedNodes.length+child2.linkedBus.length)-(child1.linkedNodes.length+child1.linkedBus.length));
                 });
-                this.containerNodes.updatePosition();
+                this.containerChilds.updatePosition();
             };
 
             this.clean = function() {
-                this.containerNodes.cleanMtx();
+                this.containerChilds.cleanMtx();
             };
 
             this.defineMaxSize = function() {
                 defineRectPoints(this.X,this.Y);
-                this.containerNodes.defineMtxContentMaxSize();
-                var mtxMaxSize = this.containerNodes.getMtxContentSize(),
-                    nodesCount = this.containerNodes.getMtxObjCount(),
+                this.containerChilds.defineMtxContentMaxSize();
+                var mtxMaxSize = this.containerChilds.getMtxContentSize(),
+                    nodesCount = this.containerChilds.getMtxObjCount(),
                     computeMaxWidth = getMaxWidth(this.interSpan*(nodesCount+1) + mtxMaxSize.width);
                 this.centerMtx  = computeMaxWidth.centerMatrix;
                 this.maxRectWidth = computeMaxWidth.maxWidth;
@@ -618,7 +619,7 @@ define(
             };
 
             this.defineIntermediateNodesPoz = function() {
-                this.containerNodes.defineMtxObjectIntermediatePoz(this.rectTopLeftX,
+                this.containerChilds.defineMtxObjectIntermediatePoz(this.rectTopLeftX,
                         this.rectTopLeftY + this.containerHat_.height + this.titleHeight,
                         this.interSpan, this.interSpan, function(node, mtxSpan, objSpan, columnIdx, lineIdx, widthPointer, heightPointer) {
                             node.setPoz(mtxSpan + objSpan * columnIdx + widthPointer, objSpan * (lineIdx+1) + heightPointer);
@@ -629,12 +630,12 @@ define(
             this.definedNodesPoz = function() {
                 var topLeftMtx = this.rectTopLeftX;
                 if (this.centerMtx) {
-                    var mtxMaxSize = this.containerNodes.getMtxContentSize(),
-                        nodesCount = this.containerNodes.getMtxObjCount(),
+                    var mtxMaxSize = this.containerChilds.getMtxContentSize(),
+                        nodesCount = this.containerChilds.getMtxObjCount(),
                         mtxWidth = this.interSpan*(nodesCount+1) + mtxMaxSize.width;
                     topLeftMtx = this.rectMiddleX - mtxWidth/2;
                 }
-                this.containerNodes.defineMtxObjectLastPoz(topLeftMtx,
+                this.containerChilds.defineMtxObjectLastPoz(topLeftMtx,
                     this.rectTopLeftY + this.containerHat_.height + this.titleHeight,
                     this.interSpan, this.interSpan, function (node, mtxSpan, objSpan, columnIdx, lineIdx, widthPointer, heightPointer) {
                         node.setPoz(mtxSpan + objSpan * columnIdx + widthPointer, objSpan * (lineIdx + 1) + heightPointer);
@@ -792,7 +793,7 @@ define(
                 this.containerHat_.toFront();
                 this.containerName.toFront();
                 this.rect.toFront();
-                this.containerNodes.toFront();
+                this.containerChilds.toFront();
             };
 
             this.changeInit = function() {
@@ -829,8 +830,8 @@ define(
                     this.r.scaleDone(this);
 
                 var i, ii, j, jj;
-                var mtxX        = this.containerNodes.getMtxSize().x,
-                    mtxY        = this.containerNodes.getMtxSize().y;
+                var mtxX        = this.containerChilds.getMtxSize().x,
+                    mtxY        = this.containerChilds.getMtxSize().y;
 
                 this.r.containersOnMovePush(this);
                 this.r.moveSetPush(this.containerName);
@@ -838,8 +839,8 @@ define(
 
                 for (i = 0, ii = mtxX; i < ii; i++)
                     for (j = 0, jj = mtxY; j < jj; j++)
-                        if (this.containerNodes.getObjectFromMtx(i, j)!=null)
-                            this.containerNodes.getObjectFromMtx(i, j).moveInit();
+                        if (this.containerChilds.getObjectFromMtx(i, j)!=null)
+                            this.containerChilds.getObjectFromMtx(i, j).moveInit();
 
                 this.changeInit();
 
@@ -882,15 +883,15 @@ define(
 
             this.propagateEditionMode = function(editionMode) {
                 var i, ii, j, jj;
-                var mtxX        = this.containerNodes.getMtxSize().x,
-                    mtxY        = this.containerNodes.getMtxSize().y;
+                var mtxX        = this.containerChilds.getMtxSize().x,
+                    mtxY        = this.containerChilds.getMtxSize().y;
 
                 this.setEditionMode(editionMode);
 
                 for (i = 0, ii = mtxX; i < ii; i++)
                     for (j = 0, jj = mtxY; j < jj; j++)
-                        if (this.containerNodes.getObjectFromMtx(i, j)!=null)
-                            this.containerNodes.getObjectFromMtx(i, j).propagateEditionMode(editionMode);
+                        if (this.containerChilds.getObjectFromMtx(i, j)!=null)
+                            this.containerChilds.getObjectFromMtx(i, j).propagateEditionMode(editionMode);
             };
 
             this.menuFieldEditClick = function() {
@@ -926,15 +927,15 @@ define(
 
             this.propagateEndpointReset = function(epreset) {
                 var i, ii, j, jj;
-                var mtxX        = containerRef.containerNodes.getMtxSize().x,
-                    mtxY        = containerRef.containerNodes.getMtxSize().y;
+                var mtxX        = containerRef.containerChilds.getMtxSize().x,
+                    mtxY        = containerRef.containerChilds.getMtxSize().y;
 
                 containerRef.endpointsResetOnChangeON = epreset;
 
                 for (i = 0, ii = mtxX; i < ii; i++)
                     for (j = 0, jj = mtxY; j < jj; j++)
-                        if (containerRef.containerNodes.getObjectFromMtx(i, j)!=null)
-                            containerRef.containerNodes.getObjectFromMtx(i, j).propagateEndpointReset(containerRef.endpointsResetOnChangeON);
+                        if (containerRef.containerChilds.getObjectFromMtx(i, j)!=null)
+                            containerRef.containerChilds.getObjectFromMtx(i, j).propagateEndpointReset(containerRef.endpointsResetOnChangeON);
             };
 
             this.getBBox = function() {
@@ -944,14 +945,14 @@ define(
             var nodeSet;
             this.getMinBBox = function() {
                 var i, ii, j, jj;
-                var mtxX        = this.containerNodes.getMtxSize().x,
-                    mtxY        = this.containerNodes.getMtxSize().y;
+                var mtxX        = this.containerChilds.getMtxSize().x,
+                    mtxY        = this.containerChilds.getMtxSize().y;
 
                 nodeSet = this.r.set();
                 for (i = 0, ii = mtxX; i < ii; i++)
                     for (j = 0, jj = mtxY; j < jj; j++)
-                        if (this.containerNodes.getObjectFromMtx(i, j)!=null)
-                            nodeSet.push(this.containerNodes.getObjectFromMtx(i, j).rect);
+                        if (this.containerChilds.getObjectFromMtx(i, j)!=null)
+                            nodeSet.push(this.containerChilds.getObjectFromMtx(i, j).rect);
 
                 var nodeBBox = nodeSet.getBBox();
 
