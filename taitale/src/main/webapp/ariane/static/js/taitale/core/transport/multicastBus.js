@@ -116,7 +116,7 @@ define(
                 this.mbus = new cylinder(this,centerX,centerY,this.diameter,this.longg,title,color);
             };
 
-            this.definedNodesPoz = function() {
+            this.defineChildsPoz = function() {
             };
 
             this.setCylinder = function(centerX,centerY) {

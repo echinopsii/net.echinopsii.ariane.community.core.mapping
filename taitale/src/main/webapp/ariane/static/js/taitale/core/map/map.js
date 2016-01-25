@@ -321,7 +321,7 @@ define(
                     //    mapWidth  = 1800;
                     //    mapHeight = 800;
                     //    for (j = 0, jj = containerRegistry.length; j < jj; j++)
-                    //        containerRegistry[j].definedNodesPoz();
+                    //        containerRegistry[j].defineChildsPoz();
                         break;
 
                     case dic.mapLayout.BBTREE:

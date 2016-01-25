@@ -618,16 +618,16 @@ define(
                 this.isJailed    = true;
             };
 
-            this.defineIntermediateNodesPoz = function() {
+            this.defineIntermediateChildsPoz = function() {
                 this.containerChilds.defineMtxObjectIntermediatePoz(this.rectTopLeftX,
                         this.rectTopLeftY + this.containerHat_.height + this.titleHeight,
                         this.interSpan, this.interSpan, function(child, mtxSpan, objSpan, columnIdx, lineIdx, widthPointer, heightPointer) {
                             child.setPoz(mtxSpan + objSpan * columnIdx + widthPointer, objSpan * (lineIdx+1) + heightPointer);
-                            child.defineIntermediateNodesPoz();
+                            child.defineIntermediateChildsPoz();
                         });
             };
 
-            this.definedNodesPoz = function() {
+            this.defineChildsPoz = function() {
                 var topLeftMtx = this.rectTopLeftX;
                 if (this.centerMtx) {
                     var mtxMaxSize = this.containerChilds.getMtxContentSize(),
@@ -639,7 +639,7 @@ define(
                     this.rectTopLeftY + this.containerHat_.height + this.titleHeight,
                     this.interSpan, this.interSpan, function (child, mtxSpan, objSpan, columnIdx, lineIdx, widthPointer, heightPointer) {
                         child.setPoz(mtxSpan + objSpan * columnIdx + widthPointer, objSpan * (lineIdx + 1) + heightPointer);
-                        child.definedNodesPoz();
+                        child.defineChildsPoz();
                     });
 
             };

@@ -640,7 +640,7 @@ define(
                         if (block!=null && block!==FREE && block!==LOCKED) {
                             block.setTopLeftCoord(lbrdSpan + contSpan*j + curContWidth , lbrdSpan + contSpan*i + curContHeight);
                             block.setMoveJail(topLeftX, topLeftY+lbrdSpan, topLeftX+lanwidth, topLeftY+lanheight);
-                            block.defineIntermediateNodesPoz();
+                            block.defineIntermediateChildsPoz();
                             curContWidth = curContWidth + block.getRectSize().width;
                             if (block.getRectSize().height>maxContHeight)
                                 maxContHeight = block.getRectSize().height;
@@ -676,7 +676,7 @@ define(
                         if (block!=null && block!==FREE && block!==LOCKED) {
                             block.setTopLeftCoord(lbrdSpan + contSpan*j + curContWidth , lbrdSpan + contSpan*i + curContHeight);
                             block.setMoveJail(topLeftX, topLeftY+lbrdSpan, topLeftX+lanwidth, topLeftY+lanheight);
-                            block.definedNodesPoz();
+                            block.defineChildsPoz();
                             if (block.getRectSize().height>maxContHeight)
                                 maxContHeight = block.getRectSize().height;
                         }

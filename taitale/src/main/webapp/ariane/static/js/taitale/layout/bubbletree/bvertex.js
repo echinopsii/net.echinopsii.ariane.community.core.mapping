@@ -175,7 +175,7 @@ define(
 
             this.defineAbsolutePoz = function(treeCenterX, treeCenterY) {
                 object.setBubbleCoord(relX+treeCenterX,relY+treeCenterY);
-                object.definedNodesPoz();
+                object.defineChildsPoz();
             };
         }
 

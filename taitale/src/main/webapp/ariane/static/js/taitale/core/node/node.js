@@ -747,20 +747,20 @@ define(
                 defineRectPoints(x,y);
             };
 
-            this.definedNodesPoz = function() {
+            this.defineChildsPoz = function() {
                 this.nodeChildNodes.defineMtxObjectLastPoz(this.rectTopLeftX, this.rectTopLeftY + this.titleHeight,
                     this.interSpan, this.interSpan, function(node, mtxSpan, objSpan, columnIdx, lineIdx, widthPointer, heightPointer) {
                         node.setPoz(mtxSpan + objSpan * columnIdx + widthPointer, objSpan * (lineIdx+1) + heightPointer);
-                        node.definedNodesPoz();
+                        node.defineChildsPoz();
                     });
                     //defineMtxObjectPoz(this.rectTopLeftX, this.rectTopLeftY + this.titleHeight, this.interSpan);
             };
 
-            this.defineIntermediateNodesPoz = function() {
+            this.defineIntermediateChildsPoz = function() {
                 this.nodeChildNodes.defineMtxObjectIntermediatePoz(this.rectTopLeftX, this.rectTopLeftY + this.titleHeight,
                     this.interSpan, this.interSpan, function(node, mtxSpan, objSpan, columnIdx, lineIdx, widthPointer, heightPointer) {
                         node.setPoz(mtxSpan + objSpan * columnIdx + widthPointer, objSpan * (lineIdx+1) + heightPointer);
-                        node.defineIntermediateNodesPoz();
+                        node.defineIntermediateChildsPoz();
                     });
                 //defineMtxObjectPoz(this.rectTopLeftX, this.rectTopLeftY + this.titleHeight, this.interSpan);
             };
