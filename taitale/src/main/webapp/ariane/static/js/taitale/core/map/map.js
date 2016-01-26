@@ -150,7 +150,6 @@ define(
                         childNodesWaitingParent.push(nodeToPush);
 
                     var childNodesFoundParent = [];
-
                     for (j = 0, jj = childNodesWaitingParent.length; j < jj; j++) {
                         for (i = 0, ii = nodeRegistry.length; i < ii; i++) {
                             var possibleParentNode = nodeRegistry[i];
@@ -161,7 +160,6 @@ define(
                             }
                         }
                     }
-
                     for (i = 0, ii = childNodesFoundParent.length; i < ii; i++)
                         childNodesWaitingParent.splice(childNodesWaitingParent.indexOf(childNodesFoundParent[i]),1);
                 } else {
@@ -277,6 +275,9 @@ define(
                 for (i = 0, ii = JSONmapDesc.nodes.length; i < ii; i++ )
                     this.addNode(JSONmapDesc.nodes[i]);
 
+                for (i = 0, ii = containerRegistry.length; i < ii; i++)
+                    containerRegistry[i].defineHeapContainers();
+
                 for (i = 0, ii = nodeRegistry.length; i < ii; i++)
                     nodeRegistry[i].defineHeapNodes();
 
@@ -296,7 +297,7 @@ define(
                     this.addLink(JSONmapDesc.links[i]);
 
                 for (i = 0, ii = transportRegistry.length; i < ii; i++) {
-                    var mbusRegistry = transportRegistry[i].getMulticastBusRegistry()
+                    var mbusRegistry = transportRegistry[i].getMulticastBusRegistry();
                     for (var j = 0, jj = mbusRegistry.length; j < jj; j++) {
                         treeObjects.push(mbusRegistry[j])
                     }

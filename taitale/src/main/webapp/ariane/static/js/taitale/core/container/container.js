@@ -143,10 +143,13 @@ define(
             this.isMoving          = false;
             this.isEditing         = false;
             this.isInserted        = false;
+            this.containerHat_     = new containerHat(this.company,this.product,this.type);
 
             this.containerParentC  = null;
+            // the current nodes heap from this to the last parent node of the chain as a list
+            // [this,this.nodeParentNode,this.nodeParentNode.nodeParentNode ...]
+            this.containerHeapC    = [];
             this.containerChilds   = new containerMatrix();
-            this.containerHat_     = new containerHat(this.company,this.product,this.type);
 
             this.linkedTreeObjects = [];
             this.sortOrdering      = 1;
@@ -644,6 +647,23 @@ define(
                         child.defineChildsPoz();
                     });
 
+            };
+
+            this.defineHeapContainers = function() {
+                var parentC = this.containerParentC;
+                this.containerHeapC.push(this);
+                while (parentC != null) {
+                    this.containerHeapC.push(parentC);
+                    parentC = parentC.containerParentC;
+                }
+            };
+
+            this.isInHeapContainers = function(node) {
+                var i, ii;
+                for (i=0, ii=this.containerHeapC.length; i < ii; i++)
+                    if (this.containerHeapC[i].ID==node.ID)
+                        return true;
+                return false;
             };
 
             this.getLinkedTreeObjectsCount = function() {

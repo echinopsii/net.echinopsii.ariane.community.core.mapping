@@ -57,7 +57,9 @@ define(
 
 
             this.nodeParentNode    = null;
-            this.nodeHeapNodes     = []; // the current nodes heap from this to the last parent node of the chain as a list [this,this.nodeParentNode,this.nodeParentNode.nodeParentNode ...]
+            // the current nodes heap from this to the last parent node of the chain as a list
+            // [this,this.nodeParentNode,this.nodeParentNode.nodeParentNode ...]
+            this.nodeHeapNodes     = [];
             this.nodeChildNodes    = new nodeMatrix();
 
             this.nodeEndpoints   = [];
@@ -812,8 +814,10 @@ define(
 
                     if (this.linkedNodes.indexOf(node)==-1)
                         this.linkedNodes.push(node);
-                    this.nodeContainer.pushLinkedNode(node);
-                    this.nodeContainer.pushLinkedContainer(node.nodeContainer);
+                    if (node.nodeContainer.ID!=this.nodeContainer.ID) {
+                        this.nodeContainer.pushLinkedNode(node);
+                        this.nodeContainer.pushLinkedContainer(node.nodeContainer);
+                    }
                 }
             };
 
