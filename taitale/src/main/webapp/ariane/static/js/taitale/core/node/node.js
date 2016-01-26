@@ -812,7 +812,7 @@ define(
 
                     if (this.linkedNodes.indexOf(node)==-1)
                         this.linkedNodes.push(node);
-                    this.nodeContainer.pushLinkedNode(node)
+                    this.nodeContainer.pushLinkedNode(node);
                     this.nodeContainer.pushLinkedContainer(node.nodeContainer);
                 }
             };

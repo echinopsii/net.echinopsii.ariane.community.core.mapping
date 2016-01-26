@@ -36,6 +36,7 @@ define(
 
             //noinspection JSUnresolvedVariable
             this.ID       	  = JSONContainerDesc.containerID;
+            this.cpID         = (JSONContainerDesc.containerParentContainerID!=null)?JSONContainerDesc.containerParentContainerID:0;
             //noinspection JSUnresolvedVariable
             this.company      = JSONContainerDesc.containerCompany;
             //noinspection JSUnresolvedVariable
@@ -143,6 +144,7 @@ define(
             this.isEditing         = false;
             this.isInserted        = false;
 
+            this.containerParentC  = null;
             this.containerChilds   = new containerMatrix();
             this.containerHat_     = new containerHat(this.company,this.product,this.type);
 

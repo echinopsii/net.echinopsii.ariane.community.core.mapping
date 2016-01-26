@@ -88,8 +88,10 @@ define(
                     return isRegistered;
                 };
 
+            var childContainersWaitingParent = [];
             this.addContainer = function(JSONContainerDesc) {
                 var cont, steam, x=0, y=0;
+                var i, ii, j, jj;
                 //noinspection JSUnresolvedVariable
                 if (JSONContainerDesc.containerProperties!=null && JSONContainerDesc.containerProperties.manualCoord!=null) {
                     //noinspection JSUnresolvedVariable
@@ -100,6 +102,20 @@ define(
                 cont = new container(JSONContainerDesc, x, y); steam = cont.getSupportTeam();
                 containerRegistry.push(cont); treeObjects.push(cont);
                 if (steam !=null && !isTeamRegistered(steam)) teams.push(steam);
+
+                var childContainersFoundParent = [];
+                for (j = 0, jj = childContainersWaitingParent.length; j < jj; j++) {
+                    for (i = 0, ii = containerRegistry.length; i < ii; i++) {
+                        var possibleParentContainer = containerRegistry[i];
+                        var waitingParentContainer = childContainersWaitingParent[j];
+                        if (possibleParentContainer.ID==waitingParentContainer.cpID) {
+                            waitingParentContainer.containerParentC = possibleParentContainer;
+                            childContainersFoundParent.push(waitingParentContainer);
+                        }
+                    }
+                }
+                for (i = 0, ii = childContainersFoundParent.length; i < ii; i++)
+                    childContainersWaitingParent.splice(childContainersWaitingParent.indexOf(childContainersFoundParent[i]),1);
             };
 
             /*
@@ -113,7 +129,7 @@ define(
             */
 
             var childNodesWaitingParent = [];
-            this.addObject = function(JSONNodeDesc) {
+            this.addNode = function(JSONNodeDesc) {
                 var container = null;
                 var i, ii, j, jj;
 
@@ -259,7 +275,7 @@ define(
                     this.addContainer(JSONmapDesc.containers[i]);
 
                 for (i = 0, ii = JSONmapDesc.nodes.length; i < ii; i++ )
-                    this.addObject(JSONmapDesc.nodes[i]);
+                    this.addNode(JSONmapDesc.nodes[i]);
 
                 for (i = 0, ii = nodeRegistry.length; i < ii; i++)
                     nodeRegistry[i].defineHeapNodes();
@@ -290,7 +306,7 @@ define(
             this.buildMap = function() {
                 var i, ii, j, jj;
 
-                // first : place nodes in container (first placement)
+                // first : place nodes and containers in container (first placement)
                 for (j = 0, jj = nodeRegistry.length; j < jj; j++)
                     nodeRegistry[j].placeIn();
 
