@@ -79,6 +79,8 @@ public class ContainerJSON {
         jgenerator.writeStringField(CT_PRODUCT_TOKEN, cont.getContainerProduct());
         jgenerator.writeStringField(CT_TYPE_TOKEN, cont.getContainerType());
         jgenerator.writeStringField(CT_GATE_URI, cont.getContainerPrimaryAdminGate().getNodePrimaryAdminEndpoint().getEndpointURL());
+        if (cont.getContainerParentContainer()!=null)
+            jgenerator.writeNumberField(CT_PCID_TOKEN, cont.getContainerParentContainer().getContainerID());
         boolean isPropsBeginWritted = false;
         if (cont.getContainerProperties() != null) {
             containerProps2JSON(cont.getContainerProperties(), jgenerator, !isPropsBeginWritted, false);
@@ -96,6 +98,7 @@ public class ContainerJSON {
         jgenerator.writeStringField(CT_PRODUCT_TOKEN, cont.getContainerProduct());
         jgenerator.writeStringField(CT_TYPE_TOKEN, cont.getContainerType());
         jgenerator.writeStringField(CT_GATE_URI, cont.getContainerPrimaryAdminGateURL());
+        jgenerator.writeNumberField(CT_PCID_TOKEN, cont.getContainerParentContainer().getContainerID());
         jgenerator.writeNumberField(CT_PAGTID_TOKEN, cont.getContainerPrimaryAdminGate().getNodeID());
         if (cont.getContainerCluster()!=null)
             jgenerator.writeNumberField(CT_CLUSTER_TOKEN, cont.getContainerCluster().getClusterID());
