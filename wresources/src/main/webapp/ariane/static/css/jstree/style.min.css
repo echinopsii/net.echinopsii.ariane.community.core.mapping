@@ -138,14 +138,17 @@ OTHER DEALINGS IN THE SOFTWARE.*/
 .vakata-context {
     /*display: none*/
     z-index: 100000 !important;
+    font-family: Arial,"Trebuchet MS",Verdana,sans-serif;
+    font-size: 12px !important;
+    border-radius: 4px !important;
 }
 
 .vakata-context, .vakata-context ul {
-    margin: 0;
+    margin: -8px 35px !important;
     padding: 2px;
     position: absolute;
-    background: #f5f5f5;
-    border: 1px solid #979797;
+    background: #FFF none repeat scroll 0% 0%;
+    border: 1px solid #F4F4F9;
     -moz-box-shadow: 5px 5px 4px -4px #666;
     -webkit-box-shadow: 2px 2px 2px #999;
     box-shadow: 2px 2px 2px #999
@@ -180,7 +183,6 @@ OTHER DEALINGS IN THE SOFTWARE.*/
     line-height: 2.4em;
     -moz-text-shadow: 1px 1px 0 #fff;
     -webkit-text-shadow: 1px 1px 0 #fff;
-    text-shadow: 1px 1px 0 #fff;
     -moz-border-radius: 1px;
     -webkit-border-radius: 1px;
     border-radius: 1px
@@ -191,7 +193,6 @@ OTHER DEALINGS IN THE SOFTWARE.*/
     background-color: #e8eff7;
     -moz-box-shadow: 0 0 2px #0a6aa1;
     -webkit-box-shadow: 0 0 2px #0a6aa1;
-    box-shadow: 0 0 2px #0a6aa1
 }
 
 .vakata-context li > a.vakata-context-parent {
@@ -206,10 +207,9 @@ OTHER DEALINGS IN THE SOFTWARE.*/
 
 .vakata-context .vakata-context-hover > a {
     position: relative;
-    background-color: #e8eff7;
-    -moz-box-shadow: 0 0 2px #0a6aa1;
-    -webkit-box-shadow: 0 0 2px #0a6aa1;
-    box-shadow: 0 0 2px #0a6aa1
+    background: #F85B37 url("") repeat-x scroll 50% top !important;
+    color: #481E18 !important;
+    border-radius: 4px !important;
 }
 
 .vakata-context .vakata-context-separator > a, .vakata-context .vakata-context-separator > a:hover {
@@ -240,7 +240,7 @@ OTHER DEALINGS IN THE SOFTWARE.*/
     box-shadow: 0 0 0
 }
 
-.vakata-context li > a > i {
+.vakata-context icon-pencil li > a > i {
     text-decoration: none;
     display: inline-block;
     width: 2.4em;
@@ -261,9 +261,6 @@ OTHER DEALINGS IN THE SOFTWARE.*/
     display: inline-block;
     width: 1px;
     height: 2.4em;
-    background: #fff;
-    margin: 0 .5em 0 0;
-    border-left: 1px solid #e2e3e3
 }
 
 .vakata-context .vakata-contextmenu-shortcut {
