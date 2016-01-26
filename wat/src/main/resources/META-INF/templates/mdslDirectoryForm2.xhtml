@@ -11,7 +11,9 @@
         </h:panelGroup>
 
         <p:outputLabel value="Root folder description : " styleClass="inputTitle"/>
-        <h:outputText value="{{directoryDescription}}"/>
+        <h:panelGroup>
+            <h:outputText value="{{directoryDescription}}"/>
+        </h:panelGroup>
 
         <p:outputLabel value="New folder name : " styleClass="inputTitle"/>
         <input type="text" id="name" class="ui-inputfield ui-inputtext ui-widget ui-state-default ui-corner-all"

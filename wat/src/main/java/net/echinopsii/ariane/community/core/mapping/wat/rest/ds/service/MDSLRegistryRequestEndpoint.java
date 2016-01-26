@@ -46,4 +46,16 @@ public class MDSLRegistryRequestEndpoint {
         Boolean responseVal = md.deleteRequest(requestID);
         return Response.status(Response.Status.OK).entity("Request " + requestID + "has been successfully deleted").build();
     }
+
+    @POST
+    @Path("/saveRequest")
+    public Response saveDirectory(@QueryParam("data") String params) throws IOException {
+        System.out.print(params);
+        MDSLRegistryRequestHelper md = new MDSLRegistryRequestHelper();
+        long id = md.saveRequest(params);
+        if (id != 0)
+            return Response.status(Response.Status.OK).entity(id).build();
+        else
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Failed to save Request.").build();
+    }
 }

@@ -204,11 +204,30 @@
                     </div>
                 </h:form>
             </h:panelGroup>
-        <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}" update=":saveReqDirForm,:saveRequestDetail,:loadReqDirForm,:loadRequestDetail"/>
+        <p:ajax event="close" update=":saveReqDirForm,:saveRequestDetail,:loadReqDirForm,:loadRequestDetail"/>
+        </p:dialog>
+
+        <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Update request properties" widgetVar="requestModificationDialog"
+                  width="800" height="555" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
+            <h:panelGroup id="updateRequest">
+                <h:form>
+                    <ui:insert name="updateRequest" >
+                        <ui:include src="/templates/mdslRequestForm2.xhtml" />
+                    </ui:insert>
+                    <h:panelGroup>
+                        <p:separator/>
+                        <br/>
+                        <p:messages id="messages_request_update" showDetail="true" autoUpdate="true" closable="true" />
+                        <input type="button" value="Update this Request" style="height: 30px"  class="ui-confirmdialog-yes" data-icon="ui-icon-check" ng-click="saveRequest()"/>
+                    </h:panelGroup>
+                </h:form>
+            </h:panelGroup>
+
+            <p:ajax event="close" update=":saveReqDirForm,:loadReqDirForm"/>
         </p:dialog>
 
 
-        <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Load request" widgetVar="requestLoaderDialog2"
+            <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Load request" widgetVar="requestLoaderDialog2"
                   width="1000" height="600" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
             <p:layout style="min-width:980px;min-height:590px;">
                 <p:layoutUnit position="west" size="240" header="NAVIGATION" resizable="false" style="border: 0px;">
@@ -226,7 +245,7 @@
                             <div ng-show="isDirectory">
                             <p:fieldset legend="Folder description" style="width: 700px; height: 155px">
                                 <p:scrollPanel style="width: 700px; height: 120px; border: 0px; overflow: auto">
-                                    <h:outputText value="{{directoryDescription}}"/>
+                                    <h:outputText value="{{leftPaneDirDesc}}"/>
                                 </p:scrollPanel>
                             </p:fieldset>
                             </div>
@@ -376,27 +395,6 @@
             </h:panelGroup>
 
             <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}" update=":saveReqDirForm,:saveRequestDetail,:loadReqDirForm,:loadRequestDetail"/>
-        </p:dialog>
-
-        <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Update request properties" widgetVar="requestModificationDialog"
-                  width="800" height="500" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
-            <h:panelGroup id="updateRequest">
-                <h:form>
-                    <ui:insert name="updateRequest" >
-                        <ui:include src="/templates/mdslRequestForm.xhtml" />
-                    </ui:insert>
-                    <h:panelGroup rendered="#{mdslRegistryController.selectedDirectoryOrRequestNode!=null}">
-                        <p:separator/>
-                        <br/>
-                        <p:messages id="messages_request_update" showDetail="true" autoUpdate="true" closable="true" />
-                        <p:commandButton value="Save" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
-                                         oncomplete="requestModificationDialog.hide();" actionListener="#{mdslrRequestController.save}"
-                                         update=":mappingToolsView:mapToolsQueryForm:requestMessages"/>
-                    </h:panelGroup>
-                </h:form>
-            </h:panelGroup>
-
-            <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}" update=":saveReqDirForm,:loadReqDirForm"/>
         </p:dialog>
 
         <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Delete folder" widgetVar="folderDeleteDialog"
