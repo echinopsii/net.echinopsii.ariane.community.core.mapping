@@ -686,9 +686,26 @@ define(
 
             this.pushLinkedContainer = function(container) {
                 var isAlreadyPushed = this.isLinkedToContainer(container);
+                var isInHeap = [];
                 if (!isAlreadyPushed) {
-                    this.linkedContainers.push(container);
-                    this.linkedTreeObjects.push(container);
+                    for (i = 0, ii = this.containerHeapC.length; i < ii; i++)
+                        for (j = 0, jj=container.containerHeapC.length; j <jj ; j++) {
+                            var linkedContainerHC = container.containerHeapC[j],
+                                thisContainerHC = this.containerHeapC[i];
+                            if (isInHeap.indexOf[linkedContainerHC]==-1)
+                                if (linkedContainerHC.ID!=thisContainerHC.ID)
+                                    if (!thisContainerHC.isInHeapNode(linkedContainerHC))
+                                        if (thisContainerHC.linkedContainers.indexOf(linkedContainerHC)==-1) {
+                                            thisContainerHC.linkedContainers.push(linkedContainerHC);
+                                            thisContainerHC.linkedTreeObjects.push(linkedContainerHC);
+                                        } else
+                                            isInHeap.push(linkedContainerHC)
+                        }
+
+                    if (this.linkedContainers.indexOf(container)==-1) {
+                        this.linkedContainers.push(container);
+                        this.linkedTreeObjects.push(container);
+                    }
                 }
             };
 

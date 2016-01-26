@@ -799,6 +799,7 @@ define(
                 var i, ii, j, jj, isAlreadyPushed = this.isLinkedToNode(node);
                 var isInHeap = [];
                 if (!isAlreadyPushed) {
+                    //Propagate linked node on the heaps
                     for (i = 0, ii = this.nodeHeapNodes.length; i < ii; i++)
                         for (j = 0, jj=node.nodeHeapNodes.length; j <jj ; j++) {
                             var linkedNodeHeapNode = node.nodeHeapNodes[j],
