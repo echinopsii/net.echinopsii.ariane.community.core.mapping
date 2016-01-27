@@ -302,6 +302,7 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
                 obj.data.directoryDesc = postObj.data.description;
                 obj.text = postObj.data.name
             }
+
         }, function (error) {
             console.error("failed to save/update directory");
         })
@@ -353,6 +354,12 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
         }, function (error) {
             console.error("failed to Request directory");
         })
+    }
+
+    $scope.closeNodeCB = function (e, data) {
+        $scope.lookupObj[data.node.id].state = {
+            "opened": false
+        };
     }
 
     $scope.openNodeCB = function (e, data) {

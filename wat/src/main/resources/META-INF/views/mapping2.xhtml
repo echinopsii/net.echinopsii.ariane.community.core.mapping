@@ -208,7 +208,7 @@
         </p:dialog>
 
         <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Update request properties" widgetVar="requestModificationDialog"
-                  width="800" height="555" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
+                  width="800" height="560" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
             <h:panelGroup id="updateRequest">
                 <h:form>
                     <ui:insert name="updateRequest" >
@@ -232,7 +232,7 @@
             <p:layout style="min-width:980px;min-height:590px;">
                 <p:layoutUnit position="west" size="240" header="NAVIGATION" resizable="false" style="border: 0px;">
                     <js-tree id="jstree_demo_div" tree-data="scope" tree-plugins="sort,contextmenu" tree-contextmenu="contextMenu"
-                     tree-model="treeData" tree-events="select_node:selectNodeCB;open_node:openNodeCB"></js-tree>
+                     tree-model="treeData" tree-events="select_node:selectNodeCB;open_node:openNodeCB;close_node:closeNodeCB"></js-tree>
                 </p:layoutUnit>
                 <p:layoutUnit position="center" resizable="false" header="SELECTION DETAILS" style="border: 0px">
                     <h:panelGroup>
