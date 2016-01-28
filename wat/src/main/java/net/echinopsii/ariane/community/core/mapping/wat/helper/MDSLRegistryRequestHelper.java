@@ -104,47 +104,46 @@ public class MDSLRegistryRequestHelper {
         String description = (String) postData.get("description");
         String request = (String) postData.get("request");
 
-        if (subject.isAuthenticated()) {
-            EntityManager em = MappingDSLRegistryBootstrap.getIDMJPAProvider().createEM();
-            User reqUser = UsersListController.getUserByUserName(em, subject.getPrincipal().toString());
-            Group reqGroup = GroupsListController.getGroupByName(em, subject.getPrincipal().toString());
-            MappingDSLRegistryRequest entity = null;
-            try {
-                em.getTransaction().begin();
-                MappingDSLRegistryDirectory rootDirectory = em.find(MappingDSLRegistryDirectory.class, rootId);
-                if (requestId == 0) {
-                    entity = new MappingDSLRegistryRequest().setNameR(name).setDescriptionR(description).setRequestR(request).setTemplateR(false);
-                    entity.setUser(reqUser);
-                    entity.setGroup(reqGroup);
-                    entity.setUxPermissions(uxDefaultPermissions);
-                    entity.setRootDirectory(rootDirectory);
+        EntityManager em = MappingDSLRegistryBootstrap.getIDMJPAProvider().createEM();
+        User reqUser = UsersListController.getUserByUserName(em, subject.getPrincipal().toString());
+        Group reqGroup = GroupsListController.getGroupByName(em, subject.getPrincipal().toString());
+        MappingDSLRegistryRequest entity = null;
+        try {
+            em.getTransaction().begin();
+            MappingDSLRegistryDirectory rootDirectory = em.find(MappingDSLRegistryDirectory.class, rootId);
+            if (requestId == 0) {
+                entity = new MappingDSLRegistryRequest().setNameR(name).setDescriptionR(description).setRequestR(request).setTemplateR(false);
+                entity.setUser(reqUser);
+                entity.setGroup(reqGroup);
+                entity.setUxPermissions(uxDefaultPermissions);
+                entity.setRootDirectory(rootDirectory);
+                rootDirectory.getRequests().add(entity);
+                em.persist(entity);
+            } else {
+                entity = em.find(MappingDSLRegistryRequest.class, requestId);
+                if (name != null) entity.setName(name);
+                if (description != null) entity.setDescription(description);
+                if (request != null) entity.setRequest(request);
+                entity.setTemplate(entity.isTemplate());
+                entity.setUser(rootDirectory.getUser());
+                entity.setGroup(rootDirectory.getGroup());
+                if (entity.getUxPermissions().size() == 0) entity.setUxPermissions(rootDirectory.getUxPermissions());
+                if (entity.getRootDirectory() != null && rootDirectory != null && !entity.getRootDirectory().equals(rootDirectory)) {
+                    entity.getRootDirectory().getRequests().remove(entity);
                     rootDirectory.getRequests().add(entity);
-                    em.persist(entity);
-                } else {
-                    entity = em.find(MappingDSLRegistryRequest.class, requestId);
-                    if (name!=null) entity.setName(name);
-                    if (description!=null) entity.setDescription(description);
-                    if (request!=null) entity.setRequest(request);
-                    entity.setTemplate(entity.isTemplate());
-                    entity.setUser(rootDirectory.getUser());
-                    entity.setGroup(rootDirectory.getGroup());
-                    if (entity.getUxPermissions().size() == 0) entity.setUxPermissions(rootDirectory.getUxPermissions());
-                    if (entity.getRootDirectory()!=null && rootDirectory!=null && !entity.getRootDirectory().equals(rootDirectory)) {
-                        entity.getRootDirectory().getRequests().remove(entity);
-                        rootDirectory.getRequests().add(entity);
-                    }
                 }
-                em.getTransaction().commit();
-                return entity.getId();
-            } catch (Throwable t) {
-                log.debug("Throwable catched !");
-                t.printStackTrace();
-                if (em.getTransaction().isActive())
-                    em.getTransaction().rollback();
-            } finally {
-                em.close();
             }
+            em.getTransaction().commit();
+            return entity.getId();
+        } catch (Throwable t) {
+            log.debug("Throwable catched !");
+            t.printStackTrace();
+            if (em.getTransaction().isActive())
+                em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
+
         return 0;
     }
 }

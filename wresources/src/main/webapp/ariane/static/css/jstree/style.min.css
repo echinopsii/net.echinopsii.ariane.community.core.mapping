@@ -175,7 +175,7 @@ OTHER DEALINGS IN THE SOFTWARE.*/
 
 .vakata-context li > a {
     display: block;
-    padding: 0 2em;
+    padding: 0 1em;
     text-decoration: none;
     width: auto;
     color: #000;
@@ -259,7 +259,7 @@ OTHER DEALINGS IN THE SOFTWARE.*/
 
 .vakata-context li > a .vakata-contextmenu-sep {
     display: inline-block;
-    width: 1px;
+    width: 10px;
     height: 2.4em;
 }
 

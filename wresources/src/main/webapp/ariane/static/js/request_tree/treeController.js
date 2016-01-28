@@ -144,6 +144,7 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
             $scope.contextMenu = {
                 "dirCreateSubfolder": {
                     "label": "Create subfolder",
+                    "icon" : "icon-plus-sign",
                     "action": function (obj) {
                         $scope.isCreate = true
                         setNodeMetaData(data)
@@ -153,18 +154,21 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
                 },
                 "dirDelete": {
                     "label": "Delete",
+                    "icon": "icon-remove-sign",
                     "action": function (obj) {
                         deleteDirectory(data.node.id)
                     }
                 },
                 "dirEditPermissions": {
                     "label": "Edit Permissions",
+                    "icon": "icon-pencil",
                     "action": function (obj) {
                         alert("You clicked " + obj.item.label);
                     }
                 },
                 "dirEditProperties": {
                     "label": "Edit Properties",
+                    "icon": "icon-pencil",
                     "action": function (obj) {
                         setNodeMetaData(data)
                         $scope.folderName = data.node.text;
@@ -187,18 +191,21 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
             $scope.contextMenu = {
                 "fileDelete": {
                     "label": "Delete",
+                    "icon": "icon-remove-sign",
                     "action": function (obj) {
                         deleteRequest(data.node.id.split("child")[1])
                     }
                 },
                 "fileEditPermissions": {
                     "label": "Edit Permissions",
+                    "icon": "icon-pencil",
                     "action": function (obj) {
                         alert("You clicked " + obj.item.label);
                     }
                 },
                 "fileEditProperties": {
                     "label": "Edit Properties",
+                    "icon": "icon-pencil",
                     "action": function (obj) {
                         setNodeMetaData(data)
                         var path = $scope.pathToNode.split("/");

@@ -81,7 +81,7 @@ public class MDSLRegistryDirectoryHelper {
         UXresourcesLikePermissions.add(UXPermission.UX_LIKE_WR_PERM);
         UXresourcesLikePermissions.add(UXPermission.UX_LIKE_CH_PERM);
 
-        uxPermissions =  new HashSet<UXPermission>();
+        uxPermissions = new HashSet<UXPermission>();
 
         uxDefaultPermissions = new HashSet<UXPermission>();
         uxDefaultPermissions.add(MappingDSLRegistryBootstrap.getIDMJPAProvider().getUXLikeResourcesPermissionsFromName(UXPermission.UX_LIKE_RD_PERM, UXPermission.UX_LIKE_U_ACTOR_TYPE));
@@ -94,35 +94,33 @@ public class MDSLRegistryDirectoryHelper {
 
     public void initRoot() {
         subject = SecurityUtils.getSubject();
-        if (subject.isAuthenticated()) {
-            em = MappingDSLRegistryBootstrap.getIDMJPAProvider().createEM();
+        em = MappingDSLRegistryBootstrap.getIDMJPAProvider().createEM();
 
-            user = UsersListController.getUserByUserName(em, subject.getPrincipal().toString());
+        user = UsersListController.getUserByUserName(em, subject.getPrincipal().toString());
 
-            CriteriaBuilder builder = em.getCriteriaBuilder();
-            CriteriaQuery<MappingDSLRegistryDirectory> rootDCriteria = builder.createQuery(MappingDSLRegistryDirectory.class);
-            Root<MappingDSLRegistryDirectory> rootDRoot = rootDCriteria.from(MappingDSLRegistryDirectory.class);
-            rootDRoot.fetch("uxPermissions", JoinType.LEFT);
-            rootDRoot.fetch("subDirectories", JoinType.LEFT);
-            rootDRoot.fetch("requests", JoinType.LEFT);
-            rootDCriteria.select(rootDRoot).where(builder.equal(rootDRoot.<String>get("name"), MappingDSLRegistryBootstrap.MAPPING_DSL_REGISTRY_ROOT_DIR_NAME));
-            TypedQuery<MappingDSLRegistryDirectory> rootDQuery = em.createQuery(rootDCriteria);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<MappingDSLRegistryDirectory> rootDCriteria = builder.createQuery(MappingDSLRegistryDirectory.class);
+        Root<MappingDSLRegistryDirectory> rootDRoot = rootDCriteria.from(MappingDSLRegistryDirectory.class);
+        rootDRoot.fetch("uxPermissions", JoinType.LEFT);
+        rootDRoot.fetch("subDirectories", JoinType.LEFT);
+        rootDRoot.fetch("requests", JoinType.LEFT);
+        rootDCriteria.select(rootDRoot).where(builder.equal(rootDRoot.<String>get("name"), MappingDSLRegistryBootstrap.MAPPING_DSL_REGISTRY_ROOT_DIR_NAME));
+        TypedQuery<MappingDSLRegistryDirectory> rootDQuery = em.createQuery(rootDCriteria);
 
-            try {
-                rootD = rootDQuery.getSingleResult();
-            } catch (NoResultException e) {
-                log.error("Mapping DSL Registry root directory has not been defined correctly ! You may have some problem during installation... ");
-                return;
-            } catch (Exception e) {
-                throw e;
-            }
-
-            if (subject.hasRole("Jedi") || hasRight(em, rootD, UXPermission.UX_LIKE_RD_PERM)) {
-                root = new DefaultTreeNode(rootD, null);
-            }
-
-            em.close();
+        try {
+            rootD = rootDQuery.getSingleResult();
+        } catch (NoResultException e) {
+            log.error("Mapping DSL Registry root directory has not been defined correctly ! You may have some problem during installation... ");
+            return;
+        } catch (Exception e) {
+            throw e;
         }
+
+        if (subject.hasRole("Jedi") || hasRight(em, rootD, UXPermission.UX_LIKE_RD_PERM)) {
+            root = new DefaultTreeNode(rootD, null);
+        }
+
+        em.close();
     }
 
     private boolean hasRight(EntityManager em, Object registryObject, String right) {
@@ -185,7 +183,6 @@ public class MDSLRegistryDirectoryHelper {
 
     public MappingDSLRegistryDirectory getChild(int subDirID) {
         em = MappingDSLRegistryBootstrap.getIDMJPAProvider().createEM();
-
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<MappingDSLRegistryDirectory> rootDCriteria = builder.createQuery(MappingDSLRegistryDirectory.class);
         Root<MappingDSLRegistryDirectory> rootDRoot = rootDCriteria.from(MappingDSLRegistryDirectory.class);
@@ -241,44 +238,42 @@ public class MDSLRegistryDirectoryHelper {
         String name = (String) postData.get("name");
         String description = (String) postData.get("description");
 
-        if (subject.isAuthenticated()) {
-            EntityManager em = MappingDSLRegistryBootstrap.getIDMJPAProvider().createEM();
-            User reqUser = UsersListController.getUserByUserName(em, subject.getPrincipal().toString());
-            Group reqGroup = GroupsListController.getGroupByName(em, subject.getPrincipal().toString());
-            MappingDSLRegistryDirectory entity = null;
-            try {
-                em.getTransaction().begin();
-                MappingDSLRegistryDirectory rootDirectory = em.find(MappingDSLRegistryDirectory.class, rootId);
-                if (directoryId == 0) {
-                    entity = new MappingDSLRegistryDirectory().setNameR(name).setDescriptionR(description).setRootDirectoryR(rootDirectory);
-                    entity.setUser(reqUser);
-                    entity.setGroup(reqGroup);
-                    entity.setUxPermissions(uxDefaultPermissions);
-                    entity.setRootDirectory(rootDirectory);
+        EntityManager em = MappingDSLRegistryBootstrap.getIDMJPAProvider().createEM();
+        User reqUser = UsersListController.getUserByUserName(em, subject.getPrincipal().toString());
+        Group reqGroup = GroupsListController.getGroupByName(em, subject.getPrincipal().toString());
+        MappingDSLRegistryDirectory entity = null;
+        try {
+            em.getTransaction().begin();
+            MappingDSLRegistryDirectory rootDirectory = em.find(MappingDSLRegistryDirectory.class, rootId);
+            if (directoryId == 0) {
+                entity = new MappingDSLRegistryDirectory().setNameR(name).setDescriptionR(description).setRootDirectoryR(rootDirectory);
+                entity.setUser(reqUser);
+                entity.setGroup(reqGroup);
+                entity.setUxPermissions(uxDefaultPermissions);
+                entity.setRootDirectory(rootDirectory);
+                rootDirectory.getSubDirectories().add(entity);
+                em.persist(entity);
+            } else {
+                entity = em.find(MappingDSLRegistryDirectory.class, directoryId);
+                if (name != null) entity.setName(name);
+                if (description != null) entity.setDescription(description);
+                entity.setUser(rootDirectory.getUser());
+                entity.setGroup(rootDirectory.getGroup());
+                if (entity.getUxPermissions().size() == 0) entity.setUxPermissions(rootDirectory.getUxPermissions());
+                if (entity.getRootDirectory() != null && rootDirectory != null && !entity.getRootDirectory().equals(rootDirectory)) {
+                    entity.getRootDirectory().getSubDirectories().remove(entity);
                     rootDirectory.getSubDirectories().add(entity);
-                    em.persist(entity);
-                } else {
-                    entity = em.find(MappingDSLRegistryDirectory.class, directoryId);
-                    if (name != null) entity.setName(name);
-                    if (description != null) entity.setDescription(description);
-                    entity.setUser(rootDirectory.getUser());
-                    entity.setGroup(rootDirectory.getGroup());
-                    if (entity.getUxPermissions().size() == 0) entity.setUxPermissions(rootDirectory.getUxPermissions());
-                    if (entity.getRootDirectory() != null && rootDirectory != null && !entity.getRootDirectory().equals(rootDirectory)) {
-                        entity.getRootDirectory().getSubDirectories().remove(entity);
-                        rootDirectory.getSubDirectories().add(entity);
-                    }
                 }
-                em.getTransaction().commit();
-                return entity.getId();
-            } catch (Throwable t) {
-                log.debug("Throwable catched !");
-                t.printStackTrace();
-                if (em.getTransaction().isActive())
-                    em.getTransaction().rollback();
-            } finally {
-                em.close();
             }
+            em.getTransaction().commit();
+            return entity.getId();
+        } catch (Throwable t) {
+            log.debug("Throwable catched !");
+            t.printStackTrace();
+            if (em.getTransaction().isActive())
+                em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
         return 0;
     }

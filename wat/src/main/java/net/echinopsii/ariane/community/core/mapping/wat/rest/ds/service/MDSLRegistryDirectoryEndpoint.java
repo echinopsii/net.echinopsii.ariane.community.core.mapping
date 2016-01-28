@@ -26,6 +26,8 @@ import net.echinopsii.ariane.community.core.mapping.ds.dsl.registry.json.Mapping
 import net.echinopsii.ariane.community.core.mapping.ds.dsl.registry.model.MappingDSLRegistryDirectory;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 import net.echinopsii.ariane.community.core.mapping.wat.helper.MDSLRegistryDirectoryHelper;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,45 +64,64 @@ public class MDSLRegistryDirectoryEndpoint {
     @GET
     @Path("/getRoot")
     public Response getRoot() throws JsonProcessingException {
-        MDSLRegistryDirectoryHelper md = new MDSLRegistryDirectoryHelper();
-        Response ret = mappingDSLRegistryDirToJSON(md.getRootD());
-        return ret;
+        Subject subject = SecurityUtils.getSubject();
+        if (subject.isAuthenticated()) {
+            MDSLRegistryDirectoryHelper md = new MDSLRegistryDirectoryHelper();
+            Response ret = mappingDSLRegistryDirToJSON(md.getRootD());
+            return ret;
+        } else {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("You're not authorized to fetch root node. Contact your administrator.").build();
+        }
     }
 
     @POST
     @Path("/getChild")
     public Response getChild(@QueryParam("data") String params) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> postData = mapper.readValue(params, Map.class);
-        int subDirID = (int) postData.get("subDirID");
-        MDSLRegistryDirectoryHelper md = new MDSLRegistryDirectoryHelper();
-        Response ret = mappingDSLRegistryDirToJSON(md.getChild(subDirID));
-        return ret;
+        Subject subject = SecurityUtils.getSubject();
+        if (subject.isAuthenticated()) {
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, Object> postData = mapper.readValue(params, Map.class);
+            int subDirID = (int) postData.get("subDirID");
+            MDSLRegistryDirectoryHelper md = new MDSLRegistryDirectoryHelper();
+            Response ret = mappingDSLRegistryDirToJSON(md.getChild(subDirID));
+            return ret;
+        } else {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("You're not authorized to fetch childs. Contact your administrator.").build();
+        }
     }
 
     @POST
     @Path("/deleteDirectory")
     public Response deleteDirectory(@QueryParam("data") String params) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> postData = mapper.readValue(params, Map.class);
-        long directoryID = Long.valueOf((String) postData.get("directoryID"));
-        MDSLRegistryDirectoryHelper md = new MDSLRegistryDirectoryHelper();
-        Boolean responseVal = md.deleteDirectory(directoryID);
-        if (responseVal)
-            return Response.status(Response.Status.OK).entity("Directory " + directoryID + "has been successfully deleted").build();
-        else
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Failed to delete directory " + directoryID).build();
+        Subject subject = SecurityUtils.getSubject();
+        if (subject.isAuthenticated()) {
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, Object> postData = mapper.readValue(params, Map.class);
+            long directoryID = Long.valueOf((String) postData.get("directoryID"));
+            MDSLRegistryDirectoryHelper md = new MDSLRegistryDirectoryHelper();
+            Boolean responseVal = md.deleteDirectory(directoryID);
+            if (responseVal)
+                return Response.status(Response.Status.OK).entity("Directory " + directoryID + "has been successfully deleted").build();
+            else
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Failed to delete directory " + directoryID).build();
+        } else {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("You're not authorized to delete directory. Contact your administrator.").build();
+        }
     }
 
     @POST
     @Path("/saveDirectory")
     public Response saveDirectory(@QueryParam("data") String params) throws IOException {
-        System.out.print(params);
-        MDSLRegistryDirectoryHelper md = new MDSLRegistryDirectoryHelper();
-        long id = md.saveDirectory(params);
-        if (id != 0)
-            return Response.status(Response.Status.OK).entity(id).build();
-        else
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Failed to save directory.").build();
+        Subject subject = SecurityUtils.getSubject();
+        if (subject.isAuthenticated()) {
+            MDSLRegistryDirectoryHelper md = new MDSLRegistryDirectoryHelper();
+            long id = md.saveDirectory(params);
+            if (id != 0)
+                return Response.status(Response.Status.OK).entity(id).build();
+            else
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Failed to save directory.").build();
+        } else {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("You're not authorized to save directory. Contact your administrator.").build();
+        }
     }
 }
