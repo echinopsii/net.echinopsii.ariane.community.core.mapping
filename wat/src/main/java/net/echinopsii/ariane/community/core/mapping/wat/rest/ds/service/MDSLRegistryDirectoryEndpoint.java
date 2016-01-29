@@ -42,7 +42,6 @@ import java.util.Map;
 public class MDSLRegistryDirectoryEndpoint {
 
     private static final Logger log = LoggerFactory.getLogger(MDSLRegistryDirectoryEndpoint.class);
-    private EntityManager em;
 
     public static Response mappingDSLRegistryDirToJSON(MappingDSLRegistryDirectory mappingDSLRegistryDirectory) {
         Response ret = null;
@@ -67,7 +66,7 @@ public class MDSLRegistryDirectoryEndpoint {
         Subject subject = SecurityUtils.getSubject();
         if (subject.isAuthenticated()) {
             MDSLRegistryDirectoryHelper md = new MDSLRegistryDirectoryHelper();
-            Response ret = mappingDSLRegistryDirToJSON(md.getRootD());
+            Response ret = mappingDSLRegistryDirToJSON(md.getRootD(subject.getPrincipal().toString()));
             return ret;
         } else {
             return Response.status(Response.Status.UNAUTHORIZED).entity("You're not authorized to fetch root node. Contact your administrator.").build();
@@ -115,7 +114,7 @@ public class MDSLRegistryDirectoryEndpoint {
         Subject subject = SecurityUtils.getSubject();
         if (subject.isAuthenticated()) {
             MDSLRegistryDirectoryHelper md = new MDSLRegistryDirectoryHelper();
-            long id = md.saveDirectory(params);
+            long id = md.saveDirectory(params, subject.getPrincipal().toString());
             if (id != 0)
                 return Response.status(Response.Status.OK).entity(id).build();
             else

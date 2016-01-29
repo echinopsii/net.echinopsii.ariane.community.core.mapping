@@ -172,6 +172,7 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
                     "action": function (obj) {
                         setNodeMetaData(data)
                         $scope.folderName = data.node.text;
+                        $scope.isCreate = false
                         $scope.folderDescription = $scope.directoryDescription;
                         $scope.directoryDescription = $scope.parentDescription;
                         var path = $scope.pathToNode.split("/");
@@ -221,7 +222,6 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
                 }
             };
         }
-        $scope.$apply()
     };
 
     $scope.saveRequest = function () {

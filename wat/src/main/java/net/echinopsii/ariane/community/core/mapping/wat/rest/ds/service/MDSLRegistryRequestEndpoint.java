@@ -60,7 +60,7 @@ public class MDSLRegistryRequestEndpoint {
         Subject subject = SecurityUtils.getSubject();
         if (subject.isAuthenticated()) {
             MDSLRegistryRequestHelper md = new MDSLRegistryRequestHelper();
-            long id = md.saveRequest(params);
+            long id = md.saveRequest(params, subject.getPrincipal().toString());
             if (id != 0)
                 return Response.status(Response.Status.OK).entity(id).build();
             else

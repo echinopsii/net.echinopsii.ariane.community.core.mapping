@@ -31,8 +31,6 @@ import net.echinopsii.ariane.community.core.mapping.ds.dsl.registry.model.Mappin
 import net.echinopsii.ariane.community.core.mapping.ds.dsl.registry.model.MappingDSLRegistryRequest;
 import net.echinopsii.ariane.community.core.portal.idmwat.controller.group.GroupsListController;
 import net.echinopsii.ariane.community.core.portal.idmwat.controller.user.UsersListController;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,8 +91,7 @@ public class MDSLRegistryRequestHelper {
         return Boolean.FALSE;
     }
 
-    public long saveRequest(String payload) throws IOException {
-        Subject subject = SecurityUtils.getSubject();
+    public long saveRequest(String payload, String username) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         Map<String, Object> postData = mapper.readValue(payload, Map.class);
         // if id is null then create new directory else update with that id
@@ -105,8 +102,8 @@ public class MDSLRegistryRequestHelper {
         String request = (String) postData.get("request");
 
         EntityManager em = MappingDSLRegistryBootstrap.getIDMJPAProvider().createEM();
-        User reqUser = UsersListController.getUserByUserName(em, subject.getPrincipal().toString());
-        Group reqGroup = GroupsListController.getGroupByName(em, subject.getPrincipal().toString());
+        User reqUser = UsersListController.getUserByUserName(em, username);
+        Group reqGroup = GroupsListController.getGroupByName(em, username);
         MappingDSLRegistryRequest entity = null;
         try {
             em.getTransaction().begin();
