@@ -130,6 +130,10 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
         }
     }
 
+    $scope.selectNodeReqCB = function(e, data){
+        console.log("in sav request click")
+    }
+
     $scope.selectNodeCB = function (e, data) {
         // if Selected node has children then it's a directory else child
         // according to that switch context Menu
@@ -222,6 +226,7 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
                 }
             };
         }
+        $scope.$apply()
     };
 
     $scope.saveRequest = function () {

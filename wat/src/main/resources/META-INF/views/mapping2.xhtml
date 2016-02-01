@@ -140,6 +140,8 @@
                                                                  onclick="requestSaveDialog.show()" actionListener="#{mdslrRequestController.clear}"
                                                                  action="#{mdslRegistryController.reloadTree}"
                                                                  update=":saveReqDirForm,:saveRequestDetail"/>
+                                                <p:commandButton type="button" value="Save request 2" title="Save" icon="icon-upload icon-large" style="width:150px"
+                                                                 onclick="requestSaveDialog2.show()"/><br/>
                                                 <p:commandButton type="button" value="Load request 2" title="Load" icon="icon-upload icon-large" style="width:150px"
                                                                  onclick="requestLoaderDialog2.show()"/><br/>
                                                </h:panelGroup>
@@ -226,6 +228,31 @@
             <p:ajax event="close" update=":saveReqDirForm,:loadReqDirForm"/>
         </p:dialog>
 
+        <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Save request" widgetVar="requestSaveDialog2"
+                  width="1000" height="600" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
+            <p:layout style="min-width:980px;min-height:590px;">
+                <p:layoutUnit position="west" size="240" header="NAVIGATION" resizable="false" style="border: 0px">
+                    <js-tree id="jstree_demo_div2" tree-data="scope" tree-plugins="sort,contextmenu" tree-contextmenu="contextMenu"
+                             tree-model="treeData" tree-events="select_node:selectNodeReqCB;open_node:openNodeCB;close_node:closeNodeCB"></js-tree>
+                </p:layoutUnit>
+                <p:layoutUnit position="center" resizable="false" header="REQUEST DETAILS" style="border: 0px">
+                    <h:panelGroup id="saveRequestDetail2">
+                        <br/>
+                        <h:form>
+                            <p:messages id="messages_req_sage2" showDetail="true" autoUpdate="true" closable="true" />
+                            <h:panelGroup>
+                                <ui:insert name="createRequest" >
+                                    <ui:include src="/templates/mdslRequestForm2.xhtml" />
+                                </ui:insert>
+                                <p:separator/>
+
+                            </h:panelGroup>
+                        </h:form>
+                    </h:panelGroup>
+                </p:layoutUnit>
+            </p:layout>
+            <p:ajax event="close" update=":saveReqDirForm,:loadReqDirForm"/>
+        </p:dialog>
 
             <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Load request" widgetVar="requestLoaderDialog2"
                   width="1000" height="600" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
