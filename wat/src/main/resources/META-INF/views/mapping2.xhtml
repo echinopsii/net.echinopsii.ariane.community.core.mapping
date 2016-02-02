@@ -229,8 +229,8 @@
         </p:dialog>
 
         <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Save request" widgetVar="requestSaveDialog2"
-                  width="1000" height="600" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
-            <p:layout style="min-width:980px;min-height:590px;">
+                  width="1010" height="600" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
+            <p:layout style="min-width:980px;min-height:600px;">
                 <p:layoutUnit position="west" size="240" header="NAVIGATION" resizable="false" style="border: 0px">
                     <js-tree id="jstree_demo_div2" tree-data="scope" tree-plugins="sort,contextmenu" tree-contextmenu="contextMenu"
                              tree-model="treeData" tree-events="select_node:selectNodeReqCB;open_node:openNodeCB;close_node:closeNodeCB"></js-tree>
@@ -245,7 +245,7 @@
                                     <ui:include src="/templates/mdslRequestForm2.xhtml" />
                                 </ui:insert>
                                 <p:separator/>
-
+                                <input type="button" value="Save" style="height: 30px"  class="ui-confirmdialog-yes" data-icon="ui-icon-check" ng-click="saveRequest()"/>
                             </h:panelGroup>
                         </h:form>
                     </h:panelGroup>

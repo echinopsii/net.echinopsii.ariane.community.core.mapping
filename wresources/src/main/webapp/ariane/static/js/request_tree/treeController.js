@@ -130,14 +130,33 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
         }
     }
 
-    $scope.selectNodeReqCB = function(e, data){
-        console.log("in sav request click")
+    $scope.selectNodeReqCB = function (e, data) {
+        $scope.selectedNode = data;
+        $scope.dirRequest = false;
+
+        if (data.node.icon !== "jstree-custom-file") {
+            // Directory
+            setNodeMetaData(data);
+            $scope.dirRequest = true;
+        } else {
+            $scope.dirRequest = false;
+            $scope.pathToNode = "/" + $scope.rootName + "/" + $('#jstree_demo_div').jstree(true).get_path(data.node.parents[0], "/");
+            var parentNode = $scope.treeData.filter(function (obj) {
+                return obj.id.toString() === data.node.parent[0]
+            })[0];
+            $scope.directoryDescription = parentNode.data.directoryDesc;
+            $scope.requestName = data.node.text;
+            $scope.requestReq = data.node.data.requestReq;
+            $scope.requestDesc = data.node.data.requestDesc;
+        }
+        $scope.$apply();
     }
 
     $scope.selectNodeCB = function (e, data) {
         // if Selected node has children then it's a directory else child
         // according to that switch context Menu
         $scope.selectedNode = data;
+        $scope.dirRequest = false;
 
         if (data.node.icon !== "jstree-custom-file") {
             // Directory
@@ -148,7 +167,7 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
             $scope.contextMenu = {
                 "dirCreateSubfolder": {
                     "label": "Create subfolder",
-                    "icon" : "icon-plus-sign",
+                    "icon": "icon-plus-sign",
                     "action": function (obj) {
                         $scope.isCreate = true
                         setNodeMetaData(data)
@@ -238,12 +257,17 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
             }
         }
 
-        if ($scope.selectedNode.node.parent === "#") {
-            postObj.data.rootId = $scope.rootId.toString()
+        if ($scope.dirRequest) {
+            postObj.data.rootId = $scope.selectedNode.node.id
+            postObj.data.requestId = '0'
         } else {
-            postObj.data.rootId = $scope.selectedNode.node.parent;
+            if ($scope.selectedNode.node.parent === "#") {
+                postObj.data.rootId = $scope.rootId.toString()
+            } else {
+                postObj.data.rootId = $scope.selectedNode.node.parent;
+            }
+            postObj.data.requestId = $scope.selectedNode.node.id.split("child").pop()
         }
-        postObj.data.requestId = $scope.selectedNode.node.id.split("child").pop()
 
         serviceMethods.apiPOSTReq('/ariane/rest/mapping/registryRequest/saveRequest', postObj).then(function (result) {
             var childNode = {
@@ -257,17 +281,23 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
                 }
             }
 
-            $scope.requestDetail = childNode.data;
-            // Find object with same Id and update it
-            var obj = $scope.treeData.filter(function (v) {
-                return v.id.toString() === "child" + result.data.toString()
-            })[0]
-            obj.data.requestDesc = postObj.data.description;
-            obj.data.requestReq = postObj.data.request;
-            obj.text = postObj.data.name
+            if ($scope.dirRequest) {
+                $scope.treeData.push(childNode);
+                $scope.lookupObj[result.data] = childNode;
+            } else {
+                $scope.requestDetail = childNode.data;
+                // Find object with same Id and update it
+                var obj = $scope.treeData.filter(function (v) {
+                    return v.id.toString() === "child" + result.data.toString()
+                })[0]
+                obj.data.requestDesc = postObj.data.description;
+                obj.data.requestReq = postObj.data.request;
+                obj.text = postObj.data.name
+            }
         }, function (error) {
             console.error("failed to save/update directory");
         })
+        requestSaveDialog2.hide()
         requestModificationDialog.hide()
     }
 
