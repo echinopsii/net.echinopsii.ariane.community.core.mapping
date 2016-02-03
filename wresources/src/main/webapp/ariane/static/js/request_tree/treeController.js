@@ -297,6 +297,11 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
         }, function (error) {
             console.error("failed to save/update directory");
         })
+        $scope.pathToNode = null;
+        $scope.directoryDescription = null;
+        $scope.requestName = null;
+        $scope.requestReq = null;
+        $scope.requestDesc = null;
         requestSaveDialog2.hide()
         requestModificationDialog.hide()
     }
