@@ -129,7 +129,7 @@
                                             <!--<p:inputTextarea id="mdslQuery" rows="6" cols="180" autoResize="false" widgetVar="mdslQuery"
                                                                  completeMethod="#{autoCompleteController.completeArea}" queryDelay="200" minQueryLength="4"/>-->
                                             <p:inputTextarea id="mdslQuery" rows="6" cols="180" autoResize="false" widgetVar="mdslQuery" var="mdslQuery"
-                                                             value="#{mdslrSessionRequestController.sessionRequest}"/>
+                                                            value="{{sessionReqest}}"/>
                                             <h:panelGroup>
                                                 <p:commandButton id="execQuery" widgetVar="execQuery" type="button" value="Execute request" title="Execute"
                                                                  icon="icon-play-circle icon-large" style="width:150px"/><br/>
@@ -190,22 +190,53 @@
             <p:ajax event="close" update=":saveReqDirForm,:saveRequestDetail,:loadReqDirForm,:loadRequestDetail"/>
         </p:dialog>
 
-        <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Update folder properties" widgetVar="folderUpdateDialog"
-                  width="800" height="400" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
-            <h:panelGroup id="updateFolder">
+        <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Delete folder" widgetVar="folderDeleteDialog2"
+                  width="400" height="110" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
+            <h:panelGroup id="deleteFolderConfirm2">
+                <h:outputText value="Are you sure you want to delete following folder with its contents ?"/><br/><br/>
+                <h:outputText value="Folder name : {{selectedNode.node.text}}"/><br/><br/>
                 <h:form>
-                    <ui:insert name="updateDirectory" >
-                        <ui:include src="/templates/mdslDirectoryForm2.xhtml" />
-                    </ui:insert>
-                    <div ng-show="isDirectory">
-                    <h:panelGroup>
-                        <p:separator/>
-                        <br/>
-                        <input type="button" value="Update this folder" style="height: 30px"  class="ui-confirmdialog-yes" data-icon="ui-icon-check" ng-click="saveDirectory()"/>
-                    </h:panelGroup>
-                    </div>
+                    <h:panelGrid id="folderDeleteGrid2" columns="2" cellpadding="5"
+                                 styleClass="ui-widget-content-grid" style="border: 0px">
+                        <input type="button" value="Yes" style="height: 27px; width: 40px !important; margin: 1% 27% !important;" class="ui-confirmdialog-yes" data-icon="ui-icon-check" ng-click="deleteDirectory(selectedNode.node.id)"/>
+                        <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-check" oncomplete="folderDeleteDialog2.hide();"/>
+                    </h:panelGrid>
                 </h:form>
             </h:panelGroup>
+        </p:dialog>
+
+        <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Delete request" widgetVar="requestDeleteDialog2"
+                  width="350" height="110" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
+            <h:panelGroup id="deleteRequestConfirm2">
+                <h:outputText value="Are you sure you want to delete following request ?"/><br/><br/>
+                <h:outputText value="Request name : {{selectedNode.node.data.requestName}}"/><br/><br/>
+                <h:form>
+                    <h:panelGrid id="requestDeleteGrid2" columns="2" cellpadding="5"
+                                 styleClass="ui-widget-content-grid" style="border: 0px">
+                        <input type="button" value="Yes" style="height: 27px; width: 40px !important; margin: 1% 27% !important;" class="ui-confirmdialog-yes" data-icon="ui-icon-check" ng-click="deleteRequest(selectedNode.node.id.split('child')[1])"/>
+                        <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-check"
+                                         oncomplete="requestDeleteDialog2.hide();"/>
+                    </h:panelGrid>
+                </h:form>
+            </h:panelGroup>
+        </p:dialog>
+
+            <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Update folder properties" widgetVar="folderUpdateDialog"
+              width="800" height="400" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
+        <h:panelGroup id="updateFolder">
+            <h:form>
+                <ui:insert name="updateDirectory" >
+                    <ui:include src="/templates/mdslDirectoryForm2.xhtml" />
+                </ui:insert>
+                <div ng-show="isDirectory">
+                <h:panelGroup>
+                    <p:separator/>
+                    <br/>
+                    <input type="button" value="Update this folder" style="height: 30px"  class="ui-confirmdialog-yes" data-icon="ui-icon-check" ng-click="saveDirectory()"/>
+                </h:panelGroup>
+                </div>
+            </h:form>
+        </h:panelGroup>
         <p:ajax event="close" update=":saveReqDirForm,:saveRequestDetail,:loadReqDirForm,:loadRequestDetail"/>
         </p:dialog>
 
@@ -232,7 +263,7 @@
                   width="1010" height="600" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
             <p:layout style="min-width:980px;min-height:600px;">
                 <p:layoutUnit position="west" size="240" header="NAVIGATION" resizable="false" style="border: 0px">
-                    <js-tree id="jstree_demo_div2" tree-data="scope" tree-plugins="sort,contextmenu" tree-contextmenu="contextMenu"
+                    <js-tree id="jstree_div2" tree-data="scope" tree-plugins="sort,contextmenu" tree-contextmenu="contextMenu"
                              tree-model="treeData" tree-events="select_node:selectNodeReqCB;open_node:openNodeCB;close_node:closeNodeCB"></js-tree>
                 </p:layoutUnit>
                 <p:layoutUnit position="center" resizable="false" header="REQUEST DETAILS" style="border: 0px">
@@ -258,7 +289,7 @@
                   width="1000" height="600" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
             <p:layout style="min-width:980px;min-height:590px;">
                 <p:layoutUnit position="west" size="240" header="NAVIGATION" resizable="false" style="border: 0px;">
-                    <js-tree id="jstree_demo_div" tree-data="scope" tree-plugins="sort,contextmenu" tree-contextmenu="contextMenu"
+                    <js-tree id="jstree_div" tree-data="scope" tree-plugins="sort,contextmenu" tree-contextmenu="contextMenu"
                      tree-model="treeData" tree-events="select_node:selectNodeCB;open_node:openNodeCB;close_node:closeNodeCB"></js-tree>
                 </p:layoutUnit>
                 <p:layoutUnit position="center" resizable="false" header="SELECTION DETAILS" style="border: 0px">
@@ -296,10 +327,7 @@
                             <br/>
                             <p:separator/>
                             <br/>
-                            <p:commandButton value="Use that one !" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
-                                             oncomplete="requestLoaderDialog.hide();"
-                                             update=":mappingToolsView:mapToolsQueryForm:mdslQuery"
-                                             actionListener="#{mdslrSessionRequestController.loadSelectedRequest}"/>
+                            <input type="button" value="Use that one!" style="height: 30px"  class="ui-confirmdialog-yes" data-icon="ui-icon-check" ng-click="loadSelectedRequest(requestDetail.requestReq)"/>
                         </h:form>
                         </div>
                     </h:panelGroup>
