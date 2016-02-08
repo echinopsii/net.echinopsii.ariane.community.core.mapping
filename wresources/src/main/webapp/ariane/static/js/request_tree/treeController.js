@@ -38,6 +38,7 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
     $scope.selectedNode = null;
     $scope.isCreate = false;
     $scope.reqUsed = false;
+    $scope.sessionReqest = "Define your Mapping DSL request here...";
 
     serviceMethods.apiGETReq('/ariane/rest/mapping/registryDirectory/getRoot').then(function (dataObj) {
         $scope.rootName = dataObj.data.mappingDSLDirectoryName;
@@ -115,7 +116,7 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
         $scope.requestName = null;
         $scope.requestDesc = null;
 
-        if (!$scope.sessionReqest) {
+        if ($scope.sessionReqest.startsWith("Define")) {
             $scope.requestReq = null;
         }
         $scope.directoryDescription = data.node.data.directoryDesc;
@@ -142,6 +143,7 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
     $scope.selectNodeReqCB = function (e, data) {
         $scope.selectedNode = data;
         $scope.dirRequest = false;
+        $scope.reqUsed = true;
 
         if (data.node.icon !== "jstree-custom-file") {
             // Directory
@@ -157,7 +159,7 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
             })[0];
             $scope.directoryDescription = parentNode.data.directoryDesc;
             $scope.requestName = data.node.text;
-            if ($scope.sessionReqest) {
+            if (!$scope.sessionReqest.startsWith("Define")) {
                 $scope.requestReq = $scope.sessionReqest;
             } else {
                 $scope.requestReq = data.node.data.requestReq;
@@ -251,6 +253,7 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
         // according to that switch context Menu
         $scope.selectedNode = data;
         $scope.dirRequest = false;
+        $scope.reqUsed = false;
 
         if (data.node.icon !== "jstree-custom-file") {
             // Directory
