@@ -411,7 +411,7 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
         });
     };
 
-    var deleteRequest = function (requestID) {
+    $scope.deleteRequest = function (requestID) {
         var postObj = {
             "data": {
                 "requestID": requestID
