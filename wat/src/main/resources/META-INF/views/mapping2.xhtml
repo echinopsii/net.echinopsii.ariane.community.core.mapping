@@ -185,7 +185,7 @@
                   width="350" height="110" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
             <h:panelGroup id="deleteRequestConfirm2">
                 <h:outputText value="Are you sure you want to delete following request ?"/><br/><br/>
-                <h:outputText value="Request name : {{selectedNode.node.data.requestName}}"/><br/><br/>
+                <h:outputText value="Request name : {{selectedNode.node.text}}"/><br/><br/>
                 <h:form>
                     <h:panelGrid id="requestDeleteGrid2" columns="2" cellpadding="5"
                                  styleClass="ui-widget-content-grid" style="border: 0px">
