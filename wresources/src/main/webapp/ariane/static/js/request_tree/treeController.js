@@ -317,12 +317,22 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
                 obj.data.requestReq = postObj.data.request;
                 obj.text = postObj.data.name;
             }
+
+            growlMsg.show([{severity: 'info', summary:
+                "Mapping DSL request " + ((postObj.data.requestId ==='0')? "created" : "updated") + " successfully !",
+                detail: "Mapping DSL request " + ((postObj.data.name !== null) ? "name : " + postObj.data.name : "id :" + postObj.data.requestId)}])
+
         }, function (error) {
-            console.error("failed to save/update directory");
+            growlMsg.show([{severity: 'error', summary:
+                "Error while creating mapping dsl request " + postObj.data.name + " !",
+                "detail" : "Error message : " + error}]);
         });
+
+        $scope.reqUsed = false;
         $scope.pathToNode = null;
         $scope.directoryDescription = null;
         $scope.requestName = null;
+        $scope.requestReq = null;
         $scope.requestDesc = null;
         requestSaveDialog2.hide();
         requestModificationDialog.hide();
@@ -376,6 +386,7 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
             console.error("failed to save/update directory");
         });
 
+        $scope.reqUsed = false;
         if ($scope.isCreate) {
             folderNewDialog.hide();
         } else {

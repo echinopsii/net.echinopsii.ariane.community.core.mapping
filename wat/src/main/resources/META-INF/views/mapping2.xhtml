@@ -181,6 +181,8 @@
             </h:panelGroup>
         </p:dialog>
 
+        <p:growl widgetVar="growlMsg"></p:growl>
+
         <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Delete request" widgetVar="requestDeleteDialog2"
                   width="350" height="110" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
             <h:panelGroup id="deleteRequestConfirm2">
@@ -197,8 +199,8 @@
             </h:panelGroup>
         </p:dialog>
 
-            <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Update folder properties" widgetVar="folderUpdateDialog"
-              width="800" height="400" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
+        <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Update folder properties" widgetVar="folderUpdateDialog"
+            width="800" height="400" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
         <h:panelGroup id="updateFolder">
             <h:form>
                 <ui:insert name="updateDirectory" >
