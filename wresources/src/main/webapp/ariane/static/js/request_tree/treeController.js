@@ -325,7 +325,7 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
         }, function (error) {
             growlMsg.show([{severity: 'error', summary:
                 "Error while creating mapping dsl request " + postObj.data.name + " !",
-                "detail" : "Error message : " + error}]);
+                "detail" : "Error message : Request with same name exists already."}]);
         });
 
         $scope.reqUsed = false;
@@ -381,9 +381,15 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
                 obj.data.directoryDesc = postObj.data.description;
                 obj.text = postObj.data.name;
             }
+            growlMsg.show([{severity: 'info', summary:
+                "Mapping DSL directory " + ((postObj.data.directoryId ==='0')? "created" : "updated") + " successfully !",
+                detail: "Mapping DSL directory " + ((postObj.data.name !== null) ? "name : " + postObj.data.name : "id :" + postObj.data.directoryId)}]);
 
         }, function (error) {
-            console.error("failed to save/update directory");
+            growlMsg.show([{severity: 'error', summary:
+                "Error while creating mapping dsl directory" +
+                " " + postObj.data.name + " !",
+                "detail" : "Error message : Directory with same name exists already."}]);
         });
 
         $scope.reqUsed = false;
@@ -417,8 +423,13 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
                 }
             }
             folderDeleteDialog2.hide();
+            growlMsg.show([{severity: 'info', summary:
+                "Mapping DSL directory deleted successfully !",
+                detail: "Mapping DSL directory : " + $scope.selectedNode.node.text}]);
         }, function (error) {
-            console.error("failed to delete directory");
+            growlMsg.show([{severity: 'error', summary:
+                "Failed to delete mapping DSL directory!",
+                detail: "Mapping DSL directory : " + $scope.selectedNode.node.text}]);
         });
     };
 
@@ -439,8 +450,13 @@ app.controller('treeController', ['$scope', 'serviceMethods', function ($scope, 
                 }
             }
             requestDeleteDialog2.hide();
+            growlMsg.show([{severity: 'info', summary:
+                "Mapping DSL request deleted successfully !",
+                detail: "Mapping DSL request : " + $scope.selectedNode.node.text}]);
         }, function (error) {
-            console.error("failed to Request directory");
+            growlMsg.show([{severity: 'error', summary:
+                "Failed to delete mapping DSL request !",
+                detail: "Mapping DSL request : " + $scope.selectedNode.node.text}]);
         });
     };
 

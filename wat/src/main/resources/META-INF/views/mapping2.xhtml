@@ -206,13 +206,11 @@
                 <ui:insert name="updateDirectory" >
                     <ui:include src="/templates/mdslDirectoryForm2.xhtml" />
                 </ui:insert>
-                <div ng-show="isDirectory">
                 <h:panelGroup>
                     <p:separator/>
                     <br/>
                     <input type="button" value="Update this folder" style="height: 30px"  class="ui-confirmdialog-yes" data-icon="ui-icon-check" ng-click="saveDirectory()"/>
                 </h:panelGroup>
-                </div>
             </h:form>
         </h:panelGroup>
         </p:dialog>
