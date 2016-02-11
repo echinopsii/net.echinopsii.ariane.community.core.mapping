@@ -108,7 +108,7 @@
                                 </p:tab>
                                 <p:tab id="mapToolsQueryTab" title="Query" >
                                     <h:form id="mapToolsQueryForm">
-                                        <p:growl id="requestMessages" showDetail="true"/>
+                                        <p:growl id="requestMessages" showDetail="true" widgetVar="growlMsg"/>
                                         <h:panelGrid id="mapToolsQueryGrid" columns="2" cellpadding="5">
                                             <!--<p:inputTextarea id="mdslQuery" rows="6" cols="180" autoResize="false" widgetVar="mdslQuery"
                                                                  completeMethod="#{autoCompleteController.completeArea}" queryDelay="200" minQueryLength="4"/>-->
@@ -197,20 +197,18 @@
             </h:panelGroup>
         </p:dialog>
 
-            <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Update folder properties" widgetVar="folderUpdateDialog"
-              width="800" height="400" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
+        <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Update folder properties" widgetVar="folderUpdateDialog"
+            width="800" height="400" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
         <h:panelGroup id="updateFolder">
             <h:form>
                 <ui:insert name="updateDirectory" >
                     <ui:include src="/templates/mdslDirectoryForm2.xhtml" />
                 </ui:insert>
-                <div ng-show="isDirectory">
                 <h:panelGroup>
                     <p:separator/>
                     <br/>
                     <input type="button" value="Update this folder" style="height: 30px"  class="ui-confirmdialog-yes" data-icon="ui-icon-check" ng-click="saveDirectory()"/>
                 </h:panelGroup>
-                </div>
             </h:form>
         </h:panelGroup>
         </p:dialog>
