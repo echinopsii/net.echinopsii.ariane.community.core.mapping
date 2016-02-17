@@ -69,7 +69,7 @@ public class ContainerEndpoint {
             if (reqContainerCluster == null) ret.setErrorMessage("Request Error: cluster with provided ID " + jsonDeserializedContainer.getContainerClusterID() + " was not found.");
         }
         if (ret.getErrorMessage() == null && jsonDeserializedContainer.getContainerParentContainerID()!=0) {
-            reqContainerParent = MappingBootstrap.getMappingSce().getContainerSce().getContainer(jsonDeserializedContainer.getContainerID());
+            reqContainerParent = MappingBootstrap.getMappingSce().getContainerSce().getContainer(jsonDeserializedContainer.getContainerParentContainerID());
             if (reqContainerParent == null) ret.setErrorMessage("Request Error: parent container with provided ID " + jsonDeserializedContainer.getContainerParentContainerID() + " was not found.");
         }
         if (ret.getErrorMessage() == null && jsonDeserializedContainer.getContainerChildContainersID()!=null && jsonDeserializedContainer.getContainerChildContainersID().size() > 0) {
@@ -146,9 +146,15 @@ public class ContainerEndpoint {
                 String reqContainerGURI = jsonDeserializedContainer.getContainerGateURI();
                 String reqContainerGName = jsonDeserializedContainer.getContainerGateName();
                 if (reqContainerName == null)
-                    deserializedContainer = (Container) MappingBootstrap.getMappingSce().getContainerSce().createContainer(reqContainerGURI, reqContainerGName);
+                    if (reqContainerParent != null)
+                        deserializedContainer = (Container) MappingBootstrap.getMappingSce().getContainerSce().createContainer(reqContainerGURI, reqContainerGName, reqContainerParent);
+                    else
+                        deserializedContainer = (Container) MappingBootstrap.getMappingSce().getContainerSce().createContainer(reqContainerGURI, reqContainerGName);
                 else
-                    deserializedContainer = (Container) MappingBootstrap.getMappingSce().getContainerSce().createContainer(reqContainerName, reqContainerGURI, reqContainerGName);
+                    if (reqContainerParent != null)
+                        deserializedContainer = (Container) MappingBootstrap.getMappingSce().getContainerSce().createContainer(reqContainerName, reqContainerGURI, reqContainerGName, reqContainerParent);
+                    else
+                        deserializedContainer = (Container) MappingBootstrap.getMappingSce().getContainerSce().createContainer(reqContainerName, reqContainerGURI, reqContainerGName);
             } else {
                 if (reqContainerName != null) deserializedContainer.setContainerName(reqContainerName);
                 if (reqPrimaryAdminGate != null) deserializedContainer.setContainerPrimaryAdminGate(reqPrimaryAdminGate);
@@ -158,7 +164,6 @@ public class ContainerEndpoint {
             if (reqContainerCompany != null) deserializedContainer.setContainerCompany(reqContainerCompany);
             if (reqContainerProduct != null) deserializedContainer.setContainerProduct(reqContainerProduct);
             if (reqContainerType != null) deserializedContainer.setContainerType(reqContainerType);
-            if (reqContainerParent != null) deserializedContainer.setContainerParentContainer(reqContainerParent);
 
             if (jsonDeserializedContainer.getContainerChildContainersID() != null) {
                 List<Container> childContainersToDelete = new ArrayList<>();

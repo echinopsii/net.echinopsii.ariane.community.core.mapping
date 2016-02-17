@@ -194,6 +194,7 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
         if (this.containerParentContainer==null || !this.containerParentContainer.equals(container)) {
             if (container == null || container instanceof ContainerImpl) {
                 this.containerParentContainer = (ContainerImpl) container;
+                synchronizeParentContainerToDB();
             }
         }
     }

@@ -23,6 +23,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.ContainerImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.GateImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository.ContainerRepoImpl;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.service.ContainerSce;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,6 +72,21 @@ public class ContainerSceImpl implements ContainerSce<ContainerImpl> {
     public ContainerImpl createContainer(String name, String primaryAdminURL, String primaryAdminGateName) throws MappingDSException {
         ContainerImpl ret = this.createContainer(primaryAdminURL, primaryAdminGateName);
         ret.setContainerName(name);
+        return ret;
+    }
+
+    @Override
+    public ContainerImpl createContainer(String primaryAdminURL, String primaryAdminGateName, Container parentContainer) throws MappingDSException {
+        ContainerImpl ret = this.createContainer(primaryAdminURL, primaryAdminGateName);
+        parentContainer.addContainerChildContainer(ret);
+        return ret;
+    }
+
+    @Override
+    public ContainerImpl createContainer(String name, String primaryAdminURL, String primaryAdminGateName, Container parentContainer) throws MappingDSException {
+        ContainerImpl ret = this.createContainer(primaryAdminURL, primaryAdminGateName);
+        ret.setContainerName(name);
+        parentContainer.addContainerChildContainer(ret);
         return ret;
     }
 

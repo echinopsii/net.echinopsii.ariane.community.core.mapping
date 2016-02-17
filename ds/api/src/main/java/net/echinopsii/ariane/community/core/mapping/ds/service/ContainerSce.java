@@ -29,6 +29,10 @@ public interface ContainerSce<C extends Container> {
 
     public C createContainer(String name, String primaryAdminURL, String primaryAdminGateName) throws MappingDSException;
 
+    public C createContainer(String primaryAdminURL, String primaryAdminGateName, Container parentContainer) throws MappingDSException;
+
+    public C createContainer(String name, String primaryAdminURL, String primaryAdminGateName, Container parentContainer) throws MappingDSException;
+
     public void deleteContainer(String primaryAdminURL) throws MappingDSException;
 
     public C getContainer(long id);
