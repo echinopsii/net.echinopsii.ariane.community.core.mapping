@@ -50,6 +50,7 @@ define(
                 options_  = options;
 
             var containerRegistry             = [],
+                rootContainerRegistry         = [],
                 nodeRegistry                  = [],
                 endpointRegistry              = [],
                 transportRegistry             = [],
@@ -100,8 +101,16 @@ define(
                     y=JSONContainerDesc.containerProperties.manualCoord.y;
                 }
                 cont = new container(JSONContainerDesc, x, y); steam = cont.getSupportTeam();
-                containerRegistry.push(cont); treeObjects.push(cont);
+                containerRegistry.push(cont);
                 if (steam !=null && !isTeamRegistered(steam)) teams.push(steam);
+
+                if (cont.cpID!=0)
+                    childContainersWaitingParent.push(cont);
+                else {
+                    rootContainerRegistry.push(cont);
+                    treeObjects.push(cont);
+                }
+
 
                 var childContainersFoundParent = [];
                 for (j = 0, jj = childContainersWaitingParent.length; j < jj; j++) {
@@ -310,6 +319,8 @@ define(
                 // first : place nodes and containers in container (first placement)
                 for (j = 0, jj = nodeRegistry.length; j < jj; j++)
                     nodeRegistry[j].placeIn();
+                for (j = 0, jj = containerRegistry.length; j < jj; j++)
+                    containerRegistry[j].placeIn();
 
                 // second : define container max size
                 for (j = 0, jj = containerRegistry.length; j < jj; j++)
@@ -323,11 +334,11 @@ define(
                     case dic.mapLayout.MDW:
                         containerRegistry.sort(minMaxLinkedObjectsComparator);
                         // third 0 : populate DC, Area and Lan registries and enrich the objects
-                        for (j = 0, jj = containerRegistry.length; j < jj; j++)
-                            mapmatrix.populateLayoutRegistries(containerRegistry[j]);
+                        for (j = 0, jj = rootContainerRegistry.length; j < jj; j++)
+                            mapmatrix.populateLayoutRegistries(rootContainerRegistry[j]);
                         // third 1 : place container and the linked bus into the map matrix
-                        for (j = 0, jj = containerRegistry.length; j < jj; j++)
-                            mapmatrix.addContainerZone(containerRegistry[j]);
+                        for (j = 0, jj = rootContainerRegistry.length; j < jj; j++)
+                            mapmatrix.addContainerZone(rootContainerRegistry[j]);
                         // third 2 : define map objects max size and first position
                         mapmatrix.defineMtxZoneMaxSize();
                         mapmatrix.defineMapContentMaxSize();
@@ -353,13 +364,8 @@ define(
                         treeObjects.sort(minMaxLinkedObjectsComparator);
                         // third 1 : define the tree with objects
                         // TODO: manage multi tree
-                        if (layout == dic.mapLayout.BBTREE){
-                            lTree = new btree();
-                            lTree.loadTree(treeObjects[0]);
-                        } else {
-                            lTree = new tree();
-                            lTree.loadTree(containerRegistry[0]);
-                        }
+                        lTree = new btree();
+                        lTree.loadTree(treeObjects[0]);
 
                         // third 2 : define map objects position
                         lTree.definePoz();

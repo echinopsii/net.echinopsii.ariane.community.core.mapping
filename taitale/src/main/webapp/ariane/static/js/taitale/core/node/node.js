@@ -950,6 +950,8 @@ define(
             this.print = function(r_) {
                 this.r        = r_;
 
+                if (this.color == 0) this.color = this.nodeContainer.color;
+
                 this.nodeName = this.r.text(0, 0, this.name).attr(this.txtTitleFont);
                 this.r.FitText(this.nodeName, this.rectWidth-1, 1.5);
                 this.nodeName.attr({x: this.rectTopLeftX + (this.rectWidth/2), y: this.rectTopLeftY + (this.titleHeight/2)});

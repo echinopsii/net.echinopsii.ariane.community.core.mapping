@@ -523,6 +523,8 @@ define(
             this.print = function(r_) {
                 this.r=r_;
 
+                if (this.color == 0) this.color = this.epNode.color;
+
                 this.circle = this.r.circle(this.x,this.y);
                 this.circle.attr({fill: this.color, stroke: this.color, "fill-opacity": this.oUnselected, "r": this.rUnselected,"stroke-width": this.strokeWidth, cursor: "crosshair"});
                 this.circle.attr({guide: this.epNode.rectPath});

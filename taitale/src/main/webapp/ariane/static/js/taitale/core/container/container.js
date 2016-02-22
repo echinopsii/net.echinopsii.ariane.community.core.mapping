@@ -122,7 +122,16 @@ define(
                 })
             }
 
-            this.layoutData        = null;
+            this.layoutData        = {
+                isConnectedInsideMtx:  false,
+                isConnectedOutsideMtx: false,
+                isConnectedOutsideToUpMtx: false,
+                isConnectedOutsideToDownMtx: false,
+                isConnectedOutsideToLeftMtx: false,
+                isConnectedOutsideToRightMtx: false,
+                mtxCoord: null,
+                tag: null
+            };
 
             this.r                 = null;
             //noinspection JSUnresolvedVariable
@@ -133,7 +142,7 @@ define(
                             "#"+this.properties.supportTeam.color : "#333"
                     : (this.properties.supportTeam[0].color != null) ?
                         "#"+this.properties.supportTeam[0].color : "#333"
-                : "#333";
+                : ((this.cpID==0) ? "#333" : 0);
             this.txtFont           = params.container_txtTitle;
             this.X                 = x_;
             this.Y                 = y_;
@@ -427,6 +436,22 @@ define(
                                 dx = containerRef.maxTopLeftX - rx;
                             if (containerRef.maxTopLeftY < ry + dy)
                                 dy = containerRef.maxTopLeftY - ry;
+                        } else if (containerRef.containerParentC != null) {
+                            var minX = containerRef.containerParentC.getRectCornerPoints().topLeftX,
+                                minY = containerRef.containerParentC.getRectCornerPoints().topLeftY +
+                                    containerRef.containerParentC.name.height(params.container_txtTitle["font-size"]) +
+                                    containerRef.containerParentC.containerHat_.height + params.container_interSpan,
+                                maxX = containerRef.containerParentC.getRectCornerPoints().bottomRightX - containerRef.rectWidth,
+                                maxY = containerRef.containerParentC.getRectCornerPoints().bottomRightY - containerRef.rectHeight;
+
+                            if (minX > rx + dx)
+                                dx = minX - rx;
+                            if (minY > ry + dy)
+                                dy = minY - ry;
+                            if (maxX < rx + dx)
+                                dx = maxX - rx;
+                            if (maxY < ry + dy)
+                                dy = maxY - ry;
                         }
 
                         containerRef.r.move(dx, dy);
@@ -615,6 +640,10 @@ define(
                 defineRectPoints(x,y);
             };
 
+            this.setPoz = function(x,y) {
+                defineRectPoints(x,y);
+            };
+
             this.setMoveJail = function(minJailX, minJailY, maxJailX, maxJailY) {
                 this.minTopLeftX = minJailX;
                 this.minTopLeftY = minJailY;
@@ -666,6 +695,11 @@ define(
                 return false;
             };
 
+            this.placeIn = function() {
+                if (this.containerParentC!=null)
+                    this.containerParentC.pushChild(this);
+            };
+
             this.getLinkedTreeObjectsCount = function() {
                 return this.linkedTreeObjects.length;
             };
@@ -694,17 +728,19 @@ define(
                                 thisContainerHC = this.containerHeapC[i];
                             if (isInHeap.indexOf[linkedContainerHC]==-1)
                                 if (linkedContainerHC.ID!=thisContainerHC.ID)
-                                    if (!thisContainerHC.isInHeapNode(linkedContainerHC))
+                                    if (!thisContainerHC.isInHeapContainers(linkedContainerHC))
                                         if (thisContainerHC.linkedContainers.indexOf(linkedContainerHC)==-1) {
                                             thisContainerHC.linkedContainers.push(linkedContainerHC);
-                                            thisContainerHC.linkedTreeObjects.push(linkedContainerHC);
+                                            if (thisContainerHC.cpID == 0 && linkedContainerHC.cpID == 0)
+                                                thisContainerHC.linkedTreeObjects.push(linkedContainerHC);
                                         } else
                                             isInHeap.push(linkedContainerHC)
                         }
 
                     if (this.linkedContainers.indexOf(container)==-1) {
                         this.linkedContainers.push(container);
-                        this.linkedTreeObjects.push(container);
+                        if (this.cpID == 0 && container.cpID == 0)
+                            this.linkedTreeObjects.push(container);
                     }
                 }
             };
@@ -758,6 +794,98 @@ define(
                 return this.linkedBus;
             };
 
+            this.updateLayoutData = function() {
+                var i, ii, linkedNode, linkedContainer, linkedBus;
+                for (i = 0, ii = this.linkedNodes.length; i < ii; i++) {
+                    linkedNode = this.linkedNodes[i];
+                    linkedContainer = this.linkedNodes[i].nodeContainer;
+                    if (this.containerParentC.ID!=linkedContainer.ID) {
+                        this.layoutData.isConnectedOutsideMtx = true;
+                        if (this.containerParentC.rectTopLeftX > linkedContainer.rectTopLeftX) {
+                            this.layoutData.isConnectedOutsideToLeftMtx = true;
+                            this.layoutData.isConnectedOutsideToRightMtx = false;
+                        } else if (this.containerParentC.rectTopLeftX < linkedContainer.rectTopLeftX) {
+                            this.layoutData.isConnectedOutsideToRightMtx = true;
+                            this.layoutData.isConnectedOutsideToLeftMtx = false;
+                        } else {
+                            this.layoutData.isConnectedOutsideToRightMtx = false;
+                            this.layoutData.isConnectedOutsideToLeftMtx = false;
+                        }
+                        if (this.containerParentC.rectTopLeftY > linkedContainer.rectTopLeftY) {
+                            this.layoutData.isConnectedOutsideToUpMtx = true;
+                            this.layoutData.isConnectedOutsideToDownMtx = false;
+                        }
+                        else if (this.containerParentC.rectTopLeftY < linkedContainer.rectTopLeftY) {
+                            this.layoutData.isConnectedOutsideToDownMtx = true;
+                            this.layoutData.isConnectedOutsideToUpMtx = false;
+                        } else {
+                            this.layoutData.isConnectedOutsideToDownMtx = false;
+                            this.layoutData.isConnectedOutsideToUpMtx = false;
+                        }
+                    }/* else {
+                        if (this.nodeParentNode!=null) {
+                            if (this.nodeParentNode.ID!=linkedNode.nodeParentNode.ID) {
+                                this.layoutData.isConnectedOutsideMtx = true;
+                                if (this.nodeParentNode.rectTopLeftX > linkedNode.nodeParentNode.rectTopLeftX) {
+                                    this.layoutData.isConnectedOutsideToLeftMtx = true;
+                                    this.layoutData.isConnectedOutsideToRightMtx = false;
+                                } else if (this.nodeParentNode.rectTopLeftX < linkedNode.nodeParentNode.rectTopLeftX) {
+                                    this.layoutData.isConnectedOutsideToRightMtx = true;
+                                    this.layoutData.isConnectedOutsideToLeftMtx = false;
+                                } else {
+                                    this.layoutData.isConnectedOutsideToRightMtx = false;
+                                    this.layoutData.isConnectedOutsideToLeftMtx = false;
+                                }
+                                if (this.nodeParentNode.rectTopLeftY > linkedNode.nodeParentNode.rectTopLeftY) {
+                                    this.layoutData.isConnectedOutsideToUpMtx = true;
+                                    this.layoutData.isConnectedOutsideToDownMtx = false;
+                                } else if (this.nodeParentNode.rectTopLeftY < linkedNode.nodeParentNode.rectTopLeftY) {
+                                    this.layoutData.isConnectedOutsideToDownMtx = true;
+                                    this.layoutData.isConnectedOutsideToUpMtx = false;
+                                } else {
+                                    this.layoutData.isConnectedOutsideToDownMtx = false;
+                                    this.layoutData.isConnectedOutsideToUpMtx = false;
+                                }
+                            } else this.layoutData.isConnectedInsideMtx = true;
+                        } else this.layoutData.isConnectedInsideMtx = true;
+                    }*/
+                }
+
+                if (this.linkedBus.length > 0)
+                    this.layoutData.isConnectedOutsideMtx = true;
+
+                for (i=0 , ii = this.linkedBus.length; i < ii; i++) {
+                    linkedBus = this.linkedBus[i];
+                    if (this.containerParentC.rectTopLeftX > linkedBus.getBusCoords().x) {
+                        this.layoutData.isConnectedOutsideToLeftMtx = true;
+                        this.layoutData.isConnectedOutsideToRightMtx = false;
+                    } else if (this.containerParentC.rectTopLeftX < linkedBus.getBusCoords().x) {
+                        this.layoutData.isConnectedOutsideToRightMtx = true;
+                        this.layoutData.isConnectedOutsideToLeftMtx = false;
+                    } else {
+                        this.layoutData.isConnectedOutsideToRightMtx = false;
+                        this.layoutData.isConnectedOutsideToLeftMtx = false;
+                    }
+                    if (this.containerParentC.rectTopLeftY > linkedBus.getBusCoords().y) {
+                        this.layoutData.isConnectedOutsideToUpMtx = true;
+                        this.layoutData.isConnectedOutsideToDownMtx = false;
+                    } else if (this.containerParentC.rectTopLeftY < linkedBus.getBusCoords().y) {
+                        this.layoutData.isConnectedOutsideToDownMtx = true;
+                        this.layoutData.isConnectedOutsideToUpMtx = false;
+                    } else {
+                        this.layoutData.isConnectedOutsideToDownMtx = false;
+                        this.layoutData.isConnectedOutsideToUpMtx = false;
+                    }
+                }
+            };
+
+            this.updatePosition = function() {
+                this.containerChilds.updateLayoutData(function(node1, node2){
+                    return ((node2.linkedNodes.length+node2.linkedBus.length)-(node1.linkedNodes.length+node1.linkedBus.length));
+                });
+                this.containerChilds.updatePosition();
+            };
+
             this.getSupportTeam = function() {
                 if (this.properties != null && this.properties.supportTeam!=null)
                     if (this.properties.supportTeam.constructor !== Array)
@@ -773,6 +901,8 @@ define(
 
             this.print = function(r_) {
                 this.r = r_;
+
+                if (this.color == 0) this.color = this.containerParentC.color
 
                 this.containerHat_.print(this.r,this.rectTopLeftX + (this.rectWidth/2),this.rectTopLeftY,this.color);
                 this.containerHat_.mousedown(mouseDown);
