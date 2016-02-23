@@ -24,6 +24,7 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
@@ -59,12 +60,16 @@ public class EndpointJSON {
     }
 
     public final static void endpoint2JSON(Endpoint endpoint, JsonGenerator jgenerator)
-            throws JsonGenerationException, IOException {
+            throws JsonGenerationException, IOException, MappingDSException {
         jgenerator.writeStartObject();
         log.debug("Ep JSON :endpoint {}", new Object[]{endpoint.getEndpointID()});
         jgenerator.writeNumberField(EP_ID_TOKEN, endpoint.getEndpointID());
         jgenerator.writeStringField(EP_URL_TOKEN, endpoint.getEndpointURL());
-        jgenerator.writeNumberField(EP_PNODEID_TOKEN, endpoint.getEndpointParentNode().getNodeID());
+        if (endpoint.getEndpointParentNode()!=null)
+            jgenerator.writeNumberField(EP_PNODEID_TOKEN, endpoint.getEndpointParentNode().getNodeID());
+        else
+            throw new MappingDSException("Endpoint (" + endpoint.getEndpointID() +
+                    ":" + endpoint.getEndpointURL() + ")");
 
         jgenerator.writeArrayFieldStart(EP_TWNEPID_TOKEN);
         Iterator<? extends Endpoint> iterE = endpoint.getTwinEndpoints().iterator();
@@ -79,14 +84,14 @@ public class EndpointJSON {
     }
 
     public final static void oneEndpoint2JSON(Endpoint endpoint, ByteArrayOutputStream outStream)
-            throws IOException {
+            throws IOException, MappingDSException {
         JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         endpoint2JSON(endpoint, jgenerator);
         jgenerator.close();
     }
 
     public final static void manyEndpoints2JSON(HashSet<Endpoint> endpoints, ByteArrayOutputStream outStream)
-            throws IOException {
+            throws IOException, MappingDSException {
         JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         jgenerator.writeStartObject();
         jgenerator.writeArrayFieldStart("endpoints");

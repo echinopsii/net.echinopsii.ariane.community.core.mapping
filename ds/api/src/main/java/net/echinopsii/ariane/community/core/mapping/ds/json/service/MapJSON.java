@@ -21,6 +21,7 @@ package net.echinopsii.ariane.community.core.mapping.ds.json.service;
 
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.*;
@@ -49,7 +50,7 @@ public class MapJSON {
                                               HashSet<Endpoint> eps, propsToInjectHolder eprps2Inject,
                                               HashSet<Link> links, propsToInjectHolder lprps2Inject,
                                               HashSet<Transport> transports, propsToInjectHolder tprps2Inject,
-                                              propsToInjectHolder mprps2Inject, ByteArrayOutputStream outStream) throws IOException {
+                                              propsToInjectHolder mprps2Inject, ByteArrayOutputStream outStream) throws IOException, MappingDSException {
         JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         jgenerator.writeStartObject();
 
@@ -112,7 +113,7 @@ public class MapJSON {
     }
 
     public final static void allMap2JSON(HashSet<Container> conts, HashSet<Node> nodes, HashSet<Endpoint> eps,
-                                         HashSet<Link> links, HashSet<Transport> transports, ByteArrayOutputStream outStream) throws IOException {
+                                         HashSet<Link> links, HashSet<Transport> transports, ByteArrayOutputStream outStream) throws IOException, MappingDSException {
         genericMap2JSON(conts, null, nodes, null, eps, null, links, null, transports, null, null, outStream);
     }
 }
