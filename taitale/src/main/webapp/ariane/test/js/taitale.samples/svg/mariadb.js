@@ -109,8 +109,8 @@ requirejs (
 
         var rsr = Raphael('rsr', '1200', '1200');
 
-        var x=100
-        var y=100
+        var x=100;
+        var y=100;
 
         var layer1 = rsr.set();
 
