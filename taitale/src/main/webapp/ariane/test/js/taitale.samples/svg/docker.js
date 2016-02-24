@@ -30,6 +30,7 @@ requirejs (
                 attr({id: 'outline_7_',"fill-rule": 'evenodd',"clip-rule": 'evenodd','stroke-width': '0',
                     'stroke-opacity': '1','fill': '#000000'}).
                 transform("t"+x+","+y+"t-205,-205s0.12");
+            rsr.rect(x,y,41,41);
         }
 
         dockerLogo(100,100)

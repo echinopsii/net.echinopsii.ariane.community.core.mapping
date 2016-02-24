@@ -83,6 +83,7 @@ requirejs (
             var debian_path_11 = rsr.path("M0,35.215c0.563-1.728,0.665-2.766,0.88-3.766C-0.676,33.438,0.164,33.862,0,35.215").
                 attr({fill: '#A80030',parent: 'Layer_1','stroke-width': '0','stroke-opacity': '1'}).
                 transform("t"+x+","+y+"t-27,-35s0.35");
+            rsr.rect(x,y,41,41);
         }
 
         debianLogo(100,100)

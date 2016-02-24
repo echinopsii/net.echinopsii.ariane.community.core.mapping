@@ -273,6 +273,7 @@ requirejs (
                 "396.29208,88.491341 396.17504,88.491341 396.05003,88.508321 Z").
                 attr({id: 'path8597',fill: '#020204',"fill-opacity": '1',stroke: 'none','stroke-width':'1','stroke-opacity':'1'})
                 .transform("t-273.04898,-0.5122002");
+            rsr.rect(x,y,41,41);
         }
 
         tuxLogo(100,100)
