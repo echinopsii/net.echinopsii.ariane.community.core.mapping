@@ -29,7 +29,7 @@ requirejs (
                 "271.415,0.93,247.6,3.145,223.803l0.664-7.127h40.315v-48.194h47.143v-47.145h94.292V74.191h56.574V168.481z").
                 attr({id: 'outline_7_',"fill-rule": 'evenodd',"clip-rule": 'evenodd','stroke-width': '0',
                     'stroke-opacity': '1','fill': '#000000'}).
-                transform("t"+x+","+y+"t-205,-205s0.12");
+                transform("t"+x+","+y+"t-210,-203s0.10");
             rsr.rect(x,y,41,41);
         }
 
