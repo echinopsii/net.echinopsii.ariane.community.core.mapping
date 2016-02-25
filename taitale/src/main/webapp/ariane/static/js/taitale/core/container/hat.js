@@ -606,7 +606,7 @@ define(
                     this.cpyLogo = new appleLogo();
                     this.logoWidth = this.cpyLogo.width;
                     this.logoHeight = this.cpyLogo.height;
-                } else if (company === "Docker") {
+                } else if (company.startsWith("Docker")) {
                     this.cpyLogo = new dockerLogo();
                     this.logoWidth = this.cpyLogo.width;
                     this.logoHeight = this.cpyLogo.height;
