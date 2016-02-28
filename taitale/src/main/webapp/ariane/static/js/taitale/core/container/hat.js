@@ -665,7 +665,7 @@ define(
                     this.cpyLogo = new appleLogo();
                     this.logoWidth = this.cpyLogo.width;
                     this.logoHeight = this.cpyLogo.height;
-                } else if (company.startsWith("Docker")) {
+                } else if (company != null && company.startsWith("Docker")) {
                     this.cpyLogo = new dockerLogo();
                     this.logoWidth = this.cpyLogo.width;
                     this.logoHeight = this.cpyLogo.height;
@@ -673,11 +673,11 @@ define(
                     this.cpyLogo = new debianLogo();
                     this.logoWidth = this.cpyLogo.width;
                     this.logoHeight = this.cpyLogo.height;
-                } else if (company === "Red Hat" && product.startsWith("Fedora")) {
+                } else if (company === "Red Hat" && (product != null && product.startsWith("Fedora"))) {
                     this.cpyLogo = new fedoraLogo();
                     this.logoWidth = this.cpyLogo.width;
                     this.logoHeight = this.cpyLogo.height;
-                } else if (product.startsWith("Linux Mint")) {
+                } else if (product != null && product.startsWith("Linux Mint")) {
                     this.cpyLogo = new mintLogo();
                     this.logoWidth = this.cpyLogo.width;
                     this.logoHeight = this.cpyLogo.height;
