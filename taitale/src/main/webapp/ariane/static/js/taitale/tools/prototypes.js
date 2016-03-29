@@ -117,6 +117,7 @@ define(
                 getArea: function() {
                     var i, ii, j, jj;
                     var ret_rarea = null;
+                    var hard_rareas = [];
                     for (i = 0, ii = this.rareas.length ; i < ii; i++) {
                         var rarea = this.rareas[i];
                         for (j = 0, jj = rarea.subnets.length; j < jj; j++) {
@@ -126,10 +127,15 @@ define(
                                 break;
                             }
                         }
+                        if (ret_rarea == null && (rarea.ratype === "LAN" || rarea.ratype === "MAN" || rarea.ratype === "WAN"))
+                            hard_rareas.push(rarea);
                     }
-                    if (ret_rarea == null)
+                    if (ret_rarea == null) {
                         if (this.rareas.length == 1)
                             ret_rarea = this.rareas[0];
+                        else if (hard_rareas.length>=1)
+                            ret_rarea = hard_rareas[0];
+                    }
                     if (ret_rarea!=null) {
                         return {
                             pname: this.plocation.pname,
@@ -165,6 +171,7 @@ define(
                 getLan: function() {
                     var i, ii, j, jj;
                     var ret_rarea = null, ret_subnet = null;
+                    var hard_rareas = [];
                     for (i = 0, ii = this.rareas.length ; i < ii; i++) {
                         var rarea = this.rareas[i];
                         for (j = 0, jj = rarea.subnets.length; j < jj; j++) {
@@ -175,6 +182,8 @@ define(
                                 break;
                             }
                         }
+                        if (ret_rarea == null && (rarea.ratype === "LAN" || rarea.ratype === "MAN" || rarea.ratype === "WAN"))
+                            hard_rareas.push(rarea);
                     }
                     if (ret_rarea == null && ret_subnet == null) {
                         if (this.rareas.length==1) {
@@ -182,6 +191,9 @@ define(
                                 ret_rarea = this.rareas[0];
                                 ret_subnet = this.rareas[0].subnets[0];
                             }
+                        } else if (hard_rareas.length>=1) {
+                            ret_rarea = hard_rareas[0];
+                            ret_subnet = hard_rareas[0].subnets[0];
                         }
                     }
                     if (ret_rarea!=null && ret_subnet!=null) {

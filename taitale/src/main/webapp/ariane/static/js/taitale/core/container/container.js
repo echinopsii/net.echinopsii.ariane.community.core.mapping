@@ -100,26 +100,65 @@ define(
                 for (i = 0, ii = tmpNetwork.length ; i < ii; i++) {
                     var rarea = tmpNetwork[i];
                     var subnets = [];
-                    for (j = 0, jj = rarea.subnets.length; j < jj; j++) {
-                        var subnet = rarea.subnets[j];
-                        subnets.push(prototypes_.create(prototypes_.subnet, {
-                            sname: subnet.sname,
-                            sip: subnet.sip,
-                            smask: subnet.smask,
-                            isdefault: subnet.isdefault
+                    if (rarea.subnets != null) {
+                        for (j = 0, jj = rarea.subnets.length; j < jj; j++) {
+                            var subnet = rarea.subnets[j];
+                            subnets.push(prototypes_.create(prototypes_.subnet, {
+                                sname: subnet.sname,
+                                sip: subnet.sip,
+                                smask: subnet.smask,
+                                isdefault: subnet.isdefault
+                            }))
+                        }
+                        rareas.push(prototypes_.create(prototypes_.routingArea, {
+                            raname: rarea.raname,
+                            ratype: rarea.ratype,
+                            ramulticast: rarea.ramulticast,
+                            subnets: subnets
                         }))
+                    } else {
+                        helper_.debug('Routing area ' + rarea.raname + ' subnets are missing for container ' + this.name + ' !');
+                        rareas = [];
+                        break;
                     }
-                    rareas.push(prototypes_.create(prototypes_.routingArea, {
-                        raname: rarea.raname,
-                        ratype: rarea.ratype,
-                        ramulticast: rarea.ramulticast,
-                        subnets: subnets
-                    }))
                 }
-                this.localisation = prototypes_.create(prototypes_.multipleNetwork, {
-                    plocation: prototypes_.create(prototypes_.physicalLocation, tmpDatacenter),
-                    rareas: rareas
-                })
+                if (rareas.length == 0) {
+                    helper_.debug('Location definition of container ' + this.name + ' is not consistent !');
+                    tmpDatacenter = {
+                        pname: "THE GLOBAL INTERNET",
+                        address: "probably somewhere on earth",
+                        town: "probably somewhere on earth",
+                        country: "probably somewhere on earth",
+                        gpsLat: "90",
+                        gpsLng: "0"
+                    };
+                    tmpNetwork = {
+                        ratype: "GLOBAL INTERNET",
+                        raname: "GLOBAL INTERNET",
+                        ramulticast: "FILTERED",
+                        sname: "NOT MY CONCERN",
+                        sip: "NOT MY CONCERN",
+                        smask: "NOT MY CONCERN"
+                    };
+                    this.localisation = prototypes_.create(prototypes_.standaloneNetwork, {
+                        plocation:    prototypes_.create(prototypes_.physicalLocation, tmpDatacenter),
+                        rarea: prototypes_.create(prototypes_.simpleRoutingArea, {
+                            raname: tmpNetwork.raname,
+                            ratype: tmpNetwork.ratype,
+                            ramulticast: tmpNetwork.ramulticast
+                        }),
+                        subnet: prototypes_.create(prototypes_.simpleSubnet, {
+                            sname: tmpNetwork.sname,
+                            sip: tmpNetwork.sip,
+                            smask: tmpNetwork.smask
+                        })
+                    });
+                } else {
+                    this.localisation = prototypes_.create(prototypes_.multipleNetwork, {
+                        plocation: prototypes_.create(prototypes_.physicalLocation, tmpDatacenter),
+                        rareas: rareas
+                    })
+                }
             }
 
             this.layoutData        = {
