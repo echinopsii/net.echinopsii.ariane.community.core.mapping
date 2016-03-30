@@ -34,6 +34,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.util.resources.LocaleNames_ko;
 
 import java.io.IOException;
 import java.util.*;
@@ -390,7 +391,7 @@ public class MappingDSGraphDB {
             entity.synchronizeToDB();
             autocommit();
             log.debug("Vertex {} ({}:{}) has been saved on graph {}", new Object[]{entityV.toString(), MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID, id,
-                                                                                          ccgraph.toString() + "(" + ccgraph.hashCode() + ")"});
+                    ccgraph.toString() + "(" + ccgraph.hashCode() + ")"});
             if (log.isTraceEnabled()) {
                 for (String propKey : entityV.getPropertyKeys()) {
                     log.trace("Vertex {} property {}: {}", new Object[]{entityV.toString(),propKey,entityV.getProperty(propKey).toString()});
@@ -898,20 +899,42 @@ public class MappingDSGraphDB {
         return ret;
     }
 
-    public static Set<LinkImpl> getLinks() {
+    private static LinkImpl getLinkFromEdge(Edge edge) {
+        long id = edge.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID);
+        LinkImpl tmp = (LinkImpl) getLink(id);
+        if (tmp == null) {
+            tmp = new LinkImpl();
+            tmp.setElement(edge);
+            MappingDSCache.putEntityToCache(tmp);
+            tmp.synchronizeFromDB();
+        }
+        return  tmp;
+    }
+
+    public static Set<LinkImpl> getLinks(EndpointImpl sourceEndpoint, EndpointImpl targetEndpoint, TransportImpl transport) {
+        Vertex sourceEpVertex = (sourceEndpoint!=null) ? sourceEndpoint.getElement() : null;
+        Vertex targetEpVertex = (targetEndpoint!=null) ? targetEndpoint.getElement() : null;
+        Vertex transportVertex = (transport!=null) ? transport.getElement() : null;
         Set<LinkImpl> ret = new HashSet<LinkImpl>();
-        for (Edge edge : ccgraph.getEdges()) {
-            if (edge.getLabel().equals(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY)) {
-                long id = edge.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID);
-                LinkImpl tmp = (LinkImpl) getLink(id);
-                if (tmp == null) {
-                    tmp = new LinkImpl();
-                    tmp.setElement(edge);
-                    MappingDSCache.putEntityToCache(tmp);
-                    tmp.synchronizeFromDB();
-                }
-                ret.add(tmp);
-            }
+
+        if (sourceEpVertex!=null && targetEpVertex!=null) {
+            for (Edge edge : sourceEpVertex.getEdges(Direction.OUT, MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY))
+                if (edge.getVertex(Direction.IN).equals(targetEpVertex))
+                    ret.add(getLinkFromEdge(edge));
+        } else if (sourceEpVertex!=null && transportVertex!=null) {
+            for (Edge edge : sourceEpVertex.getEdges(Direction.OUT, MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY))
+                if (edge.getVertex(Direction.IN).equals(transportVertex))
+                    ret.add(getLinkFromEdge(edge));
+        } else if (sourceEpVertex!=null) {
+            for (Edge edge : sourceEpVertex.getEdges(Direction.OUT, MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY))
+                ret.add(getLinkFromEdge(edge));
+        } else if (targetEpVertex!=null) {
+            for (Edge edge : targetEpVertex.getEdges(Direction.IN, MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY))
+                ret.add(getLinkFromEdge(edge));
+        } else {
+            for (Edge edge : ccgraph.getEdges())
+                if (edge.getLabel().equals(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY))
+                    ret.add(getLinkFromEdge(edge));
         }
         autocommit();
         return ret;

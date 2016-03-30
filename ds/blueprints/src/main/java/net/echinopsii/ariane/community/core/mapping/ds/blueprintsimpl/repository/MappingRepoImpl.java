@@ -116,31 +116,18 @@ public class MappingRepoImpl implements MappingRepo<ContainerImpl, NodeImpl, Gat
 
     @Override
     public Set<LinkImpl> findLinksBySourceEP(EndpointImpl endpoint) {
-        Set<LinkImpl> ret = new HashSet<LinkImpl>();
-        for (LinkImpl link : MappingDSGraphDB.getLinks()) {
-            if (link.getLinkEndpointSource().equals(endpoint)) {
-                ret.add(link);
-            }
-        }
-        return ret;
+        return MappingDSGraphDB.getLinks(endpoint, null, null);
     }
 
     @Override
     public Set<LinkImpl> findLinksByDestinationEP(EndpointImpl endpoint) {
-        Set<LinkImpl> ret = new HashSet<LinkImpl>();
-        for (LinkImpl link : MappingDSGraphDB.getLinks()) {
-            if (link.getLinkEndpointTarget()!=null /*else target is multicast transport*/ &&
-                        link.getLinkEndpointTarget().equals(endpoint)) {
-                ret.add(link);
-            }
-        }
-        return ret;
+        return MappingDSGraphDB.getLinks(null, endpoint, null);
     }
 
     @Override
     public LinkImpl findLinkBySourceEPandDestinationEP(EndpointImpl esource, EndpointImpl edest) {
         LinkImpl ret = null;
-        for (LinkImpl link : MappingDSGraphDB.getLinks()) {
+        for (LinkImpl link : MappingDSGraphDB.getLinks(esource, edest, null)) {
             if (link.getLinkEndpointSource() != null && link.getLinkEndpointTarget() != null &&
                         link.getLinkEndpointSource().equals(esource) && link.getLinkEndpointTarget().equals(edest)) {
                 ret = link;
@@ -153,7 +140,7 @@ public class MappingRepoImpl implements MappingRepo<ContainerImpl, NodeImpl, Gat
     @Override
     public LinkImpl findMulticastLinkBySourceEPandTransport(EndpointImpl esource, TransportImpl transport) {
         LinkImpl ret = null;
-        for (LinkImpl link : MappingDSGraphDB.getLinks()) {
+        for (LinkImpl link : MappingDSGraphDB.getLinks(esource, null, transport)) {
             if (link.getLinkEndpointSource() != null && link.getLinkEndpointTarget() == null && link.getLinkTransport() != null &&
                         link.getLinkEndpointSource().equals(esource) && link.getLinkTransport().equals(transport)) {
                 ret = link;

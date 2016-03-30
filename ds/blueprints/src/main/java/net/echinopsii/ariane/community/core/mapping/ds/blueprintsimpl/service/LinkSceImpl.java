@@ -112,6 +112,6 @@ public class LinkSceImpl implements LinkSce<LinkImpl> {
     @Override
     public Set<LinkImpl> getLinks(String selector) {
         // TODO : manage selector - check graphdb queries
-        return MappingDSGraphDB.getLinks();
+        return MappingDSGraphDB.getLinks(null, null, null);
     }
 }
