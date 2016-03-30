@@ -932,9 +932,11 @@ public class MappingDSGraphDB {
             for (Edge edge : targetEpVertex.getEdges(Direction.IN, MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY))
                 ret.add(getLinkFromEdge(edge));
         } else {
-            for (Edge edge : ccgraph.getEdges())
-                if (edge.getLabel().equals(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY))
-                    ret.add(getLinkFromEdge(edge));
+            synchronized (ccgraph) {
+                for (Edge edge : ccgraph.getEdges())
+                    if (edge.getLabel().equals(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY))
+                        ret.add(getLinkFromEdge(edge));
+            }
         }
         autocommit();
         return ret;
@@ -1008,7 +1010,7 @@ public class MappingDSGraphDB {
         }
     }
 
-    public static void clear() {
+    public static synchronized void clear() {
         try {
             for (Edge edge : ccgraph.getEdges()) {
                 ccgraph.removeEdge(edge);
