@@ -374,7 +374,7 @@ public class MappingDSGraphDB {
         return ret;
     }
 
-    public static MappingDSBlueprintsCacheEntity saveVertexEntity(MappingDSBlueprintsCacheEntity entity) {
+    public static synchronized MappingDSBlueprintsCacheEntity saveVertexEntity(MappingDSBlueprintsCacheEntity entity) {
         Vertex entityV = null;
         long id = 0;
         try {
@@ -404,7 +404,7 @@ public class MappingDSGraphDB {
         return entity;
     }
 
-    public static Edge createEdge(Vertex source, Vertex destination, String label) throws MappingDSException {
+    public static synchronized Edge createEdge(Vertex source, Vertex destination, String label) throws MappingDSException {
         Edge edge = null;
         long id = 0;
         try {
@@ -425,7 +425,7 @@ public class MappingDSGraphDB {
             edge.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID, id);
             autocommit();
             log.debug("Edge {} ({}:{}) has been saved on graph {}", new Object[]{edge.toString(), MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID, id,
-                                                                                        ccgraph.toString() + "(" + ccgraph.hashCode() + ")"});
+                    ccgraph.toString() + "(" + ccgraph.hashCode() + ")"});
             if (log.isTraceEnabled()) {
                 for (String propKey : edge.getPropertyKeys()) {
                     log.trace("Edge property {}: {}", new Object[]{edge.toString(),propKey,edge.getProperty(propKey).toString()});
@@ -917,7 +917,7 @@ public class MappingDSGraphDB {
         return ret;
     }
 
-    private static void removeVertex(Vertex vertex) throws MappingDSException {
+    private static synchronized void removeVertex(Vertex vertex) throws MappingDSException {
         long vertexID = (long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
         ccgraph.removeVertex(vertex);
         if (vertexID == getVertexMaxCursor()) {
@@ -928,7 +928,7 @@ public class MappingDSGraphDB {
         autocommit();
     }
 
-    private static void removeEdge(Edge edge) throws MappingDSException {
+    private static synchronized void removeEdge(Edge edge) throws MappingDSException {
         long edgeID = (long) edge.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID);
         ccgraph.removeEdge(edge);
         if (edgeID == getEdgeMaxCursor()) {
