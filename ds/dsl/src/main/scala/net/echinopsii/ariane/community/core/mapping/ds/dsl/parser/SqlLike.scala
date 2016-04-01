@@ -1,6 +1,6 @@
 /**
- * [DEFINE YOUR PROJECT NAME/MODULE HERE]
- * [DEFINE YOUR PROJECT DESCRIPTION HERE]
+ * MDSL
+ * Mapping Domain Specific Language
  * Copyright (C) 28/03/14 echinopsii
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.dsl.internal.Predicate
 
 trait SqlLike extends Common with Predicates with JavaTokenParsers {
   def sqlLike(blockEntity: String, mapperParser: MapperParser): Parser[(String,Predicate)] = {
-    (ignoreCase("from") ~> ccobjtype) ~ (ignoreCase("where") ~> predicate(blockEntity, ccobjtype.toString, mapperParser)) ^^ {
+    (ignoreCase("from") ~> ccobjtype) ~ (ignoreCase("where") ~> predicate(blockEntity, ccobjtype.toString(), mapperParser)) ^^ {
       case ccmblktype ~ predicate => (ccmblktype,predicate)
     }
   }

@@ -1,7 +1,7 @@
 /**
- * MDSL
- * Mapping Domain Specific Language
- * Copyright (C) 03/04/14 echinopsii
+ * Mapping Selector
+ * Mapping Selector
+ * Copyright (C) 01/04/16 echinopsii
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -16,9 +16,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.echinopsii.ariane.community.core.mapping.ds.dsl.internal
+package net.echinopsii.ariane.community.core.mapping.ds.selector
 
-class Block {
-  var mapPointsPredicate:Map[String, (String,Predicate)] = Map()
-  var path: String = null
+class SelectorParser {
+
 }

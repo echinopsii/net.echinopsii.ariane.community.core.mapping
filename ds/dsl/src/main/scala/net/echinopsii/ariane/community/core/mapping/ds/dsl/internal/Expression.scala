@@ -1,6 +1,6 @@
 /**
- * [DEFINE YOUR PROJECT NAME/MODULE HERE]
- * [DEFINE YOUR PROJECT DESCRIPTION HERE]
+ * MDSL
+ * Mapping Domain Specific Language
  * Copyright (C) 29/03/14 echinopsii
  *
  * This program is free software: you can redistribute it and/or modify

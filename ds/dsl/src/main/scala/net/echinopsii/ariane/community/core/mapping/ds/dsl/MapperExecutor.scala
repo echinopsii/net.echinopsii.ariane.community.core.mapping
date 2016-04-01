@@ -1,6 +1,6 @@
 /**
- * [DEFINE YOUR PROJECT NAME/MODULE HERE]
- * [DEFINE YOUR PROJECT DESCRIPTION HERE]
+ * MDSL
+ * Mapping Domain Specific Language
  * Copyright (C) 08/04/14 echinopsii
  *
  * This program is free software: you can redistribute it and/or modify
@@ -47,14 +47,13 @@ class MapperExecutor(val graph: Object) {
   private var runTimeEngine: Option[Object] = None
 
   var engineOption: Option[Object] = None
-  if (runTimeEngine != None)
+  if (runTimeEngine.isDefined)
     engineOption = runTimeEngine
   else {
     graph match {
-      case neodb: GraphDatabaseService => {
-          engineOption = Some(new ExecutionEngine(neodb))
-          runTimeEngine = engineOption
-      }
+      case neodb: GraphDatabaseService =>
+        engineOption = Some(new ExecutionEngine(neodb))
+        runTimeEngine = engineOption
       case _ => throw new MapperExecutorException("Unsupported graph !")
     }
   }
@@ -65,7 +64,7 @@ class MapperExecutor(val graph: Object) {
 
     val engine: Object = engineOption getOrElse { throw new MapperExecutorException("Execution engine has not been initialized correctly !") }
     engine match {
-      case cypherEngine: ExecutionEngine => {
+      case cypherEngine: ExecutionEngine =>
         val queryTuple: (String, Boolean) = MapperExecutorUtil.mapperQueryToCypherQuery(query)
         val cypherQuery: String = queryTuple._1
         val isMapperQuery: Boolean = queryTuple._2
@@ -84,31 +83,26 @@ class MapperExecutor(val graph: Object) {
               row foreach (column => {
                 log.debug(column._1 + ":" + column._2)
                 column._1 match {
-                  case "CID" => {
+                  case "CID" =>
                     val cidl: List[Long] = column._2.asInstanceOf[List[Long]]
                     log.debug("ADD CIDs TO RESULT MAP " + cidl)
                     cidl foreach (cid => resultMap += ("V" + cid.toString -> MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE))
-                  }
-                  case "NID" => {
+                  case "NID" =>
                     val nidl: List[Long] = column._2.asInstanceOf[List[Long]]
                     log.debug("ADD NIDs TO RESULT MAP " + nidl)
                     nidl foreach (nid => resultMap += ("V" + nid.toString -> MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE))
-                  }
-                  case "EID" => {
+                  case "EID" =>
                     val eidl: List[Long] = column._2.asInstanceOf[List[Long]]
                     log.debug("ADD EIDs TO RESULT MAP " + eidl)
                     eidl foreach (eid => resultMap += ("V" + eid.toString -> MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE))
-                  }
-                  case "TID" => {
+                  case "TID" =>
                     val tidl: List[Long] = column._2.asInstanceOf[List[Long]]
                     log.debug("ADD TIDs TO RESULT MAP " + tidl)
                     tidl foreach (tid => resultMap += ("V" + tid.toString -> MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE))
-                  }
-                  case "LID" => {
+                  case "LID" =>
                     val lidl: List[Long] = column._2.asInstanceOf[List[Long]]
                     log.debug("ADD LIDs TO RESULT MAP " + lidl)
                     lidl foreach (lid => resultMap += ("E" + lid.toString -> MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY))
-                  }
                   case _ => throw new MapperExecutorException("Unknown Column Identifier !")
                 }
               })
@@ -120,7 +114,6 @@ class MapperExecutor(val graph: Object) {
         } else {
           resultMap += ("cypherResult:" -> result.dumpToString())
         }
-      }
       case _ => throw new MapperExecutorException("Unsupported execution engine !")
     }
 

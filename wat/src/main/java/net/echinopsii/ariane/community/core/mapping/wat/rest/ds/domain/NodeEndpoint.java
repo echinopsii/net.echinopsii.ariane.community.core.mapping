@@ -40,10 +40,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 @Path("/mapping/domain/nodes")
 public class NodeEndpoint {
@@ -283,6 +280,36 @@ public class NodeEndpoint {
             }
         } else {
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity("MappingDSLRegistryRequest error: name and id are not defined. You must define one of these parameters").build();
+        }
+    }
+
+    @GET
+    @Path("/find")
+    public Response findNodes(@QueryParam("selector") String propertySelector) {
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}-{}] find node: {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), propertySelector});
+        if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
+                subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
+        {
+            HashSet<Node> nodes = (HashSet<Node>) MappingBootstrap.getMappingSce().getNodeSce().getNodes(propertySelector);
+            if (nodes != null && nodes.size() > 0) {
+                String result = "";
+                ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                try {
+                    NodeJSON.manyNodes2JSON(nodes, outStream);
+                    result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                    return Response.status(Status.OK).entity(result).build();
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                    e.printStackTrace();
+                    result = e.getMessage();
+                    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                }
+            } else {
+                return Response.status(Status.NOT_FOUND).entity("No node matching property selector ('"+propertySelector+"') found.").build();
+            }
+        } else {
+            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
         }
     }
 
