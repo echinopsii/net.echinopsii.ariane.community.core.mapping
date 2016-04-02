@@ -18,7 +18,32 @@
  */
 package net.echinopsii.ariane.community.core.mapping.ds.sdsl.internal
 
+import com.typesafe.scalalogging.slf4j.Logging
+
 abstract class Predicate extends Expression {
   override var eType: String = "Predicate"
 }
 
+case class And(left: Predicate, right: Predicate) extends Predicate with Logging {
+  override def toString = left.toString + " and " + right.toString
+
+  override def query: (Predicate, Predicate, String) =  (left, right, "and")
+
+  override def calcType: String = eType
+}
+
+case class Or(left: Predicate, right: Predicate) extends Predicate with Logging {
+  override def toString = left.toString + " or " + right.toString
+
+  override def query: (Predicate, Predicate, String) =  (left, right, "and")
+
+  override def calcType: String = eType
+}
+
+case class Ops(left: Expression, right: Expression, ops: String) extends Predicate with Logging {
+  override def toString = left.toString + " " + ops + " " + right.toString
+
+  override def query: (Expression, Expression, String) =  (left, right, ops)
+
+  override def calcType: String = eType
+}

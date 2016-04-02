@@ -16,19 +16,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.echinopsii.ariane.community.core.mapping.ds.sdsl.internal
+package net.echinopsii.ariane.community.core.mapping.ds.sdsl.parser
 
-abstract class Expression() {
-  var eType: String
+import scala.util.parsing.combinator.JavaTokenParsers
+import net.echinopsii.ariane.community.core.mapping.ds.sdsl.internal.{StringExp, Expression}
 
-  def query : (Expression, Expression, String)
-  def calcType : String
-}
+trait ExpressionsTP extends UtilsTP with JavaTokenParsers {
+  def expression: Parser[Expression] = {
+    stringExp
+  }
 
-case class StringExp(value: String) extends Expression {
-  override var eType: String = "String"
-  override def toString = value
-
-  override def calcType: String = eType
-  override def query: None.type = None
+  def stringExp: Parser[Expression] = {
+    (stringLiteral | apostropheString) ^^ {
+      case str => new StringExp(value=str)
+    }
+  }
 }
