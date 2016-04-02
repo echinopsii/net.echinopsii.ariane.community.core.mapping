@@ -20,8 +20,8 @@
 package net.echinopsii.ariane.community.core.mapping.wat.rest.ds.service;
 
 import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
-import net.echinopsii.ariane.community.core.mapping.ds.dsl.MapperEmptyResultException;
-import net.echinopsii.ariane.community.core.mapping.ds.dsl.MapperParserException;
+import net.echinopsii.ariane.community.core.mapping.ds.mdsl.MapperEmptyResultException;
+import net.echinopsii.ariane.community.core.mapping.ds.mdsl.MapperParserException;
 import net.echinopsii.ariane.community.core.mapping.ds.service.Map;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;

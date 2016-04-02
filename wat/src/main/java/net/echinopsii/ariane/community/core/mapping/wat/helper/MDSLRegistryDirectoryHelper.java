@@ -22,13 +22,12 @@
 
 package net.echinopsii.ariane.community.core.mapping.wat.helper;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.echinopsii.ariane.community.core.idm.base.model.jpa.Group;
 import net.echinopsii.ariane.community.core.idm.base.model.jpa.UXPermission;
 import net.echinopsii.ariane.community.core.idm.base.model.jpa.User;
-import net.echinopsii.ariane.community.core.mapping.ds.dsl.registry.MappingDSLRegistryBootstrap;
-import net.echinopsii.ariane.community.core.mapping.ds.dsl.registry.model.MappingDSLRegistryDirectory;
+import net.echinopsii.ariane.community.core.mapping.ds.mdsl.registry.MappingDSLRegistryBootstrap;
+import net.echinopsii.ariane.community.core.mapping.ds.mdsl.registry.model.MappingDSLRegistryDirectory;
 import net.echinopsii.ariane.community.core.portal.idmwat.controller.group.GroupsListController;
 import net.echinopsii.ariane.community.core.portal.idmwat.controller.user.UsersListController;
 import org.slf4j.Logger;

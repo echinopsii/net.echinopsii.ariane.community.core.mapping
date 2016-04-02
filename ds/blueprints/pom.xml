@@ -87,7 +87,7 @@
                             net.echinopsii.ariane.community.core.mapping.ds.cfg;version=${project.version},
                             net.echinopsii.ariane.community.core.mapping.ds.service;version="${project.version}",
                             net.echinopsii.ariane.community.core.mapping.ds.domain;version="${project.version}",
-                            net.echinopsii.ariane.community.core.mapping.ds.dsl;version="${project.version}",
+                            net.echinopsii.ariane.community.core.mapping.ds.mdsl;version="${project.version}",
                             net.echinopsii.ariane.community.core.mapping.ds.repository;version="${project.version}",
                             com.tinkerpop.blueprints.impls.neo4j2;version="[${version.osgimin.com.tinkerpop.blueprints},${version.osgimax.com.tinkerpop.blueprints})";resolution:=optional,
                             com.tinkerpop.blueprints.impls.orient;version="[${version.osgimin.com.tinkerpop.blueprints},${version.osgimax.com.tinkerpop.blueprints})";resolution:=optional,

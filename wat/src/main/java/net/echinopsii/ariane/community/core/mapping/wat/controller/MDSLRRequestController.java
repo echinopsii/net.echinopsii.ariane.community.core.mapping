@@ -20,12 +20,11 @@
 package net.echinopsii.ariane.community.core.mapping.wat.controller;
 
 import net.echinopsii.ariane.community.core.idm.base.model.jpa.Group;
-import net.echinopsii.ariane.community.core.idm.base.model.jpa.Permission;
 import net.echinopsii.ariane.community.core.idm.base.model.jpa.UXPermission;
 import net.echinopsii.ariane.community.core.idm.base.model.jpa.User;
-import net.echinopsii.ariane.community.core.mapping.ds.dsl.registry.MappingDSLRegistryBootstrap;
-import net.echinopsii.ariane.community.core.mapping.ds.dsl.registry.model.MappingDSLRegistryDirectory;
-import net.echinopsii.ariane.community.core.mapping.ds.dsl.registry.model.MappingDSLRegistryRequest;
+import net.echinopsii.ariane.community.core.mapping.ds.mdsl.registry.MappingDSLRegistryBootstrap;
+import net.echinopsii.ariane.community.core.mapping.ds.mdsl.registry.model.MappingDSLRegistryDirectory;
+import net.echinopsii.ariane.community.core.mapping.ds.mdsl.registry.model.MappingDSLRegistryRequest;
 import net.echinopsii.ariane.community.core.portal.idmwat.controller.group.GroupsListController;
 import net.echinopsii.ariane.community.core.portal.idmwat.controller.user.UsersListController;
 import org.apache.shiro.SecurityUtils;

@@ -1,4 +1,4 @@
-package net.echinopsii.ariane.community.core.mapping.ds.dsl
+package net.echinopsii.ariane.community.core.mapping.ds.mdsl
 
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, FunSuite}

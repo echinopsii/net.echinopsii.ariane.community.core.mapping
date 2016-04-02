@@ -17,14 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.echinopsii.ariane.community.core.mapping.ds.dsl.registry;
+package net.echinopsii.ariane.community.core.mapping.ds.mdsl.registry;
 
 import net.echinopsii.ariane.community.core.idm.base.model.jpa.Group;
 import net.echinopsii.ariane.community.core.idm.base.model.jpa.UXPermission;
 import net.echinopsii.ariane.community.core.idm.base.model.jpa.User;
 import net.echinopsii.ariane.community.core.idm.base.proxy.IDMJPAProvider;
-import net.echinopsii.ariane.community.core.mapping.ds.dsl.registry.model.MappingDSLRegistryDirectory;
-import net.echinopsii.ariane.community.core.mapping.ds.dsl.registry.model.MappingDSLRegistryRequest;
+import net.echinopsii.ariane.community.core.mapping.ds.mdsl.registry.model.MappingDSLRegistryDirectory;
+import net.echinopsii.ariane.community.core.mapping.ds.mdsl.registry.model.MappingDSLRegistryRequest;
 import net.echinopsii.ariane.community.core.portal.idmwat.controller.group.GroupsListController;
 import net.echinopsii.ariane.community.core.portal.idmwat.controller.user.UsersListController;
 import org.apache.felix.ipojo.annotations.*;

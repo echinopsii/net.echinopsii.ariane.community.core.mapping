@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.echinopsii.ariane.community.core.mapping.ds.dsl.registry.model;
+package net.echinopsii.ariane.community.core.mapping.ds.mdsl.registry.model;
 
 import javax.validation.constraints.NotNull;
 import net.echinopsii.ariane.community.core.idm.base.model.IUXResource;
