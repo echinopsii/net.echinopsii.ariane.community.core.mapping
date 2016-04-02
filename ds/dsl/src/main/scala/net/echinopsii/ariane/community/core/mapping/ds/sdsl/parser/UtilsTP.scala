@@ -16,16 +16,16 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.echinopsii.ariane.community.core.mapping.ds.selector
+package net.echinopsii.ariane.community.core.mapping.ds.sdsl.parser
 
-import org.slf4j.{LoggerFactory, Logger}
+import scala.util.parsing.combinator.JavaTokenParsers
+import net.echinopsii.ariane.community.core.mapping.ds.tools.ParserUtils
 
-class SelectorExecutor(val graph: Object) {
-  private final val log: Logger = LoggerFactory.getLogger(classOf[SelectorExecutor])
+class UtilsTP extends ParserUtils with JavaTokenParsers {
 
-  def execute(query: String): Unit = {
-    log.debug("selector query : \n\n" + query)
-    var resultSet: Set[Object] = Set()
-
-  }
+  val selectorkeywords = List(
+    "and","or","like","=","!=","<>",">","<",">=","<=","=~"
+  )
+  def notAKeyword: Parser[String] =
+    not(ignoreCases(selectorkeywords: _*)) ~> ident | ignoreCases(selectorkeywords: _*) ~> failure("invalid keyword usage.")
 }

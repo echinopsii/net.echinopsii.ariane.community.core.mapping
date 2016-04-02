@@ -16,8 +16,16 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.echinopsii.ariane.community.core.mapping.ds.selector
+package net.echinopsii.ariane.community.core.mapping.ds.sdsl
 
-class SelectorParser {
+import org.slf4j.{LoggerFactory, Logger}
 
+class SelectorExecutor(val graph: Object) {
+  private final val log: Logger = LoggerFactory.getLogger(classOf[SelectorExecutor])
+
+  def execute(query: String): Unit = {
+    log.debug("selector query : \n\n" + query)
+    var resultSet: Set[Object] = Set()
+
+  }
 }
