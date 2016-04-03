@@ -250,15 +250,14 @@ public class NodeEndpoint {
 
     @GET
     @Path("/get")
-    public Response getNode(@QueryParam("endpointURL") String endpointURL, @QueryParam("ID")long id) {
+    public Response getNode(@QueryParam("endpointURL") String endpointURL, @QueryParam("ID")long id, @QueryParam("selector") String selector) {
         if (id != 0) {
             return displayNode(id);
         } else if (endpointURL!=null) {
             Subject subject = SecurityUtils.getSubject();
             log.debug("[{}-{}] get node: {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), endpointURL});
             if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
-                subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
-            {
+                    subject.hasRole("Jedi") || subject.isPermitted("universe:zeone")) {
                 Node node = (Node) MappingBootstrap.getMappingSce().getNodeSce().getNode(endpointURL);
                 if (node != null) {
                     try {
@@ -278,38 +277,34 @@ public class NodeEndpoint {
             } else {
                 return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
             }
-        } else {
-            return Response.status(Status.INTERNAL_SERVER_ERROR).entity("MappingDSLRegistryRequest error: name and id are not defined. You must define one of these parameters").build();
-        }
-    }
-
-    @GET
-    @Path("/find")
-    public Response findNodes(@QueryParam("selector") String selector) {
-        Subject subject = SecurityUtils.getSubject();
-        log.debug("[{}-{}] find node: {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), selector});
-        if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
-                subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
-        {
-            HashSet<Node> nodes = (HashSet<Node>) MappingBootstrap.getMappingSce().getNodeSce().getNodes(selector);
-            if (nodes != null && nodes.size() > 0) {
-                String result = "";
-                ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-                try {
-                    NodeJSON.manyNodes2JSON(nodes, outStream);
-                    result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                    return Response.status(Status.OK).entity(result).build();
-                } catch (Exception e) {
-                    log.error(e.getMessage());
-                    e.printStackTrace();
-                    result = e.getMessage();
-                    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+        } else if (selector!=null) {
+            Subject subject = SecurityUtils.getSubject();
+            log.debug("[{}-{}] find node: {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), selector});
+            if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
+                    subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
+            {
+                HashSet<Node> nodes = (HashSet<Node>) MappingBootstrap.getMappingSce().getNodeSce().getNodes(selector);
+                if (nodes != null && nodes.size() > 0) {
+                    String result = "";
+                    ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                    try {
+                        NodeJSON.manyNodes2JSON(nodes, outStream);
+                        result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                        return Response.status(Status.OK).entity(result).build();
+                    } catch (Exception e) {
+                        log.error(e.getMessage());
+                        e.printStackTrace();
+                        result = e.getMessage();
+                        return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                    }
+                } else {
+                    return Response.status(Status.NOT_FOUND).entity("No node matching with selector ('"+selector+"') found.").build();
                 }
             } else {
-                return Response.status(Status.NOT_FOUND).entity("No node matching with selector ('"+selector+"') found.").build();
+                return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
             }
         } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity("MappingDSLRegistryRequest error: name and id are not defined. You must define one of these parameters").build();
         }
     }
 
