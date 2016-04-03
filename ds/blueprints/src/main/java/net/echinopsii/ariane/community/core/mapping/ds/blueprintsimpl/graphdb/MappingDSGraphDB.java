@@ -79,6 +79,7 @@ public class MappingDSGraphDB {
                     if (graphDb!=null) {
                         ccgraph = new Neo4j2Graph(graphDb);
                         mexecutor = new MapperExecutor(graphDb);
+                        sexecutor = new SelectorExecutor(ccgraph);
                         log.debug("{} is started", new Object[]{ccgraph.toString()});
                         log.debug(ccgraph.getFeatures().toString());
                     } else {
@@ -640,6 +641,18 @@ public class MappingDSGraphDB {
         return tmp;
     }
 
+    private static GateImpl getGateFromVertex(Vertex vertex) {
+        long id = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+        GateImpl tmp = (GateImpl) getVertexEntity(id);
+        if (tmp == null) {
+            tmp = new GateImpl();
+            tmp.setElement(vertex);
+            MappingDSCache.putEntityToCache(tmp);
+            tmp.synchronizeFromDB();
+        }
+        return tmp;
+    }
+
     public static Set<NodeImpl> getNodes() {
         Set<NodeImpl> ret = new HashSet<>();
         log.debug("Get all nodes from graph {}...", new Object[]{ccgraph.toString()});
@@ -648,34 +661,22 @@ public class MappingDSGraphDB {
             ret.add(getNodeFromVertex(vertex));
         for (Vertex vertex : ccgraph.getVertices(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY,
                                                         MappingDSGraphPropertyNames.DD_TYPE_GATE_VALUE))
-            ret.add(getNodeFromVertex(vertex));
+            ret.add(getGateFromVertex(vertex));
         autocommit();
         return ret;
     }
 
-    /**
-     *
-     * @param selector selection query following syntax : key ~ ops ~ value
-     * @return
-     */
     public static Set<NodeImpl> getNodes(String selector) {
         Set<NodeImpl> ret = new HashSet<>();
-        /*
-        String key = null;
-        String value = null;
-        Predicate predicate = null;
-
-        for (Vertex vertex : ccgraph.query().
-                has(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY, MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE).
-                has(key, predicate, predicate).vertices()) {
-                //
-        }
-
-        for (Vertex vertex : ccgraph.query().
-                has(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY, MappingDSGraphPropertyNames.DD_TYPE_GATE_VALUE).
-                has(key, predicate, predicate).vertices()) {
-                //
-        }*/
+        selector = selector.replace("nodeID", MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+        Object query_try = sexecutor.execute(selector, MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE);
+        if (query_try != null && query_try instanceof GraphQuery)
+            for (Vertex vertex : ((GraphQuery) query_try).vertices())
+                ret.add(getNodeFromVertex(vertex));
+        query_try = sexecutor.execute(selector, MappingDSGraphPropertyNames.DD_TYPE_GATE_VALUE);
+        if (query_try != null && query_try instanceof GraphQuery)
+            for (Vertex vertex : ((GraphQuery) query_try).vertices())
+                ret.add(getGateFromVertex(vertex));
         return ret;
     }
 
@@ -691,25 +692,13 @@ public class MappingDSGraphDB {
         }
         for (Vertex vertex : ccgraph.getVertices(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY,
                                                  MappingDSGraphPropertyNames.DD_TYPE_GATE_VALUE)) {
-            NodeImpl tmp = getNodeFromVertex(vertex);
+            NodeImpl tmp = getGateFromVertex(vertex);
             Object tmpValue = tmp.getNodeProperties().get(key);
             if (tmpValue.equals(value))
                 ret.add(tmp);
         }
         autocommit();
         return ret;
-    }
-
-    private static GateImpl getGateFromVertex(Vertex vertex) {
-        long id = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
-        GateImpl tmp = (GateImpl) getVertexEntity(id);
-        if (tmp == null) {
-            tmp = new GateImpl();
-            tmp.setElement(vertex);
-            MappingDSCache.putEntityToCache(tmp);
-            tmp.synchronizeFromDB();
-        }
-        return tmp;
     }
 
     public static Set<GateImpl> getGates() {

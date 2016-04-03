@@ -34,14 +34,14 @@ trait PredicatesTP extends UtilsTP with ExpressionsTP with JavaTokenParsers {
   def predicateOps(): Parser[Predicate] = operators()
 
   def operators(): Parser[Predicate] =
-      expression ~ "=" ~ expression ^^ { case l~o~r => new Ops(l,r,o) } |
-      expression ~ "!=" ~ expression ^^ { case l~o~r => new Ops(l,r,"<>") }|
-      expression ~ "<>" ~ expression ^^ { case l~o~r => new Ops(l,r,o) }|
-      expression ~ ">" ~ expression ^^ { case l~o~r => new Ops(l,r,o) } |
-      expression ~ "<" ~ expression ^^ { case l~o~r => new Ops(l,r,o) } |
-      expression ~ ">=" ~ expression ^^ { case l~o~r => new Ops(l,r,o) }|
-      expression ~ "<=" ~ expression ^^ { case l~o~r => new Ops(l,r,o) }|
-      expression ~ "=~" ~ expression ^^ { case l~o~r => new Ops(l,r,o) }|
-      expression ~ ignoreCase("like") ~ expression ^^ { case l~o~r => new Ops(l,r,"=~") }|
+      propertyKeyExp ~ "=" ~ propertyValueExp ^^ { case l~o~r => new Ops(l,r,o) } |
+      propertyKeyExp ~ "!=" ~ propertyValueExp ^^ { case l~o~r => new Ops(l,r,"<>") }|
+      propertyKeyExp ~ "<>" ~ propertyValueExp ^^ { case l~o~r => new Ops(l,r,o) }|
+      propertyKeyExp ~ ">" ~ propertyValueExp ^^ { case l~o~r => new Ops(l,r,o) } |
+      propertyKeyExp ~ "<" ~ propertyValueExp ^^ { case l~o~r => new Ops(l,r,o) } |
+      propertyKeyExp ~ ">=" ~ propertyValueExp ^^ { case l~o~r => new Ops(l,r,o) }|
+      propertyKeyExp ~ "<=" ~ propertyValueExp ^^ { case l~o~r => new Ops(l,r,o) }|
+      propertyKeyExp ~ "=~" ~ propertyValueExp ^^ { case l~o~r => new Ops(l,r,o) }|
+      propertyKeyExp ~ ignoreCase("like") ~ expression ^^ { case l~o~r => new Ops(l,r,"=~") }|
       failure("Unsupported operation")
 }

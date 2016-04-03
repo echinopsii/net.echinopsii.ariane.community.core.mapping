@@ -28,4 +28,6 @@ class UtilsTP extends ParserUtils with JavaTokenParsers {
   )
   def notAKeyword: Parser[String] =
     not(ignoreCases(selectorkeywords: _*)) ~> ident | ignoreCases(selectorkeywords: _*) ~> failure("invalid keyword usage.")
+
+  def propertyKey: Parser[String] = identifier
 }

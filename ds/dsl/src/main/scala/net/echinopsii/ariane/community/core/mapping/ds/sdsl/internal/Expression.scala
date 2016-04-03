@@ -22,7 +22,53 @@ abstract class Expression() {
   var eType: String
 
   def query : (Expression, Expression, String)
+  def getValue : Any
   def calcType : String
+}
+
+case class PropertyKeyExp(value: String) extends  Expression {
+  override var eType: String = "PropertyKey"
+  override def toString = value
+
+  override def calcType: String = eType
+  override def getValue: String = value
+  override def query: (Expression, Expression, String) = null
+}
+
+case class ByteExp(value: Byte) extends Expression {
+  override var eType: String = "Byte"
+  override def toString = value.toString
+
+  override def calcType: String = eType
+  override def getValue: Byte = value
+  override def query: (Expression, Expression, String) = null
+}
+
+case class ShortExp(value: Short) extends Expression {
+  override var eType: String = "Short"
+  override def toString = value.toString
+
+  override def calcType: String = eType
+  override def getValue: Short = value
+  override def query: (Expression, Expression, String) = null
+}
+
+case class IntegerExp(value: Int) extends Expression {
+  override var eType: String = "Integer"
+  override def toString = value.toString
+
+  override def calcType: String = eType
+  override def getValue: Int = value
+  override def query: (Expression, Expression, String) = null
+}
+
+case class LongExp(value: Long) extends Expression {
+  override var eType: String = "Long"
+  override def toString = value.toString
+
+  override def calcType: String = eType
+  override def getValue: Long = value
+  override def query: (Expression, Expression, String) = null
 }
 
 case class StringExp(value: String) extends Expression {
@@ -30,5 +76,6 @@ case class StringExp(value: String) extends Expression {
   override def toString = value
 
   override def calcType: String = eType
+  override def getValue: String = value
   override def query: (Expression, Expression, String) = null
 }

@@ -1,7 +1,7 @@
 /**
- * Mapping Datastore Interface :
- * provide a Mapping DS domain, repository and service interfaces
- * Copyright (C) 2013  Mathilde Ffrench
+ * Ariane DSL Tools
+ * Ariane DSL Tools
+ * Copyright (C) 01/04/16 echinopsii
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -16,23 +16,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package net.echinopsii.ariane.community.core.mapping.ds.tools;
 
-package net.echinopsii.ariane.community.core.mapping.ds.repository;
+import com.tinkerpop.blueprints.Predicate;
 
-import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
+public enum Text implements Predicate {
+    REGEX;
 
-import java.util.Set;
-
-public interface NodeRepo<N extends Node> {
-    public N saveNode(N node);
-
-    public void deleteNode(N node);
-
-    public N findNodeByID(long ID);
-
-    public N findNodeByEndpointURL(String URL);
-
-    public Set<N> findNodesByProperties(String key, Object value);
-
-    public Set<N> findNodesBySelector(String selector);
+    @Override
+    public boolean evaluate(Object value, Object regex) {
+        if (regex instanceof String && value instanceof String) {
+            return ((String) value).matches((String)regex);
+        } else {
+            throw new IllegalArgumentException("The both arguments must be a String");
+        }
+    }
 }

@@ -111,7 +111,9 @@ public class NodeSceImpl implements NodeSce<NodeImpl> {
 
     @Override
     public Set<NodeImpl> getNodes(String selector) {
-        // TODO : manage selector - check graphdb query
-        return NodeRepoImpl.getRepository();
+        if (selector!=null)
+            return sce.getGlobalRepo().getNodeRepo().findNodesBySelector(selector);
+        else
+            return NodeRepoImpl.getRepository();
     }
 }

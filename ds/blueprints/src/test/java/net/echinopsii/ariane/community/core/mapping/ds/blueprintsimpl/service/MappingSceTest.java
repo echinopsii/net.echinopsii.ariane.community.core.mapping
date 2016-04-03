@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class MappingSceTest {
@@ -126,7 +127,56 @@ public class MappingSceTest {
 		assertTrue(mappingSce.getNodeSce().getNodes(null).contains(nodeLan));
 		assertTrue(mappingSce.getNodeSce().getNodes(null).contains(nodeMan));
 	}
-	
+
+	@Test
+	public void testNodeSce3() {
+		String request = "nodeName = 'APP6969.tibrvrdl03prd01'";
+		assertTrue(mappingSce.getNodeSce().getNodes(request).contains(nodeLan));
+		assertTrue(mappingSce.getNodeSce().getNodes(request).size()==1);
+	}
+
+	@Test
+	public void testNodeSce4() {
+		String request = "nodeID >= 0";
+		assertTrue(mappingSce.getNodeSce().getNodes(request).contains(nodeLan));
+		assertTrue(mappingSce.getNodeSce().getNodes(request).contains(nodeMan));
+	}
+
+	@Test
+	public void testNodeSce5() {
+		String request = "nodeID > 0";
+		assertTrue(mappingSce.getNodeSce().getNodes(request).contains(nodeLan));
+		assertTrue(mappingSce.getNodeSce().getNodes(request).contains(nodeMan));
+	}
+
+	@Test
+	public void testNodeSce6() {
+		String request = "nodeID < 0";
+		assertFalse(mappingSce.getNodeSce().getNodes(request).contains(nodeLan));
+		assertFalse(mappingSce.getNodeSce().getNodes(request).contains(nodeMan));
+	}
+
+	@Test
+	public void testNodeSce7() {
+		String request = "nodeID <= 0";
+		assertFalse(mappingSce.getNodeSce().getNodes(request).contains(nodeLan));
+		assertFalse(mappingSce.getNodeSce().getNodes(request).contains(nodeMan));
+	}
+
+	@Test
+	public void testNodeSce8() {
+		String request = "nodeName =~ 'APP6969.*tibrvrdl03prd01.*'";
+		assertTrue(mappingSce.getNodeSce().getNodes(request).contains(nodeLan));
+		assertTrue(mappingSce.getNodeSce().getNodes(request).size() == 1);
+	}
+
+	@Test
+	public void testNodeSce9() {
+		String request = "nodeName LIKE 'APP6969.*tibrvrdl03prd01.*'";
+		assertTrue(mappingSce.getNodeSce().getNodes(request).contains(nodeLan));
+		assertTrue(mappingSce.getNodeSce().getNodes(request).size() == 1);
+	}
+
 	@Test
 	public void testEndpointSce1() {
 		Endpoint test = mappingSce.getEndpointSce().getEndpoint(endpointLan.getEndpointID());

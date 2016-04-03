@@ -1,6 +1,6 @@
 /**
- * Mapping Selector
- * Mapping Selector
+ * Ariane DSL Tools
+ * Ariane DSL Tools
  * Copyright (C) 01/04/16 echinopsii
  *
  * This program is free software: you can redistribute it and/or modify
@@ -40,4 +40,6 @@ class ParserUtils extends JavaTokenParsers {
   def apostropheString: Parser[String] = ("\'" + """([^'\p{Cntrl}\\]|\\[\\/bfnrt]|\\u[a-fA-F0-9]{4})*""" + "\'").r
   def quoteString: Parser[String] = stringLiteral ^^ (str => stripQuotesEscape(str))
   def string: Parser[String] = (quoteString | apostropheString) ^^ (str => {stripQuotes(str)})
+
+  def identifier: Parser[String] = """[_\p{L}][_\p{L}\p{Nd}]*""".r
 }

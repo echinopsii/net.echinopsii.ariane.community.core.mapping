@@ -98,4 +98,10 @@ public class NodeRepoImpl implements NodeRepo<NodeImpl> {
     public Set<NodeImpl> findNodesByProperties(String key, Object value) {
         return MappingDSGraphDB.getNodes(key, value);
     }
+
+    @Override
+    public Set<NodeImpl> findNodesBySelector(String selector) {
+        return MappingDSGraphDB.getNodes(selector);
+    }
+
 }
