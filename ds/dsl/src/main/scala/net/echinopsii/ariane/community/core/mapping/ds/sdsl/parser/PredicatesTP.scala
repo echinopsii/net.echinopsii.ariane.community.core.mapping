@@ -18,18 +18,12 @@
  */
 package net.echinopsii.ariane.community.core.mapping.ds.sdsl.parser
 
-import net.echinopsii.ariane.community.core.mapping.ds.sdsl.internal.{And, Ops, Or, Predicate}
+import net.echinopsii.ariane.community.core.mapping.ds.sdsl.internal.{And, Ops, Predicate}
 
 import scala.util.parsing.combinator.JavaTokenParsers
 
 trait PredicatesTP extends UtilsTP with ExpressionsTP with JavaTokenParsers {
-  def predicate(): Parser[Predicate] = predicateOr()
-
-  def predicateOr(): Parser[Predicate] = {
-    predicateAnd() ~ rep(ignoreCase("or") ~> predicateAnd()) ^^ {
-      case head ~ rest => rest.foldLeft(head)((a,b) => new Or(a,b))
-    }
-  }
+  def predicate(): Parser[Predicate] = predicateAnd()
 
   def predicateAnd(): Parser[Predicate] = {
     predicateOps() ~ rep(ignoreCase("and") ~> predicateOps()) ^^ {

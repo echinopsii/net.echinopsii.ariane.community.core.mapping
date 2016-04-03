@@ -19,6 +19,7 @@
 package net.echinopsii.ariane.community.core.mapping.ds.sdsl.internal
 
 import com.typesafe.scalalogging.slf4j.Logging
+import net.echinopsii.ariane.community.core.mapping.ds.sdsl.SelectorParserException
 
 abstract class Predicate extends Expression {
   override var eType: String = "Predicate"
@@ -32,18 +33,25 @@ case class And(left: Predicate, right: Predicate) extends Predicate with Logging
   override def calcType: String = eType
 }
 
-case class Or(left: Predicate, right: Predicate) extends Predicate with Logging {
-  override def toString = left.toString + " or " + right.toString
-
-  override def query: (Predicate, Predicate, String) =  (left, right, "and")
-
-  override def calcType: String = eType
-}
-
 case class Ops(left: Expression, right: Expression, ops: String) extends Predicate with Logging {
   override def toString = left.toString + " " + ops + " " + right.toString
 
   override def query: (Expression, Expression, String) =  (left, right, ops)
 
   override def calcType: String = eType
+}
+
+object BlueprintsQueryOperations {
+  def toBlueprintsPredicate(ops: String): com.tinkerpop.blueprints.Predicate = ops match {
+    case "=" => com.tinkerpop.blueprints.Compare.EQUAL
+    case ">" => com.tinkerpop.blueprints.Compare.GREATER_THAN
+    case ">=" => com.tinkerpop.blueprints.Compare.GREATER_THAN_EQUAL
+    case "<" => com.tinkerpop.blueprints.Compare.LESS_THAN
+    case "<=" => com.tinkerpop.blueprints.Compare.LESS_THAN_EQUAL
+    case "!=" => com.tinkerpop.blueprints.Compare.NOT_EQUAL
+    case "<>" => com.tinkerpop.blueprints.Compare.NOT_EQUAL
+    case "=~" => com.tinkerpop.blueprints.Contains.IN
+    case "like" => com.tinkerpop.blueprints.Contains.IN
+    case _ => throw new SelectorParserException("Operation " + ops + " not recognized")
+  }
 }

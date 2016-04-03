@@ -30,5 +30,5 @@ case class StringExp(value: String) extends Expression {
   override def toString = value
 
   override def calcType: String = eType
-  override def query: None.type = None
+  override def query: (Expression, Expression, String) = null
 }

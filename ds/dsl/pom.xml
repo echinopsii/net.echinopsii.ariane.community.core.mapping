@@ -131,6 +131,7 @@
                             net.echinopsii.ariane.community.core.mapping.ds.sdsl;version=${project.version}
                         </Export-Package>
                         <Import-Package>
+                            com.tinkerpop.blueprints;version="[${version.osgimin.com.tinkerpop.blueprints},${version.osgimax.com.tinkerpop.blueprints})",
                             javassist.util.proxy,
                             javax.persistence;version="[${version.osgimin.javax.persistence},${version.osgimax.javax.persistence})",
                             javax.persistence.criteria;version="[${version.osgimin.javax.persistence},${version.osgimax.javax.persistence})",

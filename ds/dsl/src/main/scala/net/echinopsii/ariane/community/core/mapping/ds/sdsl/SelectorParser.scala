@@ -18,6 +18,14 @@
  */
 package net.echinopsii.ariane.community.core.mapping.ds.sdsl
 
-class SelectorParser {
+import net.echinopsii.ariane.community.core.mapping.ds.sdsl.parser.PredicatesTP
+import net.echinopsii.ariane.community.core.mapping.ds.sdsl.internal.Expression
 
+class SelectorParser extends PredicatesTP {
+  def parse(query: String): (Expression, Expression, String) = {
+    parseAll(predicate(), query) match {
+      case Success(result, _) => result.query
+      case failure : NoSuccess => throw new SelectorParserException(failure.msg)
+    }
+  }
 }

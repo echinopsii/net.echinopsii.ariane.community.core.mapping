@@ -24,7 +24,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.tools.ParserUtils
 class UtilsTP extends ParserUtils with JavaTokenParsers {
 
   val selectorkeywords = List(
-    "and","or","like","=","!=","<>",">","<",">=","<=","=~"
+    "and","like","=","!=","<>",">","<",">=","<=","=~"
   )
   def notAKeyword: Parser[String] =
     not(ignoreCases(selectorkeywords: _*)) ~> ident | ignoreCases(selectorkeywords: _*) ~> failure("invalid keyword usage.")
