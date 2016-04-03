@@ -285,13 +285,13 @@ public class NodeEndpoint {
 
     @GET
     @Path("/find")
-    public Response findNodes(@QueryParam("selector") String propertySelector) {
+    public Response findNodes(@QueryParam("selector") String selector) {
         Subject subject = SecurityUtils.getSubject();
-        log.debug("[{}-{}] find node: {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), propertySelector});
+        log.debug("[{}-{}] find node: {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), selector});
         if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
                 subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            HashSet<Node> nodes = (HashSet<Node>) MappingBootstrap.getMappingSce().getNodeSce().getNodes(propertySelector);
+            HashSet<Node> nodes = (HashSet<Node>) MappingBootstrap.getMappingSce().getNodeSce().getNodes(selector);
             if (nodes != null && nodes.size() > 0) {
                 String result = "";
                 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -306,7 +306,7 @@ public class NodeEndpoint {
                     return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
                 }
             } else {
-                return Response.status(Status.NOT_FOUND).entity("No node matching property selector ('"+propertySelector+"') found.").build();
+                return Response.status(Status.NOT_FOUND).entity("No node matching with selector ('"+selector+"') found.").build();
             }
         } else {
             return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
