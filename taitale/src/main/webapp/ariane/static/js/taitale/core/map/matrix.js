@@ -305,13 +305,13 @@ define(
                                 if (lanDef.dc==linkedLanDef.dc && lanDef.ratype!=linkedLanDef.ratype) {
                                     switch(lanDef.ratype) {
                                         case dic.networkType.WAN:
-                                            if (linkedLanDef.ratype===dic.networkType.MAN || linkedLanDef.ratype===dic.networkType.LAN) {
+                                            if (linkedLanDef.ratype===dic.networkType.MAN || linkedLanDef.ratype===dic.networkType.LAN) {
                                                 isConnectedToDownArea = true;
                                                 isConnectedToDownLan  = true;
                                             }
                                             break;
                                         case dic.networkType.MAN:
-                                            if (linkedLanDef.ratype===dic.networkType.LAN) {
+                                            if (linkedLanDef.ratype===dic.networkType.LAN) {
                                                 isConnectedToDownArea = true;
                                                 isConnectedToDownLan  = true;
                                             } else if (linkedLanDef.ratype===dic.networkType.WAN) {
@@ -320,7 +320,7 @@ define(
                                             }
                                             break;
                                         case dic.networkType.LAN:
-                                            if (linkedLanDef.ratype===dic.networkType.WAN || linkedLanDef.ratype===dic.networkType.MAN) {
+                                            if (linkedLanDef.ratype===dic.networkType.WAN || linkedLanDef.ratype===dic.networkType.MAN) {
                                                 isConnectedToUpArea = true;
                                                 isConnectedToUpLan  = true;
                                             }

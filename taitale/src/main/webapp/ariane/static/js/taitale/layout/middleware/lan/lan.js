@@ -315,8 +315,8 @@ define(
                 if (this.layoutData!=null) {
                     this.layoutData.isConnectedToLeftDC = this.layoutData.isConnectedToLeftDC || data.isConnectedToLeftDC;
                     this.layoutData.isConnectedToRightDC = this.layoutData.isConnectedToRightDC || data.isConnectedToRightDC;
-                    this.layoutData.isConnectedToLeftArea = this.layoutData.isConnectedToLeftArea || data.isConnectedToLeftArea;
-                    this.layoutData.isConnectedToRightArea = this.layoutData.isConnectedToRightArea || data.isConnectedToRightArea;
+                    this.layoutData.isConnectedToLeftArea = this.layoutData.isConnectedToLeftArea || data.isConnectedToLeftArea;
+                    this.layoutData.isConnectedToRightArea = this.layoutData.isConnectedToRightArea || data.isConnectedToRightArea;
                     this.layoutData.isConnectedToLeftLan = this.layoutData.isConnectedToLeftLan || data.isConnectedToLeftLan;
                     this.layoutData.isConnectedToRightLan = this.layoutData.isConnectedToRightLan || data.isConnectedToRightLan;
                     this.layoutData.isConnectedToUpArea = this.layoutData.isConnectedToUpArea || data.isConnectedToUpArea;

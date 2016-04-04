@@ -74,7 +74,7 @@ define(
             };
 
             this.propertiesDisplay = function(details, propsKey, propsValue) {
-                if (Array.isArray(propsValue) || Object.prototype.toString.call(propsValue)==="[object Object]") {
+                if (Array.isArray(propsValue) || Object.prototype.toString.call(propsValue)==="[object Object]") {
                     var jsonString = JSON.stringify(propsValue);
                     jsonString=jsonString.split("[").join("[<br/>");
                     jsonString=jsonString.split("{").join("{<br/>");
