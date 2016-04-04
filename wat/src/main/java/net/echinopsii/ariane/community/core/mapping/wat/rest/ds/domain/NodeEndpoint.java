@@ -630,21 +630,26 @@ public class NodeEndpoint {
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
-            if (node != null) {
-                Object oValue;
-                try {
-                    oValue = ToolBox.extractPropertyObjectValueFromString(value, type);
-                } catch (Exception e) {
-                    log.error(e.getMessage());
-                    e.printStackTrace();
-                    String result = e.getMessage();
-                    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+            if (name != null && value !=null && type != null) {
+                Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
+                if (node != null) {
+                    Object oValue;
+                    try {
+                        oValue = ToolBox.extractPropertyObjectValueFromString(value, type);
+                    } catch (Exception e) {
+                        log.error(e.getMessage());
+                        e.printStackTrace();
+                        String result = e.getMessage();
+                        return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                    }
+                    node.addNodeProperty(name, oValue);
+                    return Response.status(Status.OK).entity("Property (" + name + "," + value + ") successfully added to node " + id + ".").build();
+                } else {
+                    return Response.status(Status.NOT_FOUND).entity("Error while adding property " + name + " to node " + id + " : node " + id + " not found.").build();
                 }
-                node.addNodeProperty(name, oValue);
-                return Response.status(Status.OK).entity("Property (" + name + "," + value + ") successfully added to node " + id + ".").build();
             } else {
-                return Response.status(Status.NOT_FOUND).entity("Error while adding property " + name + " to node " + id + " : node " + id + " not found.").build();
+                log.warn("Property is not defined correctly : {name: " + name + ", type: " + type + ", value: " + value + "}.");
+                return Response.status(Status.BAD_REQUEST).entity("Property is not defined correctly : {name: " + name + ", type: " + type + ", value: " + value + "}.").build();
             }
         } else {
             return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();

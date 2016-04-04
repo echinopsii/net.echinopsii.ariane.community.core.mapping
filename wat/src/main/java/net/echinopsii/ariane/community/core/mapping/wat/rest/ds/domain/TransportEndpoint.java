@@ -269,21 +269,26 @@ public class TransportEndpoint {
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            Transport transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(id);
-            if (transport != null) {
-                Object oValue;
-                try {
-                    oValue = ToolBox.extractPropertyObjectValueFromString(value, type);
-                } catch (Exception e) {
-                    log.error(e.getMessage());
-                    e.printStackTrace();
-                    String result = e.getMessage();
-                    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+            if (name != null && type != null && value != null) {
+                Transport transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(id);
+                if (transport != null) {
+                    Object oValue;
+                    try {
+                        oValue = ToolBox.extractPropertyObjectValueFromString(value, type);
+                    } catch (Exception e) {
+                        log.error(e.getMessage());
+                        e.printStackTrace();
+                        String result = e.getMessage();
+                        return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                    }
+                    transport.addTransportProperty(name, oValue);
+                    return Response.status(Status.OK).entity("Property (" + name + "," + value + ") successfully added to transport " + id + ".").build();
+                } else {
+                    return Response.status(Status.NOT_FOUND).entity("Error while adding property " + name + " to transport " + id + " : transport " + id + " not found.").build();
                 }
-                transport.addTransportProperty(name, oValue);
-                return Response.status(Status.OK).entity("Property (" + name + "," + value + ") successfully added to transport " + id + ".").build();
             } else {
-                return Response.status(Status.NOT_FOUND).entity("Error while adding property " + name + " to transport " + id + " : transport " + id + " not found.").build();
+                log.warn("Property is not defined correctly : {name: " + name + ", type: " + type + ", value: " + value + "}.");
+                return Response.status(Status.BAD_REQUEST).entity("Property is not defined correctly : {name: " + name + ", type: " + type + ", value: " + value + "}.").build();
             }
         } else {
             return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
