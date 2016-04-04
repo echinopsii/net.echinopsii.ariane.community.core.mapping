@@ -122,7 +122,7 @@ define(
                 var i, ii, j, jj;
                 if (index < nbColumns){
                     rows[nbColumns] = [];
-                    for (i = index, ii=nbColumns; i < ii; ii--)  {
+                    for (i = index, ii=nbColumns; i < ii; ii--) {
                         rows[ii] = rows[ii-1];
                         for (j=0, jj=nbLines; j<jj; j++) {
                             if (rows[ii][j]!==FREE && rows[ii][j]!==LOCKED && rows[ii][j]!=null)
@@ -131,7 +131,7 @@ define(
                     }
                 }
                 rows[index] = [];
-                for(i = 0, ii = nbLines; i < ii ; i++) {
+                for(i = 0, ii = nbLines; i < ii ; i++) {
                     rows[index][i] = flag;
                 }
                 nbColumns++;
@@ -362,7 +362,7 @@ define(
                 }
 
                 // IF NO BLOCK FOUNDED THEN CREATE A NEW COLUMN IN LEFT|RIGHT UP or DOWN &/or INTERNAL AREA
-                if (column==-1) {
+                if (column==-1) {
                     if (!pushInternaLudOnLeft) {
                         pushInternaLudOnLeft=true;
                         column=++mtxColumnsSplitter[maxInternalRighTudC];
@@ -704,7 +704,7 @@ define(
                                 for (i = minMulticastL+1, ii = maxMulticastL; i<=ii; i++) {
                                     for (k = mtxColumnsSplitter[minMulticastC], kk = mtxColumnsSplitter[maxMulticastC]; k<=kk; k++) {
                                         llBus = rows[k][i];
-                                        if ((llBus!=FREE && llBus!=LOCKED && llBus.obj.layoutData.toUp) || (llBus==FREE)) {
+                                        if ((llBus!=FREE && llBus!=LOCKED && llBus.obj.layoutData.toUp) || (llBus==FREE)) {
                                             rows[k][i] = lBus;
                                             lBus.obj.layoutData.areaMtxCoord= {x: i, y: k};
                                             lBus.obj.layoutData.areaPozFinal = true;
@@ -772,7 +772,7 @@ define(
                             if (lBus!=FREE && lBus!=LOCKED && upMulticastL && lBus.obj.layoutData.toUp && !lBus.obj.layoutData.toDown) {
                                 for (k = mtxColumnsSplitter[minMulticastC], kk = mtxColumnsSplitter[maxMulticastC]; k <= kk; k++) {
                                     llBus = rows[k][minMulticastL];
-                                    if ((llBus!=FREE && llBus!=LOCKED && !llBus.obj.layoutData.toUp) || llBus == FREE) {
+                                    if ((llBus!=FREE && llBus!=LOCKED && !llBus.obj.layoutData.toUp) || llBus == FREE) {
                                         rows[k][minMulticastL] = lBus;
                                         lBus.obj.layoutData.areaMtxCoord={x: minMulticastL, y: k};
                                         lBus.obj.layoutData.areaPozFinal = true;
@@ -803,7 +803,7 @@ define(
                             if (lBus!=FREE && lBus!=LOCKED && downMulticastL && !lBus.obj.layoutData.toUp && lBus.obj.layoutData.toDown) {
                                 for (k = mtxColumnsSplitter[minMulticastC], kk = mtxColumnsSplitter[maxMulticastC]; k <= kk; k++) {
                                     llBus = rows[k][maxMulticastL];
-                                    if ((llBus!=FREE && llBus!=LOCKED && !llBus.obj.layoutData.toDown) || llBus == FREE) {
+                                    if ((llBus!=FREE && llBus!=LOCKED && !llBus.obj.layoutData.toDown) || llBus == FREE) {
                                         rows[k][maxMulticastL] = lBus;
                                         lBus.obj.layoutData.areaMtxCoord={x: maxMulticastL, y: k};
                                         lBus.obj.layoutData.areaPozFinal = true;

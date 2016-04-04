@@ -113,7 +113,7 @@ define(
                 var i, ii, j, jj;
                 if (index < nbColumns){
                     rows[nbColumns] = [];
-                    for (i = index, ii=nbColumns; i < ii; ii--)  {
+                    for (i = index, ii=nbColumns; i < ii; ii--) {
                         rows[ii] = rows[ii-1];
                         for (j=0, jj=nbLines; j<jj; j++) {
                             if (rows[ii][j]!==FREE && rows[ii][j]!==LOCKED && rows[ii][j]!=null)
@@ -122,7 +122,7 @@ define(
                     }
                 }
                 rows[index] = [];
-                for(i = 0, ii = nbLines; i < ii ; i++) {
+                for(i = 0, ii = nbLines; i < ii ; i++) {
                     rows[index][i] = flag;
                 }
                 nbColumns++;
@@ -262,7 +262,7 @@ define(
                 }
 
                 // IF NO BLOCK FOUNDED THEN CREATE A NEW COLUMN IN LEFT|RIGHT UP or DOWN &/or INTERNAL AREA
-                if (column==-1) {
+                if (column==-1) {
                     if (!pushInternaLudOnLeft) {
                         pushInternaLudOnLeft=true;
                         column=++mtxColumnsSplitter[maxInternalRighTudC];

@@ -329,7 +329,7 @@ define(
                     }
                     zpd.ZPDClearEvents();
                 }
-                if (r!=null) {
+                if (r!=null) {
                     //r.raphael.unmousedown(mainMouseDown);
                     r.clear();
                 }
