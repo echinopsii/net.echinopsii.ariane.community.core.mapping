@@ -100,7 +100,10 @@ public class ContainerJSON {
         jgenerator.writeStringField(CT_GATE_URI, cont.getContainerPrimaryAdminGateURL());
         if (cont.getContainerParentContainer()!=null)
             jgenerator.writeNumberField(CT_PCID_TOKEN, cont.getContainerParentContainer().getContainerID());
-        jgenerator.writeNumberField(CT_PAGTID_TOKEN, cont.getContainerPrimaryAdminGate().getNodeID());
+        if (cont.getContainerPrimaryAdminGate()!=null)
+            jgenerator.writeNumberField(CT_PAGTID_TOKEN, cont.getContainerPrimaryAdminGate().getNodeID());
+        else
+            log.error("Container " + cont.getContainerName() + " has no primary admin gate !?");
         if (cont.getContainerCluster()!=null)
             jgenerator.writeNumberField(CT_CLUSTER_TOKEN, cont.getContainerCluster().getClusterID());
         if (cont.getContainerParentContainer()!=null)

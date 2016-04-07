@@ -28,7 +28,10 @@ public enum Text implements Predicate {
         if (regex instanceof String && value instanceof String) {
             return ((String) value).matches((String)regex);
         } else {
-            throw new IllegalArgumentException("The both arguments must be a String");
+            String msg = "The both arguments must be a String; ";
+            msg += "\nvalue is : (" + value.toString() + ", " + value.getClass() + ")";
+            msg += "\nregex is : (" + regex.toString() + ", " + regex.getClass() + ")";
+            throw new IllegalArgumentException(msg);
         }
     }
 }
