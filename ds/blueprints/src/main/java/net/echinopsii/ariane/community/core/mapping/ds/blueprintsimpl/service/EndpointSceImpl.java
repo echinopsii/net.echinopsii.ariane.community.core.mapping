@@ -81,11 +81,8 @@ public class EndpointSceImpl implements EndpointSce<EndpointImpl> {
     @Override
     public Set<EndpointImpl> getEndpoints(String selector) {
         Set<EndpointImpl> ret = null;
-        if (selector != null) {
-
-        } else {
-            ret = sce.getGlobalRepo().getEndpointRepo().getAllEndpoints();
-        }
+        if (selector != null) ret = sce.getGlobalRepo().getEndpointRepo().findEndpointsBySelector(selector);
+        else ret = sce.getGlobalRepo().getEndpointRepo().getAllEndpoints();
         return ret;
     }
 

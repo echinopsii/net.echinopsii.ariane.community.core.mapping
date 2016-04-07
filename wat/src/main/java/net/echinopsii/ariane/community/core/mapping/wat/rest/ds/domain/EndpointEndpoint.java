@@ -38,10 +38,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 @Path("/mapping/domain/endpoints")
 public class EndpointEndpoint {
@@ -198,15 +195,14 @@ public class EndpointEndpoint {
 
     @GET
     @Path("/get")
-    public Response getEndpoint(@QueryParam("URL")String URL, @QueryParam("ID")long id) {
+    public Response getEndpoint(@QueryParam("URL")String URL, @QueryParam("ID")long id, @QueryParam("selector") String selector) {
         if (id!=0) {
             return displayEndpoint(id);
         } else if (URL!=null) {
             Subject subject = SecurityUtils.getSubject();
             log.debug("[{}-{}] get endpoint : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), URL});
             if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
-                subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
-            {
+                    subject.hasRole("Jedi") || subject.isPermitted("universe:zeone")) {
                 Endpoint endpoint = (Endpoint) MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(URL);
                 if (endpoint != null) {
                     try {
@@ -222,6 +218,31 @@ public class EndpointEndpoint {
                     }
                 } else {
                     return Response.status(Status.NOT_FOUND).entity("Endpoint with URL " + URL + " not found.").build();
+                }
+            } else {
+                return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
+            }
+        } else if (selector != null) {
+            Subject subject = SecurityUtils.getSubject();
+            log.debug("[{}-{}] get endpoint : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), selector});
+            if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
+                    subject.hasRole("Jedi") || subject.isPermitted("universe:zeone")) {
+                HashSet<Endpoint> ret = (HashSet<Endpoint>) MappingBootstrap.getMappingSce().getEndpointSce().getEndpoints(selector);
+                if (ret !=null && ret.size() > 0) {
+                    String result = "";
+                    ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                    try {
+                        EndpointJSON.manyEndpoints2JSON(ret, outStream);
+                        result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                        return Response.status(Status.OK).entity(result).build();
+                    } catch (Exception e) {
+                        log.error(e.getMessage());
+                        e.printStackTrace();
+                        result = e.getMessage();
+                        return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                    }
+                } else {
+                    return Response.status(Status.NOT_FOUND).entity("No endpoints matching selector " + selector + " ...").build();
                 }
             } else {
                 return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();

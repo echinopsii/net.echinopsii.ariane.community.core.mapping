@@ -35,4 +35,6 @@ public interface EndpointRepo<E extends Endpoint> {
     public E findEndpointByURL(String url);
 
     public Set<E> findEndpointsByProperties(String key, Object value);
+
+    public Set<E> findEndpointsBySelector(String selector);
 }

@@ -74,4 +74,9 @@ public class EndpointRepoImpl implements EndpointRepo<EndpointImpl> {
     public Set<EndpointImpl> findEndpointsByProperties(String key, Object value) {
         return MappingDSGraphDB.getEndpoints(key, value);
     }
+
+    @Override
+    public Set<EndpointImpl> findEndpointsBySelector(String selector) {
+        return MappingDSGraphDB.getEndpoints(selector);
+    }
 }

@@ -725,23 +725,35 @@ public class MappingDSGraphDB {
         return ret;
     }
 
+    private static EndpointImpl getEndpointFromVertex(Vertex vertex) {
+        long id = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+        EndpointImpl tmp = (EndpointImpl) getVertexEntity(id);
+        if (tmp == null) {
+            tmp = new EndpointImpl();
+            tmp.setElement(vertex);
+            MappingDSCache.putEntityToCache(tmp);
+            tmp.synchronizeFromDB();
+        }
+        return tmp;
+    }
+
     public static Set<EndpointImpl> getEndpoints() {
         Set<EndpointImpl> ret = new HashSet<>();
         log.debug("Get all endpoints from graph {}...", new Object[]{ccgraph.toString()});
         for (Vertex vertex : ccgraph.getVertices(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY,
-                                                        MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE)) {
-            long id = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
-            EndpointImpl tmp = (EndpointImpl) getVertexEntity(id);
-            if (tmp == null) {
-                tmp = new EndpointImpl();
-                tmp.setElement(vertex);
-                MappingDSCache.putEntityToCache(tmp);
-                tmp.synchronizeFromDB();
-            }
-            log.debug("Add endpoint {} to Set...", new Object[]{id});
-            ret.add(tmp);
-        }
+                                                        MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE))
+            ret.add(getEndpointFromVertex(vertex));
         autocommit();
+        return ret;
+    }
+
+    public static Set<EndpointImpl> getEndpoints(String selector) {
+        Set<EndpointImpl> ret = new HashSet<>();
+        selector = selector.replace("endpointID", MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+        Object query_try = sexecutor.execute(selector, MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE);
+        if (query_try != null && query_try instanceof GraphQuery)
+            for (Vertex vertex : ((GraphQuery) query_try).vertices())
+                ret.add(getEndpointFromVertex(vertex));
         return ret;
     }
 

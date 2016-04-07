@@ -11,6 +11,7 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.Set;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -190,13 +191,22 @@ public class MappingSceTest {
 		assertTrue(endpointLan.equals(test));
 		assertTrue(!endpointMan.equals(test));
 	}
-	
+
 	@Test
 	public void testEndpointSce3() {
 		assertTrue(mappingSce.getEndpointSce().getEndpoints(null).contains(endpointLan));
 		assertTrue(mappingSce.getEndpointSce().getEndpoints(null).contains(endpointMan));
 	}
-	
+
+	@Test
+	public void testEndpointSce4() {
+		String request = "endpointURL =~ '.*tibrvrdl03prd01.*'";
+		Set<Endpoint> test = (Set<Endpoint>) mappingSce.getEndpointSce().getEndpoints(request);
+		assertTrue(test.contains(endpointLan));
+		assertFalse(test.contains(endpointMan));
+		assertTrue(test.size()==3);
+	}
+
 	@Test
 	public void testLinkSce1() {
 		Link test =  mappingSce.getLinkSce().getLink(link.getLinkID());
