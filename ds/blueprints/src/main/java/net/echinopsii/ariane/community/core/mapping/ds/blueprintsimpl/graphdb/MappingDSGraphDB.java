@@ -964,7 +964,7 @@ public class MappingDSGraphDB {
         return ret;
     }
 
-    private static synchronized void removeVertex(Vertex vertex) throws MappingDSException {
+    private static void removeVertex(Vertex vertex) throws MappingDSException {
         long vertexID = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
         ccgraph.removeVertex(vertex);
         if (vertexID == getVertexMaxCursor()) {
@@ -975,7 +975,7 @@ public class MappingDSGraphDB {
         autocommit();
     }
 
-    private static synchronized void removeEdge(Edge edge) throws MappingDSException {
+    private static void removeEdge(Edge edge) throws MappingDSException {
         long edgeID = edge.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID);
         ccgraph.removeEdge(edge);
         if (edgeID == getEdgeMaxCursor()) {
@@ -986,7 +986,7 @@ public class MappingDSGraphDB {
         autocommit();
     }
 
-    public static void deleteEntity(MappingDSBlueprintsCacheEntity entity) {
+    public static synchronized void deleteEntity(MappingDSBlueprintsCacheEntity entity) {
         Element elem = entity.getElement();
         try {
             if (elem != null) {
@@ -1016,12 +1016,15 @@ public class MappingDSGraphDB {
 
                     for (Edge edge : vertex.getEdges(Direction.BOTH, MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY))
                         deleteEntity(getEdgeEntity(edge));
-
-                    MappingDSCache.removeEntityFromCache(entity);
-                    removeVertex(vertex);
+                    synchronized (ccgraph) {
+                        MappingDSCache.removeEntityFromCache(entity);
+                        removeVertex(vertex);
+                    }
                 } else if (elem instanceof Edge) {
-                    MappingDSCache.removeEntityFromCache(entity);
-                    removeEdge((Edge) elem);
+                    synchronized (ccgraph) {
+                        MappingDSCache.removeEntityFromCache(entity);
+                        removeEdge((Edge) elem);
+                    }
                 }
             }
             autocommit();
