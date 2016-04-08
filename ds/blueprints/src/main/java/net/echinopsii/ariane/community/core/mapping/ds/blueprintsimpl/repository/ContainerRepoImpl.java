@@ -58,7 +58,7 @@ public class ContainerRepoImpl implements ContainerRepo<ContainerImpl> {
             if (entity instanceof ContainerImpl) {
                 ret = (ContainerImpl) entity;
             } else {
-                log.error("");
+                log.error("CONSISTENCY ERROR : entity " + id + " is not a container.");
             }
         }
         return ret;
