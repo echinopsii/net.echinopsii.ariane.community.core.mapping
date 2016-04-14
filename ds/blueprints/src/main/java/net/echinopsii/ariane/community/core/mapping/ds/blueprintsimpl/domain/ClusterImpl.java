@@ -212,7 +212,7 @@ public class ClusterImpl implements Cluster, MappingDSBlueprintsCacheEntity {
             query.has(MappingDSGraphPropertyNames.DD_CLUSTER_EDGE_CONT_KEY, true);
             for (Edge edge : query.edges()) {
                 if (edge.getVertex(Direction.OUT).equals(container.getElement())) {
-                    MappingDSGraphDB.getDDgraph().removeEdge(edge);
+                    MappingDSGraphDB.getGraph().removeEdge(edge);
                 }
             }
             MappingDSGraphDB.autocommit();

@@ -64,7 +64,7 @@ public interface MappingSce {
 
     public void unsetAutoCommit();
 
-    public void setAutoCommit();
+    public void setAutoCommit(boolean autoCommit);
 
     public void commit();
 

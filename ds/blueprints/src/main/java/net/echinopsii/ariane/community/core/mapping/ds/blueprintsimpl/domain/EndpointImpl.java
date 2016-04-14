@@ -342,9 +342,9 @@ public class EndpointImpl implements Endpoint, MappingDSBlueprintsCacheEntity {
                 Vertex vo = edge.getVertex(Direction.OUT);
                 Vertex vi = edge.getVertex(Direction.IN);
                 if (vo != null && vo.equals(endpoint.getElement()))
-                    MappingDSGraphDB.getDDgraph().removeEdge(edge);
+                    MappingDSGraphDB.getGraph().removeEdge(edge);
                 if (vi != null && vi.equals(endpoint.getElement()))
-                    MappingDSGraphDB.getDDgraph().removeEdge(edge);
+                    MappingDSGraphDB.getGraph().removeEdge(edge);
             }
             MappingDSGraphDB.autocommit();
         }

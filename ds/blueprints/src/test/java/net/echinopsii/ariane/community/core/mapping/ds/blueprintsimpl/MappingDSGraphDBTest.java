@@ -52,9 +52,9 @@ public class MappingDSGraphDBTest {
 
     @Test
     public void testInitiatedCountVertex() {
-        assertTrue(MappingDSGraphDB.getDDgraph().getVertices(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID, 0).iterator().hasNext());
+        assertTrue(MappingDSGraphDB.getGraph().getVertices(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID, 0).iterator().hasNext());
         int i = 0;
-        for (Vertex vertex : MappingDSGraphDB.getDDgraph().getVertices(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID, 0)) {
+        for (Vertex vertex : MappingDSGraphDB.getGraph().getVertices(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID, 0)) {
             i++;
             long maxVertex = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_MAXCUR_KEY);
             long maxEdge = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_MAXCUR_KEY);

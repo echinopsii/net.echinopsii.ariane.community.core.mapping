@@ -182,17 +182,26 @@ public class MappingDSGraphDB {
         MappingDSGraphDB.autocommit.put(threadID, autocommit);
     }
 
+    public static synchronized void unsetAutocommit() {
+        Long threadID = Thread.currentThread().getId();
+        log.debug("Autocommit mode for thread {} unset", new Object[]{Thread.currentThread().getName()});
+        MappingDSGraphDB.autocommit.remove(threadID);
+    }
+
     public static void autocommit() {
         if (ccgraph instanceof TransactionalGraph) {
             Long threadID = Thread.currentThread().getId();
             boolean isThreadWithAutoCommitMode = true;
-            if (autocommit.containsKey(threadID)) {
-                isThreadWithAutoCommitMode = autocommit.get(threadID);
-            }
+            if (autocommit.containsKey(threadID)) isThreadWithAutoCommitMode = autocommit.get(threadID);
             log.debug("Auto commit ({}) for thread {}", new Object[]{isThreadWithAutoCommitMode, threadID});
             if (isThreadWithAutoCommitMode) {
                 log.debug("Auto commit operation...");
-                ((TransactionalGraph) ccgraph).commit();
+                try {
+                    ((TransactionalGraph) ccgraph).commit();
+                } catch (Exception e) {
+                    log.error("Error while commiting from thread (" + threadID + ":" + Thread.currentThread().getName() + ")");
+                    log.debug("autocommit table size: " + autocommit.size());
+                }
             }
         }
     }
@@ -213,7 +222,12 @@ public class MappingDSGraphDB {
             }
             if (isThreadWithAutoCommitMode) {
                 log.error("Auto rollback operation...");
-                ((TransactionalGraph) ccgraph).rollback();
+                try {
+                    ((TransactionalGraph) ccgraph).rollback();
+                } catch (Exception e) {
+                    log.error("Error while commiting from thread (" + threadID + ":" + Thread.currentThread().getName() + ")");
+                    log.debug("autocommit table size: " + autocommit.size());
+                }
             }
         }
     }
@@ -238,7 +252,7 @@ public class MappingDSGraphDB {
         return ret;
     }
 
-    public static Graph getDDgraph() {
+    public static Graph getGraph() {
         return ccgraph;
     }
 

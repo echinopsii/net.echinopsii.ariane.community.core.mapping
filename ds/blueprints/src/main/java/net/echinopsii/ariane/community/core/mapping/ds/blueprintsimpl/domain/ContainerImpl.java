@@ -705,7 +705,7 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
             query.has(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_CHILD_CONTAINER_KEY, true);
             for (Edge edge : query.edges()) {
                 if (edge.getVertex(Direction.OUT).equals(container.getElement())) {
-                    MappingDSGraphDB.getDDgraph().removeEdge(edge);
+                    MappingDSGraphDB.getGraph().removeEdge(edge);
                 }
             }
             MappingDSGraphDB.autocommit();
@@ -743,7 +743,7 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
 			query.has(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_NODE_KEY, true);
 			for (Edge edge : query.edges()) {
 				if (edge.getVertex(Direction.OUT).equals(node.getElement())) {
-					MappingDSGraphDB.getDDgraph().removeEdge(edge);
+					MappingDSGraphDB.getGraph().removeEdge(edge);
 				}						
 			}
             MappingDSGraphDB.autocommit();
@@ -783,7 +783,7 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
             query.has(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_GATE_KEY, true);
             for (Edge edge : query.edges()) {
                 if (edge.getVertex(Direction.OUT).equals(node.getElement())) {
-                    MappingDSGraphDB.getDDgraph().removeEdge(edge);
+                    MappingDSGraphDB.getGraph().removeEdge(edge);
                 }
             }
             MappingDSGraphDB.autocommit();

@@ -85,12 +85,12 @@ public class MappingSceImpl implements MappingSce {
 
     @Override
     public void unsetAutoCommit() {
-        MappingDSGraphDB.setAutocommit(false);
+        MappingDSGraphDB.unsetAutocommit();
     }
 
     @Override
-    public void setAutoCommit() {
-        MappingDSGraphDB.setAutocommit(true);
+    public void setAutoCommit(boolean autoCommit) {
+        MappingDSGraphDB.setAutocommit(autoCommit);
     }
 
     @Override

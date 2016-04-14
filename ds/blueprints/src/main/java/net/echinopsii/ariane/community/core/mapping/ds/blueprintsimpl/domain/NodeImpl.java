@@ -540,7 +540,7 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
             query.has(MappingDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY, true);
             for (Edge edge : query.edges()) {
                 if (edge.getVertex(Direction.OUT).equals(node.getElement())) {
-                    MappingDSGraphDB.getDDgraph().removeEdge(edge);
+                    MappingDSGraphDB.getGraph().removeEdge(edge);
                 }
             }
             MappingDSGraphDB.autocommit();
@@ -579,9 +579,9 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
                 Vertex vo = edge.getVertex(Direction.OUT);
                 Vertex vi = edge.getVertex(Direction.IN);
                 if (vo != null && vo.equals(node.getElement()))
-                    MappingDSGraphDB.getDDgraph().removeEdge(edge);
+                    MappingDSGraphDB.getGraph().removeEdge(edge);
                 if (vi != null && vi.equals(node.getElement()))
-                    MappingDSGraphDB.getDDgraph().removeEdge(edge);
+                    MappingDSGraphDB.getGraph().removeEdge(edge);
             }
             MappingDSGraphDB.autocommit();
         }
