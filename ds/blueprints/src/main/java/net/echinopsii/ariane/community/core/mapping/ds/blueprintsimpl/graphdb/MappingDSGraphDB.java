@@ -193,7 +193,7 @@ public class MappingDSGraphDB {
             Long threadID = Thread.currentThread().getId();
             boolean isThreadWithAutoCommitMode = true;
             if (autocommit.containsKey(threadID)) isThreadWithAutoCommitMode = autocommit.get(threadID);
-            log.debug("Auto commit ({}) for thread {}", new Object[]{isThreadWithAutoCommitMode, threadID});
+            log.debug("Auto commit ({}) for thread {}", new Object[]{isThreadWithAutoCommitMode, Thread.currentThread().getName()});
             if (isThreadWithAutoCommitMode) {
                 log.debug("Auto commit operation...");
                 try {
@@ -208,8 +208,14 @@ public class MappingDSGraphDB {
 
     public static void commit() {
         if (ccgraph instanceof TransactionalGraph) {
-            log.debug("Commit operation...");
-            ((TransactionalGraph) ccgraph).commit();
+            Long threadID = Thread.currentThread().getId();
+            boolean isThreadWithAutoCommitMode = true;
+            if (autocommit.containsKey(threadID)) isThreadWithAutoCommitMode = autocommit.get(threadID);
+            if (!isThreadWithAutoCommitMode) {
+                log.debug("Commit operation from thread {} ...", new Object[]{Thread.currentThread().getName()});
+                ((TransactionalGraph) ccgraph).commit();
+            }
+            else log.error("Thread " + Thread.currentThread().getName() + " is registered as autocommit : manual commit forbidden !");
         }
     }
 
@@ -217,9 +223,7 @@ public class MappingDSGraphDB {
         if (ccgraph instanceof TransactionalGraph) {
             Long threadID = Thread.currentThread().getId();
             boolean isThreadWithAutoCommitMode = true;
-            if (autocommit.containsKey(threadID)) {
-                isThreadWithAutoCommitMode = autocommit.get(threadID);
-            }
+            if (autocommit.containsKey(threadID)) isThreadWithAutoCommitMode = autocommit.get(threadID);
             if (isThreadWithAutoCommitMode) {
                 log.error("Auto rollback operation...");
                 try {
@@ -235,7 +239,13 @@ public class MappingDSGraphDB {
     public static void rollback() {
         if (ccgraph instanceof TransactionalGraph) {
             log.error("Rollback operation...");
-            ((TransactionalGraph) ccgraph).rollback();
+            Long threadID = Thread.currentThread().getId();
+            boolean isThreadWithAutoCommitMode = true;
+            if (autocommit.containsKey(threadID)) isThreadWithAutoCommitMode = autocommit.get(threadID);
+            if (!isThreadWithAutoCommitMode) {
+                log.debug("Rollback operation from thread {} ...", new Object[]{Thread.currentThread().getName()});
+                ((TransactionalGraph) ccgraph).rollback();
+            } else log.error("Thread " + Thread.currentThread().getName() + " is registered as autocommit : manual rollback forbidden !");
         }
     }
 
