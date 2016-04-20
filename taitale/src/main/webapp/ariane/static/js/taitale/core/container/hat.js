@@ -669,7 +669,8 @@ define(
                     this.cpyLogo = new dockerLogo();
                     this.logoWidth = this.cpyLogo.width;
                     this.logoHeight = this.cpyLogo.height;
-                } else if (company === "Debian Community") {
+                } else if ((company != null && company.indexOf("Debian") > -1) ||
+                    (product != null && product.indexOf("Debian") > -1)) {
                     this.cpyLogo = new debianLogo();
                     this.logoWidth = this.cpyLogo.width;
                     this.logoHeight = this.cpyLogo.height;
