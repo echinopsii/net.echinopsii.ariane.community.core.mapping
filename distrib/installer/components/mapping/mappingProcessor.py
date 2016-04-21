@@ -27,10 +27,12 @@ __author__ = 'mffrench'
 
 
 class mappingProcessor:
-    def __init__(self, idmDBConfig, homeDirPath, silent):
+    def __init__(self, home_dir_path, directory_db_conf, idm_db_conf, silent):
         print("\n%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--\n")
         print("%-- Mapping configuration : \n")
-        self.homeDirPath = homeDirPath
+        self.homeDirPath = home_dir_path
+        self.idmDBConfig = idm_db_conf
+        self.directoryDBConfig = directory_db_conf
 
         neo4jConfDirPath = self.homeDirPath + "/ariane/neo4j/conf"
         if not os.path.exists(neo4jConfDirPath):
@@ -40,8 +42,8 @@ class mappingProcessor:
             os.makedirs(kernelRepositoryDirPath, 0o755)
 
         self.mappingRimManagedServiceCUProcessor = cuMappingRimManagedServiceProcessor(kernelRepositoryDirPath)
-        self.mappingIDMSQLInitiator = dbIDMMySQLInitiator(idmDBConfig)
-        self.mappingIDMSQLPopulator = dbIDMMySQLPopulator(idmDBConfig)
+        self.mappingIDMSQLInitiator = dbIDMMySQLInitiator(idm_db_conf)
+        self.mappingIDMSQLPopulator = dbIDMMySQLPopulator(idm_db_conf)
         self.mappingNeo4JLogginXMLCUProcessor = cuMappingNeo4JLoggingXMLProcessor(neo4jConfDirPath)
         self.mappingNeo4JTunningPropertiesCUProcessor = cuMappingNeo4JTuningPropertiesProcessor(neo4jConfDirPath)
         self.mappingNeo4JServerPropertiesCUProcessor = cuMappingNeo4JServerPropertiesProcessor(neo4jConfDirPath)
