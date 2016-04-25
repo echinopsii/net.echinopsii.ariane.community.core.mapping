@@ -76,14 +76,14 @@
         {% block dependencies -%}
         <!-- Ariane versions -->
         {% for d in dependencies -%}
-        {% if d.component.type == 'none' %}
-        <version.net.echinopsii.ariane.community.{{ d.component.name }}>{{ d.version }}</version.net.echinopsii.ariane.community.{{ d.component.name }}>
-        <version.net.echinopsii.ariane.community.{{ d.component.name }}.min>{{ d.version_min }}</version.net.echinopsii.ariane.community.{{ d.component.name }}.min>
-        <version.net.echinopsii.ariane.community.{{ d.component.name }}.max>{{ d.version_max }}</version.net.echinopsii.ariane.community.{{ d.component.name }}.max>
+        {% if d.component.type == 'core' %}
+        <version.net.echinopsii.ariane.{{ d.component.type}}.{{ d.component.name }}>{{ d.version }}</version.net.echinopsii.ariane.{{ d.component.type}}.{{ d.component.name }}>
+        <version.net.echinopsii.ariane.{{ d.component.type}}.{{ d.component.name }}.min>{{ d.version_min }}</version.net.echinopsii.ariane.{{ d.component.type}}.{{ d.component.name }}.min>
+        <version.net.echinopsii.ariane.{{ d.component.type}}.{{ d.component.name }}.max>{{ d.version_max }}</version.net.echinopsii.ariane.{{ d.component.type}}.{{ d.component.name }}.max>
         {% else -%}
-        <version.net.echinopsii.ariane.community.{{ d.component.type}}.{{ d.component.name }}>{{ d.version }}</version.net.echinopsii.ariane.community.{{ d.component.type}}.{{ d.component.name }}>
-        <version.net.echinopsii.ariane.community.{{ d.component.type}}.{{ d.component.name }}.min>{{ d.version_min }}</version.net.echinopsii.ariane.community.{{ d.component.type}}.{{ d.component.name }}.min>
-        <version.net.echinopsii.ariane.community.{{ d.component.type}}.{{ d.component.name }}.max>{{ d.version_max }}</version.net.echinopsii.ariane.community.{{ d.component.type}}.{{ d.component.name }}.max>
+        <version.net.echinopsii.ariane.{{ d.component.name }}>{{ d.version }}</version.net.echinopsii.ariane.{{ d.component.name }}>
+        <version.net.echinopsii.ariane.{{ d.component.name }}.min>{{ d.version_min }}</version.net.echinopsii.ariane.{{ d.component.name }}.min>
+        <version.net.echinopsii.ariane.{{ d.component.name }}.max>{{ d.version_max }}</version.net.echinopsii.ariane.{{ d.component.name }}.max>
         {% endif -%}
         {%- endfor %}
         {%- endblock %}
