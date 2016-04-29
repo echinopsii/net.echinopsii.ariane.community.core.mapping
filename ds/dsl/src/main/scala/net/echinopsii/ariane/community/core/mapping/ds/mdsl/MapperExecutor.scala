@@ -21,7 +21,7 @@ package net.echinopsii.ariane.community.core.mapping.ds.mdsl
 import org.neo4j.graphdb.GraphDatabaseService
 import org.neo4j.cypher.{ExecutionResult, ExecutionEngine}
 import scala.collection.JavaConverters._
-import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames
+import net.echinopsii.ariane.community.core.mapping.ds.{MapperEmptyResultException, MapperExecutorException, MappingDSGraphPropertyNames}
 import org.slf4j.{LoggerFactory, Logger}
 import java.util.Date
 

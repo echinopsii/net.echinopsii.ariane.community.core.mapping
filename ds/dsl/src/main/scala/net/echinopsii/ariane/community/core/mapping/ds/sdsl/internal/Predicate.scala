@@ -19,7 +19,7 @@
 package net.echinopsii.ariane.community.core.mapping.ds.sdsl.internal
 
 import com.typesafe.scalalogging.slf4j.Logging
-import net.echinopsii.ariane.community.core.mapping.ds.sdsl.SelectorParserException
+import net.echinopsii.ariane.community.core.mapping.ds.SelectorParserException
 import net.echinopsii.ariane.community.core.mapping.ds.tools.Text
 
 abstract class Predicate extends Expression {

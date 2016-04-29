@@ -18,6 +18,7 @@
  */
 package net.echinopsii.ariane.community.core.mapping.ds.sdsl
 
+import net.echinopsii.ariane.community.core.mapping.ds.SelectorParserException
 import net.echinopsii.ariane.community.core.mapping.ds.sdsl.parser.PredicatesTP
 import net.echinopsii.ariane.community.core.mapping.ds.sdsl.internal.Expression
 

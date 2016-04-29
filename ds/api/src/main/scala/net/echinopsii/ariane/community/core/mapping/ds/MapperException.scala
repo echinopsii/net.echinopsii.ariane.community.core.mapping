@@ -1,6 +1,6 @@
 /**
- * MDSL
- * Mapping Domain Specific Language
+ * DS.API
+ * MDSL Exceptions
  * Copyright (C) 28/03/14 echinopsii
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.echinopsii.ariane.community.core.mapping.ds.mdsl
+package net.echinopsii.ariane.community.core.mapping.ds
 
 abstract class MapperException(message: String, cause: Throwable) extends RuntimeException(message, cause) {
   def this(message:String) = this(message, null)

@@ -18,7 +18,7 @@
  */
 package net.echinopsii.ariane.community.core.mapping.ds.tools
 
-import net.echinopsii.ariane.community.core.mapping.ds.mdsl.MapperParserException
+import net.echinopsii.ariane.community.core.mapping.ds.MapperParserException
 
 import scala.util.parsing.combinator.JavaTokenParsers
 

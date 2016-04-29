@@ -19,9 +19,8 @@
 package net.echinopsii.ariane.community.core.mapping.ds.mdsl.internal
 
 import net.echinopsii.ariane.community.core.mapping.ds.domain.{Gate, Endpoint, Node, Container}
-import net.echinopsii.ariane.community.core.mapping.ds.mdsl.MapperParserException
 import com.typesafe.scalalogging.slf4j.Logging
-import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames
+import net.echinopsii.ariane.community.core.mapping.ds.{MapperParserException, MappingDSGraphPropertyNames}
 
 abstract class Expression() {
   var eType: String

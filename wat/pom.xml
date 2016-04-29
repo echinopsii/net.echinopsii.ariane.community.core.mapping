@@ -25,12 +25,6 @@
         </dependency>
         <dependency>
             <groupId>net.echinopsii.ariane.community.core.mapping.ds</groupId>
-            <artifactId>net.echinopsii.ariane.community.core.mapping.ds.dsl</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.echinopsii.ariane.community.core.mapping.ds</groupId>
             <artifactId>net.echinopsii.ariane.community.core.mapping.ds.rim</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>

@@ -18,6 +18,7 @@
  */
 package net.echinopsii.ariane.community.core.mapping.ds.mdsl
 
+import net.echinopsii.ariane.community.core.mapping.ds.MapperParserException
 import net.echinopsii.ariane.community.core.mapping.ds.mdsl.parser.{SqlLikeTP, MapperTP, UtilsTP}
 import net.echinopsii.ariane.community.core.mapping.ds.mdsl.internal.IdentifierExp
 import net.echinopsii.ariane.community.core.mapping.ds.mdsl.internal.Block

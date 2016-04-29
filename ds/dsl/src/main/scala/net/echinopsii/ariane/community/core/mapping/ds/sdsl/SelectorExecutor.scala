@@ -19,7 +19,7 @@
 package net.echinopsii.ariane.community.core.mapping.ds.sdsl
 
 import com.tinkerpop.blueprints.{GraphQuery, Graph}
-import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames
+import net.echinopsii.ariane.community.core.mapping.ds.{SelectorExecutorException, SelectorParserException, MappingDSGraphPropertyNames}
 import net.echinopsii.ariane.community.core.mapping.ds.sdsl.internal.{BlueprintsQueryOperations, Expression}
 import org.slf4j.{LoggerFactory, Logger}
 

@@ -1,5 +1,6 @@
 package net.echinopsii.ariane.community.core.mapping.ds.mdsl
 
+import net.echinopsii.ariane.community.core.mapping.ds.MapperParserException
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, FunSuite}
 import org.scalatest.junit.JUnitRunner

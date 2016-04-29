@@ -20,7 +20,7 @@ package net.echinopsii.ariane.community.core.mapping.ds.mdsl.parser
 
 import scala.util.parsing.combinator.JavaTokenParsers
 import net.echinopsii.ariane.community.core.mapping.ds.mdsl.internal.{Expression, StringExp, IdentifierExp}
-import net.echinopsii.ariane.community.core.mapping.ds.mdsl.{MapperParserException, MapperParser}
+import net.echinopsii.ariane.community.core.mapping.ds.mdsl.MapperParser
 
 trait ExpressionsTP extends UtilsTP with JavaTokenParsers {
   def expression(blockEntityName: String, blockEntityType: String, mapperParser: MapperParser): Parser[Expression] = {
