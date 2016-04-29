@@ -11,7 +11,7 @@
 
     <groupId>{{ artifactId }}</groupId>
     <artifactId>{{ artifactId }}.{{ name }}</artifactId>
-    <name>Ariane Community Core Mapping DS Mapper DSL</name>
+    <name>Ariane Community Core Mapping Request Registry</name>
     <packaging>bundle</packaging>
     {% endblock %}
 
@@ -38,62 +38,6 @@
 
     <build>
         <plugins>
-            <!-- disable surefire -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.7</version>
-                <configuration>
-                    <skipTests>true</skipTests>
-                </configuration>
-            </plugin>
-            <!-- enable scalatest -->
-            <plugin>
-                <groupId>org.scalatest</groupId>
-                <artifactId>scalatest-maven-plugin</artifactId>
-                <configuration>
-                    <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
-                    <junitxml>.</junitxml>
-                    <filereports>WDF TestSuite.txt</filereports>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>test</id>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>net.alchim31.maven</groupId>
-                <artifactId>scala-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>scala-compile</id>
-                        <goals>
-                            <goal>add-source</goal>
-                            <goal>compile</goal>
-                        </goals>
-                        <phase>process-resources</phase>
-                    </execution>
-                    <execution>
-                        <id>scala-test-compile</id>
-                        <phase>process-test-resources</phase>
-                        <goals>
-                            <goal>testCompile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <scalaCompatVersion>2.10</scalaCompatVersion>
-                    <jvmArgs>
-                        <jvmArg>-Xms64m</jvmArg>
-                        <jvmArg>-Xmx1024m</jvmArg>
-                    </jvmArgs>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -124,14 +68,24 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            net.echinopsii.ariane.community.core.mapping.ds.mdsl;version=${project.version},
-                            net.echinopsii.ariane.community.core.mapping.ds.mdsl.registry;version=${project.version},
-                            net.echinopsii.ariane.community.core.mapping.ds.mdsl.registry.model;version=${project.version},
-                            net.echinopsii.ariane.community.core.mapping.ds.mdsl.registry.json;version=${project.version},
-                            net.echinopsii.ariane.community.core.mapping.ds.sdsl;version=${project.version}
+                            net.echinopsii.ariane.community.core.mapping.reqregistry;version=${project.version},
+                            net.echinopsii.ariane.community.core.mapping.reqregistry.model;version=${project.version},
+                            net.echinopsii.ariane.community.core.mapping.reqregistry.json;version=${project.version},
                         </Export-Package>
                         <Import-Package>
-                            com.tinkerpop.blueprints;version="[${version.osgimin.com.tinkerpop.blueprints},${version.osgimax.com.tinkerpop.blueprints})",
+                            javassist.util.proxy,
+                            javax.persistence;version="[${version.osgimin.javax.persistence},${version.osgimax.javax.persistence})",
+                            javax.persistence.criteria;version="[${version.osgimin.javax.persistence},${version.osgimax.javax.persistence})",
+                            javax.persistence.spi;version="[${version.osgimin.javax.persistence},${version.osgimax.javax.persistence})",
+                            javax.transaction;version="${version.javax.transaction.jta}",
+                            org.h2;resolution:=optional,
+                            org.mariadb.jdbc;resolution:=optional,
+                            com.mysql.jdbc;resolution:=optional,
+                            org.hibernate.proxy;version="[${version.osgimin.hibernate},${version.osgimax.hibernate})",
+                            org.hibernate.jpa;version="[${version.osgimin.hibernate},${version.osgimax.hibernate})",
+                            org.hibernate.jpa.boot.internal;version="[${version.osgimin.hibernate},${version.osgimax.hibernate})",
+                            org.hibernate.jpa.boot.spi;version="[${version.osgimin.hibernate},${version.osgimax.hibernate})",
+                            org.osgi.framework;version="[${version.osgimin.org.osgi.framework},${version.osgimax.org.osgi.framework})",
                             *
                         </Import-Package>
                     </instructions>

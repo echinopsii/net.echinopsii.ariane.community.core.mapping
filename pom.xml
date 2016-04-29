@@ -12,9 +12,10 @@
     <modules>
         <module>ds</module>
         <module>taitale</module>
+        <module>reqregistry</module>
         <module>wat</module>
         <module>wresources</module>
-        </modules>
+    </modules>
     
     <repositories>
         <repository>

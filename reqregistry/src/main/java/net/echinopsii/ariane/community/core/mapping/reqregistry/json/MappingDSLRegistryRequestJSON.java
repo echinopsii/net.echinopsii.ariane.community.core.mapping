@@ -18,13 +18,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.echinopsii.ariane.community.core.mapping.ds.mdsl.registry.json;
+package net.echinopsii.ariane.community.core.mapping.reqregistry.json;
 
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import net.echinopsii.ariane.community.core.idm.base.model.jpa.UXPermission;
-import net.echinopsii.ariane.community.core.mapping.ds.mdsl.registry.model.MappingDSLRegistryRequest;
+import net.echinopsii.ariane.community.core.mapping.reqregistry.model.MappingDSLRegistryRequest;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashSet;
