@@ -88,6 +88,7 @@
                             net.echinopsii.ariane.community.core.mapping.ds.domain;version=${project.version},
                             net.echinopsii.ariane.community.core.mapping.ds.repository;version=${project.version},
                             net.echinopsii.ariane.community.core.mapping.ds.service;version=${project.version},
+                            net.echinopsii.ariane.community.core.mapping.ds.service.tools;version=${project.version},
                             net.echinopsii.ariane.community.core.mapping.ds.json;version=${project.version},
                             net.echinopsii.ariane.community.core.mapping.ds.json.domain;version=${project.version},
                             net.echinopsii.ariane.community.core.mapping.ds.json.service;version=${project.version},

@@ -22,6 +22,7 @@ package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.EndpointImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
+import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.tools.MapImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MapSce;
 import org.slf4j.Logger;

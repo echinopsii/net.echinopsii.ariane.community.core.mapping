@@ -1,7 +1,7 @@
 /**
  * Mapping Datastore Interface :
  * provide a Mapping DS domain, repository and service interfaces
- * Copyright (C) 2013  Mathilde Ffrench
+ * Copyright (C) 2016 echinopsii
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -16,11 +16,10 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package net.echinopsii.ariane.community.core.mapping.ds.service.tools;
 
-package net.echinopsii.ariane.community.core.mapping.ds.service;
-
-import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Map;
-
-public interface MapSce {
-    public Map getMap(String mapperQuery);
+public interface SessionRegistry {
+    public Session get(String sessionID);
+    public Session put(Session session);
+    public Session remove(Session session);
 }

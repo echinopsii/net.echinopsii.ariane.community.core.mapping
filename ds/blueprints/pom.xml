@@ -86,6 +86,7 @@
                             net.echinopsii.ariane.community.core.mapping.ds.cache;version=${project.version},
                             net.echinopsii.ariane.community.core.mapping.ds.cfg;version=${project.version},
                             net.echinopsii.ariane.community.core.mapping.ds.service;version="${project.version}",
+                            net.echinopsii.ariane.community.core.mapping.ds.service.tools;version="${project.version}",
                             net.echinopsii.ariane.community.core.mapping.ds.domain;version="${project.version}",
                             net.echinopsii.ariane.community.core.mapping.ds.mdsl;version="${project.version}",
                             net.echinopsii.ariane.community.core.mapping.ds.sdsl;version="${project.version}",
@@ -108,7 +109,8 @@
                         </Import-Package>
                         <Export-Package>
                             net.echinopsii.ariane.core.mapping.ds.blueprintsimpl.repository;version=${project.version},
-                            net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service;version=${project.version}
+                            net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service;version=${project.version},
+                            net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.tools;version=${project.version}
                         </Export-Package>
                     </instructions>
                 </configuration>

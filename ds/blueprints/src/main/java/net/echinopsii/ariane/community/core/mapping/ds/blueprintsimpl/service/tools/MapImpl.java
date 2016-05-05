@@ -17,11 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service;
+package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.tools;
 
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.*;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
-import net.echinopsii.ariane.community.core.mapping.ds.service.Map;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Map;
 
 import java.util.HashSet;
 import java.util.Set;

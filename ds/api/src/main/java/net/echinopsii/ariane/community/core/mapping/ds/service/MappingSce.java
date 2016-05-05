@@ -20,11 +20,14 @@
 package net.echinopsii.ariane.community.core.mapping.ds.service;
 
 import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.SessionRegistry;
 
 import java.util.Dictionary;
 import java.util.Set;
 
 public interface MappingSce {
+
+    public SessionRegistry getSessionRegistry();
 
     public MapSce getMapSce();
 
@@ -61,6 +64,10 @@ public interface MappingSce {
     public boolean start();
 
     public boolean stop();
+
+    public String openSession(String clientID);
+
+    public String closeSession(String clientID);
 
     public void unsetAutoCommit();
 

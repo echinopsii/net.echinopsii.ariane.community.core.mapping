@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.echinopsii.ariane.community.core.mapping.ds.service;
+package net.echinopsii.ariane.community.core.mapping.ds.service.tools;
 
 import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
 

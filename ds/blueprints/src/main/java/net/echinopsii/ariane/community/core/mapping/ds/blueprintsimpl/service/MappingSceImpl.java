@@ -19,6 +19,7 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service;
 
+import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.tools.SessionRegistryImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCache;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.*;
@@ -26,6 +27,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository
 import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MapSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.SessionRegistry;
 
 import java.util.Dictionary;
 import java.util.HashSet;
@@ -48,6 +50,8 @@ public class MappingSceImpl implements MappingSce {
     private EndpointSceImpl endpointSce = new EndpointSceImpl(this);
     private LinkSceImpl linkSce = new LinkSceImpl(this);
     private TransportSceImpl transportSce = new TransportSceImpl(this);
+
+    private SessionRegistryImpl sessionRegistry = new SessionRegistryImpl();
 
     public MappingSceImpl() {
 
@@ -81,6 +85,16 @@ public class MappingSceImpl implements MappingSce {
     public boolean stop() {
         MappingDSGraphDB.stop();
         return true;
+    }
+
+    @Override
+    public String openSession(String clientID) {
+        return clientID;
+    }
+
+    @Override
+    public String closeSession(String clientID) {
+        return clientID;
     }
 
     @Override
@@ -136,6 +150,11 @@ public class MappingSceImpl implements MappingSce {
     @Override
     public TransportSceImpl getTransportSce() {
         return transportSce;
+    }
+
+    @Override
+    public SessionRegistry getSessionRegistry() {
+        return sessionRegistry;
     }
 
     @Override
