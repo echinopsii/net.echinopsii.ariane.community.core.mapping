@@ -25,10 +25,16 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Cluster;
 import java.util.Set;
 
 public interface ClusterSce<CL extends Cluster> {
+    public final static String CREATE_CLUSTER = "createCluster";
 	public CL   createCluster(String clusterName);
+
+    public final static String DELETE_CLUSTER = "deleteCluster";
 	public void deleteCluster(String clusterName) throws MappingDSException;
 
-    public CL getCluster(long clusterID);
+    public final static String GET_CLUSTER = "getCluster";
+    public CL getCluster(Long clusterID);
     public CL getCluster(String clusterName);
+
+    public final static String GET_CLUSTERS = "getClusters";
     public Set<CL> getClusters(String selector);
 }

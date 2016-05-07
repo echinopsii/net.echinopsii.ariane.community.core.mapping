@@ -39,7 +39,7 @@ public class EndpointSceImpl implements EndpointSce<EndpointImpl> {
     }
 
     @Override
-    public EndpointImpl createEndpoint(String url, long parentNodeID) throws MappingDSException {
+    public EndpointImpl createEndpoint(String url, Long parentNodeID) throws MappingDSException {
         EndpointImpl ret = sce.getGlobalRepo().getEndpointRepo().findEndpointByURL(url);
         if (ret == null) {
             NodeImpl parentNode = sce.getGlobalRepo().getNodeRepo().findNodeByID(parentNodeID);
@@ -59,7 +59,7 @@ public class EndpointSceImpl implements EndpointSce<EndpointImpl> {
     }
 
     @Override
-    public void deleteEndpoint(long endpointID) throws MappingDSException {
+    public void deleteEndpoint(Long endpointID) throws MappingDSException {
         EndpointImpl remove = sce.getGlobalRepo().getEndpointRepo().findEndpointByID(endpointID);
         if (remove != null) {
             sce.getGlobalRepo().getEndpointRepo().delete(remove);
@@ -69,7 +69,7 @@ public class EndpointSceImpl implements EndpointSce<EndpointImpl> {
     }
 
     @Override
-    public EndpointImpl getEndpoint(long id) {
+    public EndpointImpl getEndpoint(Long id) {
         return sce.getGlobalRepo().getEndpointRepo().findEndpointByID(id);
     }
 

@@ -41,7 +41,7 @@ public class NodeSceImpl implements NodeSce<NodeImpl> {
     }
 
     @Override
-    public NodeImpl createNode(String nodeName, long containerID, long parentNodeID) throws MappingDSException {
+    public NodeImpl createNode(String nodeName, Long containerID, Long parentNodeID) throws MappingDSException {
         ContainerImpl container = sce.getGlobalRepo().getContainerRepo().findContainerByID(containerID);
         NodeImpl ret = sce.getGlobalRepo().findNodeByName(container, nodeName);
         if (ret == null) {
@@ -72,7 +72,7 @@ public class NodeSceImpl implements NodeSce<NodeImpl> {
     }
 
     @Override
-    public void deleteNode(long nodeID) throws MappingDSException {
+    public void deleteNode(Long nodeID) throws MappingDSException {
         NodeImpl remove = sce.getGlobalRepo().getNodeRepo().findNodeByID(nodeID);
         if (remove != null) {
             sce.getGlobalRepo().getNodeRepo().deleteNode(remove);
@@ -82,7 +82,7 @@ public class NodeSceImpl implements NodeSce<NodeImpl> {
     }
 
     @Override
-    public NodeImpl getNode(long id) {
+    public NodeImpl getNode(Long id) {
         return sce.getGlobalRepo().getNodeRepo().findNodeByID(id);
     }
 

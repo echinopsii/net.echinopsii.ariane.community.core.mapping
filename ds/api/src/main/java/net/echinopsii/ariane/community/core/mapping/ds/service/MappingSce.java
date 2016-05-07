@@ -20,6 +20,7 @@
 package net.echinopsii.ariane.community.core.mapping.ds.service;
 
 import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.SessionRegistry;
 
 import java.util.Dictionary;
@@ -65,9 +66,9 @@ public interface MappingSce {
 
     public boolean stop();
 
-    public String openSession(String clientID);
+    public Session openSession(String clientID);
 
-    public String closeSession(String clientID);
+    public Session closeSession(Session toClose);
 
     public void unsetAutoCommit();
 

@@ -41,8 +41,8 @@ public class LinkSceImpl implements LinkSce<LinkImpl> {
     }
 
     @Override
-    public LinkImpl createLink(long sourceEndpointID, long targetEndpointID,
-                               long transportID) throws MappingDSException {
+    public LinkImpl createLink(Long sourceEndpointID, Long targetEndpointID,
+                               Long transportID) throws MappingDSException {
         LinkImpl ret = null;
 
         EndpointImpl epsource = sce.getGlobalRepo().getEndpointRepo().findEndpointByID(sourceEndpointID);
@@ -95,7 +95,7 @@ public class LinkSceImpl implements LinkSce<LinkImpl> {
     }
 
     @Override
-    public void deleteLink(long linkID) throws MappingDSException {
+    public void deleteLink(Long linkID) throws MappingDSException {
         LinkImpl remove = sce.getGlobalRepo().getLinkRepo().findLinkByID(linkID);
         if (remove != null) {
             sce.getGlobalRepo().getLinkRepo().delete(remove);
@@ -105,7 +105,7 @@ public class LinkSceImpl implements LinkSce<LinkImpl> {
     }
 
     @Override
-    public LinkImpl getLink(long id) {
+    public LinkImpl getLink(Long id) {
         return sce.getGlobalRepo().getLinkRepo().findLinkByID(id);
     }
 

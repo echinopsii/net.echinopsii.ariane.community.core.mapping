@@ -25,15 +25,17 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import java.util.Set;
 
 public interface EndpointSce<E extends Endpoint> {
-    public E createEndpoint(String url, long parentNodeID) throws MappingDSException;
+    public final static String CREATE_ENDPOINT = "createEndpoint";
+    public E createEndpoint(String url, Long parentNodeID) throws MappingDSException;
 
-    public void deleteEndpoint(long endpointID) throws MappingDSException;
+    public final static String DELETE_ENDPOINT = "deleteEndpoint";
+    public void deleteEndpoint(Long endpointID) throws MappingDSException;
 
-    public E getEndpoint(long id);
-
+    public final static String GET_ENDPOINT = "getEndpoint";
+    public E getEndpoint(Long id);
     public E getEndpoint(String URL);
 
+    public final static String GET_ENDPOINTS = "getEndpoints";
     public Set<E> getEndpoints(String selector);
-
     public Set<E> getEndpoints(String key, Object value);
 }

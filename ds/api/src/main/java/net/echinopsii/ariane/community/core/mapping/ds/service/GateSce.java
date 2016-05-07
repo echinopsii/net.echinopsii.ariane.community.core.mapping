@@ -25,10 +25,15 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
 import java.util.Set;
 
 public interface GateSce<G extends Gate> {
-	public G    createGate(String url, String name, long containerid, boolean isPrimaryAdmin) throws MappingDSException;
-	public void deleteGate(long nodeID) throws MappingDSException;
-	
-	public G    getGate(long id);
+	public final static String CREATE_GATE = "createGate";
+	public G    createGate(String url, String name, Long containerid, Boolean isPrimaryAdmin) throws MappingDSException;
 
+	public final static String DELETE_GATE = "deleteGate";
+	public void deleteGate(Long nodeID) throws MappingDSException;
+
+	public final static String GET_GATE = "getGate";
+	public G    getGate(Long id);
+
+	public final static String GET_GATES = "getGates";
     public Set<G> getGates(String selector);
 }

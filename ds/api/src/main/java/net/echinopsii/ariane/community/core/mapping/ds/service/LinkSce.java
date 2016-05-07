@@ -25,11 +25,15 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Link;
 import java.util.Set;
 
 public interface LinkSce<L extends Link> {
-    public L createLink(long sourceEndpointID, long targetEndpointID, long transportID) throws MappingDSException;
+    public final static String CREATE_LINK = "createLink";
+    public L createLink(Long sourceEndpointID, Long targetEndpointID, Long transportID) throws MappingDSException;
 
-    public void deleteLink(long linkID) throws MappingDSException;
+    public final static String DELETE_LINK = "deleteLink";
+    public void deleteLink(Long linkID) throws MappingDSException;
 
-    public L getLink(long id);
+    public final static String GET_LINK = "getLink";
+    public L getLink(Long id);
 
+    public final static String GET_LINKS = "getLinks";
     public Set<L> getLinks(String selector);
 }

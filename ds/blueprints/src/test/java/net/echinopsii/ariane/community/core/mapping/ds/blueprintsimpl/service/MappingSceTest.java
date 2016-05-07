@@ -1,20 +1,23 @@
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cfg.MappingBlueprintsDSCfgLoader;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
-import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.*;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import scala.collection.parallel.mutable.ParArray;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.Set;
+import java.util.UUID;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class MappingSceTest {
 
@@ -38,7 +41,7 @@ public class MappingSceTest {
         Properties prop = new Properties();
         prop.load(MappingSceTest.class.getResourceAsStream("/net.echinopsii.ariane.community.core.MappingRimManagedService.properties"));
         //randomize target graphdb directory to avoid test collapse
-        prop.setProperty("mapping.ds.blueprints.graphpath", ((String)prop.get("mapping.ds.blueprints.graphpath")) + 1 + (int)(Math.random() * ((100 - 1) + 1)));
+        prop.setProperty("mapping.ds.blueprints.graphpath", ((String)prop.get("mapping.ds.blueprints.graphpath.")) + UUID.randomUUID());
 
 
         mappingSce.init(prop);
@@ -61,7 +64,7 @@ public class MappingSceTest {
             rvrdLan.setContainerType("RV Router Daemon");
             rvrdLan.addContainerProperty("RVRD_HOSTNAME", "tibrvrdl03prd01");
             gateLan = mappingSce.getGateSce().createGate(urlGLan, gateNameGLan, rvrdLan.getContainerID(), false);
-            nodeLan = mappingSce.getNodeSce().createNode("APP6969.tibrvrdl03prd01", rvrdLan.getContainerID(), 0);
+            nodeLan = mappingSce.getNodeSce().createNode("APP6969.tibrvrdl03prd01", rvrdLan.getContainerID(), (long)0);
             endpointLan = mappingSce.getEndpointSce().createEndpoint(urlELan, nodeLan.getNodeID());
             endpointLan.addEndpointProperty("RVRD_NEIGHBD_LPORT", 6969);
 
@@ -69,7 +72,7 @@ public class MappingSceTest {
             rvrdMan.setContainerType("RV Router Daemon");
             rvrdMan.addContainerProperty("RVRD_HOSTNAME", "tibrvrdmprd01");
             gateMan = mappingSce.getGateSce().createGate(urlGMan, gateNameGMan, rvrdMan.getContainerID(), false);
-            nodeMan = mappingSce.getNodeSce().createNode("APP6969.tibrvrdmprd01", rvrdMan.getContainerID(), 0);
+            nodeMan = mappingSce.getNodeSce().createNode("APP6969.tibrvrdmprd01", rvrdMan.getContainerID(), (long)0);
             endpointMan = mappingSce.getEndpointSce().createEndpoint(urlEMan, nodeMan.getNodeID());
             endpointMan.addEndpointProperty("RVRD_NEIGHBD_LPORT", 6969);
 
@@ -217,4 +220,120 @@ public class MappingSceTest {
 	public void testLinkSce2() {
 		assertTrue(mappingSce.getLinkSce().getLinks(null).contains(link));
 	}
+
+	/*
+	@Test
+	public void testSessionOnClusterSce() throws MappingDSException {
+	}
+	*/
+
+	@Test
+	public void testSessionOnContainerSce() throws MappingDSException {
+		String containerAdminURL = "http://container:2342/";
+		String containerAdminGateName = "container.admingat";
+		Session mySession = mappingSce.openSession("testClient");
+		Container container = (Container) mySession.execute(mappingSce.getContainerSce(), ContainerSce.CREATE_CONTAINER,
+				new Object[]{containerAdminURL, containerAdminGateName});
+		mySession.commit();
+		assertEquals(mySession.execute(mappingSce.getContainerSce(), ContainerSce.GET_CONTAINER,
+				new Object[]{containerAdminURL}), container);
+		mySession.execute(mappingSce.getContainerSce(), ContainerSce.DELETE_CONTAINER, new Object[]{containerAdminURL});
+		mySession.commit();
+		assertNull(mySession.execute(mappingSce.getContainerSce(), ContainerSce.GET_CONTAINER,
+				new Object[]{containerAdminURL}));
+		mappingSce.closeSession(mySession);
+		assertFalse(mySession.isRunning());
+	}
+
+	@Test
+	public void testSessionOnNodeSce() throws MappingDSException {
+		String nodeName = "BPP6969.tibrvrdl03prd01";
+		Session mySession = mappingSce.openSession("testClient");
+		Node node = (Node) mySession.execute(mappingSce.getNodeSce(), NodeSce.CREATE_NODE, new Object[]{nodeName,
+				rvrdLan.getContainerID(), (long) 0});
+		mySession.commit();
+		assertEquals(mySession.execute(mappingSce.getNodeSce(), NodeSce.GET_NODE,
+				new Object[]{node.getNodeID()}), node);
+		mySession.execute(mappingSce.getNodeSce(), NodeSce.DELETE_NODE, new Object[]{node.getNodeID()});
+		mySession.commit();
+		assertNull(mySession.execute(mappingSce.getNodeSce(), NodeSce.GET_NODE,
+				new Object[]{node.getNodeID()}));
+		mappingSce.closeSession(mySession);
+		assertFalse(mySession.isRunning());
+	}
+
+	@Test
+	public void testSessionOnGateSce() throws MappingDSException {
+		String gateURL = "http://someurl:someport";
+		String gateName = "someGate";
+		Session mySession = mappingSce.openSession("testClient");
+		Gate gate = (Gate) mySession.execute(mappingSce.getGateSce(), GateSce.CREATE_GATE, new Object[]{gateURL, gateName,
+				rvrdLan.getContainerID(), false});
+		mySession.commit();
+		assertEquals(mySession.execute(mappingSce.getGateSce(), GateSce.GET_GATE, new Object[]{gate.getNodeID()}), gate);
+		mySession.execute(mappingSce.getGateSce(), GateSce.DELETE_GATE, new Object[]{gate.getNodeID()});
+		mySession.commit();
+		assertNull(mySession.execute(mappingSce.getGateSce(), GateSce.GET_GATE, new Object[]{gate.getNodeID()}));
+		mappingSce.closeSession(mySession);
+		assertFalse(mySession.isRunning());
+	}
+
+	@Test
+	public void testSessionOnEndpointSce() throws MappingDSException {
+		String endpointURL = "tcp://someurl:someport";
+		Session mySession = mappingSce.openSession("testClient");
+		Endpoint endpoint = (Endpoint) mySession.execute(mappingSce.getEndpointSce(), EndpointSce.CREATE_ENDPOINT,
+				new Object[] {endpointURL, nodeLan.getNodeID()});
+		mySession.commit();
+		assertEquals(mySession.execute(mappingSce.getEndpointSce(), EndpointSce.GET_ENDPOINT, new Object[]{endpointURL}), endpoint);
+		mySession.execute(mappingSce.getEndpointSce(), EndpointSce.DELETE_ENDPOINT, new Object[]{endpoint.getEndpointID()});
+		mySession.commit();
+		assertNull(mySession.execute(mappingSce.getEndpointSce(), EndpointSce.GET_ENDPOINT, new Object[]{endpointURL}));
+		mappingSce.closeSession(mySession);
+		assertFalse(mySession.isRunning());
+	}
+
+	@Test
+	public void testSessionOnLinkSce() throws MappingDSException {
+		String endpointURL1 = "tcp://someurl1:someport";
+		String endpointURL2 = "tcp://someurl2:someport";
+		Session mySession = mappingSce.openSession("testClient");
+		Endpoint endpoint1 = (Endpoint) mySession.execute(mappingSce.getEndpointSce(), EndpointSce.CREATE_ENDPOINT,
+				new Object[] {endpointURL1, nodeLan.getNodeID()});
+		Endpoint endpoint2 = (Endpoint) mySession.execute(mappingSce.getEndpointSce(), EndpointSce.CREATE_ENDPOINT,
+				new Object[] {endpointURL2, nodeLan.getNodeID()});
+
+		Link link1 = (Link)mySession.execute(mappingSce.getLinkSce(), LinkSce.CREATE_LINK,
+				    new Object[]{endpoint1.getEndpointID(), endpoint2.getEndpointID(), transport.getTransportID()});
+		mySession.commit();
+		assertEquals(mySession.execute(mappingSce.getLinkSce(), LinkSce.GET_LINK, new Object[]{link1.getLinkID()}), link1);
+		mySession.execute(mappingSce.getLinkSce(), LinkSce.DELETE_LINK, new Object[]{link1.getLinkID()});
+		mySession.commit();
+		assertNull(mySession.execute(mappingSce.getLinkSce(), LinkSce.GET_LINK, new Object[]{link1.getLinkID()}));
+		mySession.execute(mappingSce.getEndpointSce(), EndpointSce.DELETE_ENDPOINT, new Object[]{endpoint1.getEndpointID()});
+		mySession.execute(mappingSce.getEndpointSce(), EndpointSce.DELETE_ENDPOINT, new Object[]{endpoint2.getEndpointID()});
+		mySession.commit();
+		mappingSce.closeSession(mySession);
+		assertFalse(mySession.isRunning());
+	}
+
+	@Test
+	public void testSessionOnTransportSce() throws MappingDSException {
+		String transportName = "a_transport://";
+		Session mySession = mappingSce.openSession("testClient");
+		Transport transport = (Transport)mySession.execute(mappingSce.getTransportSce(), TransportSce.CREATE_TRANSPORT, new Object[]{transportName});
+		mySession.commit();
+		assertEquals(mySession.execute(mappingSce.getTransportSce(), TransportSce.GET_TRANSPORT, new Object[]{transport.getTransportID()}), transport);
+		mySession.execute(mappingSce.getTransportSce(), TransportSce.DELETE_TRANSPORT, new Object[]{transport.getTransportID()});
+		mySession.commit();
+		assertNull(mySession.execute(mappingSce.getTransportSce(), TransportSce.GET_TRANSPORT, new Object[]{transport.getTransportID()}));
+		mappingSce.closeSession(mySession);
+		assertFalse(mySession.isRunning());
+	}
+
+	/*
+	@Test
+	public void testSessionOnMappingSce() throws MappingDSException {
+	}
+	*/
 }

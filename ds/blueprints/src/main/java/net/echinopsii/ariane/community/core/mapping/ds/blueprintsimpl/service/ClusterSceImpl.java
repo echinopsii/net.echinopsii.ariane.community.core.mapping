@@ -62,7 +62,7 @@ public class ClusterSceImpl implements ClusterSce<ClusterImpl> {
 	}
 
     @Override
-    public ClusterImpl getCluster(long clusterID) {
+    public ClusterImpl getCluster(Long clusterID) {
         return sce.getGlobalRepo().getClusterRepo().findClusterByID(clusterID);
     }
 

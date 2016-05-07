@@ -25,16 +25,20 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import java.util.Set;
 
 public interface NodeSce<N extends Node> {
-    public N createNode(String nodeName, long containerID, long parentNodeID) throws MappingDSException;
+    public final static String CREATE_NODE = "createNode";
+    public N createNode(String nodeName, Long containerID, Long parentNodeID) throws MappingDSException;
 
-    public void deleteNode(long nodeID) throws MappingDSException;
+    public final static String DELETE_NODE = "deleteNode";
+    public void deleteNode(Long nodeID) throws MappingDSException;
 
-    public N getNode(long id);
+    public final static String GET_NODE = "getNode";
+    public N getNode(Long id);
 
     public N getNode(String endpointURL);
 
     public N getNode(Node parentNode, String nodeName);
 
+    public final static String GET_NODES = "getNodes";
     public Set<N> getNodes(String selector);
 
     public Set<N> getNodes(String key, Object value);

@@ -23,10 +23,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import java.lang.reflect.Method;
 
 public interface Session {
-
     public String getSessionID();
-
-    public String getSessionOwner();
 
     public Session stop();
 
@@ -34,5 +31,9 @@ public interface Session {
 
     public boolean isRunning();
 
-    public Object execute(String user, Object o, Method m, Object[] args) throws MappingDSException;
+    public Object execute(Object o, String methodName, Object[] args) throws MappingDSException;
+
+    public Session commit();
+
+    public Session rollback();
 }

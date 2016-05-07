@@ -19,6 +19,7 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service;
 
+import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.tools.SessionImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.tools.SessionRegistryImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCache;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
@@ -27,6 +28,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository
 import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MapSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.SessionRegistry;
 
 import java.util.Dictionary;
@@ -88,13 +90,18 @@ public class MappingSceImpl implements MappingSce {
     }
 
     @Override
-    public String openSession(String clientID) {
-        return clientID;
+    public Session openSession(String clientID) {
+        SessionImpl session = new SessionImpl(clientID);
+        sessionRegistry.put(session);
+        session.start();
+        return session;
     }
 
     @Override
-    public String closeSession(String clientID) {
-        return clientID;
+    public Session closeSession(Session toClose) {
+        sessionRegistry.remove(toClose);
+        toClose.stop();
+        return toClose;
     }
 
     @Override

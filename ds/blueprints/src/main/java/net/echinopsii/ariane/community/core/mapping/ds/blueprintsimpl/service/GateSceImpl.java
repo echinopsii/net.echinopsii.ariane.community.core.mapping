@@ -42,7 +42,7 @@ public class GateSceImpl implements GateSce<GateImpl> {
 	}
 	
 	@Override
-	public GateImpl createGate(String url, String name, long containerid, boolean isPrimaryAdmin) throws MappingDSException {
+	public GateImpl createGate(String url, String name, Long containerid, Boolean isPrimaryAdmin) throws MappingDSException {
 		GateImpl ret = null;
 		NodeImpl check = sce.getGlobalRepo().getGateRepo().findNodeByEndpointURL(url);
 		if (check instanceof GateImpl)
@@ -77,7 +77,7 @@ public class GateSceImpl implements GateSce<GateImpl> {
 	}
 
 	@Override
-	public void deleteGate(long nodeID) throws MappingDSException {
+	public void deleteGate(Long nodeID) throws MappingDSException {
 		GateImpl remove = sce.getGlobalRepo().getGateRepo().findGateByID(nodeID);
 		if ( remove != null ) {			
 			sce.getGlobalRepo().getGateRepo().delete(remove);
@@ -87,7 +87,7 @@ public class GateSceImpl implements GateSce<GateImpl> {
 	}
 
 	@Override
-	public GateImpl getGate(long id) {
+	public GateImpl getGate(Long id) {
 		return sce.getGlobalRepo().getGateRepo().findGateByID(id);
 	}
 

@@ -52,7 +52,7 @@ public class TransportSceImpl implements TransportSce<TransportImpl> {
 	}
 
 	@Override
-	public void deleteTransport(long transportID) throws MappingDSException {
+	public void deleteTransport(Long transportID) throws MappingDSException {
 		TransportImpl remove = sce.getGlobalRepo().getTransportRepo().findTransportByID(transportID);
 		if (remove != null) {
 			sce.getGlobalRepo().getTransportRepo().delete(remove);
@@ -62,7 +62,7 @@ public class TransportSceImpl implements TransportSce<TransportImpl> {
 	}
 
     @Override
-    public TransportImpl getTransport(long transportID) {
+    public TransportImpl getTransport(Long transportID) {
         return sce.getGlobalRepo().getTransportRepo().findTransportByID(transportID);
     }
 

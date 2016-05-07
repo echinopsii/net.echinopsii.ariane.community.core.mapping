@@ -24,10 +24,15 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import java.util.Set;
 
 public interface TransportSce<T> {
+    public final static String CREATE_TRANSPORT = "createTransport";
 	public T    createTransport(String transportName);
-	public void deleteTransport(long transportID) throws MappingDSException;
 
-    public T    getTransport(long transportID);
+    public final static String DELETE_TRANSPORT = "deleteTransport";
+	public void deleteTransport(Long transportID) throws MappingDSException;
 
+    public final static String GET_TRANSPORT = "getTransport";
+    public T    getTransport(Long transportID);
+
+    public final static String GET_TRANSPORTS = "getTransports";
     public Set<T> getTransports(String selector);
 }

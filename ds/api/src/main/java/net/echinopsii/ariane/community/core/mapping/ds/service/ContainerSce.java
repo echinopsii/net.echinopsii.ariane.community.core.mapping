@@ -25,6 +25,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import java.util.Set;
 
 public interface ContainerSce<C extends Container> {
+    public final static String CREATE_CONTAINER = "createContainer";
     public C createContainer(String primaryAdminURL, String primaryAdminGateName) throws MappingDSException;
 
     public C createContainer(String name, String primaryAdminURL, String primaryAdminGateName) throws MappingDSException;
@@ -33,11 +34,14 @@ public interface ContainerSce<C extends Container> {
 
     public C createContainer(String name, String primaryAdminURL, String primaryAdminGateName, Container parentContainer) throws MappingDSException;
 
+    public final static String DELETE_CONTAINER = "deleteContainer";
     public void deleteContainer(String primaryAdminURL) throws MappingDSException;
 
-    public C getContainer(long id);
+    public final static String GET_CONTAINER = "getContainer";
+    public C getContainer(Long id);
 
     public C getContainer(String primaryAdminURL);
 
+    public final static String GET_CONTAINERS = "getContainers";
     public Set<C> getContainers(String selector);
 }

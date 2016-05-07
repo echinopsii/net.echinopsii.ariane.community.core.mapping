@@ -101,7 +101,7 @@ public class ContainerSceImpl implements ContainerSce<ContainerImpl> {
     }
 
     @Override
-    public ContainerImpl getContainer(long id) {
+    public ContainerImpl getContainer(Long id) {
         return sce.getGlobalRepo().getContainerRepo().findContainerByID(id);
     }
 
