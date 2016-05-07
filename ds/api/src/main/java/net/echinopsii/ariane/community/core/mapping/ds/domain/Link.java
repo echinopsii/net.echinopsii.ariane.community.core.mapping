@@ -19,16 +19,22 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.domain;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
+
 public interface Link {
 
 	public long getLinkID();
-	
+
 	public Transport getLinkTransport();
+	public void      setLinkTransport(Session session, Transport transport) throws MappingDSException;
 	public void      setLinkTransport(Transport transport);
 	
 	public Endpoint getLinkEndpointSource();
+	public void     setLinkEndpointSource(Session session, Endpoint source) throws MappingDSException;
 	public void     setLinkEndpointSource(Endpoint source);
 	
 	public Endpoint getLinkEndpointTarget();
+	public void     setLinkEndpointTarget(Session session, Endpoint target) throws MappingDSException;
 	public void     setLinkEndpointTarget(Endpoint target);
 }

@@ -20,6 +20,7 @@
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain;
 
 import com.tinkerpop.blueprints.impls.neo4j2.Neo4j2Vertex;
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSBlueprintsCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDBObjectProps;
@@ -27,6 +28,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNam
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +54,15 @@ public class TransportImpl implements Transport, MappingDSBlueprintsCacheEntity 
 		return this.transportName;
 	}
 
-	public void setTransportName(String name) {
+    static final String SET_TRANSPORT_NAME = "setTransportName";
+
+    @Override
+    public void setTransportName(Session session, String name) throws MappingDSException {
+        if (session!=null && session.isRunning())
+            session.execute(this, SET_TRANSPORT_NAME, new Object[]{name});
+    }
+
+    public void setTransportName(String name) {
 		if (this.transportName==null || !this.transportName.equals(name)) {
 			this.transportName = name;
 			synchronizeToDB();
@@ -62,6 +72,14 @@ public class TransportImpl implements Transport, MappingDSBlueprintsCacheEntity 
     @Override
     public HashMap<String, Object> getTransportProperties() {
         return transportProperties;
+    }
+
+    static final String ADD_TRANSPORT_PROPERTY = "addTransportProperty";
+
+    @Override
+    public void addTransportProperty(Session session, String propertyKey, Object value) throws MappingDSException {
+        if (session!=null && session.isRunning())
+            session.execute(this, ADD_TRANSPORT_PROPERTY, new Object[]{propertyKey, value});
     }
 
     @Override
@@ -74,6 +92,14 @@ public class TransportImpl implements Transport, MappingDSBlueprintsCacheEntity 
                                                                              propertyKey,
                                                                              this.transportProperties.get(propertyKey)});
 
+    }
+
+    static final String REMOVE_TRANSPORT_PROPERTY = "removeTransportProperty";
+
+    @Override
+    public void removeTransportProperty(Session session, String propertyKey) throws MappingDSException {
+        if (session!=null && session.isRunning())
+            session.execute(this, REMOVE_TRANSPORT_PROPERTY, new Object[]{propertyKey});
     }
 
     @Override

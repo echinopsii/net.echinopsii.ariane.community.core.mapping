@@ -21,19 +21,20 @@ package net.echinopsii.ariane.community.core.mapping.ds.service;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Link;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
 import java.util.Set;
 
 public interface LinkSce<L extends Link> {
-    public final static String CREATE_LINK = "createLink";
+    public L createLink(Session session, Long sourceEndpointID, Long targetEndpointID, Long transportID) throws MappingDSException;
     public L createLink(Long sourceEndpointID, Long targetEndpointID, Long transportID) throws MappingDSException;
 
-    public final static String DELETE_LINK = "deleteLink";
+    public void deleteLink(Session session, Long linkID) throws MappingDSException;
     public void deleteLink(Long linkID) throws MappingDSException;
 
-    public final static String GET_LINK = "getLink";
+    public L getLink(Session session, Long id) throws MappingDSException;
     public L getLink(Long id);
 
-    public final static String GET_LINKS = "getLinks";
+    public Set<L> getLinks(Session session, String selector) throws MappingDSException;
     public Set<L> getLinks(String selector);
 }

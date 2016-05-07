@@ -19,6 +19,9 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.domain;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
+
 import java.util.HashMap;
 
 public interface Transport {
@@ -28,10 +31,13 @@ public interface Transport {
 	 * MUST BE UNIQUE
 	 */
 	public String getTransportName();
+	public void   setTransportName(Session session, String name) throws MappingDSException;
 	public void   setTransportName(String name);
 
     public HashMap<String, Object> getTransportProperties();
+	public void addTransportProperty(Session session, String propertyKey, Object value) throws MappingDSException;
     public void addTransportProperty(String propertyKey, Object value);
+	public void removeTransportProperty(Session session, String propertyKey) throws MappingDSException;
     public void removeTransportProperty(String propertyKey);
 
 }

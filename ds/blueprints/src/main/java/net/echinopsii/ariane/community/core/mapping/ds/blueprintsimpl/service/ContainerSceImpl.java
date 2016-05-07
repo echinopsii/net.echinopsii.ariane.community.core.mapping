@@ -25,6 +25,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.Gat
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository.ContainerRepoImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.service.ContainerSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,12 +33,25 @@ import java.util.Set;
 
 public class ContainerSceImpl implements ContainerSce<ContainerImpl> {
 
+    final static String CREATE_CONTAINER = "createContainer";
+    final static String DELETE_CONTAINER = "deleteContainer";
+    final static String GET_CONTAINER = "getContainer";
+    final static String GET_CONTAINERS = "getContainers";
+
     private static final Logger log = LoggerFactory.getLogger(ContainerSceImpl.class);
 
     private MappingSceImpl sce = null;
 
     public ContainerSceImpl(MappingSceImpl sce_) {
         this.sce = sce_;
+    }
+
+    @Override
+    public ContainerImpl createContainer(Session session, String primaryAdminURL, String primaryAdminGateName) throws MappingDSException {
+        ContainerImpl ret = null;
+        if (session != null && session.isRunning())
+            ret = (ContainerImpl) session.execute(this, CREATE_CONTAINER, new Object[]{primaryAdminURL, primaryAdminGateName});
+        return ret;
     }
 
     @Override
@@ -69,9 +83,25 @@ public class ContainerSceImpl implements ContainerSce<ContainerImpl> {
     }
 
     @Override
+    public ContainerImpl createContainer(Session session, String name, String primaryAdminURL, String primaryAdminGateName) throws MappingDSException {
+        ContainerImpl ret = null;
+        if (session != null && session.isRunning())
+            ret = (ContainerImpl) session.execute(this, CREATE_CONTAINER, new Object[]{name, primaryAdminURL, primaryAdminGateName});
+        return ret;
+    }
+
+    @Override
     public ContainerImpl createContainer(String name, String primaryAdminURL, String primaryAdminGateName) throws MappingDSException {
         ContainerImpl ret = this.createContainer(primaryAdminURL, primaryAdminGateName);
         ret.setContainerName(name);
+        return ret;
+    }
+
+    @Override
+    public ContainerImpl createContainer(Session session, String primaryAdminURL, String primaryAdminGateName, Container parentContainer) throws MappingDSException {
+        ContainerImpl ret = null;
+        if (session != null && session.isRunning())
+            ret = (ContainerImpl) session.execute(this, CREATE_CONTAINER, new Object[]{primaryAdminURL, primaryAdminGateName, parentContainer});
         return ret;
     }
 
@@ -83,11 +113,25 @@ public class ContainerSceImpl implements ContainerSce<ContainerImpl> {
     }
 
     @Override
+    public ContainerImpl createContainer(Session session, String name, String primaryAdminURL, String primaryAdminGateName, Container parentContainer) throws MappingDSException {
+        ContainerImpl ret = null;
+        if (session != null && session.isRunning())
+            ret = (ContainerImpl) session.execute(this, CREATE_CONTAINER, new Object[]{name, primaryAdminURL, primaryAdminGateName, parentContainer});
+        return ret;
+    }
+
+    @Override
     public ContainerImpl createContainer(String name, String primaryAdminURL, String primaryAdminGateName, Container parentContainer) throws MappingDSException {
         ContainerImpl ret = this.createContainer(primaryAdminURL, primaryAdminGateName);
         ret.setContainerName(name);
         parentContainer.addContainerChildContainer(ret);
         return ret;
+    }
+
+    @Override
+    public void deleteContainer(Session session, String primaryAdminURL) throws MappingDSException {
+        if (session != null && session.isRunning())
+            session.execute(this, DELETE_CONTAINER, new Object[]{primaryAdminURL});
     }
 
     @Override
@@ -101,13 +145,37 @@ public class ContainerSceImpl implements ContainerSce<ContainerImpl> {
     }
 
     @Override
+    public ContainerImpl getContainer(Session session, Long id) throws MappingDSException {
+        ContainerImpl ret = null;
+        if (session != null && session.isRunning())
+            ret = (ContainerImpl) session.execute(this, GET_CONTAINER, new Object[]{id});
+        return ret;
+    }
+
+    @Override
     public ContainerImpl getContainer(Long id) {
         return sce.getGlobalRepo().getContainerRepo().findContainerByID(id);
     }
 
     @Override
+    public ContainerImpl getContainer(Session session, String primaryAdminURL) throws MappingDSException {
+        ContainerImpl ret = null;
+        if (session != null && session.isRunning())
+            ret = (ContainerImpl) session.execute(this, GET_CONTAINER, new Object[]{primaryAdminURL});
+        return ret;
+    }
+
+    @Override
     public ContainerImpl getContainer(String primaryAdminURL) {
         return sce.getGlobalRepo().getContainerRepo().findContainersByPrimaryAdminURL(primaryAdminURL);
+    }
+
+    @Override
+    public Set<ContainerImpl> getContainers(Session session, String selector) throws MappingDSException {
+        Set<ContainerImpl> ret = null;
+        if (session != null && session.isRunning())
+            ret = (Set<ContainerImpl>) session.execute(this, GET_CONTAINERS, new Object[]{selector});
+        return ret;
     }
 
     @Override

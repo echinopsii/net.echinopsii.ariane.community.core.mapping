@@ -28,6 +28,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import com.tinkerpop.blueprints.Element;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +48,14 @@ public class GateImpl extends NodeImpl implements Gate {
     @Override
     public EndpointImpl getNodePrimaryAdminEndpoint() {
         return this.gatePrimaryAdminEndpoint;
+    }
+
+    static final String SET_NODE_PRIMARY_ADMIN_ENDPOINT = "setNodePrimaryAdminEndpoint";
+
+    @Override
+    public void setNodePrimaryAdminEnpoint(Session session, Endpoint endpoint) throws MappingDSException {
+        if (session!=null && session.isRunning())
+            session.execute(this, SET_NODE_PRIMARY_ADMIN_ENDPOINT, new Object[]{endpoint});
     }
 
     @Override

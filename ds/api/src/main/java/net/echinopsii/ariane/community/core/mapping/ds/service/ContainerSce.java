@@ -21,27 +21,28 @@ package net.echinopsii.ariane.community.core.mapping.ds.service;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
 import java.util.Set;
 
 public interface ContainerSce<C extends Container> {
-    public final static String CREATE_CONTAINER = "createContainer";
+    public C createContainer(Session session, String primaryAdminURL, String primaryAdminGateName) throws MappingDSException;
     public C createContainer(String primaryAdminURL, String primaryAdminGateName) throws MappingDSException;
-
+    public C createContainer(Session session, String name, String primaryAdminURL, String primaryAdminGateName) throws MappingDSException;
     public C createContainer(String name, String primaryAdminURL, String primaryAdminGateName) throws MappingDSException;
-
+    public C createContainer(Session session, String primaryAdminURL, String primaryAdminGateName, Container parentContainer) throws MappingDSException;
     public C createContainer(String primaryAdminURL, String primaryAdminGateName, Container parentContainer) throws MappingDSException;
-
+    public C createContainer(Session session, String name, String primaryAdminURL, String primaryAdminGateName, Container parentContainer) throws MappingDSException;
     public C createContainer(String name, String primaryAdminURL, String primaryAdminGateName, Container parentContainer) throws MappingDSException;
 
-    public final static String DELETE_CONTAINER = "deleteContainer";
+    public void deleteContainer(Session session, String primaryAdminURL) throws MappingDSException;
     public void deleteContainer(String primaryAdminURL) throws MappingDSException;
 
-    public final static String GET_CONTAINER = "getContainer";
+    public C getContainer(Session session, Long id) throws MappingDSException;
     public C getContainer(Long id);
-
+    public C getContainer(Session session, String primaryAdminURL) throws MappingDSException;
     public C getContainer(String primaryAdminURL);
 
-    public final static String GET_CONTAINERS = "getContainers";
+    public Set<C> getContainers(Session session, String selector) throws MappingDSException;
     public Set<C> getContainers(String selector);
 }

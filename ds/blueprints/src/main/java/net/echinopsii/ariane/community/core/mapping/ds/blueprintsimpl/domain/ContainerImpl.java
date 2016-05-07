@@ -30,6 +30,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import com.tinkerpop.blueprints.*;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,6 +71,14 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
     @Override
     public String getContainerName() { return this.containerName; }
 
+    static final String SET_CONTAINER_NAME = "setContainerName";
+
+    @Override
+    public void setContainerName(Session session, String name) throws MappingDSException {
+        if (session!=null && session.isRunning())
+            session.execute(this, SET_CONTAINER_NAME, new Object[]{name});
+    }
+
     @Override
     public void setContainerName(String name) {
         if (this.containerName == null || this.containerName.equals(name)) {
@@ -82,6 +91,14 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
     @Override
     public String getContainerCompany() {
         return containerCompany;
+    }
+
+    static final String SET_CONTAINER_COMPANY = "setContainerCompany";
+
+    @Override
+    public void setContainerCompany(Session session, String company) throws MappingDSException {
+        if (session!=null && session.isRunning())
+            session.execute(this, SET_CONTAINER_COMPANY, new Object[]{company});
     }
 
     @Override
@@ -98,6 +115,14 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
         return this.containerProduct;
     }
 
+    static final String SET_CONTAINER_PRODUCT = "setContainerProduct";
+
+    @Override
+    public void setContainerProduct(Session session, String product) throws MappingDSException {
+        if (session!=null && session.isRunning())
+            session.execute(this, SET_CONTAINER_PRODUCT, new Object[]{product});
+    }
+
     @Override
     public void setContainerProduct(String product) {
         if (this.containerProduct == null || !this.containerProduct.equals(product)) {
@@ -110,6 +135,14 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
     @Override
     public String getContainerType() {
         return this.containerType;
+    }
+
+    static final String SET_CONTAINER_TYPE = "setContainerType";
+
+    @Override
+    public void setContainerType(Session session, String type) throws MappingDSException {
+        if (session!=null && session.isRunning())
+            session.execute(this, SET_CONTAINER_TYPE, new Object[]{type});
     }
 
     @Override
@@ -134,7 +167,15 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
 		return this.containerPrimaryAdminGate;
 	}
 
-	@Override
+    static final String SET_CONTAINER_PRIMARY_ADMIN_GATE = "setContainerPrimaryAdminGate";
+
+    @Override
+    public void setContainerPrimaryAdminGate(Session session, Gate gate) throws MappingDSException {
+        if (session!=null && session.isRunning())
+            session.execute(this, SET_CONTAINER_PRIMARY_ADMIN_GATE, new Object[]{gate});
+    }
+
+    @Override
 	public void setContainerPrimaryAdminGate(Gate gate) {
 		if (this.containerPrimaryAdminGate==null || !this.containerPrimaryAdminGate.equals(gate)) {
 			if (gate instanceof GateImpl) {
@@ -150,7 +191,15 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
 		return this.containerCluster;
 	}
 
-	@Override
+    static final String SET_CONTAINER_CLUSTER = "setContainerCluster";
+
+    @Override
+    public void setContainerCluster(Session session, Cluster cluster) throws MappingDSException {
+        if (session!=null && session.isRunning())
+            session.execute(this, SET_CONTAINER_CLUSTER, new Object[]{cluster});
+    }
+
+    @Override
 	public void setContainerCluster(Cluster cluster) {
 		if (this.containerCluster == null || !this.containerCluster.equals(cluster)) {
 			if (cluster == null || cluster instanceof ClusterImpl) {
@@ -164,8 +213,16 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
 	public HashMap<String, Object> getContainerProperties() {
 		return containerProperties ;
 	}
-	
-	@Override
+
+    static final String ADD_CONTAINER_PROPERTY = "addContainerProperty";
+
+    @Override
+    public void addContainerProperty(Session session, String propertyKey, Object value) throws MappingDSException {
+        if (session!=null && session.isRunning())
+            session.execute(this, ADD_CONTAINER_PROPERTY, new Object[]{propertyKey, value});
+    }
+
+    @Override
 	public void addContainerProperty(String propertyKey, Object value){
         if (containerProperties == null)
             containerProperties = new HashMap<String, Object>();
@@ -175,6 +232,14 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
                                                                              propertyKey,
                                                                              this.containerProperties.get(propertyKey)});
 	}
+
+    static final String REMOVE_CONTAINER_PROPERTY = "removeContainerProperty";
+
+    @Override
+    public void removeContainerProperty(Session session, String propertyKey) throws MappingDSException {
+        if (session!=null && session.isRunning())
+            session.execute(this, REMOVE_CONTAINER_PROPERTY, new Object[]{propertyKey});
+    }
 
     @Override
     public void removeContainerProperty(String propertyKey) {
@@ -187,6 +252,14 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
     @Override
     public Container getContainerParentContainer() {
         return this.containerParentContainer;
+    }
+
+    static final String SET_CONTAINER_PARENT_CONTAINER = "setContainerParentContainer";
+
+    @Override
+    public void setContainerParentContainer(Session session, Container container) throws MappingDSException {
+        if (session!=null && session.isRunning())
+            session.execute(this, SET_CONTAINER_PARENT_CONTAINER, new Object[]{container});
     }
 
     @Override
@@ -202,6 +275,16 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
     @Override
     public Set<ContainerImpl> getContainerChildContainers() {
         return this.containerChildContainers;
+    }
+
+    static final String ADD_CONTAINER_CHILD_CONTAINER = "addContainerChildContainer";
+
+    @Override
+    public boolean addContainerChildContainer(Session session, Container container) throws MappingDSException {
+        boolean ret = false;
+        if (session!=null && session.isRunning())
+            ret = (boolean) session.execute(this, ADD_CONTAINER_CHILD_CONTAINER, new Object[]{container});
+        return ret;
     }
 
     @Override
@@ -221,6 +304,16 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
                 MappingDSGraphDB.autorollback();
             }
         }
+        return ret;
+    }
+
+    static final String REMOVE_CONTAINER_CHILD_CONTAINER = "removeContainerChildContainer";
+
+    @Override
+    public boolean removeContainerChildContainer(Session session, Container container) throws MappingDSException {
+        boolean ret = false;
+        if (session!=null && session.isRunning())
+            ret = (boolean) session.execute(this, REMOVE_CONTAINER_CHILD_CONTAINER, new Object[]{container});
         return ret;
     }
 
@@ -254,7 +347,17 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
 		return ret;
 	}
 
-	@Override
+    static final String ADD_CONTAINER_NODE = "addContainerNode";
+
+    @Override
+    public boolean addContainerNode(Session session, Node node) throws MappingDSException {
+        boolean ret = false;
+        if (session!=null && session.isRunning())
+            ret = (boolean)session.execute(this, ADD_CONTAINER_NODE, new Object[]{node});
+        return ret;
+    }
+
+    @Override
 	public boolean addContainerNode(Node node) {
 		if (node instanceof NodeImpl) {
 			boolean ret = false; 
@@ -275,8 +378,18 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
 		else
 			return false;
 	}
-	
-	@Override
+
+    static final String REMOVE_CONTAINER_NODE = "removeContainerNode";
+
+    @Override
+    public boolean removeContainerNode(Session session, Node node) throws MappingDSException {
+        boolean ret = false;
+        if (session!=null && session.isRunning())
+            ret = (boolean) session.execute(this, REMOVE_CONTAINER_NODE, new Object[]{node});
+        return ret;
+    }
+
+    @Override
 	public boolean removeContainerNode(Node node) {
 		if (node instanceof NodeImpl) {
 			boolean ret = this.containerNodes.remove((NodeImpl)node);
@@ -294,7 +407,17 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
 		return this.containerGates;
 	}
 
-	@Override
+    static final String ADD_CONTAINER_GATE = "addContainerGate";
+
+    @Override
+    public boolean addContainerGate(Session session, Gate service) throws MappingDSException {
+        boolean ret = false;
+        if (session!=null && session.isRunning())
+            ret = (boolean) session.execute(this, ADD_CONTAINER_GATE, new Object[]{service});
+        return ret;
+    }
+
+    @Override
 	public boolean addContainerGate(Gate gate) {
 		// a gate is also a node
 		if (gate instanceof GateImpl) {
@@ -325,6 +448,16 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
 			return false;
 		}			
 	}
+
+    static final String REMOVE_CONTAINER_GATE = "removeContainerGate";
+
+    @Override
+    public boolean removeContainerGate(Session session, Gate service) throws MappingDSException {
+        boolean ret = false;
+        if (session!=null && session.isRunning())
+            ret = (boolean) session.execute(this, REMOVE_CONTAINER_GATE, new Object[]{service});
+        return false;
+    }
 
     @Override
     public boolean removeContainerGate(Gate gate) {

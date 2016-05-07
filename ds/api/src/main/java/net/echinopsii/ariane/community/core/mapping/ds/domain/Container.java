@@ -19,6 +19,9 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.domain;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
+
 import java.util.HashMap;
 import java.util.Set;
 
@@ -36,15 +39,19 @@ public interface Container {
 	public long getContainerID();
 
     public String getContainerName();
+	public void setContainerName(Session session, String name) throws MappingDSException;
     public void setContainerName(String name);
 	
 	public String getContainerCompany();
+	public void   setContainerCompany(Session session, String company) throws MappingDSException;
     public void   setContainerCompany(String company);
 
     public String getContainerProduct();
+	public void   setContainerProduct(Session session, String product) throws MappingDSException;
     public void   setContainerProduct(String product);
 
     public String getContainerType();
+	public void   setContainerType(Session session, String type) throws MappingDSException;
 	public void   setContainerType(String type);
 	
 	/*
@@ -53,20 +60,27 @@ public interface Container {
 	 */
 	public String getContainerPrimaryAdminGateURL();	
 	public Gate   getContainerPrimaryAdminGate();
+	public void   setContainerPrimaryAdminGate(Session session, Gate gate) throws MappingDSException;
 	public void   setContainerPrimaryAdminGate(Gate gate);
 	
 	public Cluster getContainerCluster();
+	public void    setContainerCluster(Session session, Cluster cluster) throws MappingDSException;
 	public void    setContainerCluster(Cluster cluster);
 	
 	public HashMap<String, Object> getContainerProperties();
+	public void addContainerProperty(Session session, String propertyKey, Object value) throws MappingDSException;
 	public void addContainerProperty(String propertyKey, Object value);
+	public void removeContainerProperty(Session session, String propertyKey) throws MappingDSException;
     public void removeContainerProperty(String propertyKey);
 
     public Container getContainerParentContainer();
+	public void      setContainerParentContainer(Session session, Container container) throws MappingDSException;
     public void      setContainerParentContainer(Container container);
 
     public Set<? extends Container> getContainerChildContainers();
+	public boolean                  addContainerChildContainer(Session session, Container container) throws MappingDSException;
     public boolean                  addContainerChildContainer(Container container);
+	public boolean                  removeContainerChildContainer(Session session, Container container) throws MappingDSException;
     public boolean                  removeContainerChildContainer(Container container);
 	
 	/**
@@ -81,10 +95,14 @@ public interface Container {
 	 * @return
 	 */
 	public Set<? extends Node>  getContainerNodes(long depth);
+	public boolean              addContainerNode(Session session, Node node) throws MappingDSException;
 	public boolean              addContainerNode(Node node);
+	public boolean              removeContainerNode(Session session, Node node) throws MappingDSException;
 	public boolean              removeContainerNode(Node node);
 	
 	public Set<? extends Gate>  getContainerGates();
+	public boolean              addContainerGate(Session session, Gate service) throws MappingDSException;
 	public boolean              addContainerGate(Gate service);
+	public boolean              removeContainerGate(Session session, Gate service) throws MappingDSException;
     public boolean              removeContainerGate(Gate service);
 }

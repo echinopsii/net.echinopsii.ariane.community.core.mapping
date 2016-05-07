@@ -25,6 +25,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.Nod
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository.NodeRepoImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.service.NodeSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,12 +33,25 @@ import java.util.Set;
 
 public class NodeSceImpl implements NodeSce<NodeImpl> {
 
+    final static String CREATE_NODE = "createNode";
+    final static String DELETE_NODE = "deleteNode";
+    final static String GET_NODE = "getNode";
+    final static String GET_NODES = "getNodes";
+
     private static final Logger log = LoggerFactory.getLogger(NodeSceImpl.class);
 
     private MappingSceImpl sce = null;
 
     public NodeSceImpl(MappingSceImpl sce_) {
         sce = sce_;
+    }
+
+    @Override
+    public NodeImpl createNode(Session session, String nodeName, Long containerID, Long parentNodeID) throws MappingDSException {
+        NodeImpl ret = null;
+        if (session != null && session.isRunning())
+            ret = (NodeImpl) session.execute(this, CREATE_NODE, new Object[]{nodeName, containerID, parentNodeID});
+        return ret;
     }
 
     @Override
@@ -72,6 +86,12 @@ public class NodeSceImpl implements NodeSce<NodeImpl> {
     }
 
     @Override
+    public void deleteNode(Session session, Long nodeID) throws MappingDSException {
+        if (session != null && session.isRunning())
+            session.execute(this, DELETE_NODE, new Object[]{nodeID});
+    }
+
+    @Override
     public void deleteNode(Long nodeID) throws MappingDSException {
         NodeImpl remove = sce.getGlobalRepo().getNodeRepo().findNodeByID(nodeID);
         if (remove != null) {
@@ -82,13 +102,37 @@ public class NodeSceImpl implements NodeSce<NodeImpl> {
     }
 
     @Override
+    public NodeImpl getNode(Session session, Long id) throws MappingDSException {
+        NodeImpl ret = null;
+        if (session != null && session.isRunning())
+            ret = (NodeImpl) session.execute(this, GET_NODE, new Object[]{id});
+        return ret;
+    }
+
+    @Override
     public NodeImpl getNode(Long id) {
         return sce.getGlobalRepo().getNodeRepo().findNodeByID(id);
     }
 
     @Override
+    public NodeImpl getNode(Session session, String endpointURL) throws MappingDSException {
+        NodeImpl ret = null;
+        if (session != null && session.isRunning())
+            ret = (NodeImpl) session.execute(this, GET_NODE, new Object[]{endpointURL});
+        return ret;
+    }
+
+    @Override
     public NodeImpl getNode(String endpointURL) {
         return sce.getGlobalRepo().getNodeRepo().findNodeByEndpointURL(endpointURL);
+    }
+
+    @Override
+    public NodeImpl getNode(Session session, Node parentNode, String nodeName) throws MappingDSException {
+        NodeImpl ret = null;
+        if (session != null && session.isRunning())
+            ret = (NodeImpl) session.execute(this, GET_NODE, new Object[]{parentNode, nodeName});
+        return ret;
     }
 
     @Override
@@ -105,8 +149,24 @@ public class NodeSceImpl implements NodeSce<NodeImpl> {
     }
 
     @Override
+    public Set<NodeImpl> getNodes(Session session, String key, Object value) throws MappingDSException {
+        Set<NodeImpl> ret = null;
+        if (session != null && session.isRunning())
+            ret = (Set<NodeImpl>) session.execute(this, GET_NODES, new Object[]{key, value});
+        return ret;
+    }
+
+    @Override
     public Set<NodeImpl> getNodes(String key, Object value) {
         return sce.getGlobalRepo().getNodeRepo().findNodesByProperties(key, value);
+    }
+
+    @Override
+    public Set<NodeImpl> getNodes(Session session, String selector) throws MappingDSException {
+        Set<NodeImpl> ret = null;
+        if (session != null && session.isRunning())
+            ret = (Set<NodeImpl>) session.execute(this, GET_NODES, new Object[]{selector});
+        return ret;
     }
 
     @Override

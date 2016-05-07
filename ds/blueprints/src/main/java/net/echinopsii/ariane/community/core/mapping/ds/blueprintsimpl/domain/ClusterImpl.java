@@ -27,6 +27,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNam
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Cluster;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import com.tinkerpop.blueprints.*;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +55,14 @@ public class ClusterImpl implements Cluster, MappingDSBlueprintsCacheEntity {
         return this.clusterName;
     }
 
+    final static String SET_CLUSTER_NAME = "setClusterName";
+
+    @Override
+    public void setClusterName(Session session, String name) throws MappingDSException {
+        if (session!=null && session.isRunning())
+            session.execute(this, SET_CLUSTER_NAME, new Object[]{name});
+    }
+
     @Override
     public void setClusterName(String name) {
         if (this.clusterName == null || !this.clusterName.equals(name)) {
@@ -65,6 +74,16 @@ public class ClusterImpl implements Cluster, MappingDSBlueprintsCacheEntity {
     @Override
     public Set<ContainerImpl> getClusterContainers() {
         return this.clusterContainers;
+    }
+
+    final static String ADD_CLUSTER_CONTAINER = "ADD_CLUSTER_CONTAINER";
+
+    @Override
+    public boolean addClusterContainer(Session session, Container container) throws MappingDSException {
+        boolean ret = false;
+        if (session!=null && session.isRunning())
+            ret = (boolean)session.execute(this, ADD_CLUSTER_CONTAINER, new Object[]{container});
+        return ret;
     }
 
     @Override
@@ -87,6 +106,16 @@ public class ClusterImpl implements Cluster, MappingDSBlueprintsCacheEntity {
         } else {
             return false;
         }
+    }
+
+    static final String REMOVE_CLUSTER_CONTAINER = "removeClusterContainer";
+
+    @Override
+    public boolean removeClusterContainer(Session session, Container container) throws MappingDSException {
+        boolean ret = false;
+        if (session != null && session.isRunning())
+            ret = (boolean) session.execute(this, REMOVE_CLUSTER_CONTAINER, new Object[]{container});
+        return ret;
     }
 
     @Override

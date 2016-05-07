@@ -29,6 +29,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.Ma
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import com.tinkerpop.blueprints.*;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +61,14 @@ public class EndpointImpl implements Endpoint, MappingDSBlueprintsCacheEntity {
         return this.endpointURL;
     }
 
+    static final String SET_ENDPOINT_URL = "setEndpointURL";
+
+    @Override
+    public void setEndpointURL(Session session, String url) throws MappingDSException {
+        if (session!=null && session.isRunning())
+            session.execute(this, SET_ENDPOINT_URL, new Object[]{url});
+    }
+
     @Override
     public void setEndpointURL(String url) {
         if (this.endpointURL == null || !this.endpointURL.equals(url)) {
@@ -71,6 +80,14 @@ public class EndpointImpl implements Endpoint, MappingDSBlueprintsCacheEntity {
     @Override
     public NodeImpl getEndpointParentNode() {
         return this.endpointParentNode;
+    }
+
+    static final String SET_ENDPOINT_PARENT_NODE = "setEndpointParentNode";
+
+    @Override
+    public void setEndpointParentNode(Session session, Node node) throws MappingDSException {
+        if (session!=null && session.isRunning())
+            session.execute(this, SET_ENDPOINT_PARENT_NODE, new Object[]{node});
     }
 
     @Override
@@ -90,6 +107,14 @@ public class EndpointImpl implements Endpoint, MappingDSBlueprintsCacheEntity {
         return endpointProperties;
     }
 
+    static final String ADD_ENDPOINT_PROPERTY = "addEndpointProperty";
+
+    @Override
+    public void addEndpointProperty(Session session, String propertyKey, Object value) throws MappingDSException {
+        if (session!=null && session.isRunning())
+            session.execute(this, ADD_ENDPOINT_PROPERTY, new Object[]{propertyKey, value});
+    }
+
     @Override
     public void addEndpointProperty(String propertyKey, Object value) {
         if (propertyKey != null && value != null) {
@@ -104,6 +129,14 @@ public class EndpointImpl implements Endpoint, MappingDSBlueprintsCacheEntity {
         }
     }
 
+    static final String REMOVE_ENDPOINT_PROPERTY = "removeEndpointProperty";
+
+    @Override
+    public void removeEndpointProperty(Session session, String propertyKey) throws MappingDSException {
+        if (session!=null && session.isRunning())
+            session.execute(this, REMOVE_ENDPOINT_PROPERTY, new Object[]{propertyKey});
+    }
+
     @Override
     public void removeEndpointProperty(String propertyKey) {
         if (endpointProperties!=null) {
@@ -115,6 +148,16 @@ public class EndpointImpl implements Endpoint, MappingDSBlueprintsCacheEntity {
     @Override
     public Set<? extends Endpoint> getTwinEndpoints() {
         return this.endpointTwinEndpoints;
+    }
+
+    static final String ADD_TWIN_ENDPOINT = "addTwinEndpoint";
+
+    @Override
+    public boolean addTwinEndpoint(Session session, Endpoint endpoint) throws MappingDSException {
+        boolean ret = false;
+        if (session!=null && session.isRunning())
+            ret = (boolean) session.execute(this, ADD_TWIN_ENDPOINT, new Object[]{endpoint});
+        return ret;
     }
 
     @Override
@@ -136,6 +179,16 @@ public class EndpointImpl implements Endpoint, MappingDSBlueprintsCacheEntity {
         } else {
             return false;
         }
+    }
+
+    static final String REMOVE_TWIN_ENDPOINT = "removeTwinEndpoint";
+
+    @Override
+    public boolean removeTwinEndpoint(Session session, Endpoint endpoint) throws MappingDSException {
+        boolean ret = false;
+        if (session!=null && session.isRunning())
+            ret = (boolean) session.execute(this, REMOVE_TWIN_ENDPOINT, new Object[]{endpoint});
+        return ret;
     }
 
     @Override

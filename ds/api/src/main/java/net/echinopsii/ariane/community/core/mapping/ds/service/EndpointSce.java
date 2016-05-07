@@ -21,21 +21,24 @@ package net.echinopsii.ariane.community.core.mapping.ds.service;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
 import java.util.Set;
 
 public interface EndpointSce<E extends Endpoint> {
-    public final static String CREATE_ENDPOINT = "createEndpoint";
+    public E createEndpoint(Session session, String url, Long parentNodeID) throws MappingDSException;
     public E createEndpoint(String url, Long parentNodeID) throws MappingDSException;
 
-    public final static String DELETE_ENDPOINT = "deleteEndpoint";
+    public void deleteEndpoint(Session session, Long endpointID) throws MappingDSException;
     public void deleteEndpoint(Long endpointID) throws MappingDSException;
 
-    public final static String GET_ENDPOINT = "getEndpoint";
+    public E getEndpoint(Session session, Long id) throws MappingDSException;
     public E getEndpoint(Long id);
+    public E getEndpoint(Session session, String URL) throws MappingDSException;
     public E getEndpoint(String URL);
 
-    public final static String GET_ENDPOINTS = "getEndpoints";
+    public Set<E> getEndpoints(Session session, String selector) throws MappingDSException;
     public Set<E> getEndpoints(String selector);
+    public Set<E> getEndpoints(Session session, String key, Object value) throws MappingDSException;
     public Set<E> getEndpoints(String key, Object value);
 }

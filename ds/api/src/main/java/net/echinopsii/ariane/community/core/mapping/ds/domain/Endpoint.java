@@ -18,6 +18,9 @@
  */ 
 package net.echinopsii.ariane.community.core.mapping.ds.domain;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
+
 import java.util.HashMap;
 import java.util.Set;
 
@@ -28,16 +31,22 @@ public interface Endpoint {
 	 * MUST be unique
 	 */
 	public String getEndpointURL();
+	public void   setEndpointURL(Session session, String url) throws MappingDSException;
 	public void   setEndpointURL(String url);
 	
 	public Node getEndpointParentNode();
+	public void setEndpointParentNode(Session session, Node node) throws MappingDSException;
 	public void setEndpointParentNode(Node node);
 
 	public Set<? extends Endpoint> getTwinEndpoints();
+	public boolean                 addTwinEndpoint(Session session, Endpoint endpoint) throws MappingDSException;
 	public boolean                 addTwinEndpoint(Endpoint endpoint);
+	public boolean                 removeTwinEndpoint(Session session, Endpoint endpoint) throws MappingDSException;
 	public boolean                 removeTwinEndpoint(Endpoint endpoint);
 	
 	public HashMap<String, Object> getEndpointProperties();
+	public void addEndpointProperty(Session session, String propertyKey, Object value) throws MappingDSException;
 	public void addEndpointProperty(String propertyKey, Object value);
+	public void removeEndpointProperty(Session session, String propertyKey) throws MappingDSException;
     public void removeEndpointProperty(String propertyKey);
 }

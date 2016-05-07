@@ -20,19 +20,20 @@
 package net.echinopsii.ariane.community.core.mapping.ds.service;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
 import java.util.Set;
 
 public interface TransportSce<T> {
-    public final static String CREATE_TRANSPORT = "createTransport";
+    public T    createTransport(Session session, String transportName) throws MappingDSException;
 	public T    createTransport(String transportName);
 
-    public final static String DELETE_TRANSPORT = "deleteTransport";
+    public void deleteTransport(Session session, Long transportID) throws MappingDSException;
 	public void deleteTransport(Long transportID) throws MappingDSException;
 
-    public final static String GET_TRANSPORT = "getTransport";
+    public T    getTransport(Session session, Long transportID) throws MappingDSException;
     public T    getTransport(Long transportID);
 
-    public final static String GET_TRANSPORTS = "getTransports";
+    public Set<T> getTransports(Session session, String selector) throws MappingDSException;
     public Set<T> getTransports(String selector);
 }

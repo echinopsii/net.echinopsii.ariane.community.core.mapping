@@ -21,20 +21,22 @@ package net.echinopsii.ariane.community.core.mapping.ds.service;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Cluster;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
 import java.util.Set;
 
 public interface ClusterSce<CL extends Cluster> {
-    public final static String CREATE_CLUSTER = "createCluster";
+    public CL   createCluster(Session session, String clusterName) throws MappingDSException;
 	public CL   createCluster(String clusterName);
 
-    public final static String DELETE_CLUSTER = "deleteCluster";
+    public void deleteCluster(Session session, String clusterName) throws MappingDSException;
 	public void deleteCluster(String clusterName) throws MappingDSException;
 
-    public final static String GET_CLUSTER = "getCluster";
+    public CL getCluster(Session session, Long clusterID) throws MappingDSException;
     public CL getCluster(Long clusterID);
+    public CL getCluster(Session session, String clusterName) throws MappingDSException;
     public CL getCluster(String clusterName);
 
-    public final static String GET_CLUSTERS = "getClusters";
+    public Set<CL> getClusters(Session session, String selector) throws MappingDSException;
     public Set<CL> getClusters(String selector);
 }

@@ -21,25 +21,26 @@ package net.echinopsii.ariane.community.core.mapping.ds.service;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
 import java.util.Set;
 
 public interface NodeSce<N extends Node> {
-    public final static String CREATE_NODE = "createNode";
+    public N createNode(Session session, String nodeName, Long containerID, Long parentNodeID) throws MappingDSException;
     public N createNode(String nodeName, Long containerID, Long parentNodeID) throws MappingDSException;
 
-    public final static String DELETE_NODE = "deleteNode";
+    public void deleteNode(Session session, Long nodeID) throws MappingDSException;
     public void deleteNode(Long nodeID) throws MappingDSException;
 
-    public final static String GET_NODE = "getNode";
+    public N getNode(Session session, Long id) throws MappingDSException;
     public N getNode(Long id);
-
+    public N getNode(Session session, String endpointURL) throws MappingDSException;
     public N getNode(String endpointURL);
-
+    public N getNode(Session session, Node parentNode, String nodeName) throws MappingDSException;
     public N getNode(Node parentNode, String nodeName);
 
-    public final static String GET_NODES = "getNodes";
+    public Set<N> getNodes(Session session, String selector) throws MappingDSException;
     public Set<N> getNodes(String selector);
-
+    public Set<N> getNodes(Session session, String key, Object value) throws MappingDSException;
     public Set<N> getNodes(String key, Object value);
 }

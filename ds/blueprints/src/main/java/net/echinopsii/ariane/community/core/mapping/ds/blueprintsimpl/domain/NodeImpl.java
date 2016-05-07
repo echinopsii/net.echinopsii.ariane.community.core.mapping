@@ -30,6 +30,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import com.tinkerpop.blueprints.*;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,6 +66,14 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
         return this.nodeName;
     }
 
+    static final String SET_NODE_NAME = "setNodeName";
+
+    @Override
+    public void setNodeName(Session session, String name) throws MappingDSException {
+        if (session!=null && session.isRunning())
+            session.execute(this, SET_NODE_NAME, new Object[]{name});
+    }
+
     @Override
     public void setNodeName(String name) {
         if (this.nodeName == null || !this.nodeName.equals(name)) {
@@ -83,6 +92,14 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
         return this.nodeContainer;
     }
 
+    static final String SET_NODE_CONTAINER = "setNodeContainer";
+
+    @Override
+    public void setNodeContainer(Session session, Container container) throws MappingDSException {
+        if (session!=null && session.isRunning())
+            session.execute(this, SET_NODE_CONTAINER, new Object[]{container});
+    }
+
     @Override
     public void setNodeContainer(Container container) {
         if (this.nodeContainer == null || !this.nodeContainer.equals(container)) {
@@ -96,6 +113,14 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
     @Override
     public HashMap<String, Object> getNodeProperties() {
         return this.nodeProperties;
+    }
+
+    static final String ADD_NODE_PROPERTY = "addNodeProperty";
+
+    @Override
+    public void addNodeProperty(Session session, String propertyKey, Object value) throws MappingDSException {
+        if (session!=null && session.isRunning())
+            session.execute(this, ADD_NODE_PROPERTY, new Object[]{propertyKey, value});
     }
 
     @Override
@@ -112,6 +137,14 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
         }
     }
 
+    static final String REMOVE_NODE_PROPERTY = "removeNodeProperty";
+
+    @Override
+    public void removeNodeProperty(Session session, String propertyKey) throws MappingDSException {
+        if (session!=null && session.isRunning())
+            session.execute(this, REMOVE_NODE_PROPERTY, new Object[]{propertyKey});
+    }
+
     @Override
     public void removeNodeProperty(String propertyKey) {
         if (this.nodeProperties!=null) {
@@ -123,6 +156,14 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
     @Override
     public NodeImpl getNodeParentNode() {
         return this.nodeParentNode;
+    }
+
+    static final String SET_NODE_PARENT_NODE = "setNodeParentNode";
+
+    @Override
+    public void setNodeParentNode(Session session, Node node) throws MappingDSException {
+        if (session!=null && session.isRunning())
+            session.execute(this, SET_NODE_PARENT_NODE, new Object[]{node});
     }
 
     @Override
@@ -138,6 +179,16 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
     @Override
     public Set<NodeImpl> getNodeChildNodes() {
         return this.nodeChildNodes;
+    }
+
+    static final String ADD_NODE_CHILD_NODE = "addNodeChildNode";
+
+    @Override
+    public boolean addNodeChildNode(Session session, Node node) throws MappingDSException {
+        boolean ret = false;
+        if (session!=null && session.isRunning())
+            ret = (boolean) session.execute(this, ADD_NODE_CHILD_NODE, new Object[]{node});
+        return ret;
     }
 
     @Override
@@ -161,6 +212,16 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
         }
     }
 
+    static final String REMOVE_NODE_CHILD_NODE = "removeNodeChildNode";
+
+    @Override
+    public boolean removeNodeChildNode(Session session, Node node) throws MappingDSException {
+        boolean ret = false;
+        if (session!=null && session.isRunning())
+            ret = (boolean) session.execute(this, REMOVE_NODE_CHILD_NODE, new Object[]{node});
+        return ret;
+    }
+
     @Override
     public boolean removeNodeChildNode(Node node) {
         if (node instanceof NodeImpl) {
@@ -177,6 +238,16 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
     @Override
     public Set<NodeImpl> getTwinNodes() {
         return this.nodeTwinNodes;
+    }
+
+    static final String ADD_TWIN_NODE = "addTwinNode";
+
+    @Override
+    public boolean addTwinNode(Session session, Node node) throws MappingDSException {
+        boolean ret = false;
+        if (session!=null && session.isRunning())
+            ret = (boolean) session.execute(this, ADD_TWIN_NODE, new Object[]{node});
+        return ret;
     }
 
     @Override
@@ -200,6 +271,16 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
         }
     }
 
+    static final String REMOVE_TWIN_NODE = "removeTwinNode";
+
+    @Override
+    public boolean removeTwinNode(Session session, Node node) throws MappingDSException {
+        boolean ret = false;
+        if (session!=null && session.isRunning())
+            ret = (boolean) session.execute(this, REMOVE_TWIN_NODE, new Object[]{node});
+        return ret;
+    }
+
     @Override
     public boolean removeTwinNode(Node node) {
         if (node instanceof NodeImpl) {
@@ -216,6 +297,16 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
     @Override
     public Set<EndpointImpl> getNodeEndpoints() {
         return this.nodeEndpoints;
+    }
+
+    static final String ADD_ENDPOINT = "addEndpoint";
+
+    @Override
+    public boolean addEnpoint(Session session, Endpoint endpoint) throws MappingDSException {
+        boolean ret = false;
+        if (session!=null && session.isRunning())
+            ret = (boolean) session.execute(this, ADD_ENDPOINT, new Object[]{endpoint});
+        return ret;
     }
 
     @Override
@@ -237,6 +328,16 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
         } else {
             return false;
         }
+    }
+
+    static final String REMOVE_ENDPOINT = "removeEndpoint";
+
+    @Override
+    public boolean removeEndpoint(Session session, Endpoint endpoint) throws MappingDSException {
+        boolean ret = false;
+        if (session!=null && session.isRunning())
+            ret = (boolean) session.execute(this, REMOVE_ENDPOINT, new Object[]{endpoint});
+        return ret;
     }
 
     @Override

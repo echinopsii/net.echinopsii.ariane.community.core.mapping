@@ -25,6 +25,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.End
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.LinkImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.TransportImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.service.LinkSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,12 +33,25 @@ import java.util.Set;
 
 public class LinkSceImpl implements LinkSce<LinkImpl> {
 
+    final static String CREATE_LINK = "createLink";
+    final static String DELETE_LINK = "deleteLink";
+    final static String GET_LINK = "getLink";
+    final static String GET_LINKS = "getLinks";
+
     private static final Logger log = LoggerFactory.getLogger(LinkSceImpl.class);
 
     private MappingSceImpl sce = null;
 
     public LinkSceImpl(MappingSceImpl sce_) {
         sce = sce_;
+    }
+
+    @Override
+    public LinkImpl createLink(Session session, Long sourceEndpointID, Long targetEndpointID, Long transportID) throws MappingDSException {
+        LinkImpl ret = null;
+        if (session!=null && session.isRunning())
+            ret = (LinkImpl) session.execute(this, CREATE_LINK, new Object[]{sourceEndpointID, targetEndpointID, transportID});
+        return ret;
     }
 
     @Override
@@ -95,6 +109,12 @@ public class LinkSceImpl implements LinkSce<LinkImpl> {
     }
 
     @Override
+    public void deleteLink(Session session, Long linkID) throws MappingDSException {
+        if (session!=null && session.isRunning())
+            session.execute(this, DELETE_LINK, new Object[]{linkID});
+    }
+
+    @Override
     public void deleteLink(Long linkID) throws MappingDSException {
         LinkImpl remove = sce.getGlobalRepo().getLinkRepo().findLinkByID(linkID);
         if (remove != null) {
@@ -105,8 +125,24 @@ public class LinkSceImpl implements LinkSce<LinkImpl> {
     }
 
     @Override
+    public LinkImpl getLink(Session session, Long id) throws MappingDSException {
+        LinkImpl ret = null;
+        if (session!=null && session.isRunning())
+            ret = (LinkImpl) session.execute(this, GET_LINK, new Object[]{id});
+        return ret;
+    }
+
+    @Override
     public LinkImpl getLink(Long id) {
         return sce.getGlobalRepo().getLinkRepo().findLinkByID(id);
+    }
+
+    @Override
+    public Set<LinkImpl> getLinks(Session session, String selector) throws MappingDSException {
+        Set<LinkImpl> ret = null;
+        if (session!=null && session.isRunning())
+            ret = (Set<LinkImpl>) session.execute(this, GET_LINKS, new Object[]{selector});
+        return ret;
     }
 
     @Override

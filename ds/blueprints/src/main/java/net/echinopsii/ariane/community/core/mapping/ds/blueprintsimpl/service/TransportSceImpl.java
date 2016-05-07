@@ -23,6 +23,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.TransportImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository.TransportRepoImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.service.TransportSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,14 +31,27 @@ import java.util.Set;
 
 public class TransportSceImpl implements TransportSce<TransportImpl> {
 
-    private static final Logger log = LoggerFactory.getLogger(LinkSceImpl.class);
+	final static String CREATE_TRANSPORT = "createTransport";
+	final static String DELETE_TRANSPORT = "deleteTransport";
+	final static String GET_TRANSPORT = "getTransport";
+	final static String GET_TRANSPORTS = "getTransports";
+
+	private static final Logger log = LoggerFactory.getLogger(LinkSceImpl.class);
 
 	private MappingSceImpl sce = null;
 	
 	public TransportSceImpl(MappingSceImpl sce_) {
 		sce = sce_;
 	}
-	
+
+	@Override
+	public TransportImpl createTransport(Session session, String transportName) throws MappingDSException {
+		TransportImpl ret = null;
+		if (session!=null && session.isRunning())
+			ret = (TransportImpl)session.execute(this, CREATE_TRANSPORT, new Object[]{transportName});
+		return ret;
+	}
+
 	@Override
 	public TransportImpl createTransport(String transportName) {
 		TransportImpl ret = sce.getGlobalRepo().getTransportRepo().findTransportByName(transportName);
@@ -52,6 +66,12 @@ public class TransportSceImpl implements TransportSce<TransportImpl> {
 	}
 
 	@Override
+	public void deleteTransport(Session session, Long transportID) throws MappingDSException {
+		if (session!=null && session.isRunning())
+			session.execute(this, DELETE_TRANSPORT, new Object[]{transportID});
+	}
+
+	@Override
 	public void deleteTransport(Long transportID) throws MappingDSException {
 		TransportImpl remove = sce.getGlobalRepo().getTransportRepo().findTransportByID(transportID);
 		if (remove != null) {
@@ -61,12 +81,28 @@ public class TransportSceImpl implements TransportSce<TransportImpl> {
 		}
 	}
 
-    @Override
+	@Override
+	public TransportImpl getTransport(Session session, Long transportID) throws MappingDSException {
+		TransportImpl ret = null;
+		if (session!=null && session.isRunning())
+			ret = (TransportImpl) session.execute(this, GET_TRANSPORT, new Object[]{transportID});
+		return ret;
+	}
+
+	@Override
     public TransportImpl getTransport(Long transportID) {
         return sce.getGlobalRepo().getTransportRepo().findTransportByID(transportID);
     }
 
-    @Override
+	@Override
+	public Set<TransportImpl> getTransports(Session session, String selector) throws MappingDSException {
+		Set<TransportImpl> ret = null;
+		if (session!=null && session.isRunning())
+			ret = (Set<TransportImpl>) session.execute(this, GET_TRANSPORTS, new Object[]{selector});
+		return ret;
+	}
+
+	@Override
     public Set<TransportImpl> getTransports(String selector) {
         // TODO : manage selector - check graphdb query
         return TransportRepoImpl.getTransportRepository();

@@ -26,6 +26,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.Gat
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.NodeImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository.GateRepoImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.service.GateSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,14 +34,27 @@ import java.util.Set;
 
 public class GateSceImpl implements GateSce<GateImpl> {
 
-    private static final Logger log = LoggerFactory.getLogger(GateSceImpl.class);
+	final static String CREATE_GATE = "createGate";
+	final static String DELETE_GATE = "deleteGate";
+	final static String GET_GATE = "getGate";
+	final static String GET_GATES = "getGates";
+
+	private static final Logger log = LoggerFactory.getLogger(GateSceImpl.class);
 
 	private MappingSceImpl sce = null;
 	
 	public GateSceImpl(MappingSceImpl sce_) {
 		sce = sce_;
 	}
-	
+
+	@Override
+	public GateImpl createGate(Session session, String url, String name, Long containerid, Boolean isPrimaryAdmin) throws MappingDSException {
+		GateImpl ret = null;
+		if (session!=null && session.isRunning())
+			ret= (GateImpl) session.execute(this, CREATE_GATE, new Object[]{url, name, containerid, isPrimaryAdmin});
+		return ret;
+	}
+
 	@Override
 	public GateImpl createGate(String url, String name, Long containerid, Boolean isPrimaryAdmin) throws MappingDSException {
 		GateImpl ret = null;
@@ -77,6 +91,12 @@ public class GateSceImpl implements GateSce<GateImpl> {
 	}
 
 	@Override
+	public void deleteGate(Session session, Long nodeID) throws MappingDSException {
+		if (session!=null && session.isRunning())
+			session.execute(this, DELETE_GATE, new Object[]{nodeID});
+	}
+
+	@Override
 	public void deleteGate(Long nodeID) throws MappingDSException {
 		GateImpl remove = sce.getGlobalRepo().getGateRepo().findGateByID(nodeID);
 		if ( remove != null ) {			
@@ -87,11 +107,27 @@ public class GateSceImpl implements GateSce<GateImpl> {
 	}
 
 	@Override
+	public GateImpl getGate(Session session, Long id) throws MappingDSException {
+		GateImpl ret = null;
+		if (session!=null && session.isRunning())
+			ret = (GateImpl)session.execute(this, GET_GATE, new Object[]{id});
+		return ret;
+	}
+
+	@Override
 	public GateImpl getGate(Long id) {
 		return sce.getGlobalRepo().getGateRepo().findGateByID(id);
 	}
 
-    @Override
+	@Override
+	public Set<GateImpl> getGates(Session session, String selector) throws MappingDSException {
+		Set<GateImpl> ret = null;
+		if (session!=null && session.isRunning())
+			ret = (Set<GateImpl>) session.execute(this, GET_GATES, new Object[]{selector});
+		return ret;
+	}
+
+	@Override
     public Set<GateImpl> getGates(String selector) {
         // TODO : manage selector - check graphdb query
         return GateRepoImpl.getGateRepository();

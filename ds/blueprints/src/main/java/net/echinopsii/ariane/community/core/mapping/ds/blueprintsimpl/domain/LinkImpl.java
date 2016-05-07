@@ -19,6 +19,7 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSBlueprintsCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
@@ -27,6 +28,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Link;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +58,14 @@ public class LinkImpl implements Link, MappingDSBlueprintsCacheEntity {
         return this.linkTransport;
     }
 
+    static final String SET_LINK_TRANSPORT = "setLinkTransport";
+
+    @Override
+    public void setLinkTransport(Session session, Transport transport) throws MappingDSException {
+        if (session!=null && session.isRunning())
+            session.execute(this, SET_LINK_TRANSPORT, new Object[]{transport});
+    }
+
     @Override
     public void setLinkTransport(Transport transport) {
         if (this.linkTransport == null || !this.linkTransport.equals(transport)) {
@@ -71,6 +81,14 @@ public class LinkImpl implements Link, MappingDSBlueprintsCacheEntity {
         return this.linkEndpointSource;
     }
 
+    static final String SET_LINK_ENDPOINT_SOURCE = "setLinkEndpointSource";
+
+    @Override
+    public void setLinkEndpointSource(Session session, Endpoint source) throws MappingDSException {
+        if (session!=null && session.isRunning())
+            session.execute(this, SET_LINK_ENDPOINT_SOURCE, new Object[]{source});
+    }
+
     @Override
     public void setLinkEndpointSource(Endpoint source) {
         if (this.linkEndpointSource == null || !this.linkEndpointSource.equals(source)) {
@@ -84,6 +102,14 @@ public class LinkImpl implements Link, MappingDSBlueprintsCacheEntity {
     @Override
     public EndpointImpl getLinkEndpointTarget() {
         return this.linkEndpointTarget;
+    }
+
+    static final String SET_LINK_ENDPOINT_TARGET = "setLinkEndpointTarget";
+
+    @Override
+    public void setLinkEndpointTarget(Session session, Endpoint target) throws MappingDSException {
+        if (session!=null && session.isRunning())
+            session.execute(this, SET_LINK_ENDPOINT_TARGET, new Object[]{target});
     }
 
     @Override
