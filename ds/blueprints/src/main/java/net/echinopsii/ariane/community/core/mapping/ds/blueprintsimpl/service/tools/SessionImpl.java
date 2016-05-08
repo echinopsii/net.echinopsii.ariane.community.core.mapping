@@ -21,6 +21,8 @@ package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.t
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.UUID;
@@ -31,17 +33,22 @@ import static net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.ser
 
 public class SessionImpl implements Session {
 
+    private final static Logger log = LoggerFactory.getLogger(SessionImpl.class);
+
     class SessionWorkerRequest {
         String action;
         Object instance;
         Method method;
         Object[] args;
+        LinkedBlockingQueue<SessionWorkerReply> replyQ;
 
-        public SessionWorkerRequest(String action, Object instance, Method method, Object[] args) {
+        public SessionWorkerRequest(String action, Object instance, Method method,
+                                    Object[] args, LinkedBlockingQueue<SessionWorkerReply> repQ) {
             this.action = action;
             this.instance = instance;
             this.method = method;
             this.args = args;
+            this.replyQ = repQ;
         }
 
         public String getAction() {
@@ -58,6 +65,10 @@ public class SessionImpl implements Session {
 
         public Object[] getArgs() {
             return args;
+        }
+
+        public LinkedBlockingQueue<SessionWorkerReply> getReplyQ() {
+            return replyQ;
         }
     }
 
@@ -93,8 +104,17 @@ public class SessionImpl implements Session {
         public final static String ROLLBACK = "ROLLBACK";
 
         private LinkedBlockingQueue<SessionWorkerRequest> fifoInputQ = new LinkedBlockingQueue<>();
-        private LinkedBlockingQueue<SessionWorkerReply> fifoOutputQ = new LinkedBlockingQueue<>();
         private boolean running = true;
+
+        private void returnToQueue(SessionWorkerRequest req, Object ret) {
+            if (req.getReplyQ() != null) {
+                try {
+                    req.getReplyQ().put(new SessionWorkerReply(false, ret, null));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
         @Override
         public void run() {
@@ -108,18 +128,20 @@ public class SessionImpl implements Session {
                 }
                 if (msg != null) {
                     if (msg.getAction().equals(STOP)) running = false;
-                    else if (msg.getAction().equals(COMMIT)) MappingDSGraphDB.commit();
-                    else if (msg.getAction().equals(ROLLBACK)) MappingDSGraphDB.rollback();
-                    else if (msg.getAction().equals(EXECUTE)) {
+                    else if (msg.getAction().equals(COMMIT)) {
+                        MappingDSGraphDB.commit();
+                        this.returnToQueue(msg, Void.TYPE);
+                    } else if (msg.getAction().equals(ROLLBACK)) {
+                        MappingDSGraphDB.rollback();
+                        this.returnToQueue(msg, Void.TYPE);
+                    } else if (msg.getAction().equals(EXECUTE)) {
                         try {
                             Object ret = msg.getMethod().invoke(msg.getInstance(), msg.getArgs());
-                            fifoOutputQ.put(new SessionWorkerReply(false, ret, null));
+                            if (msg.getMethod().getReturnType().equals(Void.TYPE))
+                                ret = Void.TYPE;
+                            this.returnToQueue(msg, ret);
                         } catch (Exception e) {
-                            try {
-                                fifoOutputQ.put(new SessionWorkerReply(true, null, e.getMessage()));
-                            } catch (InterruptedException e1) {
-                                e1.printStackTrace();
-                            }
+                            this.returnToQueue(msg, new SessionWorkerReply(true, null, e.getMessage()));
                         }
                     }
                 }
@@ -128,10 +150,6 @@ public class SessionImpl implements Session {
 
         public LinkedBlockingQueue<SessionWorkerRequest> getFifoInputQ() {
             return fifoInputQ;
-        }
-
-        public LinkedBlockingQueue<SessionWorkerReply> getFifoOutputQ() {
-            return fifoOutputQ;
         }
 
         public boolean isRunning() {
@@ -157,7 +175,7 @@ public class SessionImpl implements Session {
     @Override
     public Session stop() {
         try {
-            this.sessionWorker.getFifoInputQ().put(new SessionWorkerRequest(STOP, null, null, null));
+            this.sessionWorker.getFifoInputQ().put(new SessionWorkerRequest(STOP, null, null, null, null));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -181,8 +199,21 @@ public class SessionImpl implements Session {
         return sessionWorker.isRunning();
     }
 
+    private SessionWorkerReply getReply(LinkedBlockingQueue<SessionWorkerReply> repQ) throws MappingDSException {
+        SessionWorkerReply reply = null;
+        while (reply==null)
+            try {
+                reply = repQ.poll(2, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                throw new MappingDSException(e.getMessage());
+            }
+        return reply;
+    }
+
     @Override
     public Object execute(Object o, String methodName, Object[] args) throws MappingDSException {
+        log.debug("["+ sessionId +".execute] {"+o.getClass().getName()+","+methodName+"}");
+        LinkedBlockingQueue<SessionWorkerReply> repQ = new LinkedBlockingQueue<>();
         try {
             Class[] parametersType = null;
             String parameters = "";
@@ -198,42 +229,63 @@ public class SessionImpl implements Session {
             try {
                 m = o.getClass().getMethod(methodName, parametersType);
             } catch (NoSuchMethodException e) {
-                throw new MappingDSException("Method " + methodName + "(" + parameters + ")" +
+                Method[] methods = o.getClass().getMethods();
+                methodLoop: for (Method method : methods) {
+                    if (!methodName.equals(method.getName())) {
+                        continue;
+                    }
+                    Class<?>[] paramTypes = method.getParameterTypes();
+                    if (args == null && paramTypes == null) {
+                        m = method;
+                        break;
+                    } else if (args == null || paramTypes == null
+                            || paramTypes.length != args.length) {
+                        continue;
+                    }
+
+                    for (int i = 0; i < args.length; ++i) {
+                        if (!paramTypes[i].isAssignableFrom(args[i].getClass())) {
+                            continue methodLoop;
+                        }
+                    }
+                    m = method;
+                }
+                if (m == null) throw new MappingDSException("Method " + methodName + "(" + parameters + ")" +
                         "@" + o.getClass().getName() + " does not exists !");
             }
-            this.sessionWorker.getFifoInputQ().put(new SessionWorkerRequest(EXECUTE, o, m, args));
+            this.sessionWorker.getFifoInputQ().put(new SessionWorkerRequest(EXECUTE, o, m, args, repQ));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        log.debug("["+ sessionId +".execute] wait reply ...");
 
-        SessionWorkerReply reply = null;
-        while (reply==null)
-            try {
-                reply = this.sessionWorker.getFifoOutputQ().poll(2, TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
-                throw new MappingDSException(e.getMessage());
-            }
+        SessionWorkerReply reply = getReply(repQ);
+        log.debug("["+ sessionId +".execute] reply error : " + reply.isError());
         if (! reply.isError()) return reply.getRet();
         else throw new MappingDSException(reply.getError_msg());
     }
 
     @Override
-    public Session commit() {
+    public Session commit() throws MappingDSException {
+        LinkedBlockingQueue<SessionWorkerReply> repQ = new LinkedBlockingQueue<>();
         try {
-            this.sessionWorker.getFifoInputQ().put(new SessionWorkerRequest(COMMIT, null, null, null));
+            this.sessionWorker.getFifoInputQ().put(new SessionWorkerRequest(COMMIT, null, null, null, repQ));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        getReply(repQ);
         return this;
     }
 
     @Override
-    public Session rollback() {
+    public Session rollback() throws MappingDSException {
+        LinkedBlockingQueue<SessionWorkerReply> repQ = new LinkedBlockingQueue<>();
         try {
-            this.sessionWorker.getFifoInputQ().put(new SessionWorkerRequest(ROLLBACK, null, null, null));
+            this.sessionWorker.getFifoInputQ().put(new SessionWorkerRequest(ROLLBACK, null, null, null, repQ));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        getReply(repQ);
         return this;
     }
 }

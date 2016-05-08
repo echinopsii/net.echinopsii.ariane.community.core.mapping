@@ -33,7 +33,7 @@ public interface Session {
 
     public Object execute(Object o, String methodName, Object[] args) throws MappingDSException;
 
-    public Session commit();
+    public Session commit() throws MappingDSException;
 
-    public Session rollback();
+    public Session rollback() throws MappingDSException;
 }

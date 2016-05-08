@@ -76,7 +76,7 @@ public class ClusterImpl implements Cluster, MappingDSBlueprintsCacheEntity {
         return this.clusterContainers;
     }
 
-    final static String ADD_CLUSTER_CONTAINER = "ADD_CLUSTER_CONTAINER";
+    final static String ADD_CLUSTER_CONTAINER = "addClusterContainer";
 
     @Override
     public boolean addClusterContainer(Session session, Container container) throws MappingDSException {

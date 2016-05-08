@@ -19,6 +19,7 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.tools.SessionImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.tools.SessionRegistryImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCache;
@@ -105,23 +106,37 @@ public class MappingSceImpl implements MappingSce {
     }
 
     @Override
+    public SessionRegistry getSessionRegistry() {
+        return sessionRegistry;
+    }
+
+    @Deprecated
+    @Override
     public void unsetAutoCommit() {
         MappingDSGraphDB.unsetAutocommit();
     }
 
+    @Deprecated
     @Override
     public void setAutoCommit(boolean autoCommit) {
         MappingDSGraphDB.setAutocommit(autoCommit);
     }
 
+    @Deprecated
     @Override
     public void commit() {
         MappingDSGraphDB.commit();
     }
 
+    @Deprecated
     @Override
     public void rollback() {
         MappingDSGraphDB.rollback();
+    }
+
+    @Override
+    public MapSce getMapSce() {
+        return mapSce;
     }
 
     @Override
@@ -159,14 +174,14 @@ public class MappingSceImpl implements MappingSce {
         return transportSce;
     }
 
-    @Override
-    public SessionRegistry getSessionRegistry() {
-        return sessionRegistry;
-    }
+    static final String GET_NODE_BY_NAME = "getNodeByName";
 
     @Override
-    public MapSce getMapSce() {
-        return mapSce;
+    public Node getNodeByName(Session session, Container container, String nodeName) throws MappingDSException {
+        Node ret = null;
+        if (session!=null && session.isRunning())
+            ret = (Node)session.execute(this, GET_NODE_BY_NAME, new Object[]{nodeName});
+        return ret;
     }
 
     @Override
@@ -178,12 +193,32 @@ public class MappingSceImpl implements MappingSce {
         return ret;
     }
 
+    static final String GET_NODE_CONTAINING_SUB_NODE = "getNodeContainingSubnode";
+
+    @Override
+    public Node getNodeContainingSubnode(Session session, Container container, Node node) throws MappingDSException {
+        Node ret = null;
+        if (session!=null && session.isRunning())
+            ret = (Node)session.execute(this, GET_NODE_CONTAINING_SUB_NODE, new Object[]{container, node});
+        return ret;
+    }
+
     @Override
     public Node getNodeContainingSubnode(Container container, Node node) {
         Node ret = null;
         if (container instanceof ContainerImpl && node instanceof NodeImpl) {
             ret = globalRepo.findNodeContainingSubnode((ContainerImpl) container, (NodeImpl) node);
         }
+        return ret;
+    }
+
+    static final String GET_NODES_IN_PARENT_NODE = "getNodesInParentNode";
+
+    @Override
+    public Set<Node> getNodesInParentNode(Session session, Container container, Node node) throws MappingDSException {
+        Set<Node> ret = null;
+        if (session!=null && session.isRunning())
+            ret = (Set<Node>)session.execute(this, GET_NODES_IN_PARENT_NODE, new Object[]{container, node});
         return ret;
     }
 
@@ -198,12 +233,32 @@ public class MappingSceImpl implements MappingSce {
         return ret;
     }
 
+    static final String GET_GATE_BY_NAME = "getGateByName";
+
+    @Override
+    public Gate getGateByName(Session session, Container container, String nodeName) throws MappingDSException {
+        Gate ret = null;
+        if (session!=null && session.isRunning())
+            ret = (Gate)session.execute(this, GET_GATE_BY_NAME, new Object[]{container, nodeName});
+        return ret;
+    }
+
     @Override
     public Gate getGateByName(Container container, String nodeName) {
         Gate ret = null;
         if (container instanceof ContainerImpl) {
             ret = globalRepo.findGateByName((ContainerImpl) container, nodeName);
         }
+        return ret;
+    }
+
+    static final String GET_LINKS_BY_SOURCE_EP = "getLinksBySourceEP";
+
+    @Override
+    public Set<Link> getLinksBySourceEP(Session session, Endpoint endpoint) throws MappingDSException {
+        Set<Link> ret = null;
+        if (session!=null && session.isRunning())
+            ret = (Set<Link>)session.execute(this, GET_LINKS_BY_SOURCE_EP, new Object[]{endpoint});
         return ret;
     }
 
@@ -218,6 +273,16 @@ public class MappingSceImpl implements MappingSce {
         return ret;
     }
 
+    static final String GET_LINKS_BY_DESTINATION_EP = "getLinksByDestinationEP";
+
+    @Override
+    public Set<Link> getLinksByDestinationEP(Session session, Endpoint endpoint) throws MappingDSException {
+        Set<Link> ret = null;
+        if (session!=null && session.isRunning())
+            ret = (Set<Link>)session.execute(this, GET_LINKS_BY_DESTINATION_EP, new Object[]{endpoint});
+        return ret;
+    }
+
     @Override
     public Set<Link> getLinksByDestinationEP(Endpoint endpoint) {
         Set<Link> ret = new HashSet<Link>();
@@ -229,12 +294,32 @@ public class MappingSceImpl implements MappingSce {
         return ret;
     }
 
+    static final String GET_LINK_BY_SOURCE_EP_AND_DESTINATION_EP = "getLinkBySourceEPandDestinationEP";
+
+    @Override
+    public Link getLinkBySourceEPandDestinationEP(Session session, Endpoint esource, Endpoint edest) throws MappingDSException {
+        Link ret = null;
+        if (session!=null && session.isRunning())
+            ret = (Link)session.execute(this, GET_LINK_BY_SOURCE_EP_AND_DESTINATION_EP, new Object[]{esource, edest});
+        return ret;
+    }
+
     @Override
     public Link getLinkBySourceEPandDestinationEP(Endpoint esource, Endpoint edest) {
         Link ret = null;
         if (esource instanceof EndpointImpl && edest instanceof EndpointImpl) {
             ret = globalRepo.findLinkBySourceEPandDestinationEP((EndpointImpl) esource, (EndpointImpl) edest);
         }
+        return ret;
+    }
+
+    static final String GET_LINK_BY_SOURCE_EP_AND_TRANSPORT = "getLinkBySourceEPandTransport";
+
+    @Override
+    public Link getMulticastLinkBySourceEPAndTransport(Session session, Endpoint esource, Transport transport) throws MappingDSException {
+        Link ret = null;
+        if (session!=null && session.isRunning())
+            ret = (Link)session.execute(this, GET_LINK_BY_SOURCE_EP_AND_TRANSPORT, new Object[]{esource, transport});
         return ret;
     }
 

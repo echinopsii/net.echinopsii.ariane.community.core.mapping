@@ -19,6 +19,7 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.service;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.SessionRegistry;
@@ -46,19 +47,37 @@ public interface MappingSce {
 
     public TransportSce<? extends Transport> getTransportSce();
 
+    public Node getNodeByName(Session session, Container container, String nodeName) throws MappingDSException;
+
     public Node getNodeByName(Container container, String nodeName);
+
+    public Node getNodeContainingSubnode(Session session, Container container, Node node) throws MappingDSException;
 
     public Node getNodeContainingSubnode(Container container, Node node);
 
+    public Set<Node> getNodesInParentNode(Session session, Container container, Node node) throws MappingDSException;
+
     public Set<Node> getNodesInParentNode(Container container, Node node);
+
+    public Gate getGateByName(Session session, Container container, String nodeName) throws MappingDSException;
 
     public Gate getGateByName(Container container, String nodeName);
 
+    public Set<Link> getLinksBySourceEP(Session session, Endpoint endpoint) throws MappingDSException;
+
     public Set<Link> getLinksBySourceEP(Endpoint endpoint);
+
+    public Set<Link> getLinksByDestinationEP(Session session, Endpoint endpoint) throws MappingDSException;
 
     public Set<Link> getLinksByDestinationEP(Endpoint endpoint);
 
+    public Link getLinkBySourceEPandDestinationEP(Session session, Endpoint esource, Endpoint edest) throws MappingDSException;
+
     public Link getLinkBySourceEPandDestinationEP(Endpoint esource, Endpoint edest);
+
+    Link getMulticastLinkBySourceEPAndTransport(Session session, Endpoint esource, Transport transport) throws MappingDSException;
+
+    Link getMulticastLinkBySourceEPAndTransport(Endpoint esource, Transport transport);
 
     public boolean init(Dictionary<Object, Object> properties);
 
@@ -70,13 +89,15 @@ public interface MappingSce {
 
     public Session closeSession(Session toClose);
 
+    @Deprecated
     public void unsetAutoCommit();
 
+    @Deprecated
     public void setAutoCommit(boolean autoCommit);
 
+    @Deprecated
     public void commit();
 
+    @Deprecated
     public void rollback();
-
-    Link getMulticastLinkBySourceEPAndTransport(Endpoint esource, Transport transport);
 }
