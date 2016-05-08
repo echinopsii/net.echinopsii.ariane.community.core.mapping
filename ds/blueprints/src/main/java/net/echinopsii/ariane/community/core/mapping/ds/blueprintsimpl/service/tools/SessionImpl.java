@@ -146,6 +146,7 @@ public class SessionImpl implements Session {
                     }
                 }
             }
+            MappingDSGraphDB.unsetAutocommit();
         }
 
         public LinkedBlockingQueue<SessionWorkerRequest> getFifoInputQ() {
