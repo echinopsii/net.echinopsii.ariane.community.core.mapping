@@ -77,7 +77,7 @@ public class GateSceImpl implements GateSce<GateImpl> {
 				if (isPrimaryAdmin)
 					ret.setNodePrimaryAdminEnpoint(ep);				
 				sce.getGlobalRepo().getGateRepo().save(ret);
-				ret.addEnpoint(ep);
+				ret.addEndpoint(ep);
 				ep.setEndpointParentNode(ret);
 				container.addContainerGate(ret);
 

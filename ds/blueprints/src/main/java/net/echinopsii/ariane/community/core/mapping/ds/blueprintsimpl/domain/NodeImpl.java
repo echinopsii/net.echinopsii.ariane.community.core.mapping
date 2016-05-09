@@ -302,7 +302,7 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
     static final String ADD_ENDPOINT = "addEndpoint";
 
     @Override
-    public boolean addEnpoint(Session session, Endpoint endpoint) throws MappingDSException {
+    public boolean addEndpoint(Session session, Endpoint endpoint) throws MappingDSException {
         boolean ret = false;
         if (session!=null && session.isRunning())
             ret = (boolean) session.execute(this, ADD_ENDPOINT, new Object[]{endpoint});
@@ -310,7 +310,7 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
     }
 
     @Override
-    public boolean addEnpoint(Endpoint endpoint) {
+    public boolean addEndpoint(Endpoint endpoint) {
         if (endpoint instanceof EndpointImpl) {
             boolean ret = false;
             try {

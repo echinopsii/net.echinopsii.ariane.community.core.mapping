@@ -64,8 +64,8 @@ public interface Node {
 	public boolean             removeTwinNode(Node node);
 
 	public Set<? extends Endpoint> getNodeEndpoints();
-	public boolean                 addEnpoint(Session session, Endpoint endpoint) throws MappingDSException;
-	public boolean                 addEnpoint(Endpoint endpoint);
+	public boolean addEndpoint(Session session, Endpoint endpoint) throws MappingDSException;
+	public boolean addEndpoint(Endpoint endpoint);
 	public boolean                 removeEndpoint(Session session, Endpoint endpoint) throws MappingDSException;
 	public boolean                 removeEndpoint(Endpoint endpoint);
 }

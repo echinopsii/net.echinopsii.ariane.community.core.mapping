@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -221,8 +222,13 @@ public class SessionImpl implements Session {
             if (args !=null) {
                  parametersType = new Class[args.length];
                 for (int i = 0; i < args.length; i++) {
-                    parametersType[i] = args[i].getClass();
-                    parameters += args[i].getClass().getName();
+                    if (args[i] != null) {
+                        parametersType[i] = args[i].getClass();
+                        parameters += args[i].getClass().getName();
+                    } else {
+                        parametersType[i] = Object.class;
+                        parameters += Object.class.getName();
+                    }
                     if (i < args.length-1)  parameters += ", ";
                 }
             }
@@ -231,7 +237,9 @@ public class SessionImpl implements Session {
                 m = o.getClass().getMethod(methodName, parametersType);
             } catch (NoSuchMethodException e) {
                 Method[] methods = o.getClass().getMethods();
+                //log.error("Method name to found : " + methodName);
                 methodLoop: for (Method method : methods) {
+                    //log.error("Method loop : " + method.getName());
                     if (!methodName.equals(method.getName())) {
                         continue;
                     }
@@ -245,7 +253,11 @@ public class SessionImpl implements Session {
                     }
 
                     for (int i = 0; i < args.length; ++i) {
-                        if (!paramTypes[i].isAssignableFrom(args[i].getClass())) {
+                        //log.error("paramTypes["+i+"] = " + paramTypes[i].getName());
+                        //log.error("args["+i+"] = " + args[i].getClass().getName());
+                        boolean isAssignable = paramTypes[i].isAssignableFrom(args[i].getClass());
+                        //log.error("isAssignable: " + isAssignable);
+                        if (!isAssignable) {
                             continue methodLoop;
                         }
                     }

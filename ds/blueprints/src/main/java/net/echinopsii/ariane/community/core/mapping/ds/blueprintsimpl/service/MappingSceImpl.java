@@ -180,7 +180,7 @@ public class MappingSceImpl implements MappingSce {
     public Node getNodeByName(Session session, Container container, String nodeName) throws MappingDSException {
         Node ret = null;
         if (session!=null && session.isRunning())
-            ret = (Node)session.execute(this, GET_NODE_BY_NAME, new Object[]{nodeName});
+            ret = (Node)session.execute(this, GET_NODE_BY_NAME, new Object[]{container, nodeName});
         return ret;
     }
 
