@@ -172,7 +172,7 @@ public class NodeEndpoint {
                         deserializedNode.removeEndpoint(endpointToDelete);
 
                 for (Endpoint endpointReq : reqNodeEndpoints)
-                    deserializedNode.addEnpoint(endpointReq);
+                    deserializedNode.addEndpoint(endpointReq);
             }
 
             if (jsonDeserializedNode.getNodeProperties()!=null) {
@@ -583,7 +583,7 @@ public class NodeEndpoint {
             if (node != null) {
                 Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(endpointID);
                 if (endpoint != null) {
-                    node.addEnpoint(endpoint);
+                    node.addEndpoint(endpoint);
                     return Response.status(Status.OK).entity("Endpoint (" + endpointID + ") successfully added to node " + id + ".").build();
                 } else {
                     return Response.status(Status.NOT_FOUND).entity("Error while adding endpoint " + endpointID + " to node " + id + " : node " + id + " not found.").build();
