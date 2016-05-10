@@ -23,6 +23,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Link;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.LinkJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
@@ -44,7 +45,8 @@ import java.util.Set;
 public class LinkEndpoint {
     private static final Logger log = LoggerFactory.getLogger(LinkEndpoint.class);
 
-    public static JSONDeserializationResponse jsonFriendlyToMappingFriendly(LinkJSON.JSONDeserializedLink jsonDeserializedLink) throws MappingDSException {
+    public static JSONDeserializationResponse jsonFriendlyToMappingFriendly(LinkJSON.JSONDeserializedLink jsonDeserializedLink,
+                                                                            Session mappingSession) throws MappingDSException {
         JSONDeserializationResponse ret = new JSONDeserializationResponse();
 
         // DETECT POTENTIAL QUERIES ERROR FIRST
@@ -146,7 +148,7 @@ public class LinkEndpoint {
 
     @GET
     @Path("/get")
-    public Response getLink(@QueryParam("ID")long id, @QueryParam("SEPID") long sepid, @QueryParam("TEPID") long tepid) {
+    public Response getLink(@QueryParam("ID")long id, @QueryParam("SEPID") long sepid, @QueryParam("TEPID") long tepid, @QueryParam("sessionID") String sessionId) {
         if (id!=0)
             return displayLink(id);
         else {
@@ -203,7 +205,7 @@ public class LinkEndpoint {
     @GET
     @Path("/create")
     public Response createLink(@QueryParam("SEPID")long sourceEndpointID, @QueryParam("TEPID")long targetEndpointID,
-                               @QueryParam("transportID")long transportID) {
+                               @QueryParam("transportID")long transportID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create link : ({},{},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), sourceEndpointID, targetEndpointID, transportID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -234,7 +236,7 @@ public class LinkEndpoint {
     }
 
     @POST
-    public Response postLink(@QueryParam("payload") String payload) throws IOException {
+    public Response postLink(@QueryParam("payload") String payload, @QueryParam("sessionID") String sessionId) throws IOException {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create or update link : ({})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), payload});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -242,7 +244,7 @@ public class LinkEndpoint {
             if (payload != null) {
                 try {
                     Response ret;
-                    JSONDeserializationResponse deserializationResponse = jsonFriendlyToMappingFriendly(LinkJSON.JSON2Link(payload));
+                    JSONDeserializationResponse deserializationResponse = jsonFriendlyToMappingFriendly(LinkJSON.JSON2Link(payload), null);
                     if (deserializationResponse.getErrorMessage()!=null) {
                         String result = deserializationResponse.getErrorMessage();
                         ret = Response.status(Status.BAD_REQUEST).entity(result).build();
@@ -272,7 +274,7 @@ public class LinkEndpoint {
 
     @GET
     @Path("/delete")
-    public Response deleteLink(@QueryParam("ID")long linkID) {
+    public Response deleteLink(@QueryParam("ID")long linkID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] delete link : ({})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), linkID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -294,7 +296,7 @@ public class LinkEndpoint {
 
     @GET
     @Path("/update/transport")
-    public Response setLinkTransport(@QueryParam("ID")long id, @QueryParam("transportID") long transportID) {
+    public Response setLinkTransport(@QueryParam("ID")long id, @QueryParam("transportID") long transportID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}] update link transport : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, transportID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -319,7 +321,7 @@ public class LinkEndpoint {
 
     @GET
     @Path("/update/sourceEP")
-    public Response setLinkEndpointSource(@QueryParam("ID")long id, @QueryParam("SEPID") long SEPID) {
+    public Response setLinkEndpointSource(@QueryParam("ID")long id, @QueryParam("SEPID") long SEPID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update link source endpoint : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, SEPID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -344,7 +346,7 @@ public class LinkEndpoint {
 
     @GET
     @Path("/update/targetEP")
-    public Response setLinkEndpointTarget(@QueryParam("ID")long id, @QueryParam("TEPID") long TEPID) {
+    public Response setLinkEndpointTarget(@QueryParam("ID")long id, @QueryParam("TEPID") long TEPID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update link target endpoint : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(),  id, TEPID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||

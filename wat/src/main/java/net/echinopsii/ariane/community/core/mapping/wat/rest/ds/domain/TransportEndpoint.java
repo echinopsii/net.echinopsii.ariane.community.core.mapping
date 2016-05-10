@@ -153,13 +153,13 @@ public class TransportEndpoint {
 
     @GET
     @Path("/get")
-    public Response getTransport(@QueryParam("ID")long transportID) {
+    public Response getTransport(@QueryParam("ID")long transportID, @QueryParam("sessionID") String sessionId) {
         return displayTransport(transportID);
     }
 
     @GET
     @Path("/create")
-    public Response createTransport(@QueryParam("name")String transportName) {
+    public Response createTransport(@QueryParam("name")String transportName, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create transport : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), transportName});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -184,7 +184,7 @@ public class TransportEndpoint {
     }
 
     @POST
-    public Response postTransport(@QueryParam("payload") String payload) throws IOException {
+    public Response postTransport(@QueryParam("payload") String payload, @QueryParam("sessionID") String sessionId) throws IOException {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create or update transport : ({})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), payload});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -222,7 +222,7 @@ public class TransportEndpoint {
 
     @GET
     @Path("/delete")
-    public Response deleteTransport(@QueryParam("ID")long transportID) {
+    public Response deleteTransport(@QueryParam("ID")long transportID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] delete transport : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), transportID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -242,7 +242,7 @@ public class TransportEndpoint {
 
     @GET
     @Path("/update/name")
-    public Response setTransportName(@QueryParam("ID")long id, @QueryParam("name")String name) {
+    public Response setTransportName(@QueryParam("ID")long id, @QueryParam("name")String name, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update transport name: ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -263,7 +263,7 @@ public class TransportEndpoint {
     @GET
     @Path("/update/properties/add")
     public Response addTransportProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name, @QueryParam("propertyValue") String value,
-                                         @DefaultValue("String") @QueryParam("propertyType") String type) {
+                                         @DefaultValue("String") @QueryParam("propertyType") String type, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update transport by adding a property : ({},({},{},{}))", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name, value, type});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -297,7 +297,7 @@ public class TransportEndpoint {
 
     @GET
     @Path("/update/properties/delete")
-    public Response deleteTransportProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name) {
+    public Response deleteTransportProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}] update transport by removing a property : ({},{})", new Object[]{Thread.currentThread().getId(), id, name});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||

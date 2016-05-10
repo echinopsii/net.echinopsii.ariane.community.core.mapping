@@ -250,7 +250,8 @@ public class NodeEndpoint {
 
     @GET
     @Path("/get")
-    public Response getNode(@QueryParam("endpointURL") String endpointURL, @QueryParam("ID")long id, @QueryParam("selector") String selector) {
+    public Response getNode(@QueryParam("endpointURL") String endpointURL, @QueryParam("ID")long id,
+                            @QueryParam("selector") String selector, @QueryParam("sessionID") String sessionId) {
         if (id != 0) {
             return displayNode(id);
         } else if (endpointURL!=null) {
@@ -310,7 +311,8 @@ public class NodeEndpoint {
 
     @GET
     @Path("/create")
-    public Response createNode(@QueryParam("name")String nodeName, @QueryParam("containerID")long containerID, @QueryParam("parentNodeID")long parentNodeID) {
+    public Response createNode(@QueryParam("name")String nodeName, @QueryParam("containerID")long containerID,
+                               @QueryParam("parentNodeID")long parentNodeID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create node : ({},{},{},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), nodeName, containerID, parentNodeID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -340,7 +342,7 @@ public class NodeEndpoint {
     }
 
     @POST
-    public Response postNode(@QueryParam("payload") String payload) throws IOException {
+    public Response postNode(@QueryParam("payload") String payload, @QueryParam("sessionID") String sessionId) throws IOException {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create or update node : ({})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), payload});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -378,7 +380,7 @@ public class NodeEndpoint {
 
     @GET
     @Path("/delete")
-    public Response deleteNode(@QueryParam("ID")long nodeID) {
+    public Response deleteNode(@QueryParam("ID")long nodeID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] delete node : ({})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), nodeID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -401,7 +403,7 @@ public class NodeEndpoint {
 
     @GET
     @Path("/update/name")
-    public Response setNodeName(@QueryParam("ID")long id, @QueryParam("name")String name) {
+    public Response setNodeName(@QueryParam("ID")long id, @QueryParam("name")String name, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update node name : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -421,7 +423,7 @@ public class NodeEndpoint {
 
     @GET
     @Path("/update/container")
-    public Response setNodeContainer(@QueryParam("ID")long id, @QueryParam("containerID")long containerID) {
+    public Response setNodeContainer(@QueryParam("ID")long id, @QueryParam("containerID")long containerID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update node container : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, containerID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -446,7 +448,7 @@ public class NodeEndpoint {
 
     @GET
     @Path("/update/parentNode")
-    public Response setNodeParentNode(@QueryParam("ID")long id, @QueryParam("parentNodeID")long parentNodeID) {
+    public Response setNodeParentNode(@QueryParam("ID")long id, @QueryParam("parentNodeID")long parentNodeID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update node parent node : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, parentNodeID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -471,7 +473,7 @@ public class NodeEndpoint {
 
     @GET
     @Path("/update/childNodes/add")
-    public Response addNodeChildNode(@QueryParam("ID")long id, @QueryParam("childNodeID") long childNodeID) {
+    public Response addNodeChildNode(@QueryParam("ID")long id, @QueryParam("childNodeID") long childNodeID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] add node child node : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, childNodeID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -496,7 +498,7 @@ public class NodeEndpoint {
 
     @GET
     @Path("/update/childNodes/delete")
-    public Response deleteNodeChildNode(@QueryParam("ID")long id, @QueryParam("childNodeID") long childNodeID) {
+    public Response deleteNodeChildNode(@QueryParam("ID")long id, @QueryParam("childNodeID") long childNodeID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] delete node child node : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, childNodeID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -521,7 +523,7 @@ public class NodeEndpoint {
 
     @GET
     @Path("/update/twinNodes/add")
-    public Response addNodeTwinNode(@QueryParam("ID")long id, @QueryParam("twinNodeID") long twinNodeID) {
+    public Response addNodeTwinNode(@QueryParam("ID")long id, @QueryParam("twinNodeID") long twinNodeID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] add node twin node : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, twinNodeID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -547,7 +549,7 @@ public class NodeEndpoint {
 
     @GET
     @Path("/update/twinNodes/delete")
-    public Response deleteNodeTwinNode(@QueryParam("ID")long id, @QueryParam("twinNodeID") long twinNodeID) {
+    public Response deleteNodeTwinNode(@QueryParam("ID")long id, @QueryParam("twinNodeID") long twinNodeID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] delete node twin node : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, twinNodeID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -573,7 +575,7 @@ public class NodeEndpoint {
 
     @GET
     @Path("/update/endpoints/add")
-    public Response addNodeEndpoint(@QueryParam("ID")long id, @QueryParam("endpointID") long endpointID) {
+    public Response addNodeEndpoint(@QueryParam("ID")long id, @QueryParam("endpointID") long endpointID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] add node endpoint : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, endpointID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -598,7 +600,7 @@ public class NodeEndpoint {
 
     @GET
     @Path("/update/endpoints/delete")
-    public Response deleteNodeEndpoint(@QueryParam("ID")long id, @QueryParam("endpointID") long endpointID) {
+    public Response deleteNodeEndpoint(@QueryParam("ID")long id, @QueryParam("endpointID") long endpointID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] delete node endpoint : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, endpointID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -624,7 +626,7 @@ public class NodeEndpoint {
     @GET
     @Path("/update/properties/add")
     public Response addNodeProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name, @QueryParam("propertyValue") String value,
-                                    @DefaultValue("String") @QueryParam("propertyType") String type) {
+                                    @DefaultValue("String") @QueryParam("propertyType") String type, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update node by adding a property : ({},({},{},{}))", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name, value, type});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -658,7 +660,7 @@ public class NodeEndpoint {
 
     @GET
     @Path("/update/properties/delete")
-    public Response deleteNodeProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name) {
+    public Response deleteNodeProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update node by removing a property : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||

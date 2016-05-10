@@ -22,6 +22,7 @@ package net.echinopsii.ariane.community.core.mapping.wat.rest.ds.domain;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Cluster;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ClusterJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
@@ -44,7 +45,8 @@ import java.util.List;
 public class ClusterEndpoint {
     private static final Logger log = LoggerFactory.getLogger(ContainerEndpoint.class);
 
-    public static JSONDeserializationResponse jsonFriendlyToMappingFriendly(ClusterJSON.JSONDeserializedCluster jsonDeserializedCluster) throws MappingDSException {
+    public static JSONDeserializationResponse jsonFriendlyToMappingFriendly(ClusterJSON.JSONDeserializedCluster jsonDeserializedCluster,
+                                                                            Session mappingSession) throws MappingDSException {
         JSONDeserializationResponse ret = new JSONDeserializationResponse();
 
         // DETECT POTENTIAL QUERIES ERROR FIRST
@@ -144,13 +146,13 @@ public class ClusterEndpoint {
 
     @GET
     @Path("/get")
-    public Response getCluster(@QueryParam("ID") long id) {
+    public Response getCluster(@QueryParam("ID") long id, @QueryParam("sessionID") String sessionId) {
         return displayCluster(id);
     }
 
     @GET
     @Path("/create")
-    public Response createCluster(@QueryParam("name") String name) {
+    public Response createCluster(@QueryParam("name") String name, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create cluster : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), name});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -174,7 +176,7 @@ public class ClusterEndpoint {
     }
 
     @POST
-    public Response postCluster(@QueryParam("payload") String payload) throws IOException {
+    public Response postCluster(@QueryParam("payload") String payload, @QueryParam("sessionID") String sessionId) throws IOException {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create container", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -182,7 +184,7 @@ public class ClusterEndpoint {
             if (payload != null) {
                 try {
                     Response ret;
-                    JSONDeserializationResponse deserializationResponse = jsonFriendlyToMappingFriendly(ClusterJSON.JSON2Cluster(payload));
+                    JSONDeserializationResponse deserializationResponse = jsonFriendlyToMappingFriendly(ClusterJSON.JSON2Cluster(payload), null);
                     if (deserializationResponse.getErrorMessage()!=null) {
                         String result = deserializationResponse.getErrorMessage();
                         ret = Response.status(Status.BAD_REQUEST).entity(result).build();
@@ -212,7 +214,7 @@ public class ClusterEndpoint {
 
     @GET
     @Path("/delete")
-    public Response deleteCluster(@QueryParam("name") String name) {
+    public Response deleteCluster(@QueryParam("name") String name, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] delete cluster : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), name});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -231,7 +233,7 @@ public class ClusterEndpoint {
 
     @GET
     @Path("/update/name")
-    public Response setClusterName(@QueryParam("ID")long id, @QueryParam("name")String name) {
+    public Response setClusterName(@QueryParam("ID")long id, @QueryParam("name")String name, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update cluster name: ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -251,7 +253,7 @@ public class ClusterEndpoint {
 
     @GET
     @Path("/update/containers/add")
-    public Response addClusterContainer(@QueryParam("ID")long id, @QueryParam("containerID")long containerID) {
+    public Response addClusterContainer(@QueryParam("ID")long id, @QueryParam("containerID")long containerID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] add container to cluster : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, containerID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -275,7 +277,7 @@ public class ClusterEndpoint {
 
     @GET
     @Path("/update/containers/delete")
-    public Response deleteClusterContainer(@QueryParam("ID")long id, @QueryParam("containerID")long containerID) {
+    public Response deleteClusterContainer(@QueryParam("ID")long id, @QueryParam("containerID")long containerID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] delete container from cluster : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, containerID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||

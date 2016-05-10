@@ -98,14 +98,15 @@ public class GateEndpoint {
 
     @GET
     @Path("/get")
-    public Response getGate(@QueryParam("ID")long id) {
+    public Response getGate(@QueryParam("ID")long id, @QueryParam("sessionID") String sessionId) {
         return displayGate(id);
     }
 
     @GET
     @Path("/create")
     public Response createGate(@QueryParam("URL")String url, @QueryParam("name")String name,
-                               @QueryParam("containerID")long containerID, @QueryParam("isPrimaryAdmin")boolean isPrimaryAdmin) {
+                               @QueryParam("containerID")long containerID, @QueryParam("isPrimaryAdmin")boolean isPrimaryAdmin,
+                               @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create gate : ({},{},{},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), url, name, containerID, isPrimaryAdmin});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -137,7 +138,7 @@ public class GateEndpoint {
 
     @GET
     @Path("/delete")
-    public Response deleteGate(@QueryParam("ID")long nodeID) {
+    public Response deleteGate(@QueryParam("ID")long nodeID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] delete gate : ({})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), nodeID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -159,7 +160,7 @@ public class GateEndpoint {
 
     @GET
     @Path("/update/primaryEndpoint")
-    public Response setPrimaryEndpoint(@QueryParam("ID")long id, @QueryParam("endpointID")long endpointID) {
+    public Response setPrimaryEndpoint(@QueryParam("ID")long id, @QueryParam("endpointID")long endpointID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}] update primary admin endpoint : ({},{})", new Object[]{Thread.currentThread().getId(), id, endpointID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
