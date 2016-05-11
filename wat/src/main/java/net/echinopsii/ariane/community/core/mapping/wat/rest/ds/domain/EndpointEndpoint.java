@@ -55,13 +55,16 @@ public class EndpointEndpoint {
         HashMap<String, Object> reqEndpointProperties = new HashMap<>();
 
         if (jsonDeserializedEndpoint.getEndpointParentNodeID() != 0) {
-            reqEndpointParentNode =  MappingBootstrap.getMappingSce().getNodeSce().getNode(jsonDeserializedEndpoint.getEndpointParentNodeID());
+            if (mappingSession!=null) reqEndpointParentNode =  MappingBootstrap.getMappingSce().getNodeSce().getNode(mappingSession, jsonDeserializedEndpoint.getEndpointParentNodeID());
+            else reqEndpointParentNode =  MappingBootstrap.getMappingSce().getNodeSce().getNode(jsonDeserializedEndpoint.getEndpointParentNodeID());
             if (reqEndpointParentNode==null) ret.setErrorMessage("Request Error : node with provided ID " + jsonDeserializedEndpoint.getEndpointParentNodeID() + " was not found.");
         } else ret.setErrorMessage("Request Error : no parent node ID provided...");
 
         if (ret.getErrorMessage()==null && jsonDeserializedEndpoint.getEndpointTwinEndpointsID()!=null && jsonDeserializedEndpoint.getEndpointTwinEndpointsID().size() > 0) {
             for (long id : jsonDeserializedEndpoint.getEndpointTwinEndpointsID()) {
-                Endpoint twinEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
+                Endpoint twinEndpoint ;
+                if (mappingSession!=null) twinEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, id);
+                else twinEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
                 if (twinEndpoint != null)
                     reqEndpointTwinEndpoints.add(twinEndpoint);
                 else {
@@ -87,23 +90,30 @@ public class EndpointEndpoint {
         // LOOK IF NODE MAYBE UPDATED OR CREATED
         Endpoint deserializedEndpoint = null;
         if (ret.getErrorMessage() == null && jsonDeserializedEndpoint.getEndpointID()!=0) {
-            deserializedEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(jsonDeserializedEndpoint.getEndpointID());
+            if (mappingSession!=null) deserializedEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, jsonDeserializedEndpoint.getEndpointID());
+            else deserializedEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(jsonDeserializedEndpoint.getEndpointID());
             if (deserializedEndpoint==null)
                 ret.setErrorMessage("Request Error : endpoint with provided ID " + jsonDeserializedEndpoint.getEndpointID() + " was not found.");
         }
 
         if (ret.getErrorMessage() == null && deserializedEndpoint==null && jsonDeserializedEndpoint.getEndpointURL() != null)
-            deserializedEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(jsonDeserializedEndpoint.getEndpointID());
+            if (mappingSession!=null) deserializedEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, jsonDeserializedEndpoint.getEndpointID());
+            else deserializedEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(jsonDeserializedEndpoint.getEndpointID());
 
         // APPLY REQ IF NO ERRORS
         if (ret.getErrorMessage() == null) {
             String reqEndpointURL = jsonDeserializedEndpoint.getEndpointURL();
             long reqEndpointParentNodeID = jsonDeserializedEndpoint.getEndpointParentNodeID();
             if (deserializedEndpoint == null)
-                deserializedEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().createEndpoint(reqEndpointURL, reqEndpointParentNodeID);
+                if (mappingSession!=null) deserializedEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().createEndpoint(mappingSession, reqEndpointURL, reqEndpointParentNodeID);
+                else deserializedEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().createEndpoint(reqEndpointURL, reqEndpointParentNodeID);
             else {
-                if (reqEndpointURL!=null) deserializedEndpoint.setEndpointURL(reqEndpointURL);
-                if (reqEndpointParentNode!=null) deserializedEndpoint.setEndpointParentNode(reqEndpointParentNode);
+                if (reqEndpointURL!=null)
+                    if (mappingSession!=null) deserializedEndpoint.setEndpointURL(mappingSession, reqEndpointURL);
+                    else deserializedEndpoint.setEndpointURL(reqEndpointURL);
+                if (reqEndpointParentNode!=null)
+                    if (mappingSession!=null) deserializedEndpoint.setEndpointParentNode(mappingSession, reqEndpointParentNode);
+                    else deserializedEndpoint.setEndpointParentNode(reqEndpointParentNode);
             }
 
             if (jsonDeserializedEndpoint.getEndpointTwinEndpointsID()!=null) {
@@ -112,13 +122,23 @@ public class EndpointEndpoint {
                     if (!reqEndpointTwinEndpoints.contains(existingTwinEndpoint))
                         twinEndpointsToDelete.add(existingTwinEndpoint);
                 for (Endpoint twinEndpointToDelete : twinEndpointsToDelete) {
-                    deserializedEndpoint.removeTwinEndpoint(twinEndpointToDelete);
-                    twinEndpointToDelete.removeTwinEndpoint(deserializedEndpoint);
+                    if (mappingSession!=null) {
+                        deserializedEndpoint.removeTwinEndpoint(mappingSession, twinEndpointToDelete);
+                        twinEndpointToDelete.removeTwinEndpoint(mappingSession, deserializedEndpoint);
+                    } else {
+                        deserializedEndpoint.removeTwinEndpoint(twinEndpointToDelete);
+                        twinEndpointToDelete.removeTwinEndpoint(deserializedEndpoint);
+                    }
                 }
 
                 for (Endpoint twinEndpointToAdd : reqEndpointTwinEndpoints) {
-                    deserializedEndpoint.addTwinEndpoint(twinEndpointToAdd);
-                    twinEndpointToAdd.addTwinEndpoint(deserializedEndpoint);
+                    if (mappingSession!=null) {
+                        deserializedEndpoint.addTwinEndpoint(mappingSession, twinEndpointToAdd);
+                        twinEndpointToAdd.addTwinEndpoint(mappingSession, deserializedEndpoint);
+                    } else {
+                        deserializedEndpoint.addTwinEndpoint(twinEndpointToAdd);
+                        twinEndpointToAdd.addTwinEndpoint(deserializedEndpoint);
+                    }
                 }
             }
 
@@ -129,11 +149,13 @@ public class EndpointEndpoint {
                         if (!reqEndpointProperties.containsKey(propertyKey))
                             propertiesToDelete.add(propertyKey);
                     for (String propertyKeyToDelete : propertiesToDelete)
-                        deserializedEndpoint.removeEndpointProperty(propertyKeyToDelete);
+                        if (mappingSession!=null) deserializedEndpoint.removeEndpointProperty(mappingSession, propertyKeyToDelete);
+                        else deserializedEndpoint.removeEndpointProperty(propertyKeyToDelete);
                 }
 
                 for (String propertyKey : reqEndpointProperties.keySet())
-                    deserializedEndpoint.addEndpointProperty(propertyKey, reqEndpointProperties.get(propertyKey));
+                    if (mappingSession!=null) deserializedEndpoint.addEndpointProperty(mappingSession, propertyKey, reqEndpointProperties.get(propertyKey));
+                    else deserializedEndpoint.addEndpointProperty(propertyKey, reqEndpointProperties.get(propertyKey));
             }
 
             ret.setDeserializedObject(deserializedEndpoint);
@@ -142,70 +164,23 @@ public class EndpointEndpoint {
         return ret;
     }
 
-    @GET
-    @Path("/{param:[0-9][0-9]*}")
-    public Response displayEndpoint(@PathParam("param") long id) {
+    private Response _displayEndpoint(long id, String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get endpoint : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id});
         if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
-            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
+                subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            Endpoint endpoint = (Endpoint) MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
-            if (endpoint != null) {
-                try {
-                    ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-                    EndpointJSON.oneEndpoint2JSON(endpoint, outStream);
-                    String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                    return Response.status(Status.OK).entity(result).build();
-                } catch (Exception e) {
-                    log.error(e.getMessage());
-                    e.printStackTrace();
-                    String result = e.getMessage();
-                    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
-                }
-            } else {
-                return Response.status(Status.NOT_FOUND).entity("Endpoint with id " + id + " not found.").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
-        }
-    }
-
-    @GET
-    public Response displayAllEndpoints() {
-        Subject subject = SecurityUtils.getSubject();
-        log.debug("[{}-{}] get endpoints", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
-        if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
-            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
-        {
-            String result = "";
-            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             try {
-                EndpointJSON.manyEndpoints2JSON((HashSet<Endpoint>) MappingBootstrap.getMappingSce().getEndpointSce().getEndpoints(null), outStream);
-                result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                return Response.status(Status.OK).entity(result).build();
-            } catch (Exception e) {
-                log.error(e.getMessage());
-                e.printStackTrace();
-                result = e.getMessage();
-                return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
-        }
-    }
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                }
 
-    @GET
-    @Path("/get")
-    public Response getEndpoint(@QueryParam("URL")String URL, @QueryParam("ID")long id, @QueryParam("selector") String selector, @QueryParam("sessionID") String sessionId) {
-        if (id!=0) {
-            return displayEndpoint(id);
-        } else if (URL!=null) {
-            Subject subject = SecurityUtils.getSubject();
-            log.debug("[{}-{}] get endpoint : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), URL});
-            if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
-                    subject.hasRole("Jedi") || subject.isPermitted("universe:zeone")) {
-                Endpoint endpoint = (Endpoint) MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(URL);
+                Endpoint endpoint;
+                if (mappingSession!=null) endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, id);
+                else endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
                 if (endpoint != null) {
                     try {
                         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -218,40 +193,111 @@ public class EndpointEndpoint {
                         String result = e.getMessage();
                         return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
                     }
-                } else {
-                    return Response.status(Status.NOT_FOUND).entity("Endpoint with URL " + URL + " not found.").build();
-                }
-            } else {
-                return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
+                } else return Response.status(Status.NOT_FOUND).entity("Endpoint with id " + id + " not found.").build();
+            } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
+    }
+
+    @GET
+    @Path("/{param:[0-9][0-9]*}")
+    public Response displayEndpoint(@PathParam("param") long id) {
+        return _displayEndpoint(id, null);
+    }
+
+    @GET
+    public Response displayAllEndpoints() {
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("[{}-{}] get endpoints", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
+        if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
+        {
+            String result;
+            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+            try {
+                EndpointJSON.manyEndpoints2JSON((HashSet<Endpoint>) MappingBootstrap.getMappingSce().getEndpointSce().getEndpoints(null), outStream);
+                result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                return Response.status(Status.OK).entity(result).build();
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                e.printStackTrace();
+                result = e.getMessage();
+                return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
             }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
+    }
+
+    @GET
+    @Path("/get")
+    public Response getEndpoint(@QueryParam("URL")String URL, @QueryParam("ID")long id, @QueryParam("selector") String selector, @QueryParam("sessionID") String sessionId) {
+        if (id!=0) {
+            return _displayEndpoint(id, sessionId);
+        } else if (URL!=null) {
+            Subject subject = SecurityUtils.getSubject();
+            log.debug("[{}-{}] get endpoint : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), URL});
+            if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
+                    subject.hasRole("Jedi") || subject.isPermitted("universe:zeone")) {
+                try {
+                    Session mappingSession = null;
+                    if (sessionId != null && !sessionId.equals("")) {
+                        mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                        if (mappingSession == null)
+                            return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                    }
+
+                    Endpoint endpoint;
+                    if (mappingSession!=null) endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, URL);
+                    else endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(URL);
+
+                    if (endpoint != null) {
+                        try {
+                            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                            EndpointJSON.oneEndpoint2JSON(endpoint, outStream);
+                            String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                            return Response.status(Status.OK).entity(result).build();
+                        } catch (Exception e) {
+                            log.error(e.getMessage());
+                            e.printStackTrace();
+                            String result = e.getMessage();
+                            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                        }
+                    } else return Response.status(Status.NOT_FOUND).entity("Endpoint with URL " + URL + " not found.").build();
+                } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+            } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
         } else if (selector != null) {
             Subject subject = SecurityUtils.getSubject();
             log.debug("[{}-{}] get endpoint : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), selector});
             if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
                     subject.hasRole("Jedi") || subject.isPermitted("universe:zeone")) {
-                HashSet<Endpoint> ret = (HashSet<Endpoint>) MappingBootstrap.getMappingSce().getEndpointSce().getEndpoints(selector);
-                if (ret !=null && ret.size() > 0) {
-                    String result = "";
-                    ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-                    try {
-                        EndpointJSON.manyEndpoints2JSON(ret, outStream);
-                        result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                        return Response.status(Status.OK).entity(result).build();
-                    } catch (Exception e) {
-                        log.error(e.getMessage());
-                        e.printStackTrace();
-                        result = e.getMessage();
-                        return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                try {
+                    Session mappingSession = null;
+                    if (sessionId != null && !sessionId.equals("")) {
+                        mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                        if (mappingSession == null)
+                            return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
                     }
-                } else {
-                    return Response.status(Status.NOT_FOUND).entity("No endpoints matching selector " + selector + " ...").build();
-                }
-            } else {
-                return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
-            }
-        } else {
-            return Response.status(Status.INTERNAL_SERVER_ERROR).entity("MappingDSLRegistryRequest error: URL and id are not defined. You must define one of thes parameters").build();
-        }
+
+                    HashSet<Endpoint> ret;
+                    if (mappingSession!=null) ret = (HashSet<Endpoint>) MappingBootstrap.getMappingSce().getEndpointSce().getEndpoints(mappingSession, selector);
+                    else ret = (HashSet<Endpoint>) MappingBootstrap.getMappingSce().getEndpointSce().getEndpoints(selector);
+
+                    if (ret != null && ret.size() > 0) {
+                        String result;
+                        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                        try {
+                            EndpointJSON.manyEndpoints2JSON(ret, outStream);
+                            result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                            return Response.status(Status.OK).entity(result).build();
+                        } catch (Exception e) {
+                            log.error(e.getMessage());
+                            e.printStackTrace();
+                            result = e.getMessage();
+                            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                        }
+                    } else
+                        return Response.status(Status.NOT_FOUND).entity("No endpoints matching selector " + selector + " ...").build();
+                } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+            } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
+        } else return Response.status(Status.INTERNAL_SERVER_ERROR).entity("MappingDSLRegistryRequest error: URL and id are not defined. You must define one of thes parameters").build();
     }
 
     @GET
@@ -263,8 +309,18 @@ public class EndpointEndpoint {
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             try {
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                }
+
+                Endpoint endpoint;
+                if (mappingSession!=null) endpoint = MappingBootstrap.getMappingSce().getEndpointSce().createEndpoint(mappingSession, url, parentNodeID);
+                else endpoint = MappingBootstrap.getMappingSce().getEndpointSce().createEndpoint(url, parentNodeID);
+
                 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-                Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().createEndpoint(url, parentNodeID);
                 try {
                     EndpointJSON.oneEndpoint2JSON(endpoint, outStream);
                     String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
@@ -281,9 +337,7 @@ public class EndpointEndpoint {
                 String result = e.getMessage();
                 return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
             }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @POST
@@ -294,8 +348,15 @@ public class EndpointEndpoint {
                     subject.hasRole("Jedi") || subject.isPermitted("universe:zeone")) {
             if (payload != null) {
                 try {
+                    Session mappingSession = null;
+                    if (sessionId != null && !sessionId.equals("")) {
+                        mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                        if (mappingSession == null)
+                            return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                    }
+
                     Response ret;
-                    JSONDeserializationResponse deserializationResponse = jsonFriendlyToMappingFriendly(EndpointJSON.JSON2Endpoint(payload), null);
+                    JSONDeserializationResponse deserializationResponse = jsonFriendlyToMappingFriendly(EndpointJSON.JSON2Endpoint(payload), mappingSession);
                     if (deserializationResponse.getErrorMessage()!=null) {
                         String result = deserializationResponse.getErrorMessage();
                         ret = Response.status(Status.BAD_REQUEST).entity(result).build();
@@ -315,12 +376,8 @@ public class EndpointEndpoint {
                     String result = e.getMessage();
                     return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
                 }
-            } else {
-                return Response.status(Status.BAD_REQUEST).entity("No payload attached to this POST").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+            } return Response.status(Status.BAD_REQUEST).entity("No payload attached to this POST").build();
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -329,10 +386,16 @@ public class EndpointEndpoint {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] delete endpoint : ({})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), endpointID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
-        {
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone")) {
             try {
-                MappingBootstrap.getMappingSce().getEndpointSce().deleteEndpoint(endpointID);
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                }
+                if (mappingSession!=null) MappingBootstrap.getMappingSce().getEndpointSce().deleteEndpoint(mappingSession, endpointID);
+                else MappingBootstrap.getMappingSce().getEndpointSce().deleteEndpoint(endpointID);
                 return Response.status(Status.OK).entity("Endpoint (" + endpointID + ") successfully deleted.").build();
             } catch (MappingDSException e) {
                 log.error(e.getMessage());
@@ -340,9 +403,7 @@ public class EndpointEndpoint {
                 String result = e.getMessage();
                 return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
             }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -351,18 +412,24 @@ public class EndpointEndpoint {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update endpoint url: ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, url});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
-            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
-        {
-            Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
-            if (endpoint != null) {
-                endpoint.setEndpointURL(url);
-                return Response.status(Status.OK).entity("Endpoint (" + id + ") URL successfully updated to " + url + ".").build();
-            } else {
-                return Response.status(Status.NOT_FOUND).entity("Error while updating endpoint (" + id + ") URL " + url + " : endpoint " + id + " not found.").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone")) {
+            try {
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                }
+                Endpoint endpoint;
+                if (mappingSession!=null) endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, id);
+                else endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
+                if (endpoint != null) {
+                    if (mappingSession!=null) endpoint.setEndpointURL(mappingSession, url);
+                    else endpoint.setEndpointURL(url);
+                    return Response.status(Status.OK).entity("Endpoint (" + id + ") URL successfully updated to " + url + ".").build();
+                } else return Response.status(Status.NOT_FOUND).entity("Error while updating endpoint (" + id + ") URL " + url + " : endpoint " + id + " not found.").build();
+            } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -373,21 +440,28 @@ public class EndpointEndpoint {
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
-            if (endpoint != null) {
-                Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(parentNodeID);
-                if (node != null) {
-                    node.setNodeParentNode(node);
-                    return Response.status(Status.OK).entity("Endpoint (" + id + ") parent node successfully updated to " + parentNodeID + ".").build();
-                } else {
-                    return Response.status(Status.NOT_FOUND).entity("Error while updating endpoint (" + id + ") parent node " + parentNodeID + " : node " + parentNodeID + " not found.").build();
+            try {
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
                 }
-            } else {
-                return Response.status(Status.NOT_FOUND).entity("Error while updating endpoint (" + id + ") parent node " + parentNodeID + " : endpoint " + id + " not found.").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+                Endpoint endpoint ;
+                if (mappingSession!=null) endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, id);
+                else endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
+                if (endpoint != null) {
+                    Node node;
+                    if (mappingSession!=null) node = MappingBootstrap.getMappingSce().getNodeSce().getNode(mappingSession, parentNodeID);
+                    else node = MappingBootstrap.getMappingSce().getNodeSce().getNode(parentNodeID);
+                    if (node != null) {
+                        if (mappingSession!=null) node.setNodeParentNode(mappingSession, node);
+                        else node.setNodeParentNode(node);
+                        return Response.status(Status.OK).entity("Endpoint (" + id + ") parent node successfully updated to " + parentNodeID + ".").build();
+                    } else return Response.status(Status.NOT_FOUND).entity("Error while updating endpoint (" + id + ") parent node " + parentNodeID + " : node " + parentNodeID + " not found.").build();
+                } else return Response.status(Status.NOT_FOUND).entity("Error while updating endpoint (" + id + ") parent node " + parentNodeID + " : endpoint " + id + " not found.").build();
+            } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -398,22 +472,33 @@ public class EndpointEndpoint {
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
-            if (endpoint != null) {
-                Endpoint twinEP = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(twinEndpointID);
-                if (twinEP != null) {
-                    endpoint.addTwinEndpoint(twinEP);
-                    twinEP.addTwinEndpoint(endpoint);
-                    return Response.status(Status.OK).entity("Twin endpoint (" + twinEndpointID + ") successfully added to endpoint " + id + ".").build();
-                } else {
-                    return Response.status(Status.NOT_FOUND).entity("Error while adding twin endpoint " + twinEndpointID + " to endpoint (" + id + ") : endpoint " + twinEndpointID + " not found.").build();
+            try {
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
                 }
-            } else {
-                return Response.status(Status.NOT_FOUND).entity("Error while adding twin endpoint " + twinEndpointID + " to endpoint (" + id + ") : endpoint " + id + " not found.").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+                Endpoint endpoint ;
+                if (mappingSession!=null) endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, id);
+                else endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
+                if (endpoint != null) {
+                    Endpoint twinEP;
+                    if (mappingSession!=null) twinEP = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, twinEndpointID);
+                    else twinEP = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(twinEndpointID);
+                    if (twinEP != null) {
+                        if (mappingSession!=null) {
+                            endpoint.addTwinEndpoint(mappingSession, twinEP);
+                            twinEP.addTwinEndpoint(mappingSession, endpoint);
+                        } else {
+                            endpoint.addTwinEndpoint(twinEP);
+                            twinEP.addTwinEndpoint(endpoint);
+                        }
+                        return Response.status(Status.OK).entity("Twin endpoint (" + twinEndpointID + ") successfully added to endpoint " + id + ".").build();
+                    } else return Response.status(Status.NOT_FOUND).entity("Error while adding twin endpoint " + twinEndpointID + " to endpoint (" + id + ") : endpoint " + twinEndpointID + " not found.").build();
+                } else return Response.status(Status.NOT_FOUND).entity("Error while adding twin endpoint " + twinEndpointID + " to endpoint (" + id + ") : endpoint " + id + " not found.").build();
+            } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -424,22 +509,34 @@ public class EndpointEndpoint {
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
-            if (endpoint != null) {
-                Endpoint twinEP = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(twinEndpointID);
-                if (twinEP != null) {
-                    endpoint.removeTwinEndpoint(twinEP);
-                    twinEP.removeTwinEndpoint(endpoint);
-                    return Response.status(Status.OK).entity("Twin endpoint (" + twinEndpointID + ") successfully deleted from endpoint " + id + ".").build();
-                } else {
-                    return Response.status(Status.NOT_FOUND).entity("Error while deleting twin endpoint " + twinEndpointID + " from endpoint (" + id + ") : endpoint " + twinEndpointID + " not found.").build();
+            try {
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
                 }
-            } else {
-                return Response.status(Status.NOT_FOUND).entity("Error while deleting twin endpoint " + twinEndpointID + " from endpoint (" + id + ") : endpoint " + id + " not found.").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+                Endpoint endpoint ;
+                if (mappingSession!=null) endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, id);
+                else endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
+
+                if (endpoint != null) {
+                    Endpoint twinEP;
+                    if (mappingSession!=null) twinEP = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, twinEndpointID);
+                    else twinEP = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(twinEndpointID);
+                    if (twinEP != null) {
+                        if (mappingSession!=null) {
+                            endpoint.removeTwinEndpoint(mappingSession, twinEP);
+                            twinEP.removeTwinEndpoint(mappingSession, endpoint);
+                        } else {
+                            endpoint.removeTwinEndpoint(twinEP);
+                            twinEP.removeTwinEndpoint(endpoint);
+                        }
+                        return Response.status(Status.OK).entity("Twin endpoint (" + twinEndpointID + ") successfully deleted from endpoint " + id + ".").build();
+                    } else return Response.status(Status.NOT_FOUND).entity("Error while deleting twin endpoint " + twinEndpointID + " from endpoint (" + id + ") : endpoint " + twinEndpointID + " not found.").build();
+                } else return Response.status(Status.NOT_FOUND).entity("Error while deleting twin endpoint " + twinEndpointID + " from endpoint (" + id + ") : endpoint " + id + " not found.").build();
+            } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -451,30 +548,38 @@ public class EndpointEndpoint {
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            if (name != null && value != null && type != null) {
-                Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
-                if (endpoint != null) {
-                    Object oValue;
-                    try {
-                        oValue = ToolBox.extractPropertyObjectValueFromString(value, type);
-                    } catch (Exception e) {
-                        log.error(e.getMessage());
-                        e.printStackTrace();
-                        String result = e.getMessage();
-                        return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+            try {
+                if (name != null && value != null && type != null) {
+                    Session mappingSession = null;
+                    if (sessionId != null && !sessionId.equals("")) {
+                        mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                        if (mappingSession == null)
+                            return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
                     }
-                    endpoint.addEndpointProperty(name, oValue);
-                    return Response.status(Status.OK).entity("Property (" + name + "," + value + ") successfully added to endpoint " + id + ".").build();
+                    Endpoint endpoint ;
+                    if (mappingSession!=null) endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, id);
+                    else endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
+
+                    if (endpoint != null) {
+                        Object oValue;
+                        try {
+                            oValue = ToolBox.extractPropertyObjectValueFromString(value, type);
+                        } catch (Exception e) {
+                            log.error(e.getMessage());
+                            e.printStackTrace();
+                            String result = e.getMessage();
+                            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                        }
+                        if (mappingSession!=null) endpoint.addEndpointProperty(mappingSession, name, oValue);
+                        else endpoint.addEndpointProperty(name, oValue);
+                        return Response.status(Status.OK).entity("Property (" + name + "," + value + ") successfully added to endpoint " + id + ".").build();
+                    } else return Response.status(Status.NOT_FOUND).entity("Error while adding property " + name + " to endpoint (" + id + ") : endpoint " + id + " not found.").build();
                 } else {
-                    return Response.status(Status.NOT_FOUND).entity("Error while adding property " + name + " to endpoint (" + id + ") : endpoint " + id + " not found.").build();
+                    log.warn("Property is not defined correctly : {name: " + name + ", type: " + type + ", value: " + value + "}.");
+                    return Response.status(Status.BAD_REQUEST).entity("Property is not defined correctly : {name: " + name + ", type: " + type + ", value: " + value + "}.").build();
                 }
-            } else {
-                log.warn("Property is not defined correctly : {name: " + name + ", type: " + type + ", value: " + value + "}.");
-                return Response.status(Status.BAD_REQUEST).entity("Property is not defined correctly : {name: " + name + ", type: " + type + ", value: " + value + "}.").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+            } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -484,15 +589,25 @@ public class EndpointEndpoint {
         log.debug("[{}-{}] update endpoint by removing a property : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
                     subject.hasRole("Jedi") || subject.isPermitted("universe:zeone")) {
-            Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
-            if (endpoint != null) {
-                endpoint.removeEndpointProperty(name);
-                return Response.status(Status.OK).entity("Property (" + name + ") successfully deleted from endpoint " + id + ".").build();
-            } else {
-                return Response.status(Status.NOT_FOUND).entity("Error while deleting property " + name + " from endpoint (" + id + ") : endpoint " + id + " not found.").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+            try {
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                }
+                Endpoint endpoint ;
+                if (mappingSession!=null) endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, id);
+                else endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
+
+                if (endpoint != null) {
+                    if (mappingSession!=null) endpoint.removeEndpointProperty(mappingSession, name);
+                    else endpoint.removeEndpointProperty(name);
+                    return Response.status(Status.OK).entity("Property (" + name + ") successfully deleted from endpoint " + id + ".").build();
+                } else {
+                    return Response.status(Status.NOT_FOUND).entity("Error while deleting property " + name + " from endpoint (" + id + ") : endpoint " + id + " not found.").build();
+                }
+            } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 }

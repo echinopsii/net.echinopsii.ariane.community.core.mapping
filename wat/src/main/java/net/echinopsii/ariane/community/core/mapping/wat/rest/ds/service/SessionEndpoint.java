@@ -20,6 +20,8 @@
 package net.echinopsii.ariane.community.core.mapping.wat.rest.ds.service;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
+import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
+import net.echinopsii.ariane.community.core.mapping.ds.json.service.SessionJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
 import org.apache.shiro.SecurityUtils;
@@ -31,6 +33,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 @Path("/mapping/service/session")
 public class SessionEndpoint {
@@ -48,7 +52,16 @@ public class SessionEndpoint {
             Response ret = null;
             if (clientID!=null && !clientID.equals("")) {
                 Session session = MappingBootstrap.getMappingSce().openSession(clientID);
-                //TODO: RETURN JSON serialized session
+                if (session != null) {
+                    try {
+                        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                        SessionJSON.oneSession2JSON(session, outStream);
+                        String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                        ret = Response.status(Response.Status.OK).entity(result).build();
+                    } catch (IOException e) {
+                        ret = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+                    }
+                } else ret = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Failure when creating new session. Check server logs.").build();
             } else  ret = Response.status(Response.Status.BAD_REQUEST).entity("ClientID can not be null or empty").build();
             return ret ;
         } else return Response.status(Response.Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();

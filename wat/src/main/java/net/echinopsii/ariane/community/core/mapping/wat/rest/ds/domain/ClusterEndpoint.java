@@ -53,7 +53,12 @@ public class ClusterEndpoint {
         List<Container> reqContainers = new ArrayList<>();
         if (jsonDeserializedCluster.getClusterContainersID()!=null && jsonDeserializedCluster.getClusterContainersID().size()>0) {
             for (long id : jsonDeserializedCluster.getClusterContainersID()) {
-                Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
+                Container container;
+
+                if (mappingSession!=null)
+                    container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, id);
+                else container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
+
                 if (container != null) reqContainers.add(container);
                 else {
                     ret.setErrorMessage("Request Error : container with provided ID " + id + " was not found.");
@@ -65,14 +70,20 @@ public class ClusterEndpoint {
         // LOOK IF CLUSTER MAYBE UPDATED OR CREATED
         Cluster deserializedCluster = null;
         if (ret.getErrorMessage()!=null && jsonDeserializedCluster.getClusterID()!=0) {
-            deserializedCluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(jsonDeserializedCluster.getClusterID());
+            if (mappingSession!=null)
+                deserializedCluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(mappingSession, jsonDeserializedCluster.getClusterID());
+            else deserializedCluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(jsonDeserializedCluster.getClusterID());
             if (deserializedCluster == null) ret.setErrorMessage("Request Error : cluster with provided ID " + jsonDeserializedCluster.getClusterID() + " was not found.");
         }
 
         // APPLY REQ IF NO ERRORS
         if (ret.getErrorMessage()==null) {
-            if (deserializedCluster==null) deserializedCluster = MappingBootstrap.getMappingSce().getClusterSce().createCluster(jsonDeserializedCluster.getClusterName());
-            else if (jsonDeserializedCluster.getClusterName()!=null) deserializedCluster.setClusterName(jsonDeserializedCluster.getClusterName());
+            if (deserializedCluster==null)
+                if (mappingSession!=null) deserializedCluster = MappingBootstrap.getMappingSce().getClusterSce().createCluster(mappingSession, jsonDeserializedCluster.getClusterName());
+                else deserializedCluster = MappingBootstrap.getMappingSce().getClusterSce().createCluster(jsonDeserializedCluster.getClusterName());
+            else if (jsonDeserializedCluster.getClusterName()!=null)
+                if (mappingSession!=null) deserializedCluster.setClusterName(mappingSession, jsonDeserializedCluster.getClusterName());
+                else deserializedCluster.setClusterName(jsonDeserializedCluster.getClusterName());
 
             if (jsonDeserializedCluster.getClusterContainersID() != null) {
                 List<Container> containersToDelete = new ArrayList<>();
@@ -80,9 +91,11 @@ public class ClusterEndpoint {
                     if (!reqContainers.contains(containerToDel))
                         containersToDelete.add(containerToDel);
                 for (Container containerToDel : containersToDelete)
-                    deserializedCluster.removeClusterContainer(containerToDel);
+                    if (mappingSession!=null) deserializedCluster.removeClusterContainer(mappingSession, containerToDel);
+                    else deserializedCluster.removeClusterContainer(containerToDel);
                 for (Container containerToAdd : reqContainers)
-                    deserializedCluster.addClusterContainer(containerToAdd);
+                    if (mappingSession!=null) deserializedCluster.addClusterContainer(mappingSession, containerToAdd);
+                    else deserializedCluster.addClusterContainer(containerToAdd);
             }
 
             ret.setDeserializedObject(deserializedCluster);
@@ -91,15 +104,28 @@ public class ClusterEndpoint {
         return ret;
     }
 
-    @GET
-    @Path("/{param:[0-9][0-9]*}")
-    public Response displayCluster(@PathParam("param") long id) {
+    private Response _displayCluster(long id, String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get cluster : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(),id});
         if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
-            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
+                subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            Cluster cluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(id);
+            Session mappingSession = null;
+            if (sessionId!=null && !sessionId.equals("")) {
+                mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                if (mappingSession == null)
+                    return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+            }
+
+            Cluster cluster;
+            if (mappingSession != null)
+                try {
+                    cluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(mappingSession, id);
+                } catch (MappingDSException e) {
+                    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+                }
+            else cluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(id);
+
             if (cluster != null) {
                 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
                 try {
@@ -120,6 +146,13 @@ public class ClusterEndpoint {
         }
     }
 
+
+    @GET
+    @Path("/{param:[0-9][0-9]*}")
+    public Response displayCluster(@PathParam("param") long id) {
+        return _displayCluster(id, null);
+    }
+
     @GET
     public Response displayAllClusters() {
         Subject subject = SecurityUtils.getSubject();
@@ -127,7 +160,7 @@ public class ClusterEndpoint {
         if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            String result = "";
+            String result;
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             try {
                 ClusterJSON.manyClusters2JSON((HashSet<Cluster>) MappingBootstrap.getMappingSce().getClusterSce().getClusters(null), outStream);
@@ -147,7 +180,7 @@ public class ClusterEndpoint {
     @GET
     @Path("/get")
     public Response getCluster(@QueryParam("ID") long id, @QueryParam("sessionID") String sessionId) {
-        return displayCluster(id);
+        return _displayCluster(id, sessionId);
     }
 
     @GET
@@ -158,17 +191,31 @@ public class ClusterEndpoint {
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            Cluster cluster = MappingBootstrap.getMappingSce().getClusterSce().createCluster(name);
             try {
-                ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-                ClusterJSON.oneCluster2JSON(cluster, outStream);
-                String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                return Response.status(Status.OK).entity(result).build();
-            } catch (Exception e) {
-                log.debug(e.getMessage());
-                e.printStackTrace();
-                String result = e.getMessage();
-                return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                }
+
+                Cluster cluster;
+                if (mappingSession != null) cluster = MappingBootstrap.getMappingSce().getClusterSce().createCluster(mappingSession, name);
+                else cluster = MappingBootstrap.getMappingSce().getClusterSce().createCluster(name);
+
+                try {
+                    ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                    ClusterJSON.oneCluster2JSON(cluster, outStream);
+                    String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                    return Response.status(Status.OK).entity(result).build();
+                } catch (Exception e) {
+                    log.debug(e.getMessage());
+                    e.printStackTrace();
+                    String result = e.getMessage();
+                    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                }
+            } catch (MappingDSException e) {
+                return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
             }
         } else {
             return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
@@ -184,7 +231,14 @@ public class ClusterEndpoint {
             if (payload != null) {
                 try {
                     Response ret;
-                    JSONDeserializationResponse deserializationResponse = jsonFriendlyToMappingFriendly(ClusterJSON.JSON2Cluster(payload), null);
+                    Session mappingSession = null;
+                    if (sessionId!=null && !sessionId.equals("")) {
+                        mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                        if (mappingSession == null)
+                            return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                    }
+
+                    JSONDeserializationResponse deserializationResponse = jsonFriendlyToMappingFriendly(ClusterJSON.JSON2Cluster(payload), mappingSession);
                     if (deserializationResponse.getErrorMessage()!=null) {
                         String result = deserializationResponse.getErrorMessage();
                         ret = Response.status(Status.BAD_REQUEST).entity(result).build();
@@ -204,12 +258,8 @@ public class ClusterEndpoint {
                     String result = e.getMessage();
                     return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
                 }
-            } else {
-                return Response.status(Status.BAD_REQUEST).entity("No payload attached to this POST").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+            } else return Response.status(Status.BAD_REQUEST).entity("No payload attached to this POST").build();
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -221,14 +271,20 @@ public class ClusterEndpoint {
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             try {
-                MappingBootstrap.getMappingSce().getClusterSce().deleteCluster(name);
+                Session mappingSession = null;
+                if (sessionId!=null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                }
+                if (mappingSession!=null) MappingBootstrap.getMappingSce().getClusterSce().deleteCluster(mappingSession, name);
+                else MappingBootstrap.getMappingSce().getClusterSce().deleteCluster(name);
+
                 return Response.status(Status.OK).entity("Cluster (" + name + ") has been successfully deleted !").build();
             } catch (MappingDSException e) {
                 return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Error while deleting cluster with name " + name).build();
             }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -239,16 +295,27 @@ public class ClusterEndpoint {
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            Cluster cluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(id);
-            if (cluster != null) {
-                cluster.setClusterName(name);
-                return Response.status(Status.OK).entity("Cluster (" + id + ") name successfully updated to " + name + ".").build();
-            } else {
-                return Response.status(Status.NOT_FOUND).entity("Error while updating cluster (" + id + ") name " + name + " : cluster " + id + " not found.").build();
+            try {
+                Session mappingSession = null;
+                if (sessionId!=null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                }
+
+                Cluster cluster;
+                if (mappingSession!=null) cluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(mappingSession, id);
+                else cluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(id);
+
+                if (cluster != null) {
+                    if (mappingSession!=null) cluster.setClusterName(mappingSession, name);
+                    else cluster.setClusterName(name);
+                    return Response.status(Status.OK).entity("Cluster (" + id + ") name successfully updated to " + name + ".").build();
+                } else return Response.status(Status.NOT_FOUND).entity("Error while updating cluster (" + id + ") name " + name + " : cluster " + id + " not found.").build();
+            } catch (MappingDSException e) {
+                return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
             }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -258,21 +325,34 @@ public class ClusterEndpoint {
         log.debug("[{}-{}] add container to cluster : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, containerID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone")) {
-            Cluster cluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(id);
-            if (cluster != null) {
-                Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(containerID);
-                if (container != null) {
-                    cluster.addClusterContainer(container);
-                    return Response.status(Status.OK).entity("Container " + containerID + " successfully added to cluster " + id + ".").build();
-                } else {
-                    return Response.status(Status.NOT_FOUND).entity("Error while adding container " + id + " to cluster (" + id + ") : container " + containerID + " not found.").build();
+
+            try {
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
                 }
-            } else {
-                return Response.status(Status.NOT_FOUND).entity("Error while adding container " + id + " to cluster (" + id + ") : cluster " + id + " not found.").build();
+
+                Cluster cluster;
+                if (mappingSession != null) cluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(mappingSession, id);
+                else cluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(id);
+
+                if (cluster != null) {
+                    Container container;
+                    if (mappingSession != null) container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, containerID);
+                    else container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(containerID);
+
+                    if (container != null) {
+                        if (mappingSession != null) cluster.addClusterContainer(mappingSession, container);
+                        else cluster.addClusterContainer(container);
+                        return Response.status(Status.OK).entity("Container " + containerID + " successfully added to cluster " + id + ".").build();
+                    } else return Response.status(Status.NOT_FOUND).entity("Error while adding container " + id + " to cluster (" + id + ") : container " + containerID + " not found.").build();
+                } else return Response.status(Status.NOT_FOUND).entity("Error while adding container " + id + " to cluster (" + id + ") : cluster " + id + " not found.").build();
+            } catch (MappingDSException e) {
+                return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
             }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -282,20 +362,32 @@ public class ClusterEndpoint {
         log.debug("[{}-{}] delete container from cluster : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, containerID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone")) {
-            Cluster cluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(id);
-            if (cluster != null) {
-                Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(containerID);
-                if (container != null) {
-                    cluster.removeClusterContainer(container);
-                    return Response.status(Status.OK).entity("Container " + containerID + " successfully deleted from cluster " + id + ".").build();
-                } else {
-                    return Response.status(Status.NOT_FOUND).entity("Error while deleting container " + id + " from cluster (" + id + ") : container " + containerID + " not found.").build();
+            try {
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
                 }
-            } else {
-                return Response.status(Status.NOT_FOUND).entity("Error while adding container " + id + " to cluster (" + id + ") : cluster " + id + " not found.").build();
+
+                Cluster cluster;
+                if (mappingSession != null) cluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(mappingSession, id);
+                else cluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(id);
+
+                if (cluster != null) {
+                    Container container;
+                    if (mappingSession != null) container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, containerID);
+                    else container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(containerID);
+
+                    if (container != null) {
+                        if (mappingSession != null) cluster.removeClusterContainer(mappingSession, container);
+                        else cluster.removeClusterContainer(container);
+                        return Response.status(Status.OK).entity("Container " + containerID + " successfully deleted from cluster " + id + ".").build();
+                    } else return Response.status(Status.NOT_FOUND).entity("Error while deleting container " + id + " from cluster (" + id + ") : container " + containerID + " not found.").build();
+                } else return Response.status(Status.NOT_FOUND).entity("Error while adding container " + id + " to cluster (" + id + ") : cluster " + id + " not found.").build();
+            } catch (MappingDSException e) {
+                return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
             }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 }

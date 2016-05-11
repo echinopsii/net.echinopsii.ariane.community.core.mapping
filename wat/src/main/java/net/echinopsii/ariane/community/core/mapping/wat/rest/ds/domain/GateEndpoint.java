@@ -22,6 +22,7 @@ package net.echinopsii.ariane.community.core.mapping.wat.rest.ds.domain;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.GateJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
@@ -43,33 +44,47 @@ import java.util.HashSet;
 public class GateEndpoint {
     private static final Logger log = LoggerFactory.getLogger(GateEndpoint.class);
 
-    @GET
-    @Path("/{param:[0-9][0-9]*}")
-    public Response displayGate(@PathParam("param") long id) {
+    private Response _displayGate(long id, String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get gate : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id});
         if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
-            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
+                subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            Gate gate = (Gate) MappingBootstrap.getMappingSce().getGateSce().getGate(id);
-            if (gate != null) {
-                try {
-                    ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-                    GateJSON.oneGate2JSON(gate, outStream);
-                    String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                    return Response.status(Status.OK).entity(result).build();
-                } catch (Exception e) {
-                    log.error(e.getMessage());
-                    e.printStackTrace();
-                    String result = e.getMessage();
-                    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+            try {
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
                 }
-            } else {
-                return Response.status(Status.NOT_FOUND).entity("Gate with id " + id + " not found.").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
-        }
+
+                Gate gate;
+                if (mappingSession!=null) gate = MappingBootstrap.getMappingSce().getGateSce().getGate(mappingSession, id);
+                else gate = MappingBootstrap.getMappingSce().getGateSce().getGate(id);
+
+                if (gate != null) {
+                    try {
+                        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                        GateJSON.oneGate2JSON(gate, outStream);
+                        String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                        return Response.status(Status.OK).entity(result).build();
+                    } catch (Exception e) {
+                        log.error(e.getMessage());
+                        e.printStackTrace();
+                        String result = e.getMessage();
+                        return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                    }
+                } else {
+                    return Response.status(Status.NOT_FOUND).entity("Gate with id " + id + " not found.").build();
+                }
+            } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
+    }
+
+    @GET
+    @Path("/{param:[0-9][0-9]*}")
+    public Response displayGate(@PathParam("param") long id) {
+        return _displayGate(id, null);
     }
 
     @GET
@@ -79,7 +94,7 @@ public class GateEndpoint {
         if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            String result = "";
+            String result;
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             try {
                 GateJSON.manyGates2JSON((HashSet<Gate>) MappingBootstrap.getMappingSce().getGateSce().getGates(null), outStream);
@@ -91,15 +106,13 @@ public class GateEndpoint {
                 result = e.getMessage();
                 return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
             }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
-        }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
     }
 
     @GET
     @Path("/get")
     public Response getGate(@QueryParam("ID")long id, @QueryParam("sessionID") String sessionId) {
-        return displayGate(id);
+        return _displayGate(id, sessionId);
     }
 
     @GET
@@ -114,7 +127,18 @@ public class GateEndpoint {
         {
             try {
                 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-                Gate gate = MappingBootstrap.getMappingSce().getGateSce().createGate(url, name, containerID, isPrimaryAdmin);
+
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                }
+
+                Gate gate;
+                if (mappingSession!=null) gate = MappingBootstrap.getMappingSce().getGateSce().createGate(url, name, containerID, isPrimaryAdmin);
+                else gate = MappingBootstrap.getMappingSce().getGateSce().createGate(url, name, containerID, isPrimaryAdmin);
+
                 try {
                     GateJSON.oneGate2JSON(gate, outStream);
                     String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
@@ -131,9 +155,7 @@ public class GateEndpoint {
                 String result = e.getMessage();
                 return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
             }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -145,7 +167,15 @@ public class GateEndpoint {
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             try {
-                MappingBootstrap.getMappingSce().getGateSce().deleteGate(nodeID);
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                }
+
+                if (mappingSession!=null) MappingBootstrap.getMappingSce().getGateSce().deleteGate(mappingSession, nodeID);
+                else MappingBootstrap.getMappingSce().getGateSce().deleteGate(nodeID);
                 return Response.status(Status.OK).entity("Gate (" + nodeID + ") successfully deleted.").build();
             } catch (MappingDSException e) {
                 log.error(e.getMessage());
@@ -153,9 +183,7 @@ public class GateEndpoint {
                 String result = e.getMessage();
                 return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
             }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -166,20 +194,26 @@ public class GateEndpoint {
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            Gate gate = MappingBootstrap.getMappingSce().getGateSce().getGate(id);
-            if (gate != null) {
-                Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(endpointID);
-                if (endpoint != null) {
-                    gate.setNodePrimaryAdminEnpoint(endpoint);
-                    return Response.status(Status.OK).entity("Gate (" + id + ") primary endpoint successfully updated to " + endpointID + ".").build();
-                } else {
-                    return Response.status(Status.NOT_FOUND).entity("Error while updating gate (" + id + ") primary endpoint " + endpointID + " : gate " + id + " not found.").build();
+            try {
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
                 }
-            } else {
-                return Response.status(Status.NOT_FOUND).entity("Error while updating gate (" + id + ") primary endpoint " + endpointID + " : gate " + id + " not found.").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+
+                Gate gate;
+                if (mappingSession!=null) gate = MappingBootstrap.getMappingSce().getGateSce().getGate(mappingSession, id);
+                else gate = MappingBootstrap.getMappingSce().getGateSce().getGate(id);
+
+                if (gate != null) {
+                    Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(endpointID);
+                    if (endpoint != null) {
+                        gate.setNodePrimaryAdminEnpoint(endpoint);
+                        return Response.status(Status.OK).entity("Gate (" + id + ") primary endpoint successfully updated to " + endpointID + ".").build();
+                    } else return Response.status(Status.NOT_FOUND).entity("Error while updating gate (" + id + ") primary endpoint " + endpointID + " : gate " + id + " not found.").build();
+                } else return Response.status(Status.NOT_FOUND).entity("Error while updating gate (" + id + ") primary endpoint " + endpointID + " : gate " + id + " not found.").build();
+            } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 }

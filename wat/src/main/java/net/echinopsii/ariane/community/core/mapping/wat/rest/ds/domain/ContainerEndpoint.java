@@ -63,20 +63,25 @@ public class ContainerEndpoint {
         HashMap<String, Object> reqProperties = new HashMap<>();
 
         if (jsonDeserializedContainer.getContainerPrimaryAdminGateID()!=0) {
-            reqPrimaryAdminGate = MappingBootstrap.getMappingSce().getGateSce().getGate(jsonDeserializedContainer.getContainerPrimaryAdminGateID());
+            if (mappingSession!=null) reqPrimaryAdminGate = MappingBootstrap.getMappingSce().getGateSce().getGate(mappingSession, jsonDeserializedContainer.getContainerPrimaryAdminGateID());
+            else reqPrimaryAdminGate = MappingBootstrap.getMappingSce().getGateSce().getGate(jsonDeserializedContainer.getContainerPrimaryAdminGateID());
             if (reqPrimaryAdminGate == null) ret.setErrorMessage("Request Error : gate with provided ID " + jsonDeserializedContainer.getContainerPrimaryAdminGateID() + " was not found.");
         }
         if (ret.getErrorMessage() == null && jsonDeserializedContainer.getContainerClusterID()!=0) {
-            reqContainerCluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(jsonDeserializedContainer.getContainerClusterID());
+            if (mappingSession!=null) reqContainerCluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(mappingSession, jsonDeserializedContainer.getContainerClusterID());
+            else reqContainerCluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(jsonDeserializedContainer.getContainerClusterID());
             if (reqContainerCluster == null) ret.setErrorMessage("Request Error: cluster with provided ID " + jsonDeserializedContainer.getContainerClusterID() + " was not found.");
         }
         if (ret.getErrorMessage() == null && jsonDeserializedContainer.getContainerParentContainerID()!=0) {
-            reqContainerParent = MappingBootstrap.getMappingSce().getContainerSce().getContainer(jsonDeserializedContainer.getContainerParentContainerID());
+            if (mappingSession!=null) reqContainerParent = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, jsonDeserializedContainer.getContainerParentContainerID());
+            else reqContainerParent = MappingBootstrap.getMappingSce().getContainerSce().getContainer(jsonDeserializedContainer.getContainerParentContainerID());
             if (reqContainerParent == null) ret.setErrorMessage("Request Error: parent container with provided ID " + jsonDeserializedContainer.getContainerParentContainerID() + " was not found.");
         }
         if (ret.getErrorMessage() == null && jsonDeserializedContainer.getContainerChildContainersID()!=null && jsonDeserializedContainer.getContainerChildContainersID().size() > 0) {
             for (long id : jsonDeserializedContainer.getContainerChildContainersID()) {
-                Container childContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
+                Container childContainer;
+                if (mappingSession!=null) childContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, id);
+                else childContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
                 if (childContainer!=null) reqContainerChildContainers.add(childContainer);
                 else {
                     ret.setErrorMessage("Request Error : child container with provided ID " + id + " was not found.");
@@ -86,7 +91,9 @@ public class ContainerEndpoint {
         }
         if (ret.getErrorMessage() == null && jsonDeserializedContainer.getContainerNodesID()!=null && jsonDeserializedContainer.getContainerNodesID().size()>0) {
             for (long id : jsonDeserializedContainer.getContainerNodesID()) {
-                Node childNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
+                Node childNode;
+                if (mappingSession!=null) childNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(mappingSession, id);
+                else childNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
                 if (childNode != null) reqContainerChildNodes.add(childNode);
                 else {
                     ret.setErrorMessage("Request Error : child node with provided ID " + id + " was not found.");
@@ -96,7 +103,9 @@ public class ContainerEndpoint {
         }
         if (ret.getErrorMessage() == null && jsonDeserializedContainer.getContainerGatesID()!=null && jsonDeserializedContainer.getContainerGatesID().size()>0) {
             for (long id : jsonDeserializedContainer.getContainerGatesID()) {
-                Gate childGate = MappingBootstrap.getMappingSce().getGateSce().getGate(id);
+                Gate childGate;
+                if (mappingSession!=null) childGate = MappingBootstrap.getMappingSce().getGateSce().getGate(mappingSession, id);
+                else childGate = MappingBootstrap.getMappingSce().getGateSce().getGate(id);
                 if (childGate != null) reqContainerChildGates.add(childGate);
                 else {
                     ret.setErrorMessage("Request Error : child gate with provided ID " + id + " was not found.");
@@ -119,13 +128,15 @@ public class ContainerEndpoint {
         // LOOK IF CONTAINER MAYBE UPDATED OR CREATED
         Container deserializedContainer = null;
         if (ret.getErrorMessage() == null && jsonDeserializedContainer.getContainerID()!=0) {
-            deserializedContainer = (Container) MappingBootstrap.getMappingSce().getContainerSce().getContainer(jsonDeserializedContainer.getContainerID());
+            if (mappingSession!=null) deserializedContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, jsonDeserializedContainer.getContainerID());
+            else deserializedContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(jsonDeserializedContainer.getContainerID());
             if (deserializedContainer==null)
                 ret.setErrorMessage("Request Error : container with provided ID " + jsonDeserializedContainer.getContainerID() + " was not found.");
         }
 
         if (ret.getErrorMessage() == null && deserializedContainer == null && jsonDeserializedContainer.getContainerGateURI() != null)
-            deserializedContainer = (Container) MappingBootstrap.getMappingSce().getContainerSce().getContainer(jsonDeserializedContainer.getContainerGateURI());
+            if (mappingSession!=null) deserializedContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, jsonDeserializedContainer.getContainerGateURI());
+            else deserializedContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(jsonDeserializedContainer.getContainerGateURI());
 
         /*
         if (ret.getErrorMessage() == null && deserializedContainer!=null) {
@@ -149,23 +160,39 @@ public class ContainerEndpoint {
                 String reqContainerGName = jsonDeserializedContainer.getContainerGateName();
                 if (reqContainerName == null)
                     if (reqContainerParent != null)
-                        deserializedContainer = (Container) MappingBootstrap.getMappingSce().getContainerSce().createContainer(reqContainerGURI, reqContainerGName, reqContainerParent);
+                        if (mappingSession!=null) deserializedContainer = (Container) MappingBootstrap.getMappingSce().getContainerSce().createContainer(mappingSession, reqContainerGURI, reqContainerGName, reqContainerParent);
+                        else deserializedContainer = (Container) MappingBootstrap.getMappingSce().getContainerSce().createContainer(reqContainerGURI, reqContainerGName, reqContainerParent);
                     else
-                        deserializedContainer = (Container) MappingBootstrap.getMappingSce().getContainerSce().createContainer(reqContainerGURI, reqContainerGName);
+                        if (mappingSession!=null) deserializedContainer = (Container) MappingBootstrap.getMappingSce().getContainerSce().createContainer(mappingSession, reqContainerGURI, reqContainerGName);
+                        else deserializedContainer = (Container) MappingBootstrap.getMappingSce().getContainerSce().createContainer(reqContainerGURI, reqContainerGName);
                 else
                     if (reqContainerParent != null)
-                        deserializedContainer = (Container) MappingBootstrap.getMappingSce().getContainerSce().createContainer(reqContainerName, reqContainerGURI, reqContainerGName, reqContainerParent);
+                        if (mappingSession!=null) deserializedContainer = (Container) MappingBootstrap.getMappingSce().getContainerSce().createContainer(mappingSession, reqContainerName, reqContainerGURI, reqContainerGName, reqContainerParent);
+                        else deserializedContainer = (Container) MappingBootstrap.getMappingSce().getContainerSce().createContainer(reqContainerName, reqContainerGURI, reqContainerGName, reqContainerParent);
                     else
-                        deserializedContainer = (Container) MappingBootstrap.getMappingSce().getContainerSce().createContainer(reqContainerName, reqContainerGURI, reqContainerGName);
+                        if (mappingSession!=null) deserializedContainer = (Container) MappingBootstrap.getMappingSce().getContainerSce().createContainer(mappingSession, reqContainerName, reqContainerGURI, reqContainerGName);
+                        else deserializedContainer = (Container) MappingBootstrap.getMappingSce().getContainerSce().createContainer(reqContainerName, reqContainerGURI, reqContainerGName);
             } else {
-                if (reqContainerName != null) deserializedContainer.setContainerName(reqContainerName);
-                if (reqPrimaryAdminGate != null) deserializedContainer.setContainerPrimaryAdminGate(reqPrimaryAdminGate);
+                if (reqContainerName != null)
+                    if (mappingSession!=null) deserializedContainer.setContainerName(mappingSession, reqContainerName);
+                    else deserializedContainer.setContainerName(reqContainerName);
+                if (reqPrimaryAdminGate != null)
+                    if (mappingSession!=null) deserializedContainer.setContainerPrimaryAdminGate(mappingSession, reqPrimaryAdminGate);
+                    else deserializedContainer.setContainerPrimaryAdminGate(reqPrimaryAdminGate);
             }
 
-            if (reqContainerCluster != null) deserializedContainer.setContainerCluster(reqContainerCluster);
-            if (reqContainerCompany != null) deserializedContainer.setContainerCompany(reqContainerCompany);
-            if (reqContainerProduct != null) deserializedContainer.setContainerProduct(reqContainerProduct);
-            if (reqContainerType != null) deserializedContainer.setContainerType(reqContainerType);
+            if (reqContainerCluster != null)
+                if (mappingSession!=null) deserializedContainer.setContainerCluster(mappingSession, reqContainerCluster);
+                else deserializedContainer.setContainerCluster(reqContainerCluster);
+            if (reqContainerCompany != null)
+                if (mappingSession!=null) deserializedContainer.setContainerCompany(mappingSession, reqContainerCompany);
+                else deserializedContainer.setContainerCompany(reqContainerCompany);
+            if (reqContainerProduct != null)
+                if (mappingSession!=null) deserializedContainer.setContainerProduct(mappingSession, reqContainerProduct);
+                else deserializedContainer.setContainerProduct(reqContainerProduct);
+            if (reqContainerType != null)
+                if (mappingSession!=null) deserializedContainer.setContainerType(mappingSession, reqContainerType);
+                else deserializedContainer.setContainerType(reqContainerType);
 
             if (jsonDeserializedContainer.getContainerChildContainersID() != null) {
                 List<Container> childContainersToDelete = new ArrayList<>();
@@ -173,9 +200,11 @@ public class ContainerEndpoint {
                     if (!reqContainerChildContainers.contains(containerToDel))
                         childContainersToDelete.add(containerToDel);
                 for (Container containerToDel : childContainersToDelete)
-                    deserializedContainer.removeContainerChildContainer(containerToDel);
+                    if (mappingSession!=null) deserializedContainer.removeContainerChildContainer(mappingSession, containerToDel);
+                    else deserializedContainer.removeContainerChildContainer(containerToDel);
                 for (Container containerToAdd : reqContainerChildContainers)
-                    deserializedContainer.addContainerChildContainer(containerToAdd);
+                    if (mappingSession!=null) deserializedContainer.addContainerChildContainer(mappingSession, containerToAdd);
+                    else deserializedContainer.addContainerChildContainer(containerToAdd);
             }
 
             if (jsonDeserializedContainer.getContainerNodesID() != null) {
@@ -184,9 +213,11 @@ public class ContainerEndpoint {
                     if (!reqContainerChildNodes.contains(nodeToDel))
                         nodesToDelete.add(nodeToDel);
                 for (Node nodeToDel : nodesToDelete)
-                    deserializedContainer.removeContainerNode(nodeToDel);
+                    if (mappingSession!=null) deserializedContainer.removeContainerNode(mappingSession, nodeToDel);
+                    else deserializedContainer.removeContainerNode(nodeToDel);
                 for (Node nodeToAdd : reqContainerChildNodes)
-                    deserializedContainer.addContainerNode(nodeToAdd);
+                    if (mappingSession!=null) deserializedContainer.addContainerNode(mappingSession, nodeToAdd);
+                    else deserializedContainer.addContainerNode(nodeToAdd);
             }
 
             if (jsonDeserializedContainer.getContainerGatesID() != null) {
@@ -195,9 +226,11 @@ public class ContainerEndpoint {
                     if (!reqContainerChildGates.contains(gateToDel))
                         gatesToDelete.add(gateToDel);
                 for (Gate gateToDel : gatesToDelete)
-                    deserializedContainer.removeContainerGate(gateToDel);
+                    if (mappingSession!=null) deserializedContainer.removeContainerGate(mappingSession, gateToDel);
+                    else deserializedContainer.removeContainerGate(gateToDel);
                 for (Gate gateToAdd : reqContainerChildGates)
-                    deserializedContainer.addContainerGate(gateToAdd);
+                    if (mappingSession!=null) deserializedContainer.addContainerGate(mappingSession, gateToAdd);
+                    else deserializedContainer.addContainerGate(gateToAdd);
             }
 
             if (jsonDeserializedContainer.getContainerProperties()!=null) {
@@ -207,11 +240,13 @@ public class ContainerEndpoint {
                         if (!reqProperties.containsKey(propertyKey))
                             propertiesToDelete.add(propertyKey);
                     for (String propertyToDelete : propertiesToDelete)
-                        deserializedContainer.removeContainerProperty(propertyToDelete);
+                        if (mappingSession!=null) deserializedContainer.removeContainerProperty(mappingSession, propertyToDelete);
+                        else deserializedContainer.removeContainerProperty(propertyToDelete);
                 }
 
                 for (String propertyKey : reqProperties.keySet())
-                    deserializedContainer.addContainerProperty(propertyKey, reqProperties.get(propertyKey));
+                    if (mappingSession!=null) deserializedContainer.addContainerProperty(mappingSession, propertyKey, reqProperties.get(propertyKey));
+                    else deserializedContainer.addContainerProperty(propertyKey, reqProperties.get(propertyKey));
             }
 
             ret.setDeserializedObject(deserializedContainer);
@@ -219,33 +254,47 @@ public class ContainerEndpoint {
         return ret;
     }
 
-    @GET
-    @Path("/{param:[0-9][0-9]*}")
-    public Response displayContainer(@PathParam("param") long id) {
+    private Response _displayContainer(long id, String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get container : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id});
         if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
-            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
+                subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            Container cont = (Container) MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
-            if (cont != null) {
-                ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-                try {
-                    ContainerJSON.oneContainer2JSON(cont, outStream);
-                    String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                    return Response.status(Status.OK).entity(result).build();
-                } catch (Exception e) {
-                    log.error(e.getMessage());
-                    e.printStackTrace();
-                    String result = e.getMessage();
-                    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+            try {
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
                 }
-            } else {
-                return Response.status(Status.NOT_FOUND).entity("Container with id " + id + " not found").build();
+
+                Container cont;
+                if (mappingSession != null) cont = (Container) MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, id);
+                else cont = (Container) MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
+
+                if (cont != null) {
+                    ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                    try {
+                        ContainerJSON.oneContainer2JSON(cont, outStream);
+                        String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                        return Response.status(Status.OK).entity(result).build();
+                    } catch (Exception e) {
+                        log.error(e.getMessage());
+                        e.printStackTrace();
+                        String result = e.getMessage();
+                        return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                    }
+                } else return Response.status(Status.NOT_FOUND).entity("Container with id " + id + " not found").build();
+            } catch (MappingDSException e) {
+                return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
             }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
-        }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
+    }
+
+    @GET
+    @Path("/{param:[0-9][0-9]*}")
+    public Response displayContainer(@PathParam("param") long id) {
+        return _displayContainer(id, null);
     }
 
     @GET
@@ -276,35 +325,41 @@ public class ContainerEndpoint {
     @Path("/get")
     public Response getContainer(@QueryParam("primaryAdminURL") String primaryAdminURL, @QueryParam("ID") long id, @QueryParam("sessionID") String sessionId) {
         if (id!=0) {
-            return displayContainer(id);
+            return _displayContainer(id, sessionId);
         } else if (primaryAdminURL != null) {
             Subject subject = SecurityUtils.getSubject();
             log.debug("[{}-{}] get container: {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), primaryAdminURL});
             if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
                 subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
             {
-                Container cont = (Container) MappingBootstrap.getMappingSce().getContainerSce().getContainer(primaryAdminURL);
-                if (cont != null) {
-                    ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-                    try {
-                        ContainerJSON.oneContainer2JSON(cont, outStream);
-                        String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                        return Response.status(Status.OK).entity(result).build();
-                    } catch (Exception e) {
-                        log.error(e.getMessage());
-                        e.printStackTrace();
-                        String result = e.getMessage();
-                        return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                try {
+                    Session mappingSession = null;
+                    if (sessionId != null && !sessionId.equals("")) {
+                        mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                        if (mappingSession == null)
+                            return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
                     }
-                } else {
-                    return Response.status(Status.NOT_FOUND).entity("Container with primary admin url " + primaryAdminURL + " not found").build();
-                }
-            } else {
-                return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
-            }
-        } else {
-            return Response.status(Status.INTERNAL_SERVER_ERROR).entity("MappingDSLRegistryRequest error: primaryAdminURL and id are not defined. You must define one of these parameters").build();
-        }
+
+                    Container cont;
+                    if (mappingSession != null) cont = (Container) MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, primaryAdminURL);
+                    else cont = (Container) MappingBootstrap.getMappingSce().getContainerSce().getContainer(primaryAdminURL);
+
+                    if (cont != null) {
+                        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                        try {
+                            ContainerJSON.oneContainer2JSON(cont, outStream);
+                            String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                            return Response.status(Status.OK).entity(result).build();
+                        } catch (Exception e) {
+                            log.error(e.getMessage());
+                            e.printStackTrace();
+                            String result = e.getMessage();
+                            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                        }
+                    } else return Response.status(Status.NOT_FOUND).entity("Container with primary admin url " + primaryAdminURL + " not found").build();
+                } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+            } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
+        } else return Response.status(Status.INTERNAL_SERVER_ERROR).entity("MappingDSLRegistryRequest error: primaryAdminURL and id are not defined. You must define one of these parameters").build();
     }
 
     @GET
@@ -317,11 +372,21 @@ public class ContainerEndpoint {
             if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
                     subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
             {
-                Container cont = null;
+                Session mappingSession = null;
+                if (sessionId!=null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                }
+
+                Container cont;
                 if (name != null)
-                    cont = (Container) MappingBootstrap.getMappingSce().getContainerSce().createContainer(name, primaryAdminURL, primaryAdminGateName);
+                    if (mappingSession!=null) cont = MappingBootstrap.getMappingSce().getContainerSce().createContainer(mappingSession, name, primaryAdminURL, primaryAdminGateName);
+                    else cont = MappingBootstrap.getMappingSce().getContainerSce().createContainer(name, primaryAdminURL, primaryAdminGateName);
                 else
-                    cont = (Container) MappingBootstrap.getMappingSce().getContainerSce().createContainer(primaryAdminURL, primaryAdminGateName);
+                    if (mappingSession!=null) cont = MappingBootstrap.getMappingSce().getContainerSce().createContainer(mappingSession, primaryAdminURL, primaryAdminGateName);
+                    else cont = MappingBootstrap.getMappingSce().getContainerSce().createContainer(primaryAdminURL, primaryAdminGateName);
+
                 try {
                     ByteArrayOutputStream outStream = new ByteArrayOutputStream();
                     ContainerJSON.oneContainer2JSON(cont, outStream);
@@ -333,9 +398,7 @@ public class ContainerEndpoint {
                     String result = e.getMessage();
                     return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
                 }
-            } else {
-                return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-            }
+            } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
         } catch (MappingDSException e) {
             log.error(e.getMessage());
             e.printStackTrace();
@@ -352,8 +415,15 @@ public class ContainerEndpoint {
                 subject.hasRole("Jedi") || subject.isPermitted("universe:zeone")) {
             if (payload != null) {
                 try {
+                    Session mappingSession = null;
+                    if (sessionId!=null && !sessionId.equals("")) {
+                        mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                        if (mappingSession == null)
+                            return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                    }
+
                     Response ret;
-                    JSONDeserializationResponse deserializationResponse = jsonFriendlyToMappingFriendly(ContainerJSON.JSON2Container(payload), null);
+                    JSONDeserializationResponse deserializationResponse = jsonFriendlyToMappingFriendly(ContainerJSON.JSON2Container(payload), mappingSession);
                     if (deserializationResponse.getErrorMessage()!=null) {
                         String result = deserializationResponse.getErrorMessage();
                         ret = Response.status(Status.BAD_REQUEST).entity(result).build();
@@ -373,12 +443,8 @@ public class ContainerEndpoint {
                     String result = e.getMessage();
                     return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
                 }
-            } else {
-                return Response.status(Status.BAD_REQUEST).entity("No payload attached to this POST").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+            } else return Response.status(Status.BAD_REQUEST).entity("No payload attached to this POST").build();
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -390,14 +456,19 @@ public class ContainerEndpoint {
             if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
                 subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
             {
-                MappingBootstrap.getMappingSce().getContainerSce().deleteContainer(primaryAdminURL);
+                Session mappingSession = null;
+                if (sessionId!=null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                }
+
+                if (mappingSession != null) MappingBootstrap.getMappingSce().getContainerSce().deleteContainer(mappingSession, primaryAdminURL);
+                else MappingBootstrap.getMappingSce().getContainerSce().deleteContainer(primaryAdminURL);
+
                 return Response.status(Status.OK).entity("Container (" + primaryAdminURL + ") has been successfully deleted !").build();
-            } else {
-                return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-            }
-        } catch (MappingDSException e) {
-            return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Error while deleting container with primary admin URL " + primaryAdminURL).build();
-        }
+            } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
+        } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Error while deleting container with primary admin URL " + primaryAdminURL).build(); }
     }
 
     @GET
@@ -408,16 +479,25 @@ public class ContainerEndpoint {
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
                 subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
-            if (container != null) {
-                container.setContainerName(name);
-                return Response.status(Status.OK).entity("Container (" + id + ") company successfully updated to " + name + ".").build();
-            } else {
-                return Response.status(Status.NOT_FOUND).entity("Error while updating container (" + id + ") company " + name + " : container " + id + " not found.").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+            try {
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                }
+
+                Container container;
+                if (mappingSession != null) container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, id);
+                else container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
+
+                if (container != null) {
+                    if (mappingSession != null) container.setContainerName(mappingSession, name);
+                    else container.setContainerName(name);
+                    return Response.status(Status.OK).entity("Container (" + id + ") company successfully updated to " + name + ".").build();
+                } else return Response.status(Status.NOT_FOUND).entity("Error while updating container (" + id + ") company " + name + " : container " + id + " not found.").build();
+            } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -428,16 +508,25 @@ public class ContainerEndpoint {
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
-            if (container != null) {
-                container.setContainerCompany(company);
-                return Response.status(Status.OK).entity("Container (" + id + ") company successfully updated to " + company + ".").build();
-            } else {
-                return Response.status(Status.NOT_FOUND).entity("Error while updating container (" + id + ") company " + company + " : container " + id + " not found.").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+            try {
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                }
+
+                Container container;
+                if (mappingSession != null) container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, id);
+                else container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
+
+                if (container != null) {
+                    if (mappingSession != null) container.setContainerCompany(mappingSession, company);
+                    else container.setContainerCompany(company);
+                    return Response.status(Status.OK).entity("Container (" + id + ") company successfully updated to " + company + ".").build();
+                } else return Response.status(Status.NOT_FOUND).entity("Error while updating container (" + id + ") company " + company + " : container " + id + " not found.").build();
+            } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -448,16 +537,25 @@ public class ContainerEndpoint {
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
-            if (container != null) {
-                container.setContainerProduct(product);
-                return Response.status(Status.OK).entity("Container (" + id + ") product successfully updated to " + product + ".").build();
-            } else {
-                return Response.status(Status.NOT_FOUND).entity("Error while updating container (" + id + ") product " + product + " : container " + id + " not found.").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+            try {
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                }
+
+                Container container;
+                if (mappingSession != null) container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, id);
+                else container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
+
+                if (container != null) {
+                    if (mappingSession != null) container.setContainerProduct(mappingSession, product);
+                    else container.setContainerProduct(product);
+                    return Response.status(Status.OK).entity("Container (" + id + ") product successfully updated to " + product + ".").build();
+                } else return Response.status(Status.NOT_FOUND).entity("Error while updating container (" + id + ") product " + product + " : container " + id + " not found.").build();
+            } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -468,16 +566,25 @@ public class ContainerEndpoint {
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
-            if (container != null) {
-                container.setContainerType(type);
-                return Response.status(Status.OK).entity("Container (" + id + ") type successfully updated to " + type + ".").build();
-            } else {
-                return Response.status(Status.NOT_FOUND).entity("Error while updating container (" + id + ") type " + type + " : container " + id + " not found.").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+            try {
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                }
+
+                Container container;
+                if (mappingSession != null) container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, id);
+                else container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
+
+                if (container != null) {
+                    if (mappingSession != null) container.setContainerType(mappingSession, type);
+                    else container.setContainerType(type);
+                    return Response.status(Status.OK).entity("Container (" + id + ") type successfully updated to " + type + ".").build();
+                } else return Response.status(Status.NOT_FOUND).entity("Error while updating container (" + id + ") type " + type + " : container " + id + " not found.").build();
+            } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -488,21 +595,31 @@ public class ContainerEndpoint {
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
-            if (container != null) {
-                Gate gate = MappingBootstrap.getMappingSce().getGateSce().getGate(paGateID);
-                if (gate != null) {
-                    container.setContainerPrimaryAdminGate(gate);
-                    return Response.status(Status.OK).entity("Container (" + id + ") primary admin gate successfully updated to " + gate.getNodeName() + ".").build();
-                } else {
-                    return Response.status(Status.NOT_FOUND).entity("Error while updating container (" + id + ") primary admin gate : gate " + paGateID + " not found.").build();
+            try {
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
                 }
-            } else {
-                return Response.status(Status.NOT_FOUND).entity("Error while updating container (" + id + ") primary admin gate " + paGateID + " : container " + id + " not found.").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+
+                Container container;
+                if (mappingSession != null) container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, id);
+                else container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
+
+                if (container != null) {
+                    Gate gate;
+                    if (mappingSession != null) gate = MappingBootstrap.getMappingSce().getGateSce().getGate(mappingSession, paGateID);
+                    else gate = MappingBootstrap.getMappingSce().getGateSce().getGate(paGateID);
+
+                    if (gate != null) {
+                        if (mappingSession != null) container.setContainerPrimaryAdminGate(mappingSession, gate);
+                        else container.setContainerPrimaryAdminGate(gate);
+                        return Response.status(Status.OK).entity("Container (" + id + ") primary admin gate successfully updated to " + gate.getNodeName() + ".").build();
+                    } else return Response.status(Status.NOT_FOUND).entity("Error while updating container (" + id + ") primary admin gate : gate " + paGateID + " not found.").build();
+                } else return Response.status(Status.NOT_FOUND).entity("Error while updating container (" + id + ") primary admin gate " + paGateID + " : container " + id + " not found.").build();
+            } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -513,21 +630,31 @@ public class ContainerEndpoint {
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
-            if (container != null) {
-                Cluster cluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(clusterID);
-                if (cluster != null) {
-                    container.setContainerCluster(cluster);
-                    return Response.status(Status.OK).entity("Container (" + id + ") cluster successfully updated to " + clusterID + ".").build();
-                } else {
-                    return Response.status(Status.NOT_FOUND).entity("Error while updating container " + id + " cluster : cluster " + clusterID + " not found.").build();
+            try {
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
                 }
-            } else {
-                return Response.status(Status.NOT_FOUND).entity("Error while updating container (" + id + ") cluster " + clusterID + ": container " + id + " not found.").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+
+                Container container;
+                if (mappingSession != null) container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, id);
+                else container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
+
+                if (container != null) {
+                    Cluster cluster;
+                    if (mappingSession != null) cluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(mappingSession, clusterID);
+                    else cluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(clusterID);
+
+                    if (cluster != null) {
+                        if (mappingSession != null) container.setContainerCluster(mappingSession, cluster);
+                        else container.setContainerCluster(cluster);
+                        return Response.status(Status.OK).entity("Container (" + id + ") cluster successfully updated to " + clusterID + ".").build();
+                    } else return Response.status(Status.NOT_FOUND).entity("Error while updating container " + id + " cluster : cluster " + clusterID + " not found.").build();
+                } else return Response.status(Status.NOT_FOUND).entity("Error while updating container (" + id + ") cluster " + clusterID + ": container " + id + " not found.").build();
+            } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -538,21 +665,30 @@ public class ContainerEndpoint {
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
-            if (container != null) {
-                Container parentContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(parentContainerID);
-                if (parentContainer != null) {
-                    parentContainer.setContainerParentContainer(parentContainer);
-                    return Response.status(Status.OK).entity("Container (" + id + ") parent container successfully updated to " + parentContainerID + ".").build();
-                } else {
-                    return Response.status(Status.NOT_FOUND).entity("Error while updating container (" + id + ") parent container " + parentContainerID + ": parent container " + parentContainerID + " not found.").build();
+            try {
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
                 }
-            } else {
-                return Response.status(Status.NOT_FOUND).entity("Error while updating container (" + id + ") parent container " + parentContainerID + ": container " + id + " not found.").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+
+                Container container;
+                if (mappingSession != null) container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, id);
+                else container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
+
+                if (container != null) {
+                    Container parentContainer;
+                    if (mappingSession != null)  parentContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, parentContainerID);
+                    else parentContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(parentContainerID);
+                    if (parentContainer != null) {
+                        if (mappingSession != null) parentContainer.setContainerParentContainer(mappingSession, parentContainer);
+                        else parentContainer.setContainerParentContainer(parentContainer);
+                        return Response.status(Status.OK).entity("Container (" + id + ") parent container successfully updated to " + parentContainerID + ".").build();
+                    } else return Response.status(Status.NOT_FOUND).entity("Error while updating container (" + id + ") parent container " + parentContainerID + ": parent container " + parentContainerID + " not found.").build();
+                } else return Response.status(Status.NOT_FOUND).entity("Error while updating container (" + id + ") parent container " + parentContainerID + ": container " + id + " not found.").build();
+            } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -563,21 +699,31 @@ public class ContainerEndpoint {
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
-            if (container != null) {
-                Container childContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(childContainerID);
-                if (childContainer != null) {
-                    container.addContainerChildContainer(childContainer);
-                    return Response.status(Status.OK).entity("Child container " + childContainerID + " successfully added to container " + id + ".").build();
-                } else {
-                    return Response.status(Status.NOT_FOUND).entity("Error while adding child container into container " + id + " : child container " + childContainerID + " not found.").build();
+            try {
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
                 }
-            } else {
-                return Response.status(Status.NOT_FOUND).entity("Error while adding child container (" + childContainerID + ") to container " + id + ": container " + id + " not found.").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+
+                Container container;
+                if (mappingSession != null) container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, id);
+                else container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
+
+                if (container != null) {
+                    Container childContainer;
+                    if (mappingSession != null) childContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, childContainerID);
+                    else childContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(childContainerID);
+
+                    if (childContainer != null) {
+                        if (mappingSession != null) container.addContainerChildContainer(mappingSession, childContainer);
+                        else container.addContainerChildContainer(childContainer);
+                        return Response.status(Status.OK).entity("Child container " + childContainerID + " successfully added to container " + id + ".").build();
+                    } else return Response.status(Status.NOT_FOUND).entity("Error while adding child container into container " + id + " : child container " + childContainerID + " not found.").build();
+                } else return Response.status(Status.NOT_FOUND).entity("Error while adding child container (" + childContainerID + ") to container " + id + ": container " + id + " not found.").build();
+            } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -588,21 +734,30 @@ public class ContainerEndpoint {
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
-            if (container != null) {
-                Container childContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(childContainerID);
-                if (childContainer != null) {
-                    container.removeContainerChildContainer(childContainer);
-                    return Response.status(Status.OK).entity("Child container " + childContainerID + " successfully deleted from container " + id + ".").build();
-                } else {
-                    return Response.status(Status.NOT_FOUND).entity("Error while deleting child container from container " + id + " : child container " + childContainerID + " not found.").build();
+            try {
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
                 }
-            } else {
-                return Response.status(Status.NOT_FOUND).entity("Error while deleting child container (" + childContainerID + ") from container " + id + ": container " + id + " not found.").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+
+                Container container;
+                if (mappingSession != null) container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, id);
+                else container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
+
+                if (container != null) {
+                    Container childContainer;
+                    if (mappingSession != null) childContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, childContainerID);
+                    else childContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(childContainerID);
+                    if (childContainer != null) {
+                        if (mappingSession!=null) container.removeContainerChildContainer(mappingSession, childContainer);
+                        else container.removeContainerChildContainer(childContainer);
+                        return Response.status(Status.OK).entity("Child container " + childContainerID + " successfully deleted from container " + id + ".").build();
+                    } else return Response.status(Status.NOT_FOUND).entity("Error while deleting child container from container " + id + " : child container " + childContainerID + " not found.").build();
+                } else return Response.status(Status.NOT_FOUND).entity("Error while deleting child container (" + childContainerID + ") from container " + id + ": container " + id + " not found.").build();
+            } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -613,21 +768,31 @@ public class ContainerEndpoint {
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
-            if (container != null) {
-                Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(nodeID);
-                if (node != null) {
-                    container.addContainerNode(node);
-                    return Response.status(Status.OK).entity("Node " + nodeID + " successfully added to container " + id + ".").build();
-                } else {
-                    return Response.status(Status.NOT_FOUND).entity("Error while adding node into container " + id + " : node " + nodeID + " not found.").build();
+            try {
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
                 }
-            } else {
-                return Response.status(Status.NOT_FOUND).entity("Error while adding node " + nodeID + " into container (" + id + ") : container " + id + " not found.").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+
+                Container container;
+                if (mappingSession != null) container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, id);
+                else container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
+
+                if (container != null) {
+                    Node node;
+                    if (mappingSession != null) node = MappingBootstrap.getMappingSce().getNodeSce().getNode(mappingSession, nodeID);
+                    else node = MappingBootstrap.getMappingSce().getNodeSce().getNode(nodeID);
+
+                    if (node != null) {
+                        if (mappingSession != null) container.addContainerNode(mappingSession, node);
+                        else container.addContainerNode(node);
+                        return Response.status(Status.OK).entity("Node " + nodeID + " successfully added to container " + id + ".").build();
+                    } else return Response.status(Status.NOT_FOUND).entity("Error while adding node into container " + id + " : node " + nodeID + " not found.").build();
+                } else return Response.status(Status.NOT_FOUND).entity("Error while adding node " + nodeID + " into container (" + id + ") : container " + id + " not found.").build();
+            } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -638,21 +803,31 @@ public class ContainerEndpoint {
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
-            if (container != null) {
-                Node node = MappingBootstrap.getMappingSce().getNodeSce().getNode(nodeID);
-                if (node != null) {
-                    container.removeContainerNode(node);
-                    return Response.status(Status.OK).entity("Node " + nodeID + " successfully deleted from container " + id + ".").build();
-                } else {
-                    return Response.status(Status.NOT_FOUND).entity("Error while deleting node from container " + id + " : node " + nodeID + " not found.").build();
+            try {
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
                 }
-            } else {
-                return Response.status(Status.NOT_FOUND).entity("Error while deletinging node " + nodeID + " into container : container " + id + " not found.").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+
+                Container container;
+                if (mappingSession != null) container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, id);
+                else container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
+
+                if (container != null) {
+                    Node node;
+                    if (mappingSession != null) node = MappingBootstrap.getMappingSce().getNodeSce().getNode(mappingSession, nodeID);
+                    else node = MappingBootstrap.getMappingSce().getNodeSce().getNode(nodeID);
+
+                    if (node != null) {
+                        if (mappingSession != null) container.removeContainerNode(mappingSession, node);
+                        else container.removeContainerNode(node);
+                        return Response.status(Status.OK).entity("Node " + nodeID + " successfully deleted from container " + id + ".").build();
+                    } else return Response.status(Status.NOT_FOUND).entity("Error while deleting node from container " + id + " : node " + nodeID + " not found.").build();
+                } else return Response.status(Status.NOT_FOUND).entity("Error while deletinging node " + nodeID + " into container : container " + id + " not found.").build();
+            } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -663,21 +838,31 @@ public class ContainerEndpoint {
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
-            if (container != null) {
-                Gate gate = MappingBootstrap.getMappingSce().getGateSce().getGate(gateID);
-                if (gate != null) {
-                    container.addContainerGate(gate);
-                    return Response.status(Status.OK).entity("Gate " + gateID + " successfully added to container " + id + ".").build();
-                } else {
-                    return Response.status(Status.NOT_FOUND).entity("Error while adding gate into container " + id + " : gate " + gateID + " not found.").build();
+            try {
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
                 }
-            } else {
-                return Response.status(Status.NOT_FOUND).entity("Error while adding gate " + gateID + " into container (" + id + ") : container " + id + " not found.").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+
+                Container container;
+                if (mappingSession != null) container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, id);
+                else container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
+
+                if (container != null) {
+                    Gate gate;
+                    if (mappingSession != null) gate = MappingBootstrap.getMappingSce().getGateSce().getGate(mappingSession, gateID);
+                    else gate = MappingBootstrap.getMappingSce().getGateSce().getGate(gateID);
+
+                    if (gate != null) {
+                        if (mappingSession != null) container.addContainerGate(mappingSession, gate);
+                        else container.addContainerGate(gate);
+                        return Response.status(Status.OK).entity("Gate " + gateID + " successfully added to container " + id + ".").build();
+                    } else return Response.status(Status.NOT_FOUND).entity("Error while adding gate into container " + id + " : gate " + gateID + " not found.").build();
+                } else return Response.status(Status.NOT_FOUND).entity("Error while adding gate " + gateID + " into container (" + id + ") : container " + id + " not found.").build();
+            } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -688,21 +873,31 @@ public class ContainerEndpoint {
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
-            if (container != null) {
-                Gate gate = MappingBootstrap.getMappingSce().getGateSce().getGate(gateID);
-                if (gate != null) {
-                    container.removeContainerGate(gate);
-                    return Response.status(Status.OK).entity("Gate " + gateID + " successfully deleted from container " + id + ".").build();
-                } else {
-                    return Response.status(Status.NOT_FOUND).entity("Error while deleting gate from container " + id + " : gate " + gateID + " not found.").build();
+            try {
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
                 }
-            } else {
-                return Response.status(Status.NOT_FOUND).entity("Error while deleting gate " + gateID + " from container (" + id + ") : container " + id + " not found.").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+
+                Container container;
+                if (mappingSession != null) container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, id);
+                else container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
+
+                if (container != null) {
+                    Gate gate;
+                    if (mappingSession != null) gate = MappingBootstrap.getMappingSce().getGateSce().getGate(mappingSession, gateID);
+                    else gate = MappingBootstrap.getMappingSce().getGateSce().getGate(gateID);
+
+                    if (gate != null) {
+                        if (mappingSession != null) container.removeContainerGate(mappingSession, gate);
+                        else container.removeContainerGate(gate);
+                        return Response.status(Status.OK).entity("Gate " + gateID + " successfully deleted from container " + id + ".").build();
+                    } else return Response.status(Status.NOT_FOUND).entity("Error while deleting gate from container " + id + " : gate " + gateID + " not found.").build();
+                } else return Response.status(Status.NOT_FOUND).entity("Error while deleting gate " + gateID + " from container (" + id + ") : container " + id + " not found.").build();
+            } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -715,29 +910,38 @@ public class ContainerEndpoint {
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             if (name != null && type != null && value != null) {
-                Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
-                if (container != null) {
-                    Object oValue;
-                    try {
-                        oValue = ToolBox.extractPropertyObjectValueFromString(value, type);
-                    } catch (Exception e) {
-                        log.error(e.getMessage());
-                        e.printStackTrace();
-                        String result = e.getMessage();
-                        return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                try {
+                    Session mappingSession = null;
+                    if (sessionId != null && !sessionId.equals("")) {
+                        mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                        if (mappingSession == null)
+                            return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
                     }
-                    container.addContainerProperty(name, oValue);
-                    return Response.status(Status.OK).entity("Property (" + name + "," + value + ") successfully added to container " + id + ".").build();
-                } else {
-                    return Response.status(Status.NOT_FOUND).entity("Error while adding property (" + name + "," + value + ") into container : container " + id + " not found.").build();
-                }
+
+                    Container container;
+                    if (mappingSession != null) container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, id);
+                    else container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
+
+                    if (container != null) {
+                        Object oValue;
+                        try {
+                            oValue = ToolBox.extractPropertyObjectValueFromString(value, type);
+                        } catch (Exception e) {
+                            log.error(e.getMessage());
+                            e.printStackTrace();
+                            String result = e.getMessage();
+                            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                        }
+                        if (mappingSession != null) container.addContainerProperty(mappingSession, name, oValue);
+                        else container.addContainerProperty(name, oValue);
+                        return Response.status(Status.OK).entity("Property (" + name + "," + value + ") successfully added to container " + id + ".").build();
+                    } else return Response.status(Status.NOT_FOUND).entity("Error while adding property (" + name + "," + value + ") into container : container " + id + " not found.").build();
+                } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
             } else {
                 log.warn("Property is not defined correctly : {name: " + name + ", type: " + type + ", value: " + value + "}.");
                 return Response.status(Status.BAD_REQUEST).entity("Property is not defined correctly : {name: " + name + ", type: " + type + ", value: " + value + "}.").build();
             }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -747,15 +951,24 @@ public class ContainerEndpoint {
         log.debug("[{}-{}] update container by removing a property : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
                     subject.hasRole("Jedi") || subject.isPermitted("universe:zeone")) {
-            Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
-            if (container != null) {
-                container.removeContainerProperty(name);
-                return Response.status(Status.OK).entity("Property (" + name + ") successfully deleted from container " + id + ".").build();
-            } else {
-                return Response.status(Status.NOT_FOUND).entity("Error while deleting property (" + name + ") from container : container " + id + " not found.").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+            try {
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                }
+
+                Container container;
+                if (mappingSession != null) container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, id);
+                else container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
+
+                if (container != null) {
+                    if (mappingSession != null) container.removeContainerProperty(mappingSession, name);
+                    else container.removeContainerProperty(name);
+                    return Response.status(Status.OK).entity("Property (" + name + ") successfully deleted from container " + id + ".").build();
+                } else return Response.status(Status.NOT_FOUND).entity("Error while deleting property (" + name + ") from container : container " + id + " not found.").build();
+            } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 }

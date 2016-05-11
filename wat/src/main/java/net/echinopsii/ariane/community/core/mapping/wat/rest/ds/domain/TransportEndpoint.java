@@ -23,6 +23,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.TransportJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
@@ -46,7 +47,8 @@ import java.util.List;
 public class TransportEndpoint {
     private static final Logger log = LoggerFactory.getLogger(TransportEndpoint.class);
 
-    public static JSONDeserializationResponse jsonFriendlyToMappingFriendly(TransportJSON.JSONDeserializedTransport jsonDeserializedTransport) throws MappingDSException {
+    public static JSONDeserializationResponse jsonFriendlyToMappingFriendly(TransportJSON.JSONDeserializedTransport jsonDeserializedTransport,
+                                                                            Session mappingSession) throws MappingDSException {
         JSONDeserializationResponse ret = new JSONDeserializationResponse();
 
         // DETECT POTENTIAL QUERIES ERROR FIRST
@@ -68,27 +70,35 @@ public class TransportEndpoint {
         // LOOK IF TRANSPORT MAYBE UPDATED OR CREATED
         Transport deserializedTransport = null;
         if (ret.getErrorMessage() == null && jsonDeserializedTransport.getTransportID()!=0) {
-            deserializedTransport = (Transport) MappingBootstrap.getMappingSce().getTransportSce().getTransport(jsonDeserializedTransport.getTransportID());
+            if (mappingSession!=null) deserializedTransport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(mappingSession, jsonDeserializedTransport.getTransportID());
+            else deserializedTransport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(jsonDeserializedTransport.getTransportID());
             if (deserializedTransport==null) ret.setErrorMessage("Request Error : transport with provided ID " + jsonDeserializedTransport.getTransportID() + " was not found.");
         }
 
         // APPLY REQ IF NO ERRORS
         if (ret.getErrorMessage() == null) {
-            if (deserializedTransport == null) deserializedTransport = MappingBootstrap.getMappingSce().getTransportSce().createTransport(jsonDeserializedTransport.getTransportName());
-            else { if (jsonDeserializedTransport.getTransportName()!=null) deserializedTransport.setTransportName(jsonDeserializedTransport.getTransportName()); }
+            if (deserializedTransport == null)
+                if (mappingSession!=null) deserializedTransport = MappingBootstrap.getMappingSce().getTransportSce().createTransport(mappingSession, jsonDeserializedTransport.getTransportName());
+                else deserializedTransport = MappingBootstrap.getMappingSce().getTransportSce().createTransport(jsonDeserializedTransport.getTransportName());
+            else {
+                if (jsonDeserializedTransport.getTransportName()!=null)
+                    if (mappingSession!=null) deserializedTransport.setTransportName(mappingSession, jsonDeserializedTransport.getTransportName());
+                    else deserializedTransport.setTransportName(jsonDeserializedTransport.getTransportName());
+            }
 
             if (jsonDeserializedTransport.getTransportProperties()!=null) {
                 if (deserializedTransport.getTransportProperties()!=null) {
                     List<String> propertiesToDelete = new ArrayList<>();
                     for (String propertyKey : deserializedTransport.getTransportProperties().keySet())
-                        if (!reqProperties.containsKey(propertyKey))
-                            propertiesToDelete.add(propertyKey);
+                        if (!reqProperties.containsKey(propertyKey)) propertiesToDelete.add(propertyKey);
                     for (String propertyToDelete : propertiesToDelete)
-                        deserializedTransport.removeTransportProperty(propertyToDelete);
+                        if (mappingSession!=null) deserializedTransport.removeTransportProperty(mappingSession, propertyToDelete);
+                        else deserializedTransport.removeTransportProperty(propertyToDelete);
                 }
 
                 for (String propertyKey : reqProperties.keySet())
-                    deserializedTransport.addTransportProperty(propertyKey, reqProperties.get(propertyKey));
+                    if (mappingSession!=null) deserializedTransport.addTransportProperty(mappingSession, propertyKey, reqProperties.get(propertyKey));
+                    else deserializedTransport.addTransportProperty(propertyKey, reqProperties.get(propertyKey));
             }
 
             ret.setDeserializedObject(deserializedTransport);
@@ -96,34 +106,44 @@ public class TransportEndpoint {
         return ret;
     }
 
-    @GET
-    @Path("/{param}")
-    public Response displayTransport(@PathParam("param") long id) {
+    private Response _displayTransport(long id, String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get transport : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id});
         if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
-            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
+                subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            MappingSce mapping = MappingBootstrap.getMappingSce();
-            Transport transport = (Transport) mapping.getTransportSce().getTransport(id);
-            if (transport != null) {
-                try {
-                    ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-                    TransportJSON.oneTransport2JSON(transport, outStream);
-                    String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                    return Response.status(Status.OK).entity(result).build();
-                } catch (Exception e) {
-                    log.error(e.getMessage());
-                    e.printStackTrace();
-                    String result = e.getMessage();
-                    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+            try {
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
                 }
-            } else {
-                return Response.status(Status.NOT_FOUND).entity("Transport with id " + id + " not found.").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
-        }
+
+                Transport transport ;
+                if (mappingSession!=null) transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(mappingSession, id);
+                else transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(id);
+                if (transport != null) {
+                    try {
+                        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                        TransportJSON.oneTransport2JSON(transport, outStream);
+                        String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                        return Response.status(Status.OK).entity(result).build();
+                    } catch (Exception e) {
+                        log.error(e.getMessage());
+                        e.printStackTrace();
+                        String result = e.getMessage();
+                        return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                    }
+                } else return Response.status(Status.NOT_FOUND).entity("Transport with id " + id + " not found.").build();
+            } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
+    }
+
+    @GET
+    @Path("/{param}")
+    public Response displayTransport(@PathParam("param") long id) {
+        return _displayTransport(id, null);
     }
 
     @GET
@@ -133,11 +153,10 @@ public class TransportEndpoint {
         if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            MappingSce mapping = MappingBootstrap.getMappingSce();
-            String result = "";
+            String result;
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             try {
-                TransportJSON.manyTransports2JSON((HashSet<Transport>) mapping.getTransportSce().getTransports(null), outStream);
+                TransportJSON.manyTransports2JSON((HashSet<Transport>) MappingBootstrap.getMappingSce().getTransportSce().getTransports(null), outStream);
                 result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
                 return Response.status(Status.OK).entity(result).build();
             } catch (Exception e) {
@@ -146,9 +165,7 @@ public class TransportEndpoint {
                 result = e.getMessage();
                 return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
             }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
-        }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -165,22 +182,30 @@ public class TransportEndpoint {
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            MappingSce mapping = MappingBootstrap.getMappingSce();
-            Transport transport = (Transport) mapping.getTransportSce().createTransport(transportName);
-            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             try {
-                TransportJSON.oneTransport2JSON(transport, outStream);
-                String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                return Response.status(Status.OK).entity(result).build();
-            } catch (Exception e) {
-                log.error(e.getMessage());
-                e.printStackTrace();
-                String result = e.getMessage();
-                return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                }
+
+                Transport transport ;
+                if (mappingSession!=null) transport = MappingBootstrap.getMappingSce().getTransportSce().createTransport(mappingSession, transportName);
+                else transport = MappingBootstrap.getMappingSce().getTransportSce().createTransport(transportName);
+                ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                try {
+                    TransportJSON.oneTransport2JSON(transport, outStream);
+                    String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                    return Response.status(Status.OK).entity(result).build();
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                    e.printStackTrace();
+                    String result = e.getMessage();
+                    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                }
+            } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @POST
@@ -191,8 +216,15 @@ public class TransportEndpoint {
                 subject.hasRole("Jedi") || subject.isPermitted("universe:zeone")) {
             if (payload != null) {
                 try {
+                    Session mappingSession = null;
+                    if (sessionId != null && !sessionId.equals("")) {
+                        mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                        if (mappingSession == null)
+                            return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                    }
+
                     Response ret;
-                    JSONDeserializationResponse deserializationResponse = jsonFriendlyToMappingFriendly(TransportJSON.JSON2Transport(payload));
+                    JSONDeserializationResponse deserializationResponse = jsonFriendlyToMappingFriendly(TransportJSON.JSON2Transport(payload), mappingSession);
                     if (deserializationResponse.getErrorMessage()!=null) {
                         String result = deserializationResponse.getErrorMessage();
                         ret = Response.status(Status.BAD_REQUEST).entity(result).build();
@@ -212,12 +244,8 @@ public class TransportEndpoint {
                     String result = e.getMessage();
                     return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
                 }
-            } else {
-                return Response.status(Status.BAD_REQUEST).entity("No payload attached to this POST").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+            } else return Response.status(Status.BAD_REQUEST).entity("No payload attached to this POST").build();
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -228,16 +256,18 @@ public class TransportEndpoint {
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            MappingSce mapping = MappingBootstrap.getMappingSce();
             try {
-                mapping.getTransportSce().deleteTransport(transportID);
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                }
+                if (mappingSession!=null) MappingBootstrap.getMappingSce().getTransportSce().deleteTransport(mappingSession, transportID);
+                else MappingBootstrap.getMappingSce().getTransportSce().deleteTransport(transportID);
                 return Response.status(Status.OK).entity("Transport (" + transportID + ") has been successfully deleted !").build();
-            } catch (MappingDSException e) {
-                return Response.status(Status.NOT_FOUND).entity("Error while deleting transport with id " + transportID).build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+            } catch (MappingDSException e) { return Response.status(Status.NOT_FOUND).entity("Error while deleting transport with id " + transportID).build(); }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -248,16 +278,23 @@ public class TransportEndpoint {
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            Transport transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(id);
-            if (transport != null) {
-                transport.setTransportName(name);
-                return Response.status(Status.OK).entity("Transport (" + id + ") name successfully updated to " + name + ".").build();
-            } else {
-                return Response.status(Status.NOT_FOUND).entity("Error while updating transport (" + id + ") name " + name + " : link " + id + " not found.").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+            try {
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                }
+                Transport transport ;
+                if (mappingSession!=null) transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(mappingSession, id);
+                else transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(id);
+                if (transport != null) {
+                    if (mappingSession!=null) transport.setTransportName(mappingSession, name);
+                    else transport.setTransportName(name);
+                    return Response.status(Status.OK).entity("Transport (" + id + ") name successfully updated to " + name + ".").build();
+                } else return Response.status(Status.NOT_FOUND).entity("Error while updating transport (" + id + ") name " + name + " : link " + id + " not found.").build();
+            } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -269,30 +306,37 @@ public class TransportEndpoint {
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            if (name != null && type != null && value != null) {
-                Transport transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(id);
-                if (transport != null) {
-                    Object oValue;
-                    try {
-                        oValue = ToolBox.extractPropertyObjectValueFromString(value, type);
-                    } catch (Exception e) {
-                        log.error(e.getMessage());
-                        e.printStackTrace();
-                        String result = e.getMessage();
-                        return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+            try {
+                if (name != null && type != null && value != null) {
+                    Session mappingSession = null;
+                    if (sessionId != null && !sessionId.equals("")) {
+                        mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                        if (mappingSession == null)
+                            return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
                     }
-                    transport.addTransportProperty(name, oValue);
-                    return Response.status(Status.OK).entity("Property (" + name + "," + value + ") successfully added to transport " + id + ".").build();
+                    Transport transport ;
+                    if (mappingSession!=null) transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(mappingSession, id);
+                    else transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(id);
+                    if (transport != null) {
+                        Object oValue;
+                        try {
+                            oValue = ToolBox.extractPropertyObjectValueFromString(value, type);
+                        } catch (Exception e) {
+                            log.error(e.getMessage());
+                            e.printStackTrace();
+                            String result = e.getMessage();
+                            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                        }
+                        if (mappingSession!=null) transport.addTransportProperty(mappingSession, name, oValue);
+                        else transport.addTransportProperty(name, oValue);
+                        return Response.status(Status.OK).entity("Property (" + name + "," + value + ") successfully added to transport " + id + ".").build();
+                    } else return Response.status(Status.NOT_FOUND).entity("Error while adding property " + name + " to transport " + id + " : transport " + id + " not found.").build();
                 } else {
-                    return Response.status(Status.NOT_FOUND).entity("Error while adding property " + name + " to transport " + id + " : transport " + id + " not found.").build();
+                    log.warn("Property is not defined correctly : {name: " + name + ", type: " + type + ", value: " + value + "}.");
+                    return Response.status(Status.BAD_REQUEST).entity("Property is not defined correctly : {name: " + name + ", type: " + type + ", value: " + value + "}.").build();
                 }
-            } else {
-                log.warn("Property is not defined correctly : {name: " + name + ", type: " + type + ", value: " + value + "}.");
-                return Response.status(Status.BAD_REQUEST).entity("Property is not defined correctly : {name: " + name + ", type: " + type + ", value: " + value + "}.").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+            } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -303,15 +347,23 @@ public class TransportEndpoint {
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            Transport transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(id);
-            if (transport != null) {
-                transport.removeTransportProperty(name);
-                return Response.status(Status.OK).entity("Property (" + name + ") successfully deleted from transport " + id + ".").build();
-            } else {
-                return Response.status(Status.NOT_FOUND).entity("Error while deleting property " + name + " from transport " + id + " : transport " + id + " not found.").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+            try {
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                }
+                Transport transport ;
+                if (mappingSession!=null) transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(mappingSession, id);
+                else transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(id);
+
+                if (transport != null) {
+                    if (mappingSession!=null) transport.removeTransportProperty(mappingSession, name);
+                    else transport.removeTransportProperty(name);
+                    return Response.status(Status.OK).entity("Property (" + name + ") successfully deleted from transport " + id + ".").build();
+                } else return Response.status(Status.NOT_FOUND).entity("Error while deleting property " + name + " from transport " + id + " : transport " + id + " not found.").build();
+            } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 }

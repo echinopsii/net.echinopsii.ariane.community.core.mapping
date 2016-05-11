@@ -55,37 +55,50 @@ public class LinkEndpoint {
         Transport reqTransport=null;
 
         if (jsonDeserializedLink.getLinkSEPID()!=0) {
-            reqSourceEndpoint = (Endpoint) MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(jsonDeserializedLink.getLinkSEPID());
+            if (mappingSession!=null) reqSourceEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, jsonDeserializedLink.getLinkSEPID());
+            else reqSourceEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(jsonDeserializedLink.getLinkSEPID());
             if (reqSourceEndpoint==null) ret.setErrorMessage("Request Error : source endpoint with provided ID " + jsonDeserializedLink.getLinkSEPID() + " was not found.");
         }
         if (ret.getErrorMessage() == null && jsonDeserializedLink.getLinkTEPID()!=0) {
-            reqTargetEndpoint = (Endpoint) MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(jsonDeserializedLink.getLinkTEPID());
+            if (mappingSession!=null) reqTargetEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, jsonDeserializedLink.getLinkTEPID());
+            else reqTargetEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(jsonDeserializedLink.getLinkTEPID());
             if (reqTargetEndpoint==null) ret.setErrorMessage("Request Error : target endpoint with provided ID " + jsonDeserializedLink.getLinkTEPID() + " was not found.");
         }
         if (ret.getErrorMessage() == null && jsonDeserializedLink.getLinkTRPID()!=0) {
-            reqTransport = (Transport) MappingBootstrap.getMappingSce().getTransportSce().getTransport(jsonDeserializedLink.getLinkTRPID());
+            if (mappingSession!=null) reqTransport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(mappingSession, jsonDeserializedLink.getLinkTRPID());
+            else reqTransport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(jsonDeserializedLink.getLinkTRPID());
             if (reqTransport == null) ret.setErrorMessage("Request Error : transport with provided ID " + jsonDeserializedLink.getLinkTRPID() + " was not found.");
         }
 
         // LOOK IF LINK MAYBE UPDATED OR CREATED
         Link deserializedLink = null;
         if (ret.getErrorMessage() == null && jsonDeserializedLink.getLinkID()!=0) {
-            deserializedLink = (Link) MappingBootstrap.getMappingSce().getLinkSce().getLink(jsonDeserializedLink.getLinkID());
+            if (mappingSession!=null) deserializedLink = MappingBootstrap.getMappingSce().getLinkSce().getLink(mappingSession, jsonDeserializedLink.getLinkID());
+            else deserializedLink = MappingBootstrap.getMappingSce().getLinkSce().getLink(jsonDeserializedLink.getLinkID());
             if (deserializedLink==null) ret.setErrorMessage("Request Error : link with provided ID " + jsonDeserializedLink.getLinkID() + " was not found.");
         }
 
         // APPLY REQ IF NO ERRORS
         if (ret.getErrorMessage() == null) {
             if (deserializedLink==null) {
-                deserializedLink = MappingBootstrap.getMappingSce().getLinkSce().createLink(
+                if (mappingSession!=null) deserializedLink = MappingBootstrap.getMappingSce().getLinkSce().createLink(
+                        mappingSession,
                         jsonDeserializedLink.getLinkSEPID(),
                         jsonDeserializedLink.getLinkTEPID(),
-                        jsonDeserializedLink.getLinkTRPID()
-                );
+                        jsonDeserializedLink.getLinkTRPID());
+                else deserializedLink = MappingBootstrap.getMappingSce().getLinkSce().createLink(
+                        jsonDeserializedLink.getLinkSEPID(),
+                        jsonDeserializedLink.getLinkTEPID(),
+                        jsonDeserializedLink.getLinkTRPID());
             } else {
-                if (reqSourceEndpoint!=null) deserializedLink.setLinkEndpointSource(reqSourceEndpoint);
-                deserializedLink.setLinkEndpointTarget(reqTargetEndpoint);
-                if (reqTransport!=null) deserializedLink.setLinkTransport(reqTransport);
+                if (reqSourceEndpoint!=null)
+                    if (mappingSession!=null) deserializedLink.setLinkEndpointSource(mappingSession, reqSourceEndpoint);
+                    else deserializedLink.setLinkEndpointSource(reqSourceEndpoint);
+                if (mappingSession!=null) deserializedLink.setLinkEndpointTarget(mappingSession, reqTargetEndpoint);
+                else deserializedLink.setLinkEndpointTarget(reqTargetEndpoint);
+                if (reqTransport!=null)
+                    if (mappingSession!=null) deserializedLink.setLinkTransport(mappingSession, reqTransport);
+                    else deserializedLink.setLinkTransport(reqTransport);
             }
             ret.setDeserializedObject(deserializedLink);
         }
@@ -93,33 +106,44 @@ public class LinkEndpoint {
         return ret;
     }
 
-    @GET
-    @Path("/{param:[0-9][0-9]*}")
-    public Response displayLink(@PathParam("param") long id) {
+    private Response _displayLink(long id, String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get link : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id});
         if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
-            subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
+                subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            Link link = (Link) MappingBootstrap.getMappingSce().getLinkSce().getLink(id);
-            if (link != null) {
-                try {
-                    ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-                    LinkJSON.oneLink2JSON(link, outStream);
-                    String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                    return Response.status(Status.OK).entity(result).build();
-                } catch (Exception e) {
-                    log.error(e.getMessage());
-                    e.printStackTrace();
-                    String result = e.getMessage();
-                    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+            try {
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
                 }
-            } else {
-                return Response.status(Status.NOT_FOUND).entity("Link with id " + id + " not found.").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
-        }
+
+                Link link ;
+                if (mappingSession!=null) link = MappingBootstrap.getMappingSce().getLinkSce().getLink(mappingSession, id);
+                else link = MappingBootstrap.getMappingSce().getLinkSce().getLink(id);
+                if (link != null) {
+                    try {
+                        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                        LinkJSON.oneLink2JSON(link, outStream);
+                        String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                        return Response.status(Status.OK).entity(result).build();
+                    } catch (Exception e) {
+                        log.error(e.getMessage());
+                        e.printStackTrace();
+                        String result = e.getMessage();
+                        return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                    }
+                } else return Response.status(Status.NOT_FOUND).entity("Link with id " + id + " not found.").build();
+            } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
+    }
+
+    @GET
+    @Path("/{param:[0-9][0-9]*}")
+    public Response displayLink(@PathParam("param") long id) {
+        return _displayLink(id, null);
     }
 
     @GET
@@ -141,52 +165,68 @@ public class LinkEndpoint {
                 result = e.getMessage();
                 return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
             }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
-        }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
     }
 
     @GET
     @Path("/get")
     public Response getLink(@QueryParam("ID")long id, @QueryParam("SEPID") long sepid, @QueryParam("TEPID") long tepid, @QueryParam("sessionID") String sessionId) {
         if (id!=0)
-            return displayLink(id);
+            return _displayLink(id, sessionId);
         else {
             Subject subject = SecurityUtils.getSubject();
             log.debug("[{}-{}] get links ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), sepid, tepid});
             if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
                 subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
             {
-                String result = "";
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                }
+
+                String result;
                 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
                 try {
                     Endpoint sourceEndpoint = null;
                     Endpoint targetEndpoint = null;
-                    if (sepid!=0) {
-                        sourceEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(sepid);
-                        if (sourceEndpoint==null) {
+                    if (sepid != 0) {
+                        if (mappingSession!=null) sourceEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, sepid);
+                        else sourceEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(sepid);
+                        if (sourceEndpoint == null) {
                             result = "Unable to find source endpoint !";
                             return Response.status(Status.BAD_REQUEST).entity(result).build();
                         }
                     }
-                    if (tepid!=0) {
-                        targetEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(tepid);
-                        if (targetEndpoint==null) {
+                    if (tepid != 0) {
+                        if (mappingSession!=null) targetEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, tepid);
+                        else targetEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(tepid);
+                        if (targetEndpoint == null) {
                             result = "Unable to find target endpoint !";
                             return Response.status(Status.BAD_REQUEST).entity(result).build();
                         }
                     }
 
-                    if (sourceEndpoint!=null && targetEndpoint!=null) {
-                        LinkJSON.oneLink2JSON(MappingBootstrap.getMappingSce().getLinkBySourceEPandDestinationEP(sourceEndpoint, targetEndpoint), outStream);
+                    if (sourceEndpoint != null && targetEndpoint != null) {
+                        Link toPrint;
+                        if (mappingSession!=null)  toPrint = MappingBootstrap.getMappingSce().getLinkBySourceEPandDestinationEP(mappingSession, sourceEndpoint, targetEndpoint);
+                        else toPrint = MappingBootstrap.getMappingSce().getLinkBySourceEPandDestinationEP(sourceEndpoint, targetEndpoint);
+                        LinkJSON.oneLink2JSON(toPrint, outStream);
                         result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
                         return Response.status(Status.OK).entity(result).build();
-                    } else if (sourceEndpoint!=null && targetEndpoint==null) {
-                        LinkJSON.manyLinks2JSON((HashSet<Link>) MappingBootstrap.getMappingSce().getLinksBySourceEP(sourceEndpoint), outStream);
+                    } else if (sourceEndpoint != null) {
+                        HashSet<Link> toPrint;
+                        if (mappingSession!=null) toPrint = (HashSet<Link>)MappingBootstrap.getMappingSce().getLinksBySourceEP(mappingSession, sourceEndpoint);
+                        else toPrint = (HashSet<Link>)MappingBootstrap.getMappingSce().getLinksBySourceEP(sourceEndpoint);
+                        LinkJSON.manyLinks2JSON(toPrint, outStream);
                         result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
                         return Response.status(Status.OK).entity(result).build();
                     } else {
-                        LinkJSON.manyLinks2JSON((HashSet<Link>) MappingBootstrap.getMappingSce().getLinksByDestinationEP(targetEndpoint), outStream);
+                        HashSet<Link> toPrint;
+                        if (mappingSession!=null) toPrint = (HashSet<Link>) MappingBootstrap.getMappingSce().getLinksByDestinationEP(mappingSession, targetEndpoint);
+                        else toPrint = (HashSet<Link>) MappingBootstrap.getMappingSce().getLinksByDestinationEP(targetEndpoint);
+                        LinkJSON.manyLinks2JSON(toPrint, outStream);
                         result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
                         return Response.status(Status.OK).entity(result).build();
                     }
@@ -196,9 +236,7 @@ public class LinkEndpoint {
                     result = e.getMessage();
                     return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
                 }
-            } else {
-                return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
-            }
+            } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
         }
     }
 
@@ -212,9 +250,19 @@ public class LinkEndpoint {
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             try {
-                ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-                Link link = MappingBootstrap.getMappingSce().getLinkSce().createLink(sourceEndpointID, targetEndpointID, transportID);
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                }
+
+                Link link ;
+                if (mappingSession!=null) link = MappingBootstrap.getMappingSce().getLinkSce().createLink(mappingSession, sourceEndpointID, targetEndpointID, transportID);
+                else link = MappingBootstrap.getMappingSce().getLinkSce().createLink(sourceEndpointID, targetEndpointID, transportID);
+
                 try {
+                    ByteArrayOutputStream outStream = new ByteArrayOutputStream();
                     LinkJSON.oneLink2JSON(link, outStream);
                     String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
                     return Response.status(Status.OK).entity(result).build();
@@ -230,9 +278,7 @@ public class LinkEndpoint {
                 String result = e.getMessage();
                 return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
             }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @POST
@@ -243,8 +289,15 @@ public class LinkEndpoint {
                 subject.hasRole("Jedi") || subject.isPermitted("universe:zeone")) {
             if (payload != null) {
                 try {
+                    Session mappingSession = null;
+                    if (sessionId != null && !sessionId.equals("")) {
+                        mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                        if (mappingSession == null)
+                            return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                    }
+
                     Response ret;
-                    JSONDeserializationResponse deserializationResponse = jsonFriendlyToMappingFriendly(LinkJSON.JSON2Link(payload), null);
+                    JSONDeserializationResponse deserializationResponse = jsonFriendlyToMappingFriendly(LinkJSON.JSON2Link(payload), mappingSession);
                     if (deserializationResponse.getErrorMessage()!=null) {
                         String result = deserializationResponse.getErrorMessage();
                         ret = Response.status(Status.BAD_REQUEST).entity(result).build();
@@ -264,12 +317,8 @@ public class LinkEndpoint {
                     String result = e.getMessage();
                     return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
                 }
-            } else {
-                return Response.status(Status.BAD_REQUEST).entity("No payload attached to this POST").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+            } else return Response.status(Status.BAD_REQUEST).entity("No payload attached to this POST").build();
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -281,7 +330,14 @@ public class LinkEndpoint {
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
             try {
-                MappingBootstrap.getMappingSce().getLinkSce().deleteLink(linkID);
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                }
+                if (mappingSession!=null) MappingBootstrap.getMappingSce().getLinkSce().deleteLink(mappingSession, linkID);
+                else MappingBootstrap.getMappingSce().getLinkSce().deleteLink(linkID);
                 return Response.status(Status.OK).entity("Link (" + linkID + ") successfully deleted.").build();
             } catch (MappingDSException e) {
                 log.error(e.getMessage());
@@ -289,9 +345,7 @@ public class LinkEndpoint {
                 String result = e.getMessage();
                 return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
             }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -302,21 +356,28 @@ public class LinkEndpoint {
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            Link link = MappingBootstrap.getMappingSce().getLinkSce().getLink(id);
-            if (link != null) {
-                Transport transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(transportID);
-                if (transport != null) {
-                    link.setLinkTransport(transport);
-                    return Response.status(Status.OK).entity("Link (" + id + ") transport successfully updated to " + transportID + ".").build();
-                } else {
-                    return Response.status(Status.NOT_FOUND).entity("Error while updating link (" + id + ") transport " + transportID + " : transport " + id + " not found.").build();
+            try {
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
                 }
-            } else {
-                return Response.status(Status.NOT_FOUND).entity("Error while updating link (" + id + ") transport " + transportID + " : link " + id + " not found.").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+                Link link ;
+                if (mappingSession!=null) link = MappingBootstrap.getMappingSce().getLinkSce().getLink(mappingSession, id);
+                else link = MappingBootstrap.getMappingSce().getLinkSce().getLink(id);
+                if (link != null) {
+                    Transport transport;
+                    if (mappingSession!=null) transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(transportID);
+                    else transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(transportID);
+                    if (transport != null) {
+                        if (mappingSession!=null)link.setLinkTransport(mappingSession, transport);
+                        else link.setLinkTransport(transport);
+                        return Response.status(Status.OK).entity("Link (" + id + ") transport successfully updated to " + transportID + ".").build();
+                    } else return Response.status(Status.NOT_FOUND).entity("Error while updating link (" + id + ") transport " + transportID + " : transport " + id + " not found.").build();
+                } else return Response.status(Status.NOT_FOUND).entity("Error while updating link (" + id + ") transport " + transportID + " : link " + id + " not found.").build();
+            } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -327,21 +388,27 @@ public class LinkEndpoint {
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            Link link = MappingBootstrap.getMappingSce().getLinkSce().getLink(id);
-            if (link != null) {
-                Endpoint sourceEP = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(SEPID);
-                if (sourceEP != null) {
-                    link.setLinkEndpointSource(sourceEP);
-                    return Response.status(Status.OK).entity("Link (" + id + ") source endpoint successfully updated to " + SEPID + ".").build();
-                } else {
-                    return Response.status(Status.NOT_FOUND).entity("Error while updating link (" + id + ") source endpoint " + SEPID + " : link " + id + " not found.").build();
+            try {
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
                 }
-            } else {
-                return Response.status(Status.NOT_FOUND).entity("Error while updating link (" + id + ") source endpoint " + SEPID + " : link " + id + " not found.").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+                Link link ;
+                if (mappingSession!=null) link = MappingBootstrap.getMappingSce().getLinkSce().getLink(mappingSession, id);
+                else link = MappingBootstrap.getMappingSce().getLinkSce().getLink(id);
+                if (link != null) {
+                    Endpoint sourceEP;
+                    if (mappingSession!=null) sourceEP = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, SEPID);
+                    else sourceEP = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(SEPID);
+                    if (sourceEP != null) {
+                        link.setLinkEndpointSource(sourceEP);
+                        return Response.status(Status.OK).entity("Link (" + id + ") source endpoint successfully updated to " + SEPID + ".").build();
+                    } else return Response.status(Status.NOT_FOUND).entity("Error while updating link (" + id + ") source endpoint " + SEPID + " : link " + id + " not found.").build();
+                } else return Response.status(Status.NOT_FOUND).entity("Error while updating link (" + id + ") source endpoint " + SEPID + " : link " + id + " not found.").build();
+            } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 
     @GET
@@ -352,20 +419,28 @@ public class LinkEndpoint {
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            Link link = MappingBootstrap.getMappingSce().getLinkSce().getLink(id);
-            if (link != null) {
-                Endpoint targetEP = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(TEPID);
-                if (targetEP != null) {
-                    link.setLinkEndpointTarget(targetEP);
-                    return Response.status(Status.OK).entity("Link (" + id + ") target endpoint successfully updated to " + TEPID + ".").build();
-                } else {
-                    return Response.status(Status.NOT_FOUND).entity("Error while updating link (" + id + ") target endpoint " + TEPID + " : link " + id + " not found.").build();
+            try {
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
                 }
-            } else {
-                return Response.status(Status.NOT_FOUND).entity("Error while updating link (" + id + ") target endpoint " + TEPID + " : link " + id + " not found.").build();
-            }
-        } else {
-            return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
-        }
+                Link link ;
+                if (mappingSession!=null) link = MappingBootstrap.getMappingSce().getLinkSce().getLink(mappingSession, id);
+                else link = MappingBootstrap.getMappingSce().getLinkSce().getLink(id);
+
+                if (link != null) {
+                    Endpoint targetEP;
+                    if (mappingSession!=null) targetEP = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, TEPID);
+                    else targetEP = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(TEPID);
+                    if (targetEP != null) {
+                        if (mappingSession!=null) link.setLinkEndpointTarget(mappingSession, targetEP);
+                        else link.setLinkEndpointTarget(targetEP);
+                        return Response.status(Status.OK).entity("Link (" + id + ") target endpoint successfully updated to " + TEPID + ".").build();
+                    } else return Response.status(Status.NOT_FOUND).entity("Error while updating link (" + id + ") target endpoint " + TEPID + " : link " + id + " not found.").build();
+                } else return Response.status(Status.NOT_FOUND).entity("Error while updating link (" + id + ") target endpoint " + TEPID + " : link " + id + " not found.").build();
+            } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
+        } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
     }
 }
