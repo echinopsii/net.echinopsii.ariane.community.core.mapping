@@ -238,7 +238,6 @@ public class MappingDSGraphDB {
 
     public static void rollback() {
         if (ccgraph instanceof TransactionalGraph) {
-            log.error("Rollback operation...");
             Long threadID = Thread.currentThread().getId();
             boolean isThreadWithAutoCommitMode = true;
             if (autocommit.containsKey(threadID)) isThreadWithAutoCommitMode = autocommit.get(threadID);

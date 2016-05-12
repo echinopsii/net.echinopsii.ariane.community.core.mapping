@@ -8,3 +8,4 @@ net.echinopsii.ariane.community.core.mapping.wat.rest.ds.domain.TransportEndpoin
 net.echinopsii.ariane.community.core.mapping.wat.rest.ds.service.MapEndpoint
 net.echinopsii.ariane.community.core.mapping.wat.rest.ds.service.MDSLRegistryDirectoryEndpoint
 net.echinopsii.ariane.community.core.mapping.wat.rest.ds.service.MDSLRegistryRequestEndpoint
+net.echinopsii.ariane.community.core.mapping.wat.rest.ds.service.SessionEndpoint
