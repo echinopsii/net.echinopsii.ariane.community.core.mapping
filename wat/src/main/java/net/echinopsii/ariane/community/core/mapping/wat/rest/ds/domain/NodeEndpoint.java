@@ -373,8 +373,10 @@ public class NodeEndpoint {
                 Session mappingSession = null;
                 if (sessionId!=null && !sessionId.equals("")) {
                     mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
-                    if (mappingSession == null)
+                    if (mappingSession == null) {
+                        log.debug("[{}-{}]Response error: no session found", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
                         return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                    }
                 }
 
                 Node node ;
@@ -384,6 +386,7 @@ public class NodeEndpoint {
                 try {
                     NodeJSON.oneNode2JSON(node, outStream);
                     String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                    log.debug("[{}-{}]Response returned: success", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
                     return Response.status(Status.OK).entity(result).build();
                 } catch (Exception e) {
                     log.error(e.getMessage());
@@ -411,8 +414,10 @@ public class NodeEndpoint {
                     Session mappingSession = null;
                     if (sessionId!=null && !sessionId.equals("")) {
                         mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
-                        if (mappingSession == null)
+                        if (mappingSession == null) {
+                            log.debug("[{}-{}]Response error: no session found", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
                             return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                        }
                     }
 
                     Response ret;
@@ -429,6 +434,7 @@ public class NodeEndpoint {
                         String result = "ERROR while deserializing !";
                         ret = Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
                     }
+                    log.debug("[{}-{}]Response returned: {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), ret.getStatus()});
                     return ret ;
                 } catch (MappingDSException e) {
                     log.error(e.getMessage());

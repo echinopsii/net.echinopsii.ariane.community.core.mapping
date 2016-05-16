@@ -31,10 +31,7 @@ import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.io.ByteArrayOutputStream;
@@ -54,8 +51,10 @@ public class GateEndpoint {
                 Session mappingSession = null;
                 if (sessionId != null && !sessionId.equals("")) {
                     mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
-                    if (mappingSession == null)
+                    if (mappingSession == null) {
+                        log.debug("[{}-{}]Response error: no session found", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
                         return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                    }
                 }
 
                 Gate gate;
@@ -67,6 +66,7 @@ public class GateEndpoint {
                         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
                         GateJSON.oneGate2JSON(gate, outStream);
                         String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                        log.debug("[{}-{}]Response returned: success", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
                         return Response.status(Status.OK).entity(result).build();
                     } catch (Exception e) {
                         log.error(e.getMessage());
@@ -131,17 +131,20 @@ public class GateEndpoint {
                 Session mappingSession = null;
                 if (sessionId != null && !sessionId.equals("")) {
                     mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
-                    if (mappingSession == null)
+                    if (mappingSession == null) {
+                        log.debug("[{}-{}]Response error: no session found", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
                         return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                    }
                 }
 
                 Gate gate;
-                if (mappingSession!=null) gate = MappingBootstrap.getMappingSce().getGateSce().createGate(url, name, containerID, isPrimaryAdmin);
+                if (mappingSession!=null) gate = MappingBootstrap.getMappingSce().getGateSce().createGate(mappingSession, url, name, containerID, isPrimaryAdmin);
                 else gate = MappingBootstrap.getMappingSce().getGateSce().createGate(url, name, containerID, isPrimaryAdmin);
 
                 try {
                     GateJSON.oneGate2JSON(gate, outStream);
                     String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                    log.debug("[{}-{}]Response returned: success", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
                     return Response.status(Status.OK).entity(result).build();
                 } catch (Exception e) {
                     log.error(e.getMessage());
