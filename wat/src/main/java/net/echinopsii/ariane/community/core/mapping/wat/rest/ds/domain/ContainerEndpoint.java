@@ -301,16 +301,25 @@ public class ContainerEndpoint {
     }
 
     @GET
-    public Response displayAllContainers() {
+    public Response displayAllContainers(@QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get containers", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
         if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            String result = "";
+            String result;
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             try {
-                ContainerJSON.manyContainers2JSON((HashSet<Container>) MappingBootstrap.getMappingSce().getContainerSce().getContainers(null), outStream);
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                }
+                HashSet<Container> containers ;
+                if (mappingSession!=null) containers = (HashSet<Container>) MappingBootstrap.getMappingSce().getContainerSce().getContainers(mappingSession, null);
+                else containers = (HashSet<Container>) MappingBootstrap.getMappingSce().getContainerSce().getContainers(null);
+                ContainerJSON.manyContainers2JSON(containers, outStream);
                 result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
                 return Response.status(Status.OK).entity(result).build();
             } catch (Exception e) {

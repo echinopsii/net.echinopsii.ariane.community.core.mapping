@@ -147,7 +147,7 @@ public class TransportEndpoint {
     }
 
     @GET
-    public Response displayAllTransports() {
+    public Response displayAllTransports(@QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get transports", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
         if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
@@ -156,7 +156,16 @@ public class TransportEndpoint {
             String result;
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             try {
-                TransportJSON.manyTransports2JSON((HashSet<Transport>) MappingBootstrap.getMappingSce().getTransportSce().getTransports(null), outStream);
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                }
+                HashSet<Transport> transports ;
+                if (mappingSession!=null) transports = (HashSet<Transport>) MappingBootstrap.getMappingSce().getTransportSce().getTransports(mappingSession, null);
+                else transports = (HashSet<Transport>) MappingBootstrap.getMappingSce().getTransportSce().getTransports(null);
+                TransportJSON.manyTransports2JSON(transports, outStream);
                 result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
                 return Response.status(Status.OK).entity(result).build();
             } catch (Exception e) {

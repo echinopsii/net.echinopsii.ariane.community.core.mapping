@@ -147,7 +147,7 @@ public class LinkEndpoint {
     }
 
     @GET
-    public Response displayAllLinks() {
+    public Response displayAllLinks(@QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get links", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
         if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
@@ -156,7 +156,17 @@ public class LinkEndpoint {
             String result = "";
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             try {
-                LinkJSON.manyLinks2JSON((HashSet<Link>) MappingBootstrap.getMappingSce().getLinkSce().getLinks(null), outStream);
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                }
+
+                HashSet<Link> links ;
+                if (mappingSession!=null) links = (HashSet<Link>) MappingBootstrap.getMappingSce().getLinkSce().getLinks(mappingSession, null);
+                else links = (HashSet<Link>) MappingBootstrap.getMappingSce().getLinkSce().getLinks(null);
+                LinkJSON.manyLinks2JSON(links, outStream);
                 result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
                 return Response.status(Status.OK).entity(result).build();
             } catch (Exception e) {
@@ -368,7 +378,7 @@ public class LinkEndpoint {
                 else link = MappingBootstrap.getMappingSce().getLinkSce().getLink(id);
                 if (link != null) {
                     Transport transport;
-                    if (mappingSession!=null) transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(transportID);
+                    if (mappingSession!=null) transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(mappingSession, transportID);
                     else transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(transportID);
                     if (transport != null) {
                         if (mappingSession!=null)link.setLinkTransport(mappingSession, transport);

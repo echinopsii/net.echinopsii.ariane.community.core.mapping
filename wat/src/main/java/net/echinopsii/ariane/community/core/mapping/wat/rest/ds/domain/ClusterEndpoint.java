@@ -154,16 +154,26 @@ public class ClusterEndpoint {
     }
 
     @GET
-    public Response displayAllClusters() {
+    public Response displayAllClusters(@QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get clusters", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
         if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
+            Session mappingSession = null;
+            if (sessionId != null && !sessionId.equals("")) {
+                mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                if (mappingSession == null)
+                    return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+            }
+
             String result;
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             try {
-                ClusterJSON.manyClusters2JSON((HashSet<Cluster>) MappingBootstrap.getMappingSce().getClusterSce().getClusters(null), outStream);
+                HashSet<Cluster> clusters;
+                if (mappingSession!=null) clusters = (HashSet<Cluster>) MappingBootstrap.getMappingSce().getClusterSce().getClusters(mappingSession, null);
+                else clusters = (HashSet<Cluster>) MappingBootstrap.getMappingSce().getClusterSce().getClusters(null);
+                ClusterJSON.manyClusters2JSON(clusters, outStream);
                 result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
                 return Response.status(Status.OK).entity(result).build();
             } catch (Exception e) {

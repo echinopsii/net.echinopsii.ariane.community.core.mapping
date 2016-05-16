@@ -266,7 +266,7 @@ public class NodeEndpoint {
     }
 
     @GET
-    public Response displayAllNodes() {
+    public Response displayAllNodes(@QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get nodes", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
         if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
@@ -275,7 +275,17 @@ public class NodeEndpoint {
             String result;
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             try {
-                NodeJSON.manyNodes2JSON((HashSet<Node>) MappingBootstrap.getMappingSce().getNodeSce().getNodes(null), outStream);
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                }
+
+                HashSet<Node> nodes;
+                if (mappingSession!=null) nodes = (HashSet<Node>) MappingBootstrap.getMappingSce().getNodeSce().getNodes(mappingSession, null);
+                else nodes = (HashSet<Node>) MappingBootstrap.getMappingSce().getNodeSce().getNodes(null);
+                NodeJSON.manyNodes2JSON(nodes, outStream);
                 result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
                 return Response.status(Status.OK).entity(result).build();
             } catch (Exception e) {

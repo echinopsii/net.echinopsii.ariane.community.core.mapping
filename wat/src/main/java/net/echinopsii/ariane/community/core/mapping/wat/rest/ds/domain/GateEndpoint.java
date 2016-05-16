@@ -279,7 +279,7 @@ public class GateEndpoint {
     }
 
     @GET
-    public Response displayAllGates() {
+    public Response displayAllGates(@QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get gates", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
         if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
@@ -288,7 +288,20 @@ public class GateEndpoint {
             String result;
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             try {
-                GateJSON.manyGates2JSON((HashSet<Gate>) MappingBootstrap.getMappingSce().getGateSce().getGates(null), outStream);
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null) {
+                        log.debug("[{}-{}]Response error: no session found", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                    }
+                }
+
+                HashSet<Gate> gates ;
+                if (mappingSession!=null) gates = (HashSet<Gate>) MappingBootstrap.getMappingSce().getGateSce().getGates(mappingSession, null);
+                else gates = (HashSet<Gate>) MappingBootstrap.getMappingSce().getGateSce().getGates(null);
+
+                GateJSON.manyGates2JSON(gates, outStream);
                 result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
                 return Response.status(Status.OK).entity(result).build();
             } catch (Exception e) {
@@ -444,7 +457,9 @@ public class GateEndpoint {
                 else gate = MappingBootstrap.getMappingSce().getGateSce().getGate(id);
 
                 if (gate != null) {
-                    Endpoint endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(endpointID);
+                    Endpoint endpoint;
+                    if (mappingSession!=null) endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, endpointID);
+                    else endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(endpointID);
                     if (endpoint != null) {
                         gate.setNodePrimaryAdminEnpoint(endpoint);
                         return Response.status(Status.OK).entity("Gate (" + id + ") primary endpoint successfully updated to " + endpointID + ".").build();
