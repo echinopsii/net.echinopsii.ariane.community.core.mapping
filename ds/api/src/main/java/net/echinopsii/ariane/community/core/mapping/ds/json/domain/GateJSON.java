@@ -21,14 +21,18 @@ package net.echinopsii.ariane.community.core.mapping.ds.json.domain;
 
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
+import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 public class GateJSON {
     //private final static Logger  log   = LoggerFactory.getLogger(GateJSON.class);
@@ -64,4 +68,50 @@ public class GateJSON {
         jgenerator.writeEndObject();
         jgenerator.close();
     }
+
+    public static class JSONDeserializedGate {
+        private NodeJSON.JSONDeserializedNode node = null;
+        private String gateURL = null;
+        private boolean gateIsPrimaryAdmin = false;
+        private long containerGatePrimaryAdminEndpointID = 0;
+
+        public NodeJSON.JSONDeserializedNode getNode() {
+            return node;
+        }
+
+        public void setNode(NodeJSON.JSONDeserializedNode node) {
+            this.node = node;
+        }
+
+        public String getGateURL() {
+            return gateURL;
+        }
+
+        public void setGateURL(String gateURL) {
+            this.gateURL = gateURL;
+        }
+
+        public boolean isGateIsPrimaryAdmin() {
+            return gateIsPrimaryAdmin;
+        }
+
+        public void setGateIsPrimaryAdmin(boolean gateIsPrimaryAdmin) {
+            this.gateIsPrimaryAdmin = gateIsPrimaryAdmin;
+        }
+
+        public long getContainerGatePrimaryAdminEndpointID() {
+            return containerGatePrimaryAdminEndpointID;
+        }
+
+        public void setContainerGatePrimaryAdminEndpointID(long containerGatePrimaryAdminEndpointID) {
+            this.containerGatePrimaryAdminEndpointID = containerGatePrimaryAdminEndpointID;
+        }
+    }
+
+    public static JSONDeserializedGate JSON2Gate(String payload) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return mapper.readValue(payload, JSONDeserializedGate.class);
+    }
+
 }
