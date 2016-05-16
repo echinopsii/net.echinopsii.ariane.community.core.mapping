@@ -220,7 +220,7 @@ public class SessionImpl implements Session {
             Class[] parametersType = null;
             String parameters = "";
             if (args !=null) {
-                 parametersType = new Class[args.length];
+                parametersType = new Class[args.length];
                 for (int i = 0; i < args.length; i++) {
                     if (args[i] != null) {
                         parametersType[i] = args[i].getClass();
@@ -255,7 +255,9 @@ public class SessionImpl implements Session {
                     for (int i = 0; i < args.length; ++i) {
                         //log.error("paramTypes["+i+"] = " + paramTypes[i].getName());
                         //log.error("args["+i+"] = " + args[i].getClass().getName());
-                        boolean isAssignable = paramTypes[i].isAssignableFrom(args[i].getClass());
+                        boolean isAssignable;
+                        if (args[i]!=null) isAssignable = paramTypes[i].isAssignableFrom(args[i].getClass());
+                        else isAssignable = true;
                         //log.error("isAssignable: " + isAssignable);
                         if (!isAssignable) {
                             continue methodLoop;
