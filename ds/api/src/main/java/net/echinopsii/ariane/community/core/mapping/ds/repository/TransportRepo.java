@@ -25,6 +25,6 @@ public interface TransportRepo<T extends Transport> {
 	public T      save(T transport);
 	public void   delete(T transport);
 	
-	public T      findTransportByID(long ID);
+	public T      findTransportByID(String ID);
 	public T      findTransportByName(String name);
 }

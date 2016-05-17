@@ -28,7 +28,7 @@ public interface NodeRepo<N extends Node> {
 
     public void deleteNode(N node);
 
-    public N findNodeByID(long ID);
+    public N findNodeByID(String ID);
 
     public N findNodeByEndpointURL(String URL);
 

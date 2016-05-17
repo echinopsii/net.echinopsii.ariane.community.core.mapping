@@ -23,7 +23,6 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
-import net.echinopsii.ariane.community.core.mapping.ds.json.domain.NodeJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.EndpointJSON;
@@ -54,14 +53,14 @@ public class EndpointEndpoint {
         List<Endpoint> reqEndpointTwinEndpoints = new ArrayList<>();
         HashMap<String, Object> reqEndpointProperties = new HashMap<>();
 
-        if (jsonDeserializedEndpoint.getEndpointParentNodeID() != 0) {
+        if (jsonDeserializedEndpoint.getEndpointParentNodeID() != null) {
             if (mappingSession!=null) reqEndpointParentNode =  MappingBootstrap.getMappingSce().getNodeSce().getNode(mappingSession, jsonDeserializedEndpoint.getEndpointParentNodeID());
             else reqEndpointParentNode =  MappingBootstrap.getMappingSce().getNodeSce().getNode(jsonDeserializedEndpoint.getEndpointParentNodeID());
             if (reqEndpointParentNode==null) ret.setErrorMessage("Request Error : node with provided ID " + jsonDeserializedEndpoint.getEndpointParentNodeID() + " was not found.");
         } else ret.setErrorMessage("Request Error : no parent node ID provided...");
 
         if (ret.getErrorMessage()==null && jsonDeserializedEndpoint.getEndpointTwinEndpointsID()!=null && jsonDeserializedEndpoint.getEndpointTwinEndpointsID().size() > 0) {
-            for (long id : jsonDeserializedEndpoint.getEndpointTwinEndpointsID()) {
+            for (String id : jsonDeserializedEndpoint.getEndpointTwinEndpointsID()) {
                 Endpoint twinEndpoint ;
                 if (mappingSession!=null) twinEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, id);
                 else twinEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
@@ -89,7 +88,7 @@ public class EndpointEndpoint {
 
         // LOOK IF NODE MAYBE UPDATED OR CREATED
         Endpoint deserializedEndpoint = null;
-        if (ret.getErrorMessage() == null && jsonDeserializedEndpoint.getEndpointID()!=0) {
+        if (ret.getErrorMessage() == null && jsonDeserializedEndpoint.getEndpointID()!=null) {
             if (mappingSession!=null) deserializedEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, jsonDeserializedEndpoint.getEndpointID());
             else deserializedEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(jsonDeserializedEndpoint.getEndpointID());
             if (deserializedEndpoint==null)
@@ -103,7 +102,7 @@ public class EndpointEndpoint {
         // APPLY REQ IF NO ERRORS
         if (ret.getErrorMessage() == null) {
             String reqEndpointURL = jsonDeserializedEndpoint.getEndpointURL();
-            long reqEndpointParentNodeID = jsonDeserializedEndpoint.getEndpointParentNodeID();
+            String reqEndpointParentNodeID = jsonDeserializedEndpoint.getEndpointParentNodeID();
             if (deserializedEndpoint == null)
                 if (mappingSession!=null) deserializedEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().createEndpoint(mappingSession, reqEndpointURL, reqEndpointParentNodeID);
                 else deserializedEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().createEndpoint(reqEndpointURL, reqEndpointParentNodeID);
@@ -164,7 +163,7 @@ public class EndpointEndpoint {
         return ret;
     }
 
-    private Response _displayEndpoint(long id, String sessionId) {
+    private Response _displayEndpoint(String id, String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get endpoint : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id});
         if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
@@ -200,7 +199,7 @@ public class EndpointEndpoint {
 
     @GET
     @Path("/{param:[0-9][0-9]*}")
-    public Response displayEndpoint(@PathParam("param") long id) {
+    public Response displayEndpoint(@PathParam("param") String id) {
         return _displayEndpoint(id, null);
     }
 
@@ -239,8 +238,8 @@ public class EndpointEndpoint {
 
     @GET
     @Path("/get")
-    public Response getEndpoint(@QueryParam("URL")String URL, @QueryParam("ID")long id, @QueryParam("selector") String selector, @QueryParam("sessionID") String sessionId) {
-        if (id!=0) {
+    public Response getEndpoint(@QueryParam("URL")String URL, @QueryParam("ID")String id, @QueryParam("selector") String selector, @QueryParam("sessionID") String sessionId) {
+        if (id!=null) {
             return _displayEndpoint(id, sessionId);
         } else if (URL!=null) {
             Subject subject = SecurityUtils.getSubject();
@@ -256,8 +255,8 @@ public class EndpointEndpoint {
                     }
 
                     Endpoint endpoint;
-                    if (mappingSession!=null) endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, URL);
-                    else endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(URL);
+                    if (mappingSession!=null) endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpointByURL(mappingSession, URL);
+                    else endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpointByURL(URL);
 
                     if (endpoint != null) {
                         try {
@@ -313,7 +312,7 @@ public class EndpointEndpoint {
 
     @GET
     @Path("/create")
-    public Response createEndpoint(@QueryParam("endpointURL")String url, @QueryParam("parentNodeID")long parentNodeID, @QueryParam("sessionID") String sessionId) {
+    public Response createEndpoint(@QueryParam("endpointURL")String url, @QueryParam("parentNodeID")String parentNodeID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create endpoint : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), url, parentNodeID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -393,7 +392,7 @@ public class EndpointEndpoint {
 
     @GET
     @Path("/delete")
-    public Response deleteEndpoint(@QueryParam("ID")long endpointID, @QueryParam("sessionID") String sessionId) {
+    public Response deleteEndpoint(@QueryParam("ID")String endpointID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] delete endpoint : ({})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), endpointID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -419,7 +418,7 @@ public class EndpointEndpoint {
 
     @GET
     @Path("/update/url")
-    public Response setEndpointURL(@QueryParam("ID")long id, @QueryParam("URL") String url, @QueryParam("sessionID") String sessionId) {
+    public Response setEndpointURL(@QueryParam("ID")String id, @QueryParam("URL") String url, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update endpoint url: ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, url});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -445,7 +444,7 @@ public class EndpointEndpoint {
 
     @GET
     @Path("/update/parentNode")
-    public Response setEndpointParentNode(@QueryParam("ID")long id, @QueryParam("parentNodeID") long parentNodeID, @QueryParam("sessionID") String sessionId) {
+    public Response setEndpointParentNode(@QueryParam("ID")String id, @QueryParam("parentNodeID")String parentNodeID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update endpoint parent node: ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, parentNodeID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -477,7 +476,7 @@ public class EndpointEndpoint {
 
     @GET
     @Path("/update/twinEndpoints/add")
-    public Response addTwinEndpoint(@QueryParam("ID")long id, @QueryParam("twinEndpointID") long twinEndpointID, @QueryParam("sessionID") String sessionId) {
+    public Response addTwinEndpoint(@QueryParam("ID")String id, @QueryParam("twinEndpointID") String twinEndpointID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update endpoint by adding twin endpoint: ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, twinEndpointID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -514,7 +513,7 @@ public class EndpointEndpoint {
 
     @GET
     @Path("/update/twinEndpoints/delete")
-    public Response deleteTwinEndpoint(@QueryParam("ID")long id, @QueryParam("twinEndpointID") long twinEndpointID, @QueryParam("sessionID") String sessionId) {
+    public Response deleteTwinEndpoint(@QueryParam("ID")String id, @QueryParam("twinEndpointID")String twinEndpointID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update endpoint by deleting twin endpoint: ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, twinEndpointID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -552,7 +551,7 @@ public class EndpointEndpoint {
 
     @GET
     @Path("/update/properties/add")
-    public Response addEndpointProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name, @QueryParam("propertyValue") String value,
+    public Response addEndpointProperty(@QueryParam("ID")String id, @QueryParam("propertyName") String name, @QueryParam("propertyValue") String value,
                                         @DefaultValue("String") @QueryParam("propertyType") String type, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update endpoint by adding a property : ({},({},{},{}))", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name, value, type});
@@ -595,7 +594,7 @@ public class EndpointEndpoint {
 
     @GET
     @Path("/update/properties/delete")
-    public Response deleteEndpointProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name, @QueryParam("sessionID") String sessionId) {
+    public Response deleteEndpointProperty(@QueryParam("ID")String id, @QueryParam("propertyName") String name, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update endpoint by removing a property : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||

@@ -25,6 +25,6 @@ public interface ContainerRepo<CN extends Container> {
 	public CN   save(CN container);
 	public void delete(CN container);
 	
-	public CN   findContainerByID(long id);
+	public CN   findContainerByID(String id);
 	public CN   findContainersByPrimaryAdminURL(String primaryAdminURL);
 }

@@ -73,14 +73,14 @@ public class ContainerJSON {
 
     public final static void container2MapJSON(Container cont, HashMap<String, Object> props, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeStartObject();
-        jgenerator.writeNumberField(CT_ID_TOKEN, cont.getContainerID());
+        jgenerator.writeStringField(CT_ID_TOKEN, cont.getContainerID());
         jgenerator.writeStringField(CT_NAME_TOKEN, cont.getContainerName());
         jgenerator.writeStringField(CT_COMPANY_TOKEN, cont.getContainerCompany());
         jgenerator.writeStringField(CT_PRODUCT_TOKEN, cont.getContainerProduct());
         jgenerator.writeStringField(CT_TYPE_TOKEN, cont.getContainerType());
         jgenerator.writeStringField(CT_GATE_URI, cont.getContainerPrimaryAdminGate().getNodePrimaryAdminEndpoint().getEndpointURL());
         if (cont.getContainerParentContainer()!=null)
-            jgenerator.writeNumberField(CT_PCID_TOKEN, cont.getContainerParentContainer().getContainerID());
+            jgenerator.writeStringField(CT_PCID_TOKEN, cont.getContainerParentContainer().getContainerID());
         boolean isPropsBeginWritted = false;
         if (cont.getContainerProperties() != null) {
             containerProps2JSON(cont.getContainerProperties(), jgenerator, !isPropsBeginWritted, false);
@@ -92,36 +92,36 @@ public class ContainerJSON {
 
     public final static void container2JSON(Container cont, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeStartObject();
-        jgenerator.writeNumberField(CT_ID_TOKEN, cont.getContainerID());
+        jgenerator.writeStringField(CT_ID_TOKEN, cont.getContainerID());
         jgenerator.writeStringField(CT_NAME_TOKEN, cont.getContainerName());
         jgenerator.writeStringField(CT_COMPANY_TOKEN, cont.getContainerCompany());
         jgenerator.writeStringField(CT_PRODUCT_TOKEN, cont.getContainerProduct());
         jgenerator.writeStringField(CT_TYPE_TOKEN, cont.getContainerType());
         jgenerator.writeStringField(CT_GATE_URI, cont.getContainerPrimaryAdminGateURL());
         if (cont.getContainerParentContainer()!=null)
-            jgenerator.writeNumberField(CT_PCID_TOKEN, cont.getContainerParentContainer().getContainerID());
+            jgenerator.writeStringField(CT_PCID_TOKEN, cont.getContainerParentContainer().getContainerID());
         if (cont.getContainerPrimaryAdminGate()!=null)
-            jgenerator.writeNumberField(CT_PAGTID_TOKEN, cont.getContainerPrimaryAdminGate().getNodeID());
+            jgenerator.writeStringField(CT_PAGTID_TOKEN, cont.getContainerPrimaryAdminGate().getNodeID());
         else
             log.error("Container " + cont.getContainerName() + " has no primary admin gate !?");
         if (cont.getContainerCluster()!=null)
-            jgenerator.writeNumberField(CT_CLUSTER_TOKEN, cont.getContainerCluster().getClusterID());
+            jgenerator.writeStringField(CT_CLUSTER_TOKEN, cont.getContainerCluster().getClusterID());
         if (cont.getContainerParentContainer()!=null)
-            jgenerator.writeNumberField(CT_PCID_TOKEN, cont.getContainerParentContainer().getContainerID());
+            jgenerator.writeStringField(CT_PCID_TOKEN, cont.getContainerParentContainer().getContainerID());
 
         jgenerator.writeArrayFieldStart(CT_CCID_TOKEN);
         for (Container container : cont.getContainerChildContainers())
-            jgenerator.writeNumber(container.getContainerID());
+            jgenerator.writeString(container.getContainerID());
         jgenerator.writeEndArray();
 
         jgenerator.writeArrayFieldStart(CT_GID_TOKEN);
         for (Gate gate : cont.getContainerGates())
-            jgenerator.writeNumber(gate.getNodeID());
+            jgenerator.writeString(gate.getNodeID());
         jgenerator.writeEndArray();
 
         jgenerator.writeArrayFieldStart(CT_NID_TOKEN);
         for (Node node : cont.getContainerNodes(0))
-            jgenerator.writeNumber(node.getNodeID());
+            jgenerator.writeString(node.getNodeID());
         jgenerator.writeEndArray();
 
         if (cont.getContainerProperties() != null) {
@@ -153,27 +153,27 @@ public class ContainerJSON {
     }
 
     public static class JSONDeserializedContainer {
-        private long containerID;
+        private String containerID;
         private String containerName;
         private String containerCompany;
         private String containerProduct;
         private String containerType;
-        private long containerPrimaryAdminGateID;
+        private String containerPrimaryAdminGateID;
         private String containerGateURI;
         private String containerGateName;
-        private long containerClusterID;
-        private long containerParentContainerID;
-        private List<Long> containerChildContainersID;
-        private List<Long> containerNodesID;
-        private List<Long> containerGatesID;
+        private String containerClusterID;
+        private String containerParentContainerID;
+        private List<String> containerChildContainersID;
+        private List<String> containerNodesID;
+        private List<String> containerGatesID;
         private List<PropertiesJSON.JSONDeserializedProperty> containerProperties;
 
 
-        public long getContainerID() {
+        public String getContainerID() {
             return containerID;
         }
 
-        public void setContainerID(long containerID) {
+        public void setContainerID(String containerID) {
             this.containerID = containerID;
         }
 
@@ -209,11 +209,11 @@ public class ContainerJSON {
             this.containerType = containerType;
         }
 
-        public long getContainerPrimaryAdminGateID() {
+        public String getContainerPrimaryAdminGateID() {
             return containerPrimaryAdminGateID;
         }
 
-        public void setContainerPrimaryAdminGateID(long containerPrimaryAdminGateID) {
+        public void setContainerPrimaryAdminGateID(String containerPrimaryAdminGateID) {
             this.containerPrimaryAdminGateID = containerPrimaryAdminGateID;
         }
 
@@ -233,43 +233,43 @@ public class ContainerJSON {
             this.containerGateName = containerGateName;
         }
 
-        public long getContainerClusterID() {
+        public String getContainerClusterID() {
             return containerClusterID;
         }
 
-        public void setContainerClusterID(long containerClusterID) {
+        public void setContainerClusterID(String containerClusterID) {
             this.containerClusterID = containerClusterID;
         }
 
-        public long getContainerParentContainerID() {
+        public String getContainerParentContainerID() {
             return containerParentContainerID;
         }
 
-        public void setContainerParentContainerID(long containerParentContainerID) {
+        public void setContainerParentContainerID(String containerParentContainerID) {
             this.containerParentContainerID = containerParentContainerID;
         }
 
-        public List<Long> getContainerChildContainersID() {
+        public List<String> getContainerChildContainersID() {
             return containerChildContainersID;
         }
 
-        public void setContainerChildContainersID(List<Long> containerChildContainersID) {
+        public void setContainerChildContainersID(List<String> containerChildContainersID) {
             this.containerChildContainersID = containerChildContainersID;
         }
 
-        public List<Long> getContainerNodesID() {
+        public List<String> getContainerNodesID() {
             return containerNodesID;
         }
 
-        public void setContainerNodesID(List<Long> containerNodesID) {
+        public void setContainerNodesID(List<String> containerNodesID) {
             this.containerNodesID = containerNodesID;
         }
 
-        public List<Long> getContainerGatesID() {
+        public List<String> getContainerGatesID() {
             return containerGatesID;
         }
 
-        public void setContainerGatesID(List<Long> containerGatesID) {
+        public void setContainerGatesID(List<String> containerGatesID) {
             this.containerGatesID = containerGatesID;
         }
 

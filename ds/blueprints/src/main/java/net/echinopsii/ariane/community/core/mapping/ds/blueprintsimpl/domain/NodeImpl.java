@@ -43,7 +43,7 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
 
     private static final Logger log = LoggerFactory.getLogger(NodeImpl.class);
 
-    private long nodeID = 0;
+    private String nodeID = null;
     private String nodeName = null;
     private long nodeDepth = 0;
     private ContainerImpl nodeContainer = null;
@@ -57,7 +57,7 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
     private boolean isBeingSyncFromDB = false;
 
     @Override
-    public long getNodeID() {
+    public String getNodeID() {
         return this.nodeID;
     }
 
@@ -451,7 +451,7 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
             query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
             query.has(MappingDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY, true);
             for (Vertex vertex : query.vertices()) {
-                if ((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID) == child.getNodeID()) {
+                if (vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID).equals(child.getNodeID())) {
                     return;
                 }
             }
@@ -478,7 +478,7 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
             query.direction(Direction.BOTH);
             query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_TWIN_LABEL_KEY);
             for (Vertex vertex : query.vertices()) {
-                if ((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID) == twin.getNodeID()) {
+                if (vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID).equals(twin.getNodeID())) {
                     return;
                 }
             }
@@ -506,8 +506,8 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
             query.has(MappingDSGraphPropertyNames.DD_NODE_EDGE_ENDPT_KEY, true);
             for (Vertex vertex : query.vertices()) {
                 Object id = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
-                if (id!=null && id instanceof Long) {
-                    if (((long) id) == endpoint.getEndpointID()) {
+                if (id!=null && id instanceof String) {
+                    if (((String) id).equals(endpoint.getEndpointID())) {
                         return;
                     }
                 } else {
@@ -581,7 +581,7 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
         if (this.nodeVertex != null) {
             Object containerID = nodeVertex.getProperty(MappingDSGraphPropertyNames.DD_NODE_CONT_KEY);
             if (containerID != null) {
-                MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) containerID);
+                MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((String) containerID);
                 if (entity != null) {
                     if (entity instanceof ContainerImpl) {
                         nodeContainer = (ContainerImpl) entity;
@@ -597,7 +597,7 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
         if (this.nodeVertex != null) {
             Object parentNodeID = nodeVertex.getProperty(MappingDSGraphPropertyNames.DD_NODE_PNODE_KEY);
             if (parentNodeID != null) {
-                MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) parentNodeID);
+                MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((String) parentNodeID);
                 if (entity != null) {
                     if (entity instanceof NodeImpl) {
                         nodeParentNode = (NodeImpl) entity;
@@ -618,7 +618,7 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
             this.nodeChildNodes.clear();
             for (Vertex vertex : query.vertices()) {
                 NodeImpl child = null;
-                MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
+                MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((String) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
                 if (entity != null) {
                     if (entity instanceof NodeImpl) {
                         child = (NodeImpl) entity;
@@ -656,7 +656,7 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
             this.nodeTwinNodes.clear();
             for (Vertex vertex : query.vertices()) {
                 NodeImpl twin = null;
-                MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
+                MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((String) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
                 if (entity != null) {
                     if (entity instanceof NodeImpl) {
                         twin = (NodeImpl) entity;
@@ -699,9 +699,9 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
                 EndpointImpl endpoint = null;
                 log.debug("Get {} from vertex {}", new Object[]{MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID,vertex.toString()});
                 Object id = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
-                if (id!=null && id instanceof Long) {
+                if (id!=null && id instanceof String) {
                     log.debug("Get entity {} ...", new Object[]{id});
-                    MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) id);
+                    MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((String) id);
                     if (entity != null) {
                         if (entity instanceof EndpointImpl) {
                             endpoint = (EndpointImpl) entity;
@@ -746,16 +746,16 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
             else
                 nameEq = this.nodeName.equals(tmp.getNodeName()) && this.nodeContainer.equals(tmp.getNodeContainer());
         }
-        return (this.getNodeID() == tmp.getNodeID() && nameEq);
+        return (this.getNodeID().equals(tmp.getNodeID()) && nameEq);
     }
 
     @Override
     public int hashCode() {
-        return this.nodeVertex != null ? new Long(this.getNodeID()).hashCode() : super.hashCode();
+        return (this.nodeID != null && !this.nodeID.equals("")) ? this.getNodeID().hashCode() : super.hashCode();
     }
 
     @Override
     public String toString() {
-        return String.format("Node{ID='%d', nodename='%s'}", this.getNodeID(), this.nodeName);
+        return String.format("Node{ID='%s', nodename='%s'}", this.getNodeID(), this.nodeName);
     }
 }

@@ -45,7 +45,7 @@ public class GateJSON {
         jgenerator.writeObjectFieldStart(GT_NODE_TOKEN);
         NodeJSON.node2JSON(gate, jgenerator);
         jgenerator.writeEndObject();
-        jgenerator.writeNumberField(GT_ADMPEP_TOKEN, (gate.getNodePrimaryAdminEndpoint() != null) ? gate.getNodePrimaryAdminEndpoint().getEndpointID() : 0);
+        jgenerator.writeStringField(GT_ADMPEP_TOKEN, (gate.getNodePrimaryAdminEndpoint() != null) ? gate.getNodePrimaryAdminEndpoint().getEndpointID() : "");
         jgenerator.writeEndObject();
     }
 

@@ -25,6 +25,6 @@ public interface ClusterRepo<CL extends Cluster> {
 	public CL   save(CL cluster);
 	public void delete(CL cluster);
 	
-	public CL findClusterByID(long id);
+	public CL findClusterByID(String id);
 	public CL findClusterByName(String name);
 }

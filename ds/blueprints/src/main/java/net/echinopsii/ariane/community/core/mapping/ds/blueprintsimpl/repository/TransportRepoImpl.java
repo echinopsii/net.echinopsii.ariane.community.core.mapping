@@ -40,18 +40,18 @@ public class TransportRepoImpl implements TransportRepo<TransportImpl> {
     @Override
     public TransportImpl save(TransportImpl transport) {
         MappingDSGraphDB.saveVertexEntity(transport);
-        log.debug("Added transport {} to graph({}).", new Object[]{transport.toString(), MappingDSGraphDB.getVertexMaxCursor()});
+        log.debug("Added transport {} to graph.", new Object[]{transport.toString()});
         return transport;
     }
 
     @Override
     public void delete(TransportImpl transport) {
         MappingDSGraphDB.deleteEntity(transport);
-        log.debug("Deleted transport {} from graph({}).", new Object[]{transport.toString(), MappingDSGraphDB.getVertexMaxCursor()});
+        log.debug("Deleted transport {} from graph.", new Object[]{transport.toString()});
     }
 
     @Override
-    public TransportImpl findTransportByID(long ID) {
+    public TransportImpl findTransportByID(String ID) {
         TransportImpl ret = null;
         log.debug("search transport for ID {}", new Object[]{ID});
         MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity(ID);

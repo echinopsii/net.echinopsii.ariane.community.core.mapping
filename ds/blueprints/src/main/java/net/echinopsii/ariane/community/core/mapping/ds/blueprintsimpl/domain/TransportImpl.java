@@ -39,14 +39,14 @@ public class TransportImpl implements Transport, MappingDSBlueprintsCacheEntity 
 
     private static final Logger log = LoggerFactory.getLogger(TransportImpl.class);
 
-	private long   transportID     = 0;
+	private String   transportID   = null;
 	private String transportName   = null;	
 	private transient Vertex transportVertex = null;
 
     private HashMap<String,Object> transportProperties = null;
 	
 	@Override
-	public long getTransportID() {
+	public String getTransportID() {
 		return this.transportID;
 	}
 
@@ -203,17 +203,17 @@ public class TransportImpl implements Transport, MappingDSBlueprintsCacheEntity 
         if (o == null || getClass() != o.getClass()) return false;
 
         TransportImpl tmp = (TransportImpl) o;
-        if (this.getTransportID() == 0) return super.equals(o);
-        return (this.getTransportID() == tmp.getTransportID() || this.transportName.equals(tmp.getTransportName()));
+        if (this.getTransportID() == null) return super.equals(o);
+        return (this.getTransportID().equals(tmp.getTransportID()) || this.transportName.equals(tmp.getTransportName()));
     }
 	
     @Override
     public int hashCode() {
-        return this.getTransportID() != 0 ? new Long(this.getTransportID()).hashCode() : super.hashCode();
+        return this.getTransportID() != null ? this.getTransportID().hashCode() : super.hashCode();
     }
     
 	@Override
     public String toString() {
-        return String.format("Transport{ID='%d', transport name='%s'}", this.getTransportID(), this.transportName);
+        return String.format("Transport{ID='%s', transport name='%s'}", this.getTransportID(), this.transportName);
     }
 }

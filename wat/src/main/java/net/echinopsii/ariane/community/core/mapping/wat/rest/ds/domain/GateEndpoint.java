@@ -25,7 +25,6 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
-import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Map;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.GateJSON;
@@ -60,13 +59,13 @@ public class GateEndpoint {
         List<Endpoint> reqNodeEndpoints = new ArrayList<>();
         HashMap<String, Object> reqProperties = new HashMap<>();
 
-        if (jsonDeserializedGate.getNode().getNodeContainerID()!=0) {
+        if (jsonDeserializedGate.getNode().getNodeContainerID()!=null) {
             if (mappingSession!=null) reqNodeContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, jsonDeserializedGate.getNode().getNodeContainerID());
             else reqNodeContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(jsonDeserializedGate.getNode().getNodeContainerID());
             if (reqNodeContainer == null) ret.setErrorMessage("Request Error : container with provided ID " + jsonDeserializedGate.getNode().getNodeContainerID() + " was not found.");
         }
         if (ret.getErrorMessage() == null && jsonDeserializedGate.getNode().getNodeChildNodesID()!=null && jsonDeserializedGate.getNode().getNodeChildNodesID().size() > 0 ) {
-            for (long id : jsonDeserializedGate.getNode().getNodeChildNodesID()) {
+            for (String id : jsonDeserializedGate.getNode().getNodeChildNodesID()) {
                 Node childNode ;
                 if (mappingSession!=null) childNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(mappingSession, id);
                 else childNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
@@ -78,7 +77,7 @@ public class GateEndpoint {
             }
         }
         if (ret.getErrorMessage() == null && jsonDeserializedGate.getNode().getNodeTwinNodesID()!=null && jsonDeserializedGate.getNode().getNodeTwinNodesID().size() > 0 ) {
-            for (long id : jsonDeserializedGate.getNode().getNodeTwinNodesID()) {
+            for (String id : jsonDeserializedGate.getNode().getNodeTwinNodesID()) {
                 Node twinNode ;
                 if (mappingSession!=null) twinNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(mappingSession, id);
                 else twinNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
@@ -90,7 +89,7 @@ public class GateEndpoint {
             }
         }
         if (ret.getErrorMessage() == null && jsonDeserializedGate.getNode().getNodeEndpointsID()!=null && jsonDeserializedGate.getNode().getNodeEndpointsID().size() > 0) {
-            for (long id : jsonDeserializedGate.getNode().getNodeTwinNodesID()) {
+            for (String id : jsonDeserializedGate.getNode().getNodeTwinNodesID()) {
                 Endpoint endpoint ;
                 if (mappingSession!=null) endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, id);
                 else endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
@@ -116,7 +115,7 @@ public class GateEndpoint {
 
         // LOOK IF NODE MAYBE UPDATED OR CREATED
         Gate deserializedGate = null;
-        if (ret.getErrorMessage() == null && jsonDeserializedGate.getNode().getNodeID() != 0) {
+        if (ret.getErrorMessage() == null && jsonDeserializedGate.getNode().getNodeID() != null) {
             if (mappingSession!=null) deserializedGate = MappingBootstrap.getMappingSce().getGateSce().getGate(mappingSession, jsonDeserializedGate.getNode().getNodeID());
             else deserializedGate = MappingBootstrap.getMappingSce().getGateSce().getGate(jsonDeserializedGate.getNode().getNodeID());
             if (deserializedGate == null)
@@ -132,7 +131,7 @@ public class GateEndpoint {
             String reqNodeName = jsonDeserializedGate.getNode().getNodeName();
             String reqGateURL = jsonDeserializedGate.getGateURL();
             boolean reqGateIsPrimaryAdmin = jsonDeserializedGate.isGateIsPrimaryAdmin();
-            long reqContainerID = jsonDeserializedGate.getNode().getNodeContainerID();
+            String reqContainerID = jsonDeserializedGate.getNode().getNodeContainerID();
             if (deserializedGate == null)
                 if (mappingSession!=null) deserializedGate = MappingBootstrap.getMappingSce().getGateSce().createGate(mappingSession, reqGateURL, reqNodeName, reqContainerID, reqGateIsPrimaryAdmin);
                 else deserializedGate = MappingBootstrap.getMappingSce().getGateSce().createGate(reqGateURL, reqNodeName, reqContainerID, reqGateIsPrimaryAdmin);
@@ -145,8 +144,8 @@ public class GateEndpoint {
                     else deserializedGate.setNodeContainer(reqNodeContainer);
                 if (reqGateIsPrimaryAdmin && deserializedGate.getNodePrimaryAdminEndpoint()==null && reqGateURL!=null) {
                     Endpoint primaryAdminEp ;
-                    if (mappingSession!=null) primaryAdminEp = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, reqGateURL);
-                    else primaryAdminEp = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(reqGateURL);
+                    if (mappingSession!=null) primaryAdminEp = MappingBootstrap.getMappingSce().getEndpointSce().getEndpointByURL(mappingSession, reqGateURL);
+                    else primaryAdminEp = MappingBootstrap.getMappingSce().getEndpointSce().getEndpointByURL(reqGateURL);
 
                     if (primaryAdminEp == null)
                         if (mappingSession!=null) primaryAdminEp = MappingBootstrap.getMappingSce().getEndpointSce().createEndpoint(mappingSession, reqGateURL, deserializedGate.getNodeID());
@@ -232,7 +231,7 @@ public class GateEndpoint {
         return ret;
     }
 
-    private Response _displayGate(long id, String sessionId) {
+    private Response _displayGate(String id, String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get gate : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id});
         if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
@@ -274,7 +273,7 @@ public class GateEndpoint {
 
     @GET
     @Path("/{param:[0-9][0-9]*}")
-    public Response displayGate(@PathParam("param") long id) {
+    public Response displayGate(@PathParam("param") String id) {
         return _displayGate(id, null);
     }
 
@@ -315,14 +314,14 @@ public class GateEndpoint {
 
     @GET
     @Path("/get")
-    public Response getGate(@QueryParam("ID")long id, @QueryParam("sessionID") String sessionId) {
+    public Response getGate(@QueryParam("ID")String id, @QueryParam("sessionID") String sessionId) {
         return _displayGate(id, sessionId);
     }
 
     @GET
     @Path("/create")
     public Response createGate(@QueryParam("URL")String url, @QueryParam("name")String name,
-                               @QueryParam("containerID")long containerID, @QueryParam("isPrimaryAdmin")boolean isPrimaryAdmin,
+                               @QueryParam("containerID")String containerID, @QueryParam("isPrimaryAdmin")boolean isPrimaryAdmin,
                                @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create gate : ({},{},{},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), url, name, containerID, isPrimaryAdmin});
@@ -410,7 +409,7 @@ public class GateEndpoint {
 
     @GET
     @Path("/delete")
-    public Response deleteGate(@QueryParam("ID")long nodeID, @QueryParam("sessionID") String sessionId) {
+    public Response deleteGate(@QueryParam("ID")String nodeID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] delete gate : ({})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), nodeID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -438,7 +437,7 @@ public class GateEndpoint {
 
     @GET
     @Path("/update/primaryEndpoint")
-    public Response setPrimaryEndpoint(@QueryParam("ID")long id, @QueryParam("endpointID")long endpointID, @QueryParam("sessionID") String sessionId) {
+    public Response setPrimaryEndpoint(@QueryParam("ID")String id, @QueryParam("endpointID")String endpointID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}] update primary admin endpoint : ({},{})", new Object[]{Thread.currentThread().getId(), id, endpointID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||

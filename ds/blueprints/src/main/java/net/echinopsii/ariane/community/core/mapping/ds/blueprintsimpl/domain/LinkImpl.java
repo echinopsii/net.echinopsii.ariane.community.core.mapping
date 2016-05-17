@@ -39,7 +39,7 @@ public class LinkImpl implements Link, MappingDSBlueprintsCacheEntity {
 
     private static final Logger log = LoggerFactory.getLogger(NodeImpl.class);
 
-    private long linkID = 0;
+    private String linkID = null;
     private TransportImpl linkTransport = null;
     private EndpointImpl linkEndpointSource = null;
     private EndpointImpl linkEndpointTarget = null;
@@ -49,7 +49,7 @@ public class LinkImpl implements Link, MappingDSBlueprintsCacheEntity {
     private transient Edge linkEdge = null;
 
     @Override
-    public long getLinkID() {
+    public String getLinkID() {
         return this.linkID;
     }
 
@@ -210,7 +210,7 @@ public class LinkImpl implements Link, MappingDSBlueprintsCacheEntity {
     }
 
     private void synchronizeSubLinkToDB(LinkImpl subLink) {
-        if (this.linkEdge != null && subLink.getLinkID() != 0) {
+        if (this.linkEdge != null && subLink.getLinkID() != null) {
             this.linkEdge.setProperty(MappingDSGraphPropertyNames.DD_LINK_SUBLINKS_KEY + subLink.getLinkID(), subLink.getLinkID());
             MappingDSGraphDB.autocommit();
         }
@@ -243,7 +243,7 @@ public class LinkImpl implements Link, MappingDSBlueprintsCacheEntity {
         if (this.linkEdge != null) {
             Object endpointID = this.linkEdge.getProperty(MappingDSGraphPropertyNames.DD_LINK_SOURCE_EP_KEY);
             if (endpointID != null) {
-                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) endpointID);
+                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((String) endpointID);
                 if (entity != null) {
                     if (entity instanceof EndpointImpl) {
                         linkEndpointSource = (EndpointImpl) entity;
@@ -259,7 +259,7 @@ public class LinkImpl implements Link, MappingDSBlueprintsCacheEntity {
         if (this.linkEdge != null) {
             Object endpointID = this.linkEdge.getProperty(MappingDSGraphPropertyNames.DD_LINK_TARGET_EP_KEY);
             if (endpointID != null) {
-                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) endpointID);
+                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((String) endpointID);
                 if (entity != null) {
                     if (entity instanceof EndpointImpl) {
                         linkEndpointTarget = (EndpointImpl) entity;
@@ -275,7 +275,7 @@ public class LinkImpl implements Link, MappingDSBlueprintsCacheEntity {
         if (this.linkEdge != null) {
             Object upLinkID = this.linkEdge.getProperty(MappingDSGraphPropertyNames.DD_LINK_UPLINK_KEY);
             if (upLinkID != null) {
-                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getLink((long) upLinkID);
+                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getLink((String) upLinkID);
                 if (entity != null) {
                     if (entity instanceof LinkImpl) {
                         linkUpLink = (LinkImpl) entity;
@@ -292,8 +292,8 @@ public class LinkImpl implements Link, MappingDSBlueprintsCacheEntity {
             linkSubLinks.clear();
             for (String key : this.linkEdge.getPropertyKeys()) {
                 if (key.contains(MappingDSGraphPropertyNames.DD_LINK_SUBLINKS_KEY)) {
-                    long subLinkID = this.linkEdge.getProperty(key);
-                    if (subLinkID != 0) {
+                    String subLinkID = this.linkEdge.getProperty(key);
+                    if (subLinkID != null) {
                         LinkImpl subLink = null;
                         MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getLink(subLinkID);
                         if (entity != null) {
@@ -316,7 +316,7 @@ public class LinkImpl implements Link, MappingDSBlueprintsCacheEntity {
         if (this.linkEdge != null) {
             Object transportID = this.linkEdge.getProperty(MappingDSGraphPropertyNames.DD_LINK_TRANSPORT_KEY);
             if (transportID != null) {
-                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) transportID);
+                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((String) transportID);
                 if (entity != null) {
                     if (entity instanceof TransportImpl) {
                         linkTransport = (TransportImpl) entity;
@@ -338,19 +338,19 @@ public class LinkImpl implements Link, MappingDSBlueprintsCacheEntity {
         }
 
         LinkImpl tmp = (LinkImpl) o;
-        if (this.getLinkID() == 0) {
+        if (this.getLinkID() == null) {
             return super.equals(o);
         }
-        return (this.getLinkID() == tmp.getLinkID());
+        return (this.getLinkID().equals(tmp.getLinkID()));
     }
 
     @Override
     public int hashCode() {
-        return (this.getLinkID() != 0 ? new Long(this.getLinkID()).hashCode() : super.hashCode());
+        return ((this.getLinkID() != null && !this.getLinkID().equals("")) ? this.getLinkID().hashCode() : super.hashCode());
     }
 
     @Override
     public String toString() {
-        return String.format("Link{ID='%d'}", this.getLinkID());
+        return String.format("Link{ID='%s'}", this.getLinkID());
     }
 }

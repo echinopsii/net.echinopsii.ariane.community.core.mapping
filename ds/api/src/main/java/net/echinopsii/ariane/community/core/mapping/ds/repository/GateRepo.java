@@ -26,6 +26,6 @@ public interface GateRepo<N extends Node, G extends Gate> extends NodeRepo<N> {
 	public G      save(G Gate);
 	public void   delete(G Gate);
 
-	public G findGateByID(long ID);
+	public G findGateByID(String ID);
 	public G findGateByEndpointURL(String URL);
 }

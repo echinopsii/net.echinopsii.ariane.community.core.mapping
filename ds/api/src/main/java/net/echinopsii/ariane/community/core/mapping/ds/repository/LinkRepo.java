@@ -25,5 +25,5 @@ public interface LinkRepo<L extends Link> {
 	public L      save(L link);
 	public void   delete(L link);
 	
-	public L      findLinkByID(long id);
+	public L      findLinkByID(String id);
 }

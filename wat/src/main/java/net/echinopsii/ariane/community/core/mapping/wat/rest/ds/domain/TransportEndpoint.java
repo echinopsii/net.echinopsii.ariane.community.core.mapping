@@ -69,7 +69,7 @@ public class TransportEndpoint {
 
         // LOOK IF TRANSPORT MAYBE UPDATED OR CREATED
         Transport deserializedTransport = null;
-        if (ret.getErrorMessage() == null && jsonDeserializedTransport.getTransportID()!=0) {
+        if (ret.getErrorMessage() == null && jsonDeserializedTransport.getTransportID()!=null) {
             if (mappingSession!=null) deserializedTransport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(mappingSession, jsonDeserializedTransport.getTransportID());
             else deserializedTransport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(jsonDeserializedTransport.getTransportID());
             if (deserializedTransport==null) ret.setErrorMessage("Request Error : transport with provided ID " + jsonDeserializedTransport.getTransportID() + " was not found.");
@@ -106,7 +106,7 @@ public class TransportEndpoint {
         return ret;
     }
 
-    private Response _displayTransport(long id, String sessionId) {
+    private Response _displayTransport(String id, String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get transport : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id});
         if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
@@ -142,7 +142,7 @@ public class TransportEndpoint {
 
     @GET
     @Path("/{param}")
-    public Response displayTransport(@PathParam("param") long id) {
+    public Response displayTransport(@PathParam("param") String id) {
         return _displayTransport(id, null);
     }
 
@@ -179,7 +179,7 @@ public class TransportEndpoint {
 
     @GET
     @Path("/get")
-    public Response getTransport(@QueryParam("ID")long transportID, @QueryParam("sessionID") String sessionId) {
+    public Response getTransport(@QueryParam("ID")String transportID, @QueryParam("sessionID") String sessionId) {
         return displayTransport(transportID);
     }
 
@@ -259,7 +259,7 @@ public class TransportEndpoint {
 
     @GET
     @Path("/delete")
-    public Response deleteTransport(@QueryParam("ID")long transportID, @QueryParam("sessionID") String sessionId) {
+    public Response deleteTransport(@QueryParam("ID")String transportID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] delete transport : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), transportID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -281,7 +281,7 @@ public class TransportEndpoint {
 
     @GET
     @Path("/update/name")
-    public Response setTransportName(@QueryParam("ID")long id, @QueryParam("name")String name, @QueryParam("sessionID") String sessionId) {
+    public Response setTransportName(@QueryParam("ID")String id, @QueryParam("name")String name, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update transport name: ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -308,7 +308,7 @@ public class TransportEndpoint {
 
     @GET
     @Path("/update/properties/add")
-    public Response addTransportProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name, @QueryParam("propertyValue") String value,
+    public Response addTransportProperty(@QueryParam("ID")String id, @QueryParam("propertyName") String name, @QueryParam("propertyValue") String value,
                                          @DefaultValue("String") @QueryParam("propertyType") String type, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update transport by adding a property : ({},({},{},{}))", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name, value, type});
@@ -350,7 +350,7 @@ public class TransportEndpoint {
 
     @GET
     @Path("/update/properties/delete")
-    public Response deleteTransportProperty(@QueryParam("ID")long id, @QueryParam("propertyName") String name, @QueryParam("sessionID") String sessionId) {
+    public Response deleteTransportProperty(@QueryParam("ID")String id, @QueryParam("propertyName") String name, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}] update transport by removing a property : ({},{})", new Object[]{Thread.currentThread().getId(), id, name});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||

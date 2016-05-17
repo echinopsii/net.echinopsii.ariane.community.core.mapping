@@ -24,7 +24,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import java.util.Set;
 
 public interface Cluster {
-	public long getClusterID();
+	public String getClusterID();
 	
 	/*
 	 * cluster name MUST be unique

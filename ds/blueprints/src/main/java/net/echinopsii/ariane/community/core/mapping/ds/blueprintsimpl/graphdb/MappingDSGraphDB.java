@@ -48,7 +48,6 @@ public class MappingDSGraphDB {
     private static Graph  ccgraph                                    = null;
     private static MapperExecutor mexecutor                          = null;
     private static SelectorExecutor sexecutor                        = null;
-    private static Vertex idmanager                                  = null;
 
     private static HashMap<Long, Boolean> autocommit = new HashMap<>();
 
@@ -139,17 +138,6 @@ public class MappingDSGraphDB {
                 ((KeyIndexableGraph) ccgraph).createKeyIndex(MappingDSGraphPropertyNames.DD_TRANSPORT_NAME_KEY, Vertex.class);
                 log.debug("Create index for {} ...", MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID);
                 ((KeyIndexableGraph) ccgraph).createKeyIndex(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID, Edge.class);
-            }
-            log.debug("Retrieve Mapping ID manager vertex if exists...");
-            idmanager = ccgraph.getVertices(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID, (long) 0).iterator().hasNext() ?
-                                ccgraph.getVertices(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID, (long) 0).iterator().next() : null;
-            if (idmanager == null) {
-                log.debug("Initialize Mapping Blueprints DB...");
-                idmanager = ccgraph.addVertex(null);
-                idmanager.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID, (long) 0);
-                idmanager.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_MAXCUR_KEY, (long) 0);
-                idmanager.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_MAXCUR_KEY, (long) 0);
-                autocommit();
             }
             log.debug("Mapping blueprints DB is started !");
             return true;
@@ -265,147 +253,10 @@ public class MappingDSGraphDB {
         return ccgraph;
     }
 
-    private static synchronized long incrementVertexMaxCursor() throws MappingDSException {
-        try {
-            long countProp = idmanager.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_MAXCUR_KEY);
-            countProp++;
-            idmanager.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_MAXCUR_KEY, countProp);
-        } catch (Exception E) {
-            String msg = "Exception while incrementing vertex max cursor count...";
-            log.error(msg);
-            E.printStackTrace();
-            log.error("Raise exception for rollback...");
-            throw new MappingDSException(msg);
-        }
-        return getVertexMaxCursor();
-    }
-
-    private static synchronized void decrementVertexMaxCursor() throws MappingDSException {
-        try {
-            long countProp = idmanager.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_MAXCUR_KEY);
-            countProp--;
-            idmanager.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_MAXCUR_KEY, countProp);
-        } catch (Exception E) {
-            String msg = "Exception catched while decrementing vertex max cursor count...";
-            log.error(msg);
-            E.printStackTrace();
-            log.error("Raise exception for rollback...");
-            throw new MappingDSException(msg);
-        }
-    }
-
-    public static synchronized long getVertexMaxCursor() {
-        return idmanager.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_MAXCUR_KEY);
-    }
-
-    private static synchronized long incrementEdgeMaxCursor() throws MappingDSException {
-        try {
-            long countProp = idmanager.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_MAXCUR_KEY);
-            countProp++;
-            idmanager.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_MAXCUR_KEY, countProp);
-        } catch (Exception E) {
-            String msg = "Exception catched while incrementing edge max cursor count...";
-            log.error(msg);
-            E.printStackTrace();
-            log.error("Raise exception for rollback...");
-            throw new MappingDSException(msg);
-        }
-        return getEdgeMaxCursor();
-    }
-
-    private static synchronized void decrementEdgeMaxCursor() throws MappingDSException {
-        try {
-            long countProp = idmanager.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_MAXCUR_KEY);
-            countProp--;
-            idmanager.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_MAXCUR_KEY, countProp);
-        } catch (Exception E) {
-            String msg = "Exception catched while decrementing edge max cursor count...";
-            log.error(msg);
-            E.printStackTrace();
-            log.error("Raise exception for rollback...");
-            throw new MappingDSException(msg);
-        }
-    }
-
-    public static synchronized long getEdgeMaxCursor() {
-        return idmanager.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_MAXCUR_KEY);
-    }
-
-    private static synchronized void addVertexFreeID(long id) throws MappingDSException {
-        try {
-            idmanager.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_FREE_IDS_KEY + id, id);
-        } catch (Exception E) {
-            String msg = "Exception catched while adding vertex free ID " + id + "...";
-            log.error(msg);
-            E.printStackTrace();
-            log.error("Raise exception for rollback...");
-            throw new MappingDSException(msg);
-        }
-    }
-
-    private static synchronized boolean hasVertexFreeID() {
-        for (String key : idmanager.getPropertyKeys()) {
-            if (key.contains(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_FREE_IDS_KEY)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static synchronized long consumeVertexFreeID() {
-        long ret = 0;
-        for (String key : idmanager.getPropertyKeys()) {
-            if (key.contains(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_FREE_IDS_KEY)) {
-                ret = idmanager.getProperty(key);
-                idmanager.removeProperty(key);
-                break;
-            }
-        }
-        return ret;
-    }
-
-    private static synchronized void addEdgeFreeID(long id) throws MappingDSException {
-        try {
-            idmanager.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_FREE_IDS_KEY + id, id);
-        } catch (Exception E) {
-            String msg = "Exception catched while adding edge free ID " + id + "...";
-            log.error(msg);
-            E.printStackTrace();
-            log.error("Raise exception for rollback...");
-            throw new MappingDSException(msg);
-        }
-    }
-
-    private static synchronized boolean hasEdgeFreeID() {
-        for (String key : idmanager.getPropertyKeys()) {
-            if (key.contains(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_FREE_IDS_KEY)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static synchronized long consumeEdgeFreeID() {
-        long ret = 0;
-        for (String key : idmanager.getPropertyKeys()) {
-            if (key.contains(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_FREE_IDS_KEY)) {
-                ret = idmanager.getProperty(key);
-                idmanager.removeProperty(key);
-                break;
-            }
-        }
-        return ret;
-    }
-
     public static synchronized MappingDSBlueprintsCacheEntity saveVertexEntity(MappingDSBlueprintsCacheEntity entity) {
         Vertex entityV;
-        long id = 0;
+        String id = UUID.randomUUID().toString();
         try {
-            if (!hasVertexFreeID()) {
-                id = incrementVertexMaxCursor();
-            } else {
-                id = consumeVertexFreeID();
-            }
             entityV = ccgraph.addVertex(null);
             entityV.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID, id);
             entity.setElement(entityV);
@@ -429,13 +280,8 @@ public class MappingDSGraphDB {
 
     public static synchronized Edge createEdge(Vertex source, Vertex destination, String label) throws MappingDSException {
         Edge edge;
-        long id = 0;
+        String id = UUID.randomUUID().toString();
         try {
-            if (!hasEdgeFreeID()) {
-                id = incrementEdgeMaxCursor();
-            } else {
-                id = consumeEdgeFreeID();
-            }
             if (log.isTraceEnabled()) {
                 for (String propKey : source.getPropertyKeys()) {
                     log.trace("Source vertex {} property {}: {}", new Object[]{source.toString(),propKey,source.getProperty(propKey).toString()});
@@ -486,7 +332,7 @@ public class MappingDSGraphDB {
     }
 
     private static MappingDSBlueprintsCacheEntity getEdgeEntity(Edge edge) {
-        long id = edge.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID);
+        String id = edge.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID);
         MappingDSBlueprintsCacheEntity ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("E" + id);
         if (ret == null) {
             if (edge.getLabel().equals(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY)) {
@@ -499,7 +345,7 @@ public class MappingDSGraphDB {
         return ret;
     }
 
-    public static MappingDSBlueprintsCacheEntity getEdgeEntity(long id) {
+    public static MappingDSBlueprintsCacheEntity getEdgeEntity(String id) {
         log.debug("Get cache entity {} if exists ...", new Object[]{"E"+id});
         MappingDSBlueprintsCacheEntity ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("E" + id);
         if (ret == null) {
@@ -519,7 +365,7 @@ public class MappingDSGraphDB {
     }
 
     private static MappingDSBlueprintsCacheEntity getVertexEntity(Vertex vertex) {
-        long id = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+        String id = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
         String vertexType = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY);
         MappingDSBlueprintsCacheEntity ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("V" + id);
         if (ret == null) {
@@ -564,8 +410,8 @@ public class MappingDSGraphDB {
         return ret;
     }
 
-    public static MappingDSBlueprintsCacheEntity getVertexEntity(long id) {
-        if (id == 0)
+    public static MappingDSBlueprintsCacheEntity getVertexEntity(String id) {
+        if (id == null)
             return null;
         log.debug("Get cache entity {} if exists ...", new Object[]{"V" + id});
         MappingDSBlueprintsCacheEntity ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("V" + id);
@@ -617,7 +463,7 @@ public class MappingDSGraphDB {
         log.debug("Get all clusters from graph {}...", new Object[]{ccgraph.toString() + "(" + ccgraph.hashCode() + ")"});
         for (Vertex vertex : ccgraph.getVertices(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY,
                                                         MappingDSGraphPropertyNames.DD_TYPE_CLUSTER_VALUE)) {
-            long id = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+            String id = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
             ClusterImpl tmp = (ClusterImpl) getVertexEntity(id);
             if (tmp == null) {
                 tmp = new ClusterImpl();
@@ -637,7 +483,7 @@ public class MappingDSGraphDB {
         log.debug("Get all containers from graph {}...", new Object[]{ccgraph.toString() + "(" + ccgraph.hashCode() + ")"});
         for (Vertex vertex : ccgraph.getVertices(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY,
                                                         MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE)) {
-            long id = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+            String id = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
             ContainerImpl tmp = (ContainerImpl) getVertexEntity(id);
             if (tmp == null) {
                 tmp = new ContainerImpl();
@@ -653,7 +499,7 @@ public class MappingDSGraphDB {
     }
 
     private static NodeImpl getNodeFromVertex(Vertex vertex) {
-        long id = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+        String id = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
         NodeImpl tmp = (NodeImpl) getVertexEntity(id);
         if (tmp == null) {
             tmp = new NodeImpl();
@@ -665,7 +511,7 @@ public class MappingDSGraphDB {
     }
 
     private static GateImpl getGateFromVertex(Vertex vertex) {
-        long id = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+        String id = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
         GateImpl tmp = (GateImpl) getVertexEntity(id);
         if (tmp == null) {
             tmp = new GateImpl();
@@ -749,7 +595,7 @@ public class MappingDSGraphDB {
     }
 
     private static EndpointImpl getEndpointFromVertex(Vertex vertex) {
-        long id = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+        String id = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
         EndpointImpl tmp = (EndpointImpl) getVertexEntity(id);
         if (tmp == null) {
             tmp = new EndpointImpl();
@@ -784,7 +630,7 @@ public class MappingDSGraphDB {
         Set<EndpointImpl> ret = new HashSet<>();
         for (Vertex vertex : ccgraph.getVertices(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY,
                                                         MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE)) {
-            long id = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+            String id = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
             log.debug("Test vertex {}...", new Object[]{id});
             EndpointImpl tmp = (EndpointImpl) getVertexEntity(id);
             if (tmp == null) {
@@ -808,7 +654,7 @@ public class MappingDSGraphDB {
         log.debug("Get all transports from graph {}...", new Object[]{ccgraph.toString()});
         for (Vertex vertex : ccgraph.getVertices(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY,
                                                         MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE)) {
-            long id = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+            String id = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
             TransportImpl tmp = (TransportImpl) getVertexEntity(id);
             if (tmp == null) {
                 tmp = new TransportImpl();
@@ -922,8 +768,8 @@ public class MappingDSGraphDB {
         return (TransportImpl) ret;
     }
 
-    public static MappingDSBlueprintsCacheEntity getLink(long id) {
-        if (id == 0)
+    public static MappingDSBlueprintsCacheEntity getLink(String id) {
+        if (id == null)
             return null;
         MappingDSBlueprintsCacheEntity ret = (MappingDSBlueprintsCacheEntity) MappingDSCache.getCachedEntity("E" + id);
         if (ret == null && ccgraph != null) {
@@ -944,7 +790,7 @@ public class MappingDSGraphDB {
     }
 
     private static LinkImpl getLinkFromEdge(Edge edge) {
-        long id = edge.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID);
+        String id = edge.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID);
         LinkImpl tmp = (LinkImpl) getLink(id);
         if (tmp == null) {
             tmp = new LinkImpl();
@@ -988,24 +834,12 @@ public class MappingDSGraphDB {
     }
 
     private static void removeVertex(Vertex vertex) throws MappingDSException {
-        long vertexID = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
         ccgraph.removeVertex(vertex);
-        if (vertexID == getVertexMaxCursor()) {
-            decrementVertexMaxCursor();
-        } else {
-            addVertexFreeID(vertexID);
-        }
         autocommit();
     }
 
     private static void removeEdge(Edge edge) throws MappingDSException {
-        long edgeID = edge.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID);
         ccgraph.removeEdge(edge);
-        if (edgeID == getEdgeMaxCursor()) {
-            decrementEdgeMaxCursor();
-        } else {
-            addEdgeFreeID(edgeID);
-        }
         autocommit();
     }
 

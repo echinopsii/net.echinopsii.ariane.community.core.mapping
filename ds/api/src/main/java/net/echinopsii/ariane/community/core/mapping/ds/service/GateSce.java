@@ -26,14 +26,14 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import java.util.Set;
 
 public interface GateSce<G extends Gate> {
-	public G    createGate(Session session, String url, String name, Long containerid, Boolean isPrimaryAdmin) throws MappingDSException;
-	public G    createGate(String url, String name, Long containerid, Boolean isPrimaryAdmin) throws MappingDSException;
+	public G    createGate(Session session, String url, String name, String containerid, Boolean isPrimaryAdmin) throws MappingDSException;
+	public G    createGate(String url, String name, String containerid, Boolean isPrimaryAdmin) throws MappingDSException;
 
-	public void deleteGate(Session session, Long nodeID) throws MappingDSException;
-	public void deleteGate(Long nodeID) throws MappingDSException;
+	public void deleteGate(Session session, String nodeID) throws MappingDSException;
+	public void deleteGate(String nodeID) throws MappingDSException;
 
-	public G    getGate(Session session, Long id) throws MappingDSException;
-	public G    getGate(Long id);
+	public G    getGate(Session session, String id) throws MappingDSException;
+	public G    getGate(String id);
 
 	public Set<G> getGates(Session session, String selector) throws MappingDSException;
     public Set<G> getGates(String selector);

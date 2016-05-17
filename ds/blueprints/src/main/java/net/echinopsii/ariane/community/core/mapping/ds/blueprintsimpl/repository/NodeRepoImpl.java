@@ -41,7 +41,7 @@ public class NodeRepoImpl implements NodeRepo<NodeImpl> {
     @Override
     public NodeImpl saveNode(NodeImpl node) {
         MappingDSGraphDB.saveVertexEntity(node);
-        log.debug("Added node {} to graph({}).", new Object[]{node.toString(), MappingDSGraphDB.getVertexMaxCursor()});
+        log.debug("Added node {} to graph.", new Object[]{node.toString()});
         return node;
     }
 
@@ -53,7 +53,7 @@ public class NodeRepoImpl implements NodeRepo<NodeImpl> {
 
         Set<EndpointImpl> clonedESet = new HashSet<>(node.getNodeEndpoints());
         for (EndpointImpl endpoint : clonedESet) {
-            log.debug("Deleted endpoint {} from graph({}).", new Object[]{endpoint.getEndpointURL(), MappingDSGraphDB.getVertexMaxCursor()});
+            log.debug("Deleted endpoint {} from graph.", new Object[]{endpoint.getEndpointURL()});
             node.removeEndpoint(endpoint);
         }
         clonedESet.clear();
@@ -67,11 +67,11 @@ public class NodeRepoImpl implements NodeRepo<NodeImpl> {
         if (node.getNodeDepth() == 1) node.getNodeContainer().removeContainerNode(node);
 
         MappingDSGraphDB.deleteEntity(node);
-        log.debug("Deleted node {} and all its linked entities from graph({}).", new Object[]{node.toString(), MappingDSGraphDB.getVertexMaxCursor()});
+        log.debug("Deleted node {} and all its linked entities from graph.", new Object[]{node.toString()});
     }
 
     @Override
-    public NodeImpl findNodeByID(long ID) {
+    public NodeImpl findNodeByID(String ID) {
         NodeImpl ret = null;
         MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity(ID);
         if (entity != null) {

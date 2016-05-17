@@ -25,7 +25,8 @@ define(
     ],
     function (cylinder, helper) {
         function multicastBus(tid, ridx, localisation, multicastAddr_, properties_) {
-            this.ID            = tid*1000+ridx;
+            this.ID            = tid;
+            this.ridx          = ridx;
 
             this.pName         = localisation.getPLocation().pname;
             this.areaName      = localisation.getArea().raname;

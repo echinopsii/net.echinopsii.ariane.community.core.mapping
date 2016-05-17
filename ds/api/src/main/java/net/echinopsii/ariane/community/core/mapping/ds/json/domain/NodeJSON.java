@@ -64,12 +64,12 @@ public class NodeJSON {
 
     public final static void node2MapJSON(Node node, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeStartObject();
-        jgenerator.writeNumberField(ND_ID_TOKEN, node.getNodeID());
+        jgenerator.writeStringField(ND_ID_TOKEN, node.getNodeID());
         jgenerator.writeStringField(ND_NAME_TOKEN, node.getNodeName());
         jgenerator.writeNumberField(ND_DEPTH_TOKEN, node.getNodeDepth());
-        jgenerator.writeNumberField(ND_CONID_TOKEN, node.getNodeContainer().getContainerID());
+        jgenerator.writeStringField(ND_CONID_TOKEN, node.getNodeContainer().getContainerID());
         if (node.getNodeParentNode()!=null)
-            jgenerator.writeNumberField(ND_PNDID_TOKEN, node.getNodeParentNode().getNodeID());
+            jgenerator.writeStringField(ND_PNDID_TOKEN, node.getNodeParentNode().getNodeID());
         if (node.getNodeProperties() != null) {
             nodeProps2JSON(node, jgenerator);
         }
@@ -77,23 +77,23 @@ public class NodeJSON {
     }
 
     public final static void node2JSON(Node node, JsonGenerator jgenerator) throws IOException {
-        jgenerator.writeNumberField(ND_ID_TOKEN, node.getNodeID());
+        jgenerator.writeStringField(ND_ID_TOKEN, node.getNodeID());
         jgenerator.writeStringField(ND_NAME_TOKEN, node.getNodeName());
         jgenerator.writeNumberField(ND_DEPTH_TOKEN, node.getNodeDepth());
-        jgenerator.writeNumberField(ND_CONID_TOKEN, node.getNodeContainer().getContainerID());
+        jgenerator.writeStringField(ND_CONID_TOKEN, node.getNodeContainer().getContainerID());
         if (node.getNodeParentNode()!=null)
-            jgenerator.writeNumberField(ND_PNDID_TOKEN, node.getNodeParentNode().getNodeID());
+            jgenerator.writeStringField(ND_PNDID_TOKEN, node.getNodeParentNode().getNodeID());
 
         jgenerator.writeArrayFieldStart(ND_CNDID_TOKEN);
         for (Node child : node.getNodeChildNodes())
-            jgenerator.writeNumber(child.getNodeID());
+            jgenerator.writeString(child.getNodeID());
         jgenerator.writeEndArray();
 
         jgenerator.writeArrayFieldStart(ND_TWNID_TOKEN);
         Iterator<? extends Node> iterT = node.getTwinNodes().iterator();
         while (iterT.hasNext()) {
             Node twin = iterT.next();
-            jgenerator.writeNumber(twin.getNodeID());
+            jgenerator.writeString(twin.getNodeID());
         }
         jgenerator.writeEndArray();
 
@@ -101,7 +101,7 @@ public class NodeJSON {
         Iterator<? extends Endpoint> iterE = node.getNodeEndpoints().iterator();
         while (iterE.hasNext()) {
             Endpoint ep = iterE.next();
-            jgenerator.writeNumber(ep.getEndpointID());
+            jgenerator.writeString(ep.getEndpointID());
         }
         jgenerator.writeEndArray();
 
@@ -135,21 +135,21 @@ public class NodeJSON {
     }
 
     public static class JSONDeserializedNode {
-        private long nodeID;
+        private String nodeID;
         private String nodeName;
         private long nodeDepth;
-        private long nodeContainerID;
-        private long nodeParentNodeID;
-        private List<Long> nodeChildNodesID;
-        private List<Long> nodeTwinNodesID;
-        private List<Long> nodeEndpointsID;
+        private String nodeContainerID;
+        private String nodeParentNodeID;
+        private List<String> nodeChildNodesID;
+        private List<String> nodeTwinNodesID;
+        private List<String> nodeEndpointsID;
         private List<JSONDeserializedProperty> nodeProperties;
 
-        public long getNodeID() {
+        public String getNodeID() {
             return nodeID;
         }
 
-        public void setNodeID(long nodeID) {
+        public void setNodeID(String nodeID) {
             this.nodeID = nodeID;
         }
 
@@ -169,43 +169,43 @@ public class NodeJSON {
             this.nodeDepth = nodeDepth;
         }
 
-        public long getNodeContainerID() {
+        public String getNodeContainerID() {
             return nodeContainerID;
         }
 
-        public void setNodeContainerID(long nodeContainerID) {
+        public void setNodeContainerID(String nodeContainerID) {
             this.nodeContainerID = nodeContainerID;
         }
 
-        public long getNodeParentNodeID() {
+        public String getNodeParentNodeID() {
             return nodeParentNodeID;
         }
 
-        public void setNodeParentNodeID(long nodeParentNodeID) {
+        public void setNodeParentNodeID(String nodeParentNodeID) {
             this.nodeParentNodeID = nodeParentNodeID;
         }
 
-        public List<Long> getNodeChildNodesID() {
+        public List<String> getNodeChildNodesID() {
             return nodeChildNodesID;
         }
 
-        public void setNodeChildNodesID(List<Long> nodeChildNodesID) {
+        public void setNodeChildNodesID(List<String> nodeChildNodesID) {
             this.nodeChildNodesID = nodeChildNodesID;
         }
 
-        public List<Long> getNodeTwinNodesID() {
+        public List<String> getNodeTwinNodesID() {
             return nodeTwinNodesID;
         }
 
-        public void setNodeTwinNodesID(List<Long> nodeTwinNodesID) {
+        public void setNodeTwinNodesID(List<String> nodeTwinNodesID) {
             this.nodeTwinNodesID = nodeTwinNodesID;
         }
 
-        public List<Long> getNodeEndpointsID() {
+        public List<String> getNodeEndpointsID() {
             return nodeEndpointsID;
         }
 
-        public void setNodeEndpointsID(List<Long> nodeEndpointsID) {
+        public void setNodeEndpointsID(List<String> nodeEndpointsID) {
             this.nodeEndpointsID = nodeEndpointsID;
         }
 

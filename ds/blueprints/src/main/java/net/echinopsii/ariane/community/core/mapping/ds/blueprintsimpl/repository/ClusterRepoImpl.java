@@ -39,18 +39,18 @@ public class ClusterRepoImpl implements ClusterRepo<ClusterImpl> {
     @Override
     public ClusterImpl save(ClusterImpl cluster) {
         MappingDSGraphDB.saveVertexEntity(cluster);
-        log.debug("Added cluster {} to graph({}).", new Object[]{cluster.toString(), MappingDSGraphDB.getVertexMaxCursor()});
+        log.debug("Added cluster {} to graph.", new Object[]{cluster.toString()});
         return cluster;
     }
 
     @Override
     public void delete(ClusterImpl cluster) {
         MappingDSGraphDB.deleteEntity(cluster);
-        log.debug("Deleted cluster {} from graph({}).", new Object[]{cluster.toString(), MappingDSGraphDB.getVertexMaxCursor()});
+        log.debug("Deleted cluster {} from graph.", new Object[]{cluster.toString()});
     }
 
     @Override
-    public ClusterImpl findClusterByID(long id) {
+    public ClusterImpl findClusterByID(String id) {
         ClusterImpl ret = null;
         MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity(id);
         if (entity != null) {

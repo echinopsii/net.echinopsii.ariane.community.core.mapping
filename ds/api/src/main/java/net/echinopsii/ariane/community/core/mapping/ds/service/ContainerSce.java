@@ -38,10 +38,10 @@ public interface ContainerSce<C extends Container> {
     public void deleteContainer(Session session, String primaryAdminURL) throws MappingDSException;
     public void deleteContainer(String primaryAdminURL) throws MappingDSException;
 
-    public C getContainer(Session session, Long id) throws MappingDSException;
-    public C getContainer(Long id);
-    public C getContainer(Session session, String primaryAdminURL) throws MappingDSException;
-    public C getContainer(String primaryAdminURL);
+    public C getContainer(Session session, String id) throws MappingDSException;
+    public C getContainer(String id);
+    public C getContainerByPrimaryAdminURL(Session session, String primaryAdminURL) throws MappingDSException;
+    public C getContainerByPrimaryAdminURL(String primaryAdminURL);
 
     public Set<C> getContainers(Session session, String selector) throws MappingDSException;
     public Set<C> getContainers(String selector);

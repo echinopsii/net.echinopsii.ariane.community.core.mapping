@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Set;
 
 public interface Node {
-	public long   getNodeID();
+	public String   getNodeID();
 	
 	/*
 	 * 	node name MUST be unique

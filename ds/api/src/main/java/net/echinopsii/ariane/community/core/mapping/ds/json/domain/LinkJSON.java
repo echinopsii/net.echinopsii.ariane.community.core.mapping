@@ -44,11 +44,11 @@ public class LinkJSON {
 
     public final static void link2JSON(Link link, JsonGenerator jgenerator) throws JsonGenerationException, IOException {
         jgenerator.writeStartObject();
-        jgenerator.writeNumberField(LK_ID_TOKEN, link.getLinkID());
-        jgenerator.writeNumberField(LK_SEP_TOKEN, link.getLinkEndpointSource().getEndpointID());
+        jgenerator.writeStringField(LK_ID_TOKEN, link.getLinkID());
+        jgenerator.writeStringField(LK_SEP_TOKEN, link.getLinkEndpointSource().getEndpointID());
         if (link.getLinkEndpointTarget()!=null)
-            jgenerator.writeNumberField(LK_TEP_TOKEN, link.getLinkEndpointTarget().getEndpointID());
-        jgenerator.writeNumberField(LK_TRP_TOKEN, link.getLinkTransport().getTransportID());
+            jgenerator.writeStringField(LK_TEP_TOKEN, link.getLinkEndpointTarget().getEndpointID());
+        jgenerator.writeStringField(LK_TRP_TOKEN, link.getLinkTransport().getTransportID());
         jgenerator.writeEndObject();
     }
 
@@ -73,40 +73,40 @@ public class LinkJSON {
     }
 
     public static class JSONDeserializedLink {
-        private long linkID;
-        private long linkSEPID;
-        private long linkTEPID;
-        private long linkTRPID;
+        private String linkID;
+        private String linkSEPID;
+        private String linkTEPID;
+        private String linkTRPID;
 
-        public long getLinkID() {
+        public String getLinkID() {
             return linkID;
         }
 
-        public void setLinkID(long linkID) {
+        public void setLinkID(String linkID) {
             this.linkID = linkID;
         }
 
-        public long getLinkSEPID() {
+        public String getLinkSEPID() {
             return linkSEPID;
         }
 
-        public void setLinkSEPID(long linkSEPID) {
+        public void setLinkSEPID(String linkSEPID) {
             this.linkSEPID = linkSEPID;
         }
 
-        public long getLinkTEPID() {
+        public String getLinkTEPID() {
             return linkTEPID;
         }
 
-        public void setLinkTEPID(long linkTEPID) {
+        public void setLinkTEPID(String linkTEPID) {
             this.linkTEPID = linkTEPID;
         }
 
-        public long getLinkTRPID() {
+        public String getLinkTRPID() {
             return linkTRPID;
         }
 
-        public void setLinkTRPID(long linkTRPID) {
+        public void setLinkTRPID(String linkTRPID) {
             this.linkTRPID = linkTRPID;
         }
     }

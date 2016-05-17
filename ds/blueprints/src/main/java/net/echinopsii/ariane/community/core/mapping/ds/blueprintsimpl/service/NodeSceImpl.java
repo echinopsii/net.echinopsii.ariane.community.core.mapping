@@ -36,6 +36,7 @@ public class NodeSceImpl implements NodeSce<NodeImpl> {
     final static String CREATE_NODE = "createNode";
     final static String DELETE_NODE = "deleteNode";
     final static String GET_NODE = "getNode";
+    final static String GET_NODE_BY_EPURL = "getNodeByEndpointURL";
     final static String GET_NODES = "getNodes";
 
     private static final Logger log = LoggerFactory.getLogger(NodeSceImpl.class);
@@ -47,7 +48,7 @@ public class NodeSceImpl implements NodeSce<NodeImpl> {
     }
 
     @Override
-    public NodeImpl createNode(Session session, String nodeName, Long containerID, Long parentNodeID) throws MappingDSException {
+    public NodeImpl createNode(Session session, String nodeName, String containerID, String parentNodeID) throws MappingDSException {
         NodeImpl ret = null;
         if (session != null && session.isRunning())
             ret = (NodeImpl) session.execute(this, CREATE_NODE, new Object[]{nodeName, containerID, parentNodeID});
@@ -55,7 +56,7 @@ public class NodeSceImpl implements NodeSce<NodeImpl> {
     }
 
     @Override
-    public NodeImpl createNode(String nodeName, Long containerID, Long parentNodeID) throws MappingDSException {
+    public NodeImpl createNode(String nodeName, String containerID, String parentNodeID) throws MappingDSException {
         ContainerImpl container = sce.getGlobalRepo().getContainerRepo().findContainerByID(containerID);
         NodeImpl ret = sce.getGlobalRepo().findNodeByName(container, nodeName);
         if (ret == null) {
@@ -63,7 +64,7 @@ public class NodeSceImpl implements NodeSce<NodeImpl> {
                 ret = new NodeImpl();
                 ret.setNodeName(nodeName);
                 ret.setNodeContainer(container);
-                if (parentNodeID != 0) {
+                if (parentNodeID != null) {
                     NodeImpl parent = sce.getGlobalRepo().getNodeRepo().findNodeByID(parentNodeID);
                     if (parent != null) {
                         ret.setNodeParentNode(parent);
@@ -86,13 +87,13 @@ public class NodeSceImpl implements NodeSce<NodeImpl> {
     }
 
     @Override
-    public void deleteNode(Session session, Long nodeID) throws MappingDSException {
+    public void deleteNode(Session session, String nodeID) throws MappingDSException {
         if (session != null && session.isRunning())
             session.execute(this, DELETE_NODE, new Object[]{nodeID});
     }
 
     @Override
-    public void deleteNode(Long nodeID) throws MappingDSException {
+    public void deleteNode(String nodeID) throws MappingDSException {
         NodeImpl remove = sce.getGlobalRepo().getNodeRepo().findNodeByID(nodeID);
         if (remove != null) {
             sce.getGlobalRepo().getNodeRepo().deleteNode(remove);
@@ -102,7 +103,7 @@ public class NodeSceImpl implements NodeSce<NodeImpl> {
     }
 
     @Override
-    public NodeImpl getNode(Session session, Long id) throws MappingDSException {
+    public NodeImpl getNode(Session session, String id) throws MappingDSException {
         NodeImpl ret = null;
         if (session != null && session.isRunning())
             ret = (NodeImpl) session.execute(this, GET_NODE, new Object[]{id});
@@ -110,25 +111,25 @@ public class NodeSceImpl implements NodeSce<NodeImpl> {
     }
 
     @Override
-    public NodeImpl getNode(Long id) {
+    public NodeImpl getNode(String id) {
         return sce.getGlobalRepo().getNodeRepo().findNodeByID(id);
     }
 
     @Override
-    public NodeImpl getNode(Session session, String endpointURL) throws MappingDSException {
+    public NodeImpl getNodeByEndpointURL(Session session, String endpointURL) throws MappingDSException {
         NodeImpl ret = null;
         if (session != null && session.isRunning())
-            ret = (NodeImpl) session.execute(this, GET_NODE, new Object[]{endpointURL});
+            ret = (NodeImpl) session.execute(this, GET_NODE_BY_EPURL, new Object[]{endpointURL});
         return ret;
     }
 
     @Override
-    public NodeImpl getNode(String endpointURL) {
+    public NodeImpl getNodeByEndpointURL(String endpointURL) {
         return sce.getGlobalRepo().getNodeRepo().findNodeByEndpointURL(endpointURL);
     }
 
     @Override
-    public NodeImpl getNode(Session session, Node parentNode, String nodeName) throws MappingDSException {
+    public NodeImpl getNodeByName(Session session, Node parentNode, String nodeName) throws MappingDSException {
         NodeImpl ret = null;
         if (session != null && session.isRunning())
             ret = (NodeImpl) session.execute(this, GET_NODE, new Object[]{parentNode, nodeName});
@@ -136,7 +137,7 @@ public class NodeSceImpl implements NodeSce<NodeImpl> {
     }
 
     @Override
-    public NodeImpl getNode(Node parentNode, String nodeName) {
+    public NodeImpl getNodeByName(Node parentNode, String nodeName) {
         NodeImpl ret = null;
         if (parentNode instanceof NodeImpl) {
             for (Node childNode : parentNode.getNodeChildNodes())

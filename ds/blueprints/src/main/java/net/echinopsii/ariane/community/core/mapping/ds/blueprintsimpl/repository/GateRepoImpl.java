@@ -46,7 +46,7 @@ public class GateRepoImpl extends NodeRepoImpl implements GateRepo<NodeImpl, Gat
 
     @Override
     public void delete(GateImpl containerGate) {
-        if (containerGate.getNodeID() != 0) {
+        if (containerGate.getNodeID() != null) {
             super.deleteNode(containerGate);
         } else {
             //TODO : throw exception !!!
@@ -54,7 +54,7 @@ public class GateRepoImpl extends NodeRepoImpl implements GateRepo<NodeImpl, Gat
     }
 
     @Override
-    public GateImpl findGateByID(long ID) {
+    public GateImpl findGateByID(String ID) {
         GateImpl ret = null;
         MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity(ID);
         if (entity != null) {

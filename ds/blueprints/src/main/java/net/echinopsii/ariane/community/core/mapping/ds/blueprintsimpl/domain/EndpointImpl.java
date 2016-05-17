@@ -42,7 +42,7 @@ public class EndpointImpl implements Endpoint, MappingDSBlueprintsCacheEntity {
 
     private static final Logger log = LoggerFactory.getLogger(EndpointImpl.class);
 
-    private long endpointID = 0;
+    private String endpointID = null;
     private String endpointURL = null;
     private NodeImpl endpointParentNode = null;
     private HashMap<String, Object> endpointProperties = null;
@@ -52,7 +52,7 @@ public class EndpointImpl implements Endpoint, MappingDSBlueprintsCacheEntity {
     private boolean isBeingSyncFromDB = false;
 
     @Override
-    public long getEndpointID() {
+    public String getEndpointID() {
         return this.endpointID;
     }
 
@@ -287,7 +287,7 @@ public class EndpointImpl implements Endpoint, MappingDSBlueprintsCacheEntity {
             query.direction(Direction.BOTH);
             query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_TWIN_LABEL_KEY);
             for (Vertex vertex : query.vertices()) {
-                if ((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID) == twin.getEndpointID()) {
+                if (vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID).equals(twin.getEndpointID())) {
                     return;
                 }
             }
@@ -349,7 +349,7 @@ public class EndpointImpl implements Endpoint, MappingDSBlueprintsCacheEntity {
         if (endpointVertex != null) {
             Object parentNodeID = endpointVertex.getProperty(MappingDSGraphPropertyNames.DD_ENDPOINT_PNODE_KEY);
             if (parentNodeID != null) {
-                MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) parentNodeID);
+                MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((String) parentNodeID);
                 if (entity != null) {
                     if (entity instanceof NodeImpl || entity instanceof GateImpl) {
                         endpointParentNode = (NodeImpl) entity;
@@ -370,7 +370,7 @@ public class EndpointImpl implements Endpoint, MappingDSBlueprintsCacheEntity {
             this.endpointTwinEndpoints.clear();
             for (Vertex vertex : query.vertices()) {
                 EndpointImpl twin = null;
-                MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
+                MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((String) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
                 if (entity != null) {
                     if (entity instanceof EndpointImpl) {
                         twin = (EndpointImpl) entity;
@@ -413,19 +413,19 @@ public class EndpointImpl implements Endpoint, MappingDSBlueprintsCacheEntity {
         }
 
         EndpointImpl tmp = (EndpointImpl) o;
-        if (this.endpointID == 0) {
+        if (this.endpointID ==null) {
             return super.equals(o);
         }
-        return (this.endpointID == tmp.getEndpointID());
+        return (this.endpointID.equals(tmp.getEndpointID()));
     }
 
     @Override
     public int hashCode() {
-        return endpointVertex != null ? new Long(endpointID).hashCode() : super.hashCode();
+        return (endpointID != null && !endpointID.equals("")) ? endpointID.hashCode() : super.hashCode();
     }
 
     @Override
     public String toString() {
-        return String.format("Endpoint{ID='%d', URL='%s'}", this.endpointID, this.endpointURL);
+        return String.format("Endpoint{ID='%s', URL='%s'}", this.endpointID, this.endpointURL);
     }
 }

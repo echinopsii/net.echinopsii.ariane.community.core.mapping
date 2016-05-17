@@ -62,23 +62,23 @@ public class ContainerEndpoint {
         List<Gate> reqContainerChildGates = new ArrayList<>();
         HashMap<String, Object> reqProperties = new HashMap<>();
 
-        if (jsonDeserializedContainer.getContainerPrimaryAdminGateID()!=0) {
+        if (jsonDeserializedContainer.getContainerPrimaryAdminGateID()!=null) {
             if (mappingSession!=null) reqPrimaryAdminGate = MappingBootstrap.getMappingSce().getGateSce().getGate(mappingSession, jsonDeserializedContainer.getContainerPrimaryAdminGateID());
             else reqPrimaryAdminGate = MappingBootstrap.getMappingSce().getGateSce().getGate(jsonDeserializedContainer.getContainerPrimaryAdminGateID());
             if (reqPrimaryAdminGate == null) ret.setErrorMessage("Request Error : gate with provided ID " + jsonDeserializedContainer.getContainerPrimaryAdminGateID() + " was not found.");
         }
-        if (ret.getErrorMessage() == null && jsonDeserializedContainer.getContainerClusterID()!=0) {
+        if (ret.getErrorMessage() == null && jsonDeserializedContainer.getContainerClusterID()!=null) {
             if (mappingSession!=null) reqContainerCluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(mappingSession, jsonDeserializedContainer.getContainerClusterID());
             else reqContainerCluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(jsonDeserializedContainer.getContainerClusterID());
             if (reqContainerCluster == null) ret.setErrorMessage("Request Error: cluster with provided ID " + jsonDeserializedContainer.getContainerClusterID() + " was not found.");
         }
-        if (ret.getErrorMessage() == null && jsonDeserializedContainer.getContainerParentContainerID()!=0) {
+        if (ret.getErrorMessage() == null && jsonDeserializedContainer.getContainerParentContainerID()!=null) {
             if (mappingSession!=null) reqContainerParent = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, jsonDeserializedContainer.getContainerParentContainerID());
             else reqContainerParent = MappingBootstrap.getMappingSce().getContainerSce().getContainer(jsonDeserializedContainer.getContainerParentContainerID());
             if (reqContainerParent == null) ret.setErrorMessage("Request Error: parent container with provided ID " + jsonDeserializedContainer.getContainerParentContainerID() + " was not found.");
         }
         if (ret.getErrorMessage() == null && jsonDeserializedContainer.getContainerChildContainersID()!=null && jsonDeserializedContainer.getContainerChildContainersID().size() > 0) {
-            for (long id : jsonDeserializedContainer.getContainerChildContainersID()) {
+            for (String id : jsonDeserializedContainer.getContainerChildContainersID()) {
                 Container childContainer;
                 if (mappingSession!=null) childContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, id);
                 else childContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
@@ -90,7 +90,7 @@ public class ContainerEndpoint {
             }
         }
         if (ret.getErrorMessage() == null && jsonDeserializedContainer.getContainerNodesID()!=null && jsonDeserializedContainer.getContainerNodesID().size()>0) {
-            for (long id : jsonDeserializedContainer.getContainerNodesID()) {
+            for (String id : jsonDeserializedContainer.getContainerNodesID()) {
                 Node childNode;
                 if (mappingSession!=null) childNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(mappingSession, id);
                 else childNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
@@ -102,7 +102,7 @@ public class ContainerEndpoint {
             }
         }
         if (ret.getErrorMessage() == null && jsonDeserializedContainer.getContainerGatesID()!=null && jsonDeserializedContainer.getContainerGatesID().size()>0) {
-            for (long id : jsonDeserializedContainer.getContainerGatesID()) {
+            for (String id : jsonDeserializedContainer.getContainerGatesID()) {
                 Gate childGate;
                 if (mappingSession!=null) childGate = MappingBootstrap.getMappingSce().getGateSce().getGate(mappingSession, id);
                 else childGate = MappingBootstrap.getMappingSce().getGateSce().getGate(id);
@@ -127,7 +127,7 @@ public class ContainerEndpoint {
         }
         // LOOK IF CONTAINER MAYBE UPDATED OR CREATED
         Container deserializedContainer = null;
-        if (ret.getErrorMessage() == null && jsonDeserializedContainer.getContainerID()!=0) {
+        if (ret.getErrorMessage() == null && jsonDeserializedContainer.getContainerID()!=null) {
             if (mappingSession!=null) deserializedContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, jsonDeserializedContainer.getContainerID());
             else deserializedContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(jsonDeserializedContainer.getContainerID());
             if (deserializedContainer==null)
@@ -135,8 +135,8 @@ public class ContainerEndpoint {
         }
 
         if (ret.getErrorMessage() == null && deserializedContainer == null && jsonDeserializedContainer.getContainerGateURI() != null)
-            if (mappingSession!=null) deserializedContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, jsonDeserializedContainer.getContainerGateURI());
-            else deserializedContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(jsonDeserializedContainer.getContainerGateURI());
+            if (mappingSession!=null) deserializedContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainerByPrimaryAdminURL(mappingSession, jsonDeserializedContainer.getContainerGateURI());
+            else deserializedContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainerByPrimaryAdminURL(jsonDeserializedContainer.getContainerGateURI());
 
         /*
         if (ret.getErrorMessage() == null && deserializedContainer!=null) {
@@ -254,7 +254,7 @@ public class ContainerEndpoint {
         return ret;
     }
 
-    private Response _displayContainer(long id, String sessionId) {
+    private Response _displayContainer(String id, String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get container : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id});
         if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
@@ -296,7 +296,7 @@ public class ContainerEndpoint {
 
     @GET
     @Path("/{param:[0-9][0-9]*}")
-    public Response displayContainer(@PathParam("param") long id) {
+    public Response displayContainer(@PathParam("param") String id) {
         return _displayContainer(id, null);
     }
 
@@ -335,8 +335,8 @@ public class ContainerEndpoint {
 
     @GET
     @Path("/get")
-    public Response getContainer(@QueryParam("primaryAdminURL") String primaryAdminURL, @QueryParam("ID") long id, @QueryParam("sessionID") String sessionId) {
-        if (id!=0) {
+    public Response getContainer(@QueryParam("primaryAdminURL") String primaryAdminURL, @QueryParam("ID") String id, @QueryParam("sessionID") String sessionId) {
+        if (id!=null) {
             return _displayContainer(id, sessionId);
         } else if (primaryAdminURL != null) {
             Subject subject = SecurityUtils.getSubject();
@@ -355,8 +355,8 @@ public class ContainerEndpoint {
                     }
 
                     Container cont;
-                    if (mappingSession != null) cont = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, primaryAdminURL);
-                    else cont = MappingBootstrap.getMappingSce().getContainerSce().getContainer(primaryAdminURL);
+                    if (mappingSession != null) cont = MappingBootstrap.getMappingSce().getContainerSce().getContainerByPrimaryAdminURL(mappingSession, primaryAdminURL);
+                    else cont = MappingBootstrap.getMappingSce().getContainerSce().getContainerByPrimaryAdminURL(primaryAdminURL);
 
                     if (cont != null) {
                         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -494,7 +494,7 @@ public class ContainerEndpoint {
 
     @GET
     @Path("/update/name")
-    public Response setContainerName(@QueryParam("ID") long id, @QueryParam("name") String name, @QueryParam("sessionID") String sessionId) {
+    public Response setContainerName(@QueryParam("ID") String id, @QueryParam("name") String name, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container name : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -523,7 +523,7 @@ public class ContainerEndpoint {
 
     @GET
     @Path("/update/company")
-    public Response setContainerCompany(@QueryParam("ID") long id, @QueryParam("company") String company, @QueryParam("sessionID") String sessionId) {
+    public Response setContainerCompany(@QueryParam("ID") String id, @QueryParam("company") String company, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container company : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, company});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -552,7 +552,7 @@ public class ContainerEndpoint {
 
     @GET
     @Path("/update/product")
-    public Response setContainerProduct(@QueryParam("ID") long id, @QueryParam("product") String product, @QueryParam("sessionID") String sessionId) {
+    public Response setContainerProduct(@QueryParam("ID") String id, @QueryParam("product") String product, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container product : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, product});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -581,7 +581,7 @@ public class ContainerEndpoint {
 
     @GET
     @Path("/update/type")
-    public Response setContainerType(@QueryParam("ID") long id, @QueryParam("type") String type, @QueryParam("sessionID") String sessionId) {
+    public Response setContainerType(@QueryParam("ID") String id, @QueryParam("type") String type, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container type : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, type});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -610,7 +610,7 @@ public class ContainerEndpoint {
 
     @GET
     @Path("/update/primaryAdminGate")
-    public Response setContainerPrimaryAdminGate(@QueryParam("ID") long id, @QueryParam("paGateID") long paGateID, @QueryParam("sessionID") String sessionId) {
+    public Response setContainerPrimaryAdminGate(@QueryParam("ID") String id, @QueryParam("paGateID") String paGateID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container primary admin gate : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, paGateID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -645,7 +645,7 @@ public class ContainerEndpoint {
 
     @GET
     @Path("/update/cluster")
-    public Response setContainerCluster(@QueryParam("ID") long id, @QueryParam("clusterID") long clusterID, @QueryParam("sessionID") String sessionId) {
+    public Response setContainerCluster(@QueryParam("ID") String id, @QueryParam("clusterID") String clusterID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container cluster : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, clusterID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -680,7 +680,7 @@ public class ContainerEndpoint {
 
     @GET
     @Path("/update/parentContainer")
-    public Response setContainerParentContainer(@QueryParam("ID") long id, @QueryParam("parentContainerID") long parentContainerID, @QueryParam("sessionID") String sessionId) {
+    public Response setContainerParentContainer(@QueryParam("ID") String id, @QueryParam("parentContainerID") String parentContainerID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container parent container : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, parentContainerID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -714,7 +714,7 @@ public class ContainerEndpoint {
 
     @GET
     @Path("/update/childContainers/add")
-    public Response addContainerChildContainer(@QueryParam("ID") long id, @QueryParam("childContainerID") long childContainerID, @QueryParam("sessionID") String sessionId) {
+    public Response addContainerChildContainer(@QueryParam("ID") String id, @QueryParam("childContainerID") String childContainerID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container by adding child container : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, childContainerID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -749,7 +749,7 @@ public class ContainerEndpoint {
 
     @GET
     @Path("/update/childContainers/delete")
-    public Response deleteContainerChildContainer(@QueryParam("ID") long id, @QueryParam("childContainerID") long childContainerID, @QueryParam("sessionID") String sessionId) {
+    public Response deleteContainerChildContainer(@QueryParam("ID") String id, @QueryParam("childContainerID") String childContainerID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container by removing child container : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, childContainerID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -783,7 +783,7 @@ public class ContainerEndpoint {
 
     @GET
     @Path("/update/nodes/add")
-    public Response addContainerNode(@QueryParam("ID") long id, @QueryParam("nodeID") long nodeID, @QueryParam("sessionID") String sessionId) {
+    public Response addContainerNode(@QueryParam("ID") String id, @QueryParam("nodeID") String nodeID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container by adding node : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, nodeID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -818,7 +818,7 @@ public class ContainerEndpoint {
 
     @GET
     @Path("/update/nodes/delete")
-    public Response deleteContainerNode(@QueryParam("ID") long id, @QueryParam("nodeID") long nodeID, @QueryParam("sessionID") String sessionId) {
+    public Response deleteContainerNode(@QueryParam("ID") String id, @QueryParam("nodeID") String nodeID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container by removing node : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, nodeID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -853,7 +853,7 @@ public class ContainerEndpoint {
 
     @GET
     @Path("/update/gates/add")
-    public Response addContainerGate(@QueryParam("ID") long id, @QueryParam("gateID") long gateID, @QueryParam("sessionID") String sessionId) {
+    public Response addContainerGate(@QueryParam("ID") String id, @QueryParam("gateID") String gateID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container by adding gate : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, gateID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -888,7 +888,7 @@ public class ContainerEndpoint {
 
     @GET
     @Path("/update/gates/delete")
-    public Response deleteContainerGate(@QueryParam("ID") long id, @QueryParam("nodeID") long gateID, @QueryParam("sessionID") String sessionId) {
+    public Response deleteContainerGate(@QueryParam("ID") String id, @QueryParam("nodeID") String gateID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}] update container by removing gate : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, gateID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -923,7 +923,7 @@ public class ContainerEndpoint {
 
     @GET
     @Path("/update/properties/add")
-    public Response addContainerProperty(@QueryParam("ID") long id, @QueryParam("propertyName") String name, @QueryParam("propertyValue") String value,
+    public Response addContainerProperty(@QueryParam("ID") String id, @QueryParam("propertyName") String name, @QueryParam("propertyValue") String value,
                                          @DefaultValue("String") @QueryParam("propertyType") String type, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}] update container by adding a property : ({},({},{},{}))", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name, value, type});
@@ -967,7 +967,7 @@ public class ContainerEndpoint {
 
     @GET
     @Path("/update/properties/delete")
-    public Response deleteContainerProperty(@QueryParam("ID") long id, @QueryParam("propertyName") String name, @QueryParam("sessionID") String sessionId) {
+    public Response deleteContainerProperty(@QueryParam("ID") String id, @QueryParam("propertyName") String name, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container by removing a property : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||

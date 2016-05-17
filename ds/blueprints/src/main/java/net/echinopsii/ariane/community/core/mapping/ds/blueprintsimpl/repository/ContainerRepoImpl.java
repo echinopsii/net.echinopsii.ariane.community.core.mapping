@@ -40,18 +40,18 @@ public class ContainerRepoImpl implements ContainerRepo<ContainerImpl> {
     @Override
     public ContainerImpl save(ContainerImpl container) {
         MappingDSGraphDB.saveVertexEntity(container);
-        log.debug("Added container {} to graph({}).", new Object[]{container.toString(), MappingDSGraphDB.getVertexMaxCursor()});
+        log.debug("Added container {} to graph.", new Object[]{container.toString()});
         return container;
     }
 
     @Override
     public void delete(ContainerImpl container) {
         MappingDSGraphDB.deleteEntity(container);
-        log.debug("Deleted container {} from graph({}).", new Object[]{container.toString(), MappingDSGraphDB.getVertexMaxCursor()});
+        log.debug("Deleted container {} from graph.", new Object[]{container.toString()});
     }
 
     @Override
-    public ContainerImpl findContainerByID(long id) {
+    public ContainerImpl findContainerByID(String id) {
         ContainerImpl ret = null;
         MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity(id);
         if (entity != null) {

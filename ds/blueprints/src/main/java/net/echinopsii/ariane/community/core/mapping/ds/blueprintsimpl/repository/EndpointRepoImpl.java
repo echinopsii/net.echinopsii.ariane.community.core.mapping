@@ -35,14 +35,14 @@ public class EndpointRepoImpl implements EndpointRepo<EndpointImpl> {
     @Override
     public EndpointImpl save(EndpointImpl endpoint) {
         MappingDSGraphDB.saveVertexEntity(endpoint);
-        log.debug("Added endpoint {} to graph({}).", new Object[]{endpoint.toString(), MappingDSGraphDB.getVertexMaxCursor()});
+        log.debug("Added endpoint {} to graph.", new Object[]{endpoint.toString()});
         return endpoint;
     }
 
     @Override
     public void delete(EndpointImpl endpoint) {
         MappingDSGraphDB.deleteEntity(endpoint);
-        log.debug("Deleted endpoint {} from graph({}).", new Object[]{endpoint.toString(), MappingDSGraphDB.getVertexMaxCursor()});
+        log.debug("Deleted endpoint {} from graph.", new Object[]{endpoint.toString()});
     }
 
     @Override
@@ -51,7 +51,7 @@ public class EndpointRepoImpl implements EndpointRepo<EndpointImpl> {
     }
 
     @Override
-    public EndpointImpl findEndpointByID(long id) {
+    public EndpointImpl findEndpointByID(String id) {
         EndpointImpl ret = null;
         MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity(id);
         if (entity != null) {

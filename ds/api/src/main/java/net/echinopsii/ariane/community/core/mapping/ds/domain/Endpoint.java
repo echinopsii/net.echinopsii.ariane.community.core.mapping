@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Set;
 
 public interface Endpoint {
-	public long getEndpointID();
+	public String getEndpointID();
 	
 	/*
 	 * MUST be unique

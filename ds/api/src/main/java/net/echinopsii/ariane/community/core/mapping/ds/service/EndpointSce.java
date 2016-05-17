@@ -26,16 +26,16 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import java.util.Set;
 
 public interface EndpointSce<E extends Endpoint> {
-    public E createEndpoint(Session session, String url, Long parentNodeID) throws MappingDSException;
-    public E createEndpoint(String url, Long parentNodeID) throws MappingDSException;
+    public E createEndpoint(Session session, String url, String parentNodeID) throws MappingDSException;
+    public E createEndpoint(String url, String parentNodeID) throws MappingDSException;
 
-    public void deleteEndpoint(Session session, Long endpointID) throws MappingDSException;
-    public void deleteEndpoint(Long endpointID) throws MappingDSException;
+    public void deleteEndpoint(Session session, String endpointID) throws MappingDSException;
+    public void deleteEndpoint(String endpointID) throws MappingDSException;
 
-    public E getEndpoint(Session session, Long id) throws MappingDSException;
-    public E getEndpoint(Long id);
-    public E getEndpoint(Session session, String URL) throws MappingDSException;
-    public E getEndpoint(String URL);
+    public E getEndpoint(Session session, String id) throws MappingDSException;
+    public E getEndpoint(String id);
+    public E getEndpointByURL(Session session, String URL) throws MappingDSException;
+    public E getEndpointByURL(String URL);
 
     public Set<E> getEndpoints(Session session, String selector) throws MappingDSException;
     public Set<E> getEndpoints(String selector);

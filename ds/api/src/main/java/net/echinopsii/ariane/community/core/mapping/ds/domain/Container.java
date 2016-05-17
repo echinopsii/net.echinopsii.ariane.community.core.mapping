@@ -36,7 +36,7 @@ import java.util.Set;
  * @author Mathilde Ffrench
  */
 public interface Container {
-	public long getContainerID();
+	public String getContainerID();
 
     public String getContainerName();
 	public void setContainerName(Session session, String name) throws MappingDSException;

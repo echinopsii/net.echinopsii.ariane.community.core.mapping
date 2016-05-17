@@ -111,7 +111,7 @@ public class GateImpl extends NodeImpl implements Gate {
         if (super.getElement() != null) {
             Object paEndpointID = super.getElement().getProperty(MappingDSGraphPropertyNames.DD_GATE_PAEP_KEY);
             if (paEndpointID != null) {
-                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) paEndpointID);
+                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((String)paEndpointID);
                 if (entity != null) {
                     if (entity instanceof EndpointImpl) {
                         this.gatePrimaryAdminEndpoint = (EndpointImpl) entity;

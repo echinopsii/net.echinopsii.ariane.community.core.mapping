@@ -28,11 +28,11 @@ public interface TransportSce<T> {
     public T    createTransport(Session session, String transportName) throws MappingDSException;
 	public T    createTransport(String transportName);
 
-    public void deleteTransport(Session session, Long transportID) throws MappingDSException;
-	public void deleteTransport(Long transportID) throws MappingDSException;
+    public void deleteTransport(Session session, String transportID) throws MappingDSException;
+	public void deleteTransport(String transportID) throws MappingDSException;
 
-    public T    getTransport(Session session, Long transportID) throws MappingDSException;
-    public T    getTransport(Long transportID);
+    public T    getTransport(Session session, String transportID) throws MappingDSException;
+    public T    getTransport(String transportID);
 
     public Set<T> getTransports(Session session, String selector) throws MappingDSException;
     public Set<T> getTransports(String selector);

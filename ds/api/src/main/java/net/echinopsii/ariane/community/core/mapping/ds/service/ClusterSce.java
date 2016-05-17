@@ -32,10 +32,10 @@ public interface ClusterSce<CL extends Cluster> {
     public void deleteCluster(Session session, String clusterName) throws MappingDSException;
 	public void deleteCluster(String clusterName) throws MappingDSException;
 
-    public CL getCluster(Session session, Long clusterID) throws MappingDSException;
-    public CL getCluster(Long clusterID);
-    public CL getCluster(Session session, String clusterName) throws MappingDSException;
-    public CL getCluster(String clusterName);
+    public CL getCluster(Session session, String clusterID) throws MappingDSException;
+    public CL getCluster(String clusterID);
+    public CL getClusterByName(Session session, String clusterName) throws MappingDSException;
+    public CL getClusterByName(String clusterName);
 
     public Set<CL> getClusters(Session session, String selector) throws MappingDSException;
     public Set<CL> getClusters(String selector);

@@ -48,7 +48,7 @@ public class GateSceImpl implements GateSce<GateImpl> {
 	}
 
 	@Override
-	public GateImpl createGate(Session session, String url, String name, Long containerid, Boolean isPrimaryAdmin) throws MappingDSException {
+	public GateImpl createGate(Session session, String url, String name, String containerid, Boolean isPrimaryAdmin) throws MappingDSException {
 		GateImpl ret = null;
 		if (session!=null && session.isRunning())
 			ret= (GateImpl) session.execute(this, CREATE_GATE, new Object[]{url, name, containerid, isPrimaryAdmin});
@@ -56,7 +56,7 @@ public class GateSceImpl implements GateSce<GateImpl> {
 	}
 
 	@Override
-	public GateImpl createGate(String url, String name, Long containerid, Boolean isPrimaryAdmin) throws MappingDSException {
+	public GateImpl createGate(String url, String name, String containerid, Boolean isPrimaryAdmin) throws MappingDSException {
 		GateImpl ret = null;
 		NodeImpl check = sce.getGlobalRepo().getGateRepo().findNodeByEndpointURL(url);
 		if (check instanceof GateImpl)
@@ -91,13 +91,13 @@ public class GateSceImpl implements GateSce<GateImpl> {
 	}
 
 	@Override
-	public void deleteGate(Session session, Long nodeID) throws MappingDSException {
+	public void deleteGate(Session session, String nodeID) throws MappingDSException {
 		if (session!=null && session.isRunning())
 			session.execute(this, DELETE_GATE, new Object[]{nodeID});
 	}
 
 	@Override
-	public void deleteGate(Long nodeID) throws MappingDSException {
+	public void deleteGate(String nodeID) throws MappingDSException {
 		GateImpl remove = sce.getGlobalRepo().getGateRepo().findGateByID(nodeID);
 		if ( remove != null ) {			
 			sce.getGlobalRepo().getGateRepo().delete(remove);
@@ -107,7 +107,7 @@ public class GateSceImpl implements GateSce<GateImpl> {
 	}
 
 	@Override
-	public GateImpl getGate(Session session, Long id) throws MappingDSException {
+	public GateImpl getGate(Session session, String id) throws MappingDSException {
 		GateImpl ret = null;
 		if (session!=null && session.isRunning())
 			ret = (GateImpl)session.execute(this, GET_GATE, new Object[]{id});
@@ -115,7 +115,7 @@ public class GateSceImpl implements GateSce<GateImpl> {
 	}
 
 	@Override
-	public GateImpl getGate(Long id) {
+	public GateImpl getGate(String id) {
 		return sce.getGlobalRepo().getGateRepo().findGateByID(id);
 	}
 

@@ -25,7 +25,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import java.util.HashMap;
 
 public interface Transport {
-	public long   getTransportID();
+	public String  getTransportID();
 	
 	/*
 	 * MUST BE UNIQUE

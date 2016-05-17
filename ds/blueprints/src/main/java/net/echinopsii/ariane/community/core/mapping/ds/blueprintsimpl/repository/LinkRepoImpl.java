@@ -37,12 +37,12 @@ public class LinkRepoImpl implements LinkRepo<LinkImpl> {
                     link.getLinkEndpointTarget() != null && link.getLinkEndpointTarget().getElement() != null) {
             MappingDSGraphDB.saveEdgeEntity(link, link.getLinkEndpointSource().getElement(), link.getLinkEndpointTarget().getElement(),
                                                    MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY);
-            log.debug("Added unicast link {} to graph({}).", new Object[]{link.toString(), MappingDSGraphDB.getEdgeMaxCursor()});
+            log.debug("Added unicast link {} to graph.", new Object[]{link.toString()});
         } else if (link.getLinkEndpointSource() != null && link.getLinkEndpointSource().getElement() != null &&
                     link.getLinkTransport() != null && link.getLinkTransport().getElement() != null) {
             MappingDSGraphDB.saveEdgeEntity(link, link.getLinkEndpointSource().getElement(), link.getLinkTransport().getElement(),
                                                    MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY);
-            log.debug("Added multicast link {} to graph({}).", new Object[]{link.toString(), MappingDSGraphDB.getEdgeMaxCursor()});
+            log.debug("Added multicast link {} to graph.", new Object[]{link.toString()});
         }
         return link;
     }
@@ -50,11 +50,11 @@ public class LinkRepoImpl implements LinkRepo<LinkImpl> {
     @Override
     public void delete(LinkImpl link) {
         MappingDSGraphDB.deleteEntity(link);
-        log.debug("Deleted link {} from graph({}).", new Object[]{link.toString(), MappingDSGraphDB.getVertexMaxCursor()});
+        log.debug("Deleted link {} from graph.", new Object[]{link.toString()});
     }
 
     @Override
-    public LinkImpl findLinkByID(long id) {
+    public LinkImpl findLinkByID(String id) {
         LinkImpl ret = null;
         MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getLink(id);
         if (entity != null) {

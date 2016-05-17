@@ -38,7 +38,7 @@ public class ClusterImpl implements Cluster, MappingDSBlueprintsCacheEntity {
 
     private static final Logger log = LoggerFactory.getLogger(ContainerImpl.class);
 
-    private long clusterID = 0;
+    private String clusterID = null;
     private String clusterName = null;
     private Set<ContainerImpl> clusterContainers = new HashSet<ContainerImpl>();
 
@@ -46,7 +46,7 @@ public class ClusterImpl implements Cluster, MappingDSBlueprintsCacheEntity {
     private boolean isBeingSyncFromDB = false;
 
     @Override
-    public long getClusterID() {
+    public String getClusterID() {
         return this.clusterID;
     }
 
@@ -173,13 +173,13 @@ public class ClusterImpl implements Cluster, MappingDSBlueprintsCacheEntity {
     }
 
     private void synchronizeContainerToDB(ContainerImpl cont) throws MappingDSException {
-        if (this.clusterVertex != null && cont.getContainerID() != 0) {
+        if (this.clusterVertex != null && cont.getContainerID() != null && !cont.getContainerID().equals("")) {
             VertexQuery query = this.clusterVertex.query();
             query.direction(Direction.OUT);
             query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_COMPOSEDBY_LABEL_KEY);
             query.has(MappingDSGraphPropertyNames.DD_CLUSTER_EDGE_CONT_KEY, true);
             for (Vertex vertex : query.vertices())
-                if ((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID) == cont.getContainerID())
+                if (vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID).equals(cont.getContainerID()))
                     return;
             Edge owns = MappingDSGraphDB.createEdge(this.clusterVertex, cont.getElement(), MappingDSGraphPropertyNames.DD_GRAPH_EDGE_COMPOSEDBY_LABEL_KEY);
             owns.setProperty(MappingDSGraphPropertyNames.DD_CLUSTER_EDGE_CONT_KEY, true);
@@ -218,7 +218,7 @@ public class ClusterImpl implements Cluster, MappingDSBlueprintsCacheEntity {
             this.clusterContainers.clear();
             for (Vertex vertex : query.vertices()) {
                 ContainerImpl cont = null;
-                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
+                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((String) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
                 if (entity != null) {
                     if (entity instanceof ContainerImpl) {
                         cont = (ContainerImpl) entity;
@@ -258,19 +258,19 @@ public class ClusterImpl implements Cluster, MappingDSBlueprintsCacheEntity {
         }
 
         ClusterImpl tmp = (ClusterImpl) o;
-        if (this.clusterName == null || this.clusterID == 0) {
+        if (this.clusterName == null || this.clusterID == null) {
             return super.equals(o);
         }
-        return (clusterName.equals(tmp.getClusterName()) && clusterID == tmp.getClusterID());
+        return (clusterName.equals(tmp.getClusterName()) && clusterID.equals(tmp.getClusterID()));
     }
 
     @Override
     public int hashCode() {
-        return clusterID != 0 ? new Long(clusterID).hashCode() : super.hashCode();
+        return (clusterID != null && !clusterID.equals("")) ? clusterID.hashCode() : super.hashCode();
     }
 
     @Override
     public String toString() {
-        return String.format("Cluster{ID='%d', name='%s'}", this.clusterID, this.clusterName);
+        return String.format("Cluster{ID='%s', name='%s'}", this.clusterID, this.clusterName);
     }
 }

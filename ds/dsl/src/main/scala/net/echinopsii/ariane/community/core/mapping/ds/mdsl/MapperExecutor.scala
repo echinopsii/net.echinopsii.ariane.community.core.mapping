@@ -84,23 +84,23 @@ class MapperExecutor(val graph: Object) {
                 log.debug(column._1 + ":" + column._2)
                 column._1 match {
                   case "CID" =>
-                    val cidl: List[Long] = column._2.asInstanceOf[List[Long]]
+                    val cidl: List[String] = column._2.asInstanceOf[List[String]]
                     log.debug("ADD CIDs TO RESULT MAP " + cidl)
                     cidl foreach (cid => resultMap += ("V" + cid.toString -> MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE))
                   case "NID" =>
-                    val nidl: List[Long] = column._2.asInstanceOf[List[Long]]
+                    val nidl: List[String] = column._2.asInstanceOf[List[String]]
                     log.debug("ADD NIDs TO RESULT MAP " + nidl)
                     nidl foreach (nid => resultMap += ("V" + nid.toString -> MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE))
                   case "EID" =>
-                    val eidl: List[Long] = column._2.asInstanceOf[List[Long]]
+                    val eidl: List[String] = column._2.asInstanceOf[List[String]]
                     log.debug("ADD EIDs TO RESULT MAP " + eidl)
                     eidl foreach (eid => resultMap += ("V" + eid.toString -> MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE))
                   case "TID" =>
-                    val tidl: List[Long] = column._2.asInstanceOf[List[Long]]
+                    val tidl: List[String] = column._2.asInstanceOf[List[String]]
                     log.debug("ADD TIDs TO RESULT MAP " + tidl)
                     tidl foreach (tid => resultMap += ("V" + tid.toString -> MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE))
                   case "LID" =>
-                    val lidl: List[Long] = column._2.asInstanceOf[List[Long]]
+                    val lidl: List[String] = column._2.asInstanceOf[List[String]]
                     log.debug("ADD LIDs TO RESULT MAP " + lidl)
                     lidl foreach (lid => resultMap += ("E" + lid.toString -> MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY))
                   case _ => throw new MapperExecutorException("Unknown Column Identifier !")

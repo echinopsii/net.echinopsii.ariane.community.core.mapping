@@ -36,6 +36,7 @@ public class ContainerSceImpl implements ContainerSce<ContainerImpl> {
     final static String CREATE_CONTAINER = "createContainer";
     final static String DELETE_CONTAINER = "deleteContainer";
     final static String GET_CONTAINER = "getContainer";
+    final static String GET_CONTAINER_BY_PAURL = "getContainerByPrimaryAdminURL";
     final static String GET_CONTAINERS = "getContainers";
 
     private static final Logger log = LoggerFactory.getLogger(ContainerSceImpl.class);
@@ -145,7 +146,7 @@ public class ContainerSceImpl implements ContainerSce<ContainerImpl> {
     }
 
     @Override
-    public ContainerImpl getContainer(Session session, Long id) throws MappingDSException {
+    public ContainerImpl getContainer(Session session, String id) throws MappingDSException {
         ContainerImpl ret = null;
         if (session != null && session.isRunning())
             ret = (ContainerImpl) session.execute(this, GET_CONTAINER, new Object[]{id});
@@ -153,20 +154,20 @@ public class ContainerSceImpl implements ContainerSce<ContainerImpl> {
     }
 
     @Override
-    public ContainerImpl getContainer(Long id) {
+    public ContainerImpl getContainer(String id) {
         return sce.getGlobalRepo().getContainerRepo().findContainerByID(id);
     }
 
     @Override
-    public ContainerImpl getContainer(Session session, String primaryAdminURL) throws MappingDSException {
+    public ContainerImpl getContainerByPrimaryAdminURL(Session session, String primaryAdminURL) throws MappingDSException {
         ContainerImpl ret = null;
         if (session != null && session.isRunning())
-            ret = (ContainerImpl) session.execute(this, GET_CONTAINER, new Object[]{primaryAdminURL});
+            ret = (ContainerImpl) session.execute(this, GET_CONTAINER_BY_PAURL, new Object[]{primaryAdminURL});
         return ret;
     }
 
     @Override
-    public ContainerImpl getContainer(String primaryAdminURL) {
+    public ContainerImpl getContainerByPrimaryAdminURL(String primaryAdminURL) {
         return sce.getGlobalRepo().getContainerRepo().findContainersByPrimaryAdminURL(primaryAdminURL);
     }
 

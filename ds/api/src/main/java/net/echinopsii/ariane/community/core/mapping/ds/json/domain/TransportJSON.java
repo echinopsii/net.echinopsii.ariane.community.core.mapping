@@ -58,7 +58,7 @@ public class TransportJSON {
 
     public final static void transport2JSON(Transport transport, JsonGenerator jgenerator) throws JsonGenerationException, IOException {
         jgenerator.writeStartObject();
-        jgenerator.writeNumberField(TP_ID_TOKEN, transport.getTransportID());
+        jgenerator.writeStringField(TP_ID_TOKEN, transport.getTransportID());
         jgenerator.writeStringField(TP_NAME_TOKEN, transport.getTransportName());
         transportProps2JSON(transport, jgenerator);
         jgenerator.writeEndObject();
@@ -85,15 +85,15 @@ public class TransportJSON {
     }
 
     public static class JSONDeserializedTransport {
-        private long transportID;
+        private String transportID;
         private String transportName;
         private List<PropertiesJSON.JSONDeserializedProperty> transportProperties;
 
-        public long getTransportID() {
+        public String getTransportID() {
             return transportID;
         }
 
-        public void setTransportID(long transportID) {
+        public void setTransportID(String transportID) {
             this.transportID = transportID;
         }
 

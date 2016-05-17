@@ -54,17 +54,17 @@ public class LinkEndpoint {
         Endpoint reqTargetEndpoint=null;
         Transport reqTransport=null;
 
-        if (jsonDeserializedLink.getLinkSEPID()!=0) {
+        if (jsonDeserializedLink.getLinkSEPID()!=null) {
             if (mappingSession!=null) reqSourceEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, jsonDeserializedLink.getLinkSEPID());
             else reqSourceEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(jsonDeserializedLink.getLinkSEPID());
             if (reqSourceEndpoint==null) ret.setErrorMessage("Request Error : source endpoint with provided ID " + jsonDeserializedLink.getLinkSEPID() + " was not found.");
         }
-        if (ret.getErrorMessage() == null && jsonDeserializedLink.getLinkTEPID()!=0) {
+        if (ret.getErrorMessage() == null && jsonDeserializedLink.getLinkTEPID()!=null) {
             if (mappingSession!=null) reqTargetEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, jsonDeserializedLink.getLinkTEPID());
             else reqTargetEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(jsonDeserializedLink.getLinkTEPID());
             if (reqTargetEndpoint==null) ret.setErrorMessage("Request Error : target endpoint with provided ID " + jsonDeserializedLink.getLinkTEPID() + " was not found.");
         }
-        if (ret.getErrorMessage() == null && jsonDeserializedLink.getLinkTRPID()!=0) {
+        if (ret.getErrorMessage() == null && jsonDeserializedLink.getLinkTRPID()!=null) {
             if (mappingSession!=null) reqTransport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(mappingSession, jsonDeserializedLink.getLinkTRPID());
             else reqTransport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(jsonDeserializedLink.getLinkTRPID());
             if (reqTransport == null) ret.setErrorMessage("Request Error : transport with provided ID " + jsonDeserializedLink.getLinkTRPID() + " was not found.");
@@ -72,7 +72,7 @@ public class LinkEndpoint {
 
         // LOOK IF LINK MAYBE UPDATED OR CREATED
         Link deserializedLink = null;
-        if (ret.getErrorMessage() == null && jsonDeserializedLink.getLinkID()!=0) {
+        if (ret.getErrorMessage() == null && jsonDeserializedLink.getLinkID()!=null) {
             if (mappingSession!=null) deserializedLink = MappingBootstrap.getMappingSce().getLinkSce().getLink(mappingSession, jsonDeserializedLink.getLinkID());
             else deserializedLink = MappingBootstrap.getMappingSce().getLinkSce().getLink(jsonDeserializedLink.getLinkID());
             if (deserializedLink==null) ret.setErrorMessage("Request Error : link with provided ID " + jsonDeserializedLink.getLinkID() + " was not found.");
@@ -106,7 +106,7 @@ public class LinkEndpoint {
         return ret;
     }
 
-    private Response _displayLink(long id, String sessionId) {
+    private Response _displayLink(String id, String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get link : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id});
         if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
@@ -142,7 +142,7 @@ public class LinkEndpoint {
 
     @GET
     @Path("/{param:[0-9][0-9]*}")
-    public Response displayLink(@PathParam("param") long id) {
+    public Response displayLink(@PathParam("param") String id) {
         return _displayLink(id, null);
     }
 
@@ -180,8 +180,8 @@ public class LinkEndpoint {
 
     @GET
     @Path("/get")
-    public Response getLink(@QueryParam("ID")long id, @QueryParam("SEPID") long sepid, @QueryParam("TEPID") long tepid, @QueryParam("sessionID") String sessionId) {
-        if (id!=0)
+    public Response getLink(@QueryParam("ID")String id, @QueryParam("SEPID") String sepid, @QueryParam("TEPID") String tepid, @QueryParam("sessionID") String sessionId) {
+        if (id!=null)
             return _displayLink(id, sessionId);
         else {
             Subject subject = SecurityUtils.getSubject();
@@ -201,7 +201,7 @@ public class LinkEndpoint {
                 try {
                     Endpoint sourceEndpoint = null;
                     Endpoint targetEndpoint = null;
-                    if (sepid != 0) {
+                    if (sepid != null) {
                         if (mappingSession!=null) sourceEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, sepid);
                         else sourceEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(sepid);
                         if (sourceEndpoint == null) {
@@ -209,7 +209,7 @@ public class LinkEndpoint {
                             return Response.status(Status.BAD_REQUEST).entity(result).build();
                         }
                     }
-                    if (tepid != 0) {
+                    if (tepid != null) {
                         if (mappingSession!=null) targetEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, tepid);
                         else targetEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(tepid);
                         if (targetEndpoint == null) {
@@ -252,8 +252,8 @@ public class LinkEndpoint {
 
     @GET
     @Path("/create")
-    public Response createLink(@QueryParam("SEPID")long sourceEndpointID, @QueryParam("TEPID")long targetEndpointID,
-                               @QueryParam("transportID")long transportID, @QueryParam("sessionID") String sessionId) {
+    public Response createLink(@QueryParam("SEPID")String sourceEndpointID, @QueryParam("TEPID")String targetEndpointID,
+                               @QueryParam("transportID")String transportID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create link : ({},{},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), sourceEndpointID, targetEndpointID, transportID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -333,7 +333,7 @@ public class LinkEndpoint {
 
     @GET
     @Path("/delete")
-    public Response deleteLink(@QueryParam("ID")long linkID, @QueryParam("sessionID") String sessionId) {
+    public Response deleteLink(@QueryParam("ID")String linkID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] delete link : ({})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), linkID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -360,7 +360,7 @@ public class LinkEndpoint {
 
     @GET
     @Path("/update/transport")
-    public Response setLinkTransport(@QueryParam("ID")long id, @QueryParam("transportID") long transportID, @QueryParam("sessionID") String sessionId) {
+    public Response setLinkTransport(@QueryParam("ID")String id, @QueryParam("transportID")String transportID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}] update link transport : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, transportID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -392,7 +392,7 @@ public class LinkEndpoint {
 
     @GET
     @Path("/update/sourceEP")
-    public Response setLinkEndpointSource(@QueryParam("ID")long id, @QueryParam("SEPID") long SEPID, @QueryParam("sessionID") String sessionId) {
+    public Response setLinkEndpointSource(@QueryParam("ID")String id, @QueryParam("SEPID")String SEPID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update link source endpoint : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, SEPID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -423,7 +423,7 @@ public class LinkEndpoint {
 
     @GET
     @Path("/update/targetEP")
-    public Response setLinkEndpointTarget(@QueryParam("ID")long id, @QueryParam("TEPID") long TEPID, @QueryParam("sessionID") String sessionId) {
+    public Response setLinkEndpointTarget(@QueryParam("ID")String id, @QueryParam("TEPID")String TEPID, @QueryParam("sessionID") String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update link target endpoint : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(),  id, TEPID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||

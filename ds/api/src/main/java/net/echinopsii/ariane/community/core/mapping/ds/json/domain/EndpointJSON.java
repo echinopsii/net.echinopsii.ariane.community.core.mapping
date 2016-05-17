@@ -63,10 +63,10 @@ public class EndpointJSON {
             throws JsonGenerationException, IOException, MappingDSException {
         jgenerator.writeStartObject();
         log.debug("Ep JSON :endpoint {}", new Object[]{endpoint.getEndpointID()});
-        jgenerator.writeNumberField(EP_ID_TOKEN, endpoint.getEndpointID());
+        jgenerator.writeStringField(EP_ID_TOKEN, endpoint.getEndpointID());
         jgenerator.writeStringField(EP_URL_TOKEN, endpoint.getEndpointURL());
         if (endpoint.getEndpointParentNode()!=null)
-            jgenerator.writeNumberField(EP_PNODEID_TOKEN, endpoint.getEndpointParentNode().getNodeID());
+            jgenerator.writeStringField(EP_PNODEID_TOKEN, endpoint.getEndpointParentNode().getNodeID());
         else
             throw new MappingDSException("Endpoint (" + endpoint.getEndpointID() +
                     ":" + endpoint.getEndpointURL() + ")");
@@ -75,7 +75,7 @@ public class EndpointJSON {
         Iterator<? extends Endpoint> iterE = endpoint.getTwinEndpoints().iterator();
         while (iterE.hasNext()) {
             Endpoint tep = iterE.next();
-            jgenerator.writeNumber(tep.getEndpointID());
+            jgenerator.writeString(tep.getEndpointID());
         }
         jgenerator.writeEndArray();
 
@@ -106,17 +106,17 @@ public class EndpointJSON {
     }
 
     public static class JSONDeserializedEndpoint {
-        private long endpointID;
+        private String endpointID;
         private String endpointURL;
-        private long endpointParentNodeID;
-        private List<Long> endpointTwinEndpointsID;
+        private String endpointParentNodeID;
+        private List<String> endpointTwinEndpointsID;
         private List<PropertiesJSON.JSONDeserializedProperty> endpointProperties;
 
-        public long getEndpointID() {
+        public String getEndpointID() {
             return endpointID;
         }
 
-        public void setEndpointID(long endpointID) {
+        public void setEndpointID(String endpointID) {
             this.endpointID = endpointID;
         }
 
@@ -128,19 +128,19 @@ public class EndpointJSON {
             this.endpointURL = endpointURL;
         }
 
-        public long getEndpointParentNodeID() {
+        public String getEndpointParentNodeID() {
             return endpointParentNodeID;
         }
 
-        public void setEndpointParentNodeID(long endpointParentNodeID) {
+        public void setEndpointParentNodeID(String endpointParentNodeID) {
             this.endpointParentNodeID = endpointParentNodeID;
         }
 
-        public List<Long> getEndpointTwinEndpointsID() {
+        public List<String> getEndpointTwinEndpointsID() {
             return endpointTwinEndpointsID;
         }
 
-        public void setEndpointTwinEndpointsID(List<Long> endpointTwinEndpointsID) {
+        public void setEndpointTwinEndpointsID(List<String> endpointTwinEndpointsID) {
             this.endpointTwinEndpointsID = endpointTwinEndpointsID;
         }
 

@@ -34,6 +34,7 @@ public class ClusterSceImpl implements ClusterSce<ClusterImpl> {
 	final static String CREATE_CLUSTER = "createCluster";
 	final static String DELETE_CLUSTER = "deleteCluster";
 	final static String GET_CLUSTER = "getCluster";
+	final static String GET_CLUSTER_BY_NAME = "getClusterByName";
 	final static String GET_CLUSTERS = "getClusters";
 
 	private static final Logger log = LoggerFactory.getLogger(ClusterSceImpl.class);
@@ -82,7 +83,7 @@ public class ClusterSceImpl implements ClusterSce<ClusterImpl> {
 	}
 
 	@Override
-	public ClusterImpl getCluster(Session session, Long clusterID) throws MappingDSException {
+	public ClusterImpl getCluster(Session session, String clusterID) throws MappingDSException {
 		ClusterImpl ret = null;
 		if (session != null && session.isRunning())
 			ret = (ClusterImpl) session.execute(this, GET_CLUSTER, new Object[]{clusterID});
@@ -90,20 +91,20 @@ public class ClusterSceImpl implements ClusterSce<ClusterImpl> {
 	}
 
 	@Override
-    public ClusterImpl getCluster(Long clusterID) {
+    public ClusterImpl getCluster(String clusterID) {
         return sce.getGlobalRepo().getClusterRepo().findClusterByID(clusterID);
     }
 
 	@Override
-	public ClusterImpl getCluster(Session session, String clusterName) throws MappingDSException {
+	public ClusterImpl getClusterByName(Session session, String clusterName) throws MappingDSException {
 		ClusterImpl ret = null;
 		if (session != null && session.isRunning())
-			ret = (ClusterImpl) session.execute(this, GET_CLUSTER, new Object[]{clusterName});
+			ret = (ClusterImpl) session.execute(this, GET_CLUSTER_BY_NAME, new Object[]{clusterName});
 		return ret;
 	}
 
 	@Override
-    public ClusterImpl getCluster(String clusterName) {
+    public ClusterImpl getClusterByName(String clusterName) {
         return sce.getGlobalRepo().getClusterRepo().findClusterByName(clusterName);
     }
 

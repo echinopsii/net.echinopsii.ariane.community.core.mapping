@@ -34,6 +34,7 @@ public class EndpointSceImpl implements EndpointSce<EndpointImpl> {
     final static String CREATE_ENDPOINT = "createEndpoint";
     final static String DELETE_ENDPOINT = "deleteEndpoint";
     final static String GET_ENDPOINT = "getEndpoint";
+    final static String GET_ENDPOINT_BY_URL = "getEndpointByURL";
     final static String GET_ENDPOINTS = "getEndpoints";
 
     private static final Logger log = LoggerFactory.getLogger(EndpointSceImpl.class);
@@ -45,7 +46,7 @@ public class EndpointSceImpl implements EndpointSce<EndpointImpl> {
     }
 
     @Override
-    public EndpointImpl createEndpoint(Session session, String url, Long parentNodeID) throws MappingDSException {
+    public EndpointImpl createEndpoint(Session session, String url, String parentNodeID) throws MappingDSException {
         EndpointImpl ret = null;
         if (session!=null && session.isRunning())
             ret = (EndpointImpl) session.execute(this, CREATE_ENDPOINT, new Object[]{url, parentNodeID});
@@ -53,7 +54,7 @@ public class EndpointSceImpl implements EndpointSce<EndpointImpl> {
     }
 
     @Override
-    public EndpointImpl createEndpoint(String url, Long parentNodeID) throws MappingDSException {
+    public EndpointImpl createEndpoint(String url, String parentNodeID) throws MappingDSException {
         EndpointImpl ret = sce.getGlobalRepo().getEndpointRepo().findEndpointByURL(url);
         if (ret == null) {
             NodeImpl parentNode = sce.getGlobalRepo().getNodeRepo().findNodeByID(parentNodeID);
@@ -73,13 +74,13 @@ public class EndpointSceImpl implements EndpointSce<EndpointImpl> {
     }
 
     @Override
-    public void deleteEndpoint(Session session, Long endpointID) throws MappingDSException {
+    public void deleteEndpoint(Session session, String endpointID) throws MappingDSException {
         if (session!=null && session.isRunning())
             session.execute(this, DELETE_ENDPOINT, new Object[]{endpointID});
     }
 
     @Override
-    public void deleteEndpoint(Long endpointID) throws MappingDSException {
+    public void deleteEndpoint(String endpointID) throws MappingDSException {
         EndpointImpl remove = sce.getGlobalRepo().getEndpointRepo().findEndpointByID(endpointID);
         if (remove != null) {
             sce.getGlobalRepo().getEndpointRepo().delete(remove);
@@ -89,7 +90,7 @@ public class EndpointSceImpl implements EndpointSce<EndpointImpl> {
     }
 
     @Override
-    public EndpointImpl getEndpoint(Session session, Long id) throws MappingDSException {
+    public EndpointImpl getEndpoint(Session session, String id) throws MappingDSException {
         EndpointImpl ret = null;
         if (session!=null && session.isRunning())
             ret = (EndpointImpl) session.execute(this, GET_ENDPOINT, new Object[]{id});
@@ -97,20 +98,20 @@ public class EndpointSceImpl implements EndpointSce<EndpointImpl> {
     }
 
     @Override
-    public EndpointImpl getEndpoint(Long id) {
+    public EndpointImpl getEndpoint(String id) {
         return sce.getGlobalRepo().getEndpointRepo().findEndpointByID(id);
     }
 
     @Override
-    public EndpointImpl getEndpoint(Session session, String URL) throws MappingDSException {
+    public EndpointImpl getEndpointByURL(Session session, String URL) throws MappingDSException {
         EndpointImpl ret = null;
         if (session!=null && session.isRunning())
-            ret = (EndpointImpl) session.execute(this, GET_ENDPOINT, new Object[]{URL});
+            ret = (EndpointImpl) session.execute(this, GET_ENDPOINT_BY_URL, new Object[]{URL});
         return ret;
     }
 
     @Override
-    public EndpointImpl getEndpoint(String URL) {
+    public EndpointImpl getEndpointByURL(String URL) {
         return sce.getGlobalRepo().getEndpointRepo().findEndpointByURL(URL);
     }
 

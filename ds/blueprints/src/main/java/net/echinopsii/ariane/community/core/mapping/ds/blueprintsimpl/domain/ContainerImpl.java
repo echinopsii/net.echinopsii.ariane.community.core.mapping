@@ -43,7 +43,7 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
 
 	private static final Logger log = LoggerFactory.getLogger(ContainerImpl.class);
 	
-	private long                   containerID               = 0;
+	private String                 containerID               = null;
     private String                 containerName             = null;
 	private String                 containerCompany          = null;
     private String                 containerProduct          = null;
@@ -64,7 +64,7 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
 	private boolean                isBeingSyncFromDB         = false;
 	
 	@Override
-	public long getContainerID() {
+	public String getContainerID() {
 		return this.containerID;
 	}
 
@@ -621,7 +621,7 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
             query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
             query.has(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_CHILD_CONTAINER_KEY, true);
             for (Vertex vertex : query.vertices()) {
-                if ((long)vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID)==container.getContainerID())
+                if (vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID).equals(container.getContainerID()))
                     return;
             }
             log.debug("Synchronize container child container {}...", new Object[]{container.getContainerID()});
@@ -650,7 +650,7 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
 			query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
 			query.has(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_NODE_KEY, true);
 			for (Vertex vertex : query.vertices()) {
-				if ((long)vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID)==node.getNodeID())
+				if (vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID).equals(node.getNodeID()))
 					return;
 			}
 			log.debug("Synchronize container node {}...", new Object[]{node.getNodeID()});
@@ -677,7 +677,7 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
 			query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
 			query.has(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_GATE_KEY, true);
 			for (Vertex vertex : query.vertices()) {
-				if ((long)vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID)==gate.getNodeID())
+				if (vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID).equals(gate.getNodeID()))
 					return;
 			}
 			log.debug("Synchronize container gate {}...", new Object[]{gate.getNodeID()});
@@ -766,7 +766,7 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
 		if (containerVertex!=null) {
 			Object paGateID = this.containerVertex.getProperty(MappingDSGraphPropertyNames.DD_CONTAINER_PAGATE_KEY);
 			if (paGateID!=null) {
-                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) paGateID);
+                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((String) paGateID);
 				if (entity!=null) {
 					if (entity instanceof GateImpl)
 						containerPrimaryAdminGate = (GateImpl) entity;
@@ -781,7 +781,7 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
 		if (containerVertex!=null) {
 			Object clusterID = this.containerVertex.getProperty(MappingDSGraphPropertyNames.DD_CONTAINER_CLUSTER_KEY);
 			if (clusterID!=null) {
-                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) clusterID);
+                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((String) clusterID);
 				if (entity!=null) {
 					if (entity instanceof ClusterImpl)
 						containerCluster = (ClusterImpl) entity;
@@ -796,7 +796,7 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
         if (containerVertex!=null) {
             Object containerID = this.containerVertex.getProperty(MappingDSGraphPropertyNames.DD_CONTAINER_PCONTER_KEY);
             if (containerID!=null) {
-                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) containerID);
+                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((String) containerID);
                 if (entity!=null) {
                     if (entity instanceof ContainerImpl)
                         containerParentContainer = (ContainerImpl) entity;
@@ -816,7 +816,7 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
             this.containerChildContainers.clear();
             for (Vertex vertex : query.vertices()) {
                 ContainerImpl container = null;
-                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
+                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((String) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
                 if (entity!=null) {
                     if (entity instanceof ContainerImpl) {
                         container = (ContainerImpl)entity;
@@ -854,7 +854,7 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
             this.containerNodes.clear();
 			for (Vertex vertex : query.vertices()) {
 				NodeImpl node = null;
-                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
+                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((String) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
 				if (entity!=null) {
 					if (entity instanceof NodeImpl) {
 						node = (NodeImpl)entity;
@@ -892,7 +892,7 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
             this.containerGates.clear();
 			for (Vertex vertex : query.vertices()) {
 				GateImpl gate = null;
-                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
+                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((String) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
 				if (entity!=null) {
 					if (entity instanceof GateImpl) {
 						gate = (GateImpl)entity;
@@ -933,15 +933,15 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
         }
 
         ContainerImpl tmp = (ContainerImpl) o;
-        if (this.containerID == 0) {
+        if (this.containerID==null) {
             return super.equals(o);
         }
-        return (this.containerID == tmp.getContainerID());
+        return (this.containerID.equals(tmp.getContainerID()));
     }
 
     @Override
     public int hashCode() {
-        return this.containerVertex != null ? new Long(this.containerID).hashCode() : super.hashCode();
+        return (this.containerID != null && !this.containerID.equals("")) ? this.containerID.hashCode() : super.hashCode();
     }
 
     @Override
@@ -950,6 +950,6 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
         if (this.containerPrimaryAdminGate != null && this.containerPrimaryAdminGate.getNodePrimaryAdminEndpoint() != null) {
             adminUrl = this.containerPrimaryAdminGate.getNodePrimaryAdminEndpoint().getEndpointURL();
         }
-        return String.format("Container{ID='%d', Primary Admin URL='%s'}", this.containerID, adminUrl);
+        return String.format("Container{ID='%s', Primary Admin URL='%s'}", this.containerID, adminUrl);
     }
 }

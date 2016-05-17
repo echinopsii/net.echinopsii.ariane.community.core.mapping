@@ -42,14 +42,14 @@ public class ClusterJSON {
 
     public final static void cluster2JSON(Cluster cluster, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeStartObject();
-        jgenerator.writeNumberField(CL_ID_TOKEN, cluster.getClusterID());
+        jgenerator.writeStringField(CL_ID_TOKEN, cluster.getClusterID());
         jgenerator.writeStringField(CL_NAME_TOKEN, cluster.getClusterName());
 
         jgenerator.writeArrayFieldStart(CL_CONT_TOKEN);
         Iterator<? extends Container> iterCo = cluster.getClusterContainers().iterator();
         while (iterCo.hasNext()) {
             Container container = iterCo.next();
-            jgenerator.writeNumber(container.getContainerID());
+            jgenerator.writeString(container.getContainerID());
         }
         jgenerator.writeEndArray();
 
@@ -77,15 +77,15 @@ public class ClusterJSON {
     }
 
     public static class JSONDeserializedCluster {
-        private long clusterID;
+        private String clusterID;
         private String clusterName;
-        private List<Long> clusterContainersID;
+        private List<String> clusterContainersID;
 
-        public long getClusterID() {
+        public String getClusterID() {
             return clusterID;
         }
 
-        public void setClusterID(long clusterID) {
+        public void setClusterID(String clusterID) {
             this.clusterID = clusterID;
         }
 
@@ -97,11 +97,11 @@ public class ClusterJSON {
             this.clusterName = clusterName;
         }
 
-        public List<Long> getClusterContainersID() {
+        public List<String> getClusterContainersID() {
             return clusterContainersID;
         }
 
-        public void setClusterContainersID(List<Long> clusterContainersID) {
+        public void setClusterContainersID(List<String> clusterContainersID) {
             this.clusterContainersID = clusterContainersID;
         }
     }

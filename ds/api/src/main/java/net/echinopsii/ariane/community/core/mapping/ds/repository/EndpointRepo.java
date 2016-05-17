@@ -30,7 +30,7 @@ public interface EndpointRepo<E extends Endpoint> {
 
     public Set<E> getAllEndpoints();
 
-    public E findEndpointByID(long id);
+    public E findEndpointByID(String id);
 
     public E findEndpointByURL(String url);
 
