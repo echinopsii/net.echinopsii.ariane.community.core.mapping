@@ -177,6 +177,12 @@ public class SessionImpl implements Session {
     @Override
     public Session stop() {
         try {
+            //Rollback any operation not commited yet
+            this.rollback();
+        } catch (MappingDSException e) {
+            e.printStackTrace();
+        }
+        try {
             this.sessionWorker.getFifoInputQ().put(new SessionWorkerRequest(STOP, null, null, null, null));
         } catch (InterruptedException e) {
             e.printStackTrace();

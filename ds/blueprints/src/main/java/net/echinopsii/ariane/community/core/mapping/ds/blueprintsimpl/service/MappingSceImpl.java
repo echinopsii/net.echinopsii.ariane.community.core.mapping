@@ -86,6 +86,8 @@ public class MappingSceImpl implements MappingSce {
 
     @Override
     public boolean stop() {
+        for (Session session: sessionRegistry.getSessionRegistry().values())
+            session.stop();
         MappingDSGraphDB.stop();
         return true;
     }

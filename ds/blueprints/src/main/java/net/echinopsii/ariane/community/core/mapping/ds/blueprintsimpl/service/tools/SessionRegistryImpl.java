@@ -41,4 +41,8 @@ public class SessionRegistryImpl implements SessionRegistry{
     public Session remove(Session session) {
         return sessionRegistry.remove(session.getSessionID());
     }
+
+    public HashMap<String, Session> getSessionRegistry() {
+        return  sessionRegistry;
+    }
 }

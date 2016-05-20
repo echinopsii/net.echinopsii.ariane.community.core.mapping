@@ -37,6 +37,7 @@ public class NodeSceImpl implements NodeSce<NodeImpl> {
     final static String DELETE_NODE = "deleteNode";
     final static String GET_NODE = "getNode";
     final static String GET_NODE_BY_EPURL = "getNodeByEndpointURL";
+    final static String GET_NODE_BY_NAME = "getNodeByName";
     final static String GET_NODES = "getNodes";
 
     private static final Logger log = LoggerFactory.getLogger(NodeSceImpl.class);
@@ -132,7 +133,7 @@ public class NodeSceImpl implements NodeSce<NodeImpl> {
     public NodeImpl getNodeByName(Session session, Node parentNode, String nodeName) throws MappingDSException {
         NodeImpl ret = null;
         if (session != null && session.isRunning())
-            ret = (NodeImpl) session.execute(this, GET_NODE, new Object[]{parentNode, nodeName});
+            ret = (NodeImpl) session.execute(this, GET_NODE_BY_NAME, new Object[]{parentNode, nodeName});
         return ret;
     }
 
