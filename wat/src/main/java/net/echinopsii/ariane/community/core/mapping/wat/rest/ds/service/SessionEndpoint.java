@@ -51,7 +51,7 @@ public class SessionEndpoint {
         {
             Response ret = null;
             if (clientID!=null && !clientID.equals("")) {
-                Session session = MappingBootstrap.getMappingSce().openSession(clientID);
+                Session session = MappingBootstrap.getMappingSce().openSession(clientID, true);
                 if (session != null) {
                     try {
                         ByteArrayOutputStream outStream = new ByteArrayOutputStream();

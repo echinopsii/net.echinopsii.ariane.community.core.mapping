@@ -26,6 +26,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCache;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.*;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository.MappingRepoImpl;
+import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MapSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
@@ -94,17 +95,37 @@ public class MappingSceImpl implements MappingSce {
 
     @Override
     public Session openSession(String clientID) {
+        return openSession(clientID, false);
+    }
+
+    @Override
+    public Session openSession(String clientID, boolean proxy) {
         SessionImpl session = new SessionImpl(clientID);
         sessionRegistry.put(session);
         session.start();
+        if (!proxy) ClientThreadSessionRegistry.addCliThreadSession(Thread.currentThread().getName(), session.getSessionID());
         return session;
     }
 
     @Override
     public Session closeSession(Session toClose) {
-        sessionRegistry.remove(toClose);
         toClose.stop();
+        if (ClientThreadSessionRegistry.getSessionFromThread(Thread.currentThread().getName()).equals(toClose.getSessionID()))
+            ClientThreadSessionRegistry.removeCliThreadSession(Thread.currentThread().getName());
+        sessionRegistry.remove(toClose);
         return toClose;
+    }
+
+    @Override
+    public Session closeSession() {
+        Session ret = null;
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            ret = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (ret!=null) closeSession(ret);
+        }
+        return ret;
     }
 
     @Override
@@ -187,11 +208,15 @@ public class MappingSceImpl implements MappingSce {
     }
 
     @Override
-    public Node getNodeByName(Container container, String nodeName) {
+    public Node getNodeByName(Container container, String nodeName) throws MappingDSException {
         Node ret = null;
-        if (container instanceof ContainerImpl) {
-            ret = globalRepo.findNodeByName((ContainerImpl) container, nodeName);
-        }
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.getNodeByName(session, container, nodeName);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else if (container instanceof ContainerImpl) ret = globalRepo.findNodeByName((ContainerImpl) container, nodeName);
         return ret;
     }
 
@@ -206,11 +231,15 @@ public class MappingSceImpl implements MappingSce {
     }
 
     @Override
-    public Node getNodeContainingSubnode(Container container, Node node) {
+    public Node getNodeContainingSubnode(Container container, Node node) throws MappingDSException {
         Node ret = null;
-        if (container instanceof ContainerImpl && node instanceof NodeImpl) {
-            ret = globalRepo.findNodeContainingSubnode((ContainerImpl) container, (NodeImpl) node);
-        }
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = this.getNodeContainingSubnode(session, container, node);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else if (container instanceof ContainerImpl && node instanceof NodeImpl) ret = globalRepo.findNodeContainingSubnode((ContainerImpl) container, (NodeImpl) node);
         return ret;
     }
 
@@ -225,11 +254,19 @@ public class MappingSceImpl implements MappingSce {
     }
 
     @Override
-    public Set<Node> getNodesInParentNode(Container container, Node node) {
+    public Set<Node> getNodesInParentNode(Container container, Node node) throws MappingDSException {
         Set<Node> ret = new HashSet<Node>();
-        if (container instanceof ContainerImpl && node instanceof NodeImpl) {
-            for (NodeImpl nodeLoop : globalRepo.findNodesInParentNode((ContainerImpl) container, (NodeImpl) node)) {
-                ret.add((Node) nodeLoop);
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = this.getNodesInParentNode(session, container, node);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (container instanceof ContainerImpl && node instanceof NodeImpl) {
+                for (NodeImpl nodeLoop : globalRepo.findNodesInParentNode((ContainerImpl) container, (NodeImpl) node)) {
+                    ret.add((Node) nodeLoop);
+                }
             }
         }
         return ret;
@@ -246,11 +283,15 @@ public class MappingSceImpl implements MappingSce {
     }
 
     @Override
-    public Gate getGateByName(Container container, String nodeName) {
+    public Gate getGateByName(Container container, String nodeName) throws MappingDSException {
         Gate ret = null;
-        if (container instanceof ContainerImpl) {
-            ret = globalRepo.findGateByName((ContainerImpl) container, nodeName);
-        }
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.getGateByName(session, container, nodeName);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else if (container instanceof ContainerImpl) ret = globalRepo.findGateByName((ContainerImpl) container, nodeName);
         return ret;
     }
 
@@ -265,11 +306,19 @@ public class MappingSceImpl implements MappingSce {
     }
 
     @Override
-    public Set<Link> getLinksBySourceEP(Endpoint endpoint) {
+    public Set<Link> getLinksBySourceEP(Endpoint endpoint) throws MappingDSException {
         Set<Link> ret = new HashSet<Link>();
-        if (endpoint instanceof EndpointImpl) {
-            for (LinkImpl linkLoop : globalRepo.findLinksBySourceEP((EndpointImpl) endpoint)) {
-                ret.add((Link) linkLoop);
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.getLinksBySourceEP(session, endpoint);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (endpoint instanceof EndpointImpl) {
+                for (LinkImpl linkLoop : globalRepo.findLinksBySourceEP((EndpointImpl) endpoint)) {
+                    ret.add((Link) linkLoop);
+                }
             }
         }
         return ret;
@@ -286,11 +335,19 @@ public class MappingSceImpl implements MappingSce {
     }
 
     @Override
-    public Set<Link> getLinksByDestinationEP(Endpoint endpoint) {
+    public Set<Link> getLinksByDestinationEP(Endpoint endpoint) throws MappingDSException {
         Set<Link> ret = new HashSet<Link>();
-        if (endpoint instanceof EndpointImpl) {
-            for (LinkImpl linkLoop : globalRepo.findLinksByDestinationEP((EndpointImpl) endpoint)) {
-                ret.add((Link) linkLoop);
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = this.getLinksByDestinationEP(session, endpoint);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (endpoint instanceof EndpointImpl) {
+                for (LinkImpl linkLoop : globalRepo.findLinksByDestinationEP((EndpointImpl) endpoint)) {
+                    ret.add((Link) linkLoop);
+                }
             }
         }
         return ret;
@@ -307,10 +364,18 @@ public class MappingSceImpl implements MappingSce {
     }
 
     @Override
-    public Link getLinkBySourceEPandDestinationEP(Endpoint esource, Endpoint edest) {
+    public Link getLinkBySourceEPandDestinationEP(Endpoint esource, Endpoint edest) throws MappingDSException {
         Link ret = null;
-        if (esource instanceof EndpointImpl && edest instanceof EndpointImpl) {
-            ret = globalRepo.findLinkBySourceEPandDestinationEP((EndpointImpl) esource, (EndpointImpl) edest);
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = this.getLinkBySourceEPandDestinationEP(session, esource, edest);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (esource instanceof EndpointImpl && edest instanceof EndpointImpl) {
+                ret = globalRepo.findLinkBySourceEPandDestinationEP((EndpointImpl) esource, (EndpointImpl) edest);
+            }
         }
         return ret;
     }
@@ -326,10 +391,18 @@ public class MappingSceImpl implements MappingSce {
     }
 
     @Override
-    public Link getMulticastLinkBySourceEPAndTransport(Endpoint esource, Transport transport) {
+    public Link getMulticastLinkBySourceEPAndTransport(Endpoint esource, Transport transport) throws MappingDSException {
         Link ret = null;
-        if (esource instanceof EndpointImpl && transport instanceof TransportImpl) {
-            ret = globalRepo.findMulticastLinkBySourceEPandTransport((EndpointImpl)esource, (TransportImpl)transport);
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = this.getMulticastLinkBySourceEPAndTransport(session, esource, transport);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (esource instanceof EndpointImpl && transport instanceof TransportImpl) {
+                ret = globalRepo.findMulticastLinkBySourceEPandTransport((EndpointImpl) esource, (TransportImpl) transport);
+            }
         }
         return ret;
     }

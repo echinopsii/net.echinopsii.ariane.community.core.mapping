@@ -33,12 +33,12 @@ public interface EndpointSce<E extends Endpoint> {
     public void deleteEndpoint(String endpointID) throws MappingDSException;
 
     public E getEndpoint(Session session, String id) throws MappingDSException;
-    public E getEndpoint(String id);
+    public E getEndpoint(String id) throws MappingDSException;
     public E getEndpointByURL(Session session, String URL) throws MappingDSException;
-    public E getEndpointByURL(String URL);
+    public E getEndpointByURL(String URL) throws MappingDSException;
 
     public Set<E> getEndpoints(Session session, String selector) throws MappingDSException;
-    public Set<E> getEndpoints(String selector);
+    public Set<E> getEndpoints(String selector) throws MappingDSException;
     public Set<E> getEndpoints(Session session, String key, Object value) throws MappingDSException;
-    public Set<E> getEndpoints(String key, Object value);
+    public Set<E> getEndpoints(String key, Object value) throws MappingDSException;
 }

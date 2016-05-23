@@ -19,6 +19,7 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.repository;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 
 import java.util.Set;
@@ -26,7 +27,7 @@ import java.util.Set;
 public interface NodeRepo<N extends Node> {
     public N saveNode(N node);
 
-    public void deleteNode(N node);
+    public void deleteNode(N node) throws MappingDSException;
 
     public N findNodeByID(String ID);
 

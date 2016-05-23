@@ -33,14 +33,14 @@ public interface NodeSce<N extends Node> {
     public void deleteNode(String nodeID) throws MappingDSException;
 
     public N getNode(Session session, String id) throws MappingDSException;
-    public N getNode(String id);
+    public N getNode(String id) throws MappingDSException;
     public N getNodeByEndpointURL(Session session, String endpointURL) throws MappingDSException;
-    public N getNodeByEndpointURL(String endpointURL);
+    public N getNodeByEndpointURL(String endpointURL) throws MappingDSException;
     public N getNodeByName(Session session, Node parentNode, String nodeName) throws MappingDSException;
-    public N getNodeByName(Node parentNode, String nodeName);
+    public N getNodeByName(Node parentNode, String nodeName) throws MappingDSException;
 
     public Set<N> getNodes(Session session, String selector) throws MappingDSException;
-    public Set<N> getNodes(String selector);
+    public Set<N> getNodes(String selector) throws MappingDSException;
     public Set<N> getNodes(Session session, String key, Object value) throws MappingDSException;
-    public Set<N> getNodes(String key, Object value);
+    public Set<N> getNodes(String key, Object value) throws MappingDSException;
 }

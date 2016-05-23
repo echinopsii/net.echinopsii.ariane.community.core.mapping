@@ -110,36 +110,36 @@ public class ClusterEndpoint {
         if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
                 subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            Session mappingSession = null;
-            if (sessionId!=null && !sessionId.equals("")) {
-                mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
-                if (mappingSession == null)
-                    return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
-            }
-
-            Cluster cluster;
-            if (mappingSession != null)
-                try {
-                    cluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(mappingSession, id);
-                } catch (MappingDSException e) {
-                    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+            try {
+                Session mappingSession = null;
+                if (sessionId != null && !sessionId.equals("")) {
+                    mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                    if (mappingSession == null)
+                        return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
                 }
-            else cluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(id);
 
-            if (cluster != null) {
-                ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-                try {
+                Cluster cluster;
+                if (mappingSession != null)
+                    try {
+                        cluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(mappingSession, id);
+                    } catch (MappingDSException e) {
+                        return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+                    }
+                else cluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(id);
+
+                if (cluster != null) {
+                    ByteArrayOutputStream outStream = new ByteArrayOutputStream();
                     ClusterJSON.oneCluster2JSON(cluster, outStream);
                     String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
                     return Response.status(Status.OK).entity(result).build();
-                } catch (Exception e) {
-                    log.error(e.getMessage());
-                    e.printStackTrace();
-                    String result = e.getMessage();
-                    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                } else {
+                    return Response.status(Status.NOT_FOUND).entity("Cluster with id " + id + " not found.").build();
                 }
-            } else {
-                return Response.status(Status.NOT_FOUND).entity("Cluster with id " + id + " not found.").build();
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                e.printStackTrace();
+                String result = e.getMessage();
+                return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
             }
         } else {
             return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();

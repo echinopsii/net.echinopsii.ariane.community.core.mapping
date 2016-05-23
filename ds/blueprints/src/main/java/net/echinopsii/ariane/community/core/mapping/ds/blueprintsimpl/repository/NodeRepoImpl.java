@@ -19,6 +19,7 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSBlueprintsCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.EndpointImpl;
@@ -46,7 +47,7 @@ public class NodeRepoImpl implements NodeRepo<NodeImpl> {
     }
 
     @Override
-    public void deleteNode(NodeImpl node) {
+    public void deleteNode(NodeImpl node) throws MappingDSException {
         Set<NodeImpl> childNodesToRemove = new HashSet<NodeImpl>(node.getNodeChildNodes());
         for (NodeImpl childNode : childNodesToRemove) this.deleteNode(childNode);
         childNodesToRemove.clear();

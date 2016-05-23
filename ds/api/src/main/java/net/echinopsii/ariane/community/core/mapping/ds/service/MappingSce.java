@@ -49,35 +49,35 @@ public interface MappingSce {
 
     public Node getNodeByName(Session session, Container container, String nodeName) throws MappingDSException;
 
-    public Node getNodeByName(Container container, String nodeName);
+    public Node getNodeByName(Container container, String nodeName) throws MappingDSException;
 
     public Node getNodeContainingSubnode(Session session, Container container, Node node) throws MappingDSException;
 
-    public Node getNodeContainingSubnode(Container container, Node node);
+    public Node getNodeContainingSubnode(Container container, Node node) throws MappingDSException;
 
     public Set<Node> getNodesInParentNode(Session session, Container container, Node node) throws MappingDSException;
 
-    public Set<Node> getNodesInParentNode(Container container, Node node);
+    public Set<Node> getNodesInParentNode(Container container, Node node) throws MappingDSException;
 
     public Gate getGateByName(Session session, Container container, String nodeName) throws MappingDSException;
 
-    public Gate getGateByName(Container container, String nodeName);
+    public Gate getGateByName(Container container, String nodeName) throws MappingDSException;
 
     public Set<Link> getLinksBySourceEP(Session session, Endpoint endpoint) throws MappingDSException;
 
-    public Set<Link> getLinksBySourceEP(Endpoint endpoint);
+    public Set<Link> getLinksBySourceEP(Endpoint endpoint) throws MappingDSException;
 
     public Set<Link> getLinksByDestinationEP(Session session, Endpoint endpoint) throws MappingDSException;
 
-    public Set<Link> getLinksByDestinationEP(Endpoint endpoint);
+    public Set<Link> getLinksByDestinationEP(Endpoint endpoint) throws MappingDSException;
 
     public Link getLinkBySourceEPandDestinationEP(Session session, Endpoint esource, Endpoint edest) throws MappingDSException;
 
-    public Link getLinkBySourceEPandDestinationEP(Endpoint esource, Endpoint edest);
+    public Link getLinkBySourceEPandDestinationEP(Endpoint esource, Endpoint edest) throws MappingDSException;
 
     Link getMulticastLinkBySourceEPAndTransport(Session session, Endpoint esource, Transport transport) throws MappingDSException;
 
-    Link getMulticastLinkBySourceEPAndTransport(Endpoint esource, Transport transport);
+    Link getMulticastLinkBySourceEPAndTransport(Endpoint esource, Transport transport) throws MappingDSException;
 
     public boolean init(Dictionary<Object, Object> properties);
 
@@ -87,7 +87,11 @@ public interface MappingSce {
 
     public Session openSession(String clientID);
 
+    public Session openSession(String clientID, boolean proxy);
+
     public Session closeSession(Session toClose);
+
+    public Session closeSession();
 
     @Deprecated
     public void unsetAutoCommit();

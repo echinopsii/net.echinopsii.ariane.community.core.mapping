@@ -19,8 +19,9 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.service;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Map;
 
 public interface MapSce {
-    public Map getMap(String mapperQuery);
+    public Map getMap(String mapperQuery) throws MappingDSException;
 }

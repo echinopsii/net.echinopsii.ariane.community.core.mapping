@@ -93,46 +93,46 @@ public class MappingSceTest {
 	}
 	
 	@Test
-	public void testContainerSce1() {
+	public void testContainerSce1() throws MappingDSException {
 		Container test = mappingSce.getContainerSce().getContainer(rvrdLan.getContainerID());
 		assertTrue(rvrdLan.equals(test));
 		assertTrue(!rvrdMan.equals(test));
 	}
 
 	@Test
-	public void testContainerSce2() {
+	public void testContainerSce2() throws MappingDSException {
 		Container test = mappingSce.getContainerSce().getContainerByPrimaryAdminURL(rvrdLan.getContainerPrimaryAdminGateURL());
 		assertTrue(rvrdLan.equals(test));
 		assertTrue(!rvrdMan.equals(test));
 	}
 	
 	@Test
-	public void testContainerSce3() {
+	public void testContainerSce3() throws MappingDSException {
 		assertTrue(mappingSce.getContainerSce().getContainers(null).contains(rvrdLan));
 		assertTrue(mappingSce.getContainerSce().getContainers(null).contains(rvrdMan));
 	}
 	
 	@Test
-	public void testGateSce1() {
+	public void testGateSce1() throws MappingDSException {
 		Gate test = mappingSce.getGateSce().getGate(gateLan.getNodeID());
 		assertTrue(gateLan.equals(test));
 		assertTrue(!gateMan.equals(test));
 	}
 	
 	@Test
-	public void testNodeSce1() {
+	public void testNodeSce1() throws MappingDSException {
 		Node test = mappingSce.getNodeSce().getNode(nodeLan.getNodeID());
 		assertTrue(nodeLan.equals(test));
 	}
 	
 	@Test
-	public void testNodeSce2() {
+	public void testNodeSce2() throws MappingDSException {
 		assertTrue(mappingSce.getNodeSce().getNodes(null).contains(nodeLan));
 		assertTrue(mappingSce.getNodeSce().getNodes(null).contains(nodeMan));
 	}
 
 	@Test
-	public void testNodeSce3() {
+	public void testNodeSce3() throws MappingDSException {
 		String request = "nodeName = 'APP6969.tibrvrdl03prd01'";
 		assertTrue(mappingSce.getNodeSce().getNodes(request).contains(nodeLan));
 		assertTrue(mappingSce.getNodeSce().getNodes(request).size()==1);
@@ -169,41 +169,41 @@ public class MappingSceTest {
 	*/
 
 	@Test
-	public void testNodeSce8() {
+	public void testNodeSce8() throws MappingDSException {
 		String request = "nodeName =~ 'APP6969.*tibrvrdl03prd01.*'";
 		assertTrue(mappingSce.getNodeSce().getNodes(request).contains(nodeLan));
 		assertTrue(mappingSce.getNodeSce().getNodes(request).size() == 1);
 	}
 
 	@Test
-	public void testNodeSce9() {
+	public void testNodeSce9() throws MappingDSException {
 		String request = "nodeName LIKE 'APP6969.*tibrvrdl03prd01.*'";
 		assertTrue(mappingSce.getNodeSce().getNodes(request).contains(nodeLan));
 		assertTrue(mappingSce.getNodeSce().getNodes(request).size() == 1);
 	}
 
 	@Test
-	public void testEndpointSce1() {
+	public void testEndpointSce1() throws MappingDSException {
 		Endpoint test = mappingSce.getEndpointSce().getEndpoint(endpointLan.getEndpointID());
 		assertTrue(endpointLan.equals(test));
 		assertTrue(!endpointMan.equals(test));
 	}
 	
 	@Test
-	public void testEndpointSce2() {
+	public void testEndpointSce2() throws MappingDSException {
 		Endpoint test = mappingSce.getEndpointSce().getEndpointByURL(endpointLan.getEndpointURL());
 		assertTrue(endpointLan.equals(test));
 		assertTrue(!endpointMan.equals(test));
 	}
 
 	@Test
-	public void testEndpointSce3() {
+	public void testEndpointSce3() throws MappingDSException {
 		assertTrue(mappingSce.getEndpointSce().getEndpoints(null).contains(endpointLan));
 		assertTrue(mappingSce.getEndpointSce().getEndpoints(null).contains(endpointMan));
 	}
 
 	@Test
-	public void testEndpointSce4() {
+	public void testEndpointSce4() throws MappingDSException {
 		String request = "endpointURL =~ '.*tibrvrdl03prd01.*'";
 		Set<Endpoint> test = (Set<Endpoint>) mappingSce.getEndpointSce().getEndpoints(request);
 		assertTrue(test.contains(endpointLan));
@@ -212,13 +212,13 @@ public class MappingSceTest {
 	}
 
 	@Test
-	public void testLinkSce1() {
+	public void testLinkSce1() throws MappingDSException {
 		Link test =  mappingSce.getLinkSce().getLink(link.getLinkID());
 		assertTrue(link.equals(test));
 	}
 	
 	@Test
-	public void testLinkSce2() {
+	public void testLinkSce2() throws MappingDSException {
 		assertTrue(mappingSce.getLinkSce().getLinks(null).contains(link));
 	}
 

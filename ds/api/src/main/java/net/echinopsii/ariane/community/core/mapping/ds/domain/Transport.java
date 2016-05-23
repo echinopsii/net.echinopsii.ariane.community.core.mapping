@@ -32,12 +32,12 @@ public interface Transport {
 	 */
 	public String getTransportName();
 	public void   setTransportName(Session session, String name) throws MappingDSException;
-	public void   setTransportName(String name);
+	public void   setTransportName(String name) throws MappingDSException;
 
     public HashMap<String, Object> getTransportProperties();
 	public void addTransportProperty(Session session, String propertyKey, Object value) throws MappingDSException;
-    public void addTransportProperty(String propertyKey, Object value);
+    public void addTransportProperty(String propertyKey, Object value) throws MappingDSException;
 	public void removeTransportProperty(Session session, String propertyKey) throws MappingDSException;
-    public void removeTransportProperty(String propertyKey);
+    public void removeTransportProperty(String propertyKey) throws MappingDSException;
 
 }

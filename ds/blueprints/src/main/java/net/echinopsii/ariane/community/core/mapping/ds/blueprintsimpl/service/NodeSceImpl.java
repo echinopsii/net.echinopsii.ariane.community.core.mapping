@@ -23,6 +23,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.ContainerImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.NodeImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository.NodeRepoImpl;
+import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.service.NodeSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
@@ -58,31 +59,38 @@ public class NodeSceImpl implements NodeSce<NodeImpl> {
 
     @Override
     public NodeImpl createNode(String nodeName, String containerID, String parentNodeID) throws MappingDSException {
-        ContainerImpl container = sce.getGlobalRepo().getContainerRepo().findContainerByID(containerID);
-        NodeImpl ret = sce.getGlobalRepo().findNodeByName(container, nodeName);
-        if (ret == null) {
-            if (container != null) {
-                ret = new NodeImpl();
-                ret.setNodeName(nodeName);
-                ret.setNodeContainer(container);
-                if (parentNodeID != null) {
-                    NodeImpl parent = sce.getGlobalRepo().getNodeRepo().findNodeByID(parentNodeID);
-                    if (parent != null) {
-                        ret.setNodeParentNode(parent);
-                    } else {
-                        throw new MappingDSException("Node creation failed : provided parend node " + parentNodeID + " doesn't exists.");
-                    }
-                }
-                sce.getGlobalRepo().getNodeRepo().saveNode(ret);
-                if (ret.getNodeParentNode() != null)
-                    ret.getNodeParentNode().addNodeChildNode(ret);
-                else
-                    container.addContainerNode(ret);
-            } else {
-                throw new MappingDSException("Node creation failed : provided container " + containerID + " doesn't exists.");
-            }
+        NodeImpl ret = null;
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = createNode(session, nodeName, containerID, parentNodeID);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            log.debug("Node ({}) creation failed : already exists", nodeName);
+            ContainerImpl container = sce.getGlobalRepo().getContainerRepo().findContainerByID(containerID);
+            ret = sce.getGlobalRepo().findNodeByName(container, nodeName);
+            if (ret == null) {
+                if (container != null) {
+                    ret = new NodeImpl();
+                    ret.setNodeName(nodeName);
+                    ret.setNodeContainer(container);
+                    if (parentNodeID != null) {
+                        NodeImpl parent = sce.getGlobalRepo().getNodeRepo().findNodeByID(parentNodeID);
+                        if (parent != null) {
+                            ret.setNodeParentNode(parent);
+                        } else {
+                            throw new MappingDSException("Node creation failed : provided parend node " + parentNodeID + " doesn't exists.");
+                        }
+                    }
+                    sce.getGlobalRepo().getNodeRepo().saveNode(ret);
+                    if (ret.getNodeParentNode() != null)
+                        ret.getNodeParentNode().addNodeChildNode(ret);
+                    else
+                        container.addContainerNode(ret);
+                } else {
+                    throw new MappingDSException("Node creation failed : provided container " + containerID + " doesn't exists.");
+                }
+            }
         }
         return ret;
     }
@@ -95,11 +103,19 @@ public class NodeSceImpl implements NodeSce<NodeImpl> {
 
     @Override
     public void deleteNode(String nodeID) throws MappingDSException {
-        NodeImpl remove = sce.getGlobalRepo().getNodeRepo().findNodeByID(nodeID);
-        if (remove != null) {
-            sce.getGlobalRepo().getNodeRepo().deleteNode(remove);
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) deleteNode(session, nodeID);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            throw new MappingDSException("Unable to remove node with id " + nodeID + ": node not found .");
+            NodeImpl remove = sce.getGlobalRepo().getNodeRepo().findNodeByID(nodeID);
+            if (remove != null) {
+                sce.getGlobalRepo().getNodeRepo().deleteNode(remove);
+            } else {
+                throw new MappingDSException("Unable to remove node with id " + nodeID + ": node not found .");
+            }
         }
     }
 
@@ -112,8 +128,14 @@ public class NodeSceImpl implements NodeSce<NodeImpl> {
     }
 
     @Override
-    public NodeImpl getNode(String id) {
-        return sce.getGlobalRepo().getNodeRepo().findNodeByID(id);
+    public NodeImpl getNode(String id) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) return getNode(session, id);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else return sce.getGlobalRepo().getNodeRepo().findNodeByID(id);
     }
 
     @Override
@@ -125,8 +147,14 @@ public class NodeSceImpl implements NodeSce<NodeImpl> {
     }
 
     @Override
-    public NodeImpl getNodeByEndpointURL(String endpointURL) {
-        return sce.getGlobalRepo().getNodeRepo().findNodeByEndpointURL(endpointURL);
+    public NodeImpl getNodeByEndpointURL(String endpointURL) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) return getNodeByEndpointURL(session, endpointURL);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else return sce.getGlobalRepo().getNodeRepo().findNodeByEndpointURL(endpointURL);
     }
 
     @Override
@@ -138,14 +166,22 @@ public class NodeSceImpl implements NodeSce<NodeImpl> {
     }
 
     @Override
-    public NodeImpl getNodeByName(Node parentNode, String nodeName) {
+    public NodeImpl getNodeByName(Node parentNode, String nodeName) throws MappingDSException {
         NodeImpl ret = null;
-        if (parentNode instanceof NodeImpl) {
-            for (Node childNode : parentNode.getNodeChildNodes())
-                if (childNode instanceof NodeImpl && childNode.getNodeName().equals(nodeName)) {
-                    ret = (NodeImpl)childNode;
-                    break;
-                }
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) return getNodeByName(session, parentNode, nodeName);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (parentNode instanceof NodeImpl) {
+                for (Node childNode : parentNode.getNodeChildNodes())
+                    if (childNode instanceof NodeImpl && childNode.getNodeName().equals(nodeName)) {
+                        ret = (NodeImpl) childNode;
+                        break;
+                    }
+            }
         }
         return ret;
     }
@@ -159,8 +195,14 @@ public class NodeSceImpl implements NodeSce<NodeImpl> {
     }
 
     @Override
-    public Set<NodeImpl> getNodes(String key, Object value) {
-        return sce.getGlobalRepo().getNodeRepo().findNodesByProperties(key, value);
+    public Set<NodeImpl> getNodes(String key, Object value) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) return getNodes(session, key, value);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else return sce.getGlobalRepo().getNodeRepo().findNodesByProperties(key, value);
     }
 
     @Override
@@ -172,10 +214,18 @@ public class NodeSceImpl implements NodeSce<NodeImpl> {
     }
 
     @Override
-    public Set<NodeImpl> getNodes(String selector) {
-        if (selector!=null)
-            return sce.getGlobalRepo().getNodeRepo().findNodesBySelector(selector);
-        else
-            return NodeRepoImpl.getRepository();
+    public Set<NodeImpl> getNodes(String selector) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) return getNodes(session, selector);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (selector != null)
+                return sce.getGlobalRepo().getNodeRepo().findNodesBySelector(selector);
+            else
+                return NodeRepoImpl.getRepository();
+        }
     }
 }

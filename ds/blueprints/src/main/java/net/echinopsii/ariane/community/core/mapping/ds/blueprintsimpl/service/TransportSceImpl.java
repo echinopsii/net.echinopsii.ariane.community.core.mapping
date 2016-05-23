@@ -22,6 +22,7 @@ package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.TransportImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository.TransportRepoImpl;
+import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.service.TransportSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
@@ -53,14 +54,23 @@ public class TransportSceImpl implements TransportSce<TransportImpl> {
 	}
 
 	@Override
-	public TransportImpl createTransport(String transportName) {
-		TransportImpl ret = sce.getGlobalRepo().getTransportRepo().findTransportByName(transportName);
-		if (ret == null) {
-			ret = new TransportImpl();
-			ret.setTransportName(transportName);
-			sce.getGlobalRepo().getTransportRepo().save(ret);
+	public TransportImpl createTransport(String transportName) throws MappingDSException {
+		TransportImpl ret = null ;
+		String clientThreadName = Thread.currentThread().getName();
+		String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+		if (clientThreadSessionID!=null) {
+			Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+			if (session!=null) ret = createTransport(session, transportName);
+			else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
 		} else {
-            log.debug("Transport ({}) creation failed: already exists", new Object[]{transportName});
+			ret = sce.getGlobalRepo().getTransportRepo().findTransportByName(transportName);
+			if (ret == null) {
+				ret = new TransportImpl();
+				ret.setTransportName(transportName);
+				sce.getGlobalRepo().getTransportRepo().save(ret);
+			} else {
+				log.debug("Transport ({}) creation failed: already exists", new Object[]{transportName});
+			}
 		}
 		return ret;
 	}
@@ -73,11 +83,19 @@ public class TransportSceImpl implements TransportSce<TransportImpl> {
 
 	@Override
 	public void deleteTransport(String transportID) throws MappingDSException {
-		TransportImpl remove = sce.getGlobalRepo().getTransportRepo().findTransportByID(transportID);
-		if (remove != null) {
-			sce.getGlobalRepo().getTransportRepo().delete(remove);
+		String clientThreadName = Thread.currentThread().getName();
+		String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+		if (clientThreadSessionID!=null) {
+			Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+			if (session!=null) deleteTransport(session, transportID);//
+			else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
 		} else {
-            throw new MappingDSException("Unable to remove transport with id " + transportID + ": transport not found.");
+			TransportImpl remove = sce.getGlobalRepo().getTransportRepo().findTransportByID(transportID);
+			if (remove != null) {
+				sce.getGlobalRepo().getTransportRepo().delete(remove);
+			} else {
+				throw new MappingDSException("Unable to remove transport with id " + transportID + ": transport not found.");
+			}
 		}
 	}
 
@@ -90,8 +108,14 @@ public class TransportSceImpl implements TransportSce<TransportImpl> {
 	}
 
 	@Override
-    public TransportImpl getTransport(String transportID) {
-        return sce.getGlobalRepo().getTransportRepo().findTransportByID(transportID);
+    public TransportImpl getTransport(String transportID) throws MappingDSException {
+		String clientThreadName = Thread.currentThread().getName();
+		String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+		if (clientThreadSessionID!=null) {
+			Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+			if (session!=null) return getTransport(session, transportID);//
+			else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+		} else return sce.getGlobalRepo().getTransportRepo().findTransportByID(transportID);
     }
 
 	@Override
@@ -103,8 +127,14 @@ public class TransportSceImpl implements TransportSce<TransportImpl> {
 	}
 
 	@Override
-    public Set<TransportImpl> getTransports(String selector) {
+    public Set<TransportImpl> getTransports(String selector) throws MappingDSException {
         // TODO : manage selector - check graphdb query
-        return TransportRepoImpl.getTransportRepository();
+		String clientThreadName = Thread.currentThread().getName();
+		String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+		if (clientThreadSessionID!=null) {
+			Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+			if (session!=null) return getTransports(session, selector);//
+			else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+		} else return TransportRepoImpl.getTransportRepository();
     }
 }

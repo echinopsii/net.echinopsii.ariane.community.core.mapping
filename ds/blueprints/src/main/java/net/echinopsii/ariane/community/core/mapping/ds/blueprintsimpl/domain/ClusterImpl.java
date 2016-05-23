@@ -24,6 +24,8 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSBlueprintsCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
+import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.tools.SessionRegistryImpl;
+import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Cluster;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import com.tinkerpop.blueprints.*;
@@ -87,25 +89,31 @@ public class ClusterImpl implements Cluster, MappingDSBlueprintsCacheEntity {
     }
 
     @Override
-    public boolean addClusterContainer(Container container) {
-        if (container instanceof ContainerImpl) {
-            boolean ret = false;
-            try {
-                ret = this.clusterContainers.add((ContainerImpl) container);
-                if (ret) {
-                    synchronizeContainerToDB((ContainerImpl) container);
-                    container.setContainerCluster(this);
-                }
-            } catch (MappingDSException E) {
-                E.printStackTrace();
-                log.error("Exception while adding container {}...", new Object[]{container.getContainerID()});
-                this.clusterContainers.remove((ContainerImpl) container);
-                MappingDSGraphDB.autorollback();
-            }
-            return ret;
+    public boolean addClusterContainer(Container container) throws MappingDSException {
+        boolean ret = false;
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = this.addClusterContainer(session, container);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            return false;
+            if (container instanceof ContainerImpl) {
+                try {
+                    ret = this.clusterContainers.add((ContainerImpl) container);
+                    if (ret) {
+                        synchronizeContainerToDB((ContainerImpl) container);
+                        container.setContainerCluster(this);
+                    }
+                } catch (MappingDSException E) {
+                    E.printStackTrace();
+                    log.error("Exception while adding container {}...", new Object[]{container.getContainerID()});
+                    this.clusterContainers.remove((ContainerImpl) container);
+                    MappingDSGraphDB.autorollback();
+                }
+            }
         }
+        return ret;
     }
 
     static final String REMOVE_CLUSTER_CONTAINER = "removeClusterContainer";
@@ -119,17 +127,24 @@ public class ClusterImpl implements Cluster, MappingDSBlueprintsCacheEntity {
     }
 
     @Override
-    public boolean removeClusterContainer(Container container) {
-        if (container instanceof ContainerImpl) {
-            boolean ret = this.clusterContainers.remove(container);
-            if (ret) {
-                removeContainerFromDB((ContainerImpl)container);
-                container.setContainerCluster(null);
-            }
-            return ret;
+    public boolean removeClusterContainer(Container container) throws MappingDSException {
+        boolean ret = false;
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = this.removeClusterContainer(session, container);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            return false;
+            if (container instanceof ContainerImpl) {
+                ret = this.clusterContainers.remove(container);
+                if (ret) {
+                    removeContainerFromDB((ContainerImpl) container);
+                    container.setContainerCluster(null);
+                }
+            }
         }
+        return ret;
     }
 
     @Override

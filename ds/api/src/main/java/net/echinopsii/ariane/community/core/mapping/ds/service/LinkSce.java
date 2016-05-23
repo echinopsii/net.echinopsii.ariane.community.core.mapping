@@ -33,8 +33,8 @@ public interface LinkSce<L extends Link> {
     public void deleteLink(String linkID) throws MappingDSException;
 
     public L getLink(Session session, String id) throws MappingDSException;
-    public L getLink(String id);
+    public L getLink(String id) throws MappingDSException;
 
     public Set<L> getLinks(Session session, String selector) throws MappingDSException;
-    public Set<L> getLinks(String selector);
+    public Set<L> getLinks(String selector) throws MappingDSException;
 }

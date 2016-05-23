@@ -25,6 +25,8 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNam
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSBlueprintsCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDBObjectProps;
+import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.tools.SessionRegistryImpl;
+import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Cluster;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
@@ -102,11 +104,19 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
     }
 
     @Override
-    public void setContainerCompany(String company) {
-        if (this.containerCompany == null || !this.containerCompany.equals(company)) {
-            this.containerCompany = company;
-            this.synchronizeCompanyToDB();
-            log.debug("Set container {} company to {}.", new Object[]{((this.containerVertex!=null)?this.containerVertex.getId():0),this.containerCompany});
+    public void setContainerCompany(String company) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.setContainerCompany(session, company);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (this.containerCompany == null || !this.containerCompany.equals(company)) {
+                this.containerCompany = company;
+                this.synchronizeCompanyToDB();
+                log.debug("Set container {} company to {}.", new Object[]{((this.containerVertex != null) ? this.containerVertex.getId() : 0), this.containerCompany});
+            }
         }
     }
 
@@ -124,11 +134,19 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
     }
 
     @Override
-    public void setContainerProduct(String product) {
-        if (this.containerProduct == null || !this.containerProduct.equals(product)) {
-            this.containerProduct = product;
-            this.synchronizeProductToDB();
-            log.debug("Set container {} product to {}.", new Object[]{((this.containerVertex != null) ? this.containerVertex.getId() : 0), this.containerProduct});
+    public void setContainerProduct(String product) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.setContainerProduct(session, product);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (this.containerProduct == null || !this.containerProduct.equals(product)) {
+                this.containerProduct = product;
+                this.synchronizeProductToDB();
+                log.debug("Set container {} product to {}.", new Object[]{((this.containerVertex != null) ? this.containerVertex.getId() : 0), this.containerProduct});
+            }
         }
     }
 
@@ -146,11 +164,19 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
     }
 
     @Override
-    public void setContainerType(String type) {
-        if (this.containerType == null || !this.containerType.equals(type)) {
-            this.containerType = type;
-            this.synchronizeTypeToDB();
-            log.debug("Set container {} type to {}.", new Object[]{((this.containerVertex != null) ? this.containerVertex.getId() : 0), this.containerType});
+    public void setContainerType(String type) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.setContainerType(session, type);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (this.containerType == null || !this.containerType.equals(type)) {
+                this.containerType = type;
+                this.synchronizeTypeToDB();
+                log.debug("Set container {} type to {}.", new Object[]{((this.containerVertex != null) ? this.containerVertex.getId() : 0), this.containerType});
+            }
         }
     }
 
@@ -176,14 +202,22 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
     }
 
     @Override
-	public void setContainerPrimaryAdminGate(Gate gate) {
-		if (this.containerPrimaryAdminGate==null || !this.containerPrimaryAdminGate.equals(gate)) {
-			if (gate instanceof GateImpl) {
-				this.containerPrimaryAdminGate = (GateImpl) gate;
-				synchronizePrimaryAdminGateToDB();
-			}
-			log.debug("Set container {} gate to {}.", new Object[]{this.containerID,this.containerPrimaryAdminGate.toString()});
-		}
+	public void setContainerPrimaryAdminGate(Gate gate) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.setContainerPrimaryAdminGate(session, gate);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (this.containerPrimaryAdminGate == null || !this.containerPrimaryAdminGate.equals(gate)) {
+                if (gate instanceof GateImpl) {
+                    this.containerPrimaryAdminGate = (GateImpl) gate;
+                    synchronizePrimaryAdminGateToDB();
+                }
+                log.debug("Set container {} gate to {}.", new Object[]{this.containerID, this.containerPrimaryAdminGate.toString()});
+            }
+        }
 	}
 	
 	@Override
@@ -200,13 +234,21 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
     }
 
     @Override
-	public void setContainerCluster(Cluster cluster) {
-		if (this.containerCluster == null || !this.containerCluster.equals(cluster)) {
-			if (cluster == null || cluster instanceof ClusterImpl) {
-				this.containerCluster = (ClusterImpl) cluster ;
-				synchronizeClusterToDB();
-			}
-		}
+	public void setContainerCluster(Cluster cluster) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.setContainerCluster(session, cluster);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (this.containerCluster == null || !this.containerCluster.equals(cluster)) {
+                if (cluster == null || cluster instanceof ClusterImpl) {
+                    this.containerCluster = (ClusterImpl) cluster;
+                    synchronizeClusterToDB();
+                }
+            }
+        }
 	}
 
 	@Override
@@ -223,14 +265,22 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
     }
 
     @Override
-	public void addContainerProperty(String propertyKey, Object value){
-        if (containerProperties == null)
-            containerProperties = new HashMap<String, Object>();
-        containerProperties.put(propertyKey,value);
-        synchronizePropertyToDB(propertyKey, value);
-        log.debug("Set container {} property : ({},{})", new Object[]{this.containerID,
-                                                                             propertyKey,
-                                                                             this.containerProperties.get(propertyKey)});
+	public void addContainerProperty(String propertyKey, Object value) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.addContainerProperty(session, propertyKey, value);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (containerProperties == null)
+                containerProperties = new HashMap<String, Object>();
+            containerProperties.put(propertyKey, value);
+            synchronizePropertyToDB(propertyKey, value);
+            log.debug("Set container {} property : ({},{})", new Object[]{this.containerID,
+                    propertyKey,
+                    this.containerProperties.get(propertyKey)});
+        }
 	}
 
     static final String REMOVE_CONTAINER_PROPERTY = "removeContainerProperty";
@@ -242,10 +292,18 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
     }
 
     @Override
-    public void removeContainerProperty(String propertyKey) {
-        if (containerProperties!=null) {
-            containerProperties.remove(propertyKey);
-            removePropertyFromDB(propertyKey);
+    public void removeContainerProperty(String propertyKey) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) removeContainerProperty(session, propertyKey);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (containerProperties != null) {
+                containerProperties.remove(propertyKey);
+                removePropertyFromDB(propertyKey);
+            }
         }
     }
 
@@ -263,11 +321,19 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
     }
 
     @Override
-    public void setContainerParentContainer(Container container) {
-        if (this.containerParentContainer==null || !this.containerParentContainer.equals(container)) {
-            if (container == null || container instanceof ContainerImpl) {
-                this.containerParentContainer = (ContainerImpl) container;
-                synchronizeParentContainerToDB();
+    public void setContainerParentContainer(Container container) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.setContainerParentContainer(session, container);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (this.containerParentContainer == null || !this.containerParentContainer.equals(container)) {
+                if (container == null || container instanceof ContainerImpl) {
+                    this.containerParentContainer = (ContainerImpl) container;
+                    synchronizeParentContainerToDB();
+                }
             }
         }
     }
@@ -288,20 +354,27 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
     }
 
     @Override
-    public boolean addContainerChildContainer(Container container) {
+    public boolean addContainerChildContainer(Container container) throws MappingDSException {
         boolean ret = false;
-        if (container instanceof ContainerImpl) {
-            try {
-                ret = this.containerChildContainers.add((ContainerImpl)container);
-                container.setContainerParentContainer(this);
-                if (ret)
-                    synchronizeChildContainersToDB();
-            } catch (MappingDSException E) {
-                E.printStackTrace();
-                log.error("Exception while adding child container {}...", new Object[]{container.getContainerID()});
-                this.containerNodes.remove((ContainerImpl) container);
-                container.setContainerParentContainer(null);
-                MappingDSGraphDB.autorollback();
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = addContainerChildContainer(session, container);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (container instanceof ContainerImpl) {
+                try {
+                    ret = this.containerChildContainers.add((ContainerImpl) container);
+                    container.setContainerParentContainer(this);
+                    if (ret)
+                        synchronizeChildContainersToDB();
+                } catch (MappingDSException E) {
+                    E.printStackTrace();
+                    log.error("Exception while adding child container {}...", new Object[]{container.getContainerID()});
+                    this.containerNodes.remove((ContainerImpl) container);
+                    MappingDSGraphDB.autorollback();
+                }
             }
         }
         return ret;
@@ -318,13 +391,21 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
     }
 
     @Override
-    public boolean removeContainerChildContainer(Container container) {
+    public boolean removeContainerChildContainer(Container container) throws MappingDSException {
         boolean ret = false;
-        if (container instanceof ContainerImpl) {
-            ret = containerChildContainers.remove(container);
-            if (ret) {
-                container.setContainerParentContainer(null);
-                removeChildContainerFromDB((ContainerImpl) container);
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = this.removeContainerChildContainer(session, container);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (container instanceof ContainerImpl) {
+                ret = containerChildContainers.remove(container);
+                if (ret) {
+                    container.setContainerParentContainer(null);
+                    removeChildContainerFromDB((ContainerImpl) container);
+                }
             }
         }
         return ret;
@@ -358,25 +439,31 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
     }
 
     @Override
-	public boolean addContainerNode(Node node) {
-		if (node instanceof NodeImpl) {
-			boolean ret = false; 
-			try {
-				ret = this.containerNodes.add((NodeImpl)node);
-                node.setNodeContainer(this);
-				if (ret)
-					synchronizeNodeToDB((NodeImpl)node);
-			} catch (MappingDSException E) {
-				E.printStackTrace();
-				log.error("Exception while adding node {}...", new Object[]{node.getNodeID()});
-				this.containerNodes.remove((NodeImpl)node);
-                node.setNodeContainer(null);
-				MappingDSGraphDB.autorollback();
-			}
-			return ret;
-		}
-		else
-			return false;
+	public boolean addContainerNode(Node node) throws MappingDSException {
+        boolean ret = false;
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = this.addContainerNode(session, node);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (node instanceof NodeImpl) {
+                try {
+                    ret = this.containerNodes.add((NodeImpl) node);
+                    node.setNodeContainer(this);
+                    if (ret)
+                        synchronizeNodeToDB((NodeImpl) node);
+                } catch (MappingDSException E) {
+                    E.printStackTrace();
+                    log.error("Exception while adding node {}...", new Object[]{node.getNodeID()});
+                    this.containerNodes.remove((NodeImpl) node);
+                    node.setNodeContainer(null);
+                    MappingDSGraphDB.autorollback();
+                }
+            }
+        }
+        return ret;
 	}
 
     static final String REMOVE_CONTAINER_NODE = "removeContainerNode";
@@ -390,16 +477,24 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
     }
 
     @Override
-	public boolean removeContainerNode(Node node) {
-		if (node instanceof NodeImpl) {
-			boolean ret = this.containerNodes.remove((NodeImpl)node);
-            if (ret) {
-                node.setNodeContainer(null);
-                removeNodeFromDB((NodeImpl) node);
+	public boolean removeContainerNode(Node node) throws MappingDSException {
+        boolean ret = false;
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = this.removeContainerNode(session, node);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (node instanceof NodeImpl) {
+                ret = this.containerNodes.remove((NodeImpl) node);
+                if (ret) {
+                    node.setNodeContainer(null);
+                    removeNodeFromDB((NodeImpl) node);
+                }
             }
-			return ret;
-		} else
-			return false;
+        }
+        return ret;
 	}
 
 	@Override
@@ -418,35 +513,42 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
     }
 
     @Override
-	public boolean addContainerGate(Gate gate) {
-		// a gate is also a node
-		if (gate instanceof GateImpl) {
-			boolean addToNodes = false;
-			boolean addToGates = false;
-			try {
-                addToNodes = this.containerNodes.add((NodeImpl) gate);
-                addToGates = this.containerGates.add((GateImpl) gate);
-                if (addToNodes && addToGates) {
-                    gate.setNodeContainer(this);
-                    synchronizeNodeToDB((NodeImpl) gate);
-                    synchronizeGateToDB((GateImpl) gate);
-                } else {
+	public boolean addContainerGate(Gate gate) throws MappingDSException {
+		boolean ret = false;
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = addContainerGate(session, gate);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (gate instanceof GateImpl) {
+                boolean addToNodes = false;
+                boolean addToGates = false;
+                try {
+                    addToNodes = this.containerNodes.add((NodeImpl) gate);
+                    addToGates = this.containerGates.add((GateImpl) gate);
+                    if (addToNodes && addToGates) {
+                        gate.setNodeContainer(this);
+                        synchronizeNodeToDB((NodeImpl) gate);
+                        synchronizeGateToDB((GateImpl) gate);
+                    } else {
+                        gate.setNodeContainer(null);
+                        if (addToNodes) this.containerNodes.remove((NodeImpl) gate);
+                        if (addToGates) this.containerGates.remove((GateImpl) gate);
+                    }
+                } catch (MappingDSException E) {
+                    E.printStackTrace();
+                    log.error("Exception while adding gate {}...", new Object[]{gate.getNodeID()});
+                    if (addToNodes) this.containerNodes.remove((NodeImpl) gate);
+                    if (addToGates) this.containerGates.remove((GateImpl) gate);
                     gate.setNodeContainer(null);
-					if (addToNodes) this.containerNodes.remove((NodeImpl)gate);
-					if (addToGates) this.containerGates.remove((GateImpl)gate);
-				}
-			} catch (MappingDSException E) {
-				E.printStackTrace();
-				log.error("Exception while adding gate {}...", new Object[]{gate.getNodeID()});				
-				if (addToNodes) this.containerNodes.remove((NodeImpl)gate);
-				if (addToGates) this.containerGates.remove((GateImpl)gate);
-                gate.setNodeContainer(null);
-				MappingDSGraphDB.autorollback();
-			}
-			return addToNodes && addToGates;
-		} else {
-			return false;
-		}			
+                    MappingDSGraphDB.autorollback();
+                }
+                ret = addToNodes && addToGates;
+            }
+        }
+        return ret;
 	}
 
     static final String REMOVE_CONTAINER_GATE = "removeContainerGate";
@@ -460,23 +562,30 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
     }
 
     @Override
-    public boolean removeContainerGate(Gate gate) {
-        // a gate is also a node
-        if (gate instanceof GateImpl) {
-            boolean removedFromNodes = this.containerNodes.remove(gate);
-            boolean removedFromGates = this.containerGates.remove(gate);
-            if (removedFromGates && removedFromNodes) {
-                gate.setNodeContainer(null);
-                removeNodeFromDB((NodeImpl)gate);
-                removeGateFromDB((GateImpl)gate);
-            } else {
-                if (removedFromNodes) this.containerNodes.add((NodeImpl)gate);
-                if (removedFromGates) this.containerGates.add((GateImpl)gate);
-            }
-            return removedFromGates && removedFromNodes;
+    public boolean removeContainerGate(Gate gate) throws MappingDSException {
+        boolean ret = false;
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = this.removeContainerGate(session, gate);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            return true;
+            if (gate instanceof GateImpl) {
+                boolean removedFromNodes = this.containerNodes.remove(gate);
+                boolean removedFromGates = this.containerGates.remove(gate);
+                if (removedFromGates && removedFromNodes) {
+                    gate.setNodeContainer(null);
+                    removeNodeFromDB((NodeImpl) gate);
+                    removeGateFromDB((GateImpl) gate);
+                } else {
+                    if (removedFromNodes) this.containerNodes.add((NodeImpl) gate);
+                    if (removedFromGates) this.containerGates.add((GateImpl) gate);
+                }
+                ret = removedFromGates && removedFromNodes;
+            }
         }
+        return ret;
     }
 
     public Vertex getElement() {

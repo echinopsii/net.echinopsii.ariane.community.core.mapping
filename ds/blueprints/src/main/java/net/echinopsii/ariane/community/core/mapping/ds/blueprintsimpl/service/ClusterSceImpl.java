@@ -22,6 +22,8 @@ package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.ClusterImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository.ClusterRepoImpl;
+import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.tools.SessionRegistryImpl;
+import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.service.ClusterSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
@@ -54,14 +56,21 @@ public class ClusterSceImpl implements ClusterSce<ClusterImpl> {
 	}
 
 	@Override
-	public ClusterImpl createCluster(String clusterName) {
-		ClusterImpl ret = sce.getGlobalRepo().getClusterRepo().findClusterByName(clusterName);
-		if (ret == null) {
-			ret = new ClusterImpl();
-			ret.setClusterName(clusterName);
-			sce.getGlobalRepo().getClusterRepo().save(ret);
+	public ClusterImpl createCluster(String clusterName) throws MappingDSException {
+		ClusterImpl ret = null;
+		String clientThreadName = Thread.currentThread().getName();
+		String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+		if (clientThreadSessionID!=null) {
+			Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+			if (session!=null) ret = createCluster(session, clusterName);
+			else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
 		} else {
-            log.debug("Cluster with this name ({}) already exist.", new Object[]{clusterName});
+			ret = sce.getGlobalRepo().getClusterRepo().findClusterByName(clusterName);
+			if (ret == null) {
+				ret = new ClusterImpl();
+				ret.setClusterName(clusterName);
+				sce.getGlobalRepo().getClusterRepo().save(ret);
+			} else log.debug("Cluster with this name ({}) already exist.", new Object[]{clusterName});
 		}
 		return ret;		
 	}
@@ -74,11 +83,19 @@ public class ClusterSceImpl implements ClusterSce<ClusterImpl> {
 
 	@Override
 	public void deleteCluster(String clusterName) throws MappingDSException {
-		ClusterImpl remove = sce.getGlobalRepo().getClusterRepo().findClusterByName(clusterName);
-		if (remove!=null) {
-			sce.getGlobalRepo().getClusterRepo().delete(remove);
+		String clientThreadName = Thread.currentThread().getName();
+		String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+		if (clientThreadSessionID!=null) {
+			Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+			if (session!=null) deleteCluster(session, clusterName);
+			else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
 		} else {
-            throw new MappingDSException("Unable to remove cluster with name " + clusterName + ": cluster not found .");
+			ClusterImpl remove = sce.getGlobalRepo().getClusterRepo().findClusterByName(clusterName);
+			if (remove != null) {
+				sce.getGlobalRepo().getClusterRepo().delete(remove);
+			} else {
+				throw new MappingDSException("Unable to remove cluster with name " + clusterName + ": cluster not found .");
+			}
 		}
 	}
 
@@ -91,8 +108,14 @@ public class ClusterSceImpl implements ClusterSce<ClusterImpl> {
 	}
 
 	@Override
-    public ClusterImpl getCluster(String clusterID) {
-        return sce.getGlobalRepo().getClusterRepo().findClusterByID(clusterID);
+    public ClusterImpl getCluster(String clusterID) throws MappingDSException {
+		String clientThreadName = Thread.currentThread().getName();
+		String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+		if (clientThreadSessionID!=null) {
+			Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+			if (session!=null) return getCluster(session, clusterID);
+			else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+		} else return sce.getGlobalRepo().getClusterRepo().findClusterByID(clusterID);
     }
 
 	@Override
@@ -104,8 +127,14 @@ public class ClusterSceImpl implements ClusterSce<ClusterImpl> {
 	}
 
 	@Override
-    public ClusterImpl getClusterByName(String clusterName) {
-        return sce.getGlobalRepo().getClusterRepo().findClusterByName(clusterName);
+    public ClusterImpl getClusterByName(String clusterName) throws MappingDSException {
+		String clientThreadName = Thread.currentThread().getName();
+		String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+		if (clientThreadSessionID!=null) {
+			Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+			if (session!=null) return getClusterByName(session, clusterName);
+			else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+		} else return sce.getGlobalRepo().getClusterRepo().findClusterByName(clusterName);
     }
 
 	@Override
@@ -117,8 +146,14 @@ public class ClusterSceImpl implements ClusterSce<ClusterImpl> {
 	}
 
 	@Override
-    public Set<ClusterImpl> getClusters(String selector) {
+    public Set<ClusterImpl> getClusters(String selector) throws MappingDSException {
         //TODO : manage selector - check graphdb query
-        return ClusterRepoImpl.getRepository();
+		String clientThreadName = Thread.currentThread().getName();
+		String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+		if (clientThreadSessionID!=null) {
+			Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+			if (session!=null) return getClusters(session, selector);
+			else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+		} else return ClusterRepoImpl.getRepository();
     }
 }

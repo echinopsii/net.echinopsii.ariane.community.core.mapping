@@ -23,9 +23,11 @@ import com.tinkerpop.blueprints.impls.neo4j2.Neo4j2Vertex;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSBlueprintsCacheEntity;
+import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.tools.SessionRegistryImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDBObjectProps;
+import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import com.tinkerpop.blueprints.*;
@@ -70,10 +72,18 @@ public class EndpointImpl implements Endpoint, MappingDSBlueprintsCacheEntity {
     }
 
     @Override
-    public void setEndpointURL(String url) {
-        if (this.endpointURL == null || !this.endpointURL.equals(url)) {
-            this.endpointURL = url;
-            synchronizeURLToDB();
+    public void setEndpointURL(String url) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.setEndpointURL(session, url);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (this.endpointURL == null || !this.endpointURL.equals(url)) {
+                this.endpointURL = url;
+                synchronizeURLToDB();
+            }
         }
     }
 
@@ -91,13 +101,21 @@ public class EndpointImpl implements Endpoint, MappingDSBlueprintsCacheEntity {
     }
 
     @Override
-    public void setEndpointParentNode(Node node) {
-        if (this.endpointParentNode == null || !this.endpointParentNode.equals(node)) {
-            if (node instanceof NodeImpl || node instanceof GateImpl) {
-                this.endpointParentNode = (NodeImpl) node;
-                synchronizeParentNodeToDB();
-                log.debug("Add endpoint parent node {} to endpoint {}", new Object[]{this.endpointParentNode.getNodeID(),
-                                                                                            this.endpointID});
+    public void setEndpointParentNode(Node node) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.setEndpointParentNode(session, node);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (this.endpointParentNode == null || !this.endpointParentNode.equals(node)) {
+                if (node instanceof NodeImpl || node instanceof GateImpl) {
+                    this.endpointParentNode = (NodeImpl) node;
+                    synchronizeParentNodeToDB();
+                    log.debug("Add endpoint parent node {} to endpoint {}", new Object[]{this.endpointParentNode.getNodeID(),
+                            this.endpointID});
+                }
             }
         }
     }
@@ -116,16 +134,24 @@ public class EndpointImpl implements Endpoint, MappingDSBlueprintsCacheEntity {
     }
 
     @Override
-    public void addEndpointProperty(String propertyKey, Object value) {
-        if (propertyKey != null && value != null) {
-            if (endpointProperties == null) {
-                endpointProperties = new HashMap<String, Object>();
+    public void addEndpointProperty(String propertyKey, Object value) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.addEndpointProperty(session, propertyKey, value);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (propertyKey != null && value != null) {
+                if (endpointProperties == null) {
+                    endpointProperties = new HashMap<String, Object>();
+                }
+                endpointProperties.put(propertyKey, value);
+                synchronizePropertyToDB(propertyKey, value);
+                log.debug("Set endpoint {} property : ({},{})", new Object[]{this.endpointID,
+                        propertyKey,
+                        this.endpointProperties.get(propertyKey)});
             }
-            endpointProperties.put(propertyKey, value);
-            synchronizePropertyToDB(propertyKey, value);
-            log.debug("Set endpoint {} property : ({},{})", new Object[]{this.endpointID,
-                                                                                propertyKey,
-                                                                                this.endpointProperties.get(propertyKey)});
         }
     }
 
@@ -138,10 +164,18 @@ public class EndpointImpl implements Endpoint, MappingDSBlueprintsCacheEntity {
     }
 
     @Override
-    public void removeEndpointProperty(String propertyKey) {
-        if (endpointProperties!=null) {
-            endpointProperties.remove(propertyKey);
-            removePropertyFromDB(propertyKey);
+    public void removeEndpointProperty(String propertyKey) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.removeEndpointProperty(session, propertyKey);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (endpointProperties != null) {
+                endpointProperties.remove(propertyKey);
+                removePropertyFromDB(propertyKey);
+            }
         }
     }
 
@@ -161,24 +195,29 @@ public class EndpointImpl implements Endpoint, MappingDSBlueprintsCacheEntity {
     }
 
     @Override
-    public boolean addTwinEndpoint(Endpoint endpoint) {
-        if (endpoint instanceof EndpointImpl) {
-            boolean ret = false;
-            try {
-                ret = this.endpointTwinEndpoints.add((EndpointImpl) endpoint);
-                if (ret) {
-                    synchronizeTwinEndpointToDB((EndpointImpl) endpoint);
-                }
-            } catch (MappingDSException E) {
-                E.printStackTrace();
-                log.error("Exception while adding twin node {}...", new Object[]{endpoint.getEndpointID()});
-                this.endpointTwinEndpoints.remove((EndpointImpl) endpoint);
-                MappingDSGraphDB.autorollback();
-            }
-            return ret;
+    public boolean addTwinEndpoint(Endpoint endpoint) throws MappingDSException {
+        boolean ret = false;
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = this.addTwinEndpoint(session, endpoint);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            return false;
+            if (endpoint instanceof EndpointImpl) {
+                try {
+                    ret = this.endpointTwinEndpoints.add((EndpointImpl) endpoint);
+                    if (ret) synchronizeTwinEndpointToDB((EndpointImpl) endpoint);
+                } catch (MappingDSException E) {
+                    E.printStackTrace();
+                    log.error("Exception while adding twin node {}...", new Object[]{endpoint.getEndpointID()});
+                    this.endpointTwinEndpoints.remove((EndpointImpl) endpoint);
+                    MappingDSGraphDB.autorollback();
+                }
+                return ret;
+            }
         }
+        return ret;
     }
 
     static final String REMOVE_TWIN_ENDPOINT = "removeTwinEndpoint";
@@ -192,16 +231,20 @@ public class EndpointImpl implements Endpoint, MappingDSBlueprintsCacheEntity {
     }
 
     @Override
-    public boolean removeTwinEndpoint(Endpoint endpoint) {
-        if (endpoint instanceof EndpointImpl) {
-            boolean ret = this.endpointTwinEndpoints.remove((EndpointImpl) endpoint);
-            if (ret) {
-                removeTwinEndpointFromDB((EndpointImpl) endpoint);
-            }
-            return ret;
-        } else {
-            return false;
+    public boolean removeTwinEndpoint(Endpoint endpoint) throws MappingDSException {
+        boolean ret = false;
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = this.removeTwinEndpoint(session, endpoint);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         }
+        if (endpoint instanceof EndpointImpl) {
+            ret = this.endpointTwinEndpoints.remove((EndpointImpl) endpoint);
+            if (ret) removeTwinEndpointFromDB((EndpointImpl) endpoint);
+        }
+        return ret;
     }
 
     public Vertex getElement() {

@@ -23,9 +23,11 @@ import com.tinkerpop.blueprints.impls.neo4j2.Neo4j2Vertex;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSBlueprintsCacheEntity;
+import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.tools.SessionRegistryImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDBObjectProps;
+import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
@@ -75,10 +77,18 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
     }
 
     @Override
-    public void setNodeName(String name) {
-        if (this.nodeName == null || !this.nodeName.equals(name)) {
-            this.nodeName = name;
-            synchronizeNameToDB();
+    public void setNodeName(String name) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.setNodeName(session, name);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (this.nodeName == null || !this.nodeName.equals(name)) {
+                this.nodeName = name;
+                synchronizeNameToDB();
+            }
         }
     }
 
@@ -101,11 +111,19 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
     }
 
     @Override
-    public void setNodeContainer(Container container) {
-        if (this.nodeContainer == null || !this.nodeContainer.equals(container)) {
-            if (container instanceof ContainerImpl) {
-                this.nodeContainer = (ContainerImpl) container;
-                synchronizeContainerToDB();
+    public void setNodeContainer(Container container) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.setNodeContainer(session, container);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (this.nodeContainer == null || !this.nodeContainer.equals(container)) {
+                if (container instanceof ContainerImpl) {
+                    this.nodeContainer = (ContainerImpl) container;
+                    synchronizeContainerToDB();
+                }
             }
         }
     }
@@ -124,16 +142,24 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
     }
 
     @Override
-    public void addNodeProperty(String propertyKey, Object value) {
-        if (propertyKey != null && value != null) {
-            if (this.nodeProperties == null) {
-                this.nodeProperties = new HashMap<String, Object>();
+    public void addNodeProperty(String propertyKey, Object value) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.addNodeProperty(session, propertyKey, value);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (propertyKey != null && value != null) {
+                if (this.nodeProperties == null) {
+                    this.nodeProperties = new HashMap<String, Object>();
+                }
+                this.nodeProperties.put(propertyKey, value);
+                synchronizePropertyToDB(propertyKey, value);
+                log.debug("Set node {} property : ({},{})", new Object[]{this.getNodeID(),
+                        propertyKey,
+                        this.nodeProperties.get(propertyKey)});
             }
-            this.nodeProperties.put(propertyKey, value);
-            synchronizePropertyToDB(propertyKey, value);
-            log.debug("Set node {} property : ({},{})", new Object[]{this.getNodeID(),
-                                                                            propertyKey,
-                                                                            this.nodeProperties.get(propertyKey)});
         }
     }
 
@@ -146,10 +172,18 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
     }
 
     @Override
-    public void removeNodeProperty(String propertyKey) {
-        if (this.nodeProperties!=null) {
-            this.nodeProperties.remove(propertyKey);
-            removePropertyFromDB(propertyKey);
+    public void removeNodeProperty(String propertyKey) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.removeNodeProperty(session, propertyKey);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (this.nodeProperties != null) {
+                this.nodeProperties.remove(propertyKey);
+                removePropertyFromDB(propertyKey);
+            }
         }
     }
 
@@ -167,11 +201,19 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
     }
 
     @Override
-    public void setNodeParentNode(Node node) {
-        if (this.nodeParentNode == null || !this.nodeParentNode.equals(node)) {
-            if (node instanceof NodeImpl) {
-                this.nodeParentNode = (NodeImpl) node;
-                synchronizeParentNodeToDB();
+    public void setNodeParentNode(Node node) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.setNodeParentNode(session, node);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (this.nodeParentNode == null || !this.nodeParentNode.equals(node)) {
+                if (node instanceof NodeImpl) {
+                    this.nodeParentNode = (NodeImpl) node;
+                    synchronizeParentNodeToDB();
+                }
             }
         }
     }
@@ -192,24 +234,30 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
     }
 
     @Override
-    public boolean addNodeChildNode(Node node) {
-        if (node instanceof NodeImpl) {
-            boolean ret = false;
-            try {
-                ret = this.nodeChildNodes.add((NodeImpl) node);
-                if (ret) {
-                    synchronizeChildNodeToDB((NodeImpl) node);
-                }
-            } catch (MappingDSException E) {
-                E.printStackTrace();
-                log.error("Exception while adding child node {}...", new Object[]{node.getNodeID()});
-                this.nodeChildNodes.remove((NodeImpl) node);
-                MappingDSGraphDB.autorollback();
-            }
-            return ret;
+    public boolean addNodeChildNode(Node node) throws MappingDSException {
+        boolean ret = false;
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = this.addNodeChildNode(session, node);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            return false;
+            if (node instanceof NodeImpl) {
+                try {
+                    ret = this.nodeChildNodes.add((NodeImpl) node);
+                    if (ret) {
+                        synchronizeChildNodeToDB((NodeImpl) node);
+                    }
+                } catch (MappingDSException E) {
+                    E.printStackTrace();
+                    log.error("Exception while adding child node {}...", new Object[]{node.getNodeID()});
+                    this.nodeChildNodes.remove((NodeImpl) node);
+                    MappingDSGraphDB.autorollback();
+                }
+            }
         }
+        return ret;
     }
 
     static final String REMOVE_NODE_CHILD_NODE = "removeNodeChildNode";
@@ -223,16 +271,21 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
     }
 
     @Override
-    public boolean removeNodeChildNode(Node node) {
-        if (node instanceof NodeImpl) {
-            boolean ret = this.nodeChildNodes.remove((NodeImpl) node);
-            if (ret) {
-                removeChildNodeFromDB((NodeImpl) node);
-            }
-            return ret;
+    public boolean removeNodeChildNode(Node node) throws MappingDSException {
+        boolean ret = false;
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = this.removeNodeChildNode(session, node);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            return false;
+            if (node instanceof NodeImpl) {
+                ret = this.nodeChildNodes.remove((NodeImpl) node);
+                if (ret) removeChildNodeFromDB((NodeImpl) node);
+            }
         }
+        return ret;
     }
 
     @Override
@@ -251,24 +304,28 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
     }
 
     @Override
-    public boolean addTwinNode(Node node) {
-        if (node instanceof NodeImpl) {
-            boolean ret = false;
-            try {
-                ret = this.nodeTwinNodes.add((NodeImpl) node);
-                if (ret) {
-                    synchronizeTwinNodeToDB((NodeImpl) node);
-                }
-            } catch (MappingDSException E) {
-                E.printStackTrace();
-                log.error("Exception while adding twin node {}...", new Object[]{node.getNodeID()});
-                this.nodeTwinNodes.remove((NodeImpl) node);
-                MappingDSGraphDB.autorollback();
-            }
-            return ret;
+    public boolean addTwinNode(Node node) throws MappingDSException {
+        boolean ret = false;
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = this.addTwinNode(session, node);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            return false;
+            if (node instanceof NodeImpl) {
+                try {
+                    ret = this.nodeTwinNodes.add((NodeImpl) node);
+                    if (ret) synchronizeTwinNodeToDB((NodeImpl) node);
+                } catch (MappingDSException E) {
+                    E.printStackTrace();
+                    log.error("Exception while adding twin node {}...", new Object[]{node.getNodeID()});
+                    this.nodeTwinNodes.remove((NodeImpl) node);
+                    MappingDSGraphDB.autorollback();
+                }
+            }
         }
+        return ret;
     }
 
     static final String REMOVE_TWIN_NODE = "removeTwinNode";
@@ -282,16 +339,21 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
     }
 
     @Override
-    public boolean removeTwinNode(Node node) {
-        if (node instanceof NodeImpl) {
-            boolean ret = this.nodeTwinNodes.remove((NodeImpl) node);
-            if (ret) {
-                removeTwindNodeFromDB((NodeImpl) node);
-            }
-            return ret;
+    public boolean removeTwinNode(Node node) throws MappingDSException {
+        boolean ret = false;
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = this.removeTwinNode(session, node);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            return false;
+            if (node instanceof NodeImpl) {
+                ret = this.nodeTwinNodes.remove((NodeImpl) node);
+                if (ret) removeTwindNodeFromDB((NodeImpl) node);
+            }
         }
+        return ret;
     }
 
     @Override
@@ -310,24 +372,28 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
     }
 
     @Override
-    public boolean addEndpoint(Endpoint endpoint) {
-        if (endpoint instanceof EndpointImpl) {
-            boolean ret = false;
-            try {
-                ret = this.nodeEndpoints.add((EndpointImpl) endpoint);
-                if (ret) {
-                    synchronizeEndpointToDB((EndpointImpl) endpoint);
-                }
-            } catch (MappingDSException E) {
-                E.printStackTrace();
-                log.error("Exception while adding endpoint {}...", new Object[]{endpoint.getEndpointID()});
-                this.nodeEndpoints.remove((EndpointImpl) endpoint);
-                MappingDSGraphDB.autorollback();
-            }
-            return ret;
+    public boolean addEndpoint(Endpoint endpoint) throws MappingDSException {
+        boolean ret = false;
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = this.addEndpoint(session, endpoint);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            return false;
+            if (endpoint instanceof EndpointImpl) {
+                try {
+                    ret = this.nodeEndpoints.add((EndpointImpl) endpoint);
+                    if (ret) synchronizeEndpointToDB((EndpointImpl) endpoint);
+                } catch (MappingDSException E) {
+                    E.printStackTrace();
+                    log.error("Exception while adding endpoint {}...", new Object[]{endpoint.getEndpointID()});
+                    this.nodeEndpoints.remove((EndpointImpl) endpoint);
+                    MappingDSGraphDB.autorollback();
+                }
+            }
         }
+        return ret;
     }
 
     static final String REMOVE_ENDPOINT = "removeEndpoint";
@@ -341,16 +407,21 @@ public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
     }
 
     @Override
-    public boolean removeEndpoint(Endpoint endpoint) {
-        if (endpoint instanceof EndpointImpl) {
-            boolean ret = this.nodeEndpoints.remove((EndpointImpl) endpoint);
-            if (ret) {
-                removeEndpointFromDB((EndpointImpl) endpoint);
-            }
-            return ret;
+    public boolean removeEndpoint(Endpoint endpoint) throws MappingDSException {
+        boolean ret = false;
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = this.removeEndpoint(session, endpoint) ;
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            return false;
+            if (endpoint instanceof EndpointImpl) {
+                ret = this.nodeEndpoints.remove((EndpointImpl) endpoint);
+                if (ret) removeEndpointFromDB((EndpointImpl) endpoint);
+            }
         }
+        return ret;
     }
 
     public Vertex getElement() {

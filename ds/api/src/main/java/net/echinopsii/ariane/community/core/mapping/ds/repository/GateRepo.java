@@ -19,12 +19,13 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.repository;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 
 public interface GateRepo<N extends Node, G extends Gate> extends NodeRepo<N> {
 	public G      save(G Gate);
-	public void   delete(G Gate);
+	public void   delete(G Gate) throws MappingDSException;
 
 	public G findGateByID(String ID);
 	public G findGateByEndpointURL(String URL);

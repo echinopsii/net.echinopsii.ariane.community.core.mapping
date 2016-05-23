@@ -25,7 +25,7 @@ import java.util.HashMap;
 
 public class SessionRegistryImpl implements SessionRegistry{
 
-    private HashMap<String, Session> sessionRegistry = new HashMap<>();
+    private static HashMap<String, Session> sessionRegistry = new HashMap<>();
 
     @Override
     public Session get(String sessionID) {
@@ -42,7 +42,7 @@ public class SessionRegistryImpl implements SessionRegistry{
         return sessionRegistry.remove(session.getSessionID());
     }
 
-    public HashMap<String, Session> getSessionRegistry() {
+    public static HashMap<String, Session> getSessionRegistry() {
         return  sessionRegistry;
     }
 }

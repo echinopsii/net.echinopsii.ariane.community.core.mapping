@@ -19,6 +19,7 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.EndpointImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
@@ -71,7 +72,7 @@ public class MapSceImpl implements MapSce {
     }
 
     @Override
-    public MapImpl getMap(String mapperQuery) {
+    public MapImpl getMap(String mapperQuery) throws MappingDSException {
         MapImpl map = new MapImpl();
         Map<String, String> minimalMap = MappingDSGraphDB.executeQuery(mapperQuery);
 

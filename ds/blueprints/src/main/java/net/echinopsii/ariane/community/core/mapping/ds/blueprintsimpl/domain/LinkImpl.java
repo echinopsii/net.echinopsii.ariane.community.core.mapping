@@ -23,6 +23,8 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSBlueprintsCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
+import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.tools.SessionRegistryImpl;
+import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Link;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
@@ -67,11 +69,19 @@ public class LinkImpl implements Link, MappingDSBlueprintsCacheEntity {
     }
 
     @Override
-    public void setLinkTransport(Transport transport) {
-        if (this.linkTransport == null || !this.linkTransport.equals(transport)) {
-            if (transport instanceof TransportImpl) {
-                this.linkTransport = (TransportImpl) transport;
-                synchronizeTransportNameToDB();
+    public void setLinkTransport(Transport transport) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.setLinkTransport(session, transport);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (this.linkTransport == null || !this.linkTransport.equals(transport)) {
+                if (transport instanceof TransportImpl) {
+                    this.linkTransport = (TransportImpl) transport;
+                    synchronizeTransportNameToDB();
+                }
             }
         }
     }
@@ -90,11 +100,19 @@ public class LinkImpl implements Link, MappingDSBlueprintsCacheEntity {
     }
 
     @Override
-    public void setLinkEndpointSource(Endpoint source) {
-        if (this.linkEndpointSource == null || !this.linkEndpointSource.equals(source)) {
-            if (source instanceof EndpointImpl) {
-                this.linkEndpointSource = (EndpointImpl) source;
-                synchronizeSourceEndpointToDB();
+    public void setLinkEndpointSource(Endpoint source) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.setLinkEndpointSource(session, source);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (this.linkEndpointSource == null || !this.linkEndpointSource.equals(source)) {
+                if (source instanceof EndpointImpl) {
+                    this.linkEndpointSource = (EndpointImpl) source;
+                    synchronizeSourceEndpointToDB();
+                }
             }
         }
     }
@@ -113,11 +131,19 @@ public class LinkImpl implements Link, MappingDSBlueprintsCacheEntity {
     }
 
     @Override
-    public void setLinkEndpointTarget(Endpoint target) {
-        if (this.linkEndpointTarget == null || !this.linkEndpointTarget.equals(target)) {
-            if (target instanceof EndpointImpl) {
-                this.linkEndpointTarget = (EndpointImpl) target;
-                synchronizeTargetEndpointToDB();
+    public void setLinkEndpointTarget(Endpoint target) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.setLinkEndpointTarget(session, target);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (this.linkEndpointTarget == null || !this.linkEndpointTarget.equals(target)) {
+                if (target instanceof EndpointImpl) {
+                    this.linkEndpointTarget = (EndpointImpl) target;
+                    synchronizeTargetEndpointToDB();
+                }
             }
         }
     }

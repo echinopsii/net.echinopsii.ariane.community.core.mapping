@@ -28,5 +28,5 @@ public interface Gate extends Node {
 	public Endpoint getNodePrimaryAdminEndpoint();
 
 	public void     setNodePrimaryAdminEnpoint(Session session, Endpoint endpoint) throws MappingDSException;
-	public void     setNodePrimaryAdminEnpoint(Endpoint endpoint);
+	public void     setNodePrimaryAdminEnpoint(Endpoint endpoint) throws MappingDSException;
 }

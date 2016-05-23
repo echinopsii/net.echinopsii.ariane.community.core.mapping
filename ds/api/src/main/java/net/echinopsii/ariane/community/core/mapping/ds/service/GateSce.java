@@ -33,8 +33,8 @@ public interface GateSce<G extends Gate> {
 	public void deleteGate(String nodeID) throws MappingDSException;
 
 	public G    getGate(Session session, String id) throws MappingDSException;
-	public G    getGate(String id);
+	public G    getGate(String id) throws MappingDSException;
 
 	public Set<G> getGates(Session session, String selector) throws MappingDSException;
-    public Set<G> getGates(String selector);
+    public Set<G> getGates(String selector) throws MappingDSException;
 }

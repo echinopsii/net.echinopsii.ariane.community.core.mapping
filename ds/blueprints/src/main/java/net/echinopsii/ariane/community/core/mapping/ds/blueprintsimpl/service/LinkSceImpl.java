@@ -24,6 +24,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.Ma
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.EndpointImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.LinkImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.TransportImpl;
+import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.service.LinkSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
@@ -58,53 +59,59 @@ public class LinkSceImpl implements LinkSce<LinkImpl> {
     public LinkImpl createLink(String sourceEndpointID, String targetEndpointID,
                                String transportID) throws MappingDSException {
         LinkImpl ret = null;
-
-        EndpointImpl epsource = sce.getGlobalRepo().getEndpointRepo().findEndpointByID(sourceEndpointID);
-        EndpointImpl eptarget = sce.getGlobalRepo().getEndpointRepo().findEndpointByID(targetEndpointID);
-        TransportImpl transport = sce.getGlobalRepo().getTransportRepo().findTransportByID(transportID);
-
-        if (epsource != null && eptarget != null && transport != null) {
-            ret = sce.getGlobalRepo().findLinkBySourceEPandDestinationEP(epsource, eptarget);
-            if (ret == null) {
-                ret = new LinkImpl();
-                ret.setLinkEndpointSource(epsource);
-                ret.setLinkEndpointTarget(eptarget);
-                ret.setLinkTransport(transport);
-                sce.getGlobalRepo().getLinkRepo().save(ret);
-                log.debug("Unicast link ({}) saved !", new Object[]{ret.toString()});
-            } else {
-                log.debug("Unicast link ({},{},{}) creation failed : already exists", new Object[]{sourceEndpointID, targetEndpointID, transportID});
-            }
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = createLink(session, sourceEndpointID, targetEndpointID, transportID);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            if (epsource != null && eptarget == null && transport != null && transport.getTransportName().contains("multicast")) {
-                ret = sce.getGlobalRepo().findMulticastLinkBySourceEPandTransport(epsource, transport);
+            EndpointImpl epsource = sce.getGlobalRepo().getEndpointRepo().findEndpointByID(sourceEndpointID);
+            EndpointImpl eptarget = sce.getGlobalRepo().getEndpointRepo().findEndpointByID(targetEndpointID);
+            TransportImpl transport = sce.getGlobalRepo().getTransportRepo().findTransportByID(transportID);
+
+            if (epsource != null && eptarget != null && transport != null) {
+                ret = sce.getGlobalRepo().findLinkBySourceEPandDestinationEP(epsource, eptarget);
                 if (ret == null) {
                     ret = new LinkImpl();
                     ret.setLinkEndpointSource(epsource);
                     ret.setLinkEndpointTarget(eptarget);
                     ret.setLinkTransport(transport);
                     sce.getGlobalRepo().getLinkRepo().save(ret);
-                    log.debug("Multicast link ({}) saved !", new Object[]{ret.toString()});
+                    log.debug("Unicast link ({}) saved !", new Object[]{ret.toString()});
                 } else {
-                    log.debug("Multicast link ({},{}) creation failed : already exists", new Object[]{sourceEndpointID, transportID});
+                    log.debug("Unicast link ({},{},{}) creation failed : already exists", new Object[]{sourceEndpointID, targetEndpointID, transportID});
                 }
             } else {
-                if (transport != null) {
-                    if (transport.getTransportName().contains("multicast")) {
-                        if (eptarget!=null) {
-                            throw new MappingDSException("Multicast link creation failed : provided target endpoint != 0");
-                        } else {
-                            throw new MappingDSException("Multicast link creation failed : provided source endpoint " + sourceEndpointID + " | transport " + transportID + "doesn't exists.");
-                        }
+                if (epsource != null && eptarget == null && transport != null && transport.getTransportName().contains("multicast")) {
+                    ret = sce.getGlobalRepo().findMulticastLinkBySourceEPandTransport(epsource, transport);
+                    if (ret == null) {
+                        ret = new LinkImpl();
+                        ret.setLinkEndpointSource(epsource);
+                        ret.setLinkEndpointTarget(eptarget);
+                        ret.setLinkTransport(transport);
+                        sce.getGlobalRepo().getLinkRepo().save(ret);
+                        log.debug("Multicast link ({}) saved !", new Object[]{ret.toString()});
                     } else {
-                        throw new MappingDSException("Unicast link creation failed : provided source endpoint " + sourceEndpointID + " | target endpoint " + targetEndpointID + " | transport " + transportID + "doesn't exists.");
+                        log.debug("Multicast link ({},{}) creation failed : already exists", new Object[]{sourceEndpointID, transportID});
                     }
                 } else {
-                    throw new MappingDSException("Multicast link creation failed : provided transport " + transportID + "doesn't exists.");
+                    if (transport != null) {
+                        if (transport.getTransportName().contains("multicast")) {
+                            if (eptarget != null) {
+                                throw new MappingDSException("Multicast link creation failed : provided target endpoint != 0");
+                            } else {
+                                throw new MappingDSException("Multicast link creation failed : provided source endpoint " + sourceEndpointID + " | transport " + transportID + "doesn't exists.");
+                            }
+                        } else {
+                            throw new MappingDSException("Unicast link creation failed : provided source endpoint " + sourceEndpointID + " | target endpoint " + targetEndpointID + " | transport " + transportID + "doesn't exists.");
+                        }
+                    } else {
+                        throw new MappingDSException("Multicast link creation failed : provided transport " + transportID + "doesn't exists.");
+                    }
                 }
             }
         }
-
         return ret;
     }
 
@@ -116,11 +123,19 @@ public class LinkSceImpl implements LinkSce<LinkImpl> {
 
     @Override
     public void deleteLink(String linkID) throws MappingDSException {
-        LinkImpl remove = sce.getGlobalRepo().getLinkRepo().findLinkByID(linkID);
-        if (remove != null) {
-            sce.getGlobalRepo().getLinkRepo().delete(remove);
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) deleteLink(session, linkID);//
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            throw new MappingDSException("Unable to remove link with id " + linkID + ": link not found.");
+            LinkImpl remove = sce.getGlobalRepo().getLinkRepo().findLinkByID(linkID);
+            if (remove != null) {
+                sce.getGlobalRepo().getLinkRepo().delete(remove);
+            } else {
+                throw new MappingDSException("Unable to remove link with id " + linkID + ": link not found.");
+            }
         }
     }
 
@@ -133,8 +148,14 @@ public class LinkSceImpl implements LinkSce<LinkImpl> {
     }
 
     @Override
-    public LinkImpl getLink(String id) {
-        return sce.getGlobalRepo().getLinkRepo().findLinkByID(id);
+    public LinkImpl getLink(String id) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) return getLink(session, id);//
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else return sce.getGlobalRepo().getLinkRepo().findLinkByID(id);
     }
 
     @Override
@@ -146,8 +167,14 @@ public class LinkSceImpl implements LinkSce<LinkImpl> {
     }
 
     @Override
-    public Set<LinkImpl> getLinks(String selector) {
+    public Set<LinkImpl> getLinks(String selector) throws MappingDSException {
         // TODO : manage selector - check graphdb queries
-        return MappingDSGraphDB.getLinks(null, null, null);
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) return getLinks(session, selector);//
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else return MappingDSGraphDB.getLinks(null, null, null);
     }
 }

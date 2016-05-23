@@ -33,39 +33,39 @@ public interface Node {
 	 */
 	public String getNodeName();
 	public void   setNodeName(Session session, String name) throws MappingDSException;
-	public void   setNodeName(String name);
+	public void   setNodeName(String name) throws MappingDSException;
 	
 	public Container getNodeContainer();
 	public void      setNodeContainer(Session session, Container container) throws MappingDSException;
-	public void      setNodeContainer(Container container);
+	public void      setNodeContainer(Container container) throws MappingDSException;
 	
 	public long getNodeDepth();
 	
 	public HashMap<String, Object> getNodeProperties();
 	public void addNodeProperty(Session session, String propertyKey, Object value) throws MappingDSException;
-	public void addNodeProperty(String propertyKey, Object value);
+	public void addNodeProperty(String propertyKey, Object value) throws MappingDSException;
 	public void removeNodeProperty(Session session, String propertyKey) throws MappingDSException;
-    public void removeNodeProperty(String propertyKey);
+    public void removeNodeProperty(String propertyKey) throws MappingDSException;
 	
 	public Node getNodeParentNode();
 	public void setNodeParentNode(Session session, Node node) throws MappingDSException;
-	public void setNodeParentNode(Node node);
+	public void setNodeParentNode(Node node) throws MappingDSException;
 	
 	public Set<? extends Node> getNodeChildNodes();
 	public boolean             addNodeChildNode(Session session, Node node) throws MappingDSException;
-	public boolean             addNodeChildNode(Node node);
+	public boolean             addNodeChildNode(Node node) throws MappingDSException;
 	public boolean             removeNodeChildNode(Session session, Node node) throws MappingDSException;
-	public boolean             removeNodeChildNode(Node node);
+	public boolean             removeNodeChildNode(Node node) throws MappingDSException;
 
 	public Set<? extends Node> getTwinNodes();
 	public boolean             addTwinNode(Session session, Node node) throws MappingDSException;
-	public boolean             addTwinNode(Node node);
+	public boolean             addTwinNode(Node node) throws MappingDSException;
 	public boolean             removeTwinNode(Session session, Node node) throws MappingDSException;
-	public boolean             removeTwinNode(Node node);
+	public boolean             removeTwinNode(Node node) throws MappingDSException;
 
 	public Set<? extends Endpoint> getNodeEndpoints();
 	public boolean addEndpoint(Session session, Endpoint endpoint) throws MappingDSException;
-	public boolean addEndpoint(Endpoint endpoint);
+	public boolean addEndpoint(Endpoint endpoint) throws MappingDSException;
 	public boolean                 removeEndpoint(Session session, Endpoint endpoint) throws MappingDSException;
-	public boolean                 removeEndpoint(Endpoint endpoint);
+	public boolean                 removeEndpoint(Endpoint endpoint) throws MappingDSException;
 }

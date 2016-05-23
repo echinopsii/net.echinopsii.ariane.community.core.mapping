@@ -20,9 +20,11 @@
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
+import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.ClusterImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.ContainerImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.GateImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository.ContainerRepoImpl;
+import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.service.ContainerSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
@@ -57,28 +59,36 @@ public class ContainerSceImpl implements ContainerSce<ContainerImpl> {
 
     @Override
     public ContainerImpl createContainer(String primaryAdminURL, String primaryAdminGateName) throws MappingDSException {
-        ContainerImpl ret = sce.getGlobalRepo().getContainerRepo().findContainersByPrimaryAdminURL(primaryAdminURL);
-        if (ret == null) {
-            ret = new ContainerImpl();
-            sce.getGlobalRepo().getContainerRepo().save(ret);
-
-            try {
-                GateImpl primaryAdminService = sce.getGateSce().createGate(primaryAdminURL, primaryAdminGateName, ret.getContainerID(), true);
-                log.debug("Container primary gate ({}) saved !", primaryAdminService.getNodeName());
-                ret.setContainerPrimaryAdminGate(primaryAdminService);
-            } catch (MappingDSException e) {
-                try {
-                    deleteContainer(primaryAdminURL);
-                    log.error("Unable to create container gate : container has been deleted...");
-                } catch (MappingDSException e1) {
-                    log.error("Unable to remove previously created erronous container.");
-                }
-                throw new MappingDSException("Unable to create container " + primaryAdminURL + " : gate creation failed.");
-            }
-            log.debug("Container {} with primaryAdminURL ({}) has been saved.",
-                             new Object[]{ret.getContainerID(), ret.getContainerPrimaryAdminGateURL()});
+        ContainerImpl ret = null;
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = createContainer(session, primaryAdminURL, primaryAdminGateName);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            log.debug("Container for this primaryAdminURL ({}) already exist.", new Object[]{primaryAdminURL});
+            ret = sce.getGlobalRepo().getContainerRepo().findContainersByPrimaryAdminURL(primaryAdminURL);
+            if (ret == null) {
+                ret = new ContainerImpl();
+                sce.getGlobalRepo().getContainerRepo().save(ret);
+                try {
+                    GateImpl primaryAdminService = sce.getGateSce().createGate(primaryAdminURL, primaryAdminGateName, ret.getContainerID(), true);
+                    log.debug("Container primary gate ({}) saved !", primaryAdminService.getNodeName());
+                    ret.setContainerPrimaryAdminGate(primaryAdminService);
+                } catch (MappingDSException e) {
+                    try {
+                        deleteContainer(primaryAdminURL);
+                        log.error("Unable to create container gate : container has been deleted...");
+                    } catch (MappingDSException e1) {
+                        log.error("Unable to remove previously created erronous container.");
+                    }
+                    throw new MappingDSException("Unable to create container " + primaryAdminURL + " : gate creation failed.");
+                }
+                log.debug("Container {} with primaryAdminURL ({}) has been saved.",
+                        new Object[]{ret.getContainerID(), ret.getContainerPrimaryAdminGateURL()});
+            } else {
+                log.debug("Container for this primaryAdminURL ({}) already exist.", new Object[]{primaryAdminURL});
+            }
         }
         return ret;
     }
@@ -93,8 +103,17 @@ public class ContainerSceImpl implements ContainerSce<ContainerImpl> {
 
     @Override
     public ContainerImpl createContainer(String name, String primaryAdminURL, String primaryAdminGateName) throws MappingDSException {
-        ContainerImpl ret = this.createContainer(primaryAdminURL, primaryAdminGateName);
-        ret.setContainerName(name);
+        ContainerImpl ret = null;
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = createContainer(session, name, primaryAdminURL, primaryAdminGateName);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            ret = this.createContainer(primaryAdminURL, primaryAdminGateName);
+            ret.setContainerName(name);
+        }
         return ret;
     }
 
@@ -108,8 +127,17 @@ public class ContainerSceImpl implements ContainerSce<ContainerImpl> {
 
     @Override
     public ContainerImpl createContainer(String primaryAdminURL, String primaryAdminGateName, Container parentContainer) throws MappingDSException {
-        ContainerImpl ret = this.createContainer(primaryAdminURL, primaryAdminGateName);
-        parentContainer.addContainerChildContainer(ret);
+        ContainerImpl ret = null;
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = createContainer(session, primaryAdminURL, primaryAdminGateName, parentContainer);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            ret = this.createContainer(primaryAdminURL, primaryAdminGateName);
+            parentContainer.addContainerChildContainer(ret);
+        }
         return ret;
     }
 
@@ -123,9 +151,18 @@ public class ContainerSceImpl implements ContainerSce<ContainerImpl> {
 
     @Override
     public ContainerImpl createContainer(String name, String primaryAdminURL, String primaryAdminGateName, Container parentContainer) throws MappingDSException {
-        ContainerImpl ret = this.createContainer(primaryAdminURL, primaryAdminGateName);
-        ret.setContainerName(name);
-        parentContainer.addContainerChildContainer(ret);
+        ContainerImpl ret = null;
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = createContainer(session, primaryAdminURL, primaryAdminGateName, parentContainer);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            ret = this.createContainer(primaryAdminURL, primaryAdminGateName);
+            ret.setContainerName(name);
+            parentContainer.addContainerChildContainer(ret);
+        }
         return ret;
     }
 
@@ -137,11 +174,19 @@ public class ContainerSceImpl implements ContainerSce<ContainerImpl> {
 
     @Override
     public void deleteContainer(String primaryAdminURL) throws MappingDSException {
-        ContainerImpl remove = sce.getGlobalRepo().getContainerRepo().findContainersByPrimaryAdminURL(primaryAdminURL);
-        if (remove != null) {
-            sce.getGlobalRepo().getContainerRepo().delete(remove);
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) deleteContainer(session, primaryAdminURL);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            throw new MappingDSException("Unable to remove container with primary admin URL " + primaryAdminURL + ": container not found .");
+            ContainerImpl remove = sce.getGlobalRepo().getContainerRepo().findContainersByPrimaryAdminURL(primaryAdminURL);
+            if (remove != null) {
+                sce.getGlobalRepo().getContainerRepo().delete(remove);
+            } else {
+                throw new MappingDSException("Unable to remove container with primary admin URL " + primaryAdminURL + ": container not found .");
+            }
         }
     }
 
@@ -154,8 +199,14 @@ public class ContainerSceImpl implements ContainerSce<ContainerImpl> {
     }
 
     @Override
-    public ContainerImpl getContainer(String id) {
-        return sce.getGlobalRepo().getContainerRepo().findContainerByID(id);
+    public ContainerImpl getContainer(String id) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) return getContainer(session, id);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else return sce.getGlobalRepo().getContainerRepo().findContainerByID(id);
     }
 
     @Override
@@ -167,8 +218,14 @@ public class ContainerSceImpl implements ContainerSce<ContainerImpl> {
     }
 
     @Override
-    public ContainerImpl getContainerByPrimaryAdminURL(String primaryAdminURL) {
-        return sce.getGlobalRepo().getContainerRepo().findContainersByPrimaryAdminURL(primaryAdminURL);
+    public ContainerImpl getContainerByPrimaryAdminURL(String primaryAdminURL) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) return getContainerByPrimaryAdminURL(session, primaryAdminURL);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else return sce.getGlobalRepo().getContainerRepo().findContainersByPrimaryAdminURL(primaryAdminURL);
     }
 
     @Override
@@ -180,8 +237,14 @@ public class ContainerSceImpl implements ContainerSce<ContainerImpl> {
     }
 
     @Override
-    public Set<ContainerImpl> getContainers(String selector) {
+    public Set<ContainerImpl> getContainers(String selector) throws MappingDSException {
         //TODO : manage selector - check graphdb query
-        return ContainerRepoImpl.getRepository();
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) return getContainers(session, selector);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else return ContainerRepoImpl.getRepository();
     }
 }

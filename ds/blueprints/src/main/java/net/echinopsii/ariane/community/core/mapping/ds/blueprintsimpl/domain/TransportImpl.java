@@ -25,6 +25,8 @@ import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.Ma
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDBObjectProps;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
+import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.tools.SessionRegistryImpl;
+import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
@@ -62,11 +64,19 @@ public class TransportImpl implements Transport, MappingDSBlueprintsCacheEntity 
             session.execute(this, SET_TRANSPORT_NAME, new Object[]{name});
     }
 
-    public void setTransportName(String name) {
-		if (this.transportName==null || !this.transportName.equals(name)) {
-			this.transportName = name;
-			synchronizeToDB();
-		}
+    public void setTransportName(String name) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.setTransportName(session, name);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (this.transportName == null || !this.transportName.equals(name)) {
+                this.transportName = name;
+                synchronizeToDB();
+            }
+        }
 	}
 
     @Override
@@ -83,14 +93,22 @@ public class TransportImpl implements Transport, MappingDSBlueprintsCacheEntity 
     }
 
     @Override
-    public void addTransportProperty(String propertyKey, Object value) {
-        if (transportProperties == null)
-            transportProperties = new HashMap<String, Object>();
-        transportProperties.put(propertyKey,value);
-        synchronizePropertyToDB(propertyKey, value);
-        log.debug("Set transport {} property : ({},{})", new Object[]{this.transportID,
-                                                                             propertyKey,
-                                                                             this.transportProperties.get(propertyKey)});
+    public void addTransportProperty(String propertyKey, Object value) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.addTransportProperty(session, propertyKey, value);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (transportProperties == null)
+                transportProperties = new HashMap<String, Object>();
+            transportProperties.put(propertyKey, value);
+            synchronizePropertyToDB(propertyKey, value);
+            log.debug("Set transport {} property : ({},{})", new Object[]{this.transportID,
+                    propertyKey,
+                    this.transportProperties.get(propertyKey)});
+        }
 
     }
 
@@ -103,10 +121,18 @@ public class TransportImpl implements Transport, MappingDSBlueprintsCacheEntity 
     }
 
     @Override
-    public void removeTransportProperty(String propertyKey) {
-        if (transportProperties!=null) {
-            transportProperties.remove(propertyKey);
-            removePropertyFromDB(propertyKey);
+    public void removeTransportProperty(String propertyKey) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.removeTransportProperty(session, propertyKey);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (transportProperties != null) {
+                transportProperties.remove(propertyKey);
+                removePropertyFromDB(propertyKey);
+            }
         }
     }
 

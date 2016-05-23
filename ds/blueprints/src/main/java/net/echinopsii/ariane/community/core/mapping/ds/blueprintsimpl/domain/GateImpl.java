@@ -24,6 +24,8 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSBlueprintsCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
+import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.tools.SessionRegistryImpl;
+import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
@@ -59,16 +61,24 @@ public class GateImpl extends NodeImpl implements Gate {
     }
 
     @Override
-    public void setNodePrimaryAdminEnpoint(Endpoint endpoint) {
-        if (this.gatePrimaryAdminEndpoint == null || !this.gatePrimaryAdminEndpoint.equals(endpoint)) {
-            if (endpoint instanceof EndpointImpl) {
-                this.gatePrimaryAdminEndpoint = (EndpointImpl) endpoint;
+    public void setNodePrimaryAdminEnpoint(Endpoint endpoint) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.setNodePrimaryAdminEnpoint(session, endpoint);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (this.gatePrimaryAdminEndpoint == null || !this.gatePrimaryAdminEndpoint.equals(endpoint)) {
+                if (endpoint instanceof EndpointImpl) {
+                    this.gatePrimaryAdminEndpoint = (EndpointImpl) endpoint;
+                }
             }
         }
     }
 
     @Override
-    public void setNodeParentNode(Node node) {
+    public void setNodeParentNode(Node node) throws MappingDSException {
         // a container gate can't have a parent node
         // as it's contained by the container
         super.setNodeParentNode(null);

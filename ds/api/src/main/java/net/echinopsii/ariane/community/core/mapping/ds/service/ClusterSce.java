@@ -27,16 +27,16 @@ import java.util.Set;
 
 public interface ClusterSce<CL extends Cluster> {
     public CL   createCluster(Session session, String clusterName) throws MappingDSException;
-	public CL   createCluster(String clusterName);
+	public CL   createCluster(String clusterName) throws MappingDSException;
 
     public void deleteCluster(Session session, String clusterName) throws MappingDSException;
 	public void deleteCluster(String clusterName) throws MappingDSException;
 
     public CL getCluster(Session session, String clusterID) throws MappingDSException;
-    public CL getCluster(String clusterID);
+    public CL getCluster(String clusterID) throws MappingDSException;
     public CL getClusterByName(Session session, String clusterName) throws MappingDSException;
-    public CL getClusterByName(String clusterName);
+    public CL getClusterByName(String clusterName) throws MappingDSException;
 
     public Set<CL> getClusters(Session session, String selector) throws MappingDSException;
-    public Set<CL> getClusters(String selector);
+    public Set<CL> getClusters(String selector) throws MappingDSException;
 }

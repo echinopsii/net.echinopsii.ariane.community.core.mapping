@@ -35,7 +35,7 @@ public interface Cluster {
 	
 	public Set<? extends Container> getClusterContainers();
 	public boolean                  addClusterContainer(Session session, Container container) throws MappingDSException;
-	public boolean                  addClusterContainer(Container container);
+	public boolean                  addClusterContainer(Container container) throws MappingDSException;
 	public boolean                  removeClusterContainer(Session session, Container container) throws MappingDSException;
-    public boolean                  removeClusterContainer(Container container);
+    public boolean                  removeClusterContainer(Container container) throws MappingDSException;
 }

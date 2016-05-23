@@ -25,6 +25,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.End
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.GateImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.NodeImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository.GateRepoImpl;
+import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.service.GateSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
@@ -58,34 +59,40 @@ public class GateSceImpl implements GateSce<GateImpl> {
 	@Override
 	public GateImpl createGate(String url, String name, String containerid, Boolean isPrimaryAdmin) throws MappingDSException {
 		GateImpl ret = null;
-		NodeImpl check = sce.getGlobalRepo().getGateRepo().findNodeByEndpointURL(url);
-		if (check instanceof GateImpl)
-			ret=(GateImpl)check;
-		if (ret==null) {
-			ContainerImpl container = sce.getGlobalRepo().getContainerRepo().findContainerByID(containerid);
-			if (container != null) {
-				EndpointImpl ep = sce.getGlobalRepo().getEndpointRepo().findEndpointByURL(url); 
-				if ( ep == null) {
-					ep = new EndpointImpl();
-					ep.setEndpointURL(url);
-					sce.getGlobalRepo().getEndpointRepo().save(ep);
-				}
-
-				ret = new GateImpl();
-				ret.setNodeName(name);
-				ret.setNodeContainer(container);
-				if (isPrimaryAdmin)
-					ret.setNodePrimaryAdminEnpoint(ep);				
-				sce.getGlobalRepo().getGateRepo().save(ret);
-				ret.addEndpoint(ep);
-				ep.setEndpointParentNode(ret);
-				container.addContainerGate(ret);
-
-			} else {
-                throw new MappingDSException("Gate creation failed : provided container " + containerid + " doesn't exists.");
-			}				
+		String clientThreadName = Thread.currentThread().getName();
+		String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+		if (clientThreadSessionID!=null) {
+			Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+			if (session!=null) ret = createGate(session, url, name, containerid, isPrimaryAdmin);
+			else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
 		} else {
-            log.debug("Gate ({}) creation failed : already exists", name);
+			NodeImpl check = sce.getGlobalRepo().getGateRepo().findNodeByEndpointURL(url);
+			if (check instanceof GateImpl)
+				ret = (GateImpl) check;
+			if (ret == null) {
+				ContainerImpl container = sce.getGlobalRepo().getContainerRepo().findContainerByID(containerid);
+				if (container != null) {
+					EndpointImpl ep = sce.getGlobalRepo().getEndpointRepo().findEndpointByURL(url);
+					if (ep == null) {
+						ep = new EndpointImpl();
+						ep.setEndpointURL(url);
+						sce.getGlobalRepo().getEndpointRepo().save(ep);
+					}
+
+					ret = new GateImpl();
+					ret.setNodeName(name);
+					ret.setNodeContainer(container);
+					if (isPrimaryAdmin)
+						ret.setNodePrimaryAdminEnpoint(ep);
+					sce.getGlobalRepo().getGateRepo().save(ret);
+					ret.addEndpoint(ep);
+					ep.setEndpointParentNode(ret);
+					container.addContainerGate(ret);
+
+				} else {
+					throw new MappingDSException("Gate creation failed : provided container " + containerid + " doesn't exists.");
+				}
+			}
 		}
 		return ret;
 	}
@@ -98,12 +105,20 @@ public class GateSceImpl implements GateSce<GateImpl> {
 
 	@Override
 	public void deleteGate(String nodeID) throws MappingDSException {
-		GateImpl remove = sce.getGlobalRepo().getGateRepo().findGateByID(nodeID);
-		if ( remove != null ) {			
-			sce.getGlobalRepo().getGateRepo().delete(remove);
+		String clientThreadName = Thread.currentThread().getName();
+		String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+		if (clientThreadSessionID!=null) {
+			Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+			if (session!=null) deleteGate(session, nodeID);
+			else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
 		} else {
-            throw new MappingDSException("Unable to remove gate with id " + nodeID + ": gate not found.");
-		}		
+			GateImpl remove = sce.getGlobalRepo().getGateRepo().findGateByID(nodeID);
+			if (remove != null) {
+				sce.getGlobalRepo().getGateRepo().delete(remove);
+			} else {
+				throw new MappingDSException("Unable to remove gate with id " + nodeID + ": gate not found.");
+			}
+		}
 	}
 
 	@Override
@@ -115,8 +130,14 @@ public class GateSceImpl implements GateSce<GateImpl> {
 	}
 
 	@Override
-	public GateImpl getGate(String id) {
-		return sce.getGlobalRepo().getGateRepo().findGateByID(id);
+	public GateImpl getGate(String id) throws MappingDSException {
+		String clientThreadName = Thread.currentThread().getName();
+		String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+		if (clientThreadSessionID!=null) {
+			Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+			if (session!=null) return getGate(session, id);
+			else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+		} else return sce.getGlobalRepo().getGateRepo().findGateByID(id);
 	}
 
 	@Override
@@ -128,8 +149,14 @@ public class GateSceImpl implements GateSce<GateImpl> {
 	}
 
 	@Override
-    public Set<GateImpl> getGates(String selector) {
+    public Set<GateImpl> getGates(String selector) throws MappingDSException {
         // TODO : manage selector - check graphdb query
-        return GateRepoImpl.getGateRepository();
+		String clientThreadName = Thread.currentThread().getName();
+		String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+		if (clientThreadSessionID!=null) {
+			Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+			if (session!=null) return getGates(session, selector);
+			else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+		} else return GateRepoImpl.getGateRepository();
     }
 }

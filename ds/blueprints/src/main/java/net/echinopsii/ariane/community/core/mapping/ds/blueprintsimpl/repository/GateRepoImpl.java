@@ -19,6 +19,7 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSBlueprintsCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.EndpointImpl;
@@ -45,7 +46,7 @@ public class GateRepoImpl extends NodeRepoImpl implements GateRepo<NodeImpl, Gat
     }
 
     @Override
-    public void delete(GateImpl containerGate) {
+    public void delete(GateImpl containerGate) throws MappingDSException {
         if (containerGate.getNodeID() != null) {
             super.deleteNode(containerGate);
         } else {
