@@ -31,17 +31,13 @@ public interface Endpoint {
 	 * MUST be unique
 	 */
 	public String getEndpointURL();
-	public void   setEndpointURL(Session session, String url) throws MappingDSException;
 	public void   setEndpointURL(String url) throws MappingDSException;
 	
 	public Node getEndpointParentNode();
-	public void setEndpointParentNode(Session session, Node node) throws MappingDSException;
 	public void setEndpointParentNode(Node node) throws MappingDSException;
 
 	public Set<? extends Endpoint> getTwinEndpoints();
-	public boolean                 addTwinEndpoint(Session session, Endpoint endpoint) throws MappingDSException;
 	public boolean                 addTwinEndpoint(Endpoint endpoint) throws MappingDSException;
-	public boolean                 removeTwinEndpoint(Session session, Endpoint endpoint) throws MappingDSException;
 	public boolean                 removeTwinEndpoint(Endpoint endpoint) throws MappingDSException;
 	
 	public HashMap<String, Object> getEndpointProperties();

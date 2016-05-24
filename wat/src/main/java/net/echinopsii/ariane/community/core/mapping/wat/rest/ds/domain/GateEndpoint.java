@@ -24,6 +24,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxGate;
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
@@ -137,10 +138,10 @@ public class GateEndpoint {
                 else deserializedGate = MappingBootstrap.getMappingSce().getGateSce().createGate(reqGateURL, reqNodeName, reqContainerID, reqGateIsPrimaryAdmin);
             else {
                 if (reqNodeName != null)
-                    if (mappingSession!=null) deserializedGate.setNodeName(mappingSession, reqNodeName);
+                    if (mappingSession!=null) ((SProxGate)deserializedGate).setNodeName(mappingSession, reqNodeName);
                     else deserializedGate.setNodeName(reqNodeName);
                 if (reqNodeContainer != null)
-                    if (mappingSession!=null) deserializedGate.setNodeContainer(mappingSession, reqNodeContainer);
+                    if (mappingSession!=null) ((SProxGate)deserializedGate).setNodeContainer(mappingSession, reqNodeContainer);
                     else deserializedGate.setNodeContainer(reqNodeContainer);
                 if (reqGateIsPrimaryAdmin && deserializedGate.getNodePrimaryAdminEndpoint()==null && reqGateURL!=null) {
                     Endpoint primaryAdminEp ;
@@ -151,7 +152,7 @@ public class GateEndpoint {
                         if (mappingSession!=null) primaryAdminEp = MappingBootstrap.getMappingSce().getEndpointSce().createEndpoint(mappingSession, reqGateURL, deserializedGate.getNodeID());
                         else primaryAdminEp = MappingBootstrap.getMappingSce().getEndpointSce().createEndpoint(reqGateURL, deserializedGate.getNodeID());
 
-                    if (mappingSession!=null) deserializedGate.setNodePrimaryAdminEnpoint(mappingSession, primaryAdminEp);
+                    if (mappingSession!=null) ((SProxGate)deserializedGate).setNodePrimaryAdminEnpoint(mappingSession, primaryAdminEp);
                     else deserializedGate.setNodePrimaryAdminEnpoint(primaryAdminEp);
                 }
             }
@@ -162,11 +163,11 @@ public class GateEndpoint {
                     if (!reqNodeChildNodes.contains(existingChildNode))
                         childNodesToDelete.add(existingChildNode);
                 for (Node childNodeToDelete : childNodesToDelete)
-                    if (mappingSession!=null) deserializedGate.removeNodeChildNode(mappingSession, childNodeToDelete);
+                    if (mappingSession!=null) ((SProxGate)deserializedGate).removeNodeChildNode(mappingSession, childNodeToDelete);
                     else deserializedGate.removeNodeChildNode(childNodeToDelete);
 
                 for (Node childNodeReq : reqNodeChildNodes)
-                    if (mappingSession!=null) deserializedGate.addNodeChildNode(mappingSession, childNodeReq);
+                    if (mappingSession!=null) ((SProxGate)deserializedGate).addNodeChildNode(mappingSession, childNodeReq);
                     else deserializedGate.addNodeChildNode(childNodeReq);
             }
 
@@ -177,8 +178,8 @@ public class GateEndpoint {
                         twinNodesToDelete.add(existingTwinNode);
                 for (Node twinNodeToDelete : twinNodesToDelete) {
                     if (mappingSession!=null) {
-                        deserializedGate.removeTwinNode(mappingSession, twinNodeToDelete);
-                        twinNodeToDelete.removeTwinNode(mappingSession, deserializedGate);
+                        ((SProxGate)deserializedGate).removeTwinNode(mappingSession, twinNodeToDelete);
+                        ((SProxGate)twinNodeToDelete).removeTwinNode(mappingSession, deserializedGate);
                     } else {
                         deserializedGate.removeTwinNode(twinNodeToDelete);
                         twinNodeToDelete.removeTwinNode(deserializedGate);
@@ -187,8 +188,8 @@ public class GateEndpoint {
 
                 for (Node twinNodeReq : reqNodeTwinNodes) {
                     if (mappingSession!=null) {
-                        deserializedGate.addTwinNode(mappingSession, twinNodeReq);
-                        twinNodeReq.addTwinNode(mappingSession, deserializedGate);
+                        ((SProxGate)deserializedGate).addTwinNode(mappingSession, twinNodeReq);
+                        ((SProxGate)twinNodeReq).addTwinNode(mappingSession, deserializedGate);
                     } else {
                         deserializedGate.addTwinNode(twinNodeReq);
                         twinNodeReq.addTwinNode(deserializedGate);
@@ -202,7 +203,7 @@ public class GateEndpoint {
                     if (!reqNodeEndpoints.contains(existingEndpoint))
                         endpointsToDelete.add(existingEndpoint);
                 for (Endpoint endpointToDelete : endpointsToDelete)
-                    if (mappingSession!=null) deserializedGate.removeEndpoint(mappingSession, endpointToDelete);
+                    if (mappingSession!=null) ((SProxGate)deserializedGate).removeEndpoint(mappingSession, endpointToDelete);
                     else deserializedGate.removeEndpoint(endpointToDelete);
 
                 for (Endpoint endpointReq : reqNodeEndpoints)
@@ -217,12 +218,12 @@ public class GateEndpoint {
                         if (!reqProperties.containsKey(propertyKey))
                             propertiesToDelete.add(propertyKey);
                     for (String propertyToDelete : propertiesToDelete)
-                        if (mappingSession!=null) deserializedGate.removeNodeProperty(mappingSession, propertyToDelete);
+                        if (mappingSession!=null) ((SProxGate)deserializedGate).removeNodeProperty(mappingSession, propertyToDelete);
                         else deserializedGate.removeNodeProperty(propertyToDelete);
                 }
 
                 for (String propertyKey : reqProperties.keySet())
-                    if (mappingSession!=null) deserializedGate.addNodeProperty(mappingSession, propertyKey, reqProperties.get(propertyKey));
+                    if (mappingSession!=null) ((SProxGate)deserializedGate).addNodeProperty(mappingSession, propertyKey, reqProperties.get(propertyKey));
                     else deserializedGate.addNodeProperty(propertyKey, reqProperties.get(propertyKey));
             }
             ret.setDeserializedObject(deserializedGate);

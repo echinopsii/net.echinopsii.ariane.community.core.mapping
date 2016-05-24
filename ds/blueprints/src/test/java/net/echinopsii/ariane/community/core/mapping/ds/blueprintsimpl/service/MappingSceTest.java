@@ -22,10 +22,10 @@ public class MappingSceTest {
 
 	private static MappingSce mappingSce = new MappingSceImpl(); //working for this junit test only - real instantiation should be done
 																//thanks RIM or OSGI
-	private static Container   rvrdLan     = null;
-	private static Gate        gateLan     = null;
-	private static Node        nodeLan     = null;
-	private static Endpoint    endpointLan = null;
+	private static Container rvrdLan     = null;
+	private static Gate gateLan     = null;
+	private static Node nodeLan     = null;
+	private static Endpoint endpointLan = null;
 	
 	private static Container   rvrdMan     = null;
 	private static Gate        gateMan     = null;
@@ -33,7 +33,7 @@ public class MappingSceTest {
 	private static Endpoint    endpointMan = null;
 
     private static Transport   transport   = null;
-	private static Link        link        = null;
+	private static Link link        = null;
 	
 	@BeforeClass
 	public static void testSetup() throws IOException {

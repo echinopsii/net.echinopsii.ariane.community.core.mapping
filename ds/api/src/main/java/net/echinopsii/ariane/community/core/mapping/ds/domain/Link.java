@@ -27,14 +27,11 @@ public interface Link {
 	public String getLinkID();
 
 	public Transport getLinkTransport();
-	public void      setLinkTransport(Session session, Transport transport) throws MappingDSException;
 	public void      setLinkTransport(Transport transport) throws MappingDSException;
 	
 	public Endpoint getLinkEndpointSource();
-	public void     setLinkEndpointSource(Session session, Endpoint source) throws MappingDSException;
 	public void     setLinkEndpointSource(Endpoint source) throws MappingDSException;
 	
 	public Endpoint getLinkEndpointTarget();
-	public void     setLinkEndpointTarget(Session session, Endpoint target) throws MappingDSException;
 	public void     setLinkEndpointTarget(Endpoint target) throws MappingDSException;
 }

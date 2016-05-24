@@ -30,6 +30,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.Ma
 import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxEndpoint;
 import com.tinkerpop.blueprints.*;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
@@ -40,7 +41,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public class EndpointImpl implements Endpoint, MappingDSBlueprintsCacheEntity {
+public class EndpointImpl implements SProxEndpoint, MappingDSBlueprintsCacheEntity {
 
     private static final Logger log = LoggerFactory.getLogger(EndpointImpl.class);
 

@@ -23,6 +23,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxNode;
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
@@ -139,13 +140,13 @@ public class NodeEndpoint {
                 else deserializedNode = MappingBootstrap.getMappingSce().getNodeSce().createNode(reqNodeName, reqContainerID, reqParentNodeID);
             else {
                 if (reqNodeName != null)
-                    if (mappingSession!=null) deserializedNode.setNodeName(mappingSession, reqNodeName);
+                    if (mappingSession!=null) ((SProxNode)deserializedNode).setNodeName(mappingSession, reqNodeName);
                     else deserializedNode.setNodeName(reqNodeName);
                 if (reqNodeContainer != null)
-                    if (mappingSession!=null) deserializedNode.setNodeContainer(mappingSession, reqNodeContainer);
+                    if (mappingSession!=null) ((SProxNode)deserializedNode).setNodeContainer(mappingSession, reqNodeContainer);
                     else deserializedNode.setNodeContainer(reqNodeContainer);
                 if (reqNodeParentNode != null)
-                    if (mappingSession!=null) deserializedNode.setNodeParentNode(mappingSession, reqNodeParentNode);
+                    if (mappingSession!=null) ((SProxNode)deserializedNode).setNodeParentNode(mappingSession, reqNodeParentNode);
                     else deserializedNode.setNodeParentNode(reqNodeParentNode);
             }
 
@@ -155,11 +156,11 @@ public class NodeEndpoint {
                     if (!reqNodeChildNodes.contains(existingChildNode))
                         childNodesToDelete.add(existingChildNode);
                 for (Node childNodeToDelete : childNodesToDelete)
-                    if (mappingSession!=null) deserializedNode.removeNodeChildNode(mappingSession, childNodeToDelete);
+                    if (mappingSession!=null) ((SProxNode)deserializedNode).removeNodeChildNode(mappingSession, childNodeToDelete);
                     else deserializedNode.removeNodeChildNode(childNodeToDelete);
 
                 for (Node childNodeReq : reqNodeChildNodes)
-                    if (mappingSession!=null) deserializedNode.addNodeChildNode(mappingSession, childNodeReq);
+                    if (mappingSession!=null) ((SProxNode)deserializedNode).addNodeChildNode(mappingSession, childNodeReq);
                     else deserializedNode.addNodeChildNode(childNodeReq);
             }
 
@@ -170,8 +171,8 @@ public class NodeEndpoint {
                         twinNodesToDelete.add(existingTwinNode);
                 for (Node twinNodeToDelete : twinNodesToDelete) {
                     if (mappingSession!=null) {
-                        deserializedNode.removeTwinNode(mappingSession, twinNodeToDelete);
-                        twinNodeToDelete.removeTwinNode(mappingSession, deserializedNode);
+                        ((SProxNode)deserializedNode).removeTwinNode(mappingSession, twinNodeToDelete);
+                        ((SProxNode)twinNodeToDelete).removeTwinNode(mappingSession, deserializedNode);
                     } else {
                         deserializedNode.removeTwinNode(twinNodeToDelete);
                         twinNodeToDelete.removeTwinNode(deserializedNode);
@@ -180,8 +181,8 @@ public class NodeEndpoint {
 
                 for (Node twinNodeReq : reqNodeTwinNodes) {
                     if (mappingSession!=null) {
-                        deserializedNode.addTwinNode(mappingSession, twinNodeReq);
-                        twinNodeReq.addTwinNode(mappingSession, deserializedNode);
+                        ((SProxNode)deserializedNode).addTwinNode(mappingSession, twinNodeReq);
+                        ((SProxNode)twinNodeReq).addTwinNode(mappingSession, deserializedNode);
                     } else {
                         deserializedNode.addTwinNode(twinNodeReq);
                         twinNodeReq.addTwinNode(deserializedNode);
@@ -195,7 +196,7 @@ public class NodeEndpoint {
                     if (!reqNodeEndpoints.contains(existingEndpoint))
                         endpointsToDelete.add(existingEndpoint);
                 for (Endpoint endpointToDelete : endpointsToDelete)
-                    if (mappingSession!=null) deserializedNode.removeEndpoint(mappingSession, endpointToDelete);
+                    if (mappingSession!=null) ((SProxNode)deserializedNode).removeEndpoint(mappingSession, endpointToDelete);
                     else deserializedNode.removeEndpoint(endpointToDelete);
 
                 for (Endpoint endpointReq : reqNodeEndpoints)
@@ -210,12 +211,12 @@ public class NodeEndpoint {
                         if (!reqProperties.containsKey(propertyKey))
                             propertiesToDelete.add(propertyKey);
                     for (String propertyToDelete : propertiesToDelete)
-                        if (mappingSession!=null) deserializedNode.removeNodeProperty(mappingSession, propertyToDelete);
+                        if (mappingSession!=null) ((SProxNode)deserializedNode).removeNodeProperty(mappingSession, propertyToDelete);
                         else deserializedNode.removeNodeProperty(propertyToDelete);
                 }
 
                 for (String propertyKey : reqProperties.keySet())
-                    if (mappingSession!=null) deserializedNode.addNodeProperty(mappingSession, propertyKey, reqProperties.get(propertyKey));
+                    if (mappingSession!=null) ((SProxNode)deserializedNode).addNodeProperty(mappingSession, propertyKey, reqProperties.get(propertyKey));
                     else deserializedNode.addNodeProperty(propertyKey, reqProperties.get(propertyKey));
             }
             ret.setDeserializedObject(deserializedNode);
@@ -505,7 +506,7 @@ public class NodeEndpoint {
                 else node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
 
                 if (node != null) {
-                    if (mappingSession != null) node.setNodeName(mappingSession, name);
+                    if (mappingSession != null) ((SProxNode)node).setNodeName(mappingSession, name);
                     else node.setNodeName(name);
                     return Response.status(Status.OK).entity("Node (" + id + ") name successfully updated to " + name + ".").build();
                 } else return Response.status(Status.NOT_FOUND).entity("Error while updating node (" + id + ") name " + name + " : node " + id + " not found.").build();
@@ -538,7 +539,7 @@ public class NodeEndpoint {
                     if (mappingSession != null) container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, containerID);
                     else container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(containerID);
                     if (container != null) {
-                        if (mappingSession != null) node.setNodeContainer(mappingSession, container);
+                        if (mappingSession != null) ((SProxNode)node).setNodeContainer(mappingSession, container);
                         else node.setNodeContainer(container);
                         return Response.status(Status.OK).entity("Node (" + id + ") container successfully updated to " + containerID + ".").build();
                     } else return Response.status(Status.NOT_FOUND).entity("Error while updating node (" + id + ") container " + containerID + " : container " + containerID + " not found.").build();
@@ -573,7 +574,7 @@ public class NodeEndpoint {
                     else parentNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
 
                     if (parentNode != null) {
-                        if (mappingSession != null) node.setNodeParentNode(mappingSession, parentNode);
+                        if (mappingSession != null) ((SProxNode)node).setNodeParentNode(mappingSession, parentNode);
                         else node.setNodeParentNode(parentNode);
                         return Response.status(Status.OK).entity("Node (" + parentNodeID + ") parent node successfully updated to " + parentNodeID + ".").build();
                     } else return Response.status(Status.NOT_FOUND).entity("Error while updating node (" + id + ") parent node " + parentNodeID + " : parent node " + parentNodeID + " not found.").build();
@@ -608,7 +609,7 @@ public class NodeEndpoint {
                     else childNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(childNodeID);
 
                     if (childNode != null) {
-                        if (mappingSession != null) node.addNodeChildNode(mappingSession, childNode);
+                        if (mappingSession != null) ((SProxNode)node).addNodeChildNode(mappingSession, childNode);
                         else node.addNodeChildNode(childNode);
                         return Response.status(Status.OK).entity("Child node (" + childNodeID + ") successfully added to node " + id + ".").build();
                     } else return Response.status(Status.NOT_FOUND).entity("Error while adding child node " + childNodeID + " to node " + id + " : child node " + childNodeID + " not found.").build();
@@ -643,7 +644,7 @@ public class NodeEndpoint {
                     else childNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(childNodeID);
 
                     if (childNode != null) {
-                        if (mappingSession != null) node.removeNodeChildNode(mappingSession, childNode);
+                        if (mappingSession != null) ((SProxNode)node).removeNodeChildNode(mappingSession, childNode);
                         else node.removeNodeChildNode(childNode);
                         return Response.status(Status.OK).entity("Child node (" + childNodeID + ") successfully deleted from node " + id + ".").build();
                     } else return Response.status(Status.NOT_FOUND).entity("Error while deleting child node " + childNodeID + " from node " + id + " : child node " + childNodeID + " not found.").build();
@@ -679,8 +680,8 @@ public class NodeEndpoint {
 
                     if (twinNode != null) {
                         if (mappingSession != null) {
-                            node.addTwinNode(mappingSession, twinNode);
-                            twinNode.addTwinNode(mappingSession, node);
+                            ((SProxNode)node).addTwinNode(mappingSession, twinNode);
+                            ((SProxNode)twinNode).addTwinNode(mappingSession, node);
                         } else {
                             node.addTwinNode(twinNode);
                             twinNode.addTwinNode(node);
@@ -719,8 +720,8 @@ public class NodeEndpoint {
 
                     if (twinNode != null) {
                         if (mappingSession != null) {
-                            node.removeTwinNode(mappingSession, twinNode);
-                            twinNode.removeTwinNode(mappingSession, node);
+                            ((SProxNode)node).removeTwinNode(mappingSession, twinNode);
+                            ((SProxNode)twinNode).removeTwinNode(mappingSession, node);
                         } else {
                             node.removeTwinNode(twinNode);
                             twinNode.removeTwinNode(node);
@@ -791,7 +792,7 @@ public class NodeEndpoint {
                     if (mappingSession!=null) endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, endpointID);
                     else endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(endpointID);
                     if (endpoint != null) {
-                        if (mappingSession!=null) node.removeEndpoint(mappingSession, endpoint);
+                        if (mappingSession!=null) ((SProxNode)node).removeEndpoint(mappingSession, endpoint);
                         else node.removeEndpoint(endpoint);
                         return Response.status(Status.OK).entity("Endpoint (" + endpointID + ") successfully deleted from node " + id + ".").build();
                     } else return Response.status(Status.NOT_FOUND).entity("Error while deleting endpoint " + endpointID + " from node " + id + " : node " + id + " not found.").build();
@@ -832,7 +833,7 @@ public class NodeEndpoint {
                             String result = e.getMessage();
                             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
                         }
-                        if (mappingSession!=null) node.addNodeProperty(mappingSession, name, oValue);
+                        if (mappingSession!=null) ((SProxNode)node).addNodeProperty(mappingSession, name, oValue);
                         else node.addNodeProperty(name, oValue);
                         return Response.status(Status.OK).entity("Property (" + name + "," + value + ") successfully added to node " + id + ".").build();
                     } else return Response.status(Status.NOT_FOUND).entity("Error while adding property " + name + " to node " + id + " : node " + id + " not found.").build();
@@ -865,7 +866,7 @@ public class NodeEndpoint {
                 else node = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
 
                 if (node != null) {
-                    if (mappingSession!=null) node.removeNodeProperty(mappingSession, name);
+                    if (mappingSession!=null) ((SProxNode)node).removeNodeProperty(mappingSession, name);
                     else node.removeNodeProperty(name);
                     return Response.status(Status.OK).entity("Property (" + name + ") successfully deleted from node " + id + ".").build();
                 } else return Response.status(Status.NOT_FOUND).entity("Error while adding property " + name + " from node " + id + " : node " + id + " not found.").build();

@@ -15,17 +15,18 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+ */ 
 
-package net.echinopsii.ariane.community.core.mapping.ds.domain;
+package net.echinopsii.ariane.community.core.mapping.ds.domain.proxy;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
-public interface Gate extends Node {
-	public boolean isAdminPrimary();
-	
-	public Endpoint getNodePrimaryAdminEndpoint();
+import java.util.HashMap;
 
-	public void     setNodePrimaryAdminEnpoint(Endpoint endpoint) throws MappingDSException;
+public interface SProxTransport extends Transport {
+	public void setTransportName(Session session, String name) throws MappingDSException;
+	public void addTransportProperty(Session session, String propertyKey, Object value) throws MappingDSException;
+	public void removeTransportProperty(Session session, String propertyKey) throws MappingDSException;
 }

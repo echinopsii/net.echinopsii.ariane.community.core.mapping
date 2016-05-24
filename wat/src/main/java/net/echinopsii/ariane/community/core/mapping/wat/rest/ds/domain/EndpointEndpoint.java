@@ -22,6 +22,8 @@ package net.echinopsii.ariane.community.core.mapping.wat.rest.ds.domain;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxEndpoint;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxNode;
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
@@ -108,10 +110,10 @@ public class EndpointEndpoint {
                 else deserializedEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().createEndpoint(reqEndpointURL, reqEndpointParentNodeID);
             else {
                 if (reqEndpointURL!=null)
-                    if (mappingSession!=null) deserializedEndpoint.setEndpointURL(mappingSession, reqEndpointURL);
+                    if (mappingSession!=null) ((SProxEndpoint)deserializedEndpoint).setEndpointURL(mappingSession, reqEndpointURL);
                     else deserializedEndpoint.setEndpointURL(reqEndpointURL);
                 if (reqEndpointParentNode!=null)
-                    if (mappingSession!=null) deserializedEndpoint.setEndpointParentNode(mappingSession, reqEndpointParentNode);
+                    if (mappingSession!=null) ((SProxEndpoint)deserializedEndpoint).setEndpointParentNode(mappingSession, reqEndpointParentNode);
                     else deserializedEndpoint.setEndpointParentNode(reqEndpointParentNode);
             }
 
@@ -122,8 +124,8 @@ public class EndpointEndpoint {
                         twinEndpointsToDelete.add(existingTwinEndpoint);
                 for (Endpoint twinEndpointToDelete : twinEndpointsToDelete) {
                     if (mappingSession!=null) {
-                        deserializedEndpoint.removeTwinEndpoint(mappingSession, twinEndpointToDelete);
-                        twinEndpointToDelete.removeTwinEndpoint(mappingSession, deserializedEndpoint);
+                        ((SProxEndpoint)deserializedEndpoint).removeTwinEndpoint(mappingSession, twinEndpointToDelete);
+                        ((SProxEndpoint)twinEndpointToDelete).removeTwinEndpoint(mappingSession, deserializedEndpoint);
                     } else {
                         deserializedEndpoint.removeTwinEndpoint(twinEndpointToDelete);
                         twinEndpointToDelete.removeTwinEndpoint(deserializedEndpoint);
@@ -132,8 +134,8 @@ public class EndpointEndpoint {
 
                 for (Endpoint twinEndpointToAdd : reqEndpointTwinEndpoints) {
                     if (mappingSession!=null) {
-                        deserializedEndpoint.addTwinEndpoint(mappingSession, twinEndpointToAdd);
-                        twinEndpointToAdd.addTwinEndpoint(mappingSession, deserializedEndpoint);
+                        ((SProxEndpoint)deserializedEndpoint).addTwinEndpoint(mappingSession, twinEndpointToAdd);
+                        ((SProxEndpoint)twinEndpointToAdd).addTwinEndpoint(mappingSession, deserializedEndpoint);
                     } else {
                         deserializedEndpoint.addTwinEndpoint(twinEndpointToAdd);
                         twinEndpointToAdd.addTwinEndpoint(deserializedEndpoint);
@@ -434,7 +436,7 @@ public class EndpointEndpoint {
                 if (mappingSession!=null) endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, id);
                 else endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
                 if (endpoint != null) {
-                    if (mappingSession!=null) endpoint.setEndpointURL(mappingSession, url);
+                    if (mappingSession!=null) ((SProxEndpoint)endpoint).setEndpointURL(mappingSession, url);
                     else endpoint.setEndpointURL(url);
                     return Response.status(Status.OK).entity("Endpoint (" + id + ") URL successfully updated to " + url + ".").build();
                 } else return Response.status(Status.NOT_FOUND).entity("Error while updating endpoint (" + id + ") URL " + url + " : endpoint " + id + " not found.").build();
@@ -465,7 +467,7 @@ public class EndpointEndpoint {
                     if (mappingSession!=null) node = MappingBootstrap.getMappingSce().getNodeSce().getNode(mappingSession, parentNodeID);
                     else node = MappingBootstrap.getMappingSce().getNodeSce().getNode(parentNodeID);
                     if (node != null) {
-                        if (mappingSession!=null) node.setNodeParentNode(mappingSession, node);
+                        if (mappingSession!=null) ((SProxNode)node).setNodeParentNode(mappingSession, node);
                         else node.setNodeParentNode(node);
                         return Response.status(Status.OK).entity("Endpoint (" + id + ") parent node successfully updated to " + parentNodeID + ".").build();
                     } else return Response.status(Status.NOT_FOUND).entity("Error while updating endpoint (" + id + ") parent node " + parentNodeID + " : node " + parentNodeID + " not found.").build();
@@ -498,8 +500,8 @@ public class EndpointEndpoint {
                     else twinEP = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(twinEndpointID);
                     if (twinEP != null) {
                         if (mappingSession!=null) {
-                            endpoint.addTwinEndpoint(mappingSession, twinEP);
-                            twinEP.addTwinEndpoint(mappingSession, endpoint);
+                            ((SProxEndpoint)endpoint).addTwinEndpoint(mappingSession, twinEP);
+                            ((SProxEndpoint)twinEP).addTwinEndpoint(mappingSession, endpoint);
                         } else {
                             endpoint.addTwinEndpoint(twinEP);
                             twinEP.addTwinEndpoint(endpoint);
@@ -536,8 +538,8 @@ public class EndpointEndpoint {
                     else twinEP = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(twinEndpointID);
                     if (twinEP != null) {
                         if (mappingSession!=null) {
-                            endpoint.removeTwinEndpoint(mappingSession, twinEP);
-                            twinEP.removeTwinEndpoint(mappingSession, endpoint);
+                            ((SProxEndpoint)endpoint).removeTwinEndpoint(mappingSession, twinEP);
+                            ((SProxEndpoint)twinEP).removeTwinEndpoint(mappingSession, endpoint);
                         } else {
                             endpoint.removeTwinEndpoint(twinEP);
                             twinEP.removeTwinEndpoint(endpoint);

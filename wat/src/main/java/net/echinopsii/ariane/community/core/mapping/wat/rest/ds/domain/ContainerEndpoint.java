@@ -24,6 +24,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Cluster;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxContainer;
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
@@ -160,38 +161,38 @@ public class ContainerEndpoint {
                 String reqContainerGName = jsonDeserializedContainer.getContainerGateName();
                 if (reqContainerName == null)
                     if (reqContainerParent != null)
-                        if (mappingSession!=null) deserializedContainer = (Container) MappingBootstrap.getMappingSce().getContainerSce().createContainer(mappingSession, reqContainerGURI, reqContainerGName, reqContainerParent);
-                        else deserializedContainer = (Container) MappingBootstrap.getMappingSce().getContainerSce().createContainer(reqContainerGURI, reqContainerGName, reqContainerParent);
+                        if (mappingSession!=null) deserializedContainer = MappingBootstrap.getMappingSce().getContainerSce().createContainer(mappingSession, reqContainerGURI, reqContainerGName, reqContainerParent);
+                        else deserializedContainer = MappingBootstrap.getMappingSce().getContainerSce().createContainer(reqContainerGURI, reqContainerGName, reqContainerParent);
                     else
-                        if (mappingSession!=null) deserializedContainer = (Container) MappingBootstrap.getMappingSce().getContainerSce().createContainer(mappingSession, reqContainerGURI, reqContainerGName);
-                        else deserializedContainer = (Container) MappingBootstrap.getMappingSce().getContainerSce().createContainer(reqContainerGURI, reqContainerGName);
+                        if (mappingSession!=null) deserializedContainer = MappingBootstrap.getMappingSce().getContainerSce().createContainer(mappingSession, reqContainerGURI, reqContainerGName);
+                        else deserializedContainer = MappingBootstrap.getMappingSce().getContainerSce().createContainer(reqContainerGURI, reqContainerGName);
                 else
                     if (reqContainerParent != null)
-                        if (mappingSession!=null) deserializedContainer = (Container) MappingBootstrap.getMappingSce().getContainerSce().createContainer(mappingSession, reqContainerName, reqContainerGURI, reqContainerGName, reqContainerParent);
-                        else deserializedContainer = (Container) MappingBootstrap.getMappingSce().getContainerSce().createContainer(reqContainerName, reqContainerGURI, reqContainerGName, reqContainerParent);
+                        if (mappingSession!=null) deserializedContainer = MappingBootstrap.getMappingSce().getContainerSce().createContainer(mappingSession, reqContainerName, reqContainerGURI, reqContainerGName, reqContainerParent);
+                        else deserializedContainer = MappingBootstrap.getMappingSce().getContainerSce().createContainer(reqContainerName, reqContainerGURI, reqContainerGName, reqContainerParent);
                     else
-                        if (mappingSession!=null) deserializedContainer = (Container) MappingBootstrap.getMappingSce().getContainerSce().createContainer(mappingSession, reqContainerName, reqContainerGURI, reqContainerGName);
-                        else deserializedContainer = (Container) MappingBootstrap.getMappingSce().getContainerSce().createContainer(reqContainerName, reqContainerGURI, reqContainerGName);
+                        if (mappingSession!=null) deserializedContainer = MappingBootstrap.getMappingSce().getContainerSce().createContainer(mappingSession, reqContainerName, reqContainerGURI, reqContainerGName);
+                        else deserializedContainer = MappingBootstrap.getMappingSce().getContainerSce().createContainer(reqContainerName, reqContainerGURI, reqContainerGName);
             } else {
                 if (reqContainerName != null)
-                    if (mappingSession!=null) deserializedContainer.setContainerName(mappingSession, reqContainerName);
+                    if (mappingSession!=null) ((SProxContainer)deserializedContainer).setContainerName(mappingSession, reqContainerName);
                     else deserializedContainer.setContainerName(reqContainerName);
                 if (reqPrimaryAdminGate != null)
-                    if (mappingSession!=null) deserializedContainer.setContainerPrimaryAdminGate(mappingSession, reqPrimaryAdminGate);
+                    if (mappingSession!=null) ((SProxContainer)deserializedContainer).setContainerPrimaryAdminGate(mappingSession, reqPrimaryAdminGate);
                     else deserializedContainer.setContainerPrimaryAdminGate(reqPrimaryAdminGate);
             }
 
             if (reqContainerCluster != null)
-                if (mappingSession!=null) deserializedContainer.setContainerCluster(mappingSession, reqContainerCluster);
+                if (mappingSession!=null) ((SProxContainer)deserializedContainer).setContainerCluster(mappingSession, reqContainerCluster);
                 else deserializedContainer.setContainerCluster(reqContainerCluster);
             if (reqContainerCompany != null)
-                if (mappingSession!=null) deserializedContainer.setContainerCompany(mappingSession, reqContainerCompany);
+                if (mappingSession!=null) ((SProxContainer)deserializedContainer).setContainerCompany(mappingSession, reqContainerCompany);
                 else deserializedContainer.setContainerCompany(reqContainerCompany);
             if (reqContainerProduct != null)
-                if (mappingSession!=null) deserializedContainer.setContainerProduct(mappingSession, reqContainerProduct);
+                if (mappingSession!=null) ((SProxContainer)deserializedContainer).setContainerProduct(mappingSession, reqContainerProduct);
                 else deserializedContainer.setContainerProduct(reqContainerProduct);
             if (reqContainerType != null)
-                if (mappingSession!=null) deserializedContainer.setContainerType(mappingSession, reqContainerType);
+                if (mappingSession!=null) ((SProxContainer)deserializedContainer).setContainerType(mappingSession, reqContainerType);
                 else deserializedContainer.setContainerType(reqContainerType);
 
             if (jsonDeserializedContainer.getContainerChildContainersID() != null) {
@@ -200,10 +201,10 @@ public class ContainerEndpoint {
                     if (!reqContainerChildContainers.contains(containerToDel))
                         childContainersToDelete.add(containerToDel);
                 for (Container containerToDel : childContainersToDelete)
-                    if (mappingSession!=null) deserializedContainer.removeContainerChildContainer(mappingSession, containerToDel);
+                    if (mappingSession!=null) ((SProxContainer)deserializedContainer).removeContainerChildContainer(mappingSession, containerToDel);
                     else deserializedContainer.removeContainerChildContainer(containerToDel);
                 for (Container containerToAdd : reqContainerChildContainers)
-                    if (mappingSession!=null) deserializedContainer.addContainerChildContainer(mappingSession, containerToAdd);
+                    if (mappingSession!=null) ((SProxContainer)deserializedContainer).addContainerChildContainer(mappingSession, containerToAdd);
                     else deserializedContainer.addContainerChildContainer(containerToAdd);
             }
 
@@ -213,10 +214,10 @@ public class ContainerEndpoint {
                     if (!reqContainerChildNodes.contains(nodeToDel))
                         nodesToDelete.add(nodeToDel);
                 for (Node nodeToDel : nodesToDelete)
-                    if (mappingSession!=null) deserializedContainer.removeContainerNode(mappingSession, nodeToDel);
+                    if (mappingSession!=null) ((SProxContainer)deserializedContainer).removeContainerNode(mappingSession, nodeToDel);
                     else deserializedContainer.removeContainerNode(nodeToDel);
                 for (Node nodeToAdd : reqContainerChildNodes)
-                    if (mappingSession!=null) deserializedContainer.addContainerNode(mappingSession, nodeToAdd);
+                    if (mappingSession!=null) ((SProxContainer)deserializedContainer).addContainerNode(mappingSession, nodeToAdd);
                     else deserializedContainer.addContainerNode(nodeToAdd);
             }
 
@@ -226,10 +227,10 @@ public class ContainerEndpoint {
                     if (!reqContainerChildGates.contains(gateToDel))
                         gatesToDelete.add(gateToDel);
                 for (Gate gateToDel : gatesToDelete)
-                    if (mappingSession!=null) deserializedContainer.removeContainerGate(mappingSession, gateToDel);
+                    if (mappingSession!=null) ((SProxContainer)deserializedContainer).removeContainerGate(mappingSession, gateToDel);
                     else deserializedContainer.removeContainerGate(gateToDel);
                 for (Gate gateToAdd : reqContainerChildGates)
-                    if (mappingSession!=null) deserializedContainer.addContainerGate(mappingSession, gateToAdd);
+                    if (mappingSession!=null) ((SProxContainer)deserializedContainer).addContainerGate(mappingSession, gateToAdd);
                     else deserializedContainer.addContainerGate(gateToAdd);
             }
 
@@ -240,12 +241,12 @@ public class ContainerEndpoint {
                         if (!reqProperties.containsKey(propertyKey))
                             propertiesToDelete.add(propertyKey);
                     for (String propertyToDelete : propertiesToDelete)
-                        if (mappingSession!=null) deserializedContainer.removeContainerProperty(mappingSession, propertyToDelete);
+                        if (mappingSession!=null) ((SProxContainer)deserializedContainer).removeContainerProperty(mappingSession, propertyToDelete);
                         else deserializedContainer.removeContainerProperty(propertyToDelete);
                 }
 
                 for (String propertyKey : reqProperties.keySet())
-                    if (mappingSession!=null) deserializedContainer.addContainerProperty(mappingSession, propertyKey, reqProperties.get(propertyKey));
+                    if (mappingSession!=null) ((SProxContainer)deserializedContainer).addContainerProperty(mappingSession, propertyKey, reqProperties.get(propertyKey));
                     else deserializedContainer.addContainerProperty(propertyKey, reqProperties.get(propertyKey));
             }
 
@@ -513,7 +514,7 @@ public class ContainerEndpoint {
                 else container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
 
                 if (container != null) {
-                    if (mappingSession != null) container.setContainerName(mappingSession, name);
+                    if (mappingSession != null) ((SProxContainer)container).setContainerName(mappingSession, name);
                     else container.setContainerName(name);
                     return Response.status(Status.OK).entity("Container (" + id + ") company successfully updated to " + name + ".").build();
                 } else return Response.status(Status.NOT_FOUND).entity("Error while updating container (" + id + ") company " + name + " : container " + id + " not found.").build();
@@ -542,7 +543,7 @@ public class ContainerEndpoint {
                 else container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
 
                 if (container != null) {
-                    if (mappingSession != null) container.setContainerCompany(mappingSession, company);
+                    if (mappingSession != null) ((SProxContainer)container).setContainerCompany(mappingSession, company);
                     else container.setContainerCompany(company);
                     return Response.status(Status.OK).entity("Container (" + id + ") company successfully updated to " + company + ".").build();
                 } else return Response.status(Status.NOT_FOUND).entity("Error while updating container (" + id + ") company " + company + " : container " + id + " not found.").build();
@@ -571,7 +572,7 @@ public class ContainerEndpoint {
                 else container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
 
                 if (container != null) {
-                    if (mappingSession != null) container.setContainerProduct(mappingSession, product);
+                    if (mappingSession != null) ((SProxContainer)container).setContainerProduct(mappingSession, product);
                     else container.setContainerProduct(product);
                     return Response.status(Status.OK).entity("Container (" + id + ") product successfully updated to " + product + ".").build();
                 } else return Response.status(Status.NOT_FOUND).entity("Error while updating container (" + id + ") product " + product + " : container " + id + " not found.").build();
@@ -600,7 +601,7 @@ public class ContainerEndpoint {
                 else container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
 
                 if (container != null) {
-                    if (mappingSession != null) container.setContainerType(mappingSession, type);
+                    if (mappingSession != null) ((SProxContainer)container).setContainerType(mappingSession, type);
                     else container.setContainerType(type);
                     return Response.status(Status.OK).entity("Container (" + id + ") type successfully updated to " + type + ".").build();
                 } else return Response.status(Status.NOT_FOUND).entity("Error while updating container (" + id + ") type " + type + " : container " + id + " not found.").build();
@@ -634,7 +635,7 @@ public class ContainerEndpoint {
                     else gate = MappingBootstrap.getMappingSce().getGateSce().getGate(paGateID);
 
                     if (gate != null) {
-                        if (mappingSession != null) container.setContainerPrimaryAdminGate(mappingSession, gate);
+                        if (mappingSession != null) ((SProxContainer)container).setContainerPrimaryAdminGate(mappingSession, gate);
                         else container.setContainerPrimaryAdminGate(gate);
                         return Response.status(Status.OK).entity("Container (" + id + ") primary admin gate successfully updated to " + gate.getNodeName() + ".").build();
                     } else return Response.status(Status.NOT_FOUND).entity("Error while updating container (" + id + ") primary admin gate : gate " + paGateID + " not found.").build();
@@ -669,7 +670,7 @@ public class ContainerEndpoint {
                     else cluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(clusterID);
 
                     if (cluster != null) {
-                        if (mappingSession != null) container.setContainerCluster(mappingSession, cluster);
+                        if (mappingSession != null) ((SProxContainer)container).setContainerCluster(mappingSession, cluster);
                         else container.setContainerCluster(cluster);
                         return Response.status(Status.OK).entity("Container (" + id + ") cluster successfully updated to " + clusterID + ".").build();
                     } else return Response.status(Status.NOT_FOUND).entity("Error while updating container " + id + " cluster : cluster " + clusterID + " not found.").build();
@@ -703,7 +704,7 @@ public class ContainerEndpoint {
                     if (mappingSession != null)  parentContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, parentContainerID);
                     else parentContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(parentContainerID);
                     if (parentContainer != null) {
-                        if (mappingSession != null) parentContainer.setContainerParentContainer(mappingSession, parentContainer);
+                        if (mappingSession != null) ((SProxContainer)parentContainer).setContainerParentContainer(mappingSession, parentContainer);
                         else parentContainer.setContainerParentContainer(parentContainer);
                         return Response.status(Status.OK).entity("Container (" + id + ") parent container successfully updated to " + parentContainerID + ".").build();
                     } else return Response.status(Status.NOT_FOUND).entity("Error while updating container (" + id + ") parent container " + parentContainerID + ": parent container " + parentContainerID + " not found.").build();
@@ -738,7 +739,7 @@ public class ContainerEndpoint {
                     else childContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(childContainerID);
 
                     if (childContainer != null) {
-                        if (mappingSession != null) container.addContainerChildContainer(mappingSession, childContainer);
+                        if (mappingSession != null) ((SProxContainer)container).addContainerChildContainer(mappingSession, childContainer);
                         else container.addContainerChildContainer(childContainer);
                         return Response.status(Status.OK).entity("Child container " + childContainerID + " successfully added to container " + id + ".").build();
                     } else return Response.status(Status.NOT_FOUND).entity("Error while adding child container into container " + id + " : child container " + childContainerID + " not found.").build();
@@ -772,7 +773,7 @@ public class ContainerEndpoint {
                     if (mappingSession != null) childContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, childContainerID);
                     else childContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(childContainerID);
                     if (childContainer != null) {
-                        if (mappingSession!=null) container.removeContainerChildContainer(mappingSession, childContainer);
+                        if (mappingSession!=null) ((SProxContainer)container).removeContainerChildContainer(mappingSession, childContainer);
                         else container.removeContainerChildContainer(childContainer);
                         return Response.status(Status.OK).entity("Child container " + childContainerID + " successfully deleted from container " + id + ".").build();
                     } else return Response.status(Status.NOT_FOUND).entity("Error while deleting child container from container " + id + " : child container " + childContainerID + " not found.").build();
@@ -807,7 +808,7 @@ public class ContainerEndpoint {
                     else node = MappingBootstrap.getMappingSce().getNodeSce().getNode(nodeID);
 
                     if (node != null) {
-                        if (mappingSession != null) container.addContainerNode(mappingSession, node);
+                        if (mappingSession != null) ((SProxContainer)container).addContainerNode(mappingSession, node);
                         else container.addContainerNode(node);
                         return Response.status(Status.OK).entity("Node " + nodeID + " successfully added to container " + id + ".").build();
                     } else return Response.status(Status.NOT_FOUND).entity("Error while adding node into container " + id + " : node " + nodeID + " not found.").build();
@@ -842,7 +843,7 @@ public class ContainerEndpoint {
                     else node = MappingBootstrap.getMappingSce().getNodeSce().getNode(nodeID);
 
                     if (node != null) {
-                        if (mappingSession != null) container.removeContainerNode(mappingSession, node);
+                        if (mappingSession != null) ((SProxContainer)container).removeContainerNode(mappingSession, node);
                         else container.removeContainerNode(node);
                         return Response.status(Status.OK).entity("Node " + nodeID + " successfully deleted from container " + id + ".").build();
                     } else return Response.status(Status.NOT_FOUND).entity("Error while deleting node from container " + id + " : node " + nodeID + " not found.").build();
@@ -877,7 +878,7 @@ public class ContainerEndpoint {
                     else gate = MappingBootstrap.getMappingSce().getGateSce().getGate(gateID);
 
                     if (gate != null) {
-                        if (mappingSession != null) container.addContainerGate(mappingSession, gate);
+                        if (mappingSession != null) ((SProxContainer)container).addContainerGate(mappingSession, gate);
                         else container.addContainerGate(gate);
                         return Response.status(Status.OK).entity("Gate " + gateID + " successfully added to container " + id + ".").build();
                     } else return Response.status(Status.NOT_FOUND).entity("Error while adding gate into container " + id + " : gate " + gateID + " not found.").build();
@@ -912,7 +913,7 @@ public class ContainerEndpoint {
                     else gate = MappingBootstrap.getMappingSce().getGateSce().getGate(gateID);
 
                     if (gate != null) {
-                        if (mappingSession != null) container.removeContainerGate(mappingSession, gate);
+                        if (mappingSession != null) ((SProxContainer)container).removeContainerGate(mappingSession, gate);
                         else container.removeContainerGate(gate);
                         return Response.status(Status.OK).entity("Gate " + gateID + " successfully deleted from container " + id + ".").build();
                     } else return Response.status(Status.NOT_FOUND).entity("Error while deleting gate from container " + id + " : gate " + gateID + " not found.").build();
@@ -953,7 +954,7 @@ public class ContainerEndpoint {
                             String result = e.getMessage();
                             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
                         }
-                        if (mappingSession != null) container.addContainerProperty(mappingSession, name, oValue);
+                        if (mappingSession != null) ((SProxContainer)container).addContainerProperty(mappingSession, name, oValue);
                         else container.addContainerProperty(name, oValue);
                         return Response.status(Status.OK).entity("Property (" + name + "," + value + ") successfully added to container " + id + ".").build();
                     } else return Response.status(Status.NOT_FOUND).entity("Error while adding property (" + name + "," + value + ") into container : container " + id + " not found.").build();
@@ -985,7 +986,7 @@ public class ContainerEndpoint {
                 else container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
 
                 if (container != null) {
-                    if (mappingSession != null) container.removeContainerProperty(mappingSession, name);
+                    if (mappingSession != null) ((SProxContainer)container).removeContainerProperty(mappingSession, name);
                     else container.removeContainerProperty(name);
                     return Response.status(Status.OK).entity("Property (" + name + ") successfully deleted from container " + id + ".").build();
                 } else return Response.status(Status.NOT_FOUND).entity("Error while deleting property (" + name + ") from container : container " + id + " not found.").build();

@@ -1,7 +1,7 @@
 /**
  * Mapping Datastore Interface :
  * provide a Mapping DS domain, repository and service interfaces
- * Copyright (C) 2013  Mathilde Ffrench
+ * Copyright (C) 2016 echinopsii
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -15,17 +15,22 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-package net.echinopsii.ariane.community.core.mapping.ds.domain;
+ */ 
+package net.echinopsii.ariane.community.core.mapping.ds.domain.proxy;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
-public interface Gate extends Node {
-	public boolean isAdminPrimary();
-	
-	public Endpoint getNodePrimaryAdminEndpoint();
+import java.util.HashMap;
+import java.util.Set;
 
-	public void     setNodePrimaryAdminEnpoint(Endpoint endpoint) throws MappingDSException;
+public interface SProxEndpoint extends Endpoint {
+	public void setEndpointURL(Session session, String url) throws MappingDSException;
+	public void setEndpointParentNode(Session session, Node node) throws MappingDSException;
+	public boolean addTwinEndpoint(Session session, Endpoint endpoint) throws MappingDSException;
+	public boolean removeTwinEndpoint(Session session, Endpoint endpoint) throws MappingDSException;
+	public void addEndpointProperty(Session session, String propertyKey, Object value) throws MappingDSException;
+	public void removeEndpointProperty(Session session, String propertyKey) throws MappingDSException;
 }

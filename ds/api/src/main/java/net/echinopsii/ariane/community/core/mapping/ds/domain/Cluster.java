@@ -34,8 +34,6 @@ public interface Cluster {
 	public void    setClusterName(String name);
 	
 	public Set<? extends Container> getClusterContainers();
-	public boolean                  addClusterContainer(Session session, Container container) throws MappingDSException;
 	public boolean                  addClusterContainer(Container container) throws MappingDSException;
-	public boolean                  removeClusterContainer(Session session, Container container) throws MappingDSException;
     public boolean                  removeClusterContainer(Container container) throws MappingDSException;
 }

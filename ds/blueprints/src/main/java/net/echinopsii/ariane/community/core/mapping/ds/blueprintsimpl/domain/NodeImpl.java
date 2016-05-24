@@ -31,6 +31,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRe
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxNode;
 import com.tinkerpop.blueprints.*;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
@@ -41,7 +42,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public class NodeImpl implements Node, MappingDSBlueprintsCacheEntity {
+public class NodeImpl implements SProxNode, MappingDSBlueprintsCacheEntity {
 
     private static final Logger log = LoggerFactory.getLogger(NodeImpl.class);
 

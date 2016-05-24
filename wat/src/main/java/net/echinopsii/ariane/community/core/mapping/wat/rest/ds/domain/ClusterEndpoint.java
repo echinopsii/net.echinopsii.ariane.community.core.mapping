@@ -22,6 +22,7 @@ package net.echinopsii.ariane.community.core.mapping.wat.rest.ds.domain;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Cluster;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxCluster;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ClusterJSON;
@@ -91,10 +92,10 @@ public class ClusterEndpoint {
                     if (!reqContainers.contains(containerToDel))
                         containersToDelete.add(containerToDel);
                 for (Container containerToDel : containersToDelete)
-                    if (mappingSession!=null) deserializedCluster.removeClusterContainer(mappingSession, containerToDel);
+                    if (mappingSession!=null) ((SProxCluster)deserializedCluster).removeClusterContainer(mappingSession, containerToDel);
                     else deserializedCluster.removeClusterContainer(containerToDel);
                 for (Container containerToAdd : reqContainers)
-                    if (mappingSession!=null) deserializedCluster.addClusterContainer(mappingSession, containerToAdd);
+                    if (mappingSession!=null) ((SProxCluster)deserializedCluster).addClusterContainer(mappingSession, containerToAdd);
                     else deserializedCluster.addClusterContainer(containerToAdd);
             }
 
@@ -354,7 +355,7 @@ public class ClusterEndpoint {
                     else container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(containerID);
 
                     if (container != null) {
-                        if (mappingSession != null) cluster.addClusterContainer(mappingSession, container);
+                        if (mappingSession != null) ((SProxCluster)cluster).addClusterContainer(mappingSession, container);
                         else cluster.addClusterContainer(container);
                         return Response.status(Status.OK).entity("Container " + containerID + " successfully added to cluster " + id + ".").build();
                     } else return Response.status(Status.NOT_FOUND).entity("Error while adding container " + id + " to cluster (" + id + ") : container " + containerID + " not found.").build();
@@ -390,7 +391,7 @@ public class ClusterEndpoint {
                     else container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(containerID);
 
                     if (container != null) {
-                        if (mappingSession != null) cluster.removeClusterContainer(mappingSession, container);
+                        if (mappingSession != null) ((SProxCluster)cluster).removeClusterContainer(mappingSession, container);
                         else cluster.removeClusterContainer(container);
                         return Response.status(Status.OK).entity("Container " + containerID + " successfully deleted from cluster " + id + ".").build();
                     } else return Response.status(Status.NOT_FOUND).entity("Error while deleting container " + id + " from cluster (" + id + ") : container " + containerID + " not found.").build();

@@ -27,7 +27,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.Ma
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.tools.SessionRegistryImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
-import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxTransport;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Iterator;
 
-public class TransportImpl implements Transport, MappingDSBlueprintsCacheEntity {
+public class TransportImpl implements SProxTransport, MappingDSBlueprintsCacheEntity {
 
     private static final Logger log = LoggerFactory.getLogger(TransportImpl.class);
 

@@ -23,6 +23,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Link;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxLink;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.LinkJSON;
@@ -39,7 +40,6 @@ import javax.ws.rs.core.Response.Status;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.Set;
 
 @Path("/mapping/domain/links")
 public class LinkEndpoint {
@@ -92,12 +92,12 @@ public class LinkEndpoint {
                         jsonDeserializedLink.getLinkTRPID());
             } else {
                 if (reqSourceEndpoint!=null)
-                    if (mappingSession!=null) deserializedLink.setLinkEndpointSource(mappingSession, reqSourceEndpoint);
+                    if (mappingSession!=null) ((SProxLink) deserializedLink).setLinkEndpointSource(mappingSession, reqSourceEndpoint);
                     else deserializedLink.setLinkEndpointSource(reqSourceEndpoint);
-                if (mappingSession!=null) deserializedLink.setLinkEndpointTarget(mappingSession, reqTargetEndpoint);
+                if (mappingSession!=null) ((SProxLink)deserializedLink).setLinkEndpointTarget(mappingSession, reqTargetEndpoint);
                 else deserializedLink.setLinkEndpointTarget(reqTargetEndpoint);
                 if (reqTransport!=null)
-                    if (mappingSession!=null) deserializedLink.setLinkTransport(mappingSession, reqTransport);
+                    if (mappingSession!=null) ((SProxLink)deserializedLink).setLinkTransport(mappingSession, reqTransport);
                     else deserializedLink.setLinkTransport(reqTransport);
             }
             ret.setDeserializedObject(deserializedLink);
@@ -381,7 +381,7 @@ public class LinkEndpoint {
                     if (mappingSession!=null) transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(mappingSession, transportID);
                     else transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(transportID);
                     if (transport != null) {
-                        if (mappingSession!=null)link.setLinkTransport(mappingSession, transport);
+                        if (mappingSession!=null) ((SProxLink)link).setLinkTransport(mappingSession, transport);
                         else link.setLinkTransport(transport);
                         return Response.status(Status.OK).entity("Link (" + id + ") transport successfully updated to " + transportID + ".").build();
                     } else return Response.status(Status.NOT_FOUND).entity("Error while updating link (" + id + ") transport " + transportID + " : transport " + id + " not found.").build();
@@ -445,7 +445,7 @@ public class LinkEndpoint {
                     if (mappingSession!=null) targetEP = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, TEPID);
                     else targetEP = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(TEPID);
                     if (targetEP != null) {
-                        if (mappingSession!=null) link.setLinkEndpointTarget(mappingSession, targetEP);
+                        if (mappingSession!=null) ((SProxLink)link).setLinkEndpointTarget(mappingSession, targetEP);
                         else link.setLinkEndpointTarget(targetEP);
                         return Response.status(Status.OK).entity("Link (" + id + ") target endpoint successfully updated to " + TEPID + ".").build();
                     } else return Response.status(Status.NOT_FOUND).entity("Error while updating link (" + id + ") target endpoint " + TEPID + " : link " + id + " not found.").build();

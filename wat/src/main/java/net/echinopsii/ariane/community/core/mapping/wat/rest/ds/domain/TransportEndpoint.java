@@ -21,8 +21,8 @@ package net.echinopsii.ariane.community.core.mapping.wat.rest.ds.domain;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxTransport;
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
-import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.TransportJSON;
@@ -82,7 +82,7 @@ public class TransportEndpoint {
                 else deserializedTransport = MappingBootstrap.getMappingSce().getTransportSce().createTransport(jsonDeserializedTransport.getTransportName());
             else {
                 if (jsonDeserializedTransport.getTransportName()!=null)
-                    if (mappingSession!=null) deserializedTransport.setTransportName(mappingSession, jsonDeserializedTransport.getTransportName());
+                    if (mappingSession!=null) ((SProxTransport)deserializedTransport).setTransportName(mappingSession, jsonDeserializedTransport.getTransportName());
                     else deserializedTransport.setTransportName(jsonDeserializedTransport.getTransportName());
             }
 
@@ -92,12 +92,12 @@ public class TransportEndpoint {
                     for (String propertyKey : deserializedTransport.getTransportProperties().keySet())
                         if (!reqProperties.containsKey(propertyKey)) propertiesToDelete.add(propertyKey);
                     for (String propertyToDelete : propertiesToDelete)
-                        if (mappingSession!=null) deserializedTransport.removeTransportProperty(mappingSession, propertyToDelete);
+                        if (mappingSession!=null) ((SProxTransport)deserializedTransport).removeTransportProperty(mappingSession, propertyToDelete);
                         else deserializedTransport.removeTransportProperty(propertyToDelete);
                 }
 
                 for (String propertyKey : reqProperties.keySet())
-                    if (mappingSession!=null) deserializedTransport.addTransportProperty(mappingSession, propertyKey, reqProperties.get(propertyKey));
+                    if (mappingSession!=null) ((SProxTransport)deserializedTransport).addTransportProperty(mappingSession, propertyKey, reqProperties.get(propertyKey));
                     else deserializedTransport.addTransportProperty(propertyKey, reqProperties.get(propertyKey));
             }
 
@@ -298,7 +298,7 @@ public class TransportEndpoint {
                 if (mappingSession!=null) transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(mappingSession, id);
                 else transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(id);
                 if (transport != null) {
-                    if (mappingSession!=null) transport.setTransportName(mappingSession, name);
+                    if (mappingSession!=null) ((SProxTransport)transport).setTransportName(mappingSession, name);
                     else transport.setTransportName(name);
                     return Response.status(Status.OK).entity("Transport (" + id + ") name successfully updated to " + name + ".").build();
                 } else return Response.status(Status.NOT_FOUND).entity("Error while updating transport (" + id + ") name " + name + " : link " + id + " not found.").build();
@@ -336,7 +336,7 @@ public class TransportEndpoint {
                             String result = e.getMessage();
                             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
                         }
-                        if (mappingSession!=null) transport.addTransportProperty(mappingSession, name, oValue);
+                        if (mappingSession!=null) ((SProxTransport)transport).addTransportProperty(mappingSession, name, oValue);
                         else transport.addTransportProperty(name, oValue);
                         return Response.status(Status.OK).entity("Property (" + name + "," + value + ") successfully added to transport " + id + ".").build();
                     } else return Response.status(Status.NOT_FOUND).entity("Error while adding property " + name + " to transport " + id + " : transport " + id + " not found.").build();
@@ -368,7 +368,7 @@ public class TransportEndpoint {
                 else transport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(id);
 
                 if (transport != null) {
-                    if (mappingSession!=null) transport.removeTransportProperty(mappingSession, name);
+                    if (mappingSession!=null) ((SProxTransport)transport).removeTransportProperty(mappingSession, name);
                     else transport.removeTransportProperty(name);
                     return Response.status(Status.OK).entity("Property (" + name + ") successfully deleted from transport " + id + ".").build();
                 } else return Response.status(Status.NOT_FOUND).entity("Error while deleting property " + name + " from transport " + id + " : transport " + id + " not found.").build();
