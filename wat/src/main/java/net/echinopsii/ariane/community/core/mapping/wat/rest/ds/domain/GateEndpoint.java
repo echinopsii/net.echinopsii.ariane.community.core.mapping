@@ -207,7 +207,7 @@ public class GateEndpoint {
                     else deserializedGate.removeEndpoint(endpointToDelete);
 
                 for (Endpoint endpointReq : reqNodeEndpoints)
-                    if (mappingSession!=null) deserializedGate.addEndpoint(mappingSession, endpointReq);
+                    if (mappingSession!=null) ((SProxGate)deserializedGate).addEndpoint(mappingSession, endpointReq);
                     else deserializedGate.addEndpoint(endpointReq);
             }
 

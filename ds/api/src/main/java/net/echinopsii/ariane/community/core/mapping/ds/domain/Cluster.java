@@ -19,7 +19,6 @@
 package net.echinopsii.ariane.community.core.mapping.ds.domain;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
-import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
 import java.util.Set;
 
@@ -30,7 +29,6 @@ public interface Cluster {
 	 * cluster name MUST be unique
 	 */
 	public String  getClusterName();
-	public void    setClusterName(Session session, String name) throws MappingDSException;
 	public void    setClusterName(String name);
 	
 	public Set<? extends Container> getClusterContainers();

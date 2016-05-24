@@ -150,12 +150,12 @@ public class EndpointEndpoint {
                         if (!reqEndpointProperties.containsKey(propertyKey))
                             propertiesToDelete.add(propertyKey);
                     for (String propertyKeyToDelete : propertiesToDelete)
-                        if (mappingSession!=null) deserializedEndpoint.removeEndpointProperty(mappingSession, propertyKeyToDelete);
+                        if (mappingSession!=null) ((SProxEndpoint)deserializedEndpoint).removeEndpointProperty(mappingSession, propertyKeyToDelete);
                         else deserializedEndpoint.removeEndpointProperty(propertyKeyToDelete);
                 }
 
                 for (String propertyKey : reqEndpointProperties.keySet())
-                    if (mappingSession!=null) deserializedEndpoint.addEndpointProperty(mappingSession, propertyKey, reqEndpointProperties.get(propertyKey));
+                    if (mappingSession!=null) ((SProxEndpoint)deserializedEndpoint).addEndpointProperty(mappingSession, propertyKey, reqEndpointProperties.get(propertyKey));
                     else deserializedEndpoint.addEndpointProperty(propertyKey, reqEndpointProperties.get(propertyKey));
             }
 
@@ -582,7 +582,7 @@ public class EndpointEndpoint {
                             String result = e.getMessage();
                             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
                         }
-                        if (mappingSession!=null) endpoint.addEndpointProperty(mappingSession, name, oValue);
+                        if (mappingSession!=null) ((SProxEndpoint)endpoint).addEndpointProperty(mappingSession, name, oValue);
                         else endpoint.addEndpointProperty(name, oValue);
                         return Response.status(Status.OK).entity("Property (" + name + "," + value + ") successfully added to endpoint " + id + ".").build();
                     } else return Response.status(Status.NOT_FOUND).entity("Error while adding property " + name + " to endpoint (" + id + ") : endpoint " + id + " not found.").build();
@@ -613,7 +613,7 @@ public class EndpointEndpoint {
                 else endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
 
                 if (endpoint != null) {
-                    if (mappingSession!=null) endpoint.removeEndpointProperty(mappingSession, name);
+                    if (mappingSession!=null) ((SProxEndpoint)endpoint).removeEndpointProperty(mappingSession, name);
                     else endpoint.removeEndpointProperty(name);
                     return Response.status(Status.OK).entity("Property (" + name + ") successfully deleted from endpoint " + id + ".").build();
                 } else {

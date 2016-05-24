@@ -20,7 +20,6 @@
 package net.echinopsii.ariane.community.core.mapping.ds.domain;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
-import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -55,7 +54,6 @@ public interface Node {
 	public boolean             removeTwinNode(Node node) throws MappingDSException;
 
 	public Set<? extends Endpoint> getNodeEndpoints();
-	public boolean addEndpoint(Session session, Endpoint endpoint) throws MappingDSException;
 	public boolean addEndpoint(Endpoint endpoint) throws MappingDSException;
-	public boolean                 removeEndpoint(Endpoint endpoint) throws MappingDSException;
+	public boolean removeEndpoint(Endpoint endpoint) throws MappingDSException;
 }

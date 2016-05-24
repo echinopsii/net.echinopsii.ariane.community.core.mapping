@@ -19,7 +19,6 @@
 package net.echinopsii.ariane.community.core.mapping.ds.domain;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
-import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -41,8 +40,6 @@ public interface Endpoint {
 	public boolean                 removeTwinEndpoint(Endpoint endpoint) throws MappingDSException;
 	
 	public HashMap<String, Object> getEndpointProperties();
-	public void addEndpointProperty(Session session, String propertyKey, Object value) throws MappingDSException;
 	public void addEndpointProperty(String propertyKey, Object value) throws MappingDSException;
-	public void removeEndpointProperty(Session session, String propertyKey) throws MappingDSException;
     public void removeEndpointProperty(String propertyKey) throws MappingDSException;
 }

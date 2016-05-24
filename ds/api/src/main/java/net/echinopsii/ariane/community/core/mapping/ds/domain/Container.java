@@ -20,7 +20,6 @@
 package net.echinopsii.ariane.community.core.mapping.ds.domain;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
-import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
 import java.util.HashMap;
 import java.util.Set;

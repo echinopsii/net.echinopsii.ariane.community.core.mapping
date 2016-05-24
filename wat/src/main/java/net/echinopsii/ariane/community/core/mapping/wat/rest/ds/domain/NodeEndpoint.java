@@ -200,7 +200,7 @@ public class NodeEndpoint {
                     else deserializedNode.removeEndpoint(endpointToDelete);
 
                 for (Endpoint endpointReq : reqNodeEndpoints)
-                    if (mappingSession!=null) deserializedNode.addEndpoint(mappingSession, endpointReq);
+                    if (mappingSession!=null) ((SProxNode)deserializedNode).addEndpoint(mappingSession, endpointReq);
                     else deserializedNode.addEndpoint(endpointReq);
             }
 
@@ -758,7 +758,7 @@ public class NodeEndpoint {
                     if (mappingSession != null) endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, endpointID);
                     else endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(endpointID);
                     if (endpoint != null) {
-                        if (mappingSession!=null) node.addEndpoint(mappingSession, endpoint);
+                        if (mappingSession!=null) ((SProxNode)node).addEndpoint(mappingSession, endpoint);
                         else node.addEndpoint(endpoint);
                         return Response.status(Status.OK).entity("Endpoint (" + endpointID + ") successfully added to node " + id + ".").build();
                     } else return Response.status(Status.NOT_FOUND).entity("Error while adding endpoint " + endpointID + " to node " + id + " : node " + id + " not found.").build();

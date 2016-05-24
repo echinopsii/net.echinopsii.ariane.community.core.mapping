@@ -83,7 +83,7 @@ public class ClusterEndpoint {
                 if (mappingSession!=null) deserializedCluster = MappingBootstrap.getMappingSce().getClusterSce().createCluster(mappingSession, jsonDeserializedCluster.getClusterName());
                 else deserializedCluster = MappingBootstrap.getMappingSce().getClusterSce().createCluster(jsonDeserializedCluster.getClusterName());
             else if (jsonDeserializedCluster.getClusterName()!=null)
-                if (mappingSession!=null) deserializedCluster.setClusterName(mappingSession, jsonDeserializedCluster.getClusterName());
+                if (mappingSession!=null) ((SProxCluster)deserializedCluster).setClusterName(mappingSession, jsonDeserializedCluster.getClusterName());
                 else deserializedCluster.setClusterName(jsonDeserializedCluster.getClusterName());
 
             if (jsonDeserializedCluster.getClusterContainersID() != null) {
@@ -319,7 +319,7 @@ public class ClusterEndpoint {
                 else cluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(id);
 
                 if (cluster != null) {
-                    if (mappingSession!=null) cluster.setClusterName(mappingSession, name);
+                    if (mappingSession!=null) ((SProxCluster)cluster).setClusterName(mappingSession, name);
                     else cluster.setClusterName(name);
                     return Response.status(Status.OK).entity("Cluster (" + id + ") name successfully updated to " + name + ".").build();
                 } else return Response.status(Status.NOT_FOUND).entity("Error while updating cluster (" + id + ") name " + name + " : cluster " + id + " not found.").build();
