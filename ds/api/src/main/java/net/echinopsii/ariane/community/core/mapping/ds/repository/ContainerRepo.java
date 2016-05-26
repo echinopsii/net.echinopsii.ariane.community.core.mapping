@@ -19,12 +19,13 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.repository;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 
 public interface ContainerRepo<CN extends Container> {
 	public CN   save(CN container);
 	public void delete(CN container);
 	
-	public CN   findContainerByID(String id);
-	public CN   findContainersByPrimaryAdminURL(String primaryAdminURL);
+	public CN   findContainerByID(String id) throws MappingDSException;
+	public CN   findContainersByPrimaryAdminURL(String primaryAdminURL) throws MappingDSException;
 }

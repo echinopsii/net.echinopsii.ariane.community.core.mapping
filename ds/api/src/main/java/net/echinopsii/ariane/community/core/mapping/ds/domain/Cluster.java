@@ -24,12 +24,13 @@ import java.util.Set;
 
 public interface Cluster {
 	public String getClusterID();
+	public void   setClusterID(String ID);
 	
 	/*
 	 * cluster name MUST be unique
 	 */
 	public String  getClusterName();
-	public void    setClusterName(String name);
+	public void    setClusterName(String name) throws MappingDSException;
 	
 	public Set<? extends Container> getClusterContainers();
 	public boolean                  addClusterContainer(Container container) throws MappingDSException;

@@ -48,6 +48,11 @@ public class ClusterImpl implements SProxCluster{
     }
 
     @Override
+    public void setClusterID(String ID) {
+
+    }
+
+    @Override
     public String getClusterName() {
         return null;
     }

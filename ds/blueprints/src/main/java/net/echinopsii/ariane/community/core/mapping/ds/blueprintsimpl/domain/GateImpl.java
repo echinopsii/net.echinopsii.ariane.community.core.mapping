@@ -82,7 +82,7 @@ public class GateImpl extends NodeImpl implements SProxGate {
         // a container gate can't have a parent node
         // as it's contained by the container
         super.setNodeParentNode(null);
-        // TODO : raise exception
+        throw new MappingDSException("Modelisation error : Gate can be contained by containers only.");
     }
 
     @Override
@@ -108,7 +108,7 @@ public class GateImpl extends NodeImpl implements SProxGate {
         }
     }
 
-    public void synchronizeFromDB() {
+    public void synchronizeFromDB() throws MappingDSException {
         if (!isBeingSyncFromDB) {
             isBeingSyncFromDB = true;
             super.synchronizeFromDB();
@@ -117,7 +117,7 @@ public class GateImpl extends NodeImpl implements SProxGate {
         }
     }
 
-    private void synchronizeNodePrimaryAdminEndpointFromDB() {
+    private void synchronizeNodePrimaryAdminEndpointFromDB() throws MappingDSException {
         if (super.getElement() != null) {
             Object paEndpointID = super.getElement().getProperty(MappingDSGraphPropertyNames.DD_GATE_PAEP_KEY);
             if (paEndpointID != null) {

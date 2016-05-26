@@ -19,11 +19,12 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.repository;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Link;
 
 public interface LinkRepo<L extends Link> {
 	public L      save(L link);
 	public void   delete(L link);
 	
-	public L      findLinkByID(String id);
+	public L      findLinkByID(String id) throws MappingDSException;
 }

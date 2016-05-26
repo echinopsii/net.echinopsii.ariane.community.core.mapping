@@ -1,8 +1,8 @@
 /**
- * Mapping Datastore Messaging Driver Implementation :
- * provide a Mapping DS domain, repository and service messaging driver implementation
- * Copyright (C) 2016 echinopsii
- * Author: mathilde.ffrench@echinopsii.net
+ * Mapping Datastore Interface :
+ * provide a Mapping DS domain, repository and service interfaces
+ * Copyright (C) 2016  echinopsii
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,62 +17,49 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.echinopsii.ariane.community.core.mapping.ds.messagingimpl.domain;
+package net.echinopsii.ariane.community.core.mapping.ds.domain;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
-import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxTransport;
-import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
 import java.util.HashMap;
 
-public class TransportImpl implements SProxTransport {
-    @Override
-    public void setTransportName(Session session, String name) throws MappingDSException {
-
-    }
-
-    @Override
-    public void addTransportProperty(Session session, String propertyKey, Object value) throws MappingDSException {
-
-    }
-
-    @Override
-    public void removeTransportProperty(Session session, String propertyKey) throws MappingDSException {
-
-    }
+public abstract class TransportAbs implements Transport {
+    private String transportID = null;
+    private String transportName = null;
+    private HashMap<String, Object> transportProperties = new HashMap<>();
 
     @Override
     public String getTransportID() {
-        return null;
+        return this.transportID;
     }
 
     @Override
     public void setTransportID(String ID) {
-
+        this.transportID = ID;
     }
 
     @Override
     public String getTransportName() {
-        return null;
+        return this.transportName;
     }
 
     @Override
     public void setTransportName(String name) throws MappingDSException {
-
+        this.transportName = name;
     }
 
     @Override
     public HashMap<String, Object> getTransportProperties() {
-        return null;
+        return transportProperties;
     }
 
     @Override
     public void addTransportProperty(String propertyKey, Object value) throws MappingDSException {
-
+        this.transportProperties.put(propertyKey, value);
     }
 
     @Override
     public void removeTransportProperty(String propertyKey) throws MappingDSException {
-
+        this.transportProperties.remove(propertyKey);
     }
 }

@@ -36,9 +36,10 @@ import java.util.Set;
  */
 public interface Container {
 	public String getContainerID();
+	public void   setContainerID(String ID);
 
     public String getContainerName();
-    public void setContainerName(String name);
+    public void setContainerName(String name) throws MappingDSException;
 	
 	public String getContainerCompany();
     public void   setContainerCompany(String company) throws MappingDSException;

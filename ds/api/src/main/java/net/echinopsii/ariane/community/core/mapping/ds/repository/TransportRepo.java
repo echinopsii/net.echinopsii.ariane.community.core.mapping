@@ -19,12 +19,13 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.repository;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
 
 public interface TransportRepo<T extends Transport> {
 	public T      save(T transport);
 	public void   delete(T transport);
 	
-	public T      findTransportByID(String ID);
-	public T      findTransportByName(String name);
+	public T      findTransportByID(String ID) throws MappingDSException;
+	public T      findTransportByName(String name) throws MappingDSException;
 }

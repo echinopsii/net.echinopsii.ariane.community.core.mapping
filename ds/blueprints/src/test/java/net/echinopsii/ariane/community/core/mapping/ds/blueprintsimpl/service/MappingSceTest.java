@@ -91,7 +91,7 @@ public class MappingSceTest {
             if (dir.isDirectory()) FileUtils.deleteDirectory(dir);
         }
 	}
-	
+
 	@Test
 	public void testContainerSce1() throws MappingDSException {
 		Container test = mappingSce.getContainerSce().getContainer(rvrdLan.getContainerID());
@@ -118,7 +118,7 @@ public class MappingSceTest {
 		assertTrue(gateLan.equals(test));
 		assertTrue(!gateMan.equals(test));
 	}
-	
+
 	@Test
 	public void testNodeSce1() throws MappingDSException {
 		Node test = mappingSce.getNodeSce().getNode(nodeLan.getNodeID());

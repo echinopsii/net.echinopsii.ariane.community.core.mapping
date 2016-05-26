@@ -91,6 +91,11 @@ public class NodeImpl implements SProxNode {
     }
 
     @Override
+    public void setNodeID(String ID) {
+
+    }
+
+    @Override
     public String getNodeName() {
         return null;
     }

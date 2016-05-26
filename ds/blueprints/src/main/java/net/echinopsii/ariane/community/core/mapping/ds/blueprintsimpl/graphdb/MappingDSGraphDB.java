@@ -331,7 +331,7 @@ public class MappingDSGraphDB {
         return entity;
     }
 
-    private static MappingDSBlueprintsCacheEntity getEdgeEntity(Edge edge) {
+    private static MappingDSBlueprintsCacheEntity getEdgeEntity(Edge edge) throws MappingDSException {
         String id = edge.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID);
         MappingDSBlueprintsCacheEntity ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("E" + id);
         if (ret == null) {
@@ -345,7 +345,7 @@ public class MappingDSGraphDB {
         return ret;
     }
 
-    public static MappingDSBlueprintsCacheEntity getEdgeEntity(String id) {
+    public static MappingDSBlueprintsCacheEntity getEdgeEntity(String id) throws MappingDSException {
         log.debug("Get cache entity {} if exists ...", new Object[]{"E"+id});
         MappingDSBlueprintsCacheEntity ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("E" + id);
         if (ret == null) {
@@ -364,7 +364,7 @@ public class MappingDSGraphDB {
         return ret;
     }
 
-    private static MappingDSBlueprintsCacheEntity getVertexEntity(Vertex vertex) {
+    private static MappingDSBlueprintsCacheEntity getVertexEntity(Vertex vertex) throws MappingDSException {
         String id = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
         String vertexType = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY);
         MappingDSBlueprintsCacheEntity ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("V" + id);
@@ -410,7 +410,7 @@ public class MappingDSGraphDB {
         return ret;
     }
 
-    public static MappingDSBlueprintsCacheEntity getVertexEntity(String id) {
+    public static MappingDSBlueprintsCacheEntity getVertexEntity(String id) throws MappingDSException {
         if (id == null)
             return null;
         log.debug("Get cache entity {} if exists ...", new Object[]{"V" + id});
@@ -458,7 +458,7 @@ public class MappingDSGraphDB {
         return ret;
     }
 
-    public static Set<ClusterImpl> getClusters(){
+    public static Set<ClusterImpl> getClusters() throws MappingDSException {
         Set<ClusterImpl> ret = new HashSet<>();
         log.debug("Get all clusters from graph {}...", new Object[]{ccgraph.toString() + "(" + ccgraph.hashCode() + ")"});
         for (Vertex vertex : ccgraph.getVertices(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY,
@@ -478,7 +478,7 @@ public class MappingDSGraphDB {
         return ret;
     }
 
-    public static Set<ContainerImpl> getContainers() {
+    public static Set<ContainerImpl> getContainers() throws MappingDSException {
         Set<ContainerImpl> ret = new HashSet<>();
         log.debug("Get all containers from graph {}...", new Object[]{ccgraph.toString() + "(" + ccgraph.hashCode() + ")"});
         for (Vertex vertex : ccgraph.getVertices(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY,
@@ -498,7 +498,7 @@ public class MappingDSGraphDB {
         return ret;
     }
 
-    private static NodeImpl getNodeFromVertex(Vertex vertex) {
+    private static NodeImpl getNodeFromVertex(Vertex vertex) throws MappingDSException {
         String id = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
         NodeImpl tmp = (NodeImpl) getVertexEntity(id);
         if (tmp == null) {
@@ -510,7 +510,7 @@ public class MappingDSGraphDB {
         return tmp;
     }
 
-    private static GateImpl getGateFromVertex(Vertex vertex) {
+    private static GateImpl getGateFromVertex(Vertex vertex) throws MappingDSException {
         String id = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
         GateImpl tmp = (GateImpl) getVertexEntity(id);
         if (tmp == null) {
@@ -522,7 +522,7 @@ public class MappingDSGraphDB {
         return tmp;
     }
 
-    public static Set<NodeImpl> getNodes() {
+    public static Set<NodeImpl> getNodes() throws MappingDSException {
         Set<NodeImpl> ret = new HashSet<>();
         log.debug("Get all nodes from graph {}...", new Object[]{ccgraph.toString()});
         for (Vertex vertex : ccgraph.getVertices(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY,
@@ -535,7 +535,7 @@ public class MappingDSGraphDB {
         return ret;
     }
 
-    public static Set<NodeImpl> getNodes(String selector) {
+    public static Set<NodeImpl> getNodes(String selector) throws MappingDSException {
         Set<NodeImpl> ret = new HashSet<>();
         selector = selector.replace("nodeID", MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
         Object query_try = sexecutor.execute(selector, MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE);
@@ -549,7 +549,7 @@ public class MappingDSGraphDB {
         return ret;
     }
 
-    public static Set<NodeImpl> getNodes(String key, Object value) {
+    public static Set<NodeImpl> getNodes(String key, Object value) throws MappingDSException {
         Set<NodeImpl> ret = new HashSet<>();
         log.debug("Get all nodes from graph {}...", new Object[]{ccgraph.toString()});
         for (Vertex vertex : ccgraph.getVertices(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY,
@@ -570,7 +570,7 @@ public class MappingDSGraphDB {
         return ret;
     }
 
-    public static Set<GateImpl> getGates() {
+    public static Set<GateImpl> getGates() throws MappingDSException {
         Set<GateImpl> ret = new HashSet<>();
         log.debug("Get all gates from graph {}...", new Object[]{ccgraph.toString()});
         for (Vertex vertex : ccgraph.getVertices(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY,
@@ -580,7 +580,7 @@ public class MappingDSGraphDB {
         return ret;
     }
 
-    public static Set<GateImpl> getGates(String key, Object value) {
+    public static Set<GateImpl> getGates(String key, Object value) throws MappingDSException {
         Set<GateImpl> ret = new HashSet<>();
         log.debug("Get all gates from graph {}...", new Object[]{ccgraph.toString()});
         for (Vertex vertex : ccgraph.getVertices(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY,
@@ -594,7 +594,7 @@ public class MappingDSGraphDB {
         return ret;
     }
 
-    private static EndpointImpl getEndpointFromVertex(Vertex vertex) {
+    private static EndpointImpl getEndpointFromVertex(Vertex vertex) throws MappingDSException {
         String id = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
         EndpointImpl tmp = (EndpointImpl) getVertexEntity(id);
         if (tmp == null) {
@@ -606,7 +606,7 @@ public class MappingDSGraphDB {
         return tmp;
     }
 
-    public static Set<EndpointImpl> getEndpoints() {
+    public static Set<EndpointImpl> getEndpoints() throws MappingDSException {
         Set<EndpointImpl> ret = new HashSet<>();
         log.debug("Get all endpoints from graph {}...", new Object[]{ccgraph.toString()});
         for (Vertex vertex : ccgraph.getVertices(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY,
@@ -616,7 +616,7 @@ public class MappingDSGraphDB {
         return ret;
     }
 
-    public static Set<EndpointImpl> getEndpoints(String selector) {
+    public static Set<EndpointImpl> getEndpoints(String selector) throws MappingDSException {
         Set<EndpointImpl> ret = new HashSet<>();
         selector = selector.replace("endpointID", MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
         Object query_try = sexecutor.execute(selector, MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE);
@@ -626,7 +626,7 @@ public class MappingDSGraphDB {
         return ret;
     }
 
-    public static Set<EndpointImpl> getEndpoints(String key, Object value) {
+    public static Set<EndpointImpl> getEndpoints(String key, Object value) throws MappingDSException {
         Set<EndpointImpl> ret = new HashSet<>();
         for (Vertex vertex : ccgraph.getVertices(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY,
                                                         MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE)) {
@@ -649,7 +649,7 @@ public class MappingDSGraphDB {
         return ret;
     }
 
-    public static Set<TransportImpl> getTransports() {
+    public static Set<TransportImpl> getTransports() throws MappingDSException {
         Set<TransportImpl> ret = new HashSet<>();
         log.debug("Get all transports from graph {}...", new Object[]{ccgraph.toString()});
         for (Vertex vertex : ccgraph.getVertices(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY,
@@ -669,7 +669,7 @@ public class MappingDSGraphDB {
         return ret;
     }
 
-    public static ClusterImpl getIndexedCluster(String clusterName) {
+    public static ClusterImpl getIndexedCluster(String clusterName) throws MappingDSException {
         MappingDSBlueprintsCacheEntity ret = (ClusterImpl)MappingDSCache.getClusterFromCache(clusterName);
         if (ret == null) {
             Vertex vertex = ccgraph.getVertices(MappingDSGraphPropertyNames.DD_CLUSTER_NAME_KEY, clusterName).iterator().hasNext() ?
@@ -694,7 +694,7 @@ public class MappingDSGraphDB {
         return (ClusterImpl) ret;
     }
 
-    public static Set<NodeImpl> getIndexedNodes(String name) {
+    public static Set<NodeImpl> getIndexedNodes(String name) throws MappingDSException {
         Set<NodeImpl> ret = new HashSet<>();
         for (Vertex vertex : ccgraph.getVertices(MappingDSGraphPropertyNames.DD_NODE_NAME_KEY, name)) {
             String vertexType = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY);
@@ -720,7 +720,7 @@ public class MappingDSGraphDB {
         return ret;
     }
 
-    public static EndpointImpl getIndexedEndpoint(String url) {
+    public static EndpointImpl getIndexedEndpoint(String url) throws MappingDSException {
         MappingDSBlueprintsCacheEntity ret = (EndpointImpl) MappingDSCache.getEndpointFromCache(url);
         if (ret == null && ccgraph != null) {
             Vertex vertex = ccgraph.getVertices(MappingDSGraphPropertyNames.DD_ENDPOINT_URL_KEY, url).iterator().hasNext() ?
@@ -744,7 +744,7 @@ public class MappingDSGraphDB {
         return (EndpointImpl) ret;
     }
 
-    public static TransportImpl getIndexedTransport(String transportName) {
+    public static TransportImpl getIndexedTransport(String transportName) throws MappingDSException {
         MappingDSBlueprintsCacheEntity ret = (TransportImpl) MappingDSCache.getTransportFromCache(transportName);
         if (ret == null && ccgraph != null) {
             Vertex vertex = ccgraph.getVertices(MappingDSGraphPropertyNames.DD_TRANSPORT_NAME_KEY, transportName).iterator().hasNext() ?
@@ -768,7 +768,7 @@ public class MappingDSGraphDB {
         return (TransportImpl) ret;
     }
 
-    public static MappingDSBlueprintsCacheEntity getLink(String id) {
+    public static MappingDSBlueprintsCacheEntity getLink(String id) throws MappingDSException {
         if (id == null)
             return null;
         MappingDSBlueprintsCacheEntity ret = (MappingDSBlueprintsCacheEntity) MappingDSCache.getCachedEntity("E" + id);
@@ -789,7 +789,7 @@ public class MappingDSGraphDB {
         return ret;
     }
 
-    private static LinkImpl getLinkFromEdge(Edge edge) {
+    private static LinkImpl getLinkFromEdge(Edge edge) throws MappingDSException {
         String id = edge.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID);
         LinkImpl tmp = (LinkImpl) getLink(id);
         if (tmp == null) {
@@ -801,7 +801,7 @@ public class MappingDSGraphDB {
         return  tmp;
     }
 
-    public static Set<LinkImpl> getLinks(EndpointImpl sourceEndpoint, EndpointImpl targetEndpoint, TransportImpl transport) {
+    public static Set<LinkImpl> getLinks(EndpointImpl sourceEndpoint, EndpointImpl targetEndpoint, TransportImpl transport) throws MappingDSException {
         Vertex sourceEpVertex = (sourceEndpoint!=null) ? sourceEndpoint.getElement() : null;
         Vertex targetEpVertex = (targetEndpoint!=null) ? targetEndpoint.getElement() : null;
         Vertex transportVertex = (transport!=null) ? transport.getElement() : null;
@@ -894,12 +894,8 @@ public class MappingDSGraphDB {
 
     public static synchronized void clear() {
         try {
-            for (Edge edge : ccgraph.getEdges()) {
-                ccgraph.removeEdge(edge);
-            }
-            for (Vertex vertex : ccgraph.getVertices()) {
-                ccgraph.removeVertex(vertex);
-            }
+            for (Edge edge : ccgraph.getEdges()) ccgraph.removeEdge(edge);
+            for (Vertex vertex : ccgraph.getVertices()) ccgraph.removeVertex(vertex);
             autocommit();
         } catch (Exception E) {
             log.error("Exception catched while clearing DB Graph...");

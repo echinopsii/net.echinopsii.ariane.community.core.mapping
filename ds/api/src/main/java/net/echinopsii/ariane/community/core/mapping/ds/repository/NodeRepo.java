@@ -29,11 +29,11 @@ public interface NodeRepo<N extends Node> {
 
     public void deleteNode(N node) throws MappingDSException;
 
-    public N findNodeByID(String ID);
+    public N findNodeByID(String ID) throws MappingDSException;
 
-    public N findNodeByEndpointURL(String URL);
+    public N findNodeByEndpointURL(String URL) throws MappingDSException;
 
-    public Set<N> findNodesByProperties(String key, Object value);
+    public Set<N> findNodesByProperties(String key, Object value) throws MappingDSException;
 
-    public Set<N> findNodesBySelector(String selector);
+    public Set<N> findNodesBySelector(String selector) throws MappingDSException;
 }

@@ -47,6 +47,11 @@ public class LinkImpl implements SProxLink {
     }
 
     @Override
+    public void setLinkID(String ID) {
+
+    }
+
+    @Override
     public Transport getLinkTransport() {
         return null;
     }

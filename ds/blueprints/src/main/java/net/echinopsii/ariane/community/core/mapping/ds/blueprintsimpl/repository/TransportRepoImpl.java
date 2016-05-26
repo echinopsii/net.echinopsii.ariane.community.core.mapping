@@ -18,9 +18,8 @@
  */
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository;
 
-import com.tinkerpop.blueprints.Element;
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSBlueprintsCacheEntity;
-import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.TransportImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.repository.TransportRepo;
@@ -33,7 +32,7 @@ public class TransportRepoImpl implements TransportRepo<TransportImpl> {
 
     private final static Logger log = LoggerFactory.getLogger(TransportRepoImpl.class);
 
-    public static Set<TransportImpl> getTransportRepository() {
+    public static Set<TransportImpl> getTransportRepository() throws MappingDSException {
         return MappingDSGraphDB.getTransports();
     }
 
@@ -51,7 +50,7 @@ public class TransportRepoImpl implements TransportRepo<TransportImpl> {
     }
 
     @Override
-    public TransportImpl findTransportByID(String ID) {
+    public TransportImpl findTransportByID(String ID) throws MappingDSException {
         TransportImpl ret = null;
         log.debug("search transport for ID {}", new Object[]{ID});
         MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity(ID);
@@ -67,7 +66,7 @@ public class TransportRepoImpl implements TransportRepo<TransportImpl> {
     }
 
     @Override
-    public TransportImpl findTransportByName(String name) {
+    public TransportImpl findTransportByName(String name) throws MappingDSException {
         return MappingDSGraphDB.getIndexedTransport(name);
     }
 }

@@ -19,6 +19,9 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
+import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.EndpointImpl;
+import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.TransportImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSBlueprintsCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
@@ -33,14 +36,14 @@ public class LinkRepoImpl implements LinkRepo<LinkImpl> {
 
     @Override
     public LinkImpl save(LinkImpl link) {
-        if (link.getLinkEndpointSource() != null && link.getLinkEndpointSource().getElement() != null &&
-                    link.getLinkEndpointTarget() != null && link.getLinkEndpointTarget().getElement() != null) {
-            MappingDSGraphDB.saveEdgeEntity(link, link.getLinkEndpointSource().getElement(), link.getLinkEndpointTarget().getElement(),
+        if (link.getLinkEndpointSource() != null && ((EndpointImpl)link.getLinkEndpointSource()).getElement() != null &&
+                    link.getLinkEndpointTarget() != null && ((EndpointImpl)link.getLinkEndpointTarget()).getElement() != null) {
+            MappingDSGraphDB.saveEdgeEntity(link, ((EndpointImpl)link.getLinkEndpointSource()).getElement(), ((EndpointImpl)link.getLinkEndpointTarget()).getElement(),
                                                    MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY);
             log.debug("Added unicast link {} to graph.", new Object[]{link.toString()});
-        } else if (link.getLinkEndpointSource() != null && link.getLinkEndpointSource().getElement() != null &&
-                    link.getLinkTransport() != null && link.getLinkTransport().getElement() != null) {
-            MappingDSGraphDB.saveEdgeEntity(link, link.getLinkEndpointSource().getElement(), link.getLinkTransport().getElement(),
+        } else if (link.getLinkEndpointSource() != null && ((EndpointImpl)link.getLinkEndpointSource()).getElement() != null &&
+                    link.getLinkTransport() != null && ((TransportImpl)link.getLinkTransport()).getElement() != null) {
+            MappingDSGraphDB.saveEdgeEntity(link, ((EndpointImpl)link.getLinkEndpointSource()).getElement(), ((TransportImpl)link.getLinkTransport()).getElement(),
                                                    MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY);
             log.debug("Added multicast link {} to graph.", new Object[]{link.toString()});
         }
@@ -54,7 +57,7 @@ public class LinkRepoImpl implements LinkRepo<LinkImpl> {
     }
 
     @Override
-    public LinkImpl findLinkByID(String id) {
+    public LinkImpl findLinkByID(String id) throws MappingDSException {
         LinkImpl ret = null;
         MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getLink(id);
         if (entity != null) {

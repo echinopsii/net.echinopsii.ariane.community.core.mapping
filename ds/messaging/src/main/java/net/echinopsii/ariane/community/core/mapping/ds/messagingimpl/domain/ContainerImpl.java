@@ -113,6 +113,11 @@ public class ContainerImpl implements SProxContainer {
     }
 
     @Override
+    public void setContainerID(String ID) {
+
+    }
+
+    @Override
     public String getContainerName() {
         return null;
     }

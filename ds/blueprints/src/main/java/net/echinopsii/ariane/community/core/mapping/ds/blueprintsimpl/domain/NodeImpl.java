@@ -31,43 +31,19 @@ import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRe
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.NodeAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxNode;
 import com.tinkerpop.blueprints.*;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
-public class NodeImpl implements SProxNode, MappingDSBlueprintsCacheEntity {
+public class NodeImpl extends NodeAbs implements SProxNode, MappingDSBlueprintsCacheEntity {
 
     private static final Logger log = LoggerFactory.getLogger(NodeImpl.class);
 
-    private String nodeID = null;
-    private String nodeName = null;
-    private long nodeDepth = 0;
-    private ContainerImpl nodeContainer = null;
-    private HashMap<String, Object> nodeProperties = null;
-    private NodeImpl nodeParentNode = null;
-    private Set<NodeImpl> nodeChildNodes = new HashSet<NodeImpl>();
-    private Set<NodeImpl> nodeTwinNodes = new HashSet<NodeImpl>();
-    private Set<EndpointImpl> nodeEndpoints = new HashSet<EndpointImpl>();
-
     private transient Vertex nodeVertex = null;
     private boolean isBeingSyncFromDB = false;
-
-    @Override
-    public String getNodeID() {
-        return this.nodeID;
-    }
-
-    @Override
-    public String getNodeName() {
-        return this.nodeName;
-    }
 
     static final String SET_NODE_NAME = "setNodeName";
 
@@ -86,21 +62,11 @@ public class NodeImpl implements SProxNode, MappingDSBlueprintsCacheEntity {
             if (session!=null) this.setNodeName(session, name);
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            if (this.nodeName == null || !this.nodeName.equals(name)) {
-                this.nodeName = name;
+            if (super.getNodeName() == null || !super.getNodeName().equals(name)) {
+                super.setNodeName(name);
                 synchronizeNameToDB();
             }
         }
-    }
-
-    @Override
-    public long getNodeDepth() {
-        return this.nodeDepth;
-    }
-
-    @Override
-    public ContainerImpl getNodeContainer() {
-        return this.nodeContainer;
     }
 
     static final String SET_NODE_CONTAINER = "setNodeContainer";
@@ -120,18 +86,13 @@ public class NodeImpl implements SProxNode, MappingDSBlueprintsCacheEntity {
             if (session!=null) this.setNodeContainer(session, container);
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            if (this.nodeContainer == null || !this.nodeContainer.equals(container)) {
+            if (super.getNodeContainer() == null || !super.getNodeContainer().equals(container)) {
                 if (container instanceof ContainerImpl) {
-                    this.nodeContainer = (ContainerImpl) container;
+                    super.setNodeContainer(container);
                     synchronizeContainerToDB();
                 }
             }
         }
-    }
-
-    @Override
-    public HashMap<String, Object> getNodeProperties() {
-        return this.nodeProperties;
     }
 
     static final String ADD_NODE_PROPERTY = "addNodeProperty";
@@ -152,14 +113,11 @@ public class NodeImpl implements SProxNode, MappingDSBlueprintsCacheEntity {
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
             if (propertyKey != null && value != null) {
-                if (this.nodeProperties == null) {
-                    this.nodeProperties = new HashMap<String, Object>();
-                }
-                this.nodeProperties.put(propertyKey, value);
+                super.addNodeProperty(propertyKey, value);
                 synchronizePropertyToDB(propertyKey, value);
                 log.debug("Set node {} property : ({},{})", new Object[]{this.getNodeID(),
                         propertyKey,
-                        this.nodeProperties.get(propertyKey)});
+                        super.getNodeProperties().get(propertyKey)});
             }
         }
     }
@@ -181,16 +139,9 @@ public class NodeImpl implements SProxNode, MappingDSBlueprintsCacheEntity {
             if (session!=null) this.removeNodeProperty(session, propertyKey);
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            if (this.nodeProperties != null) {
-                this.nodeProperties.remove(propertyKey);
-                removePropertyFromDB(propertyKey);
-            }
+            super.removeNodeProperty(propertyKey);
+            removePropertyFromDB(propertyKey);
         }
-    }
-
-    @Override
-    public NodeImpl getNodeParentNode() {
-        return this.nodeParentNode;
     }
 
     static final String SET_NODE_PARENT_NODE = "setNodeParentNode";
@@ -210,18 +161,15 @@ public class NodeImpl implements SProxNode, MappingDSBlueprintsCacheEntity {
             if (session!=null) this.setNodeParentNode(session, node);
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            if (this.nodeParentNode == null || !this.nodeParentNode.equals(node)) {
+            if (super.getNodeParentNode() == null || !super.getNodeParentNode().equals(node)) {
                 if (node instanceof NodeImpl) {
-                    this.nodeParentNode = (NodeImpl) node;
+                    super.setNodeParentNode(node);
+                    super.setNodeDepth(1+node.getNodeDepth());
                     synchronizeParentNodeToDB();
+                    synchronizeDepthToDB();
                 }
             }
         }
-    }
-
-    @Override
-    public Set<NodeImpl> getNodeChildNodes() {
-        return this.nodeChildNodes;
     }
 
     static final String ADD_NODE_CHILD_NODE = "addNodeChildNode";
@@ -246,14 +194,12 @@ public class NodeImpl implements SProxNode, MappingDSBlueprintsCacheEntity {
         } else {
             if (node instanceof NodeImpl) {
                 try {
-                    ret = this.nodeChildNodes.add((NodeImpl) node);
-                    if (ret) {
-                        synchronizeChildNodeToDB((NodeImpl) node);
-                    }
+                    ret = super.addNodeChildNode(node);
+                    if (ret) synchronizeChildNodeToDB((NodeImpl) node);
                 } catch (MappingDSException E) {
                     E.printStackTrace();
                     log.error("Exception while adding child node {}...", new Object[]{node.getNodeID()});
-                    this.nodeChildNodes.remove((NodeImpl) node);
+                    super.removeNodeChildNode(node);
                     MappingDSGraphDB.autorollback();
                 }
             }
@@ -282,16 +228,11 @@ public class NodeImpl implements SProxNode, MappingDSBlueprintsCacheEntity {
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
             if (node instanceof NodeImpl) {
-                ret = this.nodeChildNodes.remove((NodeImpl) node);
+                ret = super.removeNodeChildNode(node);
                 if (ret) removeChildNodeFromDB((NodeImpl) node);
             }
         }
         return ret;
-    }
-
-    @Override
-    public Set<NodeImpl> getTwinNodes() {
-        return this.nodeTwinNodes;
     }
 
     static final String ADD_TWIN_NODE = "addTwinNode";
@@ -316,12 +257,12 @@ public class NodeImpl implements SProxNode, MappingDSBlueprintsCacheEntity {
         } else {
             if (node instanceof NodeImpl) {
                 try {
-                    ret = this.nodeTwinNodes.add((NodeImpl) node);
+                    ret = super.addTwinNode(node);
                     if (ret) synchronizeTwinNodeToDB((NodeImpl) node);
                 } catch (MappingDSException E) {
                     E.printStackTrace();
                     log.error("Exception while adding twin node {}...", new Object[]{node.getNodeID()});
-                    this.nodeTwinNodes.remove((NodeImpl) node);
+                    super.removeTwinNode(node);
                     MappingDSGraphDB.autorollback();
                 }
             }
@@ -350,16 +291,11 @@ public class NodeImpl implements SProxNode, MappingDSBlueprintsCacheEntity {
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
             if (node instanceof NodeImpl) {
-                ret = this.nodeTwinNodes.remove((NodeImpl) node);
+                ret = super.removeTwinNode(node);
                 if (ret) removeTwindNodeFromDB((NodeImpl) node);
             }
         }
         return ret;
-    }
-
-    @Override
-    public Set<EndpointImpl> getNodeEndpoints() {
-        return this.nodeEndpoints;
     }
 
     static final String ADD_ENDPOINT = "addEndpoint";
@@ -384,12 +320,12 @@ public class NodeImpl implements SProxNode, MappingDSBlueprintsCacheEntity {
         } else {
             if (endpoint instanceof EndpointImpl) {
                 try {
-                    ret = this.nodeEndpoints.add((EndpointImpl) endpoint);
+                    ret = super.addEndpoint(endpoint);
                     if (ret) synchronizeEndpointToDB((EndpointImpl) endpoint);
                 } catch (MappingDSException E) {
                     E.printStackTrace();
                     log.error("Exception while adding endpoint {}...", new Object[]{endpoint.getEndpointID()});
-                    this.nodeEndpoints.remove((EndpointImpl) endpoint);
+                    super.removeEndpoint(endpoint);
                     MappingDSGraphDB.autorollback();
                 }
             }
@@ -418,7 +354,7 @@ public class NodeImpl implements SProxNode, MappingDSBlueprintsCacheEntity {
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
             if (endpoint instanceof EndpointImpl) {
-                ret = this.nodeEndpoints.remove((EndpointImpl) endpoint);
+                ret = super.removeEndpoint(endpoint);
                 if (ret) removeEndpointFromDB((EndpointImpl) endpoint);
             }
         }
@@ -434,14 +370,14 @@ public class NodeImpl implements SProxNode, MappingDSBlueprintsCacheEntity {
         if (MappingDSGraphDB.isBlueprintsNeo4j() && this.nodeVertex instanceof Neo4j2Vertex)
             ((Neo4j2Vertex) this.nodeVertex).addLabel(MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE);
         this.nodeVertex.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY, MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE);
-        this.nodeID = this.nodeVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+        super.setNodeID((String) this.nodeVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
         log.debug("Node vertex has been initialized ({},{}).", new Object[]{this.nodeVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID),
                                                                                    this.nodeVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY)});
     }
 
     @Override
     public String getEntityCacheID() {
-        return "V" + this.nodeID;
+        return "V" + super.getNodeID();
     }
 
     public void synchronizeToDB() throws MappingDSException {
@@ -457,29 +393,26 @@ public class NodeImpl implements SProxNode, MappingDSBlueprintsCacheEntity {
 
     private void synchronizeDepthToDB() {
         if (this.nodeVertex != null) {
-            log.debug("Synchronize node depth {} to db...", new Object[]{this.nodeDepth});
-            nodeVertex.setProperty(MappingDSGraphPropertyNames.DD_NODE_DEPTH_KEY, this.nodeDepth);
+            log.debug("Synchronize node depth {} to db...", new Object[]{super.getNodeDepth()});
+            nodeVertex.setProperty(MappingDSGraphPropertyNames.DD_NODE_DEPTH_KEY, super.getNodeDepth());
             MappingDSGraphDB.autocommit();
         }
     }
 
     private void synchronizeNameToDB() {
-        if (this.nodeVertex != null && this.nodeName != null) {
-            log.debug("Synchronize node name {} to db...", new Object[]{this.nodeName});
-            nodeVertex.setProperty(MappingDSGraphPropertyNames.DD_NODE_NAME_KEY, this.nodeName);
+        if (this.nodeVertex != null && super.getNodeName() != null) {
+            log.debug("Synchronize node name {} to db...", new Object[]{super.getNodeName()});
+            nodeVertex.setProperty(MappingDSGraphPropertyNames.DD_NODE_NAME_KEY, super.getNodeName());
             MappingDSGraphDB.autocommit();
         }
     }
 
     private void synchronizePropertiesToDB() {
-        if (nodeProperties != null) {
-            Iterator<String> iterK = this.nodeProperties.keySet().iterator();
-            while (iterK.hasNext()) {
-                String key = iterK.next();
-                Object value = nodeProperties.get(key);
+        if (super.getNodeProperties() != null)
+            for (String key : super.getNodeProperties().keySet()) {
+                Object value = super.getNodeProperties().get(key);
                 synchronizePropertyToDB(key, value);
             }
-        }
     }
 
     private void synchronizePropertyToDB(String key, Object value) {
@@ -491,29 +424,24 @@ public class NodeImpl implements SProxNode, MappingDSBlueprintsCacheEntity {
     }
 
     private void synchronizeContainerToDB() {
-        if (this.nodeVertex != null && nodeContainer != null && nodeContainer.getElement() != null) {
-            log.debug("Synchronize node container {} to db...", new Object[]{this.nodeContainer.getContainerID()});
-            nodeVertex.setProperty(MappingDSGraphPropertyNames.DD_NODE_CONT_KEY, this.nodeContainer.getElement().getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
+        if (this.nodeVertex != null && super.getNodeContainer() != null && ((ContainerImpl)super.getNodeContainer()).getElement() != null) {
+            log.debug("Synchronize node container {} to db...", new Object[]{super.getNodeContainer().getContainerID()});
+            nodeVertex.setProperty(MappingDSGraphPropertyNames.DD_NODE_CONT_KEY, ((ContainerImpl) super.getNodeContainer()).getElement().getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
             MappingDSGraphDB.autocommit();
         }
     }
 
     private void synchronizeParentNodeToDB() {
-        if (this.nodeVertex != null && nodeParentNode != null && nodeParentNode.getElement() != null) {
-            log.debug("Synchronize node parent node {} to db...", new Object[]{this.nodeParentNode.getNodeID()});
-            nodeVertex.setProperty(MappingDSGraphPropertyNames.DD_NODE_PNODE_KEY, this.nodeParentNode.getElement().getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
+        if (this.nodeVertex != null && super.getNodeParentNode() != null && ((NodeImpl)super.getNodeParentNode()).getElement() != null) {
+            log.debug("Synchronize node parent node {} to db...", new Object[]{super.getNodeParentNode().getNodeID()});
+            nodeVertex.setProperty(MappingDSGraphPropertyNames.DD_NODE_PNODE_KEY, ((NodeImpl) super.getNodeParentNode()).getElement().getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
             MappingDSGraphDB.autocommit();
         }
     }
 
     private void synchronizeChildNodesToDB() throws MappingDSException {
-        if (this.nodeVertex != null) {
-            Iterator<NodeImpl> iterCN = this.nodeChildNodes.iterator();
-            while (iterCN.hasNext()) {
-                NodeImpl aChild = iterCN.next();
-                synchronizeChildNodeToDB(aChild);
-            }
-        }
+        if (this.nodeVertex != null)
+            for (Node aChild : super.getNodeChildNodes()) synchronizeChildNodeToDB((NodeImpl) aChild);
     }
 
     private void synchronizeChildNodeToDB(NodeImpl child) throws MappingDSException {
@@ -535,13 +463,8 @@ public class NodeImpl implements SProxNode, MappingDSBlueprintsCacheEntity {
     }
 
     private void synchronizeTwinNodesToDB() throws MappingDSException {
-        if (this.nodeVertex != null) {
-            Iterator<NodeImpl> iterTN = this.nodeTwinNodes.iterator();
-            while (iterTN.hasNext()) {
-                NodeImpl aTwin = iterTN.next();
-                synchronizeTwinNodeToDB(aTwin);
-            }
-        }
+        if (this.nodeVertex != null)
+            for (Node aTwin : super.getTwinNodes()) synchronizeTwinNodeToDB((NodeImpl) aTwin);
     }
 
     private void synchronizeTwinNodeToDB(NodeImpl twin) throws MappingDSException {
@@ -561,13 +484,8 @@ public class NodeImpl implements SProxNode, MappingDSBlueprintsCacheEntity {
     }
 
     private void synchronizeEndpointsToDB() throws MappingDSException {
-        if (this.nodeVertex != null) {
-            Iterator<EndpointImpl> iterEP = this.nodeEndpoints.iterator();
-            while (iterEP.hasNext()) {
-                EndpointImpl anEP = iterEP.next();
-                synchronizeEndpointToDB(anEP);
-            }
-        }
+        if (this.nodeVertex != null)
+            for (Endpoint anEP : super.getNodeEndpoints()) synchronizeEndpointToDB((EndpointImpl) anEP);
     }
 
     private void synchronizeEndpointToDB(EndpointImpl endpoint) throws MappingDSException {
@@ -579,9 +497,7 @@ public class NodeImpl implements SProxNode, MappingDSBlueprintsCacheEntity {
             for (Vertex vertex : query.vertices()) {
                 Object id = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
                 if (id!=null && id instanceof String) {
-                    if (((String) id).equals(endpoint.getEndpointID())) {
-                        return;
-                    }
+                    if (id.equals(endpoint.getEndpointID())) return;
                 } else {
                     if (id == null)
                         log.error("CONSISTENCY ERROR: Vertex {} has null property {} !", new Object[]{vertex.toString(), MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID});
@@ -596,7 +512,7 @@ public class NodeImpl implements SProxNode, MappingDSBlueprintsCacheEntity {
         }
     }
 
-    public void synchronizeFromDB() {
+    public void synchronizeFromDB() throws MappingDSException {
         if (!isBeingSyncFromDB) {
             isBeingSyncFromDB = true;
             synchronizeIDFromDB();
@@ -614,30 +530,26 @@ public class NodeImpl implements SProxNode, MappingDSBlueprintsCacheEntity {
 
     private void synchronizeIDFromDB() {
         if (this.nodeVertex != null) {
-            this.nodeID = this.nodeVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+            super.setNodeID((String) this.nodeVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
         }
     }
 
     private void synchronizeDepthFromDB() {
         if (this.nodeVertex != null) {
-            this.nodeDepth = nodeVertex.getProperty(MappingDSGraphPropertyNames.DD_NODE_DEPTH_KEY);
+            super.setNodeDepth((Long) nodeVertex.getProperty(MappingDSGraphPropertyNames.DD_NODE_DEPTH_KEY));
         }
     }
 
-    private void synchronizeNameFromDB() {
+    private void synchronizeNameFromDB() throws MappingDSException {
         if (this.nodeVertex != null) {
-            this.nodeName = nodeVertex.getProperty(MappingDSGraphPropertyNames.DD_NODE_NAME_KEY);
+            super.setNodeName((String) nodeVertex.getProperty(MappingDSGraphPropertyNames.DD_NODE_NAME_KEY));
         }
     }
 
     private void synchronizePropertiesFromDB() {
         if (this.nodeVertex != null) {
-            if (nodeProperties == null) {
-                nodeProperties = new HashMap<String, Object>();
-            } else {
-                nodeProperties.clear();
-            }
-            MappingDSGraphDBObjectProps.synchronizeObjectPropertyFromDB(nodeVertex, nodeProperties, MappingDSGraphPropertyNames.DD_NODE_PROPS_KEY);
+            if (super.getNodeProperties() != null) super.getNodeProperties().clear();
+            MappingDSGraphDBObjectProps.synchronizeObjectPropertyFromDB(nodeVertex, super.getNodeProperties(), MappingDSGraphPropertyNames.DD_NODE_PROPS_KEY);
         }
     }
 
@@ -649,58 +561,47 @@ public class NodeImpl implements SProxNode, MappingDSBlueprintsCacheEntity {
         }
     }
 
-    private void synchronizeContainerFromDB() {
+    private void synchronizeContainerFromDB() throws MappingDSException {
         if (this.nodeVertex != null) {
             Object containerID = nodeVertex.getProperty(MappingDSGraphPropertyNames.DD_NODE_CONT_KEY);
             if (containerID != null) {
                 MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((String) containerID);
                 if (entity != null) {
-                    if (entity instanceof ContainerImpl) {
-                        nodeContainer = (ContainerImpl) entity;
-                    } else {
-                        log.error("CONSISTENCY ERROR : entity {} is not a node.", nodeID);
-                    }
+                    if (entity instanceof ContainerImpl) super.setNodeContainer((Container) entity);
+                    else log.error("CONSISTENCY ERROR : entity {} is not a node.", super.getNodeID());
                 }
             }
         }
     }
 
-    private void synchronizeParentNodeFromDB() {
+    private void synchronizeParentNodeFromDB() throws MappingDSException {
         if (this.nodeVertex != null) {
             Object parentNodeID = nodeVertex.getProperty(MappingDSGraphPropertyNames.DD_NODE_PNODE_KEY);
             if (parentNodeID != null) {
                 MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((String) parentNodeID);
                 if (entity != null) {
-                    if (entity instanceof NodeImpl) {
-                        nodeParentNode = (NodeImpl) entity;
-                    } else {
-                        log.error("CACHE CONSISTENCY ERROR : entity {} is not a node.", nodeID);
-                    }
+                    if (entity instanceof NodeImpl) super.setNodeParentNode((Node)entity);
+                    else log.error("CACHE CONSISTENCY ERROR : entity {} is not a node.", super.getNodeID());
                 }
             }
         }
     }
 
-    private void synchronizeChildNodesFromDB() {
+    private void synchronizeChildNodesFromDB() throws MappingDSException {
         if (this.nodeVertex != null) {
             VertexQuery query = nodeVertex.query();
             query.direction(Direction.OUT);
             query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
             query.has(MappingDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY, true);
-            this.nodeChildNodes.clear();
+            super.getNodeChildNodes().clear();
             for (Vertex vertex : query.vertices()) {
                 NodeImpl child = null;
                 MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((String) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
                 if (entity != null) {
-                    if (entity instanceof NodeImpl) {
-                        child = (NodeImpl) entity;
-                    } else {
-                        log.error("CONSISTENCY ERROR : entity {} is not a node.", nodeID);
-                    }
+                    if (entity instanceof NodeImpl) child = (NodeImpl) entity;
+                    else log.error("CONSISTENCY ERROR : entity {} is not a node.", super.getNodeID());
                 }
-                if (child != null) {
-                    this.nodeChildNodes.add(child);
-                }
+                if (child != null)  super.addNodeChildNode(child);
             }
         }
     }
@@ -720,25 +621,20 @@ public class NodeImpl implements SProxNode, MappingDSBlueprintsCacheEntity {
         }
     }
 
-    private void synchronizeTwinNodesFromDB() {
+    private void synchronizeTwinNodesFromDB() throws MappingDSException {
         if (this.nodeVertex != null) {
             VertexQuery query = nodeVertex.query();
             query.direction(Direction.BOTH);
             query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_TWIN_LABEL_KEY);
-            this.nodeTwinNodes.clear();
+            super.getTwinNodes().clear();
             for (Vertex vertex : query.vertices()) {
                 NodeImpl twin = null;
                 MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((String) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
                 if (entity != null) {
-                    if (entity instanceof NodeImpl) {
-                        twin = (NodeImpl) entity;
-                    } else {
-                        log.error("CONSISTENCY ERROR : entity {} is not a node.", nodeID);
-                    }
+                    if (entity instanceof NodeImpl) twin = (NodeImpl) entity;
+                    else log.error("CONSISTENCY ERROR : entity {} is not a node.", super.getNodeID());
                 }
-                if (entity != null) {
-                    this.nodeTwinNodes.add(twin);
-                }
+                if (entity != null) super.addTwinNode(twin);
             }
         }
     }
@@ -760,13 +656,13 @@ public class NodeImpl implements SProxNode, MappingDSBlueprintsCacheEntity {
         }
     }
 
-    private void synchronizeEndpointsFromDB() {
+    private void synchronizeEndpointsFromDB() throws MappingDSException {
         if (this.nodeVertex != null) {
             VertexQuery query = nodeVertex.query();
             query.direction(Direction.OUT);
             query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
             query.has(MappingDSGraphPropertyNames.DD_NODE_EDGE_ENDPT_KEY, true);
-            this.nodeEndpoints.clear();
+            super.getNodeEndpoints().clear();
             for (Vertex vertex : query.vertices()) {
                 EndpointImpl endpoint = null;
                 log.debug("Get {} from vertex {}", new Object[]{MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID,vertex.toString()});
@@ -775,11 +671,8 @@ public class NodeImpl implements SProxNode, MappingDSBlueprintsCacheEntity {
                     log.debug("Get entity {} ...", new Object[]{id});
                     MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((String) id);
                     if (entity != null) {
-                        if (entity instanceof EndpointImpl) {
-                            endpoint = (EndpointImpl) entity;
-                        } else {
-                            log.error("CONSISTENCY ERROR : entity {} is not a node.", nodeID);
-                        }
+                        if (entity instanceof EndpointImpl) endpoint = (EndpointImpl) entity;
+                        else log.error("CONSISTENCY ERROR : entity {} is not a node.", super.getNodeID());
                     }
                 } else {
                     if (id==null)
@@ -787,47 +680,12 @@ public class NodeImpl implements SProxNode, MappingDSBlueprintsCacheEntity {
                     else
                         log.error("CONSISTENCY ERROR : Vertex {} property {} is not a Long instance !", new Object[]{vertex.toString(), MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID});
                 }
-                if (endpoint != null) {
-                    this.nodeEndpoints.add(endpoint);
-                }
+                if (endpoint != null) super.addEndpoint(endpoint);
             }
         }
     }
 
     private void removeEndpointFromDB(EndpointImpl endpoint) {
-        MappingDSGraphDB.deleteEntity((EndpointImpl) endpoint);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        NodeImpl tmp = (NodeImpl) o;
-        if (this.nodeVertex == null) {
-            return super.equals(o);
-        }
-        boolean nameEq = false;
-        if (this.nodeName != null && this.nodeContainer != null) {
-            if (this.nodeParentNode != null)
-                nameEq = this.nodeName.equals(tmp.getNodeName()) && this.nodeParentNode.equals(tmp.getNodeParentNode());
-            else
-                nameEq = this.nodeName.equals(tmp.getNodeName()) && this.nodeContainer.equals(tmp.getNodeContainer());
-        }
-        return (this.getNodeID().equals(tmp.getNodeID()) && nameEq);
-    }
-
-    @Override
-    public int hashCode() {
-        return (this.nodeID != null && !this.nodeID.equals("")) ? this.getNodeID().hashCode() : super.hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return String.format("Node{ID='%s', nodename='%s'}", this.getNodeID(), this.nodeName);
+        MappingDSGraphDB.deleteEntity(endpoint);
     }
 }

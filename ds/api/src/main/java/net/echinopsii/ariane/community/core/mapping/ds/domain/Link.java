@@ -24,6 +24,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 public interface Link {
 
 	public String getLinkID();
+	public void   setLinkID(String ID);
 
 	public Transport getLinkTransport();
 	public void      setLinkTransport(Transport transport) throws MappingDSException;

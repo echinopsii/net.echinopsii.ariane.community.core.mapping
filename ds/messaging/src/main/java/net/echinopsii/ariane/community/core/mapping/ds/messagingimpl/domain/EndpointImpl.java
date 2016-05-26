@@ -66,6 +66,11 @@ public class EndpointImpl implements SProxEndpoint {
     }
 
     @Override
+    public void setEndpointID(String ID) {
+
+    }
+
+    @Override
     public String getEndpointURL() {
         return null;
     }

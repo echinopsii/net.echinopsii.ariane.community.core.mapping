@@ -19,6 +19,7 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.ContainerImpl;
@@ -33,7 +34,7 @@ public class ContainerRepoImpl implements ContainerRepo<ContainerImpl> {
 
     private final static Logger log = LoggerFactory.getLogger(ContainerRepoImpl.class);
 
-    public static Set<ContainerImpl> getRepository() {
+    public static Set<ContainerImpl> getRepository() throws MappingDSException {
         return MappingDSGraphDB.getContainers();
     }
 
@@ -51,7 +52,7 @@ public class ContainerRepoImpl implements ContainerRepo<ContainerImpl> {
     }
 
     @Override
-    public ContainerImpl findContainerByID(String id) {
+    public ContainerImpl findContainerByID(String id) throws MappingDSException {
         ContainerImpl ret = null;
         MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity(id);
         if (entity != null) {
@@ -65,11 +66,11 @@ public class ContainerRepoImpl implements ContainerRepo<ContainerImpl> {
     }
 
     @Override
-    public ContainerImpl findContainersByPrimaryAdminURL(String primaryAdminURL) {
+    public ContainerImpl findContainersByPrimaryAdminURL(String primaryAdminURL) throws MappingDSException {
         ContainerImpl ret = null;
         EndpointImpl ep = MappingDSGraphDB.getIndexedEndpoint(primaryAdminURL);
         if (ep != null) {
-            ret = ep.getEndpointParentNode().getNodeContainer();
+            ret = (ContainerImpl) ep.getEndpointParentNode().getNodeContainer();
         }
         return ret;
     }

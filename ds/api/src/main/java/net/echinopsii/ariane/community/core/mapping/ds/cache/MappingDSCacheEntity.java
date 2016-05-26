@@ -25,5 +25,5 @@ public interface MappingDSCacheEntity {
 	public String getEntityCacheID();
 	
 	public void   synchronizeToDB() throws MappingDSException;
-	public void   synchronizeFromDB();
+	public void   synchronizeFromDB() throws MappingDSException;
 }

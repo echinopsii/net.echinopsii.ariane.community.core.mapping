@@ -26,6 +26,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNam
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.tools.SessionRegistryImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.LinkAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxLink;
 import com.tinkerpop.blueprints.Edge;
@@ -37,28 +38,11 @@ import org.slf4j.LoggerFactory;
 import java.util.HashSet;
 import java.util.Set;
 
-public class LinkImpl implements SProxLink, MappingDSBlueprintsCacheEntity {
+public class LinkImpl extends LinkAbs implements SProxLink, MappingDSBlueprintsCacheEntity {
 
     private static final Logger log = LoggerFactory.getLogger(NodeImpl.class);
 
-    private String linkID = null;
-    private TransportImpl linkTransport = null;
-    private EndpointImpl linkEndpointSource = null;
-    private EndpointImpl linkEndpointTarget = null;
-    private Set<LinkImpl> linkSubLinks = new HashSet<LinkImpl>();
-    private LinkImpl linkUpLink = null;
-
     private transient Edge linkEdge = null;
-
-    @Override
-    public String getLinkID() {
-        return this.linkID;
-    }
-
-    @Override
-    public TransportImpl getLinkTransport() {
-        return this.linkTransport;
-    }
 
     static final String SET_LINK_TRANSPORT = "setLinkTransport";
 
@@ -77,18 +61,13 @@ public class LinkImpl implements SProxLink, MappingDSBlueprintsCacheEntity {
             if (session!=null) this.setLinkTransport(session, transport);
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            if (this.linkTransport == null || !this.linkTransport.equals(transport)) {
+            if (super.getLinkTransport() == null || !super.getLinkTransport().equals(transport)) {
                 if (transport instanceof TransportImpl) {
-                    this.linkTransport = (TransportImpl) transport;
+                    super.setLinkTransport(transport);
                     synchronizeTransportNameToDB();
                 }
             }
         }
-    }
-
-    @Override
-    public EndpointImpl getLinkEndpointSource() {
-        return this.linkEndpointSource;
     }
 
     static final String SET_LINK_ENDPOINT_SOURCE = "setLinkEndpointSource";
@@ -108,18 +87,13 @@ public class LinkImpl implements SProxLink, MappingDSBlueprintsCacheEntity {
             if (session!=null) this.setLinkEndpointSource(session, source);
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            if (this.linkEndpointSource == null || !this.linkEndpointSource.equals(source)) {
+            if (super.getLinkEndpointSource() == null || !super.getLinkEndpointSource().equals(source)) {
                 if (source instanceof EndpointImpl) {
-                    this.linkEndpointSource = (EndpointImpl) source;
+                    super.setLinkEndpointSource(source);
                     synchronizeSourceEndpointToDB();
                 }
             }
         }
-    }
-
-    @Override
-    public EndpointImpl getLinkEndpointTarget() {
-        return this.linkEndpointTarget;
     }
 
     static final String SET_LINK_ENDPOINT_TARGET = "setLinkEndpointTarget";
@@ -139,9 +113,9 @@ public class LinkImpl implements SProxLink, MappingDSBlueprintsCacheEntity {
             if (session!=null) this.setLinkEndpointTarget(session, target);
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            if (this.linkEndpointTarget == null || !this.linkEndpointTarget.equals(target)) {
+            if (super.getLinkEndpointTarget() == null || !super.getLinkEndpointTarget().equals(target)) {
                 if (target instanceof EndpointImpl) {
-                    this.linkEndpointTarget = (EndpointImpl) target;
+                    super.setLinkEndpointTarget(target);
                     synchronizeTargetEndpointToDB();
                 }
             }
@@ -190,38 +164,38 @@ public class LinkImpl implements SProxLink, MappingDSBlueprintsCacheEntity {
     @Override
     public void setElement(Element edge) {
         this.linkEdge = (Edge) edge;
-        this.linkID = this.linkEdge.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID);
+        super.setLinkID((String) this.linkEdge.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID));
         log.debug("Link edge has been initialized ({}).", new Object[]{this.linkEdge.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID)});
     }
 
     @Override
     public String getEntityCacheID() {
-        return "E"+this.linkID;
+        return "E"+super.getLinkID();
     }
 
     @Override
     public void synchronizeToDB() {
         synchronizeSourceEndpointToDB();
         synchronizeTargetEndpointToDB();
-        synchronizeUpLinkToDB();
-        synchronizeSubLinksToDB();
+        //synchronizeUpLinkToDB();
+        //synchronizeSubLinksToDB();
         synchronizeTransportNameToDB();
     }
 
     private void synchronizeSourceEndpointToDB() {
-        if (this.linkEdge != null && this.linkEndpointSource != null) {
-            this.linkEdge.setProperty(MappingDSGraphPropertyNames.DD_LINK_SOURCE_EP_KEY, this.linkEndpointSource.getEndpointID());
+        if (this.linkEdge != null && super.getLinkEndpointSource() != null) {
+            this.linkEdge.setProperty(MappingDSGraphPropertyNames.DD_LINK_SOURCE_EP_KEY, super.getLinkEndpointSource().getEndpointID());
             MappingDSGraphDB.autocommit();
         }
     }
 
     private void synchronizeTargetEndpointToDB() {
-        if (this.linkEdge != null && this.linkEndpointTarget != null) {
-            this.linkEdge.setProperty(MappingDSGraphPropertyNames.DD_LINK_TARGET_EP_KEY, this.linkEndpointTarget.getEndpointID());
+        if (this.linkEdge != null && super.getLinkEndpointTarget() != null) {
+            this.linkEdge.setProperty(MappingDSGraphPropertyNames.DD_LINK_TARGET_EP_KEY, super.getLinkEndpointTarget().getEndpointID());
             MappingDSGraphDB.autocommit();
         }
     }
-
+/*
     private void synchronizeUpLinkToDB() {
         if (this.linkEdge != null && this.linkUpLink != null) {
             this.linkEdge.setProperty(MappingDSGraphPropertyNames.DD_LINK_UPLINK_KEY, this.linkUpLink.getLinkID());
@@ -241,62 +215,57 @@ public class LinkImpl implements SProxLink, MappingDSBlueprintsCacheEntity {
             MappingDSGraphDB.autocommit();
         }
     }
+*/
 
     private void synchronizeTransportNameToDB() {
-        if (this.linkEdge != null && this.linkTransport != null) {
-            this.linkEdge.setProperty(MappingDSGraphPropertyNames.DD_LINK_TRANSPORT_KEY, this.linkTransport.getTransportID());
+        if (this.linkEdge != null && super.getLinkTransport() != null) {
+            this.linkEdge.setProperty(MappingDSGraphPropertyNames.DD_LINK_TRANSPORT_KEY, super.getLinkTransport().getTransportID());
             MappingDSGraphDB.autocommit();
         }
     }
 
     @Override
-    public void synchronizeFromDB() {
+    public void synchronizeFromDB() throws MappingDSException {
         synchronizeIDFromDB();
         synchronizeSourceEndpointFromDB();
         synchronizeTargetEndpointFromDB();
-        synchronizeUpLinkFromDB();
-        synchronizeSubLinksFromDB();
+        //synchronizeUpLinkFromDB();
+        //synchronizeSubLinksFromDB();
         synchronizeTransportNameFromDB();
     }
 
     private void synchronizeIDFromDB() {
         if (this.linkEdge != null) {
-            this.linkID = this.linkEdge.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID);
+            super.setLinkID((String) this.linkEdge.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID));
         }
     }
 
-    private void synchronizeSourceEndpointFromDB() {
+    private void synchronizeSourceEndpointFromDB() throws MappingDSException {
         if (this.linkEdge != null) {
             Object endpointID = this.linkEdge.getProperty(MappingDSGraphPropertyNames.DD_LINK_SOURCE_EP_KEY);
             if (endpointID != null) {
                 MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((String) endpointID);
                 if (entity != null) {
-                    if (entity instanceof EndpointImpl) {
-                        linkEndpointSource = (EndpointImpl) entity;
-                    } else {
-                        log.error("CACHE CONSISTENCY ERROR : entity {} is not an endpoint.", entity.getElement().getId());
-                    }
+                    if (entity instanceof EndpointImpl) super.setLinkEndpointSource((Endpoint)entity);
+                    else log.error("CACHE CONSISTENCY ERROR : entity {} is not an endpoint.", entity.getElement().getId());
                 }
             }
         }
     }
 
-    private void synchronizeTargetEndpointFromDB() {
+    private void synchronizeTargetEndpointFromDB() throws MappingDSException {
         if (this.linkEdge != null) {
             Object endpointID = this.linkEdge.getProperty(MappingDSGraphPropertyNames.DD_LINK_TARGET_EP_KEY);
             if (endpointID != null) {
                 MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((String) endpointID);
                 if (entity != null) {
-                    if (entity instanceof EndpointImpl) {
-                        linkEndpointTarget = (EndpointImpl) entity;
-                    } else {
-                        log.error("CACHE CONSISTENCY ERROR : entity {} is not an endpoint.", entity.getElement().getId());
-                    }
+                    if (entity instanceof EndpointImpl) super.setLinkEndpointTarget((EndpointImpl) entity);
+                    else log.error("CACHE CONSISTENCY ERROR : entity {} is not an endpoint.", entity.getElement().getId());
                 }
             }
         }
     }
-
+/*
     private void synchronizeUpLinkFromDB() {
         if (this.linkEdge != null) {
             Object upLinkID = this.linkEdge.getProperty(MappingDSGraphPropertyNames.DD_LINK_UPLINK_KEY);
@@ -337,46 +306,17 @@ public class LinkImpl implements SProxLink, MappingDSBlueprintsCacheEntity {
             }
         }
     }
-
-    private void synchronizeTransportNameFromDB() {
+*/
+    private void synchronizeTransportNameFromDB() throws MappingDSException {
         if (this.linkEdge != null) {
             Object transportID = this.linkEdge.getProperty(MappingDSGraphPropertyNames.DD_LINK_TRANSPORT_KEY);
             if (transportID != null) {
                 MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((String) transportID);
                 if (entity != null) {
-                    if (entity instanceof TransportImpl) {
-                        linkTransport = (TransportImpl) entity;
-                    } else {
-                        log.error("CACHE CONSISTENCY ERROR : entity {} is not a link.", entity.getElement().getId());
-                    }
+                    if (entity instanceof TransportImpl) super.setLinkTransport((TransportImpl) entity);
+                    else log.error("CACHE CONSISTENCY ERROR : entity {} is not a link.", entity.getElement().getId());
                 }
             }
         }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        LinkImpl tmp = (LinkImpl) o;
-        if (this.getLinkID() == null) {
-            return super.equals(o);
-        }
-        return (this.getLinkID().equals(tmp.getLinkID()));
-    }
-
-    @Override
-    public int hashCode() {
-        return ((this.getLinkID() != null && !this.getLinkID().equals("")) ? this.getLinkID().hashCode() : super.hashCode());
-    }
-
-    @Override
-    public String toString() {
-        return String.format("Link{ID='%s'}", this.getLinkID());
     }
 }

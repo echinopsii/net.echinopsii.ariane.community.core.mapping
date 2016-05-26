@@ -34,7 +34,7 @@ import java.util.Set;
 public class GateRepoImpl extends NodeRepoImpl implements GateRepo<NodeImpl, GateImpl> {
     private final static Logger log = LoggerFactory.getLogger(GateRepoImpl.class);
 
-    public static Set<GateImpl> getGateRepository() {
+    public static Set<GateImpl> getGateRepository() throws MappingDSException {
         return MappingDSGraphDB.getGates();
     }
 
@@ -55,7 +55,7 @@ public class GateRepoImpl extends NodeRepoImpl implements GateRepo<NodeImpl, Gat
     }
 
     @Override
-    public GateImpl findGateByID(String ID) {
+    public GateImpl findGateByID(String ID) throws MappingDSException {
         GateImpl ret = null;
         MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity(ID);
         if (entity != null) {
@@ -69,7 +69,7 @@ public class GateRepoImpl extends NodeRepoImpl implements GateRepo<NodeImpl, Gat
     }
 
     @Override
-    public GateImpl findGateByEndpointURL(String URL) {
+    public GateImpl findGateByEndpointURL(String URL) throws MappingDSException {
         GateImpl ret = null;
         EndpointImpl ep = MappingDSGraphDB.getIndexedEndpoint(URL);
         if (ep != null) {

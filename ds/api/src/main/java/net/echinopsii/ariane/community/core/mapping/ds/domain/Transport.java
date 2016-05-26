@@ -25,6 +25,7 @@ import java.util.HashMap;
 
 public interface Transport {
 	public String  getTransportID();
+	public void    setTransportID(String ID);
 	
 	/*
 	 * MUST BE UNIQUE

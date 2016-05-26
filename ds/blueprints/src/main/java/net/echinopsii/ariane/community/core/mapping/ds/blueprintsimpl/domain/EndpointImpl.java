@@ -29,6 +29,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.Ma
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDBObjectProps;
 import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.EndpointAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxEndpoint;
 import com.tinkerpop.blueprints.*;
@@ -36,33 +37,12 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
-public class EndpointImpl implements SProxEndpoint, MappingDSBlueprintsCacheEntity {
+public class EndpointImpl extends EndpointAbs implements SProxEndpoint, MappingDSBlueprintsCacheEntity {
 
     private static final Logger log = LoggerFactory.getLogger(EndpointImpl.class);
 
-    private String endpointID = null;
-    private String endpointURL = null;
-    private NodeImpl endpointParentNode = null;
-    private HashMap<String, Object> endpointProperties = null;
-    private Set<EndpointImpl> endpointTwinEndpoints = new HashSet<EndpointImpl>();
-
     private transient Vertex endpointVertex = null;
     private boolean isBeingSyncFromDB = false;
-
-    @Override
-    public String getEndpointID() {
-        return this.endpointID;
-    }
-
-    @Override
-    public String getEndpointURL() {
-        return this.endpointURL;
-    }
 
     static final String SET_ENDPOINT_URL = "setEndpointURL";
 
@@ -81,16 +61,11 @@ public class EndpointImpl implements SProxEndpoint, MappingDSBlueprintsCacheEnti
             if (session!=null) this.setEndpointURL(session, url);
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            if (this.endpointURL == null || !this.endpointURL.equals(url)) {
-                this.endpointURL = url;
+            if (super.getEndpointURL() == null || !super.getEndpointURL().equals(url)) {
+                super.setEndpointURL(url);
                 synchronizeURLToDB();
             }
         }
-    }
-
-    @Override
-    public NodeImpl getEndpointParentNode() {
-        return this.endpointParentNode;
     }
 
     static final String SET_ENDPOINT_PARENT_NODE = "setEndpointParentNode";
@@ -110,20 +85,15 @@ public class EndpointImpl implements SProxEndpoint, MappingDSBlueprintsCacheEnti
             if (session!=null) this.setEndpointParentNode(session, node);
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            if (this.endpointParentNode == null || !this.endpointParentNode.equals(node)) {
-                if (node instanceof NodeImpl || node instanceof GateImpl) {
-                    this.endpointParentNode = (NodeImpl) node;
+            if (super.getEndpointParentNode() == null || !super.getEndpointParentNode().equals(node)) {
+                if (node instanceof NodeImpl) {
+                    super.setEndpointParentNode(node);
                     synchronizeParentNodeToDB();
-                    log.debug("Add endpoint parent node {} to endpoint {}", new Object[]{this.endpointParentNode.getNodeID(),
-                            this.endpointID});
+                    log.debug("Add endpoint parent node {} to endpoint {}", new Object[]{super.getEndpointParentNode().getNodeID(),
+                            super.getEndpointID()});
                 }
             }
         }
-    }
-
-    @Override
-    public HashMap<String, Object> getEndpointProperties() {
-        return endpointProperties;
     }
 
     static final String ADD_ENDPOINT_PROPERTY = "addEndpointProperty";
@@ -144,14 +114,11 @@ public class EndpointImpl implements SProxEndpoint, MappingDSBlueprintsCacheEnti
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
             if (propertyKey != null && value != null) {
-                if (endpointProperties == null) {
-                    endpointProperties = new HashMap<String, Object>();
-                }
-                endpointProperties.put(propertyKey, value);
+                super.addEndpointProperty(propertyKey, value);
                 synchronizePropertyToDB(propertyKey, value);
-                log.debug("Set endpoint {} property : ({},{})", new Object[]{this.endpointID,
+                log.debug("Set endpoint {} property : ({},{})", new Object[]{super.getEndpointID(),
                         propertyKey,
-                        this.endpointProperties.get(propertyKey)});
+                        super.getEndpointProperties().get(propertyKey)});
             }
         }
     }
@@ -173,16 +140,9 @@ public class EndpointImpl implements SProxEndpoint, MappingDSBlueprintsCacheEnti
             if (session!=null) this.removeEndpointProperty(session, propertyKey);
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            if (endpointProperties != null) {
-                endpointProperties.remove(propertyKey);
-                removePropertyFromDB(propertyKey);
-            }
+            super.removeEndpointProperty(propertyKey);
+            removePropertyFromDB(propertyKey);
         }
-    }
-
-    @Override
-    public Set<? extends Endpoint> getTwinEndpoints() {
-        return this.endpointTwinEndpoints;
     }
 
     static final String ADD_TWIN_ENDPOINT = "addTwinEndpoint";
@@ -207,12 +167,12 @@ public class EndpointImpl implements SProxEndpoint, MappingDSBlueprintsCacheEnti
         } else {
             if (endpoint instanceof EndpointImpl) {
                 try {
-                    ret = this.endpointTwinEndpoints.add((EndpointImpl) endpoint);
+                    ret = super.addTwinEndpoint(endpoint);
                     if (ret) synchronizeTwinEndpointToDB((EndpointImpl) endpoint);
                 } catch (MappingDSException E) {
                     E.printStackTrace();
                     log.error("Exception while adding twin node {}...", new Object[]{endpoint.getEndpointID()});
-                    this.endpointTwinEndpoints.remove((EndpointImpl) endpoint);
+                    super.removeTwinEndpoint(endpoint);
                     MappingDSGraphDB.autorollback();
                 }
                 return ret;
@@ -242,8 +202,8 @@ public class EndpointImpl implements SProxEndpoint, MappingDSBlueprintsCacheEnti
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         }
         if (endpoint instanceof EndpointImpl) {
-            ret = this.endpointTwinEndpoints.remove((EndpointImpl) endpoint);
-            if (ret) removeTwinEndpointFromDB((EndpointImpl) endpoint);
+            ret = super.removeTwinEndpoint(endpoint);
+            if (ret) removeTwinEndpointFromDB((EndpointImpl)endpoint);
         }
         return ret;
     }
@@ -257,14 +217,14 @@ public class EndpointImpl implements SProxEndpoint, MappingDSBlueprintsCacheEnti
         if (MappingDSGraphDB.isBlueprintsNeo4j() && this.endpointVertex instanceof Neo4j2Vertex)
             ((Neo4j2Vertex) this.endpointVertex).addLabel(MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE);
         this.endpointVertex.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY, MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE);
-        this.endpointID = this.endpointVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+        super.setEndpointID((String) this.endpointVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
         log.debug("Endpoint vertex has been initialized ({},{}).", new Object[]{this.endpointVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID),
                                                                                        this.endpointVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY)});
     }
 
     @Override
     public String getEntityCacheID() {
-        return "V" + this.endpointID;
+        return "V" + super.getEndpointID();
     }
 
     public void synchronizeToDB() throws MappingDSException {
@@ -275,22 +235,19 @@ public class EndpointImpl implements SProxEndpoint, MappingDSBlueprintsCacheEnti
     }
 
     private void synchronizeURLToDB() {
-        if (endpointVertex != null && this.endpointURL != null) {
-            log.debug("Synchronize endpoint URL {}...", new Object[]{this.endpointURL});
-            endpointVertex.setProperty(MappingDSGraphPropertyNames.DD_ENDPOINT_URL_KEY, this.endpointURL);
+        if (endpointVertex != null && super.getEndpointURL() != null) {
+            log.debug("Synchronize endpoint URL {}...", new Object[]{super.getEndpointURL()});
+            endpointVertex.setProperty(MappingDSGraphPropertyNames.DD_ENDPOINT_URL_KEY, super.getEndpointURL());
             MappingDSGraphDB.autocommit();
         }
     }
 
     private void synchronizePropertiesToDB() {
-        if (endpointProperties != null) {
-            Iterator<String> iterK = this.endpointProperties.keySet().iterator();
-            while (iterK.hasNext()) {
-                String key = iterK.next();
-                Object value = endpointProperties.get(key);
+        if (super.getEndpointProperties() != null)
+            for (String key : super.getEndpointProperties().keySet()) {
+                Object value = super.getEndpointProperties().get(key);
                 synchronizePropertyToDB(key, value);
             }
-        }
     }
 
     private void synchronizePropertyToDB(String key, Object value) {
@@ -302,22 +259,17 @@ public class EndpointImpl implements SProxEndpoint, MappingDSBlueprintsCacheEnti
     }
 
     private void synchronizeParentNodeToDB() {
-        if (endpointVertex != null && endpointParentNode != null && endpointParentNode.getElement() != null) {
-            log.debug("Synchronize parent node {}...", new Object[]{endpointParentNode.getNodeID()});
+        if (endpointVertex != null && super.getEndpointParentNode() != null && ((NodeImpl)super.getEndpointParentNode()).getElement() != null) {
+            log.debug("Synchronize parent node {}...", new Object[]{super.getEndpointParentNode().getNodeID()});
             endpointVertex.setProperty(MappingDSGraphPropertyNames.DD_ENDPOINT_PNODE_KEY,
-                                              endpointParentNode.getElement().getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
+                    ((NodeImpl) super.getEndpointParentNode()).getElement().getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
             MappingDSGraphDB.autocommit();
         }
     }
 
     private void synchronizeTwinEndpointsToDB() throws MappingDSException {
-        if (this.endpointVertex != null) {
-            Iterator<EndpointImpl> iterTE = this.endpointTwinEndpoints.iterator();
-            while (iterTE.hasNext()) {
-                EndpointImpl aTwin = iterTE.next();
-                synchronizeTwinEndpointToDB(aTwin);
-            }
-        }
+        if (this.endpointVertex != null)
+            for (Endpoint aTwin : super.getTwinEndpoints()) synchronizeTwinEndpointToDB((EndpointImpl) aTwin);
     }
 
     private void synchronizeTwinEndpointToDB(EndpointImpl twin) throws MappingDSException {
@@ -346,7 +298,7 @@ public class EndpointImpl implements SProxEndpoint, MappingDSBlueprintsCacheEnti
         }
     }
 
-    public void synchronizeFromDB() {
+    public void synchronizeFromDB() throws MappingDSException {
         if (!isBeingSyncFromDB) {
             isBeingSyncFromDB = true;
             synchronizeIDFromDB();
@@ -359,25 +311,17 @@ public class EndpointImpl implements SProxEndpoint, MappingDSBlueprintsCacheEnti
     }
 
     private void synchronizeIDFromDB() {
-        if (this.endpointVertex != null) {
-            this.endpointID = this.endpointVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
-        }
+        if (this.endpointVertex != null) super.setEndpointID((String) this.endpointVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
     }
 
-    private void synchronizeURLFromDB() {
-        if (endpointVertex != null) {
-            endpointURL = endpointVertex.getProperty(MappingDSGraphPropertyNames.DD_ENDPOINT_URL_KEY);
-        }
+    private void synchronizeURLFromDB() throws MappingDSException {
+        if (endpointVertex != null) super.setEndpointURL((String) endpointVertex.getProperty(MappingDSGraphPropertyNames.DD_ENDPOINT_URL_KEY));
     }
 
     private void synchronizePropertiesFromDB() {
         if (endpointVertex != null) {
-            if (endpointProperties == null) {
-                endpointProperties = new HashMap<String, Object>();
-            } else {
-                endpointProperties.clear();
-            }
-            MappingDSGraphDBObjectProps.synchronizeObjectPropertyFromDB(endpointVertex, endpointProperties, MappingDSGraphPropertyNames.DD_ENDPOINT_PROPS_KEY);
+            super.getEndpointProperties().clear();
+            MappingDSGraphDBObjectProps.synchronizeObjectPropertyFromDB(endpointVertex, super.getEndpointProperties(), MappingDSGraphPropertyNames.DD_ENDPOINT_PROPS_KEY);
         }
     }
 
@@ -389,15 +333,14 @@ public class EndpointImpl implements SProxEndpoint, MappingDSBlueprintsCacheEnti
         }
     }
 
-    private void synchronizeParentNodeFromDB() {
+    private void synchronizeParentNodeFromDB() throws MappingDSException {
         if (endpointVertex != null) {
             Object parentNodeID = endpointVertex.getProperty(MappingDSGraphPropertyNames.DD_ENDPOINT_PNODE_KEY);
             if (parentNodeID != null) {
                 MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((String) parentNodeID);
                 if (entity != null) {
-                    if (entity instanceof NodeImpl || entity instanceof GateImpl) {
-                        endpointParentNode = (NodeImpl) entity;
-                    } else {
+                    if (entity instanceof NodeImpl) super.setEndpointParentNode((NodeImpl) entity);
+                    else {
                         log.error("CACHE CONSISTENCY PROBLEM : entity {} is not a node.", new Object[]{parentNodeID});
                         log.error(entity.getClass().toString());
                     }
@@ -406,12 +349,12 @@ public class EndpointImpl implements SProxEndpoint, MappingDSBlueprintsCacheEnti
         }
     }
 
-    private void synchronizeTwinEndpointsFromDB() {
+    private void synchronizeTwinEndpointsFromDB() throws MappingDSException {
         if (this.endpointVertex != null) {
             VertexQuery query = endpointVertex.query();
             query.direction(Direction.BOTH);
             query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_TWIN_LABEL_KEY);
-            this.endpointTwinEndpoints.clear();
+            super.getTwinEndpoints().clear();
             for (Vertex vertex : query.vertices()) {
                 EndpointImpl twin = null;
                 MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity((String) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
@@ -419,13 +362,11 @@ public class EndpointImpl implements SProxEndpoint, MappingDSBlueprintsCacheEnti
                     if (entity instanceof EndpointImpl) {
                         twin = (EndpointImpl) entity;
                     } else {
-                        log.error("CONSISTENCY ERROR : entity {} is not a endpoint.", endpointID);
+                        log.error("CONSISTENCY ERROR : entity {} is not a endpoint.", super.getEndpointID());
                         log.error(entity.getClass().toString());
                     }
                 }
-                if (entity != null) {
-                    this.endpointTwinEndpoints.add(twin);
-                }
+                if (entity != null) super.addTwinEndpoint(twin);
             }
         }
     }
@@ -445,31 +386,5 @@ public class EndpointImpl implements SProxEndpoint, MappingDSBlueprintsCacheEnti
             }
             MappingDSGraphDB.autocommit();
         }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        EndpointImpl tmp = (EndpointImpl) o;
-        if (this.endpointID ==null) {
-            return super.equals(o);
-        }
-        return (this.endpointID.equals(tmp.getEndpointID()));
-    }
-
-    @Override
-    public int hashCode() {
-        return (endpointID != null && !endpointID.equals("")) ? endpointID.hashCode() : super.hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return String.format("Endpoint{ID='%s', URL='%s'}", this.endpointID, this.endpointURL);
     }
 }

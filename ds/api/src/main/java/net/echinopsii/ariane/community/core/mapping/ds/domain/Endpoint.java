@@ -25,6 +25,7 @@ import java.util.Set;
 
 public interface Endpoint {
 	public String getEndpointID();
+	public void   setEndpointID(String ID);
 	
 	/*
 	 * MUST be unique
