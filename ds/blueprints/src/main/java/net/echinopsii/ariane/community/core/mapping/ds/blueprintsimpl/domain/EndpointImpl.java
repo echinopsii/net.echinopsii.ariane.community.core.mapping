@@ -29,28 +29,20 @@ import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.Ma
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDBObjectProps;
 import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
-import net.echinopsii.ariane.community.core.mapping.ds.domain.EndpointAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxEndpoint;
 import com.tinkerpop.blueprints.*;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxEndpointAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EndpointImpl extends EndpointAbs implements SProxEndpoint, MappingDSBlueprintsCacheEntity {
+public class EndpointImpl extends SProxEndpointAbs implements SProxEndpoint, MappingDSBlueprintsCacheEntity {
 
     private static final Logger log = LoggerFactory.getLogger(EndpointImpl.class);
 
     private transient Vertex endpointVertex = null;
     private boolean isBeingSyncFromDB = false;
-
-    static final String SET_ENDPOINT_URL = "setEndpointURL";
-
-    @Override
-    public void setEndpointURL(Session session, String url) throws MappingDSException {
-        if (session!=null && session.isRunning())
-            session.execute(this, SET_ENDPOINT_URL, new Object[]{url});
-    }
 
     @Override
     public void setEndpointURL(String url) throws MappingDSException {
@@ -66,14 +58,6 @@ public class EndpointImpl extends EndpointAbs implements SProxEndpoint, MappingD
                 synchronizeURLToDB();
             }
         }
-    }
-
-    static final String SET_ENDPOINT_PARENT_NODE = "setEndpointParentNode";
-
-    @Override
-    public void setEndpointParentNode(Session session, Node node) throws MappingDSException {
-        if (session!=null && session.isRunning())
-            session.execute(this, SET_ENDPOINT_PARENT_NODE, new Object[]{node});
     }
 
     @Override
@@ -96,14 +80,6 @@ public class EndpointImpl extends EndpointAbs implements SProxEndpoint, MappingD
         }
     }
 
-    static final String ADD_ENDPOINT_PROPERTY = "addEndpointProperty";
-
-    @Override
-    public void addEndpointProperty(Session session, String propertyKey, Object value) throws MappingDSException {
-        if (session!=null && session.isRunning())
-            session.execute(this, ADD_ENDPOINT_PROPERTY, new Object[]{propertyKey, value});
-    }
-
     @Override
     public void addEndpointProperty(String propertyKey, Object value) throws MappingDSException {
         String clientThreadName = Thread.currentThread().getName();
@@ -123,14 +99,6 @@ public class EndpointImpl extends EndpointAbs implements SProxEndpoint, MappingD
         }
     }
 
-    static final String REMOVE_ENDPOINT_PROPERTY = "removeEndpointProperty";
-
-    @Override
-    public void removeEndpointProperty(Session session, String propertyKey) throws MappingDSException {
-        if (session!=null && session.isRunning())
-            session.execute(this, REMOVE_ENDPOINT_PROPERTY, new Object[]{propertyKey});
-    }
-
     @Override
     public void removeEndpointProperty(String propertyKey) throws MappingDSException {
         String clientThreadName = Thread.currentThread().getName();
@@ -143,16 +111,6 @@ public class EndpointImpl extends EndpointAbs implements SProxEndpoint, MappingD
             super.removeEndpointProperty(propertyKey);
             removePropertyFromDB(propertyKey);
         }
-    }
-
-    static final String ADD_TWIN_ENDPOINT = "addTwinEndpoint";
-
-    @Override
-    public boolean addTwinEndpoint(Session session, Endpoint endpoint) throws MappingDSException {
-        boolean ret = false;
-        if (session!=null && session.isRunning())
-            ret = (boolean) session.execute(this, ADD_TWIN_ENDPOINT, new Object[]{endpoint});
-        return ret;
     }
 
     @Override
@@ -178,16 +136,6 @@ public class EndpointImpl extends EndpointAbs implements SProxEndpoint, MappingD
                 return ret;
             }
         }
-        return ret;
-    }
-
-    static final String REMOVE_TWIN_ENDPOINT = "removeTwinEndpoint";
-
-    @Override
-    public boolean removeTwinEndpoint(Session session, Endpoint endpoint) throws MappingDSException {
-        boolean ret = false;
-        if (session!=null && session.isRunning())
-            ret = (boolean) session.execute(this, REMOVE_TWIN_ENDPOINT, new Object[]{endpoint});
         return ret;
     }
 

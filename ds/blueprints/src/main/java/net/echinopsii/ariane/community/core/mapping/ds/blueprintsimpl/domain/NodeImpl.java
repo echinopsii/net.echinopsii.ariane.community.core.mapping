@@ -31,27 +31,19 @@ import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRe
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
-import net.echinopsii.ariane.community.core.mapping.ds.domain.NodeAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxNode;
 import com.tinkerpop.blueprints.*;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxNodeAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NodeImpl extends NodeAbs implements SProxNode, MappingDSBlueprintsCacheEntity {
+public class NodeImpl extends SProxNodeAbs implements SProxNode, MappingDSBlueprintsCacheEntity {
 
     private static final Logger log = LoggerFactory.getLogger(NodeImpl.class);
 
     private transient Vertex nodeVertex = null;
     private boolean isBeingSyncFromDB = false;
-
-    static final String SET_NODE_NAME = "setNodeName";
-
-    @Override
-    public void setNodeName(Session session, String name) throws MappingDSException {
-        if (session!=null && session.isRunning())
-            session.execute(this, SET_NODE_NAME, new Object[]{name});
-    }
 
     @Override
     public void setNodeName(String name) throws MappingDSException {
@@ -67,14 +59,6 @@ public class NodeImpl extends NodeAbs implements SProxNode, MappingDSBlueprintsC
                 synchronizeNameToDB();
             }
         }
-    }
-
-    static final String SET_NODE_CONTAINER = "setNodeContainer";
-
-    @Override
-    public void setNodeContainer(Session session, Container container) throws MappingDSException {
-        if (session!=null && session.isRunning())
-            session.execute(this, SET_NODE_CONTAINER, new Object[]{container});
     }
 
     @Override
@@ -93,14 +77,6 @@ public class NodeImpl extends NodeAbs implements SProxNode, MappingDSBlueprintsC
                 }
             }
         }
-    }
-
-    static final String ADD_NODE_PROPERTY = "addNodeProperty";
-
-    @Override
-    public void addNodeProperty(Session session, String propertyKey, Object value) throws MappingDSException {
-        if (session!=null && session.isRunning())
-            session.execute(this, ADD_NODE_PROPERTY, new Object[]{propertyKey, value});
     }
 
     @Override
@@ -122,14 +98,6 @@ public class NodeImpl extends NodeAbs implements SProxNode, MappingDSBlueprintsC
         }
     }
 
-    static final String REMOVE_NODE_PROPERTY = "removeNodeProperty";
-
-    @Override
-    public void removeNodeProperty(Session session, String propertyKey) throws MappingDSException {
-        if (session!=null && session.isRunning())
-            session.execute(this, REMOVE_NODE_PROPERTY, new Object[]{propertyKey});
-    }
-
     @Override
     public void removeNodeProperty(String propertyKey) throws MappingDSException {
         String clientThreadName = Thread.currentThread().getName();
@@ -144,14 +112,6 @@ public class NodeImpl extends NodeAbs implements SProxNode, MappingDSBlueprintsC
         }
     }
 
-    static final String SET_NODE_PARENT_NODE = "setNodeParentNode";
-
-    @Override
-    public void setNodeParentNode(Session session, Node node) throws MappingDSException {
-        if (session!=null && session.isRunning())
-            session.execute(this, SET_NODE_PARENT_NODE, new Object[]{node});
-    }
-
     @Override
     public void setNodeParentNode(Node node) throws MappingDSException {
         String clientThreadName = Thread.currentThread().getName();
@@ -164,22 +124,12 @@ public class NodeImpl extends NodeAbs implements SProxNode, MappingDSBlueprintsC
             if (super.getNodeParentNode() == null || !super.getNodeParentNode().equals(node)) {
                 if (node instanceof NodeImpl) {
                     super.setNodeParentNode(node);
-                    super.setNodeDepth(1+node.getNodeDepth());
+                    super.setNodeDepth(1 + node.getNodeDepth());
                     synchronizeParentNodeToDB();
                     synchronizeDepthToDB();
                 }
             }
         }
-    }
-
-    static final String ADD_NODE_CHILD_NODE = "addNodeChildNode";
-
-    @Override
-    public boolean addNodeChildNode(Session session, Node node) throws MappingDSException {
-        boolean ret = false;
-        if (session!=null && session.isRunning())
-            ret = (boolean) session.execute(this, ADD_NODE_CHILD_NODE, new Object[]{node});
-        return ret;
     }
 
     @Override
@@ -207,16 +157,6 @@ public class NodeImpl extends NodeAbs implements SProxNode, MappingDSBlueprintsC
         return ret;
     }
 
-    static final String REMOVE_NODE_CHILD_NODE = "removeNodeChildNode";
-
-    @Override
-    public boolean removeNodeChildNode(Session session, Node node) throws MappingDSException {
-        boolean ret = false;
-        if (session!=null && session.isRunning())
-            ret = (boolean) session.execute(this, REMOVE_NODE_CHILD_NODE, new Object[]{node});
-        return ret;
-    }
-
     @Override
     public boolean removeNodeChildNode(Node node) throws MappingDSException {
         boolean ret = false;
@@ -232,16 +172,6 @@ public class NodeImpl extends NodeAbs implements SProxNode, MappingDSBlueprintsC
                 if (ret) removeChildNodeFromDB((NodeImpl) node);
             }
         }
-        return ret;
-    }
-
-    static final String ADD_TWIN_NODE = "addTwinNode";
-
-    @Override
-    public boolean addTwinNode(Session session, Node node) throws MappingDSException {
-        boolean ret = false;
-        if (session!=null && session.isRunning())
-            ret = (boolean) session.execute(this, ADD_TWIN_NODE, new Object[]{node});
         return ret;
     }
 
@@ -270,16 +200,6 @@ public class NodeImpl extends NodeAbs implements SProxNode, MappingDSBlueprintsC
         return ret;
     }
 
-    static final String REMOVE_TWIN_NODE = "removeTwinNode";
-
-    @Override
-    public boolean removeTwinNode(Session session, Node node) throws MappingDSException {
-        boolean ret = false;
-        if (session!=null && session.isRunning())
-            ret = (boolean) session.execute(this, REMOVE_TWIN_NODE, new Object[]{node});
-        return ret;
-    }
-
     @Override
     public boolean removeTwinNode(Node node) throws MappingDSException {
         boolean ret = false;
@@ -295,16 +215,6 @@ public class NodeImpl extends NodeAbs implements SProxNode, MappingDSBlueprintsC
                 if (ret) removeTwindNodeFromDB((NodeImpl) node);
             }
         }
-        return ret;
-    }
-
-    static final String ADD_ENDPOINT = "addEndpoint";
-
-    @Override
-    public boolean addEndpoint(Session session, Endpoint endpoint) throws MappingDSException {
-        boolean ret = false;
-        if (session!=null && session.isRunning())
-            ret = (boolean) session.execute(this, ADD_ENDPOINT, new Object[]{endpoint});
         return ret;
     }
 
@@ -330,16 +240,6 @@ public class NodeImpl extends NodeAbs implements SProxNode, MappingDSBlueprintsC
                 }
             }
         }
-        return ret;
-    }
-
-    static final String REMOVE_ENDPOINT = "removeEndpoint";
-
-    @Override
-    public boolean removeEndpoint(Session session, Endpoint endpoint) throws MappingDSException {
-        boolean ret = false;
-        if (session!=null && session.isRunning())
-            ret = (boolean) session.execute(this, REMOVE_ENDPOINT, new Object[]{endpoint});
         return ret;
     }
 

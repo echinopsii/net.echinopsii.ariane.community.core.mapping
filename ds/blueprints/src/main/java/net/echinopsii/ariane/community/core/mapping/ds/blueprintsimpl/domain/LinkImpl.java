@@ -26,31 +26,20 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNam
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.tools.SessionRegistryImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
-import net.echinopsii.ariane.community.core.mapping.ds.domain.LinkAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxLink;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxLinkAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashSet;
-import java.util.Set;
-
-public class LinkImpl extends LinkAbs implements SProxLink, MappingDSBlueprintsCacheEntity {
+public class LinkImpl extends SProxLinkAbs implements SProxLink, MappingDSBlueprintsCacheEntity {
 
     private static final Logger log = LoggerFactory.getLogger(NodeImpl.class);
 
     private transient Edge linkEdge = null;
-
-    static final String SET_LINK_TRANSPORT = "setLinkTransport";
-
-    @Override
-    public void setLinkTransport(Session session, Transport transport) throws MappingDSException {
-        if (session!=null && session.isRunning())
-            session.execute(this, SET_LINK_TRANSPORT, new Object[]{transport});
-    }
 
     @Override
     public void setLinkTransport(Transport transport) throws MappingDSException {
@@ -70,14 +59,6 @@ public class LinkImpl extends LinkAbs implements SProxLink, MappingDSBlueprintsC
         }
     }
 
-    static final String SET_LINK_ENDPOINT_SOURCE = "setLinkEndpointSource";
-
-    @Override
-    public void setLinkEndpointSource(Session session, Endpoint source) throws MappingDSException {
-        if (session!=null && session.isRunning())
-            session.execute(this, SET_LINK_ENDPOINT_SOURCE, new Object[]{source});
-    }
-
     @Override
     public void setLinkEndpointSource(Endpoint source) throws MappingDSException {
         String clientThreadName = Thread.currentThread().getName();
@@ -94,14 +75,6 @@ public class LinkImpl extends LinkAbs implements SProxLink, MappingDSBlueprintsC
                 }
             }
         }
-    }
-
-    static final String SET_LINK_ENDPOINT_TARGET = "setLinkEndpointTarget";
-
-    @Override
-    public void setLinkEndpointTarget(Session session, Endpoint target) throws MappingDSException {
-        if (session!=null && session.isRunning())
-            session.execute(this, SET_LINK_ENDPOINT_TARGET, new Object[]{target});
     }
 
     @Override

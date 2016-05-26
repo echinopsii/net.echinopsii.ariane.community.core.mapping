@@ -27,27 +27,19 @@ import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.Ma
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.tools.SessionRegistryImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
-import net.echinopsii.ariane.community.core.mapping.ds.domain.TransportAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxTransport;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxTransportAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TransportImpl extends TransportAbs implements SProxTransport, MappingDSBlueprintsCacheEntity {
+public class TransportImpl extends SProxTransportAbs implements SProxTransport, MappingDSBlueprintsCacheEntity {
 
     private static final Logger log = LoggerFactory.getLogger(TransportImpl.class);
 
     private transient Vertex transportVertex = null;
-
-    static final String SET_TRANSPORT_NAME = "setTransportName";
-
-    @Override
-    public void setTransportName(Session session, String name) throws MappingDSException {
-        if (session!=null && session.isRunning())
-            session.execute(this, SET_TRANSPORT_NAME, new Object[]{name});
-    }
 
     @Override
     public void setTransportName(String name) throws MappingDSException {
@@ -65,14 +57,6 @@ public class TransportImpl extends TransportAbs implements SProxTransport, Mappi
         }
 	}
 
-    static final String ADD_TRANSPORT_PROPERTY = "addTransportProperty";
-
-    @Override
-    public void addTransportProperty(Session session, String propertyKey, Object value) throws MappingDSException {
-        if (session!=null && session.isRunning())
-            session.execute(this, ADD_TRANSPORT_PROPERTY, new Object[]{propertyKey, value});
-    }
-
     @Override
     public void addTransportProperty(String propertyKey, Object value) throws MappingDSException {
         String clientThreadName = Thread.currentThread().getName();
@@ -89,14 +73,6 @@ public class TransportImpl extends TransportAbs implements SProxTransport, Mappi
                     super.getTransportProperties().get(propertyKey)});
         }
 
-    }
-
-    static final String REMOVE_TRANSPORT_PROPERTY = "removeTransportProperty";
-
-    @Override
-    public void removeTransportProperty(Session session, String propertyKey) throws MappingDSException {
-        if (session!=null && session.isRunning())
-            session.execute(this, REMOVE_TRANSPORT_PROPERTY, new Object[]{propertyKey});
     }
 
     @Override

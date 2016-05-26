@@ -26,28 +26,20 @@ import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.Ma
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.tools.SessionRegistryImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
-import net.echinopsii.ariane.community.core.mapping.ds.domain.ClusterAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxCluster;
 import com.tinkerpop.blueprints.*;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxClusterAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ClusterImpl extends ClusterAbs implements SProxCluster, MappingDSBlueprintsCacheEntity {
+public class ClusterImpl extends SProxClusterAbs implements SProxCluster, MappingDSBlueprintsCacheEntity {
 
     private static final Logger log = LoggerFactory.getLogger(ContainerImpl.class);
 
     private transient Vertex clusterVertex = null;
     private boolean isBeingSyncFromDB = false;
-
-    final static String SET_CLUSTER_NAME = "setClusterName";
-
-    @Override
-    public void setClusterName(Session session, String name) throws MappingDSException {
-        if (session!=null && session.isRunning())
-            session.execute(this, SET_CLUSTER_NAME, new Object[]{name});
-    }
 
     @Override
     public void setClusterName(String name) throws MappingDSException {
@@ -64,16 +56,6 @@ public class ClusterImpl extends ClusterAbs implements SProxCluster, MappingDSBl
                 synchronizeNameToDB();
             }
         }
-    }
-
-    final static String ADD_CLUSTER_CONTAINER = "addClusterContainer";
-
-    @Override
-    public boolean addClusterContainer(Session session, Container container) throws MappingDSException {
-        boolean ret = false;
-        if (session!=null && session.isRunning())
-            ret = (boolean)session.execute(this, ADD_CLUSTER_CONTAINER, new Object[]{container});
-        return ret;
     }
 
     @Override
@@ -101,16 +83,6 @@ public class ClusterImpl extends ClusterAbs implements SProxCluster, MappingDSBl
                 }
             }
         }
-        return ret;
-    }
-
-    static final String REMOVE_CLUSTER_CONTAINER = "removeClusterContainer";
-
-    @Override
-    public boolean removeClusterContainer(Session session, Container container) throws MappingDSException {
-        boolean ret = false;
-        if (session != null && session.isRunning())
-            ret = (boolean) session.execute(this, REMOVE_CLUSTER_CONTAINER, new Object[]{container});
         return ret;
     }
 

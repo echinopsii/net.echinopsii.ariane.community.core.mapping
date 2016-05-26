@@ -30,25 +30,18 @@ import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRe
 import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxContainer;
 import com.tinkerpop.blueprints.*;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxContainerAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ContainerImpl extends ContainerAbs implements SProxContainer, MappingDSBlueprintsCacheEntity {
+public class ContainerImpl extends SProxContainerAbs implements SProxContainer, MappingDSBlueprintsCacheEntity {
 
 	private static final Logger log = LoggerFactory.getLogger(ContainerImpl.class);
 	
 	private transient Vertex       containerVertex           = null;
 	private boolean                isBeingSyncFromDB         = false;
 	
-    static final String SET_CONTAINER_NAME = "setContainerName";
-
-    @Override
-    public void setContainerName(Session session, String name) throws MappingDSException {
-        if (session!=null && session.isRunning())
-            session.execute(this, SET_CONTAINER_NAME, new Object[]{name});
-    }
-
     @Override
     public void setContainerName(String name) throws MappingDSException {
         String clientThreadName = Thread.currentThread().getName();
@@ -64,14 +57,6 @@ public class ContainerImpl extends ContainerAbs implements SProxContainer, Mappi
                 log.debug("Set container {} name to {}.", new Object[]{((this.containerVertex != null) ? this.containerVertex.getId() : 0), super.getContainerName()});
             }
         }
-    }
-
-    static final String SET_CONTAINER_COMPANY = "setContainerCompany";
-
-    @Override
-    public void setContainerCompany(Session session, String company) throws MappingDSException {
-        if (session!=null && session.isRunning())
-            session.execute(this, SET_CONTAINER_COMPANY, new Object[]{company});
     }
 
     @Override
@@ -91,14 +76,6 @@ public class ContainerImpl extends ContainerAbs implements SProxContainer, Mappi
         }
     }
 
-    static final String SET_CONTAINER_PRODUCT = "setContainerProduct";
-
-    @Override
-    public void setContainerProduct(Session session, String product) throws MappingDSException {
-        if (session!=null && session.isRunning())
-            session.execute(this, SET_CONTAINER_PRODUCT, new Object[]{product});
-    }
-
     @Override
     public void setContainerProduct(String product) throws MappingDSException {
         String clientThreadName = Thread.currentThread().getName();
@@ -116,14 +93,6 @@ public class ContainerImpl extends ContainerAbs implements SProxContainer, Mappi
         }
     }
 
-    static final String SET_CONTAINER_TYPE = "setContainerType";
-
-    @Override
-    public void setContainerType(Session session, String type) throws MappingDSException {
-        if (session!=null && session.isRunning())
-            session.execute(this, SET_CONTAINER_TYPE, new Object[]{type});
-    }
-
     @Override
     public void setContainerType(String type) throws MappingDSException {
         String clientThreadName = Thread.currentThread().getName();
@@ -139,14 +108,6 @@ public class ContainerImpl extends ContainerAbs implements SProxContainer, Mappi
                 log.debug("Set container {} type to {}.", new Object[]{((this.containerVertex != null) ? this.containerVertex.getId() : 0), super.getContainerType()});
             }
         }
-    }
-
-    static final String SET_CONTAINER_PRIMARY_ADMIN_GATE = "setContainerPrimaryAdminGate";
-
-    @Override
-    public void setContainerPrimaryAdminGate(Session session, Gate gate) throws MappingDSException {
-        if (session!=null && session.isRunning())
-            session.execute(this, SET_CONTAINER_PRIMARY_ADMIN_GATE, new Object[]{gate});
     }
 
     @Override
@@ -170,14 +131,6 @@ public class ContainerImpl extends ContainerAbs implements SProxContainer, Mappi
         }
 	}
 	
-    static final String SET_CONTAINER_CLUSTER = "setContainerCluster";
-
-    @Override
-    public void setContainerCluster(Session session, Cluster cluster) throws MappingDSException {
-        if (session!=null && session.isRunning())
-            session.execute(this, SET_CONTAINER_CLUSTER, new Object[]{cluster});
-    }
-
     @Override
 	public void setContainerCluster(Cluster cluster) throws MappingDSException {
         String clientThreadName = Thread.currentThread().getName();
@@ -196,14 +149,6 @@ public class ContainerImpl extends ContainerAbs implements SProxContainer, Mappi
         }
 	}
 
-    static final String ADD_CONTAINER_PROPERTY = "addContainerProperty";
-
-    @Override
-    public void addContainerProperty(Session session, String propertyKey, Object value) throws MappingDSException {
-        if (session!=null && session.isRunning())
-            session.execute(this, ADD_CONTAINER_PROPERTY, new Object[]{propertyKey, value});
-    }
-
     @Override
 	public void addContainerProperty(String propertyKey, Object value) throws MappingDSException {
         String clientThreadName = Thread.currentThread().getName();
@@ -221,14 +166,6 @@ public class ContainerImpl extends ContainerAbs implements SProxContainer, Mappi
         }
 	}
 
-    static final String REMOVE_CONTAINER_PROPERTY = "removeContainerProperty";
-
-    @Override
-    public void removeContainerProperty(Session session, String propertyKey) throws MappingDSException {
-        if (session!=null && session.isRunning())
-            session.execute(this, REMOVE_CONTAINER_PROPERTY, new Object[]{propertyKey});
-    }
-
     @Override
     public void removeContainerProperty(String propertyKey) throws MappingDSException {
         String clientThreadName = Thread.currentThread().getName();
@@ -241,14 +178,6 @@ public class ContainerImpl extends ContainerAbs implements SProxContainer, Mappi
             super.removeContainerProperty(propertyKey);
             removePropertyFromDB(propertyKey);
         }
-    }
-
-    static final String SET_CONTAINER_PARENT_CONTAINER = "setContainerParentContainer";
-
-    @Override
-    public void setContainerParentContainer(Session session, Container container) throws MappingDSException {
-        if (session!=null && session.isRunning())
-            session.execute(this, SET_CONTAINER_PARENT_CONTAINER, new Object[]{container});
     }
 
     @Override
@@ -267,16 +196,6 @@ public class ContainerImpl extends ContainerAbs implements SProxContainer, Mappi
                 }
             }
         }
-    }
-
-    static final String ADD_CONTAINER_CHILD_CONTAINER = "addContainerChildContainer";
-
-    @Override
-    public boolean addContainerChildContainer(Session session, Container container) throws MappingDSException {
-        boolean ret = false;
-        if (session!=null && session.isRunning())
-            ret = (boolean) session.execute(this, ADD_CONTAINER_CHILD_CONTAINER, new Object[]{container});
-        return ret;
     }
 
     @Override
@@ -306,16 +225,6 @@ public class ContainerImpl extends ContainerAbs implements SProxContainer, Mappi
         return ret;
     }
 
-    static final String REMOVE_CONTAINER_CHILD_CONTAINER = "removeContainerChildContainer";
-
-    @Override
-    public boolean removeContainerChildContainer(Session session, Container container) throws MappingDSException {
-        boolean ret = false;
-        if (session!=null && session.isRunning())
-            ret = (boolean) session.execute(this, REMOVE_CONTAINER_CHILD_CONTAINER, new Object[]{container});
-        return ret;
-    }
-
     @Override
     public boolean removeContainerChildContainer(Container container) throws MappingDSException {
         boolean ret = false;
@@ -334,16 +243,6 @@ public class ContainerImpl extends ContainerAbs implements SProxContainer, Mappi
                 }
             }
         }
-        return ret;
-    }
-
-    static final String ADD_CONTAINER_NODE = "addContainerNode";
-
-    @Override
-    public boolean addContainerNode(Session session, Node node) throws MappingDSException {
-        boolean ret = false;
-        if (session!=null && session.isRunning())
-            ret = (boolean)session.execute(this, ADD_CONTAINER_NODE, new Object[]{node});
         return ret;
     }
 
@@ -375,16 +274,6 @@ public class ContainerImpl extends ContainerAbs implements SProxContainer, Mappi
         return ret;
 	}
 
-    static final String REMOVE_CONTAINER_NODE = "removeContainerNode";
-
-    @Override
-    public boolean removeContainerNode(Session session, Node node) throws MappingDSException {
-        boolean ret = false;
-        if (session!=null && session.isRunning())
-            ret = (boolean) session.execute(this, REMOVE_CONTAINER_NODE, new Object[]{node});
-        return ret;
-    }
-
     @Override
 	public boolean removeContainerNode(Node node) throws MappingDSException {
         boolean ret = false;
@@ -405,16 +294,6 @@ public class ContainerImpl extends ContainerAbs implements SProxContainer, Mappi
         }
         return ret;
 	}
-
-    static final String ADD_CONTAINER_GATE = "addContainerGate";
-
-    @Override
-    public boolean addContainerGate(Session session, Gate service) throws MappingDSException {
-        boolean ret = false;
-        if (session!=null && session.isRunning())
-            ret = (boolean) session.execute(this, ADD_CONTAINER_GATE, new Object[]{service});
-        return ret;
-    }
 
     @Override
 	public boolean addContainerGate(Gate gate) throws MappingDSException {
@@ -454,16 +333,6 @@ public class ContainerImpl extends ContainerAbs implements SProxContainer, Mappi
         }
         return ret;
 	}
-
-    static final String REMOVE_CONTAINER_GATE = "removeContainerGate";
-
-    @Override
-    public boolean removeContainerGate(Session session, Gate service) throws MappingDSException {
-        boolean ret = false;
-        if (session!=null && session.isRunning())
-            ret = (boolean) session.execute(this, REMOVE_CONTAINER_GATE, new Object[]{service});
-        return ret;
-    }
 
     @Override
     public boolean removeContainerGate(Gate gate) throws MappingDSException {
