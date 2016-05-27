@@ -19,60 +19,8 @@
  */
 package net.echinopsii.ariane.community.core.mapping.ds.messagingimpl.domain;
 
-import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxTransport;
-import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxTransportAbs;
 
-import java.util.HashMap;
-
-public class TransportImpl implements SProxTransport {
-    @Override
-    public void setTransportName(Session session, String name) throws MappingDSException {
-
-    }
-
-    @Override
-    public void addTransportProperty(Session session, String propertyKey, Object value) throws MappingDSException {
-
-    }
-
-    @Override
-    public void removeTransportProperty(Session session, String propertyKey) throws MappingDSException {
-
-    }
-
-    @Override
-    public String getTransportID() {
-        return null;
-    }
-
-    @Override
-    public void setTransportID(String ID) {
-
-    }
-
-    @Override
-    public String getTransportName() {
-        return null;
-    }
-
-    @Override
-    public void setTransportName(String name) throws MappingDSException {
-
-    }
-
-    @Override
-    public HashMap<String, Object> getTransportProperties() {
-        return null;
-    }
-
-    @Override
-    public void addTransportProperty(String propertyKey, Object value) throws MappingDSException {
-
-    }
-
-    @Override
-    public void removeTransportProperty(String propertyKey) throws MappingDSException {
-
-    }
+public class TransportImpl extends SProxTransportAbs implements SProxTransport {
 }

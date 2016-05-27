@@ -19,5 +19,50 @@
  */
 package net.echinopsii.ariane.community.core.mapping.ds.messagingimpl.momsp;
 
+import net.echinopsii.ariane.community.core.mapping.ds.messagingimpl.cfg.MappingMessagingDSCfgLoader;
+import net.echinopsii.ariane.community.messaging.api.MomClient;
+import net.echinopsii.ariane.community.messaging.common.MomClientFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.Dictionary;
+
 public class MappingDSMomSP {
+    private final static Logger log = LoggerFactory.getLogger(MappingDSMomSP.class);
+
+    private static MomClient shared_mom_con = null;
+
+    public static boolean init(Dictionary<Object, Object> properties) throws IOException {
+        return properties != null && MappingMessagingDSCfgLoader.load(properties);
+    }
+
+    public static boolean start() {
+        boolean ret = true;
+
+        try {
+            shared_mom_con = MomClientFactory.make(MappingMessagingDSCfgLoader.getDefaultCfgEntity().getMomc());
+        } catch (Exception e) {
+            System.err.println("Error while loading MoM client : " + e.getMessage());
+            System.err.println("Provided MoM client : " + MappingMessagingDSCfgLoader.getDefaultCfgEntity().getMomc());
+            ret = false;
+        }
+
+        try {
+            shared_mom_con.init(MappingMessagingDSCfgLoader.getDefaultCfgEntity().getMomc_conf());
+        } catch (Exception e) {
+            System.err.println("Error while initializing MoM client : " + e.getMessage());
+            System.err.println("Provided MoM host : " + MappingMessagingDSCfgLoader.getDefaultCfgEntity().getMomc_conf().get(MomClient.MOM_HOST));
+            System.err.println("Provided MoM port : " + MappingMessagingDSCfgLoader.getDefaultCfgEntity().getMomc_conf().get(MomClient.MOM_PORT));
+            shared_mom_con = null;
+            ret = false;
+        }
+
+        return ret;
+    }
+
+    public static void stop() throws Exception {
+        if (shared_mom_con!=null)
+            shared_mom_con.close();
+    }
 }

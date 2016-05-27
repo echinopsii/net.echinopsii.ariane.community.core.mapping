@@ -21,5 +21,33 @@ package net.echinopsii.ariane.community.core.mapping.ds.messagingimpl.cfg;
 
 import net.echinopsii.ariane.community.core.mapping.ds.cfg.MappingDSCfgEntity;
 
+import java.util.Dictionary;
+
 public class MappingMessagingDSCfgEntity extends MappingDSCfgEntity {
+
+    private String momc = null;
+
+    private Dictionary<Object, Object> momc_conf = null;
+
+    public String getMomc() {
+        return momc;
+    }
+
+    public void setMomc(String momc) {
+        this.momc = momc;
+    }
+
+    public Dictionary<Object, Object> getMomc_conf() {
+        return momc_conf;
+    }
+
+    public void setMomc_conf(Dictionary<Object, Object> momc_conf) {
+        this.momc_conf = momc_conf;
+    }
+
+    public String toString() {
+        return super.toString() +
+                "\nmom cli implementation : " + momc +
+                "\nmom cli configuration: " + momc_conf.toString();
+    }
 }

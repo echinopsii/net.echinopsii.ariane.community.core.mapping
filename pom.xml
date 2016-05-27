@@ -13,6 +13,7 @@
         <module>ds</module>
         <module>taitale</module>
         <module>reqregistry</module>
+        <module>msgsrv</module>
         <module>wat</module>
         <module>wresources</module>
     </modules>
@@ -74,7 +75,10 @@
         <version.ipojo.plugin>1.11.0</version.ipojo.plugin>
 
         <!-- Ariane versions -->
-        
+        <version.net.echinopsii.ariane.messaging>0.1.1-SNAPSHOT</version.net.echinopsii.ariane.messaging>
+        <version.net.echinopsii.ariane.messaging.min>0.1.0</version.net.echinopsii.ariane.messaging.min>
+        <version.net.echinopsii.ariane.messaging.max>0.2.0</version.net.echinopsii.ariane.messaging.max>
+
         <version.net.echinopsii.ariane.community.core.portal>0.7.5-SNAPSHOT</version.net.echinopsii.ariane.community.core.portal>
         <version.net.echinopsii.ariane.community.core.portal.min>0.7.0</version.net.echinopsii.ariane.community.core.portal.min>
         <version.net.echinopsii.ariane.community.core.portal.max>0.8.0</version.net.echinopsii.ariane.community.core.portal.max>
@@ -173,6 +177,14 @@
             <properties>
                 <com.tinkerpop.blueprints.version>2.5.1</com.tinkerpop.blueprints.version>
                 <version.osgi.com.neo4j>2.1.2</version.osgi.com.neo4j>
+                <com.tinkerpop.blueprints.blueprints-neo4j-graph.groupid>com.tinkerpop.blueprints.osgi</com.tinkerpop.blueprints.blueprints-neo4j-graph.groupid>
+            </properties>
+        </profile>
+        <profile>
+            <id>blueprints-26</id>
+            <properties>
+                <com.tinkerpop.blueprints.version>2.6.231</com.tinkerpop.blueprints.version>
+                <version.osgi.com.neo4j>2.3.1</version.osgi.com.neo4j>
                 <com.tinkerpop.blueprints.blueprints-neo4j-graph.groupid>com.tinkerpop.blueprints.osgi</com.tinkerpop.blueprints.blueprints-neo4j-graph.groupid>
             </properties>
         </profile>

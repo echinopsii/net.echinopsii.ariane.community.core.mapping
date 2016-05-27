@@ -17,29 +17,50 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.echinopsii.ariane.community.core.mapping.ds.messagingimpl.repository;
+package net.echinopsii.ariane.community.core.mapping.ds.messagingimpl.service.tools;
 
-import net.echinopsii.ariane.community.core.mapping.ds.messagingimpl.domain.ClusterImpl;
-import net.echinopsii.ariane.community.core.mapping.ds.repository.ClusterRepo;
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
-public class ClusterRepoImpl implements ClusterRepo<ClusterImpl> {
+public class SessionImpl implements Session {
     @Override
-    public ClusterImpl save(ClusterImpl cluster) {
+    public String getSessionID() {
         return null;
     }
 
     @Override
-    public void delete(ClusterImpl cluster) {
-
-    }
-
-    @Override
-    public ClusterImpl findClusterByID(String id) {
+    public Session stop() {
         return null;
     }
 
     @Override
-    public ClusterImpl findClusterByName(String name) {
+    public Session start() {
+        return null;
+    }
+
+    @Override
+    public boolean isRunning() {
+        return false;
+    }
+
+    @Override
+    public Object execute(Object o, String methodName, Object[] args) throws MappingDSException {
+        /*
+           SEND REQ LIKE :
+           String ObjectType - Mapping Domain or Mapping Service
+           String ID - can be null
+           String methodName
+        */
+        return null;
+    }
+
+    @Override
+    public Session commit() throws MappingDSException {
+        return null;
+    }
+
+    @Override
+    public Session rollback() throws MappingDSException {
         return null;
     }
 }

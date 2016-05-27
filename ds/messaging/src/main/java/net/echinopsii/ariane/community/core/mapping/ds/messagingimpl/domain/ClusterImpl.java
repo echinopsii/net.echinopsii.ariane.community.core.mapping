@@ -19,61 +19,8 @@
  */
 package net.echinopsii.ariane.community.core.mapping.ds.messagingimpl.domain;
 
-import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
-import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxCluster;
-import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxClusterAbs;
 
-import java.util.Set;
-
-public class ClusterImpl implements SProxCluster{
-    @Override
-    public void setClusterName(Session session, String name) throws MappingDSException {
-
-    }
-
-    @Override
-    public boolean addClusterContainer(Session session, Container container) throws MappingDSException {
-        return false;
-    }
-
-    @Override
-    public boolean removeClusterContainer(Session session, Container container) throws MappingDSException {
-        return false;
-    }
-
-    @Override
-    public String getClusterID() {
-        return null;
-    }
-
-    @Override
-    public void setClusterID(String ID) {
-
-    }
-
-    @Override
-    public String getClusterName() {
-        return null;
-    }
-
-    @Override
-    public void setClusterName(String name) {
-
-    }
-
-    @Override
-    public Set<? extends Container> getClusterContainers() {
-        return null;
-    }
-
-    @Override
-    public boolean addClusterContainer(Container container) throws MappingDSException {
-        return false;
-    }
-
-    @Override
-    public boolean removeClusterContainer(Container container) throws MappingDSException {
-        return false;
-    }
+public class ClusterImpl extends SProxClusterAbs implements SProxCluster{
 }

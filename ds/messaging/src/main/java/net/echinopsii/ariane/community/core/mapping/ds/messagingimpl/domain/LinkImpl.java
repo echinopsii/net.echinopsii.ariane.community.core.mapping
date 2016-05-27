@@ -19,65 +19,8 @@
  */
 package net.echinopsii.ariane.community.core.mapping.ds.messagingimpl.domain;
 
-import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
-import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
-import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxLink;
-import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxLinkAbs;
 
-public class LinkImpl implements SProxLink {
-    @Override
-    public void setLinkTransport(Session session, Transport transport) throws MappingDSException {
-
-    }
-
-    @Override
-    public void setLinkEndpointSource(Session session, Endpoint source) throws MappingDSException {
-
-    }
-
-    @Override
-    public void setLinkEndpointTarget(Session session, Endpoint target) throws MappingDSException {
-
-    }
-
-    @Override
-    public String getLinkID() {
-        return null;
-    }
-
-    @Override
-    public void setLinkID(String ID) {
-
-    }
-
-    @Override
-    public Transport getLinkTransport() {
-        return null;
-    }
-
-    @Override
-    public void setLinkTransport(Transport transport) throws MappingDSException {
-
-    }
-
-    @Override
-    public Endpoint getLinkEndpointSource() {
-        return null;
-    }
-
-    @Override
-    public void setLinkEndpointSource(Endpoint source) throws MappingDSException {
-
-    }
-
-    @Override
-    public Endpoint getLinkEndpointTarget() {
-        return null;
-    }
-
-    @Override
-    public void setLinkEndpointTarget(Endpoint target) throws MappingDSException {
-
-    }
+public class LinkImpl extends SProxLinkAbs implements SProxLink {
 }

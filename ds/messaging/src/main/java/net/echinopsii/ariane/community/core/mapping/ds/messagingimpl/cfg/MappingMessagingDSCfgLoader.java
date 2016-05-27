@@ -19,7 +19,34 @@
  */
 package net.echinopsii.ariane.community.core.mapping.ds.messagingimpl.cfg;
 
-import net.echinopsii.ariane.community.core.mapping.ds.cfg.MappingDSCfgLoader;
+import net.echinopsii.ariane.community.messaging.api.MomClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class MappingMessagingDSCfgLoader extends MappingDSCfgLoader {
+import java.util.Dictionary;
+
+public class MappingMessagingDSCfgLoader {
+
+    private static final Logger log = LoggerFactory.getLogger(MappingMessagingDSCfgLoader.class);
+
+    private static final String MAPPING_DS_CFG_FROM_RIM_MSG_DRIVER_IMPL_KEY           = "mapping.ds.messaging.mode";
+    private static MappingMessagingDSCfgEntity defaultCfgEntity = new MappingMessagingDSCfgEntity();
+
+    public static boolean load(Dictionary<Object, Object> properties) {
+        boolean ret = true;
+        if (properties!=null) {
+            Object momc_spec = properties.get(MomClient.MOM_CLI);
+            if (momc_spec != null && momc_spec instanceof String) {
+                defaultCfgEntity.setMomc((String) momc_spec);
+                properties.remove(MomClient.MOM_CLI);
+
+                defaultCfgEntity.setMomc_conf(properties);
+            } else ret = false;
+        } else ret = false;
+        return ret;
+    }
+
+    public static MappingMessagingDSCfgEntity getDefaultCfgEntity() {
+        return defaultCfgEntity;
+    }
 }

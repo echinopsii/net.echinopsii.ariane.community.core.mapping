@@ -23,6 +23,12 @@
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>net.echinopsii.ariane.community.messaging</groupId>
+            <artifactId>net.echinopsii.ariane.community.messaging.api</artifactId>
+            <version>${version.net.echinopsii.ariane.messaging}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
