@@ -44,8 +44,8 @@ import java.io.IOException;
 import java.util.*;
 
 @Path("/mapping/domain/nodes")
-public class NodeEndpoint {
-    private static final Logger log = LoggerFactory.getLogger(NodeEndpoint.class);
+public class NodeEp {
+    private static final Logger log = LoggerFactory.getLogger(NodeEp.class);
 
     public static JSONDeserializationResponse jsonFriendlyToMappingFriendly(JSONDeserializedNode jsonDeserializedNode, Session mappingSession) throws MappingDSException {
         JSONDeserializationResponse ret = new JSONDeserializationResponse();

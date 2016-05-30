@@ -34,8 +34,8 @@ import java.io.IOException;
 import java.util.Map;
 
 @Path("/mapping/registryRequest")
-public class MDSLRegistryRequestEndpoint {
-    private static final Logger log = LoggerFactory.getLogger(MDSLRegistryRequestEndpoint.class);
+public class MDSLRegistryRequestEp {
+    private static final Logger log = LoggerFactory.getLogger(MDSLRegistryRequestEp.class);
     private EntityManager em;
 
     @POST

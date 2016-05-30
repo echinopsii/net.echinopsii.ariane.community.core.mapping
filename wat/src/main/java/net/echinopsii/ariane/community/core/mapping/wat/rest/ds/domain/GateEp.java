@@ -47,8 +47,8 @@ import java.util.HashSet;
 import java.util.List;
 
 @Path("/mapping/domain/gates")
-public class GateEndpoint {
-    private static final Logger log = LoggerFactory.getLogger(GateEndpoint.class);
+public class GateEp {
+    private static final Logger log = LoggerFactory.getLogger(GateEp.class);
 
     public static JSONDeserializationResponse jsonFriendlyToMappingFriendly(GateJSON.JSONDeserializedGate jsonDeserializedGate, Session mappingSession) throws MappingDSException {
         JSONDeserializationResponse ret = new JSONDeserializationResponse();

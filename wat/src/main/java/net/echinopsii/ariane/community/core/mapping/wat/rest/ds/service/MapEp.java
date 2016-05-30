@@ -41,9 +41,9 @@ import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
 
 @Path("/mapping/service/map")
-public class MapEndpoint {
+public class MapEp {
 
-    private static final Logger log = LoggerFactory.getLogger(MapEndpoint.class);
+    private static final Logger log = LoggerFactory.getLogger(MapEp.class);
 
     @SuppressWarnings("unchecked")
     @GET

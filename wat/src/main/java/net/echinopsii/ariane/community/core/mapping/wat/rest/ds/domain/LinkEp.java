@@ -42,8 +42,8 @@ import java.io.IOException;
 import java.util.HashSet;
 
 @Path("/mapping/domain/links")
-public class LinkEndpoint {
-    private static final Logger log = LoggerFactory.getLogger(LinkEndpoint.class);
+public class LinkEp {
+    private static final Logger log = LoggerFactory.getLogger(LinkEp.class);
 
     public static JSONDeserializationResponse jsonFriendlyToMappingFriendly(LinkJSON.JSONDeserializedLink jsonDeserializedLink,
                                                                             Session mappingSession) throws MappingDSException {

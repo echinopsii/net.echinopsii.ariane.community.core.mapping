@@ -43,8 +43,8 @@ import java.util.HashSet;
 import java.util.List;
 
 @Path("/mapping/domain/clusters")
-public class ClusterEndpoint {
-    private static final Logger log = LoggerFactory.getLogger(ContainerEndpoint.class);
+public class ClusterEp {
+    private static final Logger log = LoggerFactory.getLogger(ContainerEp.class);
 
     public static JSONDeserializationResponse jsonFriendlyToMappingFriendly(ClusterJSON.JSONDeserializedCluster jsonDeserializedCluster,
                                                                             Session mappingSession) throws MappingDSException {

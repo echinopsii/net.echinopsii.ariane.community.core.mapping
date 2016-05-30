@@ -38,9 +38,9 @@ import java.io.IOException;
 import java.util.Map;
 
 @Path("/mapping/registryDirectory")
-public class MDSLRegistryDirectoryEndpoint {
+public class MDSLRegistryDirectoryEp {
 
-    private static final Logger log = LoggerFactory.getLogger(MDSLRegistryDirectoryEndpoint.class);
+    private static final Logger log = LoggerFactory.getLogger(MDSLRegistryDirectoryEp.class);
 
     public static Response mappingDSLRegistryDirToJSON(MappingDSLRegistryDirectory mappingDSLRegistryDirectory) {
         Response ret = null;

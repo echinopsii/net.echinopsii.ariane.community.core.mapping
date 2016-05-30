@@ -43,8 +43,8 @@ import java.io.IOException;
 import java.util.*;
 
 @Path("/mapping/domain/endpoints")
-public class EndpointEndpoint {
-    private static final Logger log = LoggerFactory.getLogger(EndpointEndpoint.class);
+public class EndpointEp {
+    private static final Logger log = LoggerFactory.getLogger(EndpointEp.class);
 
     public static JSONDeserializationResponse jsonFriendlyToMappingFriendly(EndpointJSON.JSONDeserializedEndpoint jsonDeserializedEndpoint,
                                                                             Session mappingSession) throws MappingDSException {

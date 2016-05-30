@@ -37,9 +37,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 @Path("/mapping/service/session")
-public class SessionEndpoint {
+public class SessionEp {
 
-    private static final Logger log = LoggerFactory.getLogger(SessionEndpoint.class);
+    private static final Logger log = LoggerFactory.getLogger(SessionEp.class);
 
     @GET
     @Path("/open")

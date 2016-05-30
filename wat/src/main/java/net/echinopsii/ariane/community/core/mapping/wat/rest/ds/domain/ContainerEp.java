@@ -47,8 +47,8 @@ import java.util.HashSet;
 import java.util.List;
 
 @Path("/mapping/domain/containers")
-public class ContainerEndpoint {
-    private static final Logger log = LoggerFactory.getLogger(ContainerEndpoint.class);
+public class ContainerEp {
+    private static final Logger log = LoggerFactory.getLogger(ContainerEp.class);
 
     public static JSONDeserializationResponse jsonFriendlyToMappingFriendly(ContainerJSON.JSONDeserializedContainer jsonDeserializedContainer,
                                                                             Session mappingSession) throws MappingDSException {

@@ -44,8 +44,8 @@ import java.util.HashSet;
 import java.util.List;
 
 @Path("/mapping/domain/transports")
-public class TransportEndpoint {
-    private static final Logger log = LoggerFactory.getLogger(TransportEndpoint.class);
+public class TransportEp {
+    private static final Logger log = LoggerFactory.getLogger(TransportEp.class);
 
     public static JSONDeserializationResponse jsonFriendlyToMappingFriendly(TransportJSON.JSONDeserializedTransport jsonDeserializedTransport,
                                                                             Session mappingSession) throws MappingDSException {
