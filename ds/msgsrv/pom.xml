@@ -3,8 +3,8 @@
     <modelVersion>4.0.0</modelVersion>
     
     <parent>
-        <groupId>net.echinopsii.ariane.community.core</groupId>
-        <artifactId>net.echinopsii.ariane.community.core.mapping</artifactId>
+        <groupId>net.echinopsii.ariane.community.core.mapping</groupId>
+        <artifactId>net.echinopsii.ariane.community.core.mapping.ds</artifactId>
         <version>0.7.5-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
