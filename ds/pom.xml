@@ -19,7 +19,8 @@
         <module>api</module>
         <module>dsl</module>
         <module>blueprints</module>
-        <module>messaging</module>
         <module>rim</module>
+        <module>msgsrv</module>
+        <module>msgcli</module>
     </modules>
 </project>

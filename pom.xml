@@ -13,7 +13,6 @@
         <module>ds</module>
         <module>taitale</module>
         <module>reqregistry</module>
-        <module>msgsrv</module>
         <module>wat</module>
         <module>wresources</module>
     </modules>
@@ -73,6 +72,7 @@
         <version.license.plugin>1.5</version.license.plugin>
         <version.war.plugin>2.1.1</version.war.plugin>
         <version.ipojo.plugin>1.11.0</version.ipojo.plugin>
+        <version.com.typesafe.akka>2.3.4</version.com.typesafe.akka>
 
         <!-- Ariane versions -->
         <version.net.echinopsii.ariane.messaging>0.1.1-SNAPSHOT</version.net.echinopsii.ariane.messaging>

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <parent>
+        <groupId>net.echinopsii.ariane.community.core.mapping</groupId>
+        <artifactId>net.echinopsii.ariane.community.core.mapping.ds</artifactId>
+        <version>0.7.5-SNAPSHOT</version>
+        <relativePath>..</relativePath>
+    </parent>
+
+    <groupId>net.echinopsii.ariane.community.core.mapping.ds</groupId>
+    <artifactId>net.echinopsii.ariane.community.core.mapping.ds.msgcli</artifactId>
+    <name>Ariane Community Core Mapping DS Messaging Client Implementation</name>
+    <packaging>bundle</packaging>
+    
+
+    <dependencies>
+        <!-- Internal -->
+        <dependency>
+            <groupId>net.echinopsii.ariane.community.core.mapping.ds</groupId>
+            <artifactId>net.echinopsii.ariane.community.core.mapping.ds.api</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.echinopsii.ariane.community.messaging</groupId>
+            <artifactId>net.echinopsii.ariane.community.messaging.api</artifactId>
+            <version>${version.net.echinopsii.ariane.messaging}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.echinopsii.ariane.community.core.mapping.ds</groupId>
+            <artifactId>net.echinopsii.ariane.community.core.mapping.ds.blueprints</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.echinopsii.ariane.community.core.mapping.ds</groupId>
+            <artifactId>net.echinopsii.ariane.community.core.mapping.ds.msgsrv</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.echinopsii.ariane.community.core.mapping.ds</groupId>
+            <artifactId>net.echinopsii.ariane.community.core.mapping.ds.dsl</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.echinopsii.ariane.community.messaging</groupId>
+            <artifactId>net.echinopsii.ariane.community.messaging.nats</artifactId>
+            <version>${version.net.echinopsii.ariane.messaging}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.nats</groupId>
+            <!-- bundleized and compiled with Java 1.7 -->
+            <artifactId>net.echinopsii.3rdparty.jnats</artifactId>
+            <version>0.4.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-actor_2.10</artifactId>
+            <version>${version.com.typesafe.akka}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-osgi_2.10</artifactId>
+            <version>${version.com.typesafe.akka}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${version.java.source}</source>
+                    <target>${version.java.target}</target>
+                    <showDeprecation>true</showDeprecation>
+                    <showWarnings>true</showWarnings>
+                    <optimize>true</optimize>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <!-- This plugin takes care of packaging the artifact as an OSGi Bundle -->
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Import-Package>
+                            com.fasterxml.jackson.datatype.jsonorg;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.annotation;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.cfg;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.deser;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.deser.impl;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.deser.std;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.exc;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.ext;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.introspect;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.jsonFormatVisitors;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.jsonschema;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.jsontype;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.jsontype.impl;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.module;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.node;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.ser;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.ser.impl;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.ser.std;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.type;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.util;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.annotation;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.core;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.core.base;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.core.format;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.core.io;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.core.json;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.core.sym;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.core.type;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.core.util;version="${version.com.fasterxml.jackson}",
+                            net.echinopsii.ariane.community.core.mapping.ds;version="${project.version}",
+                            net.echinopsii.ariane.community.core.mapping.ds.cache;version=${project.version},
+                            net.echinopsii.ariane.community.core.mapping.ds.cfg;version=${project.version},
+                            net.echinopsii.ariane.community.core.mapping.ds.cli;version=${project.version},
+                            net.echinopsii.ariane.community.core.mapping.ds.service;version="${project.version}",
+                            net.echinopsii.ariane.community.core.mapping.ds.domain;version="${project.version}",
+                            net.echinopsii.ariane.community.core.mapping.ds.domain.proxy;version="${project.version}",
+                            net.echinopsii.ariane.community.core.mapping.ds.mdsl;version="${project.version}",
+                            net.echinopsii.ariane.community.core.mapping.ds.sdsl;version="${project.version}",
+                            net.echinopsii.ariane.community.core.mapping.ds.repository;version="${project.version}",
+                            com.tinkerpop.blueprints.impls.neo4j2;version="[${version.osgimin.com.tinkerpop.blueprints},${version.osgimax.com.tinkerpop.blueprints})";resolution:=optional,
+                            com.tinkerpop.blueprints.impls.orient;version="[${version.osgimin.com.tinkerpop.blueprints},${version.osgimax.com.tinkerpop.blueprints})";resolution:=optional,
+                            com.tinkerpop.blueprints;version="[${version.osgimin.com.tinkerpop.blueprints},${version.osgimax.com.tinkerpop.blueprints})",
+                            org.neo4j.graphdb;version="${version.osgi.com.neo4j}";resolution:=optional,
+                            org.neo4j.graphdb.factory;version="${version.osgi.com.neo4j}";resolution:=optional,
+                            org.neo4j.kernel;version="${version.osgi.com.neo4j}";resolution:=optional,
+                            org.neo4j.kernel.logging;version="${version.osgi.com.neo4j}";resolution:=optional,
+                            org.neo4j.server;version="${version.osgi.com.neo4j}";resolution:=optional,
+                            org.neo4j.server.configuration;version="${version.osgi.com.neo4j}";resolution:=optional,
+                            org.neo4j.server.configuration.validation;version="${version.osgi.com.neo4j}";resolution:=optional,
+                            org.neo4j.server.database;version="${version.osgi.com.neo4j}";resolution:=optional,
+                            org.neo4j.server.webadmin.rest;version="${version.osgi.com.neo4j}";resolution:=optional,
+                            org.neo4j.server.rest.web;version="${version.osgi.com.neo4j}";resolution:=optional,
+                            org.neo4j.server.rest.discovery;version="${version.osgi.com.neo4j}";resolution:=optional,
+                            org.slf4j;version="${version.org.slf4j}"
+                        </Import-Package>
+                        <Export-Package>
+                            net.echinopsii.ariane.core.mapping.ds.blueprintsimpl.repository;version=${project.version},
+                            net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service;version=${project.version}
+                        </Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
