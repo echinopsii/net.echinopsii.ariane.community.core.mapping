@@ -40,7 +40,7 @@ public class MappingSceTest {
         Properties prop = new Properties();
         prop.load(MappingSceTest.class.getResourceAsStream("/net.echinopsii.ariane.community.core.MappingRimManagedService.properties"));
         //randomize target graphdb directory to avoid test collapse
-        prop.setProperty("mapping.ds.blueprints.graphpath", ((String)prop.get("mapping.ds.blueprints.graphpath.")) + UUID.randomUUID());
+        prop.setProperty("mapping.ds.blueprints.graphpath", ((String)prop.get("mapping.ds.blueprints.graphpath")) + UUID.randomUUID());
 
 
         mappingSce.init(prop);
