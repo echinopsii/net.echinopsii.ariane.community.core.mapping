@@ -85,6 +85,10 @@ public interface MappingSce {
 
     public boolean stop();
 
+    public final static String SESSION_MGR_Q = "ARIANE_MAPPING_SESSION_Q";
+    public final static String SESSION_MGR_OP_OPEN = "openSession";
+    public final static String SESSION_MGR_OP_CLOSE = "closeSession";
+
     public Session openSession(String clientID);
 
     public Session openSession(String clientID, boolean proxy);

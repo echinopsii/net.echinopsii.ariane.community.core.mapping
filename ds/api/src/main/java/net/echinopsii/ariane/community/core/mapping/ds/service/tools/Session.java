@@ -33,6 +33,9 @@ public interface Session {
 
     public Object execute(Object o, String methodName, Object[] args) throws MappingDSException;
 
+    public final static String SESSION_OP_COMMIT = "commit";
+    public final static String SESSION_OP_ROLLBACK = "rollback";
+
     public Session commit() throws MappingDSException;
 
     public Session rollback() throws MappingDSException;
