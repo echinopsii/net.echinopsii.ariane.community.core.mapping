@@ -133,30 +133,6 @@ public class MappingSceImpl implements MappingSce {
         return sessionRegistry;
     }
 
-    @Deprecated
-    @Override
-    public void unsetAutoCommit() {
-        MappingDSGraphDB.unsetAutocommit();
-    }
-
-    @Deprecated
-    @Override
-    public void setAutoCommit(boolean autoCommit) {
-        MappingDSGraphDB.setAutocommit(autoCommit);
-    }
-
-    @Deprecated
-    @Override
-    public void commit() {
-        MappingDSGraphDB.commit();
-    }
-
-    @Deprecated
-    @Override
-    public void rollback() {
-        MappingDSGraphDB.rollback();
-    }
-
     @Override
     public MapSce getMapSce() {
         return mapSce;
