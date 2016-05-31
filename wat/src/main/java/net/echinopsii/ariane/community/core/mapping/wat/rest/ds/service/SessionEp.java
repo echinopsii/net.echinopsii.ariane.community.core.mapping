@@ -22,6 +22,7 @@ package net.echinopsii.ariane.community.core.mapping.wat.rest.ds.service;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 import net.echinopsii.ariane.community.core.mapping.ds.json.service.SessionJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
 import org.apache.shiro.SecurityUtils;
@@ -43,7 +44,7 @@ public class SessionEp {
 
     @GET
     @Path("/open")
-    public Response openSession(@QueryParam("clientID") String clientID) {
+    public Response openSession(@QueryParam(MappingSce.SESSION_MGR_OP_CLIENT_ID) String clientID) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] openSession : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), clientID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -69,7 +70,7 @@ public class SessionEp {
 
     @GET
     @Path("/close")
-    public Response closeSession(@QueryParam("sessionID") String sessionID) {
+    public Response closeSession(@QueryParam(MappingSce.SESSION_MGR_OP_SESSION_ID) String sessionID) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] closeSession : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), sessionID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -89,7 +90,7 @@ public class SessionEp {
 
     @GET
     @Path("/commit")
-    public Response commit(@QueryParam("sessionID")  String sessionID) {
+    public Response commit(@QueryParam(MappingSce.SESSION_MGR_OP_SESSION_ID)  String sessionID) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] commit : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), sessionID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -113,7 +114,7 @@ public class SessionEp {
 
     @GET
     @Path("/rollback")
-    public Response rollback(@QueryParam("sessionID")  String sessionID) {
+    public Response rollback(@QueryParam(MappingSce.SESSION_MGR_OP_SESSION_ID)  String sessionID) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] rollback : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), sessionID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
