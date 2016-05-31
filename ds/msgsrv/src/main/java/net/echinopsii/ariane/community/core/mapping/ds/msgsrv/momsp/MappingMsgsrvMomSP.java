@@ -30,7 +30,7 @@ import java.util.Dictionary;
 public class MappingMsgsrvMomSP {
     private final static Logger log = LoggerFactory.getLogger(MappingMsgsrvMomSP.class);
 
-    private static MomClient shared_mom_con = null;
+    private static MomClient sharedMoMConnection = null;
 
     public static boolean init(Dictionary<Object, Object> properties) throws IOException {
         return properties != null && MappingMsgsrvCfgLoader.load(properties);
@@ -40,7 +40,7 @@ public class MappingMsgsrvMomSP {
         boolean ret = true;
 
         try {
-            shared_mom_con = MomClientFactory.make(MappingMsgsrvCfgLoader.getDefaultCfgEntity().getMomc());
+            sharedMoMConnection = MomClientFactory.make(MappingMsgsrvCfgLoader.getDefaultCfgEntity().getMomc());
         } catch (Exception e) {
             System.err.println("Error while loading MoM client : " + e.getMessage());
             System.err.println("Provided MoM client : " + MappingMsgsrvCfgLoader.getDefaultCfgEntity().getMomc());
@@ -48,12 +48,12 @@ public class MappingMsgsrvMomSP {
         }
 
         try {
-            shared_mom_con.init(MappingMsgsrvCfgLoader.getDefaultCfgEntity().getMomc_conf());
+            sharedMoMConnection.init(MappingMsgsrvCfgLoader.getDefaultCfgEntity().getMomCliConf());
         } catch (Exception e) {
             System.err.println("Error while initializing MoM client : " + e.getMessage());
-            System.err.println("Provided MoM host : " + MappingMsgsrvCfgLoader.getDefaultCfgEntity().getMomc_conf().get(MomClient.MOM_HOST));
-            System.err.println("Provided MoM port : " + MappingMsgsrvCfgLoader.getDefaultCfgEntity().getMomc_conf().get(MomClient.MOM_PORT));
-            shared_mom_con = null;
+            System.err.println("Provided MoM host : " + MappingMsgsrvCfgLoader.getDefaultCfgEntity().getMomCliConf().get(MomClient.MOM_HOST));
+            System.err.println("Provided MoM port : " + MappingMsgsrvCfgLoader.getDefaultCfgEntity().getMomCliConf().get(MomClient.MOM_PORT));
+            sharedMoMConnection = null;
             ret = false;
         }
 
@@ -63,11 +63,11 @@ public class MappingMsgsrvMomSP {
     }
 
     public static void stop() throws Exception {
-        if (shared_mom_con!=null)
-            shared_mom_con.close();
+        if (sharedMoMConnection !=null)
+            sharedMoMConnection.close();
     }
 
-    public static MomClient getShared_mom_con() {
-        return shared_mom_con;
+    public static MomClient getSharedMoMConnection() {
+        return sharedMoMConnection;
     }
 }

@@ -26,7 +26,7 @@ public class MappingMsgsrvCfgEntity extends MappingDSCfgEntity {
 
     private String momc = null;
 
-    private Dictionary<Object, Object> momc_conf = null;
+    private Dictionary<Object, Object> momCliConf = null;
 
     public String getMomc() {
         return momc;
@@ -36,17 +36,17 @@ public class MappingMsgsrvCfgEntity extends MappingDSCfgEntity {
         this.momc = momc;
     }
 
-    public Dictionary<Object, Object> getMomc_conf() {
-        return momc_conf;
+    public Dictionary<Object, Object> getMomCliConf() {
+        return momCliConf;
     }
 
-    public void setMomc_conf(Dictionary<Object, Object> momc_conf) {
-        this.momc_conf = momc_conf;
+    public void setMomCliConf(Dictionary<Object, Object> momCliConf) {
+        this.momCliConf = momCliConf;
     }
 
     public String toString() {
         return super.toString() +
                 "\nmom cli implementation : " + momc +
-                "\nmom cli configuration: " + momc_conf.toString();
+                "\nmom cli configuration: " + momCliConf.toString();
     }
 }

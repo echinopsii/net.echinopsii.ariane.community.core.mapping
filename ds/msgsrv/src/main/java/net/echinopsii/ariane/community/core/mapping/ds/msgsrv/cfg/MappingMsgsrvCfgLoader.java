@@ -36,9 +36,7 @@ public class MappingMsgsrvCfgLoader {
             Object momc_spec = properties.get(MomClient.MOM_CLI);
             if (momc_spec != null && momc_spec instanceof String) {
                 defaultCfgEntity.setMomc((String) momc_spec);
-                properties.remove(MomClient.MOM_CLI);
-
-                defaultCfgEntity.setMomc_conf(properties);
+                defaultCfgEntity.setMomCliConf(properties);
             } else ret = false;
         } else ret = false;
         return ret;
