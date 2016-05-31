@@ -20,19 +20,28 @@
 package net.echinopsii.ariane.community.core.mapping.ds.msgcli.service;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
+import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
+import net.echinopsii.ariane.community.core.mapping.ds.msgcli.momsp.MappingMsgcliMomSP;
+import net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.tools.SessionImpl;
+import net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.tools.SessionRegistryImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.service.*;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.SessionRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 public class MappingSceImpl implements MappingSce {
-    @Override
-    public SessionRegistry getSessionRegistry() {
-        return null;
-    }
+
+    private final static Logger log = LoggerFactory.getLogger(MappingSceImpl.class);
+
+    private SessionRegistryImpl sessionRegistry = new SessionRegistryImpl();
 
     @Override
     public MapSce getMapSce() {
@@ -156,56 +165,82 @@ public class MappingSceImpl implements MappingSce {
 
     @Override
     public boolean init(Dictionary<Object, Object> properties) {
-        return false;
+        boolean ret = false;
+        try {
+            MappingMsgcliMomSP.init(properties);
+            ret = true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return ret;
     }
 
     @Override
     public boolean start() {
-        return false;
+        return MappingMsgcliMomSP.start();
     }
 
     @Override
     public boolean stop() {
-        return false;
+        boolean ret = false;
+        try {
+            MappingMsgcliMomSP.stop();
+            ret = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ret;
+    }
+
+    @Override
+    public SessionRegistry getSessionRegistry() {
+        return sessionRegistry;
     }
 
     @Override
     public Session openSession(String clientID) {
-        return null;
+        Map<String, Object> message = new HashMap<>();
+        message.put(MappingSce.OPERATION_FDN, MappingSce.SESSION_MGR_OP_OPEN);
+        message.put(MappingSce.SESSION_MGR_OP_CLIENT_ID, clientID);
+        Session session = new SessionImpl();
+        MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, Session.MAPPING_SESSION_SERVICE_Q, ((SessionImpl)session).getSessionReplyWorker());
+        if (session.isRunning()) {
+            ClientThreadSessionRegistry.addCliThreadSession(Thread.currentThread().getName(), session.getSessionID());
+            sessionRegistry.put(session);
+        }
+        else session = null;
+        return session;
     }
 
     @Override
     public Session openSession(String clientID, boolean proxy) {
-        return null;
+        if (proxy)
+            log.warn("As a remote client you should use openSession(String clientID) method only. Proxy parameter will be ignored !");
+        return openSession(clientID);
     }
 
     @Override
     public Session closeSession(Session toClose) {
-        return null;
+        Map<String, Object> message = new HashMap<>();
+        message.put(MappingSce.OPERATION_FDN, MappingSce.SESSION_MGR_OP_CLOSE);
+        message.put(MappingSce.SESSION_MGR_OP_SESSION_ID, toClose.getSessionID());
+        MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, Session.MAPPING_SESSION_SERVICE_Q, ((SessionImpl) toClose).getSessionReplyWorker());
+        if (!toClose.isRunning()) {
+            sessionRegistry.remove(toClose);
+            ClientThreadSessionRegistry.removeCliThreadSession(Thread.currentThread().getName());
+        }
+        return toClose;
     }
 
     @Override
     public Session closeSession() {
-        return null;
-    }
-
-    @Override
-    public void unsetAutoCommit() {
-
-    }
-
-    @Override
-    public void setAutoCommit(boolean autoCommit) {
-
-    }
-
-    @Override
-    public void commit() {
-
-    }
-
-    @Override
-    public void rollback() {
-
+        Session ret = null;
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            ret = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (ret!=null) closeSession(ret);
+        }
+        return ret;
     }
 }

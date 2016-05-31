@@ -24,6 +24,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.msgcli.momsp.MappingMsgcl
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.MappingMsgsrvBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.momsp.MappingMsgsrvMomSP;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.messaging.api.MomClient;
 import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
@@ -45,20 +46,20 @@ public class MappingMsgTest {
 
     @BeforeClass
     public static void testSetup() throws Exception {
-        Properties nats_config = new Properties();
-        nats_config.load(MappingMsgTest.class.getResourceAsStream("/nats-test.properties"));
+        Properties natsConfig = new Properties();
+        natsConfig.load(MappingMsgTest.class.getResourceAsStream("/nats-test.properties"));
 
-        Properties mappingDS_config = new Properties();
-        mappingDS_config.load(MappingMsgTest.class.getResourceAsStream("/net.echinopsii.ariane.community.core.MappingRimManagedService.properties"));
-        mappingDS_config.setProperty("mapping.ds.blueprints.graphpath", ((String) mappingDS_config.get("mapping.ds.blueprints.graphpath")) + UUID.randomUUID());
+        Properties mappingDSConfig = new Properties();
+        mappingDSConfig.load(MappingMsgTest.class.getResourceAsStream("/net.echinopsii.ariane.community.core.MappingRimManagedService.properties"));
+        mappingDSConfig.setProperty("mapping.ds.blueprints.graphpath", ((String) mappingDSConfig.get("mapping.ds.blueprints.graphpath")) + UUID.randomUUID());
 
-        blueprintsMappingSce.init(mappingDS_config);
+        blueprintsMappingSce.init(mappingDSConfig);
         blueprintsMappingSce.start();
 
         msgsrvBootstrap.bindMappingBSce(blueprintsMappingSce);
-        msgsrvBootstrap.updated(nats_config);
+        msgsrvBootstrap.updated(natsConfig);
 
-        messagingMappingSce.init(nats_config);
+        messagingMappingSce.init(natsConfig);
 
         try {
             msgsrvBootstrap.validate();
@@ -88,20 +89,28 @@ public class MappingMsgTest {
 
     @Test
     public void testConnection() {
-        if (MappingMsgsrvMomSP.getShared_mom_con()!=null) {
-            MomClient client = MappingMsgsrvMomSP.getShared_mom_con();
+        if (MappingMsgsrvMomSP.getSharedMoMConnection()!=null) {
+            MomClient client = MappingMsgsrvMomSP.getSharedMoMConnection();
             assertTrue(client.isConnected());
             assertNotNull(client.getConnection());
             assertNotNull(client.createRequestExecutor());
             assertNotNull(client.getServiceFactory());
         }
 
-        if (MappingMsgcliMomSP.getShared_mom_con()!=null) {
-            MomClient client = MappingMsgcliMomSP.getShared_mom_con();
+        if (MappingMsgcliMomSP.getSharedMoMConnection()!=null) {
+            MomClient client = MappingMsgcliMomSP.getSharedMoMConnection();
             assertTrue(client.isConnected());
             assertNotNull(client.getConnection());
             assertNotNull(client.createRequestExecutor());
             assertNotNull(client.getServiceFactory());
         }
     }
+
+    /*
+    @Test
+    public void testOpenCloseSession() {
+        Session session = messagingMappingSce.openSession("this is a test");
+        messagingMappingSce.closeSession();
+    }
+    */
 }

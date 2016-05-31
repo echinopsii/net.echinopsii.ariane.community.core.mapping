@@ -20,35 +20,106 @@
 package net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.tools;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
+import net.echinopsii.ariane.community.core.mapping.ds.json.service.SessionJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.msgcli.momsp.MappingMsgcliMomSP;
+import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
+import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
+import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SessionImpl implements Session {
+
+    class SessionReplyWorker implements AppMsgWorker {
+        private SessionImpl session ;
+
+        public SessionReplyWorker(SessionImpl session) {
+            this.session = session;
+        }
+
+        @Override
+        public Map<String, Object> apply(Map<String, Object> message) {
+            if (this.session!=null) {
+                int rc = (int) message.get(MomMsgTranslator.MSG_RC);
+                if (rc == 0) {
+                    Object oOperation = message.get(MappingSce.OPERATION_FDN);
+                    String operation;
+
+                    if (oOperation == null)
+                        operation = MappingSce.OPERATION_NOT_DEFINED;
+                    else
+                        operation = oOperation.toString();
+
+                    switch (operation) {
+                        case MappingSce.SESSION_MGR_OP_OPEN:
+                            try {
+                                this.session.setSessionID(SessionJSON.JSON2Session((String) message.get(MomMsgTranslator.MSG_BODY)).getSessionID());
+                                this.session.start();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        case MappingSce.SESSION_MGR_OP_CLOSE:
+                            this.session.stop();
+                            break;
+                        case MappingSce.OPERATION_NOT_DEFINED:
+                            SessionImpl.log.error("Ariane Mapping Service didn't return origin operation ! ");
+                        default:
+                            break;
+                    }
+                } else SessionImpl.log.error("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
+            }
+            return message;
+        }
+    }
+
+    protected final static Logger log = LoggerFactory.getLogger(SessionImpl.class);
+    private String sessionID = null;
+    private boolean isRunning = false;
+    private AppMsgWorker sessionReplyWorker = new SessionReplyWorker(this);
+
     @Override
     public String getSessionID() {
-        return null;
+        return sessionID;
+    }
+
+    protected void setSessionID(String sessionID) {
+        this.sessionID = sessionID;
+    }
+
+    public AppMsgWorker getSessionReplyWorker() {
+        return sessionReplyWorker;
     }
 
     @Override
     public Session stop() {
-        return null;
+        this.sessionReplyWorker = null;
+        this.isRunning = false;
+        return this;
     }
 
     @Override
     public Session start() {
-        return null;
+        this.isRunning = true;
+        return this;
     }
 
     @Override
     public boolean isRunning() {
-        return false;
+        return isRunning;
     }
 
     @Override
     public Object execute(Object o, String methodName, Object[] args) throws MappingDSException {
         /*
            SEND REQ LIKE :
-           String ObjectType - Mapping Domain or Mapping Service
-           String ID - can be null
+           String ObjectType to Queue (Mapping Domain or Mapping Service)
+           String sessionID
            String methodName
         */
         return null;
@@ -56,11 +127,23 @@ public class SessionImpl implements Session {
 
     @Override
     public Session commit() throws MappingDSException {
-        return null;
+        Map<String, Object> message = new HashMap<>();
+        message.put(MappingSce.OPERATION_FDN, SESSION_OP_COMMIT);
+        message.put(MappingSce.SESSION_MGR_OP_SESSION_ID, this.sessionID);
+        Map<String, Object> reply = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, Session.MAPPING_SESSION_SERVICE_Q, this.getSessionReplyWorker());
+        if (reply.get(MomMsgTranslator.MSG_RC)!=null && reply.get(MomMsgTranslator.MSG_RC)!=0)
+            throw new MappingDSException("Error returned by Ariane Mapping Service ! " + reply.get(MomMsgTranslator.MSG_ERR));
+        return this;
     }
 
     @Override
     public Session rollback() throws MappingDSException {
-        return null;
+        Map<String, Object> message = new HashMap<>();
+        message.put(MappingSce.OPERATION_FDN, SESSION_OP_ROLLBACK);
+        message.put(MappingSce.SESSION_MGR_OP_SESSION_ID, this.sessionID);
+        Map<String, Object> reply = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, Session.MAPPING_SESSION_SERVICE_Q, this.getSessionReplyWorker());
+        if (reply.get(MomMsgTranslator.MSG_RC)!=null && reply.get(MomMsgTranslator.MSG_RC)!=0)
+            throw new MappingDSException("Error returned by Ariane Mapping Service ! " + reply.get(MomMsgTranslator.MSG_ERR));
+        return this;
     }
 }

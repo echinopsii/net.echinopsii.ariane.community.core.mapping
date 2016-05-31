@@ -19,8 +19,9 @@
  */
 package net.echinopsii.ariane.community.core.mapping.ds.msgcli.momsp;
 
-import net.echinopsii.ariane.community.core.mapping.ds.msgcli.cfg.MappingMessagingDSCfgLoader;
+import net.echinopsii.ariane.community.core.mapping.ds.msgcli.cfg.MappingMsgcliCfgLoader;
 import net.echinopsii.ariane.community.messaging.api.MomClient;
+import net.echinopsii.ariane.community.messaging.api.MomRequestExecutor;
 import net.echinopsii.ariane.community.messaging.common.MomClientFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,42 +32,50 @@ import java.util.Dictionary;
 public class MappingMsgcliMomSP {
     private final static Logger log = LoggerFactory.getLogger(MappingMsgcliMomSP.class);
 
-    private static MomClient shared_mom_con = null;
+    private static MomClient sharedMoMConnection = null;
+    private static MomRequestExecutor sharedMoMReqExec = null;
 
     public static boolean init(Dictionary<Object, Object> properties) throws IOException {
-        return properties != null && MappingMessagingDSCfgLoader.load(properties);
+        return properties != null && MappingMsgcliCfgLoader.load(properties);
     }
 
     public static boolean start() {
         boolean ret = true;
 
         try {
-            shared_mom_con = MomClientFactory.make(MappingMessagingDSCfgLoader.getDefaultCfgEntity().getMomc());
+            sharedMoMConnection = MomClientFactory.make(MappingMsgcliCfgLoader.getDefaultCfgEntity().getMomc());
         } catch (Exception e) {
             System.err.println("Error while loading MoM client : " + e.getMessage());
-            System.err.println("Provided MoM client : " + MappingMessagingDSCfgLoader.getDefaultCfgEntity().getMomc());
+            System.err.println("Provided MoM client : " + MappingMsgcliCfgLoader.getDefaultCfgEntity().getMomc());
             ret = false;
         }
 
         try {
-            shared_mom_con.init(MappingMessagingDSCfgLoader.getDefaultCfgEntity().getMomc_conf());
+            sharedMoMConnection.init(MappingMsgcliCfgLoader.getDefaultCfgEntity().getMomCliConf());
         } catch (Exception e) {
             System.err.println("Error while initializing MoM client : " + e.getMessage());
-            System.err.println("Provided MoM host : " + MappingMessagingDSCfgLoader.getDefaultCfgEntity().getMomc_conf().get(MomClient.MOM_HOST));
-            System.err.println("Provided MoM port : " + MappingMessagingDSCfgLoader.getDefaultCfgEntity().getMomc_conf().get(MomClient.MOM_PORT));
-            shared_mom_con = null;
+            System.err.println("Provided MoM host : " + MappingMsgcliCfgLoader.getDefaultCfgEntity().getMomCliConf().get(MomClient.MOM_HOST));
+            System.err.println("Provided MoM port : " + MappingMsgcliCfgLoader.getDefaultCfgEntity().getMomCliConf().get(MomClient.MOM_PORT));
+            sharedMoMConnection = null;
             ret = false;
         }
+
+        if (ret)
+            sharedMoMReqExec = sharedMoMConnection.createRequestExecutor();
 
         return ret;
     }
 
     public static void stop() throws Exception {
-        if (shared_mom_con!=null)
-            shared_mom_con.close();
+        if (sharedMoMConnection !=null)
+            sharedMoMConnection.close();
     }
 
-    public static MomClient getShared_mom_con() {
-        return shared_mom_con;
+    public static MomClient getSharedMoMConnection() {
+        return sharedMoMConnection;
+    }
+
+    public static MomRequestExecutor getSharedMoMReqExec() {
+        return sharedMoMReqExec;
     }
 }

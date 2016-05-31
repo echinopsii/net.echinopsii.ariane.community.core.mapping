@@ -25,21 +25,19 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Dictionary;
 
-public class MappingMessagingDSCfgLoader {
+public class MappingMsgcliCfgLoader {
 
-    private static final Logger log = LoggerFactory.getLogger(MappingMessagingDSCfgLoader.class);
+    private static final Logger log = LoggerFactory.getLogger(MappingMsgcliCfgLoader.class);
 
     private static MappingMsgcliCfgEntity defaultCfgEntity = new MappingMsgcliCfgEntity();
 
     public static boolean load(Dictionary<Object, Object> properties) {
         boolean ret = true;
         if (properties!=null) {
-            Object momc_spec = properties.get(MomClient.MOM_CLI);
-            if (momc_spec != null && momc_spec instanceof String) {
-                defaultCfgEntity.setMomc((String) momc_spec);
-                properties.remove(MomClient.MOM_CLI);
-
-                defaultCfgEntity.setMomc_conf(properties);
+            Object momCliSpec = properties.get(MomClient.MOM_CLI);
+            if (momCliSpec != null && momCliSpec instanceof String) {
+                defaultCfgEntity.setMomc((String) momCliSpec);
+                defaultCfgEntity.setMomCliConf(properties);
             } else ret = false;
         } else ret = false;
         return ret;
