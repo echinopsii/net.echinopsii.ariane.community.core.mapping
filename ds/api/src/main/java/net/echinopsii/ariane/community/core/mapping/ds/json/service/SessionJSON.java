@@ -21,25 +21,46 @@ package net.echinopsii.ariane.community.core.mapping.ds.json.service;
 
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 public class SessionJSON {
 
     public final static String SE_ID_TOKEN = "SessionID";
 
-    public final static void session2JSON(Session session, JsonGenerator jgenerator) throws IOException {
+    public static void session2JSON(Session session, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeStartObject();
         jgenerator.writeStringField(SE_ID_TOKEN, session.getSessionID());
         jgenerator.writeEndObject();
     }
 
-    public final static void oneSession2JSON(Session session, ByteArrayOutputStream outStream) throws IOException {
+    public static void oneSession2JSON(Session session, ByteArrayOutputStream outStream) throws IOException {
         JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         SessionJSON.session2JSON(session, jgenerator);
         jgenerator.close();
+    }
+
+    public static class JSONDeserializedSession {
+        private String sessionID;
+
+        public String getSessionID() {
+            return sessionID;
+        }
+
+        public void setSessionID(String sessionID) {
+            this.sessionID = sessionID;
+        }
+    }
+
+    public static JSONDeserializedSession JSON2Session(String payload) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return mapper.readValue(payload, JSONDeserializedSession.class);
     }
 }

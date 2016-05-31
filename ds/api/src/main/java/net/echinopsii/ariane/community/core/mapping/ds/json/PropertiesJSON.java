@@ -1,6 +1,6 @@
 /**
- * [DEFINE YOUR PROJECT NAME/MODULE HERE]
- * [DEFINE YOUR PROJECT DESCRIPTION HERE] 
+ * Properties to JSON tooling
+ *
  * Copyright (C) 14/01/14 echinopsii
  *
  * This program is free software: you can redistribute it and/or modify
@@ -390,7 +390,7 @@ public class PropertiesJSON {
         }
     }
 
-    public static JSONDeserializedProperty JSON2Properties(String payload) throws IOException {
+    public static JSONDeserializedProperty JSON2Properties(byte[] payload) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return mapper.readValue(payload, JSONDeserializedProperty.class);

@@ -29,83 +29,77 @@ import java.util.Set;
 
 public interface MappingSce {
 
-    public SessionRegistry getSessionRegistry();
+    String MAPPING_SERVICE_Q = "ARIANE_MAPPING_SERVICE_Q";
 
-    public MapSce getMapSce();
+    String OPERATION_FDN = "OPERATION";
+    String OPERATION_NOT_DEFINED = "NOT_DEFINED";
 
-    public ClusterSce<? extends Cluster> getClusterSce();
+    String SESSION_MGR_OP_OPEN = "openSession";
+    String SESSION_MGR_OP_CLOSE = "closeSession";
+    String SESSION_MGR_OP_CLIENT_ID = "clientID";
+    String SESSION_MGR_OP_SESSION_ID = "sessionID";
 
-    public ContainerSce<? extends Container> getContainerSce();
+    SessionRegistry getSessionRegistry();
 
-    public GateSce<? extends Gate> getGateSce();
+    MapSce getMapSce();
 
-    public NodeSce<? extends Node> getNodeSce();
+    ClusterSce<? extends Cluster> getClusterSce();
 
-    public EndpointSce<? extends Endpoint> getEndpointSce();
+    ContainerSce<? extends Container> getContainerSce();
 
-    public LinkSce<? extends Link> getLinkSce();
+    GateSce<? extends Gate> getGateSce();
 
-    public TransportSce<? extends Transport> getTransportSce();
+    NodeSce<? extends Node> getNodeSce();
 
-    public Node getNodeByName(Session session, Container container, String nodeName) throws MappingDSException;
+    EndpointSce<? extends Endpoint> getEndpointSce();
 
-    public Node getNodeByName(Container container, String nodeName) throws MappingDSException;
+    LinkSce<? extends Link> getLinkSce();
 
-    public Node getNodeContainingSubnode(Session session, Container container, Node node) throws MappingDSException;
+    TransportSce<? extends Transport> getTransportSce();
 
-    public Node getNodeContainingSubnode(Container container, Node node) throws MappingDSException;
+    Node getNodeByName(Session session, Container container, String nodeName) throws MappingDSException;
 
-    public Set<Node> getNodesInParentNode(Session session, Container container, Node node) throws MappingDSException;
+    Node getNodeByName(Container container, String nodeName) throws MappingDSException;
 
-    public Set<Node> getNodesInParentNode(Container container, Node node) throws MappingDSException;
+    Node getNodeContainingSubnode(Session session, Container container, Node node) throws MappingDSException;
 
-    public Gate getGateByName(Session session, Container container, String nodeName) throws MappingDSException;
+    Node getNodeContainingSubnode(Container container, Node node) throws MappingDSException;
 
-    public Gate getGateByName(Container container, String nodeName) throws MappingDSException;
+    Set<Node> getNodesInParentNode(Session session, Container container, Node node) throws MappingDSException;
 
-    public Set<Link> getLinksBySourceEP(Session session, Endpoint endpoint) throws MappingDSException;
+    Set<Node> getNodesInParentNode(Container container, Node node) throws MappingDSException;
 
-    public Set<Link> getLinksBySourceEP(Endpoint endpoint) throws MappingDSException;
+    Gate getGateByName(Session session, Container container, String nodeName) throws MappingDSException;
 
-    public Set<Link> getLinksByDestinationEP(Session session, Endpoint endpoint) throws MappingDSException;
+    Gate getGateByName(Container container, String nodeName) throws MappingDSException;
 
-    public Set<Link> getLinksByDestinationEP(Endpoint endpoint) throws MappingDSException;
+    Set<Link> getLinksBySourceEP(Session session, Endpoint endpoint) throws MappingDSException;
 
-    public Link getLinkBySourceEPandDestinationEP(Session session, Endpoint esource, Endpoint edest) throws MappingDSException;
+    Set<Link> getLinksBySourceEP(Endpoint endpoint) throws MappingDSException;
 
-    public Link getLinkBySourceEPandDestinationEP(Endpoint esource, Endpoint edest) throws MappingDSException;
+    Set<Link> getLinksByDestinationEP(Session session, Endpoint endpoint) throws MappingDSException;
+
+    Set<Link> getLinksByDestinationEP(Endpoint endpoint) throws MappingDSException;
+
+    Link getLinkBySourceEPandDestinationEP(Session session, Endpoint esource, Endpoint edest) throws MappingDSException;
+
+    Link getLinkBySourceEPandDestinationEP(Endpoint esource, Endpoint edest) throws MappingDSException;
 
     Link getMulticastLinkBySourceEPAndTransport(Session session, Endpoint esource, Transport transport) throws MappingDSException;
 
     Link getMulticastLinkBySourceEPAndTransport(Endpoint esource, Transport transport) throws MappingDSException;
 
-    public boolean init(Dictionary<Object, Object> properties);
+    boolean init(Dictionary<Object, Object> properties);
 
-    public boolean start();
+    boolean start();
 
-    public boolean stop();
+    boolean stop();
 
-    public final static String SESSION_MGR_Q = "ARIANE_MAPPING_SESSION_Q";
-    public final static String SESSION_MGR_OP_OPEN = "openSession";
-    public final static String SESSION_MGR_OP_CLOSE = "closeSession";
+    Session openSession(String clientID);
 
-    public Session openSession(String clientID);
+    Session openSession(String clientID, boolean proxy);
 
-    public Session openSession(String clientID, boolean proxy);
+    Session closeSession(Session toClose);
 
-    public Session closeSession(Session toClose);
-
-    public Session closeSession();
-
-    @Deprecated
-    public void unsetAutoCommit();
-
-    @Deprecated
-    public void setAutoCommit(boolean autoCommit);
-
-    @Deprecated
-    public void commit();
-
-    @Deprecated
-    public void rollback();
+    Session closeSession();
 }
