@@ -83,6 +83,7 @@
                             com.fasterxml.jackson.databind.type;version="${version.com.fasterxml.jackson}",
                             com.fasterxml.jackson.databind.util;version="${version.com.fasterxml.jackson}",
                             net.echinopsii.ariane.community.core.mapping.ds.service;version=${project.version},
+                            net.echinopsii.ariane.community.core.mapping.ds.service.proxy;version=${project.version},
                             net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service;version="${project.version}";resolution:=optional,
                             net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.tools;version=${project.version};resolution:=optional,
                             org.osgi.framework;version="[${version.osgimin.org.osgi.framework},${version.osgimax.org.osgi.framework})",
