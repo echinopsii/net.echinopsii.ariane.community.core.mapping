@@ -23,20 +23,14 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.ClusterImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository.ClusterRepoImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
-import net.echinopsii.ariane.community.core.mapping.ds.service.ClusterSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxClusterSceAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 
-public class ClusterSceImpl implements ClusterSce<ClusterImpl> {
-
-	final static String CREATE_CLUSTER = "createCluster";
-	final static String DELETE_CLUSTER = "deleteCluster";
-	final static String GET_CLUSTER = "getCluster";
-	final static String GET_CLUSTER_BY_NAME = "getClusterByName";
-	final static String GET_CLUSTERS = "getClusters";
+public class ClusterSceImpl extends SProxClusterSceAbs<ClusterImpl> {
 
 	private static final Logger log = LoggerFactory.getLogger(ClusterSceImpl.class);
 
@@ -44,14 +38,6 @@ public class ClusterSceImpl implements ClusterSce<ClusterImpl> {
 	
 	public ClusterSceImpl(MappingSceImpl sce_) {
 		sce = sce_;
-	}
-
-	@Override
-	public ClusterImpl createCluster(Session session, String clusterName) throws MappingDSException {
-		ClusterImpl ret = null;
-		if (session != null && session.isRunning())
-			ret = (ClusterImpl) session.execute(this, CREATE_CLUSTER, new Object[]{clusterName});
-		return ret;
 	}
 
 	@Override
@@ -75,12 +61,6 @@ public class ClusterSceImpl implements ClusterSce<ClusterImpl> {
 	}
 
 	@Override
-	public void deleteCluster(Session session, String clusterName) throws MappingDSException {
-		if (session!=null && session.isRunning())
-			session.execute(this, DELETE_CLUSTER, new Object[]{clusterName});
-	}
-
-	@Override
 	public void deleteCluster(String clusterName) throws MappingDSException {
 		String clientThreadName = Thread.currentThread().getName();
 		String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
@@ -99,14 +79,6 @@ public class ClusterSceImpl implements ClusterSce<ClusterImpl> {
 	}
 
 	@Override
-	public ClusterImpl getCluster(Session session, String clusterID) throws MappingDSException {
-		ClusterImpl ret = null;
-		if (session != null && session.isRunning())
-			ret = (ClusterImpl) session.execute(this, GET_CLUSTER, new Object[]{clusterID});
-		return ret;
-	}
-
-	@Override
     public ClusterImpl getCluster(String clusterID) throws MappingDSException {
 		String clientThreadName = Thread.currentThread().getName();
 		String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
@@ -118,14 +90,6 @@ public class ClusterSceImpl implements ClusterSce<ClusterImpl> {
     }
 
 	@Override
-	public ClusterImpl getClusterByName(Session session, String clusterName) throws MappingDSException {
-		ClusterImpl ret = null;
-		if (session != null && session.isRunning())
-			ret = (ClusterImpl) session.execute(this, GET_CLUSTER_BY_NAME, new Object[]{clusterName});
-		return ret;
-	}
-
-	@Override
     public ClusterImpl getClusterByName(String clusterName) throws MappingDSException {
 		String clientThreadName = Thread.currentThread().getName();
 		String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
@@ -135,14 +99,6 @@ public class ClusterSceImpl implements ClusterSce<ClusterImpl> {
 			else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
 		} else return sce.getGlobalRepo().getClusterRepo().findClusterByName(clusterName);
     }
-
-	@Override
-	public Set<ClusterImpl> getClusters(Session session, String selector) throws MappingDSException {
-		Set<ClusterImpl> ret = null;
-		if (session != null && session.isRunning())
-			ret = (Set<ClusterImpl>)session.execute(this, GET_CLUSTERS, new Object[]{selector});
-		return ret;
-	}
 
 	@Override
     public Set<ClusterImpl> getClusters(String selector) throws MappingDSException {
