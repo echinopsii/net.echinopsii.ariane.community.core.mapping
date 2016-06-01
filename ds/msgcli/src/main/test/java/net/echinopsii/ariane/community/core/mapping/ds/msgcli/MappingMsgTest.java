@@ -19,6 +19,7 @@
  */
 package net.echinopsii.ariane.community.core.mapping.ds.msgcli;
 
+import junit.framework.Assert;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cfg.MappingBlueprintsDSCfgLoader;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.momsp.MappingMsgcliMomSP;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.MappingMsgsrvBootstrap;
@@ -106,11 +107,14 @@ public class MappingMsgTest {
         }
     }
 
-    /*
     @Test
     public void testOpenCloseSession() {
         Session session = messagingMappingSce.openSession("this is a test");
+        assertTrue(session.isRunning());
+        assertTrue(session.getSessionID()!=null);
+        assertTrue(messagingMappingSce.getSessionRegistry().get(session.getSessionID())!=null);
+        assertTrue(blueprintsMappingSce.getSessionRegistry().get(session.getSessionID())!=null);
         messagingMappingSce.closeSession();
+        assertTrue(!session.isRunning());
     }
-    */
 }

@@ -68,8 +68,8 @@ public class SessionEp {
                     break;
                 case MappingSce.SESSION_MGR_OP_CLOSE:
                     try {
-                        if (message.get(MappingSce.SESSION_MGR_OP_CLIENT_ID)!=null) {
-                            sessionID = message.get(MappingSce.SESSION_MGR_OP_CLIENT_ID).toString();
+                        if (message.get(MappingSce.SESSION_MGR_OP_SESSION_ID)!=null) {
+                            sessionID = message.get(MappingSce.SESSION_MGR_OP_SESSION_ID).toString();
                             Session session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sessionID);
                             if (session != null) {
                                 MappingMsgsrvBootstrap.getMappingSce().closeSession(session);
@@ -92,11 +92,16 @@ public class SessionEp {
                     break;
                 case Session.SESSION_OP_COMMIT:
                     try {
-                        sessionID = message.get(MappingSce.SESSION_MGR_OP_CLIENT_ID).toString();
-                        Session session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sessionID);
-                        if (session != null) {
-                            session.commit();
-                            message.put(MomMsgTranslator.MSG_RC, 0);
+                        if (message.get(MappingSce.SESSION_MGR_OP_SESSION_ID)!=null) {
+                            sessionID = message.get(MappingSce.SESSION_MGR_OP_SESSION_ID).toString();
+                            Session session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sessionID);
+                            if (session != null) {
+                                session.commit();
+                                message.put(MomMsgTranslator.MSG_RC, 0);
+                            } else {
+                                message.put(MomMsgTranslator.MSG_RC, 1);
+                                message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + MappingSce.SESSION_MGR_OP_CLOSE + ") : no session for ID provided");
+                            }
                         } else {
                             message.put(MomMsgTranslator.MSG_RC, 1);
                             message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + MappingSce.SESSION_MGR_OP_CLOSE + ") : no session ID provided");
@@ -109,11 +114,16 @@ public class SessionEp {
                     break;
                 case Session.SESSION_OP_ROLLBACK:
                     try {
-                        sessionID = message.get(MappingSce.SESSION_MGR_OP_CLIENT_ID).toString();
-                        Session session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sessionID);
-                        if (session != null) {
-                            session.rollback();
-                            message.put(MomMsgTranslator.MSG_RC, 0);
+                        if (message.get(MappingSce.SESSION_MGR_OP_SESSION_ID)!=null) {
+                            sessionID = message.get(MappingSce.SESSION_MGR_OP_SESSION_ID).toString();
+                            Session session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sessionID);
+                            if (session != null) {
+                                session.rollback();
+                                message.put(MomMsgTranslator.MSG_RC, 0);
+                            } else {
+                                message.put(MomMsgTranslator.MSG_RC, 1);
+                                message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + MappingSce.SESSION_MGR_OP_CLOSE + ") : no session for ID provided");
+                            }
                         } else {
                             message.put(MomMsgTranslator.MSG_RC, 1);
                             message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + MappingSce.SESSION_MGR_OP_CLOSE + ") : no session ID provided");

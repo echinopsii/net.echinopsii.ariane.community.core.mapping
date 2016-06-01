@@ -58,7 +58,12 @@ public class SessionImpl implements Session {
                     switch (operation) {
                         case MappingSce.SESSION_MGR_OP_OPEN:
                             try {
-                                this.session.setSessionID(SessionJSON.JSON2Session((String) message.get(MomMsgTranslator.MSG_BODY)).getSessionID());
+                                String body = null;
+                                if (message.get(MomMsgTranslator.MSG_BODY)!=null && message.get(MomMsgTranslator.MSG_BODY) instanceof String)
+                                    body = (String) message.get(MomMsgTranslator.MSG_BODY);
+                                else if (message.get(MomMsgTranslator.MSG_BODY)!=null && message.get(MomMsgTranslator.MSG_BODY) instanceof byte[])
+                                    body = new String((byte[])message.get(MomMsgTranslator.MSG_BODY));
+                                this.session.setSessionID(SessionJSON.JSON2Session(body).getSessionID());
                                 this.session.start();
                             } catch (IOException e) {
                                 e.printStackTrace();
