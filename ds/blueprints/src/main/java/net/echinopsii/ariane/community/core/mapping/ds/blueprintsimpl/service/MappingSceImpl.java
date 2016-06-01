@@ -110,7 +110,8 @@ public class MappingSceImpl implements MappingSce {
     @Override
     public Session closeSession(Session toClose) {
         toClose.stop();
-        if (ClientThreadSessionRegistry.getSessionFromThread(Thread.currentThread().getName()).equals(toClose.getSessionID()))
+        if (ClientThreadSessionRegistry.getSessionFromThread(Thread.currentThread().getName())!=null &&
+                ClientThreadSessionRegistry.getSessionFromThread(Thread.currentThread().getName()).equals(toClose.getSessionID()))
             ClientThreadSessionRegistry.removeCliThreadSession(Thread.currentThread().getName());
         sessionRegistry.remove(toClose);
         return toClose;
