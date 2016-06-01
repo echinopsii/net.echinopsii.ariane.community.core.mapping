@@ -23,6 +23,8 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Cluster;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxCluster;
+import net.echinopsii.ariane.community.core.mapping.ds.service.ClusterSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ClusterJSON;
@@ -155,7 +157,7 @@ public class ClusterEp {
     }
 
     @GET
-    public Response displayAllClusters(@QueryParam("sessionID") String sessionId) {
+    public Response displayAllClusters(@QueryParam(MappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get clusters", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
         if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
@@ -190,13 +192,13 @@ public class ClusterEp {
 
     @GET
     @Path("/get")
-    public Response getCluster(@QueryParam("ID") String id, @QueryParam("sessionID") String sessionId) {
+    public Response getCluster(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id, @QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String sessionId) {
         return _displayCluster(id, sessionId);
     }
 
     @GET
     @Path("/create")
-    public Response createCluster(@QueryParam("name") String name, @QueryParam("sessionID") String sessionId) {
+    public Response createCluster(@QueryParam(ClusterSce.CLUSTER_SCE_PARAM_CLUSTER_NAME) String name, @QueryParam(MappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create cluster : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), name});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
