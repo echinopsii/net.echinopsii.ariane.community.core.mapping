@@ -389,10 +389,4 @@ public class PropertiesJSON {
             this.propertyValue = propertyValue;
         }
     }
-
-    public static JSONDeserializedProperty JSON2Properties(byte[] payload) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        return mapper.readValue(payload, JSONDeserializedProperty.class);
-    }
 }

@@ -32,7 +32,7 @@ import java.util.List;
 
 public class SessionJSON {
 
-    public final static String SE_ID_TOKEN = "SessionID";
+    public final static String SE_ID_TOKEN = "sessionID";
 
     public static void session2JSON(Session session, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeStartObject();
