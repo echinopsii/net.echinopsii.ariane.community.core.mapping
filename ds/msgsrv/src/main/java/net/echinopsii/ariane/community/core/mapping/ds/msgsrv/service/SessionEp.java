@@ -35,21 +35,21 @@ public class SessionEp {
     static class SessionWorker implements AppMsgWorker {
         @Override
         public Map<String, Object> apply(Map<String, Object> message) {
-            Object oOperation = message.get(MappingSce.OPERATION_FDN);
+            Object oOperation = message.get(MappingSce.MAPPING_SCE_OPERATION_FDN);
             String operation;
             String clientID;
             String sessionID;
 
             if (oOperation==null)
-                operation = MappingSce.OPERATION_NOT_DEFINED;
+                operation = MappingSce.MAPPING_SCE_OPERATION_NOT_DEFINED;
             else
                 operation = oOperation.toString();
 
             switch (operation) {
                 case MappingSce.SESSION_MGR_OP_OPEN:
                     try {
-                        if (message.get(MappingSce.SESSION_MGR_OP_CLIENT_ID)!=null) {
-                            clientID = message.get(MappingSce.SESSION_MGR_OP_CLIENT_ID).toString();
+                        if (message.get(MappingSce.SESSION_MGR_PARAM_CLIENT_ID)!=null) {
+                            clientID = message.get(MappingSce.SESSION_MGR_PARAM_CLIENT_ID).toString();
                             Session session = MappingMsgsrvBootstrap.getMappingSce().openSession(clientID, true);
                             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
                             SessionJSON.oneSession2JSON(session, outStream);
@@ -68,8 +68,8 @@ public class SessionEp {
                     break;
                 case MappingSce.SESSION_MGR_OP_CLOSE:
                     try {
-                        if (message.get(MappingSce.SESSION_MGR_OP_SESSION_ID)!=null) {
-                            sessionID = message.get(MappingSce.SESSION_MGR_OP_SESSION_ID).toString();
+                        if (message.get(MappingSce.SESSION_MGR_PARAM_SESSION_ID)!=null) {
+                            sessionID = message.get(MappingSce.SESSION_MGR_PARAM_SESSION_ID).toString();
                             Session session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sessionID);
                             if (session != null) {
                                 MappingMsgsrvBootstrap.getMappingSce().closeSession(session);
@@ -92,8 +92,8 @@ public class SessionEp {
                     break;
                 case Session.SESSION_OP_COMMIT:
                     try {
-                        if (message.get(MappingSce.SESSION_MGR_OP_SESSION_ID)!=null) {
-                            sessionID = message.get(MappingSce.SESSION_MGR_OP_SESSION_ID).toString();
+                        if (message.get(MappingSce.SESSION_MGR_PARAM_SESSION_ID)!=null) {
+                            sessionID = message.get(MappingSce.SESSION_MGR_PARAM_SESSION_ID).toString();
                             Session session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sessionID);
                             if (session != null) {
                                 session.commit();
@@ -114,8 +114,8 @@ public class SessionEp {
                     break;
                 case Session.SESSION_OP_ROLLBACK:
                     try {
-                        if (message.get(MappingSce.SESSION_MGR_OP_SESSION_ID)!=null) {
-                            sessionID = message.get(MappingSce.SESSION_MGR_OP_SESSION_ID).toString();
+                        if (message.get(MappingSce.SESSION_MGR_PARAM_SESSION_ID)!=null) {
+                            sessionID = message.get(MappingSce.SESSION_MGR_PARAM_SESSION_ID).toString();
                             Session session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sessionID);
                             if (session != null) {
                                 session.rollback();
@@ -134,7 +134,7 @@ public class SessionEp {
                         message.put(MomMsgTranslator.MSG_ERR, "Internal server error : " + e.getMessage());
                     }
                     break;
-                case MappingSce.OPERATION_NOT_DEFINED:
+                case MappingSce.MAPPING_SCE_OPERATION_NOT_DEFINED:
                     message.put(MomMsgTranslator.MSG_RC, 1);
                     message.put(MomMsgTranslator.MSG_ERR, "Operation not defined ! ");
                     break;

@@ -236,7 +236,7 @@ public class ClusterEp {
     }
 
     @POST
-    public Response postCluster(@QueryParam("payload") String payload, @QueryParam("sessionID") String sessionId) throws IOException {
+    public Response postCluster(@QueryParam("payload") String payload, @QueryParam(MappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) throws IOException {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create container", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -277,7 +277,7 @@ public class ClusterEp {
 
     @GET
     @Path("/delete")
-    public Response deleteCluster(@QueryParam("name") String name, @QueryParam("sessionID") String sessionId) {
+    public Response deleteCluster(@QueryParam(ClusterSce.CLUSTER_SCE_PARAM_CLUSTER_NAME) String name, @QueryParam(MappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] delete cluster : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), name});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -302,7 +302,7 @@ public class ClusterEp {
 
     @GET
     @Path("/update/name")
-    public Response setClusterName(@QueryParam("ID")String id, @QueryParam("name")String name, @QueryParam("sessionID") String sessionId) {
+    public Response setClusterName(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID)String id, @QueryParam(ClusterSce.CLUSTER_SCE_PARAM_CLUSTER_NAME)String name, @QueryParam(MappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update cluster name: ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -333,7 +333,7 @@ public class ClusterEp {
 
     @GET
     @Path("/update/containers/add")
-    public Response addClusterContainer(@QueryParam("ID")String id, @QueryParam("containerID")String containerID, @QueryParam("sessionID") String sessionId) {
+    public Response addClusterContainer(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID)String id, @QueryParam("containerID")String containerID, @QueryParam(MappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] add container to cluster : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, containerID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -370,7 +370,7 @@ public class ClusterEp {
 
     @GET
     @Path("/update/containers/delete")
-    public Response deleteClusterContainer(@QueryParam("ID")String id, @QueryParam("containerID")String containerID, @QueryParam("sessionID") String sessionId) {
+    public Response deleteClusterContainer(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID)String id, @QueryParam("containerID")String containerID, @QueryParam(MappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] delete container from cluster : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, containerID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||

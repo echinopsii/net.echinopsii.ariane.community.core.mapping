@@ -31,7 +31,6 @@ import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 
 public class ClusterJSON {
@@ -40,37 +39,29 @@ public class ClusterJSON {
     public final static String CL_NAME_TOKEN = MappingDSGraphPropertyNames.DD_CLUSTER_NAME_KEY;
     public final static String CL_CONT_TOKEN = MappingDSGraphPropertyNames.DD_CLUSTER_EDGE_CONT_KEY+"ID";
 
-    public final static void cluster2JSON(Cluster cluster, JsonGenerator jgenerator) throws IOException {
+    public static void cluster2JSON(Cluster cluster, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeStartObject();
         jgenerator.writeStringField(CL_ID_TOKEN, cluster.getClusterID());
         jgenerator.writeStringField(CL_NAME_TOKEN, cluster.getClusterName());
 
         jgenerator.writeArrayFieldStart(CL_CONT_TOKEN);
-        Iterator<? extends Container> iterCo = cluster.getClusterContainers().iterator();
-        while (iterCo.hasNext()) {
-            Container container = iterCo.next();
-            jgenerator.writeString(container.getContainerID());
-        }
+        for (Container container : cluster.getClusterContainers()) jgenerator.writeString(container.getContainerID());
         jgenerator.writeEndArray();
 
         jgenerator.writeEndObject();
     }
 
-    public final static void oneCluster2JSON(Cluster cluster, ByteArrayOutputStream outStream) throws IOException {
+    public static void oneCluster2JSON(Cluster cluster, ByteArrayOutputStream outStream) throws IOException {
         JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         ClusterJSON.cluster2JSON(cluster, jgenerator);
         jgenerator.close();
     }
 
-    public final static void manyClusters2JSON(HashSet<Cluster> clusters, ByteArrayOutputStream outStream) throws IOException {
+    public static void manyClusters2JSON(HashSet<Cluster> clusters, ByteArrayOutputStream outStream) throws IOException {
         JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         jgenerator.writeStartObject();
         jgenerator.writeArrayFieldStart("clusters");
-        Iterator<Cluster> iterC = clusters.iterator();
-        while (iterC.hasNext()) {
-            Cluster current = iterC.next();
-            ClusterJSON.cluster2JSON(current, jgenerator);
-        }
+        for (Cluster current : clusters) ClusterJSON.cluster2JSON(current, jgenerator);
         jgenerator.writeEndArray();
         jgenerator.writeEndObject();
         jgenerator.close();

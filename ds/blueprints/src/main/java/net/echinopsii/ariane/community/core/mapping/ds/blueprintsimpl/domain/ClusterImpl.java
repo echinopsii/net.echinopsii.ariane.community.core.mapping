@@ -34,7 +34,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ClusterImpl extends SProxClusterAbs implements SProxCluster, MappingDSBlueprintsCacheEntity {
+public class ClusterImpl extends SProxClusterAbs implements MappingDSBlueprintsCacheEntity {
 
     private static final Logger log = LoggerFactory.getLogger(ContainerImpl.class);
 

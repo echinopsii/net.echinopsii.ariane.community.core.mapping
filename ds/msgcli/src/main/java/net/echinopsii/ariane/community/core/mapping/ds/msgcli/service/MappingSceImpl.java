@@ -26,6 +26,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.msgcli.momsp.MappingMsgcl
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.tools.SessionImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.tools.SessionRegistryImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.service.*;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxClusterSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.SessionRegistry;
 import org.slf4j.Logger;
@@ -49,7 +50,7 @@ public class MappingSceImpl implements MappingSce {
     }
 
     @Override
-    public ClusterSce<? extends Cluster> getClusterSce() {
+    public SProxClusterSce<? extends Cluster> getClusterSce() {
         return null;
     }
 
@@ -200,8 +201,8 @@ public class MappingSceImpl implements MappingSce {
     @Override
     public Session openSession(String clientID) {
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.OPERATION_FDN, MappingSce.SESSION_MGR_OP_OPEN);
-        message.put(MappingSce.SESSION_MGR_OP_CLIENT_ID, clientID);
+        message.put(MappingSce.MAPPING_SCE_OPERATION_FDN, MappingSce.SESSION_MGR_OP_OPEN);
+        message.put(MappingSce.SESSION_MGR_PARAM_CLIENT_ID, clientID);
         Session session = new SessionImpl();
         MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, Session.MAPPING_SESSION_SERVICE_Q, ((SessionImpl)session).getSessionReplyWorker());
         if (session.isRunning()) {
@@ -222,8 +223,8 @@ public class MappingSceImpl implements MappingSce {
     @Override
     public Session closeSession(Session toClose) {
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.OPERATION_FDN, MappingSce.SESSION_MGR_OP_CLOSE);
-        message.put(MappingSce.SESSION_MGR_OP_SESSION_ID, toClose.getSessionID());
+        message.put(MappingSce.MAPPING_SCE_OPERATION_FDN, MappingSce.SESSION_MGR_OP_CLOSE);
+        message.put(MappingSce.SESSION_MGR_PARAM_SESSION_ID, toClose.getSessionID());
         MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, Session.MAPPING_SESSION_SERVICE_Q, ((SessionImpl) toClose).getSessionReplyWorker());
         if (!toClose.isRunning()) {
             sessionRegistry.remove(toClose);
