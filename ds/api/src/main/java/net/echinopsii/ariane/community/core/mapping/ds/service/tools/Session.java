@@ -26,8 +26,6 @@ public interface Session {
     String SESSION_OP_COMMIT = "commit";
     String SESSION_OP_ROLLBACK = "rollback";
 
-
-
     String getSessionID();
 
     Session stop();

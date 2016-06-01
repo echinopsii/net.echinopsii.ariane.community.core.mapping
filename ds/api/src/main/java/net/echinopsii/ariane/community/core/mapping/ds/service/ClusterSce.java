@@ -26,17 +26,21 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import java.util.Set;
 
 public interface ClusterSce<CL extends Cluster> {
-    public CL   createCluster(Session session, String clusterName) throws MappingDSException;
-	public CL   createCluster(String clusterName) throws MappingDSException;
+    String MAPPING_CLUSTER_SERVICE_Q = "ARIANE_MAPPING_CLUSTER_SERVICE_Q";
+    String CLUSTER_SCE_OP_CREATE = "createCluster";
+    String CLUSTER_SCE_PARAM_CLUSTER_NAME = "name";
+    String CLUSTER_SCE_OP_DELETE = "deleteCluster";
 
-    public void deleteCluster(Session session, String clusterName) throws MappingDSException;
-	public void deleteCluster(String clusterName) throws MappingDSException;
+    String CLUSTER_SCE_OP_GET = "getCluster";
+    String CLUSTER_SCE_OP_GET_BY_NAME = "getClusterByName";
+    String CLUSTER_SCE_OP_GETS = "getClusters";
 
-    public CL getCluster(Session session, String clusterID) throws MappingDSException;
-    public CL getCluster(String clusterID) throws MappingDSException;
-    public CL getClusterByName(Session session, String clusterName) throws MappingDSException;
-    public CL getClusterByName(String clusterName) throws MappingDSException;
+	CL   createCluster(String clusterName) throws MappingDSException;
 
-    public Set<CL> getClusters(Session session, String selector) throws MappingDSException;
-    public Set<CL> getClusters(String selector) throws MappingDSException;
+	void deleteCluster(String clusterName) throws MappingDSException;
+
+    CL getCluster(String clusterID) throws MappingDSException;
+    CL getClusterByName(String clusterName) throws MappingDSException;
+
+    Set<CL> getClusters(String selector) throws MappingDSException;
 }

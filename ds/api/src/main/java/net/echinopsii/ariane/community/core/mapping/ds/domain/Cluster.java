@@ -23,16 +23,17 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import java.util.Set;
 
 public interface Cluster {
-	public String getClusterID();
-	public void   setClusterID(String ID);
+
+	String getClusterID();
+	void   setClusterID(String ID);
 	
 	/*
 	 * cluster name MUST be unique
 	 */
-	public String  getClusterName();
-	public void    setClusterName(String name) throws MappingDSException;
+	String  getClusterName();
+	void    setClusterName(String name) throws MappingDSException;
 	
-	public Set<? extends Container> getClusterContainers();
-	public boolean                  addClusterContainer(Container container) throws MappingDSException;
-    public boolean                  removeClusterContainer(Container container) throws MappingDSException;
+	Set<? extends Container> getClusterContainers();
+	boolean                  addClusterContainer(Container container) throws MappingDSException;
+    boolean                  removeClusterContainer(Container container) throws MappingDSException;
 }

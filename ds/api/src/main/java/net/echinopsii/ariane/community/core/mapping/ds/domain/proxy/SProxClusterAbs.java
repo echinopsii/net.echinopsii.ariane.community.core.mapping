@@ -26,31 +26,25 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
 public abstract class SProxClusterAbs extends ClusterAbs implements SProxCluster {
 
-    final static String SET_CLUSTER_NAME = "setClusterName";
-
     @Override
     public void setClusterName(Session session, String name) throws MappingDSException {
         if (session!=null && session.isRunning())
-            session.execute(this, SET_CLUSTER_NAME, new Object[]{name});
+            session.execute(this, CLUSTER_OP_SET_CLUSTER_NAME, new Object[]{name});
     }
-
-    final static String ADD_CLUSTER_CONTAINER = "addClusterContainer";
 
     @Override
     public boolean addClusterContainer(Session session, Container container) throws MappingDSException {
         boolean ret = false;
         if (session!=null && session.isRunning())
-            ret = (boolean)session.execute(this, ADD_CLUSTER_CONTAINER, new Object[]{container});
+            ret = (boolean)session.execute(this, CLUSTER_OP_ADD_CLUSTER_CONTAINER, new Object[]{container});
         return ret;
     }
-
-    static final String REMOVE_CLUSTER_CONTAINER = "removeClusterContainer";
 
     @Override
     public boolean removeClusterContainer(Session session, Container container) throws MappingDSException {
         boolean ret = false;
         if (session != null && session.isRunning())
-            ret = (boolean) session.execute(this, REMOVE_CLUSTER_CONTAINER, new Object[]{container});
+            ret = (boolean) session.execute(this, CLUSTER_OP_REMOVE_CLUSTER_CONTAINER, new Object[]{container});
         return ret;
     }
 }

@@ -21,6 +21,7 @@ package net.echinopsii.ariane.community.core.mapping.ds.service;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxClusterSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.SessionRegistry;
 
@@ -29,21 +30,24 @@ import java.util.Set;
 
 public interface MappingSce {
 
-    String MAPPING_SERVICE_Q = "ARIANE_MAPPING_SERVICE_Q";
+    String MAPPING_SCE_SERVICE_Q = "ARIANE_MAPPING_SERVICE_Q";
 
-    String OPERATION_FDN = "OPERATION";
-    String OPERATION_NOT_DEFINED = "NOT_DEFINED";
+    String MAPPING_SCE_OPERATION_FDN = "OPERATION";
+    String MAPPING_SCE_OPERATION_NOT_DEFINED = "NOT_DEFINED";
+
+    String MAPPING_SCE_PARAM_OBJ_ID = "ID";
+    String MAPPING_SCE_PARAM_SELECTOR = "selector";
 
     String SESSION_MGR_OP_OPEN = "openSession";
     String SESSION_MGR_OP_CLOSE = "closeSession";
-    String SESSION_MGR_OP_CLIENT_ID = "clientID";
-    String SESSION_MGR_OP_SESSION_ID = "sessionID";
+    String SESSION_MGR_PARAM_CLIENT_ID = "clientID";
+    String SESSION_MGR_PARAM_SESSION_ID = "sessionID";
 
     SessionRegistry getSessionRegistry();
 
     MapSce getMapSce();
 
-    ClusterSce<? extends Cluster> getClusterSce();
+    SProxClusterSce<? extends Cluster> getClusterSce();
 
     ContainerSce<? extends Container> getContainerSce();
 

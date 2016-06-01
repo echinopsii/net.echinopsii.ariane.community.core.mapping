@@ -3,7 +3,6 @@
  * provide a Mapping DS domain, repository and service interfaces
  * Copyright (C) 2016  echinopsii
  *
- *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -17,21 +16,34 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */ 
-package net.echinopsii.ariane.community.core.mapping.ds.domain.proxy;
+
+package net.echinopsii.ariane.community.core.mapping.ds.service.proxy;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Cluster;
-import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
+import net.echinopsii.ariane.community.core.mapping.ds.service.ClusterSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
 import java.util.Set;
 
-public interface SProxCluster extends Cluster {
-	String CLUSTER_OP_SET_CLUSTER_NAME = "setClusterName";
-	String CLUSTER_OP_ADD_CLUSTER_CONTAINER = "addClusterContainer";
-	String CLUSTER_OP_REMOVE_CLUSTER_CONTAINER = "removeClusterContainer";
+public interface SProxClusterSce<CL extends Cluster> extends ClusterSce {
+    String MAPPING_CLUSTER_SERVICE_Q = "ARIANE_MAPPING_CLUSTER_SERVICE_Q";
+    String CLUSTER_SCE_OP_CREATE = "createCluster";
+    String CLUSTER_SCE_PARAM_CLUSTER_NAME = "name";
+    String CLUSTER_SCE_OP_DELETE = "deleteCluster";
 
-	void    setClusterName(Session session, String name) throws MappingDSException;
-	boolean addClusterContainer(Session session, Container container) throws MappingDSException;
-	boolean removeClusterContainer(Session session, Container container) throws MappingDSException;
+    String CLUSTER_SCE_OP_GET = "getCluster";
+    String CLUSTER_SCE_OP_GET_BY_NAME = "getClusterByName";
+    String CLUSTER_SCE_OP_GETS = "getClusters";
+
+    CL   createCluster(Session session, String clusterName) throws MappingDSException;
+
+    void deleteCluster(Session session, String clusterName) throws MappingDSException;
+
+    CL getCluster(Session session, String clusterID) throws MappingDSException;
+
+    CL getClusterByName(Session session, String clusterName) throws MappingDSException;
+
+
+    Set<CL> getClusters(Session session, String selector) throws MappingDSException;
 }
