@@ -192,7 +192,7 @@ public class ClusterEp {
 
     @GET
     @Path("/get")
-    public Response getCluster(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id, @QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String sessionId) {
+    public Response getCluster(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id, @QueryParam(MappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         return _displayCluster(id, sessionId);
     }
 
