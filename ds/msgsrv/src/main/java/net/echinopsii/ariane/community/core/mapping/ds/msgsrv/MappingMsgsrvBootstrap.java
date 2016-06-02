@@ -19,6 +19,8 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.msgsrv;
 
+import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.service.ClusterEp;
+import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.service.ContainerEp;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.momsp.MappingMsgsrvMomSP;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.service.SessionEp;
@@ -59,6 +61,8 @@ public class MappingMsgsrvBootstrap {
     private void start() {
         if (MappingMsgsrvMomSP.start()) {
             SessionEp.start();
+            ClusterEp.start();
+            ContainerEp.start();
             isStarted = true;
         }
     }

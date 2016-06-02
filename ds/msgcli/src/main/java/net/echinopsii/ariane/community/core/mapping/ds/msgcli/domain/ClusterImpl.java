@@ -25,11 +25,43 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxClusterAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.tools.SessionRegistryImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
+import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+import java.util.Map;
+
 public class ClusterImpl extends SProxClusterAbs {
+
+    class ClusterReplyWorker implements AppMsgWorker {
+        private ClusterImpl cluster = null;
+
+        public ClusterReplyWorker(ClusterImpl cluster) {
+            this.cluster = cluster;
+        }
+
+        @Override
+        public Map<String, Object> apply(Map<String, Object> message) {
+            return null;
+        }
+    }
+
     private static final Logger log = LoggerFactory.getLogger(ContainerImpl.class);
+    private AppMsgWorker clusterReplyWorker = new ClusterReplyWorker(this);
+    private List<String> clusterContainersID;
+
+    public AppMsgWorker getClusterReplyWorker() {
+        return clusterReplyWorker;
+    }
+
+    public List<String> getClusterContainersID() {
+        return clusterContainersID;
+    }
+
+    public void setClusterContainersID(List<String> clusterContainersID) {
+        this.clusterContainersID = clusterContainersID;
+    }
 
     @Override
     public void setClusterName(String name) throws MappingDSException {

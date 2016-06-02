@@ -41,6 +41,15 @@ public class MappingSceImpl extends SProxMappingSceAbs<SessionImpl, SessionRegis
 
     private final static Logger log = LoggerFactory.getLogger(MappingSceImpl.class);
 
+    //private MapSceImpl mapSce = new MapSceImpl(this);
+    private ClusterSceImpl clusterSce = new ClusterSceImpl(this);
+    //private ContainerSceImpl containerSce = new ContainerSceImpl(this);
+    //private GateSceImpl gateSce = new GateSceImpl(this);
+    //private NodeSceImpl nodeSce = new NodeSceImpl(this);
+    //private EndpointSceImpl endpointSce = new EndpointSceImpl(this);
+    //private LinkSceImpl linkSce = new LinkSceImpl(this);
+    //private TransportSceImpl transportSce = new TransportSceImpl(this);
+
     public MappingSceImpl() {
         super.setSessionRegistry(new SessionRegistryImpl());
     }
@@ -128,7 +137,7 @@ public class MappingSceImpl extends SProxMappingSceAbs<SessionImpl, SessionRegis
 
     @Override
     public SProxClusterSce<? extends Cluster> getClusterSce() {
-        return null;
+        return clusterSce;
     }
 
     @Override

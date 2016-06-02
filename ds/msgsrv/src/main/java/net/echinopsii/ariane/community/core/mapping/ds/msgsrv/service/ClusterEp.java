@@ -19,6 +19,7 @@
 package net.echinopsii.ariane.community.core.mapping.ds.msgsrv.service;
 
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Cluster;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxCluster;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ClusterJSON;
@@ -35,7 +36,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
 import java.util.Map;
 
-public class ClusterEP {
+public class ClusterEp {
 
     static class ClusterWorker implements AppMsgWorker {
         @Override
@@ -44,6 +45,7 @@ public class ClusterEP {
             String operation;
             String sid;
             String cid;
+            String ccid;
             String name;
             Session session = null;
 
@@ -243,8 +245,8 @@ public class ClusterEP {
                             }
 
                             Cluster cluster;
-                            if (session != null) cluster = MappingMsgsrvBootstrap.getMappingSce().getClusterSce().getClusterByName(session, name);
-                            else cluster = MappingMsgsrvBootstrap.getMappingSce().getClusterSce().getClusterByName(name);
+                            if (session != null) cluster = MappingMsgsrvBootstrap.getMappingSce().getClusterSce().getCluster(session, cid);
+                            else cluster = MappingMsgsrvBootstrap.getMappingSce().getClusterSce().getCluster(cid);
 
                             if (cluster != null) {
                                 cluster.setClusterName(name);
@@ -259,6 +261,9 @@ public class ClusterEP {
                                 message.put(MomMsgTranslator.MSG_RC, 1);
                                 message.put(MomMsgTranslator.MSG_ERR, "Not Found (" + operation + ") : cluster with provided id not found");
                             }
+                        } else {
+                            message.put(MomMsgTranslator.MSG_RC, 1);
+                            message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : missing parameter (cluster id and/or container name)");
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -267,8 +272,62 @@ public class ClusterEP {
                     }
                     break;
                 case SProxCluster.CLUSTER_OP_ADD_CLUSTER_CONTAINER:
-                    break;
                 case SProxCluster.CLUSTER_OP_REMOVE_CLUSTER_CONTAINER:
+                    try {
+                        sid = (String) message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID);
+                        cid = (String) message.get(MappingSce.MAPPING_SCE_PARAM_OBJ_ID);
+                        ccid = (String) message.get(Container.CT_ID_TOKEN);
+                        if (ccid != null && cid != null) {
+                            if (sid != null) {
+                                session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sid);
+                                if (session == null) {
+                                    message.put(MomMsgTranslator.MSG_RC, 1);
+                                    message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : session with provided id not found");
+                                    return message;
+                                }
+                            }
+
+                            Cluster cluster;
+                            if (session != null) cluster = MappingMsgsrvBootstrap.getMappingSce().getClusterSce().getCluster(session, cid);
+                            else cluster = MappingMsgsrvBootstrap.getMappingSce().getClusterSce().getCluster(cid);
+
+                            if (cluster != null) {
+                                Container container;
+                                if (session != null) container = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(session, ccid);
+                                else container = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(ccid);
+
+                                if (container != null) {
+                                    if (operation.equals(SProxCluster.CLUSTER_OP_ADD_CLUSTER_CONTAINER)) {
+                                        if (session != null) ((SProxCluster) cluster).addClusterContainer(session, container);
+                                        else cluster.addClusterContainer(container);
+                                    } else {
+                                        if (session != null) ((SProxCluster) cluster).removeClusterContainer(session, container);
+                                        else cluster.removeClusterContainer(container);
+                                    }
+
+                                    ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                                    ClusterJSON.oneCluster2JSON(cluster, outStream);
+                                    String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+
+                                    message.put(MomMsgTranslator.MSG_RC, 0);
+                                    message.put(MomMsgTranslator.MSG_BODY, result);
+                                } else {
+                                    message.put(MomMsgTranslator.MSG_RC, 1);
+                                    message.put(MomMsgTranslator.MSG_ERR, "Not Found (" + operation + ") : container with provided id not found");
+                                }
+                            } else {
+                                message.put(MomMsgTranslator.MSG_RC, 1);
+                                message.put(MomMsgTranslator.MSG_ERR, "Not Found (" + operation + ") : cluster with provided id not found");
+                            }
+                        } else {
+                            message.put(MomMsgTranslator.MSG_RC, 1);
+                            message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : missing parameter (cluster id and/or container id)");
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        message.put(MomMsgTranslator.MSG_RC, 1);
+                        message.put(MomMsgTranslator.MSG_ERR, "Internal server error (" + operation + ") : " + e.getMessage());
+                    }
                     break;
                 case MappingSce.MAPPING_SCE_OPERATION_NOT_DEFINED:
                     message.put(MomMsgTranslator.MSG_RC, 1);
