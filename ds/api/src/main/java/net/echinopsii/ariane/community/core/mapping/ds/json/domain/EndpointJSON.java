@@ -49,8 +49,8 @@ public class EndpointJSON {
     public final static String EP_TWNEPID_TOKEN = MappingDSGraphPropertyNames.DD_ENDPOINT_EDGE_TWIN_KEY+"ID";
     public final static String EP_PRP_TOKEN = MappingDSGraphPropertyNames.DD_ENDPOINT_PROPS_KEY;
 
-    private final static void endpointProps2JSON(Endpoint endpoint, JsonGenerator jgenerator)
-            throws JsonGenerationException, IOException {
+    private static void endpointProps2JSON(Endpoint endpoint, JsonGenerator jgenerator)
+            throws IOException {
         HashMap<String, Object> props = endpoint.getEndpointProperties();
         if (props != null && props.size()!=0) {
             jgenerator.writeObjectFieldStart(EP_PRP_TOKEN);
@@ -59,8 +59,8 @@ public class EndpointJSON {
         }
     }
 
-    public final static void endpoint2JSON(Endpoint endpoint, JsonGenerator jgenerator)
-            throws JsonGenerationException, IOException, MappingDSException {
+    public static void endpoint2JSON(Endpoint endpoint, JsonGenerator jgenerator)
+            throws IOException, MappingDSException {
         jgenerator.writeStartObject();
         log.debug("Ep JSON :endpoint {}", new Object[]{endpoint.getEndpointID()});
         jgenerator.writeStringField(EP_ID_TOKEN, endpoint.getEndpointID());
@@ -72,34 +72,26 @@ public class EndpointJSON {
                     ":" + endpoint.getEndpointURL() + ")");
 
         jgenerator.writeArrayFieldStart(EP_TWNEPID_TOKEN);
-        Iterator<? extends Endpoint> iterE = endpoint.getTwinEndpoints().iterator();
-        while (iterE.hasNext()) {
-            Endpoint tep = iterE.next();
-            jgenerator.writeString(tep.getEndpointID());
-        }
+        for (Endpoint tep : endpoint.getTwinEndpoints()) jgenerator.writeString(tep.getEndpointID());
         jgenerator.writeEndArray();
 
         EndpointJSON.endpointProps2JSON(endpoint,jgenerator);
         jgenerator.writeEndObject();
     }
 
-    public final static void oneEndpoint2JSON(Endpoint endpoint, ByteArrayOutputStream outStream)
+    public static void oneEndpoint2JSON(Endpoint endpoint, ByteArrayOutputStream outStream)
             throws IOException, MappingDSException {
         JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         endpoint2JSON(endpoint, jgenerator);
         jgenerator.close();
     }
 
-    public final static void manyEndpoints2JSON(HashSet<Endpoint> endpoints, ByteArrayOutputStream outStream)
+    public static void manyEndpoints2JSON(HashSet<Endpoint> endpoints, ByteArrayOutputStream outStream)
             throws IOException, MappingDSException {
         JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         jgenerator.writeStartObject();
         jgenerator.writeArrayFieldStart("endpoints");
-        Iterator<Endpoint> iterC = endpoints.iterator();
-        while (iterC.hasNext()) {
-            Endpoint current = iterC.next();
-            EndpointJSON.endpoint2JSON(current, jgenerator);
-        }
+        for (Endpoint current : endpoints) EndpointJSON.endpoint2JSON(current, jgenerator);
         jgenerator.writeEndArray();
         jgenerator.writeEndObject();
         jgenerator.close();

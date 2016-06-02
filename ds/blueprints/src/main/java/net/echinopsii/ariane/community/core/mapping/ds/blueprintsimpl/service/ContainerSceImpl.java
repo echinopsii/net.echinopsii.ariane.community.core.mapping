@@ -25,20 +25,14 @@ import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.Gat
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository.ContainerRepoImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
-import net.echinopsii.ariane.community.core.mapping.ds.service.ContainerSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxContainerSceAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 
-public class ContainerSceImpl implements ContainerSce<ContainerImpl> {
-
-    final static String CREATE_CONTAINER = "createContainer";
-    final static String DELETE_CONTAINER = "deleteContainer";
-    final static String GET_CONTAINER = "getContainer";
-    final static String GET_CONTAINER_BY_PAURL = "getContainerByPrimaryAdminURL";
-    final static String GET_CONTAINERS = "getContainers";
+public class ContainerSceImpl extends SProxContainerSceAbs<ContainerImpl> {
 
     private static final Logger log = LoggerFactory.getLogger(ContainerSceImpl.class);
 
@@ -46,14 +40,6 @@ public class ContainerSceImpl implements ContainerSce<ContainerImpl> {
 
     public ContainerSceImpl(MappingSceImpl sce_) {
         this.sce = sce_;
-    }
-
-    @Override
-    public ContainerImpl createContainer(Session session, String primaryAdminURL, String primaryAdminGateName) throws MappingDSException {
-        ContainerImpl ret = null;
-        if (session != null && session.isRunning())
-            ret = (ContainerImpl) session.execute(this, CREATE_CONTAINER, new Object[]{primaryAdminURL, primaryAdminGateName});
-        return ret;
     }
 
     @Override
@@ -93,14 +79,6 @@ public class ContainerSceImpl implements ContainerSce<ContainerImpl> {
     }
 
     @Override
-    public ContainerImpl createContainer(Session session, String name, String primaryAdminURL, String primaryAdminGateName) throws MappingDSException {
-        ContainerImpl ret = null;
-        if (session != null && session.isRunning())
-            ret = (ContainerImpl) session.execute(this, CREATE_CONTAINER, new Object[]{name, primaryAdminURL, primaryAdminGateName});
-        return ret;
-    }
-
-    @Override
     public ContainerImpl createContainer(String name, String primaryAdminURL, String primaryAdminGateName) throws MappingDSException {
         ContainerImpl ret = null;
         String clientThreadName = Thread.currentThread().getName();
@@ -117,14 +95,6 @@ public class ContainerSceImpl implements ContainerSce<ContainerImpl> {
     }
 
     @Override
-    public ContainerImpl createContainer(Session session, String primaryAdminURL, String primaryAdminGateName, Container parentContainer) throws MappingDSException {
-        ContainerImpl ret = null;
-        if (session != null && session.isRunning())
-            ret = (ContainerImpl) session.execute(this, CREATE_CONTAINER, new Object[]{primaryAdminURL, primaryAdminGateName, parentContainer});
-        return ret;
-    }
-
-    @Override
     public ContainerImpl createContainer(String primaryAdminURL, String primaryAdminGateName, Container parentContainer) throws MappingDSException {
         ContainerImpl ret = null;
         String clientThreadName = Thread.currentThread().getName();
@@ -137,14 +107,6 @@ public class ContainerSceImpl implements ContainerSce<ContainerImpl> {
             ret = this.createContainer(primaryAdminURL, primaryAdminGateName);
             parentContainer.addContainerChildContainer(ret);
         }
-        return ret;
-    }
-
-    @Override
-    public ContainerImpl createContainer(Session session, String name, String primaryAdminURL, String primaryAdminGateName, Container parentContainer) throws MappingDSException {
-        ContainerImpl ret = null;
-        if (session != null && session.isRunning())
-            ret = (ContainerImpl) session.execute(this, CREATE_CONTAINER, new Object[]{name, primaryAdminURL, primaryAdminGateName, parentContainer});
         return ret;
     }
 
@@ -166,12 +128,6 @@ public class ContainerSceImpl implements ContainerSce<ContainerImpl> {
     }
 
     @Override
-    public void deleteContainer(Session session, String primaryAdminURL) throws MappingDSException {
-        if (session != null && session.isRunning())
-            session.execute(this, DELETE_CONTAINER, new Object[]{primaryAdminURL});
-    }
-
-    @Override
     public void deleteContainer(String primaryAdminURL) throws MappingDSException {
         String clientThreadName = Thread.currentThread().getName();
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
@@ -190,14 +146,6 @@ public class ContainerSceImpl implements ContainerSce<ContainerImpl> {
     }
 
     @Override
-    public ContainerImpl getContainer(Session session, String id) throws MappingDSException {
-        ContainerImpl ret = null;
-        if (session != null && session.isRunning())
-            ret = (ContainerImpl) session.execute(this, GET_CONTAINER, new Object[]{id});
-        return ret;
-    }
-
-    @Override
     public ContainerImpl getContainer(String id) throws MappingDSException {
         String clientThreadName = Thread.currentThread().getName();
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
@@ -209,14 +157,6 @@ public class ContainerSceImpl implements ContainerSce<ContainerImpl> {
     }
 
     @Override
-    public ContainerImpl getContainerByPrimaryAdminURL(Session session, String primaryAdminURL) throws MappingDSException {
-        ContainerImpl ret = null;
-        if (session != null && session.isRunning())
-            ret = (ContainerImpl) session.execute(this, GET_CONTAINER_BY_PAURL, new Object[]{primaryAdminURL});
-        return ret;
-    }
-
-    @Override
     public ContainerImpl getContainerByPrimaryAdminURL(String primaryAdminURL) throws MappingDSException {
         String clientThreadName = Thread.currentThread().getName();
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
@@ -225,14 +165,6 @@ public class ContainerSceImpl implements ContainerSce<ContainerImpl> {
             if (session!=null) return getContainerByPrimaryAdminURL(session, primaryAdminURL);
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else return sce.getGlobalRepo().getContainerRepo().findContainersByPrimaryAdminURL(primaryAdminURL);
-    }
-
-    @Override
-    public Set<ContainerImpl> getContainers(Session session, String selector) throws MappingDSException {
-        Set<ContainerImpl> ret = null;
-        if (session != null && session.isRunning())
-            ret = (Set<ContainerImpl>) session.execute(this, GET_CONTAINERS, new Object[]{selector});
-        return ret;
     }
 
     @Override

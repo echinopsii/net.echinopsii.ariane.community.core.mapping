@@ -22,9 +22,9 @@ package net.echinopsii.ariane.community.core.mapping.ds.domain;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 
 public interface Gate extends Node {
-	public boolean isAdminPrimary();
+	boolean isAdminPrimary();
 	
-	public Endpoint getNodePrimaryAdminEndpoint();
+	Endpoint getNodePrimaryAdminEndpoint();
 
-	public void     setNodePrimaryAdminEnpoint(Endpoint endpoint) throws MappingDSException;
+	void     setNodePrimaryAdminEnpoint(Endpoint endpoint) throws MappingDSException;
 }

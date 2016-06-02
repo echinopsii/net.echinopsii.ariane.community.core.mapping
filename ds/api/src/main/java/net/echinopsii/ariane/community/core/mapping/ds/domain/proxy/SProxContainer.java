@@ -29,30 +29,21 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import java.util.HashMap;
 import java.util.Set;
 
-/**
- * AMQP 1.0 Containers:
- * Containers contain nodes
- * Containers have a globally unique name
- * Within a container a node name will resolve to at most one node
- * Authentication is always with respect to a container
- * Observable Container state is consistent
- *
- * @author Mathilde Ffrench
- */
 public interface SProxContainer extends Container {
-	public void setContainerName(Session session, String name) throws MappingDSException;
-	public void setContainerCompany(Session session, String company) throws MappingDSException;
-	public void setContainerProduct(Session session, String product) throws MappingDSException;
-	public void setContainerType(Session session, String type) throws MappingDSException;
-	public void setContainerPrimaryAdminGate(Session session, Gate gate) throws MappingDSException;
-	public void setContainerCluster(Session session, Cluster cluster) throws MappingDSException;
-	public void addContainerProperty(Session session, String propertyKey, Object value) throws MappingDSException;
-	public void removeContainerProperty(Session session, String propertyKey) throws MappingDSException;
-	public void setContainerParentContainer(Session session, Container container) throws MappingDSException;
-	public boolean addContainerChildContainer(Session session, Container container) throws MappingDSException;
-	public boolean removeContainerChildContainer(Session session, Container container) throws MappingDSException;
-	public boolean addContainerNode(Session session, Node node) throws MappingDSException;
-	public boolean removeContainerNode(Session session, Node node) throws MappingDSException;
-	public boolean addContainerGate(Session session, Gate service) throws MappingDSException;
-	public boolean removeContainerGate(Session session, Gate service) throws MappingDSException;
+
+	void setContainerName(Session session, String name) throws MappingDSException;
+	void setContainerCompany(Session session, String company) throws MappingDSException;
+	void setContainerProduct(Session session, String product) throws MappingDSException;
+	void setContainerType(Session session, String type) throws MappingDSException;
+	void setContainerPrimaryAdminGate(Session session, Gate gate) throws MappingDSException;
+	void setContainerCluster(Session session, Cluster cluster) throws MappingDSException;
+	void addContainerProperty(Session session, String propertyKey, Object value) throws MappingDSException;
+	void removeContainerProperty(Session session, String propertyKey) throws MappingDSException;
+	void setContainerParentContainer(Session session, Container container) throws MappingDSException;
+	boolean addContainerChildContainer(Session session, Container container) throws MappingDSException;
+	boolean removeContainerChildContainer(Session session, Container container) throws MappingDSException;
+	boolean addContainerNode(Session session, Node node) throws MappingDSException;
+	boolean removeContainerNode(Session session, Node node) throws MappingDSException;
+	boolean addContainerGate(Session session, Gate service) throws MappingDSException;
+	boolean removeContainerGate(Session session, Gate service) throws MappingDSException;
 }

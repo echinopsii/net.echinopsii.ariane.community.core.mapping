@@ -25,36 +25,36 @@ import java.util.HashMap;
 import java.util.Set;
 
 public interface Node {
-	public String getNodeID();
-	public void   setNodeID(String ID);
+	String getNodeID();
+	void   setNodeID(String ID);
 	
 	/*
 	 * 	node name MUST be unique
 	 */
-	public String getNodeName();
-	public void   setNodeName(String name) throws MappingDSException;
+	String getNodeName();
+	void   setNodeName(String name) throws MappingDSException;
 	
-	public Container getNodeContainer();
-	public void      setNodeContainer(Container container) throws MappingDSException;
+	Container getNodeContainer();
+	void      setNodeContainer(Container container) throws MappingDSException;
 	
-	public long getNodeDepth();
+	long getNodeDepth();
 	
-	public HashMap<String, Object> getNodeProperties();
-	public void addNodeProperty(String propertyKey, Object value) throws MappingDSException;
-    public void removeNodeProperty(String propertyKey) throws MappingDSException;
+	HashMap<String, Object> getNodeProperties();
+	void addNodeProperty(String propertyKey, Object value) throws MappingDSException;
+    void removeNodeProperty(String propertyKey) throws MappingDSException;
 	
-	public Node getNodeParentNode();
-	public void setNodeParentNode(Node node) throws MappingDSException;
+	Node getNodeParentNode();
+	void setNodeParentNode(Node node) throws MappingDSException;
 	
-	public Set<? extends Node> getNodeChildNodes();
-	public boolean             addNodeChildNode(Node node) throws MappingDSException;
-	public boolean             removeNodeChildNode(Node node) throws MappingDSException;
+	Set<? extends Node> getNodeChildNodes();
+	boolean             addNodeChildNode(Node node) throws MappingDSException;
+	boolean             removeNodeChildNode(Node node) throws MappingDSException;
 
-	public Set<? extends Node> getTwinNodes();
-	public boolean             addTwinNode(Node node) throws MappingDSException;
-	public boolean             removeTwinNode(Node node) throws MappingDSException;
+	Set<? extends Node> getTwinNodes();
+	boolean             addTwinNode(Node node) throws MappingDSException;
+	boolean             removeTwinNode(Node node) throws MappingDSException;
 
-	public Set<? extends Endpoint> getNodeEndpoints();
-	public boolean addEndpoint(Endpoint endpoint) throws MappingDSException;
-	public boolean removeEndpoint(Endpoint endpoint) throws MappingDSException;
+	Set<? extends Endpoint> getNodeEndpoints();
+	boolean addEndpoint(Endpoint endpoint) throws MappingDSException;
+	boolean removeEndpoint(Endpoint endpoint) throws MappingDSException;
 }

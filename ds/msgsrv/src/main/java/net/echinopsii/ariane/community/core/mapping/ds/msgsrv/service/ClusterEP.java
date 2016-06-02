@@ -26,6 +26,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.MappingMsgsrvBoots
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.momsp.MappingMsgsrvMomSP;
 import net.echinopsii.ariane.community.core.mapping.ds.service.ClusterSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
@@ -54,7 +55,7 @@ public class ClusterEP {
             switch (operation) {
                 case ClusterSce.CLUSTER_SCE_OP_CREATE:
                     try {
-                        sid = (String) message.get(MappingSce.SESSION_MGR_PARAM_SESSION_ID);
+                        sid = (String) message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID);
                         name = (String) message.get(ClusterSce.CLUSTER_SCE_PARAM_CLUSTER_NAME);
                         if (name != null) {
                             if (sid!=null) {
@@ -88,7 +89,7 @@ public class ClusterEP {
                     break;
                 case ClusterSce.CLUSTER_SCE_OP_DELETE:
                     try {
-                        sid = (String) message.get(MappingSce.SESSION_MGR_PARAM_SESSION_ID);
+                        sid = (String) message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID);
                         name = (String) message.get(ClusterSce.CLUSTER_SCE_PARAM_CLUSTER_NAME);
                         if (name != null) {
                             if (sid != null) {
@@ -117,7 +118,7 @@ public class ClusterEP {
                     break;
                 case ClusterSce.CLUSTER_SCE_OP_GET:
                     try {
-                        sid = (String) message.get(MappingSce.SESSION_MGR_PARAM_SESSION_ID);
+                        sid = (String) message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID);
                         cid = (String) message.get(MappingSce.MAPPING_SCE_PARAM_OBJ_ID);
                         if (cid != null) {
                             if (sid != null) {
@@ -156,7 +157,7 @@ public class ClusterEP {
                     break;
                 case ClusterSce.CLUSTER_SCE_OP_GET_BY_NAME:
                     try {
-                        sid = (String) message.get(MappingSce.SESSION_MGR_PARAM_SESSION_ID);
+                        sid = (String) message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID);
                         name = (String) message.get(ClusterSce.CLUSTER_SCE_PARAM_CLUSTER_NAME);
                         if (name != null) {
                             if (sid != null) {
@@ -195,7 +196,7 @@ public class ClusterEP {
                     break;
                 case ClusterSce.CLUSTER_SCE_OP_GETS:
                     try {
-                        sid = (String) message.get(MappingSce.SESSION_MGR_PARAM_SESSION_ID);
+                        sid = (String) message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID);
                         if (sid != null) {
                             session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sid);
                             if (session == null) {
@@ -228,7 +229,7 @@ public class ClusterEP {
                     break;
                 case SProxCluster.CLUSTER_OP_SET_CLUSTER_NAME:
                     try {
-                        sid = (String) message.get(MappingSce.SESSION_MGR_PARAM_SESSION_ID);
+                        sid = (String) message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID);
                         name = (String) message.get(ClusterSce.CLUSTER_SCE_PARAM_CLUSTER_NAME);
                         cid = (String) message.get(MappingSce.MAPPING_SCE_PARAM_OBJ_ID);
                         if (name != null && cid != null) {

@@ -25,6 +25,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxCluster;
 import net.echinopsii.ariane.community.core.mapping.ds.service.ClusterSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ClusterJSON;
@@ -157,7 +158,7 @@ public class ClusterEp {
     }
 
     @GET
-    public Response displayAllClusters(@QueryParam(MappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
+    public Response displayAllClusters(@QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get clusters", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
         if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
@@ -192,13 +193,13 @@ public class ClusterEp {
 
     @GET
     @Path("/get")
-    public Response getCluster(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id, @QueryParam(MappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
+    public Response getCluster(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id, @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         return _displayCluster(id, sessionId);
     }
 
     @GET
     @Path("/create")
-    public Response createCluster(@QueryParam(ClusterSce.CLUSTER_SCE_PARAM_CLUSTER_NAME) String name, @QueryParam(MappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
+    public Response createCluster(@QueryParam(ClusterSce.CLUSTER_SCE_PARAM_CLUSTER_NAME) String name, @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create cluster : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), name});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -236,7 +237,7 @@ public class ClusterEp {
     }
 
     @POST
-    public Response postCluster(@QueryParam("payload") String payload, @QueryParam(MappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) throws IOException {
+    public Response postCluster(@QueryParam("payload") String payload, @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) throws IOException {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create container", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -277,7 +278,8 @@ public class ClusterEp {
 
     @GET
     @Path("/delete")
-    public Response deleteCluster(@QueryParam(ClusterSce.CLUSTER_SCE_PARAM_CLUSTER_NAME) String name, @QueryParam(MappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
+    public Response deleteCluster(@QueryParam(ClusterSce.CLUSTER_SCE_PARAM_CLUSTER_NAME) String name,
+                                  @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] delete cluster : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), name});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -302,7 +304,9 @@ public class ClusterEp {
 
     @GET
     @Path("/update/name")
-    public Response setClusterName(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID)String id, @QueryParam(ClusterSce.CLUSTER_SCE_PARAM_CLUSTER_NAME)String name, @QueryParam(MappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
+    public Response setClusterName(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID)String id,
+                                   @QueryParam(ClusterSce.CLUSTER_SCE_PARAM_CLUSTER_NAME)String name,
+                                   @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update cluster name: ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -333,7 +337,9 @@ public class ClusterEp {
 
     @GET
     @Path("/update/containers/add")
-    public Response addClusterContainer(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID)String id, @QueryParam("containerID")String containerID, @QueryParam(MappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
+    public Response addClusterContainer(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID)String id,
+                                        @QueryParam("containerID")String containerID,
+                                        @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] add container to cluster : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, containerID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -370,7 +376,9 @@ public class ClusterEp {
 
     @GET
     @Path("/update/containers/delete")
-    public Response deleteClusterContainer(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID)String id, @QueryParam("containerID")String containerID, @QueryParam(MappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
+    public Response deleteClusterContainer(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID)String id,
+                                           @QueryParam("containerID")String containerID,
+                                           @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] delete container from cluster : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, containerID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||

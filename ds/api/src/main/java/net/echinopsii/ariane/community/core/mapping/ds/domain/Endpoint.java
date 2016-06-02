@@ -24,23 +24,23 @@ import java.util.HashMap;
 import java.util.Set;
 
 public interface Endpoint {
-	public String getEndpointID();
-	public void   setEndpointID(String ID);
+	String getEndpointID();
+	void   setEndpointID(String ID);
 	
 	/*
 	 * MUST be unique
 	 */
-	public String getEndpointURL();
-	public void   setEndpointURL(String url) throws MappingDSException;
+	String getEndpointURL();
+	void   setEndpointURL(String url) throws MappingDSException;
 	
-	public Node getEndpointParentNode();
-	public void setEndpointParentNode(Node node) throws MappingDSException;
+	Node getEndpointParentNode();
+	void setEndpointParentNode(Node node) throws MappingDSException;
 
-	public Set<? extends Endpoint> getTwinEndpoints();
-	public boolean                 addTwinEndpoint(Endpoint endpoint) throws MappingDSException;
-	public boolean                 removeTwinEndpoint(Endpoint endpoint) throws MappingDSException;
+	Set<? extends Endpoint> getTwinEndpoints();
+	boolean                 addTwinEndpoint(Endpoint endpoint) throws MappingDSException;
+	boolean                 removeTwinEndpoint(Endpoint endpoint) throws MappingDSException;
 	
-	public HashMap<String, Object> getEndpointProperties();
-	public void addEndpointProperty(String propertyKey, Object value) throws MappingDSException;
-    public void removeEndpointProperty(String propertyKey) throws MappingDSException;
+	HashMap<String, Object> getEndpointProperties();
+	void addEndpointProperty(String propertyKey, Object value) throws MappingDSException;
+    void removeEndpointProperty(String propertyKey) throws MappingDSException;
 }

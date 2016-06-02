@@ -38,7 +38,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 
 public class ContainerJSON {
@@ -59,7 +58,7 @@ public class ContainerJSON {
     public final static String CT_GID_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_GATE_KEY+"ID";
     public final static String CT_PRP_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY;
 
-    private final static void containerProps2JSON(HashMap<String, Object> props, JsonGenerator jgenerator,
+    private static void containerProps2JSON(HashMap<String, Object> props, JsonGenerator jgenerator,
                                                   boolean writeOPropsFieldStart, boolean writeOPropsFieldEnd)
     throws JsonGenerationException, IOException {
         if (writeOPropsFieldStart) {
@@ -71,7 +70,7 @@ public class ContainerJSON {
         }
     }
 
-    public final static void container2MapJSON(Container cont, HashMap<String, Object> props, JsonGenerator jgenerator) throws IOException {
+    public static void container2MapJSON(Container cont, HashMap<String, Object> props, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeStartObject();
         jgenerator.writeStringField(CT_ID_TOKEN, cont.getContainerID());
         jgenerator.writeStringField(CT_NAME_TOKEN, cont.getContainerName());
@@ -83,14 +82,14 @@ public class ContainerJSON {
             jgenerator.writeStringField(CT_PCID_TOKEN, cont.getContainerParentContainer().getContainerID());
         boolean isPropsBeginWritted = false;
         if (cont.getContainerProperties() != null) {
-            containerProps2JSON(cont.getContainerProperties(), jgenerator, !isPropsBeginWritted, false);
+            containerProps2JSON(cont.getContainerProperties(), jgenerator, true, false);
             isPropsBeginWritted = true;
         }
         containerProps2JSON(props, jgenerator, (!isPropsBeginWritted && (props != null)), (isPropsBeginWritted || props != null));
         jgenerator.writeEndObject();
     }
 
-    public final static void container2JSON(Container cont, JsonGenerator jgenerator) throws IOException {
+    public static void container2JSON(Container cont, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeStartObject();
         jgenerator.writeStringField(CT_ID_TOKEN, cont.getContainerID());
         jgenerator.writeStringField(CT_NAME_TOKEN, cont.getContainerName());
@@ -132,21 +131,17 @@ public class ContainerJSON {
         jgenerator.writeEndObject();
     }
 
-    public final static void oneContainer2JSON(Container cont, ByteArrayOutputStream outStream) throws IOException {
+    public static void oneContainer2JSON(Container cont, ByteArrayOutputStream outStream) throws IOException {
         JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         ContainerJSON.container2JSON(cont, jgenerator);
         jgenerator.close();
     }
 
-    public final static void manyContainers2JSON(HashSet<Container> conts, ByteArrayOutputStream outStream) throws IOException {
+    public static void manyContainers2JSON(HashSet<Container> conts, ByteArrayOutputStream outStream) throws IOException {
         JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         jgenerator.writeStartObject();
         jgenerator.writeArrayFieldStart("containers");
-        Iterator<Container> iterC = conts.iterator();
-        while (iterC.hasNext()) {
-            Container current = iterC.next();
-            ContainerJSON.container2JSON(current, jgenerator);
-        }
+        for (Container current : conts) ContainerJSON.container2JSON(current, jgenerator);
         jgenerator.writeEndArray();
         jgenerator.writeEndObject();
         jgenerator.close();

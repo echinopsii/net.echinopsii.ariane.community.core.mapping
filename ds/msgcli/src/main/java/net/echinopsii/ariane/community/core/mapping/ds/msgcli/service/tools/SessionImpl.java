@@ -23,6 +23,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.json.service.SessionJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.momsp.MappingMsgcliMomSP;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
@@ -56,7 +57,7 @@ public class SessionImpl implements Session {
                         operation = oOperation.toString();
 
                     switch (operation) {
-                        case MappingSce.SESSION_MGR_OP_OPEN:
+                        case SProxMappingSce.SESSION_MGR_OP_OPEN:
                             try {
                                 String body = null;
                                 if (message.get(MomMsgTranslator.MSG_BODY)!=null && message.get(MomMsgTranslator.MSG_BODY) instanceof String)
@@ -69,7 +70,7 @@ public class SessionImpl implements Session {
                                 e.printStackTrace();
                             }
                             break;
-                        case MappingSce.SESSION_MGR_OP_CLOSE:
+                        case SProxMappingSce.SESSION_MGR_OP_CLOSE:
                             this.session.stop();
                             break;
                         case MappingSce.MAPPING_SCE_OPERATION_NOT_DEFINED:
@@ -134,7 +135,7 @@ public class SessionImpl implements Session {
     public Session commit() throws MappingDSException {
         Map<String, Object> message = new HashMap<>();
         message.put(MappingSce.MAPPING_SCE_OPERATION_FDN, SESSION_OP_COMMIT);
-        message.put(MappingSce.SESSION_MGR_PARAM_SESSION_ID, this.sessionID);
+        message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, this.sessionID);
         Map<String, Object> reply = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, Session.MAPPING_SESSION_SERVICE_Q, this.getSessionReplyWorker());
         if (reply.get(MomMsgTranslator.MSG_RC)!=null && reply.get(MomMsgTranslator.MSG_RC)!=0)
             throw new MappingDSException("Error returned by Ariane Mapping Service ! " + reply.get(MomMsgTranslator.MSG_ERR));
@@ -145,7 +146,7 @@ public class SessionImpl implements Session {
     public Session rollback() throws MappingDSException {
         Map<String, Object> message = new HashMap<>();
         message.put(MappingSce.MAPPING_SCE_OPERATION_FDN, SESSION_OP_ROLLBACK);
-        message.put(MappingSce.SESSION_MGR_PARAM_SESSION_ID, this.sessionID);
+        message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, this.sessionID);
         Map<String, Object> reply = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, Session.MAPPING_SESSION_SERVICE_Q, this.getSessionReplyWorker());
         if (reply.get(MomMsgTranslator.MSG_RC)!=null && reply.get(MomMsgTranslator.MSG_RC)!=0)
             throw new MappingDSException("Error returned by Ariane Mapping Service ! " + reply.get(MomMsgTranslator.MSG_ERR));

@@ -26,19 +26,14 @@ import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.Gat
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.NodeImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository.GateRepoImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
-import net.echinopsii.ariane.community.core.mapping.ds.service.GateSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxGateSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 
-public class GateSceImpl implements GateSce<GateImpl> {
-
-	final static String CREATE_GATE = "createGate";
-	final static String DELETE_GATE = "deleteGate";
-	final static String GET_GATE = "getGate";
-	final static String GET_GATES = "getGates";
+public class GateSceImpl implements SProxGateSce<GateImpl> {
 
 	private static final Logger log = LoggerFactory.getLogger(GateSceImpl.class);
 

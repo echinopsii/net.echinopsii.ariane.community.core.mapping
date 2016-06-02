@@ -22,6 +22,7 @@ package net.echinopsii.ariane.community.core.mapping.ds.msgsrv;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.momsp.MappingMsgsrvMomSP;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.service.SessionEp;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import org.apache.felix.ipojo.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,11 +39,11 @@ public class MappingMsgsrvBootstrap {
     private boolean isInit = false;
 
     @Requires
-    private MappingSce mappingBSce = null;
-    private static MappingSce mappingSce = null;
+    private SProxMappingSce mappingBSce = null;
+    private static SProxMappingSce mappingSce = null;
 
     @Bind
-    public void bindMappingBSce(MappingSce s) {
+    public void bindMappingBSce(SProxMappingSce s) {
         log.debug("Bound to mapping service...");
         mappingBSce = s;
         mappingSce = s;
@@ -110,7 +111,7 @@ public class MappingMsgsrvBootstrap {
         }
     }
 
-    public static MappingSce getMappingSce() {
+    public static SProxMappingSce getMappingSce() {
         return mappingSce;
     }
 }

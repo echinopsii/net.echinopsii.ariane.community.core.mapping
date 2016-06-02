@@ -20,6 +20,7 @@
 package net.echinopsii.ariane.community.core.mapping.wat;
 
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.core.portal.base.model.*;
 import net.echinopsii.ariane.community.core.portal.base.plugin.FaceletsResourceResolverService;
 import net.echinopsii.ariane.community.core.portal.base.plugin.FacesMBeanRegistry;
@@ -63,7 +64,7 @@ public class MappingBootstrap implements FaceletsResourceResolverService {
     private UserPreferencesRegistry userPreferencesRegistry = null;
 
     @Requires
-    private MappingSce mappingBSce = null;
+    private SProxMappingSce mappingBSce = null;
 
     @Bind
     public void bindRestResourceRegistry(RestResourceRegistry r) {
@@ -113,10 +114,10 @@ public class MappingBootstrap implements FaceletsResourceResolverService {
         userPreferencesRegistry = null;
     }
 
-    private static MappingSce mappingSce = null;
+    private static SProxMappingSce mappingSce = null;
 
     @Bind
-    public void bindMappingBSce(MappingSce s) {
+    public void bindMappingBSce(SProxMappingSce s) {
         log.debug("Bound to mapping service...");
         mappingBSce = s;
         mappingSce = s;
@@ -217,7 +218,7 @@ public class MappingBootstrap implements FaceletsResourceResolverService {
         log.info("{} is stopped", MAPPING_COMPONENT);
     }
 
-    public static MappingSce getMappingSce() {
+    public static SProxMappingSce getMappingSce() {
         return mappingSce;
     }
 

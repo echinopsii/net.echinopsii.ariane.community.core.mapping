@@ -26,7 +26,6 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import java.util.Set;
 
 public abstract class SProxClusterSceAbs<CL extends Cluster> implements SProxClusterSce {
-
     @Override
     public CL createCluster(Session session, String clusterName) throws MappingDSException {
         CL ret = null;
@@ -64,5 +63,4 @@ public abstract class SProxClusterSceAbs<CL extends Cluster> implements SProxClu
             ret = (Set<CL>)session.execute(this, ClusterSce.CLUSTER_SCE_OP_GETS, new Object[]{selector});
         return ret;
     }
-
 }

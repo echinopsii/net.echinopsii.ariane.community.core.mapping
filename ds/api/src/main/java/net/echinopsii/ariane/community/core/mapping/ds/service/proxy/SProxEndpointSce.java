@@ -1,7 +1,7 @@
 /**
  * Mapping Datastore Interface :
  * provide a Mapping DS domain, repository and service interfaces
- * Copyright (C) 2016 echinopsii
+ * Copyright (C) 2016  echinopsii
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -15,22 +15,31 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */ 
-package net.echinopsii.ariane.community.core.mapping.ds.domain.proxy;
+ */
+
+package net.echinopsii.ariane.community.core.mapping.ds.service.proxy;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
-import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
+import net.echinopsii.ariane.community.core.mapping.ds.service.EndpointSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
-import java.util.HashMap;
 import java.util.Set;
 
-public interface SProxEndpoint extends Endpoint {
-	void setEndpointURL(Session session, String url) throws MappingDSException;
-	void setEndpointParentNode(Session session, Node node) throws MappingDSException;
-	boolean addTwinEndpoint(Session session, Endpoint endpoint) throws MappingDSException;
-	boolean removeTwinEndpoint(Session session, Endpoint endpoint) throws MappingDSException;
-	void addEndpointProperty(Session session, String propertyKey, Object value) throws MappingDSException;
-	void removeEndpointProperty(Session session, String propertyKey) throws MappingDSException;
+public interface SProxEndpointSce<E extends Endpoint> extends EndpointSce {
+    String CREATE_ENDPOINT = "createEndpoint";
+    String DELETE_ENDPOINT = "deleteEndpoint";
+    String GET_ENDPOINT = "getEndpoint";
+    String GET_ENDPOINT_BY_URL = "getEndpointByURL";
+    String GET_ENDPOINTS = "getEndpoints";
+
+    E createEndpoint(Session session, String url, String parentNodeID) throws MappingDSException;
+
+    void deleteEndpoint(Session session, String endpointID) throws MappingDSException;
+
+    E getEndpoint(Session session, String id) throws MappingDSException;
+    E getEndpointByURL(Session session, String URL) throws MappingDSException;
+
+    Set<E> getEndpoints(Session session, String selector) throws MappingDSException;
+    Set<E> getEndpoints(Session session, String key, Object value) throws MappingDSException;
 }

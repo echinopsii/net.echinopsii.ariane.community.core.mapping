@@ -26,15 +26,11 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import java.util.Set;
 
 public interface LinkSce<L extends Link> {
-    public L createLink(Session session, String sourceEndpointID, String targetEndpointID, String transportID) throws MappingDSException;
-    public L createLink(String sourceEndpointID, String targetEndpointID, String transportID) throws MappingDSException;
+    L createLink(String sourceEndpointID, String targetEndpointID, String transportID) throws MappingDSException;
 
-    public void deleteLink(Session session, String linkID) throws MappingDSException;
-    public void deleteLink(String linkID) throws MappingDSException;
+    void deleteLink(String linkID) throws MappingDSException;
 
-    public L getLink(Session session, String id) throws MappingDSException;
-    public L getLink(String id) throws MappingDSException;
+    L getLink(String id) throws MappingDSException;
 
-    public Set<L> getLinks(Session session, String selector) throws MappingDSException;
-    public Set<L> getLinks(String selector) throws MappingDSException;
+    Set<L> getLinks(String selector) throws MappingDSException;
 }

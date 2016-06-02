@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import net.echinopsii.ariane.community.core.mapping.ds.rim.cfg.MappingDSCfgLoader;
 import net.echinopsii.ariane.community.core.mapping.ds.rim.factory.service.MappingSceFactory;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +36,7 @@ import java.util.Dictionary;
 public class MappingRIMRuntime {
     private static final Logger log = LoggerFactory.getLogger(MappingRIMRuntime.class);
 
-    private static MappingSce mappingSce = null;
+    private static SProxMappingSce mappingSce = null;
     private static JsonFactory jFactory = new JsonFactory();
 
     private static boolean started = false;

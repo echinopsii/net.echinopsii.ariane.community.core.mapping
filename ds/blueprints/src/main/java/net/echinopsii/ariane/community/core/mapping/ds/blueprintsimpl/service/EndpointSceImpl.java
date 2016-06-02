@@ -23,20 +23,14 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.EndpointImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.NodeImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
-import net.echinopsii.ariane.community.core.mapping.ds.service.EndpointSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxEndpointSceAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 
-public class EndpointSceImpl implements EndpointSce<EndpointImpl> {
-
-    final static String CREATE_ENDPOINT = "createEndpoint";
-    final static String DELETE_ENDPOINT = "deleteEndpoint";
-    final static String GET_ENDPOINT = "getEndpoint";
-    final static String GET_ENDPOINT_BY_URL = "getEndpointByURL";
-    final static String GET_ENDPOINTS = "getEndpoints";
+public class EndpointSceImpl extends SProxEndpointSceAbs<EndpointImpl> {
 
     private static final Logger log = LoggerFactory.getLogger(EndpointSceImpl.class);
 
@@ -44,14 +38,6 @@ public class EndpointSceImpl implements EndpointSce<EndpointImpl> {
 
     public EndpointSceImpl(MappingSceImpl sce_) {
         sce = sce_;
-    }
-
-    @Override
-    public EndpointImpl createEndpoint(Session session, String url, String parentNodeID) throws MappingDSException {
-        EndpointImpl ret = null;
-        if (session!=null && session.isRunning())
-            ret = (EndpointImpl) session.execute(this, CREATE_ENDPOINT, new Object[]{url, parentNodeID});
-        return ret;
     }
 
     @Override
@@ -82,12 +68,6 @@ public class EndpointSceImpl implements EndpointSce<EndpointImpl> {
     }
 
     @Override
-    public void deleteEndpoint(Session session, String endpointID) throws MappingDSException {
-        if (session!=null && session.isRunning())
-            session.execute(this, DELETE_ENDPOINT, new Object[]{endpointID});
-    }
-
-    @Override
     public void deleteEndpoint(String endpointID) throws MappingDSException {
         String clientThreadName = Thread.currentThread().getName();
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
@@ -106,14 +86,6 @@ public class EndpointSceImpl implements EndpointSce<EndpointImpl> {
     }
 
     @Override
-    public EndpointImpl getEndpoint(Session session, String id) throws MappingDSException {
-        EndpointImpl ret = null;
-        if (session!=null && session.isRunning())
-            ret = (EndpointImpl) session.execute(this, GET_ENDPOINT, new Object[]{id});
-        return ret;
-    }
-
-    @Override
     public EndpointImpl getEndpoint(String id) throws MappingDSException {
         String clientThreadName = Thread.currentThread().getName();
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
@@ -125,14 +97,6 @@ public class EndpointSceImpl implements EndpointSce<EndpointImpl> {
     }
 
     @Override
-    public EndpointImpl getEndpointByURL(Session session, String URL) throws MappingDSException {
-        EndpointImpl ret = null;
-        if (session!=null && session.isRunning())
-            ret = (EndpointImpl) session.execute(this, GET_ENDPOINT_BY_URL, new Object[]{URL});
-        return ret;
-    }
-
-    @Override
     public EndpointImpl getEndpointByURL(String URL) throws MappingDSException {
         String clientThreadName = Thread.currentThread().getName();
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
@@ -141,14 +105,6 @@ public class EndpointSceImpl implements EndpointSce<EndpointImpl> {
             if (session!=null) return getEndpointByURL(session, URL);//
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else return sce.getGlobalRepo().getEndpointRepo().findEndpointByURL(URL);
-    }
-
-    @Override
-    public Set<EndpointImpl> getEndpoints(Session session, String selector) throws MappingDSException {
-        Set<EndpointImpl> ret = null;
-        if (session!=null && session.isRunning())
-            ret = (Set<EndpointImpl>) session.execute(this, GET_ENDPOINTS, new Object[]{selector});
-        return ret;
     }
 
     @Override
@@ -165,14 +121,6 @@ public class EndpointSceImpl implements EndpointSce<EndpointImpl> {
             else ret = sce.getGlobalRepo().getEndpointRepo().getAllEndpoints();
             return ret;
         }
-    }
-
-    @Override
-    public Set<EndpointImpl> getEndpoints(Session session, String key, Object value) throws MappingDSException {
-        Set<EndpointImpl> ret = null;
-        if (session!=null && session.isRunning())
-            ret = (Set<EndpointImpl>) session.execute(this, GET_ENDPOINTS, new Object[]{key, value});
-        return ret;
     }
 
     @Override

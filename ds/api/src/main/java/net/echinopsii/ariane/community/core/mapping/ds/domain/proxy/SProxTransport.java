@@ -23,10 +23,8 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
-import java.util.HashMap;
-
 public interface SProxTransport extends Transport {
-	public void setTransportName(Session session, String name) throws MappingDSException;
-	public void addTransportProperty(Session session, String propertyKey, Object value) throws MappingDSException;
-	public void removeTransportProperty(Session session, String propertyKey) throws MappingDSException;
+	void setTransportName(Session session, String name) throws MappingDSException;
+	void addTransportProperty(Session session, String propertyKey, Object value) throws MappingDSException;
+	void removeTransportProperty(Session session, String propertyKey) throws MappingDSException;
 }

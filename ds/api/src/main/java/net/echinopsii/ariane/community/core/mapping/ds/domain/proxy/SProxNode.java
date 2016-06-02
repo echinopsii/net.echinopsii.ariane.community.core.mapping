@@ -25,19 +25,16 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
-import java.util.HashMap;
-import java.util.Set;
-
 public interface SProxNode extends Node{
-	public void setNodeName(Session session, String name) throws MappingDSException;
-	public void setNodeContainer(Session session, Container container) throws MappingDSException;
-	public void addNodeProperty(Session session, String propertyKey, Object value) throws MappingDSException;
-	public void removeNodeProperty(Session session, String propertyKey) throws MappingDSException;
-	public void setNodeParentNode(Session session, Node node) throws MappingDSException;
-	public boolean addNodeChildNode(Session session, Node node) throws MappingDSException;
-	public boolean removeNodeChildNode(Session session, Node node) throws MappingDSException;
-	public boolean addTwinNode(Session session, Node node) throws MappingDSException;
-	public boolean removeTwinNode(Session session, Node node) throws MappingDSException;
-	public boolean addEndpoint(Session session, Endpoint endpoint) throws MappingDSException;
-	public boolean removeEndpoint(Session session, Endpoint endpoint) throws MappingDSException;
+	void setNodeName(Session session, String name) throws MappingDSException;
+	void setNodeContainer(Session session, Container container) throws MappingDSException;
+	void addNodeProperty(Session session, String propertyKey, Object value) throws MappingDSException;
+	void removeNodeProperty(Session session, String propertyKey) throws MappingDSException;
+	void setNodeParentNode(Session session, Node node) throws MappingDSException;
+	boolean addNodeChildNode(Session session, Node node) throws MappingDSException;
+	boolean removeNodeChildNode(Session session, Node node) throws MappingDSException;
+	boolean addTwinNode(Session session, Node node) throws MappingDSException;
+	boolean removeTwinNode(Session session, Node node) throws MappingDSException;
+	boolean addEndpoint(Session session, Endpoint endpoint) throws MappingDSException;
+	boolean removeEndpoint(Session session, Endpoint endpoint) throws MappingDSException;
 }

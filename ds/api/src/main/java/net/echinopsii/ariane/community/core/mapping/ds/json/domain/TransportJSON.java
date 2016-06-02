@@ -21,7 +21,6 @@
 package net.echinopsii.ariane.community.core.mapping.ds.json.domain;
 
 import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,25 +28,24 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNam
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 
 public class TransportJSON {
-    private final static Logger log   = LoggerFactory.getLogger(TransportJSON.class);
+    //private final static Logger log   = LoggerFactory.getLogger(TransportJSON.class);
 
     public final static String TP_ID_TOKEN   = MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE+"ID";
     public final static String TP_NAME_TOKEN = MappingDSGraphPropertyNames.DD_TRANSPORT_NAME_KEY;
     public final static String TP_PRP_TOKEN  = MappingDSGraphPropertyNames.DD_TRANSPORT_PROPS_KEY;
 
-    private final static void transportProps2JSON(Transport transport, JsonGenerator jgenerator)
-            throws JsonGenerationException, IOException {
+    private static void transportProps2JSON(Transport transport, JsonGenerator jgenerator)
+            throws IOException {
         HashMap<String, Object> props = transport.getTransportProperties();
         if (props != null && props.size()!=0) {
             jgenerator.writeObjectFieldStart(TP_PRP_TOKEN);
@@ -56,7 +54,7 @@ public class TransportJSON {
         }
     }
 
-    public final static void transport2JSON(Transport transport, JsonGenerator jgenerator) throws JsonGenerationException, IOException {
+    public static void transport2JSON(Transport transport, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeStartObject();
         jgenerator.writeStringField(TP_ID_TOKEN, transport.getTransportID());
         jgenerator.writeStringField(TP_NAME_TOKEN, transport.getTransportName());
@@ -64,21 +62,17 @@ public class TransportJSON {
         jgenerator.writeEndObject();
     }
 
-    public final static void oneTransport2JSON(Transport transport, ByteArrayOutputStream outStream) throws IOException {
+    public static void oneTransport2JSON(Transport transport, ByteArrayOutputStream outStream) throws IOException {
         JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         transport2JSON(transport, jgenerator);
         jgenerator.close();
     }
 
-    public final static void manyTransports2JSON(HashSet<Transport> transports, ByteArrayOutputStream outStream) throws IOException {
+    public static void manyTransports2JSON(HashSet<Transport> transports, ByteArrayOutputStream outStream) throws IOException {
         JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         jgenerator.writeStartObject();
         jgenerator.writeArrayFieldStart("transports");
-        Iterator<Transport> iterC = transports.iterator();
-        while (iterC.hasNext()) {
-            Transport current = iterC.next();
-            TransportJSON.transport2JSON(current, jgenerator);
-        }
+        for (Transport current : transports) TransportJSON.transport2JSON(current, jgenerator);
         jgenerator.writeEndArray();
         jgenerator.writeEndObject();
         jgenerator.close();
@@ -119,5 +113,4 @@ public class TransportJSON {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return mapper.readValue(payload, JSONDeserializedTransport.class);
     }
-
 }

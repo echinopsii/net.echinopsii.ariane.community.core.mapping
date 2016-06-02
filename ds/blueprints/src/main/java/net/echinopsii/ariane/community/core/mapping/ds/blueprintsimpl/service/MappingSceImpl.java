@@ -29,7 +29,8 @@ import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository
 import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MapSce;
-import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSceAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.SessionRegistry;
 
@@ -40,7 +41,7 @@ import java.util.Set;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 
-public class MappingSceImpl implements MappingSce {
+public class MappingSceImpl extends SProxMappingSceAbs<SessionImpl, SessionRegistryImpl> {
 
     //private final static Logger log = LoggerFactory.getLogger(MappingSceImpl.class);
 
@@ -55,15 +56,10 @@ public class MappingSceImpl implements MappingSce {
     private LinkSceImpl linkSce = new LinkSceImpl(this);
     private TransportSceImpl transportSce = new TransportSceImpl(this);
 
-    private SessionRegistryImpl sessionRegistry = new SessionRegistryImpl();
-
     public MappingSceImpl() {
-
+        super.setSessionRegistry(new SessionRegistryImpl());
     }
 
-    public MappingRepoImpl getGlobalRepo() {
-        return globalRepo;
-    }
 
     @Override
     public boolean init(Dictionary<Object, Object> properties) {
@@ -87,10 +83,19 @@ public class MappingSceImpl implements MappingSce {
 
     @Override
     public boolean stop() {
-        for (Session session: sessionRegistry.getSessionRegistry().values())
+        for (Session session: super.getSessionRegistry().getSessionRegistry().values())
             session.stop();
         MappingDSGraphDB.stop();
         return true;
+    }
+
+    @Override
+    public Session openSession(String clientID, boolean proxy) {
+        Session session = new SessionImpl(clientID);
+        super.getSessionRegistry().put(session);
+        session.start();
+        if (!proxy) ClientThreadSessionRegistry.addCliThreadSession(Thread.currentThread().getName(), session.getSessionID());
+        return session;
     }
 
     @Override
@@ -99,21 +104,12 @@ public class MappingSceImpl implements MappingSce {
     }
 
     @Override
-    public Session openSession(String clientID, boolean proxy) {
-        SessionImpl session = new SessionImpl(clientID);
-        sessionRegistry.put(session);
-        session.start();
-        if (!proxy) ClientThreadSessionRegistry.addCliThreadSession(Thread.currentThread().getName(), session.getSessionID());
-        return session;
-    }
-
-    @Override
     public Session closeSession(Session toClose) {
         toClose.stop();
         if (ClientThreadSessionRegistry.getSessionFromThread(Thread.currentThread().getName())!=null &&
                 ClientThreadSessionRegistry.getSessionFromThread(Thread.currentThread().getName()).equals(toClose.getSessionID()))
             ClientThreadSessionRegistry.removeCliThreadSession(Thread.currentThread().getName());
-        sessionRegistry.remove(toClose);
+        super.getSessionRegistry().remove(toClose);
         return toClose;
     }
 
@@ -123,15 +119,14 @@ public class MappingSceImpl implements MappingSce {
         String clientThreadName = Thread.currentThread().getName();
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
         if (clientThreadSessionID!=null) {
-            ret = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            ret = super.getSessionRegistry().get(clientThreadSessionID);
             if (ret!=null) closeSession(ret);
         }
         return ret;
     }
 
-    @Override
-    public SessionRegistry getSessionRegistry() {
-        return sessionRegistry;
+    public MappingRepoImpl getGlobalRepo() {
+        return globalRepo;
     }
 
     @Override
@@ -174,16 +169,6 @@ public class MappingSceImpl implements MappingSce {
         return transportSce;
     }
 
-    static final String GET_NODE_BY_NAME = "getNodeByName";
-
-    @Override
-    public Node getNodeByName(Session session, Container container, String nodeName) throws MappingDSException {
-        Node ret = null;
-        if (session!=null && session.isRunning())
-            ret = (Node)session.execute(this, GET_NODE_BY_NAME, new Object[]{container, nodeName});
-        return ret;
-    }
-
     @Override
     public Node getNodeByName(Container container, String nodeName) throws MappingDSException {
         Node ret = null;
@@ -197,16 +182,6 @@ public class MappingSceImpl implements MappingSce {
         return ret;
     }
 
-    static final String GET_NODE_CONTAINING_SUB_NODE = "getNodeContainingSubnode";
-
-    @Override
-    public Node getNodeContainingSubnode(Session session, Container container, Node node) throws MappingDSException {
-        Node ret = null;
-        if (session!=null && session.isRunning())
-            ret = (Node)session.execute(this, GET_NODE_CONTAINING_SUB_NODE, new Object[]{container, node});
-        return ret;
-    }
-
     @Override
     public Node getNodeContainingSubnode(Container container, Node node) throws MappingDSException {
         Node ret = null;
@@ -217,16 +192,6 @@ public class MappingSceImpl implements MappingSce {
             if (session!=null) ret = this.getNodeContainingSubnode(session, container, node);
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else if (container instanceof ContainerImpl && node instanceof NodeImpl) ret = globalRepo.findNodeContainingSubnode((ContainerImpl) container, (NodeImpl) node);
-        return ret;
-    }
-
-    static final String GET_NODES_IN_PARENT_NODE = "getNodesInParentNode";
-
-    @Override
-    public Set<Node> getNodesInParentNode(Session session, Container container, Node node) throws MappingDSException {
-        Set<Node> ret = null;
-        if (session!=null && session.isRunning())
-            ret = (Set<Node>)session.execute(this, GET_NODES_IN_PARENT_NODE, new Object[]{container, node});
         return ret;
     }
 
@@ -249,16 +214,6 @@ public class MappingSceImpl implements MappingSce {
         return ret;
     }
 
-    static final String GET_GATE_BY_NAME = "getGateByName";
-
-    @Override
-    public Gate getGateByName(Session session, Container container, String nodeName) throws MappingDSException {
-        Gate ret = null;
-        if (session!=null && session.isRunning())
-            ret = (Gate)session.execute(this, GET_GATE_BY_NAME, new Object[]{container, nodeName});
-        return ret;
-    }
-
     @Override
     public Gate getGateByName(Container container, String nodeName) throws MappingDSException {
         Gate ret = null;
@@ -269,16 +224,6 @@ public class MappingSceImpl implements MappingSce {
             if (session!=null) this.getGateByName(session, container, nodeName);
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else if (container instanceof ContainerImpl) ret = globalRepo.findGateByName((ContainerImpl) container, nodeName);
-        return ret;
-    }
-
-    static final String GET_LINKS_BY_SOURCE_EP = "getLinksBySourceEP";
-
-    @Override
-    public Set<Link> getLinksBySourceEP(Session session, Endpoint endpoint) throws MappingDSException {
-        Set<Link> ret = null;
-        if (session!=null && session.isRunning())
-            ret = (Set<Link>)session.execute(this, GET_LINKS_BY_SOURCE_EP, new Object[]{endpoint});
         return ret;
     }
 
@@ -301,16 +246,6 @@ public class MappingSceImpl implements MappingSce {
         return ret;
     }
 
-    static final String GET_LINKS_BY_DESTINATION_EP = "getLinksByDestinationEP";
-
-    @Override
-    public Set<Link> getLinksByDestinationEP(Session session, Endpoint endpoint) throws MappingDSException {
-        Set<Link> ret = null;
-        if (session!=null && session.isRunning())
-            ret = (Set<Link>)session.execute(this, GET_LINKS_BY_DESTINATION_EP, new Object[]{endpoint});
-        return ret;
-    }
-
     @Override
     public Set<Link> getLinksByDestinationEP(Endpoint endpoint) throws MappingDSException {
         Set<Link> ret = new HashSet<Link>();
@@ -330,16 +265,6 @@ public class MappingSceImpl implements MappingSce {
         return ret;
     }
 
-    static final String GET_LINK_BY_SOURCE_EP_AND_DESTINATION_EP = "getLinkBySourceEPandDestinationEP";
-
-    @Override
-    public Link getLinkBySourceEPandDestinationEP(Session session, Endpoint esource, Endpoint edest) throws MappingDSException {
-        Link ret = null;
-        if (session!=null && session.isRunning())
-            ret = (Link)session.execute(this, GET_LINK_BY_SOURCE_EP_AND_DESTINATION_EP, new Object[]{esource, edest});
-        return ret;
-    }
-
     @Override
     public Link getLinkBySourceEPandDestinationEP(Endpoint esource, Endpoint edest) throws MappingDSException {
         Link ret = null;
@@ -354,16 +279,6 @@ public class MappingSceImpl implements MappingSce {
                 ret = globalRepo.findLinkBySourceEPandDestinationEP((EndpointImpl) esource, (EndpointImpl) edest);
             }
         }
-        return ret;
-    }
-
-    static final String GET_LINK_BY_SOURCE_EP_AND_TRANSPORT = "getLinkBySourceEPandTransport";
-
-    @Override
-    public Link getMulticastLinkBySourceEPAndTransport(Session session, Endpoint esource, Transport transport) throws MappingDSException {
-        Link ret = null;
-        if (session!=null && session.isRunning())
-            ret = (Link)session.execute(this, GET_LINK_BY_SOURCE_EP_AND_TRANSPORT, new Object[]{esource, transport});
         return ret;
     }
 

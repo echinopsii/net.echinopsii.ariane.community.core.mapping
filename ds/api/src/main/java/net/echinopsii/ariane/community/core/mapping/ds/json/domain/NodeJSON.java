@@ -37,7 +37,6 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 
 public class NodeJSON {
@@ -54,7 +53,7 @@ public class NodeJSON {
     public final static String ND_EPSID_TOKEN = MappingDSGraphPropertyNames.DD_NODE_EDGE_ENDPT_KEY+"ID";
     public final static String ND_PRP_TOKEN   = MappingDSGraphPropertyNames.DD_NODE_PROPS_KEY;
 
-    private final static void nodeProps2JSON(Node node, JsonGenerator jgenerator) throws JsonGenerationException, IOException {
+    private static void nodeProps2JSON(Node node, JsonGenerator jgenerator) throws JsonGenerationException, IOException {
         if (node.getNodeProperties()!=null && node.getNodeProperties().size()!=0) {
             jgenerator.writeObjectFieldStart(ND_PRP_TOKEN);
             PropertiesJSON.propertiesToJSON(node.getNodeProperties(), jgenerator);
@@ -62,7 +61,7 @@ public class NodeJSON {
         }
     }
 
-    public final static void node2MapJSON(Node node, JsonGenerator jgenerator) throws IOException {
+    public static void node2MapJSON(Node node, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeStartObject();
         jgenerator.writeStringField(ND_ID_TOKEN, node.getNodeID());
         jgenerator.writeStringField(ND_NAME_TOKEN, node.getNodeName());
@@ -76,7 +75,7 @@ public class NodeJSON {
         jgenerator.writeEndObject();
     }
 
-    public final static void node2JSON(Node node, JsonGenerator jgenerator) throws IOException {
+    public static void node2JSON(Node node, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeStringField(ND_ID_TOKEN, node.getNodeID());
         jgenerator.writeStringField(ND_NAME_TOKEN, node.getNodeName());
         jgenerator.writeNumberField(ND_DEPTH_TOKEN, node.getNodeDepth());
@@ -90,19 +89,11 @@ public class NodeJSON {
         jgenerator.writeEndArray();
 
         jgenerator.writeArrayFieldStart(ND_TWNID_TOKEN);
-        Iterator<? extends Node> iterT = node.getTwinNodes().iterator();
-        while (iterT.hasNext()) {
-            Node twin = iterT.next();
-            jgenerator.writeString(twin.getNodeID());
-        }
+        for (Node twin : node.getTwinNodes()) jgenerator.writeString(twin.getNodeID());
         jgenerator.writeEndArray();
 
         jgenerator.writeArrayFieldStart(ND_EPSID_TOKEN);
-        Iterator<? extends Endpoint> iterE = node.getNodeEndpoints().iterator();
-        while (iterE.hasNext()) {
-            Endpoint ep = iterE.next();
-            jgenerator.writeString(ep.getEndpointID());
-        }
+        for (Endpoint ep : node.getNodeEndpoints()) jgenerator.writeString(ep.getEndpointID());
         jgenerator.writeEndArray();
 
         if (node.getNodeProperties() != null) {
@@ -110,7 +101,7 @@ public class NodeJSON {
         }
     }
 
-    public final static void oneNode2JSON(Node node, ByteArrayOutputStream outStream) throws IOException {
+    public static void oneNode2JSON(Node node, ByteArrayOutputStream outStream) throws IOException {
         JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         jgenerator.writeStartObject();
         node2JSON(node, jgenerator);
@@ -118,13 +109,11 @@ public class NodeJSON {
         jgenerator.close();
     }
 
-    public final static void manyNodes2JSON(HashSet<Node> nodes, ByteArrayOutputStream outStream) throws IOException {
+    public static void manyNodes2JSON(HashSet<Node> nodes, ByteArrayOutputStream outStream) throws IOException {
         JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         jgenerator.writeStartObject();
         jgenerator.writeArrayFieldStart("nodes");
-        Iterator<Node> iterC = nodes.iterator();
-        while (iterC.hasNext()) {
-            Node current = iterC.next();
+        for (Node current : nodes) {
             jgenerator.writeStartObject();
             NodeJSON.node2JSON(current, jgenerator);
             jgenerator.writeEndObject();

@@ -21,7 +21,7 @@ package net.echinopsii.ariane.community.core.mapping.ds.service;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
-import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxClusterSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.*;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.SessionRegistry;
 
@@ -29,7 +29,6 @@ import java.util.Dictionary;
 import java.util.Set;
 
 public interface MappingSce {
-
     String MAPPING_SCE_SERVICE_Q = "ARIANE_MAPPING_SERVICE_Q";
 
     String MAPPING_SCE_OPERATION_FDN = "OPERATION";
@@ -38,58 +37,35 @@ public interface MappingSce {
     String MAPPING_SCE_PARAM_OBJ_ID = "ID";
     String MAPPING_SCE_PARAM_SELECTOR = "selector";
 
-    String SESSION_MGR_OP_OPEN = "openSession";
-    String SESSION_MGR_OP_CLOSE = "closeSession";
-    String SESSION_MGR_PARAM_CLIENT_ID = "clientID";
-    String SESSION_MGR_PARAM_SESSION_ID = "sessionID";
-
-    SessionRegistry getSessionRegistry();
-
     MapSce getMapSce();
 
     SProxClusterSce<? extends Cluster> getClusterSce();
 
-    ContainerSce<? extends Container> getContainerSce();
+    SProxContainerSce<? extends Container> getContainerSce();
 
-    GateSce<? extends Gate> getGateSce();
+    SProxGateSce<? extends Gate> getGateSce();
 
-    NodeSce<? extends Node> getNodeSce();
+    SProxNodeSce<? extends Node> getNodeSce();
 
-    EndpointSce<? extends Endpoint> getEndpointSce();
+    SProxEndpointSce<? extends Endpoint> getEndpointSce();
 
-    LinkSce<? extends Link> getLinkSce();
+    SProxLinkSce<? extends Link> getLinkSce();
 
-    TransportSce<? extends Transport> getTransportSce();
-
-    Node getNodeByName(Session session, Container container, String nodeName) throws MappingDSException;
+    SProxTransportSce<? extends Transport> getTransportSce();
 
     Node getNodeByName(Container container, String nodeName) throws MappingDSException;
 
-    Node getNodeContainingSubnode(Session session, Container container, Node node) throws MappingDSException;
-
     Node getNodeContainingSubnode(Container container, Node node) throws MappingDSException;
-
-    Set<Node> getNodesInParentNode(Session session, Container container, Node node) throws MappingDSException;
 
     Set<Node> getNodesInParentNode(Container container, Node node) throws MappingDSException;
 
-    Gate getGateByName(Session session, Container container, String nodeName) throws MappingDSException;
-
     Gate getGateByName(Container container, String nodeName) throws MappingDSException;
-
-    Set<Link> getLinksBySourceEP(Session session, Endpoint endpoint) throws MappingDSException;
 
     Set<Link> getLinksBySourceEP(Endpoint endpoint) throws MappingDSException;
 
-    Set<Link> getLinksByDestinationEP(Session session, Endpoint endpoint) throws MappingDSException;
-
     Set<Link> getLinksByDestinationEP(Endpoint endpoint) throws MappingDSException;
 
-    Link getLinkBySourceEPandDestinationEP(Session session, Endpoint esource, Endpoint edest) throws MappingDSException;
-
     Link getLinkBySourceEPandDestinationEP(Endpoint esource, Endpoint edest) throws MappingDSException;
-
-    Link getMulticastLinkBySourceEPAndTransport(Session session, Endpoint esource, Transport transport) throws MappingDSException;
 
     Link getMulticastLinkBySourceEPAndTransport(Endpoint esource, Transport transport) throws MappingDSException;
 
@@ -98,12 +74,4 @@ public interface MappingSce {
     boolean start();
 
     boolean stop();
-
-    Session openSession(String clientID);
-
-    Session openSession(String clientID, boolean proxy);
-
-    Session closeSession(Session toClose);
-
-    Session closeSession();
 }

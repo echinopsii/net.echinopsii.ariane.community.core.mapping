@@ -30,7 +30,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map.Entry;
 
 public class MapJSON {
@@ -41,11 +40,11 @@ public class MapJSON {
     public final static String MAP_LINKS_ARRAY = "links";
     public final static String MAP_TRANSPORTS_ARRAY = "transports";
 
-    private static interface propsToInjectHolder {
-        public HashMap<String, Object> getPropsMap();
+    private interface propsToInjectHolder {
+        HashMap<String, Object> getPropsMap();
     }
 
-    private final static void genericMap2JSON(HashSet<Container> conts, propsToInjectHolder cprps2Inject,
+    private static void genericMap2JSON(HashSet<Container> conts, propsToInjectHolder cprps2Inject,
                                               HashSet<Node> nodes, propsToInjectHolder nprps2Inject,
                                               HashSet<Endpoint> eps, propsToInjectHolder eprps2Inject,
                                               HashSet<Link> links, propsToInjectHolder lprps2Inject,
@@ -55,56 +54,32 @@ public class MapJSON {
         jgenerator.writeStartObject();
 
         jgenerator.writeArrayFieldStart(MAP_CONTAINERS_ARRAY);
-        Iterator<Container> iterC = conts.iterator();
-        while (iterC.hasNext()) {
-            Container current = iterC.next();
-            ContainerJSON.container2MapJSON(current, ((cprps2Inject != null) ? cprps2Inject.getPropsMap() : null), jgenerator);
-        }
+        for (Container current : conts) ContainerJSON.container2MapJSON(current, ((cprps2Inject != null) ? cprps2Inject.getPropsMap() : null), jgenerator);
         jgenerator.writeEndArray();
 
         jgenerator.writeArrayFieldStart(MAP_NODES_ARRAY);
-        Iterator<Node> iterN = nodes.iterator();
-        while (iterN.hasNext()) {
-            Node current = iterN.next();
-            if (!(current instanceof Gate && !current.getNodeName().contains("cluster"))) {
+        for (Node current : nodes)
+            if (!(current instanceof Gate && !current.getNodeName().contains("cluster")))
                 NodeJSON.node2MapJSON(current, jgenerator);
-            }
-        }
         jgenerator.writeEndArray();
 
         jgenerator.writeArrayFieldStart(MAP_ENDPOINTS_ARRAY);
-        Iterator<Endpoint> iterE = eps.iterator();
-        while (iterE.hasNext()) {
-            Endpoint current = iterE.next();
-            EndpointJSON.endpoint2JSON(current, jgenerator);
-        }
+        for (Endpoint current : eps) EndpointJSON.endpoint2JSON(current, jgenerator);
         jgenerator.writeEndArray();
 
         jgenerator.writeArrayFieldStart(MAP_LINKS_ARRAY);
-        Iterator<Link> iterL = links.iterator();
-        while (iterL.hasNext()) {
-            Link current = iterL.next();
-            LinkJSON.link2JSON(current, jgenerator);
-        }
+        for (Link current : links) LinkJSON.link2JSON(current, jgenerator);
         jgenerator.writeEndArray();
 
         jgenerator.writeArrayFieldStart(MAP_TRANSPORTS_ARRAY);
-        Iterator<Transport> iterT = transports.iterator();
-        while (iterT.hasNext()) {
-            Transport current = iterT.next();
-            TransportJSON.transport2JSON(current, jgenerator);
-        }
+        for (Transport current : transports) TransportJSON.transport2JSON(current, jgenerator);
         jgenerator.writeEndArray();
 
         if (mprps2Inject != null) {
-            Iterator<Entry<String, Object>> iterP = mprps2Inject.getPropsMap().entrySet().iterator();
-            while (iterP.hasNext()) {
-                Entry<String, Object> current = iterP.next();
+            for (Entry<String, Object> current : mprps2Inject.getPropsMap().entrySet()) {
                 String objectName = current.getKey();
                 Object obj = current.getValue();
-                if (obj instanceof String) {
-                    jgenerator.writeStringField(objectName, (String) obj);
-                }
+                if (obj instanceof String) jgenerator.writeStringField(objectName, (String) obj);
             }
         }
 
@@ -112,7 +87,7 @@ public class MapJSON {
         jgenerator.close();
     }
 
-    public final static void allMap2JSON(HashSet<Container> conts, HashSet<Node> nodes, HashSet<Endpoint> eps,
+    public static void allMap2JSON(HashSet<Container> conts, HashSet<Node> nodes, HashSet<Endpoint> eps,
                                          HashSet<Link> links, HashSet<Transport> transports, ByteArrayOutputStream outStream) throws IOException, MappingDSException {
         genericMap2JSON(conts, null, nodes, null, eps, null, links, null, transports, null, null, outStream);
     }

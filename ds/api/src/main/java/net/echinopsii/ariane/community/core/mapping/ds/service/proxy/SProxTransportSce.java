@@ -1,7 +1,7 @@
 /**
  * Mapping Datastore Interface :
  * provide a Mapping DS domain, repository and service interfaces
- * Copyright (C) 2013  Mathilde Ffrench
+ * Copyright (C) 2016  echinopsii
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,20 +17,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */ 
 
-package net.echinopsii.ariane.community.core.mapping.ds.service;
+package net.echinopsii.ariane.community.core.mapping.ds.service.proxy;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
-import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
+import net.echinopsii.ariane.community.core.mapping.ds.service.TransportSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
 import java.util.Set;
 
-public interface GateSce<G extends Gate> {
-	public G    createGate(String url, String name, String containerid, Boolean isPrimaryAdmin) throws MappingDSException;
+public interface SProxTransportSce<T extends Transport> extends TransportSce {
+    String CREATE_TRANSPORT = "createTransport";
+    String DELETE_TRANSPORT = "deleteTransport";
+    String GET_TRANSPORT = "getTransport";
+    String GET_TRANSPORTS = "getTransports";
 
-	public void deleteGate(String nodeID) throws MappingDSException;
+    T    createTransport(Session session, String transportName) throws MappingDSException;
 
-	public G    getGate(String id) throws MappingDSException;
+    void deleteTransport(Session session, String transportID) throws MappingDSException;
 
-    public Set<G> getGates(String selector) throws MappingDSException;
+    T    getTransport(Session session, String transportID) throws MappingDSException;
+
+    Set<T> getTransports(Session session, String selector) throws MappingDSException;
 }

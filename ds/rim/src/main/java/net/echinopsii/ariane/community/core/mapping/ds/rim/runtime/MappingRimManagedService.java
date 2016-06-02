@@ -21,6 +21,7 @@ package net.echinopsii.ariane.community.core.mapping.ds.rim.runtime;
 
 import net.echinopsii.ariane.community.core.mapping.ds.rim.cfg.MappingDSCfgLoader;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Invalidate;
@@ -63,7 +64,7 @@ public class MappingRimManagedService {
         try {
             if (MappingRIMRuntime.start(config)) {
                 log.debug("Registring service {} ...", MAPPING_DS_SERVICE_NAME);
-                mappingSceRegistration = bundleContext.registerService(MappingSce.class.getName(), MappingRIMRuntime.getMappingSce(), null);
+                mappingSceRegistration = bundleContext.registerService(SProxMappingSce.class.getName(), MappingRIMRuntime.getMappingSce(), null);
                 isStarted = true;
             }
         } catch (ClassNotFoundException | InstantiationException

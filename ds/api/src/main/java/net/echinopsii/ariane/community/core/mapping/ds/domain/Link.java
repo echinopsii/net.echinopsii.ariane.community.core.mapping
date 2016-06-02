@@ -23,15 +23,15 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 
 public interface Link {
 
-	public String getLinkID();
-	public void   setLinkID(String ID);
+	String getLinkID();
+	void   setLinkID(String ID);
 
-	public Transport getLinkTransport();
-	public void      setLinkTransport(Transport transport) throws MappingDSException;
+	Transport getLinkTransport();
+	void      setLinkTransport(Transport transport) throws MappingDSException;
 	
-	public Endpoint getLinkEndpointSource();
-	public void     setLinkEndpointSource(Endpoint source) throws MappingDSException;
+	Endpoint getLinkEndpointSource();
+	void     setLinkEndpointSource(Endpoint source) throws MappingDSException;
 	
-	public Endpoint getLinkEndpointTarget();
-	public void     setLinkEndpointTarget(Endpoint target) throws MappingDSException;
+	Endpoint getLinkEndpointTarget();
+	void     setLinkEndpointTarget(Endpoint target) throws MappingDSException;
 }

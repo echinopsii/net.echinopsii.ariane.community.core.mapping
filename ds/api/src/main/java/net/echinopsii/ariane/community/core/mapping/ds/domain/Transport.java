@@ -24,17 +24,17 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import java.util.HashMap;
 
 public interface Transport {
-	public String  getTransportID();
-	public void    setTransportID(String ID);
+	String  getTransportID();
+	void    setTransportID(String ID);
 	
 	/*
 	 * MUST BE UNIQUE
 	 */
-	public String getTransportName();
-	public void   setTransportName(String name) throws MappingDSException;
+	String getTransportName();
+	void   setTransportName(String name) throws MappingDSException;
 
-    public HashMap<String, Object> getTransportProperties();
-    public void addTransportProperty(String propertyKey, Object value) throws MappingDSException;
-    public void removeTransportProperty(String propertyKey) throws MappingDSException;
+    HashMap<String, Object> getTransportProperties();
+    void addTransportProperty(String propertyKey, Object value) throws MappingDSException;
+    void removeTransportProperty(String propertyKey) throws MappingDSException;
 
 }

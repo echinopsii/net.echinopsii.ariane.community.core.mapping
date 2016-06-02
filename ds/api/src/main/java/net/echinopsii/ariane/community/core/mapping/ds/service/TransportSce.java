@@ -20,20 +20,17 @@
 package net.echinopsii.ariane.community.core.mapping.ds.service;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
 import java.util.Set;
 
-public interface TransportSce<T> {
-    public T    createTransport(Session session, String transportName) throws MappingDSException;
-	public T    createTransport(String transportName) throws MappingDSException;
+public interface TransportSce<T extends Transport> {
+	T    createTransport(String transportName) throws MappingDSException;
 
-    public void deleteTransport(Session session, String transportID) throws MappingDSException;
-	public void deleteTransport(String transportID) throws MappingDSException;
+	void deleteTransport(String transportID) throws MappingDSException;
 
-    public T    getTransport(Session session, String transportID) throws MappingDSException;
-    public T    getTransport(String transportID) throws MappingDSException;
+    T    getTransport(String transportID) throws MappingDSException;
 
-    public Set<T> getTransports(Session session, String selector) throws MappingDSException;
-    public Set<T> getTransports(String selector) throws MappingDSException;
+    Set<T> getTransports(String selector) throws MappingDSException;
 }

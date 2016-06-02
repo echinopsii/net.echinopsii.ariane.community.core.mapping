@@ -30,7 +30,6 @@ import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.Iterator;
 
 public class GateJSON {
     //private final static Logger  log   = LoggerFactory.getLogger(GateJSON.class);
@@ -38,7 +37,7 @@ public class GateJSON {
     private final static String GT_ADMPEP_TOKEN = MappingDSGraphPropertyNames.DD_GATE_PAEP_KEY+"ID";
     private final static String GT_NODE_TOKEN   = MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE;
 
-    public final static void gate2JSON(Gate gate, JsonGenerator jgenerator) throws IOException {
+    public static void gate2JSON(Gate gate, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeStartObject();
         jgenerator.writeObjectFieldStart(GT_NODE_TOKEN);
         NodeJSON.node2JSON(gate, jgenerator);
@@ -47,21 +46,17 @@ public class GateJSON {
         jgenerator.writeEndObject();
     }
 
-    public final static void oneGate2JSON(Gate gate, ByteArrayOutputStream outStream) throws IOException {
+    public static void oneGate2JSON(Gate gate, ByteArrayOutputStream outStream) throws IOException {
         JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         gate2JSON(gate, jgenerator);
         jgenerator.close();
     }
 
-    public final static void manyGates2JSON(HashSet<Gate> gates, ByteArrayOutputStream outStream) throws IOException {
+    public static void manyGates2JSON(HashSet<Gate> gates, ByteArrayOutputStream outStream) throws IOException {
         JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         jgenerator.writeStartObject();
         jgenerator.writeArrayFieldStart("gates");
-        Iterator<Gate> iterC = gates.iterator();
-        while (iterC.hasNext()) {
-            Gate current = iterC.next();
-            GateJSON.gate2JSON(current, jgenerator);
-        }
+        for (Gate current : gates) GateJSON.gate2JSON(current, jgenerator);
         jgenerator.writeEndArray();
         jgenerator.writeEndObject();
         jgenerator.close();

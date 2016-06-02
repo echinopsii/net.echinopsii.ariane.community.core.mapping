@@ -42,7 +42,7 @@ public class LinkJSON {
     public final static String LK_TEP_TOKEN = MappingDSGraphPropertyNames.DD_LINK_TARGET_EP_REST_KEY;
     public final static String LK_TRP_TOKEN = MappingDSGraphPropertyNames.DD_LINK_TRANSPORT_REST_KEY;
 
-    public final static void link2JSON(Link link, JsonGenerator jgenerator) throws JsonGenerationException, IOException {
+    public static void link2JSON(Link link, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeStartObject();
         jgenerator.writeStringField(LK_ID_TOKEN, link.getLinkID());
         jgenerator.writeStringField(LK_SEP_TOKEN, link.getLinkEndpointSource().getEndpointID());
@@ -52,21 +52,17 @@ public class LinkJSON {
         jgenerator.writeEndObject();
     }
 
-    public final static void oneLink2JSON(Link link, ByteArrayOutputStream outStream) throws IOException {
+    public static void oneLink2JSON(Link link, ByteArrayOutputStream outStream) throws IOException {
         JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         link2JSON(link, jgenerator);
         jgenerator.close();
     }
 
-    public final static void manyLinks2JSON(HashSet<Link> links, ByteArrayOutputStream outStream) throws IOException {
+    public static void manyLinks2JSON(HashSet<Link> links, ByteArrayOutputStream outStream) throws IOException {
         JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         jgenerator.writeStartObject();
         jgenerator.writeArrayFieldStart("links");
-        Iterator<Link> iterC = links.iterator();
-        while (iterC.hasNext()) {
-            Link current = iterC.next();
-            LinkJSON.link2JSON(current, jgenerator);
-        }
+        for (Link current : links) LinkJSON.link2JSON(current, jgenerator);
         jgenerator.writeEndArray();
         jgenerator.writeEndObject();
         jgenerator.close();

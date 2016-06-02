@@ -26,9 +26,8 @@ import net.echinopsii.ariane.community.core.mapping.ds.msgcli.momsp.MappingMsgcl
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.tools.SessionImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.tools.SessionRegistryImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.service.*;
-import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxClusterSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.*;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
-import net.echinopsii.ariane.community.core.mapping.ds.service.tools.SessionRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,130 +37,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class MappingSceImpl implements MappingSce {
+public class MappingSceImpl extends SProxMappingSceAbs<SessionImpl, SessionRegistryImpl> {
 
     private final static Logger log = LoggerFactory.getLogger(MappingSceImpl.class);
 
-    private SessionRegistryImpl sessionRegistry = new SessionRegistryImpl();
-
-    @Override
-    public MapSce getMapSce() {
-        return null;
-    }
-
-    @Override
-    public SProxClusterSce<? extends Cluster> getClusterSce() {
-        return null;
-    }
-
-    @Override
-    public ContainerSce<? extends Container> getContainerSce() {
-        return null;
-    }
-
-    @Override
-    public GateSce<? extends Gate> getGateSce() {
-        return null;
-    }
-
-    @Override
-    public NodeSce<? extends Node> getNodeSce() {
-        return null;
-    }
-
-    @Override
-    public EndpointSce<? extends Endpoint> getEndpointSce() {
-        return null;
-    }
-
-    @Override
-    public LinkSce<? extends Link> getLinkSce() {
-        return null;
-    }
-
-    @Override
-    public TransportSce<? extends Transport> getTransportSce() {
-        return null;
-    }
-
-    @Override
-    public Node getNodeByName(Session session, Container container, String nodeName) throws MappingDSException {
-        return null;
-    }
-
-    @Override
-    public Node getNodeByName(Container container, String nodeName) throws MappingDSException {
-        return null;
-    }
-
-    @Override
-    public Node getNodeContainingSubnode(Session session, Container container, Node node) throws MappingDSException {
-        return null;
-    }
-
-    @Override
-    public Node getNodeContainingSubnode(Container container, Node node) throws MappingDSException {
-        return null;
-    }
-
-    @Override
-    public Set<Node> getNodesInParentNode(Session session, Container container, Node node) throws MappingDSException {
-        return null;
-    }
-
-    @Override
-    public Set<Node> getNodesInParentNode(Container container, Node node) throws MappingDSException {
-        return null;
-    }
-
-    @Override
-    public Gate getGateByName(Session session, Container container, String nodeName) throws MappingDSException {
-        return null;
-    }
-
-    @Override
-    public Gate getGateByName(Container container, String nodeName) throws MappingDSException {
-        return null;
-    }
-
-    @Override
-    public Set<Link> getLinksBySourceEP(Session session, Endpoint endpoint) throws MappingDSException {
-        return null;
-    }
-
-    @Override
-    public Set<Link> getLinksBySourceEP(Endpoint endpoint) throws MappingDSException {
-        return null;
-    }
-
-    @Override
-    public Set<Link> getLinksByDestinationEP(Session session, Endpoint endpoint) throws MappingDSException {
-        return null;
-    }
-
-    @Override
-    public Set<Link> getLinksByDestinationEP(Endpoint endpoint) throws MappingDSException {
-        return null;
-    }
-
-    @Override
-    public Link getLinkBySourceEPandDestinationEP(Session session, Endpoint esource, Endpoint edest) throws MappingDSException {
-        return null;
-    }
-
-    @Override
-    public Link getLinkBySourceEPandDestinationEP(Endpoint esource, Endpoint edest) throws MappingDSException {
-        return null;
-    }
-
-    @Override
-    public Link getMulticastLinkBySourceEPAndTransport(Session session, Endpoint esource, Transport transport) throws MappingDSException {
-        return null;
-    }
-
-    @Override
-    public Link getMulticastLinkBySourceEPAndTransport(Endpoint esource, Transport transport) throws MappingDSException {
-        return null;
+    public MappingSceImpl() {
+        super.setSessionRegistry(new SessionRegistryImpl());
     }
 
     @Override
@@ -194,20 +75,15 @@ public class MappingSceImpl implements MappingSce {
     }
 
     @Override
-    public SessionRegistry getSessionRegistry() {
-        return sessionRegistry;
-    }
-
-    @Override
     public Session openSession(String clientID) {
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.MAPPING_SCE_OPERATION_FDN, MappingSce.SESSION_MGR_OP_OPEN);
-        message.put(MappingSce.SESSION_MGR_PARAM_CLIENT_ID, clientID);
+        message.put(MappingSce.MAPPING_SCE_OPERATION_FDN, SProxMappingSce.SESSION_MGR_OP_OPEN);
+        message.put(SProxMappingSce.SESSION_MGR_PARAM_CLIENT_ID, clientID);
         Session session = new SessionImpl();
         MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, Session.MAPPING_SESSION_SERVICE_Q, ((SessionImpl)session).getSessionReplyWorker());
         if (session.isRunning()) {
             ClientThreadSessionRegistry.addCliThreadSession(Thread.currentThread().getName(), session.getSessionID());
-            sessionRegistry.put(session);
+            super.getSessionRegistry().put(session);
         }
         else session = null;
         return session;
@@ -223,11 +99,11 @@ public class MappingSceImpl implements MappingSce {
     @Override
     public Session closeSession(Session toClose) {
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.MAPPING_SCE_OPERATION_FDN, MappingSce.SESSION_MGR_OP_CLOSE);
-        message.put(MappingSce.SESSION_MGR_PARAM_SESSION_ID, toClose.getSessionID());
+        message.put(MappingSce.MAPPING_SCE_OPERATION_FDN, SProxMappingSce.SESSION_MGR_OP_CLOSE);
+        message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, toClose.getSessionID());
         MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, Session.MAPPING_SESSION_SERVICE_Q, ((SessionImpl) toClose).getSessionReplyWorker());
         if (!toClose.isRunning()) {
-            sessionRegistry.remove(toClose);
+            super.getSessionRegistry().remove(toClose);
             ClientThreadSessionRegistry.removeCliThreadSession(Thread.currentThread().getName());
         }
         return toClose;
@@ -243,5 +119,85 @@ public class MappingSceImpl implements MappingSce {
             if (ret!=null) closeSession(ret);
         }
         return ret;
+    }
+
+    @Override
+    public MapSce getMapSce() {
+        return null;
+    }
+
+    @Override
+    public SProxClusterSce<? extends Cluster> getClusterSce() {
+        return null;
+    }
+
+    @Override
+    public SProxContainerSce<? extends Container> getContainerSce() {
+        return null;
+    }
+
+    @Override
+    public SProxGateSce<? extends Gate> getGateSce() {
+        return null;
+    }
+
+    @Override
+    public SProxNodeSce<? extends Node> getNodeSce() {
+        return null;
+    }
+
+    @Override
+    public SProxEndpointSce<? extends Endpoint> getEndpointSce() {
+        return null;
+    }
+
+    @Override
+    public SProxLinkSce<? extends Link> getLinkSce() {
+        return null;
+    }
+
+    @Override
+    public SProxTransportSce<? extends Transport> getTransportSce() {
+        return null;
+    }
+
+    @Override
+    public Node getNodeByName(Container container, String nodeName) throws MappingDSException {
+        return null;
+    }
+
+    @Override
+    public Node getNodeContainingSubnode(Container container, Node node) throws MappingDSException {
+        return null;
+    }
+
+    @Override
+    public Set<Node> getNodesInParentNode(Container container, Node node) throws MappingDSException {
+        return null;
+    }
+
+    @Override
+    public Gate getGateByName(Container container, String nodeName) throws MappingDSException {
+        return null;
+    }
+
+    @Override
+    public Set<Link> getLinksBySourceEP(Endpoint endpoint) throws MappingDSException {
+        return null;
+    }
+
+    @Override
+    public Set<Link> getLinksByDestinationEP(Endpoint endpoint) throws MappingDSException {
+        return null;
+    }
+
+    @Override
+    public Link getLinkBySourceEPandDestinationEP(Endpoint esource, Endpoint edest) throws MappingDSException {
+        return null;
+    }
+
+    @Override
+    public Link getMulticastLinkBySourceEPAndTransport(Endpoint esource, Transport transport) throws MappingDSException {
+        return null;
     }
 }

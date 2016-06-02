@@ -23,6 +23,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.json.service.SessionJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.MappingMsgsrvBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.momsp.MappingMsgsrvMomSP;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
@@ -46,10 +47,10 @@ public class SessionEp {
                 operation = oOperation.toString();
 
             switch (operation) {
-                case MappingSce.SESSION_MGR_OP_OPEN:
+                case SProxMappingSce.SESSION_MGR_OP_OPEN:
                     try {
-                        if (message.get(MappingSce.SESSION_MGR_PARAM_CLIENT_ID)!=null) {
-                            clientID = message.get(MappingSce.SESSION_MGR_PARAM_CLIENT_ID).toString();
+                        if (message.get(SProxMappingSce.SESSION_MGR_PARAM_CLIENT_ID)!=null) {
+                            clientID = message.get(SProxMappingSce.SESSION_MGR_PARAM_CLIENT_ID).toString();
                             Session session = MappingMsgsrvBootstrap.getMappingSce().openSession(clientID, true);
                             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
                             SessionJSON.oneSession2JSON(session, outStream);
@@ -58,7 +59,7 @@ public class SessionEp {
                             message.put(MomMsgTranslator.MSG_BODY, result);
                         } else {
                             message.put(MomMsgTranslator.MSG_RC, 1);
-                            message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + MappingSce.SESSION_MGR_OP_OPEN + ") : no client ID provided");
+                            message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + SProxMappingSce.SESSION_MGR_OP_OPEN + ") : no client ID provided");
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -66,23 +67,23 @@ public class SessionEp {
                         message.put(MomMsgTranslator.MSG_ERR, "Internal server error : " + e.getMessage());
                     }
                     break;
-                case MappingSce.SESSION_MGR_OP_CLOSE:
+                case SProxMappingSce.SESSION_MGR_OP_CLOSE:
                     try {
-                        if (message.get(MappingSce.SESSION_MGR_PARAM_SESSION_ID)!=null) {
-                            sessionID = message.get(MappingSce.SESSION_MGR_PARAM_SESSION_ID).toString();
+                        if (message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID)!=null) {
+                            sessionID = message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID).toString();
                             Session session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sessionID);
                             if (session != null) {
                                 MappingMsgsrvBootstrap.getMappingSce().closeSession(session);
                                 message.put(MomMsgTranslator.MSG_RC, 0);
                             } else {
                                 message.put(MomMsgTranslator.MSG_RC, 1);
-                                message.put(MomMsgTranslator.MSG_ERR, "Not Found (" + MappingSce.SESSION_MGR_OP_CLOSE +
+                                message.put(MomMsgTranslator.MSG_ERR, "Not Found (" + SProxMappingSce.SESSION_MGR_OP_CLOSE +
                                         ") : no session found for ID " +
                                         sessionID + " provided");
                             }
                         } else {
                             message.put(MomMsgTranslator.MSG_RC, 1);
-                            message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + MappingSce.SESSION_MGR_OP_CLOSE + ") : no session ID provided");
+                            message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + SProxMappingSce.SESSION_MGR_OP_CLOSE + ") : no session ID provided");
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -92,19 +93,19 @@ public class SessionEp {
                     break;
                 case Session.SESSION_OP_COMMIT:
                     try {
-                        if (message.get(MappingSce.SESSION_MGR_PARAM_SESSION_ID)!=null) {
-                            sessionID = message.get(MappingSce.SESSION_MGR_PARAM_SESSION_ID).toString();
+                        if (message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID)!=null) {
+                            sessionID = message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID).toString();
                             Session session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sessionID);
                             if (session != null) {
                                 session.commit();
                                 message.put(MomMsgTranslator.MSG_RC, 0);
                             } else {
                                 message.put(MomMsgTranslator.MSG_RC, 1);
-                                message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + MappingSce.SESSION_MGR_OP_CLOSE + ") : no session for ID provided");
+                                message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + SProxMappingSce.SESSION_MGR_OP_CLOSE + ") : no session for ID provided");
                             }
                         } else {
                             message.put(MomMsgTranslator.MSG_RC, 1);
-                            message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + MappingSce.SESSION_MGR_OP_CLOSE + ") : no session ID provided");
+                            message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + SProxMappingSce.SESSION_MGR_OP_CLOSE + ") : no session ID provided");
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -114,19 +115,19 @@ public class SessionEp {
                     break;
                 case Session.SESSION_OP_ROLLBACK:
                     try {
-                        if (message.get(MappingSce.SESSION_MGR_PARAM_SESSION_ID)!=null) {
-                            sessionID = message.get(MappingSce.SESSION_MGR_PARAM_SESSION_ID).toString();
+                        if (message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID)!=null) {
+                            sessionID = message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID).toString();
                             Session session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sessionID);
                             if (session != null) {
                                 session.rollback();
                                 message.put(MomMsgTranslator.MSG_RC, 0);
                             } else {
                                 message.put(MomMsgTranslator.MSG_RC, 1);
-                                message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + MappingSce.SESSION_MGR_OP_CLOSE + ") : no session for ID provided");
+                                message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + SProxMappingSce.SESSION_MGR_OP_CLOSE + ") : no session for ID provided");
                             }
                         } else {
                             message.put(MomMsgTranslator.MSG_RC, 1);
-                            message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + MappingSce.SESSION_MGR_OP_CLOSE + ") : no session ID provided");
+                            message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + SProxMappingSce.SESSION_MGR_OP_CLOSE + ") : no session ID provided");
                         }
                     } catch (Exception e) {
                         e.printStackTrace();

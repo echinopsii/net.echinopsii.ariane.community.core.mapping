@@ -3,7 +3,7 @@ package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cfg.MappingBlueprintsDSCfgLoader;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
-import net.echinopsii.ariane.community.core.mapping.ds.service.*;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
 
 public class MappingSceTest {
 
-	private static MappingSce mappingSce = new MappingSceImpl(); //working for this junit test only - real instantiation should be done
+	private static SProxMappingSce mappingSce = new MappingSceImpl(); //working for this junit test only - real instantiation should be done
 																//thanks RIM or OSGI
 	private static Container rvrdLan     = null;
 	private static Gate gateLan     = null;
