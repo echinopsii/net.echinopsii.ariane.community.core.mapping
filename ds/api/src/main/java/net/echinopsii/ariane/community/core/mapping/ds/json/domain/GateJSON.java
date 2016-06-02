@@ -23,7 +23,6 @@ import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 
@@ -34,15 +33,12 @@ import java.util.HashSet;
 public class GateJSON {
     //private final static Logger  log   = LoggerFactory.getLogger(GateJSON.class);
 
-    private final static String GT_ADMPEP_TOKEN = MappingDSGraphPropertyNames.DD_GATE_PAEP_KEY+"ID";
-    private final static String GT_NODE_TOKEN   = MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE;
-
     public static void gate2JSON(Gate gate, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeStartObject();
-        jgenerator.writeObjectFieldStart(GT_NODE_TOKEN);
+        jgenerator.writeObjectFieldStart(Gate.GT_NODE_TOKEN);
         NodeJSON.node2JSON(gate, jgenerator);
         jgenerator.writeEndObject();
-        jgenerator.writeStringField(GT_ADMPEP_TOKEN, (gate.getNodePrimaryAdminEndpoint() != null) ? gate.getNodePrimaryAdminEndpoint().getEndpointID() : "");
+        jgenerator.writeStringField(Gate.GT_ADMPEP_TOKEN, (gate.getNodePrimaryAdminEndpoint() != null) ? gate.getNodePrimaryAdminEndpoint().getEndpointID() : "");
         jgenerator.writeEndObject();
     }
 

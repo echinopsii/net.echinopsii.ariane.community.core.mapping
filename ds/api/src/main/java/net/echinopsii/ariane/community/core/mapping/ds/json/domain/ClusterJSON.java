@@ -23,7 +23,6 @@ import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Cluster;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
@@ -32,19 +31,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ClusterJSON {
 
-    public final static String CL_ID_TOKEN   = MappingDSGraphPropertyNames.DD_TYPE_CLUSTER_VALUE+"ID";
-    public final static String CL_NAME_TOKEN = MappingDSGraphPropertyNames.DD_CLUSTER_NAME_KEY;
-    public final static String CL_CONT_TOKEN = MappingDSGraphPropertyNames.DD_CLUSTER_EDGE_CONT_KEY+"ID";
-
     public static void cluster2JSON(Cluster cluster, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeStartObject();
-        jgenerator.writeStringField(CL_ID_TOKEN, cluster.getClusterID());
-        jgenerator.writeStringField(CL_NAME_TOKEN, cluster.getClusterName());
+        jgenerator.writeStringField(Cluster.CL_ID_TOKEN, cluster.getClusterID());
+        jgenerator.writeStringField(Cluster.CL_NAME_TOKEN, cluster.getClusterName());
 
-        jgenerator.writeArrayFieldStart(CL_CONT_TOKEN);
+        jgenerator.writeArrayFieldStart(Cluster.CL_CONT_TOKEN);
         for (Container container : cluster.getClusterContainers()) jgenerator.writeString(container.getContainerID());
         jgenerator.writeEndArray();
 
@@ -101,5 +97,14 @@ public class ClusterJSON {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return mapper.readValue(payload, JSONDeserializedCluster.class);
+    }
+
+    public static Set<JSONDeserializedCluster> JSON2Clusters(String payload) throws IOException {
+        HashSet<JSONDeserializedCluster> ret = new HashSet<>();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        JSONDeserializedCluster[] clusters = mapper.readValue(payload, JSONDeserializedCluster[].class);
+        for(JSONDeserializedCluster cluster : clusters) ret.add(cluster);
+        return ret;
     }
 }

@@ -20,6 +20,7 @@
 package net.echinopsii.ariane.community.core.mapping.ds.domain;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -35,6 +36,20 @@ import java.util.Set;
  * @author Mathilde Ffrench
  */
 public interface Container {
+	String CT_ID_TOKEN = MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE+"ID";
+	String CT_NAME_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_NAME_KEY;
+	String CT_COMPANY_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_COMPANY_KEY;
+	String CT_PRODUCT_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_PRODUCT_KEY;
+	String CT_TYPE_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_TYPE_KEY;
+	String CT_PAGTID_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_PAGATE_KEY+"ID";
+	String CT_GATE_URI = MappingDSGraphPropertyNames.DD_CONTAINER_GATEURI_KEY;
+	String CT_CLUSTER_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_CLUSTER_KEY+"ID";
+	String CT_PCID_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_PCONTER_KEY+"ID";
+	String CT_CCID_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_CHILD_CONTAINER_KEY+"ID";
+	String CT_NID_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_NODE_KEY+"ID";
+	String CT_GID_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_GATE_KEY+"ID";
+	String CT_PRP_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY;
+
 	public String getContainerID();
 	public void   setContainerID(String ID);
 

@@ -21,34 +21,26 @@
 package net.echinopsii.ariane.community.core.mapping.ds.json.domain;
 
 import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Link;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.Iterator;
 
 public class LinkJSON {
     //private final static Logger  log   = LoggerFactory.getLogger(EndpointJSON.class);
 
-    public final static String LK_ID_TOKEN  = MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY+"ID";
-    public final static String LK_SEP_TOKEN = MappingDSGraphPropertyNames.DD_LINK_SOURCE_EP_REST_KEY;
-    public final static String LK_TEP_TOKEN = MappingDSGraphPropertyNames.DD_LINK_TARGET_EP_REST_KEY;
-    public final static String LK_TRP_TOKEN = MappingDSGraphPropertyNames.DD_LINK_TRANSPORT_REST_KEY;
-
     public static void link2JSON(Link link, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeStartObject();
-        jgenerator.writeStringField(LK_ID_TOKEN, link.getLinkID());
-        jgenerator.writeStringField(LK_SEP_TOKEN, link.getLinkEndpointSource().getEndpointID());
+        jgenerator.writeStringField(Link.LK_ID_TOKEN, link.getLinkID());
+        jgenerator.writeStringField(Link.LK_SEP_TOKEN, link.getLinkEndpointSource().getEndpointID());
         if (link.getLinkEndpointTarget()!=null)
-            jgenerator.writeStringField(LK_TEP_TOKEN, link.getLinkEndpointTarget().getEndpointID());
-        jgenerator.writeStringField(LK_TRP_TOKEN, link.getLinkTransport().getTransportID());
+            jgenerator.writeStringField(Link.LK_TEP_TOKEN, link.getLinkEndpointTarget().getEndpointID());
+        jgenerator.writeStringField(Link.LK_TRP_TOKEN, link.getLinkTransport().getTransportID());
         jgenerator.writeEndObject();
     }
 

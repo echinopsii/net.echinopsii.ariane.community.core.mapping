@@ -24,7 +24,6 @@ import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
@@ -40,15 +39,11 @@ import java.util.List;
 public class TransportJSON {
     //private final static Logger log   = LoggerFactory.getLogger(TransportJSON.class);
 
-    public final static String TP_ID_TOKEN   = MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE+"ID";
-    public final static String TP_NAME_TOKEN = MappingDSGraphPropertyNames.DD_TRANSPORT_NAME_KEY;
-    public final static String TP_PRP_TOKEN  = MappingDSGraphPropertyNames.DD_TRANSPORT_PROPS_KEY;
-
     private static void transportProps2JSON(Transport transport, JsonGenerator jgenerator)
             throws IOException {
         HashMap<String, Object> props = transport.getTransportProperties();
         if (props != null && props.size()!=0) {
-            jgenerator.writeObjectFieldStart(TP_PRP_TOKEN);
+            jgenerator.writeObjectFieldStart(Transport.TP_PRP_TOKEN);
             PropertiesJSON.propertiesToJSON(props, jgenerator);
             jgenerator.writeEndObject();
         }
@@ -56,8 +51,8 @@ public class TransportJSON {
 
     public static void transport2JSON(Transport transport, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeStartObject();
-        jgenerator.writeStringField(TP_ID_TOKEN, transport.getTransportID());
-        jgenerator.writeStringField(TP_NAME_TOKEN, transport.getTransportName());
+        jgenerator.writeStringField(Transport.TP_ID_TOKEN, transport.getTransportID());
+        jgenerator.writeStringField(Transport.TP_NAME_TOKEN, transport.getTransportName());
         transportProps2JSON(transport, jgenerator);
         jgenerator.writeEndObject();
     }

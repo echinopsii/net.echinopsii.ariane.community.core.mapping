@@ -19,10 +19,15 @@
 package net.echinopsii.ariane.community.core.mapping.ds.domain;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 
 import java.util.Set;
 
 public interface Cluster {
+
+	String CL_ID_TOKEN   = MappingDSGraphPropertyNames.DD_TYPE_CLUSTER_VALUE+"ID";
+	String CL_NAME_TOKEN = MappingDSGraphPropertyNames.DD_CLUSTER_NAME_KEY;
+	String CL_CONT_TOKEN = MappingDSGraphPropertyNames.DD_CLUSTER_EDGE_CONT_KEY+"ID";
 
 	String getClusterID();
 	void   setClusterID(String ID);

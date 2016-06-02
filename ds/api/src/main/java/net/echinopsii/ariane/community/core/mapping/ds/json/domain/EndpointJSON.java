@@ -20,12 +20,10 @@
 package net.echinopsii.ariane.community.core.mapping.ds.json.domain;
 
 import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
-import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
@@ -36,24 +34,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 
 public class EndpointJSON {
 
     private final static Logger log = LoggerFactory.getLogger(EndpointJSON.class);
 
-    public final static String EP_ID_TOKEN = MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE+"ID";
-    public final static String EP_URL_TOKEN = MappingDSGraphPropertyNames.DD_ENDPOINT_URL_KEY;
-    public final static String EP_PNODEID_TOKEN = MappingDSGraphPropertyNames.DD_ENDPOINT_PNODE_KEY+"ID";
-    public final static String EP_TWNEPID_TOKEN = MappingDSGraphPropertyNames.DD_ENDPOINT_EDGE_TWIN_KEY+"ID";
-    public final static String EP_PRP_TOKEN = MappingDSGraphPropertyNames.DD_ENDPOINT_PROPS_KEY;
-
     private static void endpointProps2JSON(Endpoint endpoint, JsonGenerator jgenerator)
             throws IOException {
         HashMap<String, Object> props = endpoint.getEndpointProperties();
         if (props != null && props.size()!=0) {
-            jgenerator.writeObjectFieldStart(EP_PRP_TOKEN);
+            jgenerator.writeObjectFieldStart(Endpoint.EP_PRP_TOKEN);
             PropertiesJSON.propertiesToJSON(props,jgenerator);
             jgenerator.writeEndObject();
         }
@@ -63,15 +54,15 @@ public class EndpointJSON {
             throws IOException, MappingDSException {
         jgenerator.writeStartObject();
         log.debug("Ep JSON :endpoint {}", new Object[]{endpoint.getEndpointID()});
-        jgenerator.writeStringField(EP_ID_TOKEN, endpoint.getEndpointID());
-        jgenerator.writeStringField(EP_URL_TOKEN, endpoint.getEndpointURL());
+        jgenerator.writeStringField(Endpoint.EP_ID_TOKEN, endpoint.getEndpointID());
+        jgenerator.writeStringField(Endpoint.EP_URL_TOKEN, endpoint.getEndpointURL());
         if (endpoint.getEndpointParentNode()!=null)
-            jgenerator.writeStringField(EP_PNODEID_TOKEN, endpoint.getEndpointParentNode().getNodeID());
+            jgenerator.writeStringField(Endpoint.EP_PNODEID_TOKEN, endpoint.getEndpointParentNode().getNodeID());
         else
             throw new MappingDSException("Endpoint (" + endpoint.getEndpointID() +
                     ":" + endpoint.getEndpointURL() + ")");
 
-        jgenerator.writeArrayFieldStart(EP_TWNEPID_TOKEN);
+        jgenerator.writeArrayFieldStart(Endpoint.EP_TWNEPID_TOKEN);
         for (Endpoint tep : endpoint.getTwinEndpoints()) jgenerator.writeString(tep.getEndpointID());
         jgenerator.writeEndArray();
 

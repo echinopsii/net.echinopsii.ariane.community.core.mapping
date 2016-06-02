@@ -26,6 +26,9 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxContainer;
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.service.ContainerSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ContainerJSON;
@@ -302,7 +305,7 @@ public class ContainerEp {
     }
 
     @GET
-    public Response displayAllContainers(@QueryParam("sessionID") String sessionId) {
+    public Response displayAllContainers(@QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get containers", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
         if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
@@ -336,7 +339,9 @@ public class ContainerEp {
 
     @GET
     @Path("/get")
-    public Response getContainer(@QueryParam("primaryAdminURL") String primaryAdminURL, @QueryParam("ID") String id, @QueryParam("sessionID") String sessionId) {
+    public Response getContainer(@QueryParam(ContainerSce.CONTAINER_SCE_PARAM_CONTAINER_PAURL) String primaryAdminURL,
+                                 @QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id,
+                                 @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         if (id!=null) {
             return _displayContainer(id, sessionId);
         } else if (primaryAdminURL != null) {
@@ -380,8 +385,10 @@ public class ContainerEp {
 
     @GET
     @Path("/create")
-    public Response createContainer(@QueryParam("name") String name, @QueryParam("primaryAdminURL") String primaryAdminURL,
-                                    @QueryParam("primaryAdminGateName") String primaryAdminGateName, @QueryParam("sessionID") String sessionId) {
+    public Response createContainer(@QueryParam(ContainerSce.CONTAINER_SCE_PARAM_CONTAINER_NAME) String name,
+                                    @QueryParam(ContainerSce.CONTAINER_SCE_PARAM_CONTAINER_PAURL) String primaryAdminURL,
+                                    @QueryParam(ContainerSce.CONTAINER_SCE_PARAM_CONTAINER_PAG_NAME) String primaryAdminGateName,
+                                    @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         try {
             Subject subject = SecurityUtils.getSubject();
             log.debug("[{}-{}] create container : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), primaryAdminURL, primaryAdminGateName});
@@ -427,7 +434,7 @@ public class ContainerEp {
     }
 
     @POST
-    public Response postContainer(@QueryParam("payload") String payload, @QueryParam("sessionID") String sessionId) throws IOException {
+    public Response postContainer(@QueryParam("payload") String payload, @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) throws IOException {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create container", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -471,7 +478,8 @@ public class ContainerEp {
 
     @GET
     @Path("/delete")
-    public Response deleteContainer(@QueryParam("primaryAdminURL") String primaryAdminURL, @QueryParam("sessionID") String sessionId) {
+    public Response deleteContainer(@QueryParam(ContainerSce.CONTAINER_SCE_PARAM_CONTAINER_PAURL) String primaryAdminURL,
+                                    @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         try {
             Subject subject = SecurityUtils.getSubject();
             log.debug("[{}-{}] delete container : ({})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), primaryAdminURL});
@@ -495,7 +503,9 @@ public class ContainerEp {
 
     @GET
     @Path("/update/name")
-    public Response setContainerName(@QueryParam("ID") String id, @QueryParam("name") String name, @QueryParam("sessionID") String sessionId) {
+    public Response setContainerName(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id,
+                                     @QueryParam(ContainerSce.CONTAINER_SCE_PARAM_CONTAINER_NAME) String name,
+                                     @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container name : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -524,7 +534,9 @@ public class ContainerEp {
 
     @GET
     @Path("/update/company")
-    public Response setContainerCompany(@QueryParam("ID") String id, @QueryParam("company") String company, @QueryParam("sessionID") String sessionId) {
+    public Response setContainerCompany(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id,
+                                        @QueryParam("company") String company,
+                                        @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container company : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, company});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -553,7 +565,9 @@ public class ContainerEp {
 
     @GET
     @Path("/update/product")
-    public Response setContainerProduct(@QueryParam("ID") String id, @QueryParam("product") String product, @QueryParam("sessionID") String sessionId) {
+    public Response setContainerProduct(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id,
+                                        @QueryParam("product") String product,
+                                        @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container product : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, product});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -582,7 +596,9 @@ public class ContainerEp {
 
     @GET
     @Path("/update/type")
-    public Response setContainerType(@QueryParam("ID") String id, @QueryParam("type") String type, @QueryParam("sessionID") String sessionId) {
+    public Response setContainerType(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id,
+                                     @QueryParam("type") String type,
+                                     @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container type : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, type});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -611,7 +627,9 @@ public class ContainerEp {
 
     @GET
     @Path("/update/primaryAdminGate")
-    public Response setContainerPrimaryAdminGate(@QueryParam("ID") String id, @QueryParam("paGateID") String paGateID, @QueryParam("sessionID") String sessionId) {
+    public Response setContainerPrimaryAdminGate(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id,
+                                                 @QueryParam("paGateID") String paGateID,
+                                                 @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container primary admin gate : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, paGateID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -646,7 +664,9 @@ public class ContainerEp {
 
     @GET
     @Path("/update/cluster")
-    public Response setContainerCluster(@QueryParam("ID") String id, @QueryParam("clusterID") String clusterID, @QueryParam("sessionID") String sessionId) {
+    public Response setContainerCluster(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id,
+                                        @QueryParam("clusterID") String clusterID,
+                                        @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container cluster : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, clusterID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -681,7 +701,9 @@ public class ContainerEp {
 
     @GET
     @Path("/update/parentContainer")
-    public Response setContainerParentContainer(@QueryParam("ID") String id, @QueryParam("parentContainerID") String parentContainerID, @QueryParam("sessionID") String sessionId) {
+    public Response setContainerParentContainer(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id,
+                                                @QueryParam("parentContainerID") String parentContainerID,
+                                                @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container parent container : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, parentContainerID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -715,7 +737,9 @@ public class ContainerEp {
 
     @GET
     @Path("/update/childContainers/add")
-    public Response addContainerChildContainer(@QueryParam("ID") String id, @QueryParam("childContainerID") String childContainerID, @QueryParam("sessionID") String sessionId) {
+    public Response addContainerChildContainer(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id,
+                                               @QueryParam("childContainerID") String childContainerID,
+                                               @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container by adding child container : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, childContainerID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -750,7 +774,9 @@ public class ContainerEp {
 
     @GET
     @Path("/update/childContainers/delete")
-    public Response deleteContainerChildContainer(@QueryParam("ID") String id, @QueryParam("childContainerID") String childContainerID, @QueryParam("sessionID") String sessionId) {
+    public Response deleteContainerChildContainer(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id,
+                                                  @QueryParam("childContainerID") String childContainerID,
+                                                  @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container by removing child container : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, childContainerID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -784,7 +810,9 @@ public class ContainerEp {
 
     @GET
     @Path("/update/nodes/add")
-    public Response addContainerNode(@QueryParam("ID") String id, @QueryParam("nodeID") String nodeID, @QueryParam("sessionID") String sessionId) {
+    public Response addContainerNode(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id,
+                                     @QueryParam("nodeID") String nodeID,
+                                     @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container by adding node : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, nodeID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -819,7 +847,9 @@ public class ContainerEp {
 
     @GET
     @Path("/update/nodes/delete")
-    public Response deleteContainerNode(@QueryParam("ID") String id, @QueryParam("nodeID") String nodeID, @QueryParam("sessionID") String sessionId) {
+    public Response deleteContainerNode(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id,
+                                        @QueryParam("nodeID") String nodeID,
+                                        @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container by removing node : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, nodeID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -854,7 +884,9 @@ public class ContainerEp {
 
     @GET
     @Path("/update/gates/add")
-    public Response addContainerGate(@QueryParam("ID") String id, @QueryParam("gateID") String gateID, @QueryParam("sessionID") String sessionId) {
+    public Response addContainerGate(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id,
+                                     @QueryParam("gateID") String gateID,
+                                     @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container by adding gate : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, gateID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -889,7 +921,9 @@ public class ContainerEp {
 
     @GET
     @Path("/update/gates/delete")
-    public Response deleteContainerGate(@QueryParam("ID") String id, @QueryParam("nodeID") String gateID, @QueryParam("sessionID") String sessionId) {
+    public Response deleteContainerGate(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id,
+                                        @QueryParam("nodeID") String gateID,
+                                        @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}] update container by removing gate : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, gateID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -924,8 +958,11 @@ public class ContainerEp {
 
     @GET
     @Path("/update/properties/add")
-    public Response addContainerProperty(@QueryParam("ID") String id, @QueryParam("propertyName") String name, @QueryParam("propertyValue") String value,
-                                         @DefaultValue("String") @QueryParam("propertyType") String type, @QueryParam("sessionID") String sessionId) {
+    public Response addContainerProperty(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id,
+                                         @QueryParam("propertyName") String name,
+                                         @QueryParam("propertyValue") String value,
+                                         @DefaultValue("String") @QueryParam("propertyType") String type,
+                                         @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}] update container by adding a property : ({},({},{},{}))", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name, value, type});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -968,7 +1005,9 @@ public class ContainerEp {
 
     @GET
     @Path("/update/properties/delete")
-    public Response deleteContainerProperty(@QueryParam("ID") String id, @QueryParam("propertyName") String name, @QueryParam("sessionID") String sessionId) {
+    public Response deleteContainerProperty(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id,
+                                            @QueryParam("propertyName") String name,
+                                            @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container by removing a property : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||

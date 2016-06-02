@@ -35,6 +35,7 @@ public interface MappingSce {
     String MAPPING_SCE_OPERATION_NOT_DEFINED = "NOT_DEFINED";
 
     String MAPPING_SCE_PARAM_OBJ_ID = "ID";
+    String MAPPING_SCE_PARAM_PAYLOAD = "payload";
     String MAPPING_SCE_PARAM_SELECTOR = "selector";
 
     MapSce getMapSce();

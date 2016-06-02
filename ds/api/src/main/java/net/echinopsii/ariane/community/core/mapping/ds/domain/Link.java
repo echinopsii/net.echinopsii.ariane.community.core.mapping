@@ -20,8 +20,14 @@
 package net.echinopsii.ariane.community.core.mapping.ds.domain;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 
 public interface Link {
+
+	String LK_ID_TOKEN  = MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY+"ID";
+	String LK_SEP_TOKEN = MappingDSGraphPropertyNames.DD_LINK_SOURCE_EP_REST_KEY;
+	String LK_TEP_TOKEN = MappingDSGraphPropertyNames.DD_LINK_TARGET_EP_REST_KEY;
+	String LK_TRP_TOKEN = MappingDSGraphPropertyNames.DD_LINK_TRANSPORT_REST_KEY;
 
 	String getLinkID();
 	void   setLinkID(String ID);

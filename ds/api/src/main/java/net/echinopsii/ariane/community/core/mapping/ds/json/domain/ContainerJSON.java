@@ -25,7 +25,6 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
@@ -44,25 +43,11 @@ public class ContainerJSON {
 
     private final static Logger log = LoggerFactory.getLogger(ContainerJSON.class);
 
-    public final static String CT_ID_TOKEN = MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE+"ID";
-    public final static String CT_NAME_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_NAME_KEY;
-    public final static String CT_COMPANY_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_COMPANY_KEY;
-    public final static String CT_PRODUCT_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_PRODUCT_KEY;
-    public final static String CT_TYPE_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_TYPE_KEY;
-    public final static String CT_PAGTID_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_PAGATE_KEY+"ID";
-    public final static String CT_GATE_URI = MappingDSGraphPropertyNames.DD_CONTAINER_GATEURI_KEY;
-    public final static String CT_CLUSTER_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_CLUSTER_KEY+"ID";
-    public final static String CT_PCID_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_PCONTER_KEY+"ID";
-    public final static String CT_CCID_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_CHILD_CONTAINER_KEY+"ID";
-    public final static String CT_NID_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_NODE_KEY+"ID";
-    public final static String CT_GID_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_GATE_KEY+"ID";
-    public final static String CT_PRP_TOKEN = MappingDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY;
-
     private static void containerProps2JSON(HashMap<String, Object> props, JsonGenerator jgenerator,
                                                   boolean writeOPropsFieldStart, boolean writeOPropsFieldEnd)
     throws JsonGenerationException, IOException {
         if (writeOPropsFieldStart) {
-            jgenerator.writeObjectFieldStart(CT_PRP_TOKEN);
+            jgenerator.writeObjectFieldStart(Container.CT_PRP_TOKEN);
         }
         PropertiesJSON.propertiesToJSON(props, jgenerator);
         if (writeOPropsFieldEnd) {
@@ -72,14 +57,14 @@ public class ContainerJSON {
 
     public static void container2MapJSON(Container cont, HashMap<String, Object> props, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeStartObject();
-        jgenerator.writeStringField(CT_ID_TOKEN, cont.getContainerID());
-        jgenerator.writeStringField(CT_NAME_TOKEN, cont.getContainerName());
-        jgenerator.writeStringField(CT_COMPANY_TOKEN, cont.getContainerCompany());
-        jgenerator.writeStringField(CT_PRODUCT_TOKEN, cont.getContainerProduct());
-        jgenerator.writeStringField(CT_TYPE_TOKEN, cont.getContainerType());
-        jgenerator.writeStringField(CT_GATE_URI, cont.getContainerPrimaryAdminGate().getNodePrimaryAdminEndpoint().getEndpointURL());
+        jgenerator.writeStringField(Container.CT_ID_TOKEN, cont.getContainerID());
+        jgenerator.writeStringField(Container.CT_NAME_TOKEN, cont.getContainerName());
+        jgenerator.writeStringField(Container.CT_COMPANY_TOKEN, cont.getContainerCompany());
+        jgenerator.writeStringField(Container.CT_PRODUCT_TOKEN, cont.getContainerProduct());
+        jgenerator.writeStringField(Container.CT_TYPE_TOKEN, cont.getContainerType());
+        jgenerator.writeStringField(Container.CT_GATE_URI, cont.getContainerPrimaryAdminGate().getNodePrimaryAdminEndpoint().getEndpointURL());
         if (cont.getContainerParentContainer()!=null)
-            jgenerator.writeStringField(CT_PCID_TOKEN, cont.getContainerParentContainer().getContainerID());
+            jgenerator.writeStringField(Container.CT_PCID_TOKEN, cont.getContainerParentContainer().getContainerID());
         boolean isPropsBeginWritted = false;
         if (cont.getContainerProperties() != null) {
             containerProps2JSON(cont.getContainerProperties(), jgenerator, true, false);
@@ -91,34 +76,34 @@ public class ContainerJSON {
 
     public static void container2JSON(Container cont, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeStartObject();
-        jgenerator.writeStringField(CT_ID_TOKEN, cont.getContainerID());
-        jgenerator.writeStringField(CT_NAME_TOKEN, cont.getContainerName());
-        jgenerator.writeStringField(CT_COMPANY_TOKEN, cont.getContainerCompany());
-        jgenerator.writeStringField(CT_PRODUCT_TOKEN, cont.getContainerProduct());
-        jgenerator.writeStringField(CT_TYPE_TOKEN, cont.getContainerType());
-        jgenerator.writeStringField(CT_GATE_URI, cont.getContainerPrimaryAdminGateURL());
+        jgenerator.writeStringField(Container.CT_ID_TOKEN, cont.getContainerID());
+        jgenerator.writeStringField(Container.CT_NAME_TOKEN, cont.getContainerName());
+        jgenerator.writeStringField(Container.CT_COMPANY_TOKEN, cont.getContainerCompany());
+        jgenerator.writeStringField(Container.CT_PRODUCT_TOKEN, cont.getContainerProduct());
+        jgenerator.writeStringField(Container.CT_TYPE_TOKEN, cont.getContainerType());
+        jgenerator.writeStringField(Container.CT_GATE_URI, cont.getContainerPrimaryAdminGateURL());
         if (cont.getContainerParentContainer()!=null)
-            jgenerator.writeStringField(CT_PCID_TOKEN, cont.getContainerParentContainer().getContainerID());
+            jgenerator.writeStringField(Container.CT_PCID_TOKEN, cont.getContainerParentContainer().getContainerID());
         if (cont.getContainerPrimaryAdminGate()!=null)
-            jgenerator.writeStringField(CT_PAGTID_TOKEN, cont.getContainerPrimaryAdminGate().getNodeID());
+            jgenerator.writeStringField(Container.CT_PAGTID_TOKEN, cont.getContainerPrimaryAdminGate().getNodeID());
         else
             log.error("Container " + cont.getContainerName() + " has no primary admin gate !?");
         if (cont.getContainerCluster()!=null)
-            jgenerator.writeStringField(CT_CLUSTER_TOKEN, cont.getContainerCluster().getClusterID());
+            jgenerator.writeStringField(Container.CT_CLUSTER_TOKEN, cont.getContainerCluster().getClusterID());
         if (cont.getContainerParentContainer()!=null)
-            jgenerator.writeStringField(CT_PCID_TOKEN, cont.getContainerParentContainer().getContainerID());
+            jgenerator.writeStringField(Container.CT_PCID_TOKEN, cont.getContainerParentContainer().getContainerID());
 
-        jgenerator.writeArrayFieldStart(CT_CCID_TOKEN);
+        jgenerator.writeArrayFieldStart(Container.CT_CCID_TOKEN);
         for (Container container : cont.getContainerChildContainers())
             jgenerator.writeString(container.getContainerID());
         jgenerator.writeEndArray();
 
-        jgenerator.writeArrayFieldStart(CT_GID_TOKEN);
+        jgenerator.writeArrayFieldStart(Container.CT_GID_TOKEN);
         for (Gate gate : cont.getContainerGates())
             jgenerator.writeString(gate.getNodeID());
         jgenerator.writeEndArray();
 
-        jgenerator.writeArrayFieldStart(CT_NID_TOKEN);
+        jgenerator.writeArrayFieldStart(Container.CT_NID_TOKEN);
         for (Node node : cont.getContainerNodes(0))
             jgenerator.writeString(node.getNodeID());
         jgenerator.writeEndArray();
