@@ -42,7 +42,7 @@ public class ClusterSceImpl extends SProxClusterSceAbs<ClusterImpl> {
 
 	@Override
 	public ClusterImpl createCluster(String clusterName) throws MappingDSException {
-		ClusterImpl ret = null;
+		ClusterImpl ret;
 		String clientThreadName = Thread.currentThread().getName();
 		String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 		if (clientThreadSessionID!=null) {
