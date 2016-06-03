@@ -471,7 +471,8 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer, 
                     super.getContainerCluster().getClusterID());
             MappingDSGraphDB.autocommit();
             log.debug("Synchronize container cluster {} done...", new Object[]{super.getContainerCluster().getClusterID()});
-		}
+		}// else if (containerVertex!=null && super.getContainerCluster()==null)
+         //   containerVertex.removeProperty(MappingDSGraphPropertyNames.DD_CONTAINER_CLUSTER_KEY);
 	}
 
     private void synchronizeParentContainerToDB() {
@@ -481,7 +482,8 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer, 
                     super.getContainerParentContainer().getContainerID());
             MappingDSGraphDB.autocommit();
             log.debug("Synchronize container parent container {} done...", new Object[]{super.getContainerParentContainer().getContainerID()});
-        }
+        }// else if (containerVertex!=null && super.getContainerParentContainer()==null)
+         //   containerVertex.removeProperty(MappingDSGraphPropertyNames.DD_CONTAINER_PCONTER_KEY);
     }
 
     private void synchronizeChildContainersToDB() throws MappingDSException {
