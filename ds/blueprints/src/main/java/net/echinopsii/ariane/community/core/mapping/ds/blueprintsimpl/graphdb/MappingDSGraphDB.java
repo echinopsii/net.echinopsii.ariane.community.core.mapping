@@ -21,6 +21,7 @@ package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
+import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.tools.SessionImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCache;
 import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cfg.MappingBlueprintsDSCfgLoader;
@@ -29,6 +30,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.mdsl.MapperExecutor;
 import com.tinkerpop.blueprints.*;
 import com.tinkerpop.blueprints.impls.neo4j2.Neo4j2Graph;
 import net.echinopsii.ariane.community.core.mapping.ds.sdsl.SelectorExecutor;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.slf4j.Logger;
@@ -49,7 +51,7 @@ public class MappingDSGraphDB {
     private static MapperExecutor mexecutor                          = null;
     private static SelectorExecutor sexecutor                        = null;
 
-    private static HashMap<Long, Boolean> autocommit = new HashMap<>();
+    private static HashMap<Long, Session> threadSessionRegistry = new HashMap<>();
 
     public static boolean isBlueprintsNeo4j() {
         return (blpImpl.equals(BLUEPRINTS_IMPL_N4J));
@@ -164,23 +166,21 @@ public class MappingDSGraphDB {
         }
     }
 
-    public static synchronized void setAutocommit(boolean autocommit) {
+    public static synchronized void putThreadedSession(Session session) {
         Long threadID = Thread.currentThread().getId();
-        log.debug("Autocommit mode is {} for thread {}", new Object[]{(autocommit ? "activated" : "deactivated"), Thread.currentThread().getName()});
-        MappingDSGraphDB.autocommit.put(threadID, autocommit);
+        MappingDSGraphDB.threadSessionRegistry.put(threadID, session);
     }
 
-    public static synchronized void unsetAutocommit() {
+    public static synchronized void removeThreadedSession() {
         Long threadID = Thread.currentThread().getId();
-        log.debug("Autocommit mode for thread {} unset", new Object[]{Thread.currentThread().getName()});
-        MappingDSGraphDB.autocommit.remove(threadID);
+        MappingDSGraphDB.threadSessionRegistry.remove(threadID);
     }
 
     public static void autocommit() {
         if (ccgraph instanceof TransactionalGraph) {
-            Long threadID = Thread.currentThread().getId();
             boolean isThreadWithAutoCommitMode = true;
-            if (autocommit.containsKey(threadID)) isThreadWithAutoCommitMode = autocommit.get(threadID);
+            Long threadID = Thread.currentThread().getId();
+            if (threadSessionRegistry.containsKey(threadID)) isThreadWithAutoCommitMode = false;
             log.debug("Auto commit ({}) for thread {}", new Object[]{isThreadWithAutoCommitMode, Thread.currentThread().getName()});
             if (isThreadWithAutoCommitMode) {
                 log.debug("Auto commit operation...");
@@ -188,7 +188,7 @@ public class MappingDSGraphDB {
                     ((TransactionalGraph) ccgraph).commit();
                 } catch (Exception e) {
                     log.error("Error while commiting from thread (" + threadID + ":" + Thread.currentThread().getName() + ")");
-                    log.debug("autocommit table size: " + autocommit.size());
+                    log.debug("autocommit table size: " + threadSessionRegistry.size());
                 }
             }
         }
@@ -196,9 +196,9 @@ public class MappingDSGraphDB {
 
     public static void commit() {
         if (ccgraph instanceof TransactionalGraph) {
-            Long threadID = Thread.currentThread().getId();
             boolean isThreadWithAutoCommitMode = true;
-            if (autocommit.containsKey(threadID)) isThreadWithAutoCommitMode = autocommit.get(threadID);
+            Long threadID = Thread.currentThread().getId();
+            if (threadSessionRegistry.containsKey(threadID)) isThreadWithAutoCommitMode = false;
             if (!isThreadWithAutoCommitMode) {
                 log.debug("Commit operation from thread {} ...", new Object[]{Thread.currentThread().getName()});
                 ((TransactionalGraph) ccgraph).commit();
@@ -209,16 +209,16 @@ public class MappingDSGraphDB {
 
     public static void autorollback() {
         if (ccgraph instanceof TransactionalGraph) {
-            Long threadID = Thread.currentThread().getId();
             boolean isThreadWithAutoCommitMode = true;
-            if (autocommit.containsKey(threadID)) isThreadWithAutoCommitMode = autocommit.get(threadID);
+            Long threadID = Thread.currentThread().getId();
+            if (threadSessionRegistry.containsKey(threadID)) isThreadWithAutoCommitMode = false;
             if (isThreadWithAutoCommitMode) {
                 log.error("Auto rollback operation...");
                 try {
                     ((TransactionalGraph) ccgraph).rollback();
                 } catch (Exception e) {
                     log.error("Error while commiting from thread (" + threadID + ":" + Thread.currentThread().getName() + ")");
-                    log.debug("autocommit table size: " + autocommit.size());
+                    log.debug("autocommit table size: " + threadSessionRegistry.size());
                 }
             }
         }
@@ -226,9 +226,9 @@ public class MappingDSGraphDB {
 
     public static void rollback() {
         if (ccgraph instanceof TransactionalGraph) {
-            Long threadID = Thread.currentThread().getId();
             boolean isThreadWithAutoCommitMode = true;
-            if (autocommit.containsKey(threadID)) isThreadWithAutoCommitMode = autocommit.get(threadID);
+            Long threadID = Thread.currentThread().getId();
+            if (threadSessionRegistry.containsKey(threadID)) isThreadWithAutoCommitMode = false;
             if (!isThreadWithAutoCommitMode) {
                 log.debug("Rollback operation from thread {} ...", new Object[]{Thread.currentThread().getName()});
                 ((TransactionalGraph) ccgraph).rollback();
@@ -260,7 +260,9 @@ public class MappingDSGraphDB {
             entityV = ccgraph.addVertex(null);
             entityV.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID, id);
             entity.setElement(entityV);
-            MappingDSCache.putEntityToCache(entity);
+            Long threadID = Thread.currentThread().getId();
+            if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(entity);
+            else MappingDSCache.putEntityToCache(entity);
             entity.synchronizeToDB();
             autocommit();
             log.debug("Vertex {} ({}:{}) has been saved on graph {}", new Object[]{entityV.toString(), MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID, id,
@@ -320,7 +322,9 @@ public class MappingDSGraphDB {
         try {
             Edge entityE = createEdge(source, destination, label);
             entity.setElement(entityE);
-            MappingDSCache.putEntityToCache(entity);
+            Long threadID = Thread.currentThread().getId();
+            if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(entity);
+            else MappingDSCache.putEntityToCache(entity);
             entity.synchronizeToDB();
             autocommit();
         } catch (Exception E) {
@@ -333,12 +337,17 @@ public class MappingDSGraphDB {
 
     private static MappingDSBlueprintsCacheEntity getEdgeEntity(Edge edge) throws MappingDSException {
         String id = edge.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID);
-        MappingDSBlueprintsCacheEntity ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("E" + id);
+        MappingDSBlueprintsCacheEntity ret;
+        Long threadID = Thread.currentThread().getId();
+        if (threadSessionRegistry.containsKey(threadID))
+            ret = (MappingDSBlueprintsCacheEntity)((SessionImpl)threadSessionRegistry.get(threadID)).getCachedEntity("E" + id);
+        else ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("E" + id);
         if (ret == null) {
             if (edge.getLabel().equals(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY)) {
                 ret = new LinkImpl();
                 ret.setElement(edge);
-                MappingDSCache.putEntityToCache(ret);
+                if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(ret);
+                else MappingDSCache.putEntityToCache(ret);
                 ret.synchronizeFromDB();
             }
         }
@@ -347,7 +356,11 @@ public class MappingDSGraphDB {
 
     public static MappingDSBlueprintsCacheEntity getEdgeEntity(String id) throws MappingDSException {
         log.debug("Get cache entity {} if exists ...", new Object[]{"E"+id});
-        MappingDSBlueprintsCacheEntity ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("E" + id);
+        MappingDSBlueprintsCacheEntity ret;
+        Long threadID = Thread.currentThread().getId();
+        if (threadSessionRegistry.containsKey(threadID))
+            ret = (MappingDSBlueprintsCacheEntity)((SessionImpl)threadSessionRegistry.get(threadID)).getCachedEntity("E" + id);
+        else ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("E" + id);
         if (ret == null) {
             if (ccgraph instanceof Neo4j2Graph)
                 //Tinkerpop Blueprint 2.5 forget to start transaction on getEdges(final String key, final Object value)
@@ -357,7 +370,8 @@ public class MappingDSGraphDB {
             if (edge!=null && edge.getLabel().equals(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY)) {
                 ret = new LinkImpl();
                 ret.setElement(edge);
-                MappingDSCache.putEntityToCache(ret);
+                if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(ret);
+                else MappingDSCache.putEntityToCache(ret);
                 ret.synchronizeFromDB();
             }
         }
@@ -367,7 +381,11 @@ public class MappingDSGraphDB {
     private static MappingDSBlueprintsCacheEntity getVertexEntity(Vertex vertex) throws MappingDSException {
         String id = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
         String vertexType = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY);
-        MappingDSBlueprintsCacheEntity ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("V" + id);
+        MappingDSBlueprintsCacheEntity ret;
+        Long threadID = Thread.currentThread().getId();
+        if (threadSessionRegistry.containsKey(threadID))
+            ret = (MappingDSBlueprintsCacheEntity)((SessionImpl)threadSessionRegistry.get(threadID)).getCachedEntity("V" + id);
+        else ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("V" + id);
         if (ret == null) {
             if (vertexType != null) {
                 switch (vertexType) {
@@ -395,7 +413,8 @@ public class MappingDSGraphDB {
             }
             if (ret != null) {
                 ret.setElement(vertex);
-                MappingDSCache.putEntityToCache(ret);
+                if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(ret);
+                else MappingDSCache.putEntityToCache(ret);
                 ret.synchronizeFromDB();
             }
         }
@@ -414,7 +433,11 @@ public class MappingDSGraphDB {
         if (id == null)
             return null;
         log.debug("Get cache entity {} if exists ...", new Object[]{"V" + id});
-        MappingDSBlueprintsCacheEntity ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("V" + id);
+        MappingDSBlueprintsCacheEntity ret;
+        Long threadID = Thread.currentThread().getId();
+        if (threadSessionRegistry.containsKey(threadID))
+            ret = (MappingDSBlueprintsCacheEntity)((SessionImpl)threadSessionRegistry.get(threadID)).getCachedEntity("V" + id);
+        else ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("V" + id);
         if (ret == null) {
             log.debug("Get vertex {} from graph {}...", new Object[]{id, ccgraph.toString() + "(" + ccgraph.hashCode() + ")"});
             Vertex vertex = (ccgraph.getVertices(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID, id).iterator().hasNext() ?
@@ -447,7 +470,8 @@ public class MappingDSGraphDB {
                 }
                 if (ret != null) {
                     ret.setElement(vertex);
-                    MappingDSCache.putEntityToCache(ret);
+                    if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(ret);
+                    else MappingDSCache.putEntityToCache(ret);
                     ret.synchronizeFromDB();
                 }
             }
@@ -468,7 +492,9 @@ public class MappingDSGraphDB {
             if (tmp == null) {
                 tmp = new ClusterImpl();
                 tmp.setElement(vertex);
-                MappingDSCache.putEntityToCache(tmp);
+                Long threadID = Thread.currentThread().getId();
+                if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(tmp);
+                else MappingDSCache.putEntityToCache(tmp);
                 tmp.synchronizeFromDB();
             }
             log.debug("Add cluster {} to Set...", new Object[]{id});
@@ -488,7 +514,9 @@ public class MappingDSGraphDB {
             if (tmp == null) {
                 tmp = new ContainerImpl();
                 tmp.setElement(vertex);
-                MappingDSCache.putEntityToCache(tmp);
+                Long threadID = Thread.currentThread().getId();
+                if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(tmp);
+                else MappingDSCache.putEntityToCache(tmp);
                 tmp.synchronizeFromDB();
             }
             log.debug("Add container {} to Set...", new Object[]{id});
@@ -504,7 +532,9 @@ public class MappingDSGraphDB {
         if (tmp == null) {
             tmp = new NodeImpl();
             tmp.setElement(vertex);
-            MappingDSCache.putEntityToCache(tmp);
+            Long threadID = Thread.currentThread().getId();
+            if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(tmp);
+            else MappingDSCache.putEntityToCache(tmp);
             tmp.synchronizeFromDB();
         }
         return tmp;
@@ -516,7 +546,9 @@ public class MappingDSGraphDB {
         if (tmp == null) {
             tmp = new GateImpl();
             tmp.setElement(vertex);
-            MappingDSCache.putEntityToCache(tmp);
+            Long threadID = Thread.currentThread().getId();
+            if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(tmp);
+            else MappingDSCache.putEntityToCache(tmp);
             tmp.synchronizeFromDB();
         }
         return tmp;
@@ -600,7 +632,9 @@ public class MappingDSGraphDB {
         if (tmp == null) {
             tmp = new EndpointImpl();
             tmp.setElement(vertex);
-            MappingDSCache.putEntityToCache(tmp);
+            Long threadID = Thread.currentThread().getId();
+            if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(tmp);
+            else MappingDSCache.putEntityToCache(tmp);
             tmp.synchronizeFromDB();
         }
         return tmp;
@@ -636,7 +670,9 @@ public class MappingDSGraphDB {
             if (tmp == null) {
                 tmp = new EndpointImpl();
                 tmp.setElement(vertex);
-                MappingDSCache.putEntityToCache(tmp);
+                Long threadID = Thread.currentThread().getId();
+                if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(tmp);
+                else MappingDSCache.putEntityToCache(tmp);
                 tmp.synchronizeFromDB();
             }
             Object tmpValue = (tmp.getEndpointProperties() != null) ? tmp.getEndpointProperties().get(key) : null;
@@ -659,7 +695,9 @@ public class MappingDSGraphDB {
             if (tmp == null) {
                 tmp = new TransportImpl();
                 tmp.setElement(vertex);
-                MappingDSCache.putEntityToCache(tmp);
+                Long threadID = Thread.currentThread().getId();
+                if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(tmp);
+                else MappingDSCache.putEntityToCache(tmp);
                 tmp.synchronizeFromDB();
             }
             log.debug("Add transport {} to Set...", new Object[]{id});
@@ -685,7 +723,9 @@ public class MappingDSGraphDB {
                 }
                 if (ret != null) {
                     ret.setElement(vertex);
-                    MappingDSCache.putEntityToCache(ret);
+                    Long threadID = Thread.currentThread().getId();
+                    if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(ret);
+                    else MappingDSCache.putEntityToCache(ret);
                     ret.synchronizeFromDB();
                 }
             }
@@ -711,7 +751,9 @@ public class MappingDSGraphDB {
             }
             if (tmp != null) {
                 tmp.setElement(vertex);
-                MappingDSCache.putEntityToCache(tmp);
+                Long threadID = Thread.currentThread().getId();
+                if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(tmp);
+                else MappingDSCache.putEntityToCache(tmp);
                 tmp.synchronizeFromDB();
                 ret.add(tmp);
             }
@@ -735,7 +777,9 @@ public class MappingDSGraphDB {
                 }
                 if (ret != null) {
                     ret.setElement(vertex);
-                    MappingDSCache.putEntityToCache(ret);
+                    Long threadID = Thread.currentThread().getId();
+                    if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(ret);
+                    else MappingDSCache.putEntityToCache(ret);
                     ret.synchronizeFromDB();
                 }
             }
@@ -759,7 +803,9 @@ public class MappingDSGraphDB {
                 }
                 if (ret != null) {
                     ret.setElement(vertex);
-                    MappingDSCache.putEntityToCache(ret);
+                    Long threadID = Thread.currentThread().getId();
+                    if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(ret);
+                    else MappingDSCache.putEntityToCache(ret);
                     ret.synchronizeFromDB();
                 }
             }
@@ -771,7 +817,11 @@ public class MappingDSGraphDB {
     public static MappingDSBlueprintsCacheEntity getLink(String id) throws MappingDSException {
         if (id == null)
             return null;
-        MappingDSBlueprintsCacheEntity ret = (MappingDSBlueprintsCacheEntity) MappingDSCache.getCachedEntity("E" + id);
+        MappingDSBlueprintsCacheEntity ret;
+        Long threadID = Thread.currentThread().getId();
+        if (threadSessionRegistry.containsKey(threadID))
+            ret = (MappingDSBlueprintsCacheEntity)((SessionImpl)threadSessionRegistry.get(threadID)).getCachedEntity("E" + id);
+        else ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("E" + id);
         if (ret == null && ccgraph != null) {
             if (ccgraph instanceof Neo4j2Graph)
                 //Tinkerpop Blueprint 2.5 forget to start transaction on getEdges(final String key, final Object value)
@@ -781,7 +831,8 @@ public class MappingDSGraphDB {
             if (edge != null && edge.getLabel().equals(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY)) {
                 ret = new LinkImpl();
                 ret.setElement(edge);
-                MappingDSCache.putEntityToCache(ret);
+                if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(ret);
+                else MappingDSCache.putEntityToCache(ret);
                 ret.synchronizeFromDB();
             }
             autocommit();
@@ -795,7 +846,9 @@ public class MappingDSGraphDB {
         if (tmp == null) {
             tmp = new LinkImpl();
             tmp.setElement(edge);
-            MappingDSCache.putEntityToCache(tmp);
+            Long threadID = Thread.currentThread().getId();
+            if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(tmp);
+            else MappingDSCache.putEntityToCache(tmp);
             tmp.synchronizeFromDB();
         }
         return  tmp;
@@ -874,12 +927,16 @@ public class MappingDSGraphDB {
                     for (Edge edge : vertex.getEdges(Direction.BOTH, MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY))
                         deleteEntity(getEdgeEntity(edge));
                     synchronized (ccgraph) {
-                        MappingDSCache.removeEntityFromCache(entity);
+                        Long threadID = Thread.currentThread().getId();
+                        if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).removeEntityFromCache(entity);
+                        else MappingDSCache.removeEntityFromCache(entity);
                         removeVertex(vertex);
                     }
                 } else if (elem instanceof Edge) {
                     synchronized (ccgraph) {
-                        MappingDSCache.removeEntityFromCache(entity);
+                        Long threadID = Thread.currentThread().getId();
+                        if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).removeEntityFromCache(entity);
+                        else MappingDSCache.removeEntityFromCache(entity);
                         removeEdge((Edge) elem);
                     }
                 }

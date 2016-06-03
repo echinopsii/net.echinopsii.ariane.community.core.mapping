@@ -20,12 +20,14 @@ package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.t
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
+import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCache;
+import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
-import java.util.Objects;
+import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -106,6 +108,12 @@ public class SessionImpl implements Session {
 
         private LinkedBlockingQueue<SessionWorkerRequest> fifoInputQ = new LinkedBlockingQueue<>();
         private boolean running = true;
+        private Session attachedSession = null;
+
+        public SessionWorker(Session session) {
+            this.attachedSession = session;
+        }
+
 
         private void returnToQueue(SessionWorkerRequest req, Object ret) {
             if (req.getReplyQ() != null) {
@@ -119,7 +127,7 @@ public class SessionImpl implements Session {
 
         @Override
         public void run() {
-            MappingDSGraphDB.setAutocommit(false);
+            MappingDSGraphDB.putThreadedSession(this.attachedSession);
             while (running) {
                 SessionWorkerRequest msg = null;
                 try {
@@ -131,9 +139,16 @@ public class SessionImpl implements Session {
                     if (msg.getAction().equals(STOP)) running = false;
                     else if (msg.getAction().equals(COMMIT)) {
                         MappingDSGraphDB.commit();
+                        for (MappingDSCacheEntity entity: ((SessionImpl)this.attachedSession).sessionExistingObjectCache.values())
+                            MappingDSCache.putEntityToCache(entity);
+                        for (MappingDSCacheEntity entity: ((SessionImpl)this.attachedSession).sessionRemovedObjectCache.values())
+                            MappingDSCache.removeEntityFromCache(entity);
+                        ((SessionImpl) this.attachedSession).sessionExistingObjectCache.clear();
+                        ((SessionImpl) this.attachedSession).sessionRemovedObjectCache.clear();
                         this.returnToQueue(msg, Void.TYPE);
                     } else if (msg.getAction().equals(ROLLBACK)) {
                         MappingDSGraphDB.rollback();
+                        ((SessionImpl)this.attachedSession).sessionExistingObjectCache.clear();
                         this.returnToQueue(msg, Void.TYPE);
                     } else if (msg.getAction().equals(EXECUTE)) {
                         try {
@@ -147,7 +162,7 @@ public class SessionImpl implements Session {
                     }
                 }
             }
-            MappingDSGraphDB.unsetAutocommit();
+            MappingDSGraphDB.removeThreadedSession();
         }
 
         public LinkedBlockingQueue<SessionWorkerRequest> getFifoInputQ() {
@@ -161,8 +176,11 @@ public class SessionImpl implements Session {
 
     private String sessionId = null;
 
-    private SessionWorker sessionWorker = new SessionWorker();
+    private SessionWorker sessionWorker = new SessionWorker(this);
     private Thread sessionThread = new Thread(sessionWorker);
+
+    private HashMap<String, MappingDSCacheEntity> sessionExistingObjectCache = new HashMap<>();
+    private HashMap<String, MappingDSCacheEntity> sessionRemovedObjectCache = new HashMap<>();
 
     public SessionImpl(String clientId) {
         this.sessionId = clientId + '-' + UUID.randomUUID();
@@ -308,5 +326,18 @@ public class SessionImpl implements Session {
         }
         getReply(repQ);
         return this;
+    }
+
+    public MappingDSCacheEntity getCachedEntity(String id) {
+        return sessionExistingObjectCache.get(id);
+    }
+
+    public void putEntityToCache(MappingDSCacheEntity entity) {
+        sessionExistingObjectCache.put(entity.getEntityCacheID(), entity);
+    }
+
+    public void removeEntityFromCache(MappingDSCacheEntity entity) {
+        sessionExistingObjectCache.remove(entity.getEntityCacheID());
+        sessionRemovedObjectCache.put(entity.getEntityCacheID(), entity);
     }
 }

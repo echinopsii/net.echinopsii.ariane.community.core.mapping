@@ -21,7 +21,6 @@ package net.echinopsii.ariane.community.core.mapping.ds.service.tools;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 
 public interface Session {
-
     String MAPPING_SESSION_SERVICE_Q = "ARIANE_MAPPING_SESSION_SERVICE_Q";
     String SESSION_OP_COMMIT = "commit";
     String SESSION_OP_ROLLBACK = "rollback";
@@ -29,14 +28,10 @@ public interface Session {
     String getSessionID();
 
     Session stop();
-
     Session start();
-
     boolean isRunning();
 
     Object execute(Object o, String methodName, Object[] args) throws MappingDSException;
-
     Session commit() throws MappingDSException;
-
     Session rollback() throws MappingDSException;
 }

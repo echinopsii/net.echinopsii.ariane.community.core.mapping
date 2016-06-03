@@ -145,8 +145,7 @@ public class MappingMsgTest {
         Session session = messagingMappingSce.openSession("this is a test");
         Cluster cluster = messagingMappingSce.getClusterSce().createCluster("test");
         assertTrue(messagingMappingSce.getClusterSce().getClusters(null).size() == 1);
-        //session.rollback();
-        messagingMappingSce.getClusterSce().deleteCluster(cluster.getClusterName());
+        session.rollback();
         assertTrue(messagingMappingSce.getClusterSce().getClusters(null).size() == 0);
         messagingMappingSce.closeSession();
     }
