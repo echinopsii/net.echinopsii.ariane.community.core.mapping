@@ -35,10 +35,10 @@ public class GateJSON {
 
     public static void gate2JSON(Gate gate, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeStartObject();
-        jgenerator.writeObjectFieldStart(Gate.GT_NODE_TOKEN);
+        jgenerator.writeObjectFieldStart(Gate.TOKEN_GT_NODE);
         NodeJSON.node2JSON(gate, jgenerator);
         jgenerator.writeEndObject();
-        jgenerator.writeStringField(Gate.GT_ADMPEP_TOKEN, (gate.getNodePrimaryAdminEndpoint() != null) ? gate.getNodePrimaryAdminEndpoint().getEndpointID() : "");
+        jgenerator.writeStringField(Gate.TOKEN_GT_ADMPEP, (gate.getNodePrimaryAdminEndpoint() != null) ? gate.getNodePrimaryAdminEndpoint().getEndpointID() : "");
         jgenerator.writeEndObject();
     }
 

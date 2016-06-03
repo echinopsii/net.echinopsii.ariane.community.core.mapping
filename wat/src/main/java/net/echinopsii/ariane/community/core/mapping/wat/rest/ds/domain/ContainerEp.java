@@ -339,8 +339,8 @@ public class ContainerEp {
 
     @GET
     @Path("/get")
-    public Response getContainer(@QueryParam(ContainerSce.CONTAINER_SCE_PARAM_CONTAINER_PAURL) String primaryAdminURL,
-                                 @QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id,
+    public Response getContainer(@QueryParam(ContainerSce.PARAM_CONTAINER_PAURL) String primaryAdminURL,
+                                 @QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID) String id,
                                  @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         if (id!=null) {
             return _displayContainer(id, sessionId);
@@ -385,9 +385,9 @@ public class ContainerEp {
 
     @GET
     @Path("/create")
-    public Response createContainer(@QueryParam(ContainerSce.CONTAINER_SCE_PARAM_CONTAINER_NAME) String name,
-                                    @QueryParam(ContainerSce.CONTAINER_SCE_PARAM_CONTAINER_PAURL) String primaryAdminURL,
-                                    @QueryParam(ContainerSce.CONTAINER_SCE_PARAM_CONTAINER_PAG_NAME) String primaryAdminGateName,
+    public Response createContainer(@QueryParam(ContainerSce.PARAM_CONTAINER_NAME) String name,
+                                    @QueryParam(ContainerSce.PARAM_CONTAINER_PAURL) String primaryAdminURL,
+                                    @QueryParam(ContainerSce.PARAM_CONTAINER_PAG_NAME) String primaryAdminGateName,
                                     @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         try {
             Subject subject = SecurityUtils.getSubject();
@@ -478,7 +478,7 @@ public class ContainerEp {
 
     @GET
     @Path("/delete")
-    public Response deleteContainer(@QueryParam(ContainerSce.CONTAINER_SCE_PARAM_CONTAINER_PAURL) String primaryAdminURL,
+    public Response deleteContainer(@QueryParam(ContainerSce.PARAM_CONTAINER_PAURL) String primaryAdminURL,
                                     @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         try {
             Subject subject = SecurityUtils.getSubject();
@@ -503,8 +503,8 @@ public class ContainerEp {
 
     @GET
     @Path("/update/name")
-    public Response setContainerName(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id,
-                                     @QueryParam(ContainerSce.CONTAINER_SCE_PARAM_CONTAINER_NAME) String name,
+    public Response setContainerName(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID) String id,
+                                     @QueryParam(ContainerSce.PARAM_CONTAINER_NAME) String name,
                                      @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update container name : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name});
@@ -534,7 +534,7 @@ public class ContainerEp {
 
     @GET
     @Path("/update/company")
-    public Response setContainerCompany(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id,
+    public Response setContainerCompany(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID) String id,
                                         @QueryParam("company") String company,
                                         @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
@@ -565,7 +565,7 @@ public class ContainerEp {
 
     @GET
     @Path("/update/product")
-    public Response setContainerProduct(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id,
+    public Response setContainerProduct(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID) String id,
                                         @QueryParam("product") String product,
                                         @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
@@ -596,7 +596,7 @@ public class ContainerEp {
 
     @GET
     @Path("/update/type")
-    public Response setContainerType(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id,
+    public Response setContainerType(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID) String id,
                                      @QueryParam("type") String type,
                                      @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
@@ -627,7 +627,7 @@ public class ContainerEp {
 
     @GET
     @Path("/update/primaryAdminGate")
-    public Response setContainerPrimaryAdminGate(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id,
+    public Response setContainerPrimaryAdminGate(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID) String id,
                                                  @QueryParam("paGateID") String paGateID,
                                                  @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
@@ -664,7 +664,7 @@ public class ContainerEp {
 
     @GET
     @Path("/update/cluster")
-    public Response setContainerCluster(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id,
+    public Response setContainerCluster(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID) String id,
                                         @QueryParam("clusterID") String clusterID,
                                         @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
@@ -701,7 +701,7 @@ public class ContainerEp {
 
     @GET
     @Path("/update/parentContainer")
-    public Response setContainerParentContainer(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id,
+    public Response setContainerParentContainer(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID) String id,
                                                 @QueryParam("parentContainerID") String parentContainerID,
                                                 @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
@@ -737,7 +737,7 @@ public class ContainerEp {
 
     @GET
     @Path("/update/childContainers/add")
-    public Response addContainerChildContainer(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id,
+    public Response addContainerChildContainer(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID) String id,
                                                @QueryParam("childContainerID") String childContainerID,
                                                @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
@@ -774,7 +774,7 @@ public class ContainerEp {
 
     @GET
     @Path("/update/childContainers/delete")
-    public Response deleteContainerChildContainer(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id,
+    public Response deleteContainerChildContainer(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID) String id,
                                                   @QueryParam("childContainerID") String childContainerID,
                                                   @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
@@ -810,7 +810,7 @@ public class ContainerEp {
 
     @GET
     @Path("/update/nodes/add")
-    public Response addContainerNode(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id,
+    public Response addContainerNode(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID) String id,
                                      @QueryParam("nodeID") String nodeID,
                                      @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
@@ -847,7 +847,7 @@ public class ContainerEp {
 
     @GET
     @Path("/update/nodes/delete")
-    public Response deleteContainerNode(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id,
+    public Response deleteContainerNode(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID) String id,
                                         @QueryParam("nodeID") String nodeID,
                                         @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
@@ -884,7 +884,7 @@ public class ContainerEp {
 
     @GET
     @Path("/update/gates/add")
-    public Response addContainerGate(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id,
+    public Response addContainerGate(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID) String id,
                                      @QueryParam("gateID") String gateID,
                                      @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
@@ -921,7 +921,7 @@ public class ContainerEp {
 
     @GET
     @Path("/update/gates/delete")
-    public Response deleteContainerGate(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id,
+    public Response deleteContainerGate(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID) String id,
                                         @QueryParam("nodeID") String gateID,
                                         @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
@@ -958,7 +958,7 @@ public class ContainerEp {
 
     @GET
     @Path("/update/properties/add")
-    public Response addContainerProperty(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id,
+    public Response addContainerProperty(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID) String id,
                                          @QueryParam("propertyName") String name,
                                          @QueryParam("propertyValue") String value,
                                          @DefaultValue("String") @QueryParam("propertyType") String type,
@@ -1005,7 +1005,7 @@ public class ContainerEp {
 
     @GET
     @Path("/update/properties/delete")
-    public Response deleteContainerProperty(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id,
+    public Response deleteContainerProperty(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID) String id,
                                             @QueryParam("propertyName") String name,
                                             @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();

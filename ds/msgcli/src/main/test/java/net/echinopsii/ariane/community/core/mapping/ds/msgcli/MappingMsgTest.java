@@ -19,12 +19,13 @@
  */
 package net.echinopsii.ariane.community.core.mapping.ds.msgcli;
 
-import junit.framework.Assert;
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cfg.MappingBlueprintsDSCfgLoader;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.Cluster;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.momsp.MappingMsgcliMomSP;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.MappingMsgsrvBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.momsp.MappingMsgsrvMomSP;
-import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.messaging.api.MomClient;
 import org.apache.commons.io.FileUtils;
@@ -41,8 +42,8 @@ import static junit.framework.TestCase.assertTrue;
 
 public class MappingMsgTest {
 
-    private static MappingSce blueprintsMappingSce = new net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.MappingSceImpl();
-    private static MappingSce messagingMappingSce = new net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.MappingSceImpl();
+    private static SProxMappingSce blueprintsMappingSce = new net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.MappingSceImpl();
+    private static SProxMappingSce messagingMappingSce = new net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.MappingSceImpl();
     private static MappingMsgsrvBootstrap msgsrvBootstrap = new MappingMsgsrvBootstrap();
 
     @BeforeClass
@@ -116,5 +117,37 @@ public class MappingMsgTest {
         assertTrue(blueprintsMappingSce.getSessionRegistry().get(session.getSessionID())!=null);
         messagingMappingSce.closeSession();
         assertTrue(!session.isRunning());
+    }
+
+    @Test
+    public void testClusterCreate() throws MappingDSException {
+        Cluster cluster = messagingMappingSce.getClusterSce().createCluster("test");
+        assertTrue(cluster.getClusterID()!=null);
+        assertTrue(messagingMappingSce.getClusterSce().getClusters(null).size() == 1);
+        messagingMappingSce.getClusterSce().deleteCluster(cluster.getClusterName());
+        assertTrue(messagingMappingSce.getClusterSce().getClusters(null).size() == 0);
+    }
+
+    @Test
+    public void testTransacClusterCreate1() throws MappingDSException {
+        Session session = messagingMappingSce.openSession("this is a test");
+        Cluster cluster = messagingMappingSce.getClusterSce().createCluster("test");
+        assertTrue(messagingMappingSce.getClusterSce().getClusters(null).size() == 1);
+        session.commit();
+        messagingMappingSce.getClusterSce().deleteCluster(cluster.getClusterName());
+        session.commit();
+        assertTrue(messagingMappingSce.getClusterSce().getClusters(null).size() == 0);
+        messagingMappingSce.closeSession();
+    }
+
+    @Test
+    public void testTransacClusterCreate2() throws MappingDSException {
+        Session session = messagingMappingSce.openSession("this is a test");
+        Cluster cluster = messagingMappingSce.getClusterSce().createCluster("test");
+        assertTrue(messagingMappingSce.getClusterSce().getClusters(null).size() == 1);
+        //session.rollback();
+        messagingMappingSce.getClusterSce().deleteCluster(cluster.getClusterName());
+        assertTrue(messagingMappingSce.getClusterSce().getClusters(null).size() == 0);
+        messagingMappingSce.closeSession();
     }
 }

@@ -20,6 +20,7 @@ package net.echinopsii.ariane.community.core.mapping.ds.service.proxy;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
+import net.echinopsii.ariane.community.core.mapping.ds.service.ContainerSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
 import java.util.Set;
@@ -29,7 +30,7 @@ public abstract class SProxContainerSceAbs<C extends Container> implements SProx
     public C createContainer(Session session, String primaryAdminURL, String primaryAdminGateName) throws MappingDSException {
         C ret = null;
         if (session != null && session.isRunning())
-            ret = (C) session.execute(this, SProxContainerSce.CREATE_CONTAINER, new Object[]{primaryAdminURL, primaryAdminGateName});
+            ret = (C) session.execute(this, ContainerSce.OP_CREATE_CONTAINER, new Object[]{primaryAdminURL, primaryAdminGateName});
         return ret;
     }
 
@@ -37,7 +38,7 @@ public abstract class SProxContainerSceAbs<C extends Container> implements SProx
     public C createContainer(Session session, String name, String primaryAdminURL, String primaryAdminGateName) throws MappingDSException {
         C ret = null;
         if (session != null && session.isRunning())
-            ret = (C) session.execute(this, CREATE_CONTAINER, new Object[]{name, primaryAdminURL, primaryAdminGateName});
+            ret = (C) session.execute(this, ContainerSce.OP_CREATE_CONTAINER, new Object[]{name, primaryAdminURL, primaryAdminGateName});
         return ret;
     }
 
@@ -45,7 +46,7 @@ public abstract class SProxContainerSceAbs<C extends Container> implements SProx
     public C createContainer(Session session, String primaryAdminURL, String primaryAdminGateName, Container parentContainer) throws MappingDSException {
         C ret = null;
         if (session != null && session.isRunning())
-            ret = (C) session.execute(this, CREATE_CONTAINER, new Object[]{primaryAdminURL, primaryAdminGateName, parentContainer});
+            ret = (C) session.execute(this, ContainerSce.OP_CREATE_CONTAINER, new Object[]{primaryAdminURL, primaryAdminGateName, parentContainer});
         return ret;
     }
 
@@ -53,21 +54,21 @@ public abstract class SProxContainerSceAbs<C extends Container> implements SProx
     public C createContainer(Session session, String name, String primaryAdminURL, String primaryAdminGateName, Container parentContainer) throws MappingDSException {
         C ret = null;
         if (session != null && session.isRunning())
-            ret = (C) session.execute(this, CREATE_CONTAINER, new Object[]{name, primaryAdminURL, primaryAdminGateName, parentContainer});
+            ret = (C) session.execute(this, ContainerSce.OP_CREATE_CONTAINER, new Object[]{name, primaryAdminURL, primaryAdminGateName, parentContainer});
         return ret;
     }
 
     @Override
     public void deleteContainer(Session session, String primaryAdminURL) throws MappingDSException {
         if (session != null && session.isRunning())
-            session.execute(this, DELETE_CONTAINER, new Object[]{primaryAdminURL});
+            session.execute(this, ContainerSce.OP_DELETE_CONTAINER, new Object[]{primaryAdminURL});
     }
 
     @Override
     public C getContainer(Session session, String id) throws MappingDSException {
         C ret = null;
         if (session != null && session.isRunning())
-            ret = (C) session.execute(this, GET_CONTAINER, new Object[]{id});
+            ret = (C) session.execute(this, ContainerSce.OP_GET_CONTAINER, new Object[]{id});
         return ret;
     }
 
@@ -75,7 +76,7 @@ public abstract class SProxContainerSceAbs<C extends Container> implements SProx
     public C getContainerByPrimaryAdminURL(Session session, String primaryAdminURL) throws MappingDSException {
         C ret = null;
         if (session != null && session.isRunning())
-            ret = (C) session.execute(this, GET_CONTAINER_BY_PAURL, new Object[]{primaryAdminURL});
+            ret = (C) session.execute(this, ContainerSce.OP_GET_CONTAINER_BY_PRIMARY_ADMIN_URL, new Object[]{primaryAdminURL});
         return ret;
     }
 
@@ -83,7 +84,7 @@ public abstract class SProxContainerSceAbs<C extends Container> implements SProx
     public Set<C> getContainers(Session session, String selector) throws MappingDSException {
         Set<C> ret = null;
         if (session != null && session.isRunning())
-            ret = (Set<C>) session.execute(this, GET_CONTAINERS, new Object[]{selector});
+            ret = (Set<C>) session.execute(this, ContainerSce.OP_GET_CONTAINERS, new Object[]{selector});
         return ret;
     }
 }

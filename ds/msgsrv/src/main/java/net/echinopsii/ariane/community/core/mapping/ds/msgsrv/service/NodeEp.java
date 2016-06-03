@@ -18,27 +18,22 @@
  */
 package net.echinopsii.ariane.community.core.mapping.ds.msgsrv.service;
 
-import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.momsp.MappingMsgsrvMomSP;
-import net.echinopsii.ariane.community.core.mapping.ds.service.ContainerSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
-import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
+import net.echinopsii.ariane.community.core.mapping.ds.service.NodeSce;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
 
 import java.util.Map;
 
-public class ContainerEp {
+public class NodeEp {
 
-    static class ContainerWorker implements AppMsgWorker {
+    static class NodeWorker implements AppMsgWorker {
         @Override
         public Map<String, Object> apply(Map<String, Object> message) {
             Object oOperation = message.get(MappingSce.GLOBAL_OPERATION_FDN);
             String operation;
-            String sid;
-            String cid;
-            String name;
-            Session session = null;
 
             if (oOperation==null)
                 operation = MappingSce.GLOBAL_OPERATION_NOT_DEFINED;
@@ -46,41 +41,35 @@ public class ContainerEp {
                 operation = oOperation.toString();
 
             switch (operation) {
-                case ContainerSce.OP_CREATE_CONTAINER:
+                case NodeSce.OP_CREATE_NODE:
                     break;
-                case ContainerSce.OP_DELETE_CONTAINER:
+                case NodeSce.OP_DELETE_NODE:
                     break;
-                case ContainerSce.OP_GET_CONTAINER:
+                case NodeSce.OP_GET_NODE:
                     break;
-                case ContainerSce.OP_GET_CONTAINER_BY_PRIMARY_ADMIN_URL:
+                case NodeSce.OP_GET_NODE_BY_EPURL:
                     break;
-                case ContainerSce.OP_GET_CONTAINERS:
+                case NodeSce.OP_GET_NODE_BY_NAME:
                     break;
-                case Container.OP_SET_CONTAINER_NAME:
+                case NodeSce.OP_GET_NODES:
                     break;
-                case Container.OP_SET_CONTAINER_COMPANY:
+                case Node.OP_SET_NODE_NAME:
                     break;
-                case Container.OP_SET_CONTAINER_PRODUCT:
+                case Node.OP_SET_NODE_CONTAINER:
                     break;
-                case Container.OP_SET_CONTAINER_TYPE:
+                case Node.OP_SET_NODE_PARENT_NODE:
                     break;
-                case Container.OP_SET_CONTAINER_PRIMARY_ADMIN_GATE:
+                case Node.OP_ADD_ENDPOINT:
+                case Node.OP_REMOVE_ENDPOINT:
                     break;
-                case Container.OP_SET_CONTAINER_PARENT_CONTAINER:
+                case Node.OP_ADD_NODE_PROPERTY:
+                case Node.OP_REMOVE_NODE_PROPERTY:
                     break;
-                case Container.OP_SET_CONTAINER_CLUSTER:
+                case Node.OP_ADD_NODE_CHILD_NODE:
+                case Node.OP_REMOVE_NODE_CHILD_NODE:
                     break;
-                case Container.OP_ADD_CONTAINER_CHILD_CONTAINER:
-                case Container.OP_REMOVE_CONTAINER_CHILD_CONTAINER:
-                    break;
-                case Container.OP_ADD_CONTAINER_GATE:
-                case Container.OP_REMOVE_CONTAINER_GATE:
-                    break;
-                case Container.OP_ADD_CONTAINER_NODE:
-                case Container.OP_REMOVE_CONTAINER_NODE:
-                    break;
-                case Container.OP_ADD_CONTAINER_PROPERTY:
-                case Container.OP_REMOVE_CONTAINER_PROPERTY:
+                case Node.OP_ADD_TWIN_NODE:
+                case Node.OP_REMOVE_TWIN_NODE:
                     break;
                 case MappingSce.GLOBAL_OPERATION_NOT_DEFINED:
                     message.put(MomMsgTranslator.MSG_RC, 1);
@@ -91,6 +80,7 @@ public class ContainerEp {
                     message.put(MomMsgTranslator.MSG_ERR, "Unknown operation (" + operation + ") ! ");
                     break;
             }
+
             return message;
         }
     }
@@ -98,7 +88,7 @@ public class ContainerEp {
     public static void start() {
         if (MappingMsgsrvMomSP.getSharedMoMConnection() != null && MappingMsgsrvMomSP.getSharedMoMConnection().isConnected())
             MappingMsgsrvMomSP.getSharedMoMConnection().getServiceFactory().requestService(
-                    ContainerSce.Q_MAPPING_CONTAINER_SERVICE, new ContainerWorker()
+                    NodeSce.Q_MAPPING_CONTAINER_SERVICE, new NodeWorker()
             );
     }
 }

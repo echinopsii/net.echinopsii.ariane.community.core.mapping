@@ -25,11 +25,18 @@ import java.util.HashMap;
 import java.util.Set;
 
 public interface Endpoint {
-	String EP_ID_TOKEN = MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE+"ID";
-	String EP_URL_TOKEN = MappingDSGraphPropertyNames.DD_ENDPOINT_URL_KEY;
-	String EP_PNODEID_TOKEN = MappingDSGraphPropertyNames.DD_ENDPOINT_PNODE_KEY+"ID";
-	String EP_TWNEPID_TOKEN = MappingDSGraphPropertyNames.DD_ENDPOINT_EDGE_TWIN_KEY+"ID";
-	String EP_PRP_TOKEN = MappingDSGraphPropertyNames.DD_ENDPOINT_PROPS_KEY;
+	String TOKEN_EP_ID = MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE+"ID";
+	String TOKEN_EP_URL = MappingDSGraphPropertyNames.DD_ENDPOINT_URL_KEY;
+	String TOKEN_EP_PNODEID = MappingDSGraphPropertyNames.DD_ENDPOINT_PNODE_KEY+"ID";
+	String TOKEN_EP_TWNEPID = MappingDSGraphPropertyNames.DD_ENDPOINT_EDGE_TWIN_KEY+"ID";
+	String TOKEN_EP_PRP = MappingDSGraphPropertyNames.DD_ENDPOINT_PROPS_KEY;
+
+	String OP_SET_ENDPOINT_URL = "setEndpointURL";
+	String OP_SET_ENDPOINT_PARENT_NODE = "setEndpointParentNode";
+	String OP_ADD_ENDPOINT_PROPERTY = "addEndpointProperty";
+	String OP_REMOVE_ENDPOINT_PROPERTY = "removeEndpointProperty";
+	String OP_ADD_TWIN_ENDPOINT = "addTwinEndpoint";
+	String OP_REMOVE_TWIN_ENDPOINT = "removeTwinEndpoint";
 
 	String getEndpointID();
 	void   setEndpointID(String ID);

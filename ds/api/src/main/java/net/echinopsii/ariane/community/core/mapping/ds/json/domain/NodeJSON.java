@@ -44,7 +44,7 @@ public class NodeJSON {
 
     private static void nodeProps2JSON(Node node, JsonGenerator jgenerator) throws JsonGenerationException, IOException {
         if (node.getNodeProperties()!=null && node.getNodeProperties().size()!=0) {
-            jgenerator.writeObjectFieldStart(Node.ND_PRP_TOKEN);
+            jgenerator.writeObjectFieldStart(Node.TOKEN_ND_PRP);
             PropertiesJSON.propertiesToJSON(node.getNodeProperties(), jgenerator);
             jgenerator.writeEndObject();
         }
@@ -52,12 +52,12 @@ public class NodeJSON {
 
     public static void node2MapJSON(Node node, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeStartObject();
-        jgenerator.writeStringField(Node.ND_ID_TOKEN, node.getNodeID());
-        jgenerator.writeStringField(Node.ND_NAME_TOKEN, node.getNodeName());
-        jgenerator.writeNumberField(Node.ND_DEPTH_TOKEN, node.getNodeDepth());
-        jgenerator.writeStringField(Node.ND_CONID_TOKEN, node.getNodeContainer().getContainerID());
+        jgenerator.writeStringField(Node.TOKEN_ND_ID, node.getNodeID());
+        jgenerator.writeStringField(Node.TOKEN_ND_NAME, node.getNodeName());
+        jgenerator.writeNumberField(Node.TOKEN_ND_DEPTH, node.getNodeDepth());
+        jgenerator.writeStringField(Node.TOKEN_ND_CONID, node.getNodeContainer().getContainerID());
         if (node.getNodeParentNode()!=null)
-            jgenerator.writeStringField(Node.ND_PNDID_TOKEN, node.getNodeParentNode().getNodeID());
+            jgenerator.writeStringField(Node.TOKEN_ND_PNDID, node.getNodeParentNode().getNodeID());
         if (node.getNodeProperties() != null) {
             nodeProps2JSON(node, jgenerator);
         }
@@ -65,23 +65,23 @@ public class NodeJSON {
     }
 
     public static void node2JSON(Node node, JsonGenerator jgenerator) throws IOException {
-        jgenerator.writeStringField(Node.ND_ID_TOKEN, node.getNodeID());
-        jgenerator.writeStringField(Node.ND_NAME_TOKEN, node.getNodeName());
-        jgenerator.writeNumberField(Node.ND_DEPTH_TOKEN, node.getNodeDepth());
-        jgenerator.writeStringField(Node.ND_CONID_TOKEN, node.getNodeContainer().getContainerID());
+        jgenerator.writeStringField(Node.TOKEN_ND_ID, node.getNodeID());
+        jgenerator.writeStringField(Node.TOKEN_ND_NAME, node.getNodeName());
+        jgenerator.writeNumberField(Node.TOKEN_ND_DEPTH, node.getNodeDepth());
+        jgenerator.writeStringField(Node.TOKEN_ND_CONID, node.getNodeContainer().getContainerID());
         if (node.getNodeParentNode()!=null)
-            jgenerator.writeStringField(Node.ND_PNDID_TOKEN, node.getNodeParentNode().getNodeID());
+            jgenerator.writeStringField(Node.TOKEN_ND_PNDID, node.getNodeParentNode().getNodeID());
 
-        jgenerator.writeArrayFieldStart(Node.ND_CNDID_TOKEN);
+        jgenerator.writeArrayFieldStart(Node.TOKEN_ND_CNDID);
         for (Node child : node.getNodeChildNodes())
             jgenerator.writeString(child.getNodeID());
         jgenerator.writeEndArray();
 
-        jgenerator.writeArrayFieldStart(Node.ND_TWNID_TOKEN);
+        jgenerator.writeArrayFieldStart(Node.TOKEN_ND_TWNID);
         for (Node twin : node.getTwinNodes()) jgenerator.writeString(twin.getNodeID());
         jgenerator.writeEndArray();
 
-        jgenerator.writeArrayFieldStart(Node.ND_EPSID_TOKEN);
+        jgenerator.writeArrayFieldStart(Node.TOKEN_ND_EPSID);
         for (Endpoint ep : node.getNodeEndpoints()) jgenerator.writeString(ep.getEndpointID());
         jgenerator.writeEndArray();
 

@@ -36,11 +36,11 @@ public class LinkJSON {
 
     public static void link2JSON(Link link, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeStartObject();
-        jgenerator.writeStringField(Link.LK_ID_TOKEN, link.getLinkID());
-        jgenerator.writeStringField(Link.LK_SEP_TOKEN, link.getLinkEndpointSource().getEndpointID());
+        jgenerator.writeStringField(Link.TOKEN_LK_ID, link.getLinkID());
+        jgenerator.writeStringField(Link.TOKEN_LK_SEP, link.getLinkEndpointSource().getEndpointID());
         if (link.getLinkEndpointTarget()!=null)
-            jgenerator.writeStringField(Link.LK_TEP_TOKEN, link.getLinkEndpointTarget().getEndpointID());
-        jgenerator.writeStringField(Link.LK_TRP_TOKEN, link.getLinkTransport().getTransportID());
+            jgenerator.writeStringField(Link.TOKEN_LK_TEP, link.getLinkEndpointTarget().getEndpointID());
+        jgenerator.writeStringField(Link.TOKEN_LK_TRP, link.getLinkTransport().getTransportID());
         jgenerator.writeEndObject();
     }
 

@@ -23,8 +23,8 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 
 public interface Gate extends Node {
-	String GT_ADMPEP_TOKEN = MappingDSGraphPropertyNames.DD_GATE_PAEP_KEY+"ID";
-	String GT_NODE_TOKEN   = MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE;
+	String TOKEN_GT_ADMPEP = MappingDSGraphPropertyNames.DD_GATE_PAEP_KEY+"ID";
+	String TOKEN_GT_NODE = MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE;
 
 	boolean isAdminPrimary();
 	

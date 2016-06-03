@@ -30,21 +30,21 @@ public abstract class SProxClusterSceAbs<CL extends Cluster> implements SProxClu
     public CL createCluster(Session session, String clusterName) throws MappingDSException {
         CL ret = null;
         if (session != null && session.isRunning())
-            ret = (CL) session.execute(this, ClusterSce.CLUSTER_SCE_OP_CREATE, new Object[]{clusterName});
+            ret = (CL) session.execute(this, ClusterSce.OP_CREATE_CLUSTER, new Object[]{clusterName});
         return ret;
     }
 
     @Override
     public void deleteCluster(Session session, String clusterName) throws MappingDSException {
         if (session!=null && session.isRunning())
-            session.execute(this, ClusterSce.CLUSTER_SCE_OP_DELETE, new Object[]{clusterName});
+            session.execute(this, ClusterSce.OP_DELETE_CLUSTER, new Object[]{clusterName});
     }
 
     @Override
     public CL getCluster(Session session, String clusterID) throws MappingDSException {
         CL ret = null;
         if (session != null && session.isRunning())
-            ret = (CL) session.execute(this, ClusterSce.CLUSTER_SCE_OP_GET, new Object[]{clusterID});
+            ret = (CL) session.execute(this, ClusterSce.OP_GET_CLUSTER, new Object[]{clusterID});
         return ret;
     }
 
@@ -52,7 +52,7 @@ public abstract class SProxClusterSceAbs<CL extends Cluster> implements SProxClu
     public CL getClusterByName(Session session, String clusterName) throws MappingDSException {
         CL ret = null;
         if (session != null && session.isRunning())
-            ret = (CL) session.execute(this, ClusterSce.CLUSTER_SCE_OP_GET_BY_NAME, new Object[]{clusterName});
+            ret = (CL) session.execute(this, ClusterSce.OP_GET_CLUSTER_BY_NAME, new Object[]{clusterName});
         return ret;
     }
 
@@ -60,7 +60,7 @@ public abstract class SProxClusterSceAbs<CL extends Cluster> implements SProxClu
     public Set<CL> getClusters(Session session, String selector) throws MappingDSException {
         Set<CL> ret = null;
         if (session != null && session.isRunning())
-            ret = (Set<CL>)session.execute(this, ClusterSce.CLUSTER_SCE_OP_GETS, new Object[]{selector});
+            ret = (Set<CL>)session.execute(this, ClusterSce.OP_GET_CLUSTERS, new Object[]{selector});
         return ret;
     }
 }

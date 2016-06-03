@@ -29,6 +29,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,10 +38,10 @@ public class ClusterJSON {
 
     public static void cluster2JSON(Cluster cluster, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeStartObject();
-        jgenerator.writeStringField(Cluster.CL_ID_TOKEN, cluster.getClusterID());
-        jgenerator.writeStringField(Cluster.CL_NAME_TOKEN, cluster.getClusterName());
+        jgenerator.writeStringField(Cluster.TOKEN_CL_ID, cluster.getClusterID());
+        jgenerator.writeStringField(Cluster.TOKEN_CL_NAME, cluster.getClusterName());
 
-        jgenerator.writeArrayFieldStart(Cluster.CL_CONT_TOKEN);
+        jgenerator.writeArrayFieldStart(Cluster.TOKEN_CL_CONT);
         for (Container container : cluster.getClusterContainers()) jgenerator.writeString(container.getContainerID());
         jgenerator.writeEndArray();
 
@@ -93,6 +94,25 @@ public class ClusterJSON {
         }
     }
 
+    public static class JSONDeserializedClusters {
+        JSONDeserializedCluster[] clusters;
+
+        public JSONDeserializedCluster[] getClusters() {
+            return clusters;
+        }
+
+        public void setClusters(JSONDeserializedCluster[] clusters) {
+            this.clusters = clusters;
+        }
+
+        public Set<JSONDeserializedCluster> toSet() {
+            HashSet<JSONDeserializedCluster> ret = new HashSet<>();
+            if (clusters!=null)
+                Collections.addAll(ret, clusters);
+            return ret;
+        }
+    }
+
     public static JSONDeserializedCluster JSON2Cluster(String payload) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -103,8 +123,6 @@ public class ClusterJSON {
         HashSet<JSONDeserializedCluster> ret = new HashSet<>();
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        JSONDeserializedCluster[] clusters = mapper.readValue(payload, JSONDeserializedCluster[].class);
-        for(JSONDeserializedCluster cluster : clusters) ret.add(cluster);
-        return ret;
+        return mapper.readValue(payload, JSONDeserializedClusters.class).toSet();
     }
 }

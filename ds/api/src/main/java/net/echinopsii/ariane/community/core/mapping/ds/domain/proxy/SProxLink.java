@@ -26,10 +26,6 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
 public interface SProxLink extends Link {
-	String SET_LINK_TRANSPORT = "setLinkTransport";
-	String SET_LINK_ENDPOINT_SOURCE = "setLinkEndpointSource";
-	String SET_LINK_ENDPOINT_TARGET = "setLinkEndpointTarget";
-
 	void setLinkTransport(Session session, Transport transport) throws MappingDSException;
 	void setLinkEndpointSource(Session session, Endpoint source) throws MappingDSException;
 	void setLinkEndpointTarget(Session session, Endpoint target) throws MappingDSException;

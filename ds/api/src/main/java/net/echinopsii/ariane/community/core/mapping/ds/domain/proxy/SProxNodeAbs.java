@@ -31,38 +31,38 @@ public abstract class SProxNodeAbs extends NodeAbs implements SProxNode {
     @Override
     public void setNodeName(Session session, String name) throws MappingDSException {
         if (session!=null && session.isRunning())
-            session.execute(this, SET_NODE_NAME, new Object[]{name});
+            session.execute(this, OP_SET_NODE_NAME, new Object[]{name});
     }
 
     @Override
     public void setNodeContainer(Session session, Container container) throws MappingDSException {
         if (session!=null && session.isRunning())
-            session.execute(this, SET_NODE_CONTAINER, new Object[]{container});
+            session.execute(this, OP_SET_NODE_CONTAINER, new Object[]{container});
     }
 
     @Override
     public void addNodeProperty(Session session, String propertyKey, Object value) throws MappingDSException {
         if (session!=null && session.isRunning())
-            session.execute(this, ADD_NODE_PROPERTY, new Object[]{propertyKey, value});
+            session.execute(this, OP_ADD_NODE_PROPERTY, new Object[]{propertyKey, value});
     }
 
     @Override
     public void removeNodeProperty(Session session, String propertyKey) throws MappingDSException {
         if (session!=null && session.isRunning())
-            session.execute(this, REMOVE_NODE_PROPERTY, new Object[]{propertyKey});
+            session.execute(this, OP_REMOVE_NODE_PROPERTY, new Object[]{propertyKey});
     }
 
     @Override
     public void setNodeParentNode(Session session, Node node) throws MappingDSException {
         if (session!=null && session.isRunning())
-            session.execute(this, SET_NODE_PARENT_NODE, new Object[]{node});
+            session.execute(this, OP_SET_NODE_PARENT_NODE, new Object[]{node});
     }
 
     @Override
     public boolean addNodeChildNode(Session session, Node node) throws MappingDSException {
         boolean ret = false;
         if (session!=null && session.isRunning())
-            ret = (boolean) session.execute(this, ADD_NODE_CHILD_NODE, new Object[]{node});
+            ret = (boolean) session.execute(this, OP_ADD_NODE_CHILD_NODE, new Object[]{node});
         return ret;
     }
 
@@ -70,7 +70,7 @@ public abstract class SProxNodeAbs extends NodeAbs implements SProxNode {
     public boolean removeNodeChildNode(Session session, Node node) throws MappingDSException {
         boolean ret = false;
         if (session!=null && session.isRunning())
-            ret = (boolean) session.execute(this, REMOVE_NODE_CHILD_NODE, new Object[]{node});
+            ret = (boolean) session.execute(this, OP_REMOVE_NODE_CHILD_NODE, new Object[]{node});
         return ret;
     }
 
@@ -78,7 +78,7 @@ public abstract class SProxNodeAbs extends NodeAbs implements SProxNode {
     public boolean addTwinNode(Session session, Node node) throws MappingDSException {
         boolean ret = false;
         if (session!=null && session.isRunning())
-            ret = (boolean) session.execute(this, ADD_TWIN_NODE, new Object[]{node});
+            ret = (boolean) session.execute(this, OP_ADD_TWIN_NODE, new Object[]{node});
         return ret;
     }
 
@@ -86,7 +86,7 @@ public abstract class SProxNodeAbs extends NodeAbs implements SProxNode {
     public boolean removeTwinNode(Session session, Node node) throws MappingDSException {
         boolean ret = false;
         if (session!=null && session.isRunning())
-            ret = (boolean) session.execute(this, REMOVE_TWIN_NODE, new Object[]{node});
+            ret = (boolean) session.execute(this, OP_REMOVE_TWIN_NODE, new Object[]{node});
         return ret;
     }
 
@@ -94,7 +94,7 @@ public abstract class SProxNodeAbs extends NodeAbs implements SProxNode {
     public boolean addEndpoint(Session session, Endpoint endpoint) throws MappingDSException {
         boolean ret = false;
         if (session!=null && session.isRunning())
-            ret = (boolean) session.execute(this, ADD_ENDPOINT, new Object[]{endpoint});
+            ret = (boolean) session.execute(this, OP_ADD_ENDPOINT, new Object[]{endpoint});
         return ret;
     }
 
@@ -102,7 +102,7 @@ public abstract class SProxNodeAbs extends NodeAbs implements SProxNode {
     public boolean removeEndpoint(Session session, Endpoint endpoint) throws MappingDSException {
         boolean ret = false;
         if (session!=null && session.isRunning())
-            ret = (boolean) session.execute(this, REMOVE_ENDPOINT, new Object[]{endpoint});
+            ret = (boolean) session.execute(this, OP_REMOVE_ENDPOINT, new Object[]{endpoint});
         return ret;
     }
 

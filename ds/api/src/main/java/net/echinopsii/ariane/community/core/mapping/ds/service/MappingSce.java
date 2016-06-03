@@ -29,14 +29,19 @@ import java.util.Dictionary;
 import java.util.Set;
 
 public interface MappingSce {
-    String MAPPING_SCE_SERVICE_Q = "ARIANE_MAPPING_SERVICE_Q";
+    String Q_MAPPING_SCE_SERVICE = "ARIANE_MAPPING_SERVICE_Q";
 
-    String MAPPING_SCE_OPERATION_FDN = "OPERATION";
-    String MAPPING_SCE_OPERATION_NOT_DEFINED = "NOT_DEFINED";
+    String GLOBAL_OPERATION_FDN = "OPERATION";
+    String GLOBAL_OPERATION_NOT_DEFINED = "NOT_DEFINED";
 
-    String MAPPING_SCE_PARAM_OBJ_ID = "ID";
-    String MAPPING_SCE_PARAM_PAYLOAD = "payload";
-    String MAPPING_SCE_PARAM_SELECTOR = "selector";
+    String GLOBAL_PARAM_OBJ_ID = "ID";
+    String GLOBAL_PARAM_PAYLOAD = "payload";
+    String GLOBAL_PARAM_SELECTOR = "selector";
+
+    int MAPPING_SCE_RET_SUCCESS = 0;
+    int MAPPING_SCE_RET_BAD_REQ = 400;
+    int MAPPING_SCE_RET_NOT_FOUND = 404;
+    int MAPPING_SCE_RET_SERVER_ERR = 500;
 
     MapSce getMapSce();
 

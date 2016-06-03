@@ -26,17 +26,17 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import java.util.Set;
 
 public interface ContainerSce<C extends Container> {
-    String MAPPING_CONTAINER_SERVICE_Q = "ARIANE_MAPPING_CONTAINER_SERVICE_Q";
+    String Q_MAPPING_CONTAINER_SERVICE = "ARIANE_MAPPING_CONTAINER_SERVICE_Q";
 
-    String CONTAINER_SCE_OP_CREATE = "createContainer";
-    String CONTAINER_SCE_OP_DELETE = "deleteContainer";
-    String CONTAINER_SCE_OP_GET = "getContainer";
-    String CONTAINER_SCE_OP_GET_BY_PRIMARY_ADMIN_URL = "getContainerByPrimaryAdminURL";
-    String CONTAINER_SCE_OP_GETS = "getContainers";
+    String OP_CREATE_CONTAINER = "createContainer";
+    String OP_DELETE_CONTAINER = "deleteContainer";
+    String OP_GET_CONTAINER = "getContainer";
+    String OP_GET_CONTAINER_BY_PRIMARY_ADMIN_URL = "getContainerByPrimaryAdminURL";
+    String OP_GET_CONTAINERS = "getContainers";
 
-    String CONTAINER_SCE_PARAM_CONTAINER_NAME = "name";
-    String CONTAINER_SCE_PARAM_CONTAINER_PAURL = "primaryAdminURL";
-    String CONTAINER_SCE_PARAM_CONTAINER_PAG_NAME = "primaryAdminGateName";
+    String PARAM_CONTAINER_NAME = "name";
+    String PARAM_CONTAINER_PAURL = "primaryAdminURL";
+    String PARAM_CONTAINER_PAG_NAME = "primaryAdminGateName";
 
 
     C createContainer(String primaryAdminURL, String primaryAdminGateName) throws MappingDSException;

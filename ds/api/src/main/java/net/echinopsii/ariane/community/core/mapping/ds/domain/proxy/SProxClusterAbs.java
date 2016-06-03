@@ -29,14 +29,14 @@ public abstract class SProxClusterAbs extends ClusterAbs implements SProxCluster
     @Override
     public void setClusterName(Session session, String name) throws MappingDSException {
         if (session!=null && session.isRunning())
-            session.execute(this, CLUSTER_OP_SET_CLUSTER_NAME, new Object[]{name});
+            session.execute(this, OP_SET_CLUSTER_NAME, new Object[]{name});
     }
 
     @Override
     public boolean addClusterContainer(Session session, Container container) throws MappingDSException {
         boolean ret = false;
         if (session!=null && session.isRunning())
-            ret = (boolean)session.execute(this, CLUSTER_OP_ADD_CLUSTER_CONTAINER, new Object[]{container});
+            ret = (boolean)session.execute(this, OP_ADD_CLUSTER_CONTAINER, new Object[]{container});
         return ret;
     }
 
@@ -44,7 +44,7 @@ public abstract class SProxClusterAbs extends ClusterAbs implements SProxCluster
     public boolean removeClusterContainer(Session session, Container container) throws MappingDSException {
         boolean ret = false;
         if (session != null && session.isRunning())
-            ret = (boolean) session.execute(this, CLUSTER_OP_REMOVE_CLUSTER_CONTAINER, new Object[]{container});
+            ret = (boolean) session.execute(this, OP_REMOVE_CLUSTER_CONTAINER, new Object[]{container});
         return ret;
     }
 }

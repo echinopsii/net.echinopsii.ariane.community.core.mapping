@@ -43,7 +43,7 @@ public class TransportJSON {
             throws IOException {
         HashMap<String, Object> props = transport.getTransportProperties();
         if (props != null && props.size()!=0) {
-            jgenerator.writeObjectFieldStart(Transport.TP_PRP_TOKEN);
+            jgenerator.writeObjectFieldStart(Transport.TOKEN_TP_PRP);
             PropertiesJSON.propertiesToJSON(props, jgenerator);
             jgenerator.writeEndObject();
         }
@@ -51,8 +51,8 @@ public class TransportJSON {
 
     public static void transport2JSON(Transport transport, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeStartObject();
-        jgenerator.writeStringField(Transport.TP_ID_TOKEN, transport.getTransportID());
-        jgenerator.writeStringField(Transport.TP_NAME_TOKEN, transport.getTransportName());
+        jgenerator.writeStringField(Transport.TOKEN_TP_ID, transport.getTransportID());
+        jgenerator.writeStringField(Transport.TOKEN_TP_NAME, transport.getTransportName());
         transportProps2JSON(transport, jgenerator);
         jgenerator.writeEndObject();
     }

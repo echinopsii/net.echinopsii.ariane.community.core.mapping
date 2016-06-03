@@ -25,9 +25,13 @@ import java.util.Set;
 
 public interface Cluster {
 
-	String CL_ID_TOKEN   = MappingDSGraphPropertyNames.DD_TYPE_CLUSTER_VALUE+"ID";
-	String CL_NAME_TOKEN = MappingDSGraphPropertyNames.DD_CLUSTER_NAME_KEY;
-	String CL_CONT_TOKEN = MappingDSGraphPropertyNames.DD_CLUSTER_EDGE_CONT_KEY+"ID";
+	String TOKEN_CL_ID = MappingDSGraphPropertyNames.DD_TYPE_CLUSTER_VALUE+"ID";
+	String TOKEN_CL_NAME = MappingDSGraphPropertyNames.DD_CLUSTER_NAME_KEY;
+	String TOKEN_CL_CONT = MappingDSGraphPropertyNames.DD_CLUSTER_EDGE_CONT_KEY+"ID";
+
+	String OP_SET_CLUSTER_NAME = "setClusterName";
+	String OP_ADD_CLUSTER_CONTAINER = "addClusterContainer";
+	String OP_REMOVE_CLUSTER_CONTAINER = "removeClusterContainer";
 
 	String getClusterID();
 	void   setClusterID(String ID);

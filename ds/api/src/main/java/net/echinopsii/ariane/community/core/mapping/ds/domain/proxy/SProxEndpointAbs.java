@@ -30,32 +30,32 @@ public abstract class SProxEndpointAbs extends EndpointAbs implements SProxEndpo
     @Override
     public void setEndpointURL(Session session, String url) throws MappingDSException {
         if (session!=null && session.isRunning())
-            session.execute(this, SET_ENDPOINT_URL, new Object[]{url});
+            session.execute(this, OP_SET_ENDPOINT_URL, new Object[]{url});
     }
 
     @Override
     public void setEndpointParentNode(Session session, Node node) throws MappingDSException {
         if (session!=null && session.isRunning())
-            session.execute(this, SET_ENDPOINT_PARENT_NODE, new Object[]{node});
+            session.execute(this, OP_SET_ENDPOINT_PARENT_NODE, new Object[]{node});
     }
 
     @Override
     public void addEndpointProperty(Session session, String propertyKey, Object value) throws MappingDSException {
         if (session!=null && session.isRunning())
-            session.execute(this, ADD_ENDPOINT_PROPERTY, new Object[]{propertyKey, value});
+            session.execute(this, OP_ADD_ENDPOINT_PROPERTY, new Object[]{propertyKey, value});
     }
 
     @Override
     public void removeEndpointProperty(Session session, String propertyKey) throws MappingDSException {
         if (session!=null && session.isRunning())
-            session.execute(this, REMOVE_ENDPOINT_PROPERTY, new Object[]{propertyKey});
+            session.execute(this, OP_REMOVE_ENDPOINT_PROPERTY, new Object[]{propertyKey});
     }
 
     @Override
     public boolean addTwinEndpoint(Session session, Endpoint endpoint) throws MappingDSException {
         boolean ret = false;
         if (session!=null && session.isRunning())
-            ret = (boolean) session.execute(this, ADD_TWIN_ENDPOINT, new Object[]{endpoint});
+            ret = (boolean) session.execute(this, OP_ADD_TWIN_ENDPOINT, new Object[]{endpoint});
         return ret;
     }
 
@@ -63,7 +63,7 @@ public abstract class SProxEndpointAbs extends EndpointAbs implements SProxEndpo
     public boolean removeTwinEndpoint(Session session, Endpoint endpoint) throws MappingDSException {
         boolean ret = false;
         if (session!=null && session.isRunning())
-            ret = (boolean) session.execute(this, REMOVE_TWIN_ENDPOINT, new Object[]{endpoint});
+            ret = (boolean) session.execute(this, OP_REMOVE_TWIN_ENDPOINT, new Object[]{endpoint});
         return ret;
     }
 

@@ -28,19 +28,19 @@ public abstract class SProxTransportAbs extends TransportAbs implements SProxTra
     @Override
     public void setTransportName(Session session, String name) throws MappingDSException {
         if (session!=null && session.isRunning())
-            session.execute(this, SET_TRANSPORT_NAME, new Object[]{name});
+            session.execute(this, OP_SET_TRANSPORT_NAME, new Object[]{name});
     }
 
     @Override
     public void addTransportProperty(Session session, String propertyKey, Object value) throws MappingDSException {
         if (session!=null && session.isRunning())
-            session.execute(this, ADD_TRANSPORT_PROPERTY, new Object[]{propertyKey, value});
+            session.execute(this, OP_ADD_TRANSPORT_PROPERTY, new Object[]{propertyKey, value});
     }
 
     @Override
     public void removeTransportProperty(Session session, String propertyKey) throws MappingDSException {
         if (session!=null && session.isRunning())
-            session.execute(this, REMOVE_TRANSPORT_PROPERTY, new Object[]{propertyKey});
+            session.execute(this, OP_REMOVE_TRANSPORT_PROPERTY, new Object[]{propertyKey});
     }
 
 

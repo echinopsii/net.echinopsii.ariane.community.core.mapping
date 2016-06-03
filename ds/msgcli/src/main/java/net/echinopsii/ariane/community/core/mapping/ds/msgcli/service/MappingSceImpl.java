@@ -42,7 +42,7 @@ public class MappingSceImpl extends SProxMappingSceAbs<SessionImpl, SessionRegis
     private final static Logger log = LoggerFactory.getLogger(MappingSceImpl.class);
 
     //private MapSceImpl mapSce = new MapSceImpl(this);
-    private ClusterSceImpl clusterSce = new ClusterSceImpl(this);
+    private ClusterSceImpl clusterSce = new ClusterSceImpl();
     //private ContainerSceImpl containerSce = new ContainerSceImpl(this);
     //private GateSceImpl gateSce = new GateSceImpl(this);
     //private NodeSceImpl nodeSce = new NodeSceImpl(this);
@@ -86,7 +86,7 @@ public class MappingSceImpl extends SProxMappingSceAbs<SessionImpl, SessionRegis
     @Override
     public Session openSession(String clientID) {
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.MAPPING_SCE_OPERATION_FDN, SProxMappingSce.SESSION_MGR_OP_OPEN);
+        message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxMappingSce.SESSION_MGR_OP_OPEN);
         message.put(SProxMappingSce.SESSION_MGR_PARAM_CLIENT_ID, clientID);
         Session session = new SessionImpl();
         MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, Session.MAPPING_SESSION_SERVICE_Q, ((SessionImpl)session).getSessionReplyWorker());
@@ -108,7 +108,7 @@ public class MappingSceImpl extends SProxMappingSceAbs<SessionImpl, SessionRegis
     @Override
     public Session closeSession(Session toClose) {
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.MAPPING_SCE_OPERATION_FDN, SProxMappingSce.SESSION_MGR_OP_CLOSE);
+        message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxMappingSce.SESSION_MGR_OP_CLOSE);
         message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, toClose.getSessionID());
         MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, Session.MAPPING_SESSION_SERVICE_Q, ((SessionImpl) toClose).getSessionReplyWorker());
         if (!toClose.isRunning()) {

@@ -26,15 +26,15 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import java.util.Set;
 
 public interface ClusterSce<CL extends Cluster> {
-    String MAPPING_CLUSTER_SERVICE_Q = "ARIANE_MAPPING_CLUSTER_SERVICE_Q";
+    String Q_MAPPING_CLUSTER_SERVICE = "ARIANE_MAPPING_CLUSTER_SERVICE_Q";
 
-    String CLUSTER_SCE_OP_CREATE = "createCluster";
-    String CLUSTER_SCE_OP_DELETE = "deleteCluster";
-    String CLUSTER_SCE_OP_GET = "getCluster";
-    String CLUSTER_SCE_OP_GET_BY_NAME = "getClusterByName";
-    String CLUSTER_SCE_OP_GETS = "getClusters";
+    String OP_CREATE_CLUSTER = "createCluster";
+    String OP_DELETE_CLUSTER = "deleteCluster";
+    String OP_GET_CLUSTER = "getCluster";
+    String OP_GET_CLUSTER_BY_NAME = "getClusterByName";
+    String OP_GET_CLUSTERS = "getClusters";
 
-    String CLUSTER_SCE_PARAM_CLUSTER_NAME = "name";
+    String PARAM_CLUSTER_NAME = "name";
 
 	CL   createCluster(String clusterName) throws MappingDSException;
 

@@ -193,14 +193,14 @@ public class ClusterEp {
 
     @GET
     @Path("/get")
-    public Response getCluster(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID) String id,
+    public Response getCluster(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID) String id,
                                @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         return _displayCluster(id, sessionId);
     }
 
     @GET
     @Path("/create")
-    public Response createCluster(@QueryParam(ClusterSce.CLUSTER_SCE_PARAM_CLUSTER_NAME) String name,
+    public Response createCluster(@QueryParam(ClusterSce.PARAM_CLUSTER_NAME) String name,
                                   @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create cluster : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), name});
@@ -239,7 +239,7 @@ public class ClusterEp {
     }
 
     @POST
-    public Response postCluster(@QueryParam(MappingSce.MAPPING_SCE_PARAM_PAYLOAD) String payload,
+    public Response postCluster(@QueryParam(MappingSce.GLOBAL_PARAM_PAYLOAD) String payload,
                                 @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) throws IOException {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create container", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
@@ -281,7 +281,7 @@ public class ClusterEp {
 
     @GET
     @Path("/delete")
-    public Response deleteCluster(@QueryParam(ClusterSce.CLUSTER_SCE_PARAM_CLUSTER_NAME) String name,
+    public Response deleteCluster(@QueryParam(ClusterSce.PARAM_CLUSTER_NAME) String name,
                                   @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] delete cluster : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), name});
@@ -307,8 +307,8 @@ public class ClusterEp {
 
     @GET
     @Path("/update/name")
-    public Response setClusterName(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID)String id,
-                                   @QueryParam(ClusterSce.CLUSTER_SCE_PARAM_CLUSTER_NAME)String name,
+    public Response setClusterName(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID)String id,
+                                   @QueryParam(ClusterSce.PARAM_CLUSTER_NAME)String name,
                                    @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update cluster name: ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name});
@@ -340,8 +340,8 @@ public class ClusterEp {
 
     @GET
     @Path("/update/containers/add")
-    public Response addClusterContainer(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID)String id,
-                                        @QueryParam(Container.CT_ID_TOKEN)String containerID,
+    public Response addClusterContainer(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID)String id,
+                                        @QueryParam(Container.TOKEN_CT_ID)String containerID,
                                         @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] add container to cluster : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, containerID});
@@ -379,8 +379,8 @@ public class ClusterEp {
 
     @GET
     @Path("/update/containers/delete")
-    public Response deleteClusterContainer(@QueryParam(MappingSce.MAPPING_SCE_PARAM_OBJ_ID)String id,
-                                           @QueryParam(Container.CT_ID_TOKEN)String containerID,
+    public Response deleteClusterContainer(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID)String id,
+                                           @QueryParam(Container.TOKEN_CT_ID)String containerID,
                                            @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] delete container from cluster : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, containerID});

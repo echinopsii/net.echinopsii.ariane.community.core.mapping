@@ -27,11 +27,6 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import java.util.Set;
 
 public interface SProxContainerSce<C extends Container> extends ContainerSce {
-    String CREATE_CONTAINER = "createContainer";
-    String DELETE_CONTAINER = "deleteContainer";
-    String GET_CONTAINER = "getContainer";
-    String GET_CONTAINER_BY_PAURL = "getContainerByPrimaryAdminURL";
-    String GET_CONTAINERS = "getContainers";
 
     C createContainer(Session session, String primaryAdminURL, String primaryAdminGateName) throws MappingDSException;
     C createContainer(Session session, String name, String primaryAdminURL, String primaryAdminGateName) throws MappingDSException;

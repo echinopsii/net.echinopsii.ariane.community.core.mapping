@@ -36,13 +36,13 @@ public class SessionEp {
     static class SessionWorker implements AppMsgWorker {
         @Override
         public Map<String, Object> apply(Map<String, Object> message) {
-            Object oOperation = message.get(MappingSce.MAPPING_SCE_OPERATION_FDN);
+            Object oOperation = message.get(MappingSce.GLOBAL_OPERATION_FDN);
             String operation;
             String clientID;
             String sessionID;
 
             if (oOperation==null)
-                operation = MappingSce.MAPPING_SCE_OPERATION_NOT_DEFINED;
+                operation = MappingSce.GLOBAL_OPERATION_NOT_DEFINED;
             else
                 operation = oOperation.toString();
 
@@ -135,7 +135,7 @@ public class SessionEp {
                         message.put(MomMsgTranslator.MSG_ERR, "Internal server error : " + e.getMessage());
                     }
                     break;
-                case MappingSce.MAPPING_SCE_OPERATION_NOT_DEFINED:
+                case MappingSce.GLOBAL_OPERATION_NOT_DEFINED:
                     message.put(MomMsgTranslator.MSG_RC, 1);
                     message.put(MomMsgTranslator.MSG_ERR, "Operation not defined ! ");
                     break;

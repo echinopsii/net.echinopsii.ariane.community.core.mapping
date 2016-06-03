@@ -25,9 +25,13 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNam
 import java.util.HashMap;
 
 public interface Transport {
-	String TP_ID_TOKEN   = MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE+"ID";
-	String TP_NAME_TOKEN = MappingDSGraphPropertyNames.DD_TRANSPORT_NAME_KEY;
-	String TP_PRP_TOKEN  = MappingDSGraphPropertyNames.DD_TRANSPORT_PROPS_KEY;
+	String TOKEN_TP_ID = MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE+"ID";
+	String TOKEN_TP_NAME = MappingDSGraphPropertyNames.DD_TRANSPORT_NAME_KEY;
+	String TOKEN_TP_PRP = MappingDSGraphPropertyNames.DD_TRANSPORT_PROPS_KEY;
+
+	String OP_SET_TRANSPORT_NAME = "setTransportName";
+	String OP_ADD_TRANSPORT_PROPERTY = "addTransportProperty";
+	String OP_REMOVE_TRANSPORT_PROPERTY = "removeTransportProperty";
 
 	String  getTransportID();
 	void    setTransportID(String ID);

@@ -29,21 +29,21 @@ public abstract class SProxNodeSceAbs<N extends Node> implements SProxNodeSce {
     public N createNode(Session session, String nodeName, String containerID, String parentNodeID) throws MappingDSException {
         N ret = null;
         if (session != null && session.isRunning())
-            ret = (N) session.execute(this, CREATE_NODE, new Object[]{nodeName, containerID, parentNodeID});
+            ret = (N) session.execute(this, OP_CREATE_NODE, new Object[]{nodeName, containerID, parentNodeID});
         return ret;
     }
 
     @Override
     public void deleteNode(Session session, String nodeID) throws MappingDSException {
         if (session != null && session.isRunning())
-            session.execute(this, DELETE_NODE, new Object[]{nodeID});
+            session.execute(this, OP_DELETE_NODE, new Object[]{nodeID});
     }
 
     @Override
     public N getNode(Session session, String id) throws MappingDSException {
         N ret = null;
         if (session != null && session.isRunning())
-            ret = (N) session.execute(this, GET_NODE, new Object[]{id});
+            ret = (N) session.execute(this, OP_GET_NODE, new Object[]{id});
         return ret;
     }
 
@@ -51,7 +51,7 @@ public abstract class SProxNodeSceAbs<N extends Node> implements SProxNodeSce {
     public N getNodeByEndpointURL(Session session, String endpointURL) throws MappingDSException {
         N ret = null;
         if (session != null && session.isRunning())
-            ret = (N) session.execute(this, GET_NODE_BY_EPURL, new Object[]{endpointURL});
+            ret = (N) session.execute(this, OP_GET_NODE_BY_EPURL, new Object[]{endpointURL});
         return ret;
     }
 
@@ -59,7 +59,7 @@ public abstract class SProxNodeSceAbs<N extends Node> implements SProxNodeSce {
     public N getNodeByName(Session session, Node parentNode, String nodeName) throws MappingDSException {
         N ret = null;
         if (session != null && session.isRunning())
-            ret = (N) session.execute(this, GET_NODE_BY_NAME, new Object[]{parentNode, nodeName});
+            ret = (N) session.execute(this, OP_GET_NODE_BY_NAME, new Object[]{parentNode, nodeName});
         return ret;
     }
 
@@ -67,7 +67,7 @@ public abstract class SProxNodeSceAbs<N extends Node> implements SProxNodeSce {
     public Set<N> getNodes(Session session, String key, Object value) throws MappingDSException {
         Set<N> ret = null;
         if (session != null && session.isRunning())
-            ret = (Set<N>) session.execute(this, GET_NODES, new Object[]{key, value});
+            ret = (Set<N>) session.execute(this, OP_GET_NODES, new Object[]{key, value});
         return ret;
     }
 
@@ -75,7 +75,7 @@ public abstract class SProxNodeSceAbs<N extends Node> implements SProxNodeSce {
     public Set<N> getNodes(Session session, String selector) throws MappingDSException {
         Set<N> ret = null;
         if (session != null && session.isRunning())
-            ret = (Set<N>) session.execute(this, GET_NODES, new Object[]{selector});
+            ret = (Set<N>) session.execute(this, OP_GET_NODES, new Object[]{selector});
         return ret;
     }
 

@@ -23,12 +23,18 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxClusterAbs;
-import net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.tools.SessionRegistryImpl;
-import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
+import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ClusterJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.msgcli.momsp.MappingMsgcliMomSP;
+import net.echinopsii.ariane.community.core.mapping.ds.service.ClusterSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxClusterSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
+import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +49,29 @@ public class ClusterImpl extends SProxClusterAbs {
 
         @Override
         public Map<String, Object> apply(Map<String, Object> message) {
-            return null;
+            if (cluster!=null) {
+                int rc = (int) message.get(MomMsgTranslator.MSG_RC);
+                if (rc == 0) {
+                    String body = null;
+                    if (message.get(MomMsgTranslator.MSG_BODY)!=null && message.get(MomMsgTranslator.MSG_BODY) instanceof String)
+                        body = (String) message.get(MomMsgTranslator.MSG_BODY);
+                    else if (message.get(MomMsgTranslator.MSG_BODY)!=null && message.get(MomMsgTranslator.MSG_BODY) instanceof byte[])
+                        body = new String((byte[])message.get(MomMsgTranslator.MSG_BODY));
+                    if (body!=null) {
+                        try {
+                            ClusterJSON.JSONDeserializedCluster jsonDeserializedCluster = ClusterJSON.JSON2Cluster(body);
+                            if (cluster.getClusterID() == null) {
+                                cluster.setClusterID(jsonDeserializedCluster.getClusterID());
+                                cluster.setClusterName(jsonDeserializedCluster.getClusterName());
+                                cluster.setClusterContainersID(jsonDeserializedCluster.getClusterContainersID());
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } else ClusterImpl.log.error("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
+            }
+            return message;
         }
     }
 
@@ -65,51 +93,70 @@ public class ClusterImpl extends SProxClusterAbs {
 
     @Override
     public void setClusterName(String name) throws MappingDSException {
-        String clientThreadName = Thread.currentThread().getName();
-        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
-        if (clientThreadSessionID!=null) {
-            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
-            if (session!=null) this.setClusterName(session, name);
-            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
-        } else {
-            // check change needs before requesting msg operation
-            if (super.getClusterName() == null || !super.getClusterName().equals(name)) {
-                //
-            }
-        }
+        if (super.getClusterID()!=null) {
+            String clientThreadName = Thread.currentThread().getName();
+            String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+
+            if (super.getClusterName()!=null && !super.getClusterName().equals(name)) {
+                Map<String, Object> message = new HashMap<>();
+                message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_SET_CLUSTER_NAME);
+                message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getClusterID());
+                message.put(SProxClusterSce.PARAM_CLUSTER_NAME, name);
+                if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+                Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ClusterSce.Q_MAPPING_CLUSTER_SERVICE, clusterReplyWorker);
+                if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.setClusterName(name);
+                else throw new MappingDSException("Ariane server raised an error... Check your logs !");
+            } else if (super.getClusterName() == null) super.setClusterName(name);
+        } else throw new MappingDSException("This cluster is not initialized !");
     }
 
     @Override
     public boolean addClusterContainer(Container container) throws MappingDSException {
-        boolean ret = false;
-        String clientThreadName = Thread.currentThread().getName();
-        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
-        if (clientThreadSessionID!=null) {
-            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
-            if (session!=null) ret = this.addClusterContainer(session, container);
-            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
-        } else {
-            if (container instanceof ContainerImpl) {
-                //
-            }
-        }
-        return ret;
+        if (super.getClusterID()!=null) {
+            String clientThreadName = Thread.currentThread().getName();
+            String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+            if (container.getContainerID()!=null) {
+                if (!this.clusterContainersID.contains(container.getContainerID())) {
+                    Map<String, Object> message = new HashMap<>();
+                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_ADD_CLUSTER_CONTAINER);
+                    message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getClusterID());
+                    message.put(Container.TOKEN_CT_ID, container.getContainerID());
+                    if (clientThreadSessionID != null)
+                        message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ClusterSce.Q_MAPPING_CLUSTER_SERVICE, clusterReplyWorker);
+                    if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
+                        this.clusterContainersID.add(container.getContainerID());
+                        super.addClusterContainer(container);
+                        container.setContainerCluster(this);
+                    } else throw new MappingDSException("Ariane server raised an error... Check your logs !");
+                }
+            } else throw new MappingDSException("Provided container is not initialized !");
+        } else throw new MappingDSException("This cluster is not initialized !");
+        return true;
     }
 
     @Override
     public boolean removeClusterContainer(Container container) throws MappingDSException {
-        boolean ret = false;
-        String clientThreadName = Thread.currentThread().getName();
-        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
-        if (clientThreadSessionID!=null) {
-            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
-            if (session!=null) ret = this.removeClusterContainer(session, container);
-            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
-        } else {
-            if (container instanceof ContainerImpl) {
-                //
-            }
-        }
-        return ret;
+        if (super.getClusterID()!=null) {
+            String clientThreadName = Thread.currentThread().getName();
+            String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+            if (container.getContainerID()!=null) {
+                if (this.clusterContainersID.contains(container.getContainerID())) {
+                    Map<String, Object> message = new HashMap<>();
+                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_ADD_CLUSTER_CONTAINER);
+                    message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getClusterID());
+                    message.put(Container.TOKEN_CT_ID, container.getContainerID());
+                    if (clientThreadSessionID != null)
+                        message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ClusterSce.Q_MAPPING_CLUSTER_SERVICE, clusterReplyWorker);
+                    if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
+                        this.clusterContainersID.remove(container.getContainerID());
+                        super.removeClusterContainer(container);
+                        container.setContainerCluster(null);
+                    } else throw new MappingDSException("Ariane server raised an error... Check your logs !");
+                }
+            } else throw new MappingDSException("Provided container is not initialized !");
+        } else throw new MappingDSException("This cluster is not initialized !");
+        return true;
     }
 }

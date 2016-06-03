@@ -24,10 +24,14 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNam
 
 public interface Link {
 
-	String LK_ID_TOKEN  = MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY+"ID";
-	String LK_SEP_TOKEN = MappingDSGraphPropertyNames.DD_LINK_SOURCE_EP_REST_KEY;
-	String LK_TEP_TOKEN = MappingDSGraphPropertyNames.DD_LINK_TARGET_EP_REST_KEY;
-	String LK_TRP_TOKEN = MappingDSGraphPropertyNames.DD_LINK_TRANSPORT_REST_KEY;
+	String TOKEN_LK_ID = MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY+"ID";
+	String TOKEN_LK_SEP = MappingDSGraphPropertyNames.DD_LINK_SOURCE_EP_REST_KEY;
+	String TOKEN_LK_TEP = MappingDSGraphPropertyNames.DD_LINK_TARGET_EP_REST_KEY;
+	String TOKEN_LK_TRP = MappingDSGraphPropertyNames.DD_LINK_TRANSPORT_REST_KEY;
+
+	String OP_SET_LINK_TRANSPORT = "setLinkTransport";
+	String OP_SET_LINK_ENDPOINT_SOURCE = "setLinkEndpointSource";
+	String OP_SET_LINK_ENDPOINT_TARGET = "setLinkEndpointTarget";
 
 	String getLinkID();
 	void   setLinkID(String ID);

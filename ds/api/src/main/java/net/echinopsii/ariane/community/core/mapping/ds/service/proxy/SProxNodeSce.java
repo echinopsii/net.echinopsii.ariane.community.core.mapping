@@ -27,12 +27,6 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import java.util.Set;
 
 public interface SProxNodeSce<N extends Node> extends NodeSce {
-    String CREATE_NODE = "createNode";
-    String DELETE_NODE = "deleteNode";
-    String GET_NODE = "getNode";
-    String GET_NODE_BY_EPURL = "getNodeByEndpointURL";
-    String GET_NODE_BY_NAME = "getNodeByName";
-    String GET_NODES = "getNodes";
 
     N createNode(Session session, String nodeName, String containerID, String parentNodeID) throws MappingDSException;
 

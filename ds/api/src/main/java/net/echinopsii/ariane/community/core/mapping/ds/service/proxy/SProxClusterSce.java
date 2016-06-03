@@ -28,13 +28,6 @@ import java.util.Set;
 
 public interface SProxClusterSce<CL extends Cluster> extends ClusterSce {
     String MAPPING_CLUSTER_SERVICE_Q = "ARIANE_MAPPING_CLUSTER_SERVICE_Q";
-    String CLUSTER_SCE_OP_CREATE = "createCluster";
-    String CLUSTER_SCE_PARAM_CLUSTER_NAME = "name";
-    String CLUSTER_SCE_OP_DELETE = "deleteCluster";
-
-    String CLUSTER_SCE_OP_GET = "getCluster";
-    String CLUSTER_SCE_OP_GET_BY_NAME = "getClusterByName";
-    String CLUSTER_SCE_OP_GETS = "getClusters";
 
     CL   createCluster(Session session, String clusterName) throws MappingDSException;
 

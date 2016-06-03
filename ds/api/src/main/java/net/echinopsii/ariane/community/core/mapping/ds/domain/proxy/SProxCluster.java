@@ -27,10 +27,6 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import java.util.Set;
 
 public interface SProxCluster extends Cluster {
-	String CLUSTER_OP_SET_CLUSTER_NAME = "setClusterName";
-	String CLUSTER_OP_ADD_CLUSTER_CONTAINER = "addClusterContainer";
-	String CLUSTER_OP_REMOVE_CLUSTER_CONTAINER = "removeClusterContainer";
-
 	void    setClusterName(Session session, String name) throws MappingDSException;
 	boolean addClusterContainer(Session session, Container container) throws MappingDSException;
 	boolean removeClusterContainer(Session session, Container container) throws MappingDSException;

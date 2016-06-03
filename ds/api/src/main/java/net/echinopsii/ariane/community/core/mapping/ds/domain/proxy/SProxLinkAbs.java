@@ -30,19 +30,19 @@ public abstract class SProxLinkAbs extends LinkAbs implements SProxLink {
     @Override
     public void setLinkTransport(Session session, Transport transport) throws MappingDSException {
         if (session!=null && session.isRunning())
-            session.execute(this, SET_LINK_TRANSPORT, new Object[]{transport});
+            session.execute(this, OP_SET_LINK_TRANSPORT, new Object[]{transport});
     }
 
     @Override
     public void setLinkEndpointSource(Session session, Endpoint source) throws MappingDSException {
         if (session!=null && session.isRunning())
-            session.execute(this, SET_LINK_ENDPOINT_SOURCE, new Object[]{source});
+            session.execute(this, OP_SET_LINK_ENDPOINT_SOURCE, new Object[]{source});
     }
 
     @Override
     public void setLinkEndpointTarget(Session session, Endpoint target) throws MappingDSException {
         if (session!=null && session.isRunning())
-            session.execute(this, SET_LINK_ENDPOINT_TARGET, new Object[]{target});
+            session.execute(this, OP_SET_LINK_ENDPOINT_TARGET, new Object[]{target});
     }
 
 

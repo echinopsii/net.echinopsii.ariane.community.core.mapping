@@ -30,41 +30,31 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxClusterSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxClusterSceAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
-import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
-import org.neo4j.shell.App;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.*;
 
 public class ClusterSceImpl extends SProxClusterSceAbs<ClusterImpl> {
 
     private static final Logger log = LoggerFactory.getLogger(ClusterSceImpl.class);
 
-    private MappingSceImpl sce = null;
-
-    public ClusterSceImpl(MappingSceImpl sce_) {
-        sce = sce_;
-    }
-
     @Override
     public Cluster createCluster(String clusterName) throws MappingDSException {
         ClusterImpl cluster = new ClusterImpl();
 
-        Session session = null;
         String clientThreadName = Thread.currentThread().getName();
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
-        if (clientThreadSessionID!=null) session = sce.getSessionRegistry().get(clientThreadSessionID);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.MAPPING_SCE_OPERATION_FDN, SProxClusterSce.CLUSTER_SCE_OP_CREATE);
-        message.put(SProxClusterSce.CLUSTER_SCE_PARAM_CLUSTER_NAME, clusterName);
-        if (session!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, session.getSessionID());
-        MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ClusterSce.MAPPING_CLUSTER_SERVICE_Q, cluster.getClusterReplyWorker());
-        if (cluster.getClusterID() == null) cluster = null;
+        message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxClusterSce.OP_CREATE_CLUSTER);
+        message.put(ClusterSce.PARAM_CLUSTER_NAME, clusterName);
+        if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+        Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ClusterSce.Q_MAPPING_CLUSTER_SERVICE, cluster.getClusterReplyWorker());
+        int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
+        if (rc != 0) throw new MappingDSException("Ariane server raised an error... Check your logs !");
 
         return cluster;
     }
@@ -73,34 +63,36 @@ public class ClusterSceImpl extends SProxClusterSceAbs<ClusterImpl> {
     public void deleteCluster(String clusterName) throws MappingDSException {
         ClusterImpl cluster = new ClusterImpl();
 
-        Session session = null;
         String clientThreadName = Thread.currentThread().getName();
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
-        if (clientThreadSessionID!=null) session = sce.getSessionRegistry().get(clientThreadSessionID);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.MAPPING_SCE_OPERATION_FDN, SProxClusterSce.CLUSTER_SCE_OP_DELETE);
-        message.put(SProxClusterSce.CLUSTER_SCE_PARAM_CLUSTER_NAME, clusterName);
-        if (session!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, session.getSessionID());
+        message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxClusterSce.OP_DELETE_CLUSTER);
+        message.put(ClusterSce.PARAM_CLUSTER_NAME, clusterName);
+        if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
 
-        MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ClusterSce.MAPPING_CLUSTER_SERVICE_Q, cluster.getClusterReplyWorker());
+        Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ClusterSce.Q_MAPPING_CLUSTER_SERVICE, cluster.getClusterReplyWorker());
+        int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
+        if (rc != 0) throw new MappingDSException("Ariane server raised an error... Check your logs !");
     }
 
     @Override
     public Cluster getCluster(String clusterID) throws MappingDSException {
         ClusterImpl cluster = new ClusterImpl();
 
-        Session session = null;
         String clientThreadName = Thread.currentThread().getName();
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
-        if (clientThreadSessionID!=null) session = sce.getSessionRegistry().get(clientThreadSessionID);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.MAPPING_SCE_OPERATION_FDN, SProxClusterSce.CLUSTER_SCE_OP_GET);
-        message.put(MappingSce.MAPPING_SCE_PARAM_OBJ_ID, clusterID);
-        if (session!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, session.getSessionID());
-        MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ClusterSce.MAPPING_CLUSTER_SERVICE_Q, cluster.getClusterReplyWorker());
-        if (cluster.getClusterID() == null) cluster = null;
+        message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxClusterSce.OP_GET_CLUSTER);
+        message.put(MappingSce.GLOBAL_PARAM_OBJ_ID, clusterID);
+        if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+        Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ClusterSce.Q_MAPPING_CLUSTER_SERVICE, cluster.getClusterReplyWorker());
+        int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
+        if (rc != 0) {
+            if (rc == MappingSce.MAPPING_SCE_RET_NOT_FOUND) cluster = null;
+            else throw new MappingDSException("Ariane server raised an error... Check your logs !");
+        }
 
         return cluster;
     }
@@ -109,17 +101,19 @@ public class ClusterSceImpl extends SProxClusterSceAbs<ClusterImpl> {
     public Cluster getClusterByName(String clusterName) throws MappingDSException {
         ClusterImpl cluster = new ClusterImpl();
 
-        Session session = null;
         String clientThreadName = Thread.currentThread().getName();
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
-        if (clientThreadSessionID!=null) session = sce.getSessionRegistry().get(clientThreadSessionID);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.MAPPING_SCE_OPERATION_FDN, SProxClusterSce.CLUSTER_SCE_OP_GET_BY_NAME);
-        message.put(ClusterSce.CLUSTER_SCE_PARAM_CLUSTER_NAME, clusterName);
-        if (session!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, session.getSessionID());
-        MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ClusterSce.MAPPING_CLUSTER_SERVICE_Q, cluster.getClusterReplyWorker());
-        if (cluster.getClusterID() == null) cluster = null;
+        message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxClusterSce.OP_GET_CLUSTER_BY_NAME);
+        message.put(ClusterSce.PARAM_CLUSTER_NAME, clusterName);
+        if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+        Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ClusterSce.Q_MAPPING_CLUSTER_SERVICE, cluster.getClusterReplyWorker());
+        int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
+        if (rc != 0) {
+            if (rc == MappingSce.MAPPING_SCE_RET_NOT_FOUND) cluster = null;
+            else throw new MappingDSException("Ariane server raised an error... Check your logs !");
+        }
 
         return cluster;
     }
@@ -157,20 +151,19 @@ public class ClusterSceImpl extends SProxClusterSceAbs<ClusterImpl> {
     @Override
     public Set<Cluster> getClusters(String selector) throws MappingDSException {
         Set<Cluster> ret = new HashSet<>();
-        Session session = null;
+
         String clientThreadName = Thread.currentThread().getName();
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
-        if (clientThreadSessionID!=null) session = sce.getSessionRegistry().get(clientThreadSessionID);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.MAPPING_SCE_OPERATION_FDN, SProxClusterSce.CLUSTER_SCE_OP_GET_BY_NAME);
-        //message.put(MappingSce.MAPPING_SCE_PARAM_SELECTOR, selector);
-        if (session!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, session.getSessionID());
+        message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxClusterSce.OP_GET_CLUSTERS);
+        //message.put(MappingSce.GLOBAL_PARAM_SELECTOR, selector);
+        if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
 
-
-        ret.addAll(
-                (Collection<? extends ClusterImpl>) MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ClusterSce.MAPPING_CLUSTER_SERVICE_Q, new getClustersWorker()).get("RET")
-        );
+        Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ClusterSce.Q_MAPPING_CLUSTER_SERVICE, new getClustersWorker());
+        int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
+        if (rc != 0) throw new MappingDSException("Ariane server raised an error... Check your logs !");
+        ret.addAll((Collection<? extends Cluster>) retMsg.get("RET"));
 
         return ret;
     }

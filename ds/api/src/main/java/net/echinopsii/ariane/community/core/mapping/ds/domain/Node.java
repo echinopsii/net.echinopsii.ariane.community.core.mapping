@@ -26,15 +26,27 @@ import java.util.HashMap;
 import java.util.Set;
 
 public interface Node {
-	String ND_ID_TOKEN    = MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE+"ID";
-	String ND_NAME_TOKEN  = MappingDSGraphPropertyNames.DD_NODE_NAME_KEY;
-	String ND_DEPTH_TOKEN = MappingDSGraphPropertyNames.DD_NODE_DEPTH_KEY;
-	String ND_CONID_TOKEN = MappingDSGraphPropertyNames.DD_NODE_CONT_KEY+"ID";
-	String ND_PNDID_TOKEN = MappingDSGraphPropertyNames.DD_NODE_PNODE_KEY+"ID";
-	String ND_CNDID_TOKEN = MappingDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY+"ID";
-	String ND_TWNID_TOKEN = MappingDSGraphPropertyNames.DD_NODE_EDGE_TWIN_KEY+"ID";
-	String ND_EPSID_TOKEN = MappingDSGraphPropertyNames.DD_NODE_EDGE_ENDPT_KEY+"ID";
-	String ND_PRP_TOKEN   = MappingDSGraphPropertyNames.DD_NODE_PROPS_KEY;
+	String TOKEN_ND_ID = MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE+"ID";
+	String TOKEN_ND_NAME = MappingDSGraphPropertyNames.DD_NODE_NAME_KEY;
+	String TOKEN_ND_DEPTH = MappingDSGraphPropertyNames.DD_NODE_DEPTH_KEY;
+	String TOKEN_ND_CONID = MappingDSGraphPropertyNames.DD_NODE_CONT_KEY+"ID";
+	String TOKEN_ND_PNDID = MappingDSGraphPropertyNames.DD_NODE_PNODE_KEY+"ID";
+	String TOKEN_ND_CNDID = MappingDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY+"ID";
+	String TOKEN_ND_TWNID = MappingDSGraphPropertyNames.DD_NODE_EDGE_TWIN_KEY+"ID";
+	String TOKEN_ND_EPSID = MappingDSGraphPropertyNames.DD_NODE_EDGE_ENDPT_KEY+"ID";
+	String TOKEN_ND_PRP = MappingDSGraphPropertyNames.DD_NODE_PROPS_KEY;
+
+	String OP_SET_NODE_NAME = "setNodeName";
+	String OP_SET_NODE_CONTAINER = "setNodeContainer";
+	String OP_ADD_NODE_PROPERTY = "addNodeProperty";
+	String OP_REMOVE_NODE_PROPERTY = "removeNodeProperty";
+	String OP_SET_NODE_PARENT_NODE = "setNodeParentNode";
+	String OP_ADD_NODE_CHILD_NODE = "addNodeChildNode";
+	String OP_REMOVE_NODE_CHILD_NODE = "removeNodeChildNode";
+	String OP_ADD_TWIN_NODE = "addTwinNode";
+	String OP_REMOVE_TWIN_NODE = "removeTwinNode";
+	String OP_ADD_ENDPOINT = "addEndpoint";
+	String OP_REMOVE_ENDPOINT = "removeEndpoint";
 
 	String getNodeID();
 	void   setNodeID(String ID);

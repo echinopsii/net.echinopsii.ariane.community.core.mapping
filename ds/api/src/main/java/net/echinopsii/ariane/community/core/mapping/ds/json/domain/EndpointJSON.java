@@ -44,7 +44,7 @@ public class EndpointJSON {
             throws IOException {
         HashMap<String, Object> props = endpoint.getEndpointProperties();
         if (props != null && props.size()!=0) {
-            jgenerator.writeObjectFieldStart(Endpoint.EP_PRP_TOKEN);
+            jgenerator.writeObjectFieldStart(Endpoint.TOKEN_EP_PRP);
             PropertiesJSON.propertiesToJSON(props,jgenerator);
             jgenerator.writeEndObject();
         }
@@ -54,15 +54,15 @@ public class EndpointJSON {
             throws IOException, MappingDSException {
         jgenerator.writeStartObject();
         log.debug("Ep JSON :endpoint {}", new Object[]{endpoint.getEndpointID()});
-        jgenerator.writeStringField(Endpoint.EP_ID_TOKEN, endpoint.getEndpointID());
-        jgenerator.writeStringField(Endpoint.EP_URL_TOKEN, endpoint.getEndpointURL());
+        jgenerator.writeStringField(Endpoint.TOKEN_EP_ID, endpoint.getEndpointID());
+        jgenerator.writeStringField(Endpoint.TOKEN_EP_URL, endpoint.getEndpointURL());
         if (endpoint.getEndpointParentNode()!=null)
-            jgenerator.writeStringField(Endpoint.EP_PNODEID_TOKEN, endpoint.getEndpointParentNode().getNodeID());
+            jgenerator.writeStringField(Endpoint.TOKEN_EP_PNODEID, endpoint.getEndpointParentNode().getNodeID());
         else
             throw new MappingDSException("Endpoint (" + endpoint.getEndpointID() +
                     ":" + endpoint.getEndpointURL() + ")");
 
-        jgenerator.writeArrayFieldStart(Endpoint.EP_TWNEPID_TOKEN);
+        jgenerator.writeArrayFieldStart(Endpoint.TOKEN_EP_TWNEPID);
         for (Endpoint tep : endpoint.getTwinEndpoints()) jgenerator.writeString(tep.getEndpointID());
         jgenerator.writeEndArray();
 

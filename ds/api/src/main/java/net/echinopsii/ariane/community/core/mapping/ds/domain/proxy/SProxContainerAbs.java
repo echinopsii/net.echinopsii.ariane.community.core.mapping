@@ -28,62 +28,62 @@ public abstract class SProxContainerAbs extends ContainerAbs implements SProxCon
     @Override
     public void setContainerName(Session session, String name) throws MappingDSException {
         if (session!=null && session.isRunning())
-            session.execute(this, SET_CONTAINER_NAME, new Object[]{name});
+            session.execute(this, OP_SET_CONTAINER_NAME, new Object[]{name});
     }
 
     @Override
     public void setContainerCompany(Session session, String company) throws MappingDSException {
         if (session!=null && session.isRunning())
-            session.execute(this, SET_CONTAINER_COMPANY, new Object[]{company});
+            session.execute(this, OP_SET_CONTAINER_COMPANY, new Object[]{company});
     }
 
     @Override
     public void setContainerProduct(Session session, String product) throws MappingDSException {
         if (session!=null && session.isRunning())
-            session.execute(this, SET_CONTAINER_PRODUCT, new Object[]{product});
+            session.execute(this, OP_SET_CONTAINER_PRODUCT, new Object[]{product});
     }
 
     @Override
     public void setContainerType(Session session, String type) throws MappingDSException {
         if (session!=null && session.isRunning())
-            session.execute(this, SET_CONTAINER_TYPE, new Object[]{type});
+            session.execute(this, OP_SET_CONTAINER_TYPE, new Object[]{type});
     }
 
     @Override
     public void setContainerPrimaryAdminGate(Session session, Gate gate) throws MappingDSException {
         if (session!=null && session.isRunning())
-            session.execute(this, SET_CONTAINER_PRIMARY_ADMIN_GATE, new Object[]{gate});
+            session.execute(this, OP_SET_CONTAINER_PRIMARY_ADMIN_GATE, new Object[]{gate});
     }
 
     @Override
     public void setContainerCluster(Session session, Cluster cluster) throws MappingDSException {
         if (session!=null && session.isRunning())
-            session.execute(this, SET_CONTAINER_CLUSTER, new Object[]{cluster});
+            session.execute(this, OP_SET_CONTAINER_CLUSTER, new Object[]{cluster});
     }
 
     @Override
     public void addContainerProperty(Session session, String propertyKey, Object value) throws MappingDSException {
         if (session!=null && session.isRunning())
-            session.execute(this, ADD_CONTAINER_PROPERTY, new Object[]{propertyKey, value});
+            session.execute(this, OP_ADD_CONTAINER_PROPERTY, new Object[]{propertyKey, value});
     }
 
     @Override
     public void removeContainerProperty(Session session, String propertyKey) throws MappingDSException {
         if (session!=null && session.isRunning())
-            session.execute(this, REMOVE_CONTAINER_PROPERTY, new Object[]{propertyKey});
+            session.execute(this, OP_REMOVE_CONTAINER_PROPERTY, new Object[]{propertyKey});
     }
 
     @Override
     public void setContainerParentContainer(Session session, Container container) throws MappingDSException {
         if (session!=null && session.isRunning())
-            session.execute(this, SET_CONTAINER_PARENT_CONTAINER, new Object[]{container});
+            session.execute(this, OP_SET_CONTAINER_PARENT_CONTAINER, new Object[]{container});
     }
 
     @Override
     public boolean addContainerChildContainer(Session session, Container container) throws MappingDSException {
         boolean ret = false;
         if (session!=null && session.isRunning())
-            ret = (boolean) session.execute(this, ADD_CONTAINER_CHILD_CONTAINER, new Object[]{container});
+            ret = (boolean) session.execute(this, OP_ADD_CONTAINER_CHILD_CONTAINER, new Object[]{container});
         return ret;
     }
 
@@ -91,7 +91,7 @@ public abstract class SProxContainerAbs extends ContainerAbs implements SProxCon
     public boolean removeContainerChildContainer(Session session, Container container) throws MappingDSException {
         boolean ret = false;
         if (session!=null && session.isRunning())
-            ret = (boolean) session.execute(this, REMOVE_CONTAINER_CHILD_CONTAINER, new Object[]{container});
+            ret = (boolean) session.execute(this, OP_REMOVE_CONTAINER_CHILD_CONTAINER, new Object[]{container});
         return ret;
     }
 
@@ -99,7 +99,7 @@ public abstract class SProxContainerAbs extends ContainerAbs implements SProxCon
     public boolean addContainerNode(Session session, Node node) throws MappingDSException {
         boolean ret = false;
         if (session!=null && session.isRunning())
-            ret = (boolean)session.execute(this, ADD_CONTAINER_NODE, new Object[]{node});
+            ret = (boolean)session.execute(this, OP_ADD_CONTAINER_NODE, new Object[]{node});
         return ret;
     }
 
@@ -107,7 +107,7 @@ public abstract class SProxContainerAbs extends ContainerAbs implements SProxCon
     public boolean removeContainerNode(Session session, Node node) throws MappingDSException {
         boolean ret = false;
         if (session!=null && session.isRunning())
-            ret = (boolean) session.execute(this, REMOVE_CONTAINER_NODE, new Object[]{node});
+            ret = (boolean) session.execute(this, OP_REMOVE_CONTAINER_NODE, new Object[]{node});
         return ret;
     }
 
@@ -115,7 +115,7 @@ public abstract class SProxContainerAbs extends ContainerAbs implements SProxCon
     public boolean addContainerGate(Session session, Gate service) throws MappingDSException {
         boolean ret = false;
         if (session!=null && session.isRunning())
-            ret = (boolean) session.execute(this, ADD_CONTAINER_GATE, new Object[]{service});
+            ret = (boolean) session.execute(this, OP_ADD_CONTAINER_GATE, new Object[]{service});
         return ret;
     }
 
@@ -123,7 +123,7 @@ public abstract class SProxContainerAbs extends ContainerAbs implements SProxCon
     public boolean removeContainerGate(Session session, Gate service) throws MappingDSException {
         boolean ret = false;
         if (session!=null && session.isRunning())
-            ret = (boolean) session.execute(this, REMOVE_CONTAINER_GATE, new Object[]{service});
+            ret = (boolean) session.execute(this, OP_REMOVE_CONTAINER_GATE, new Object[]{service});
         return ret;
     }
 
