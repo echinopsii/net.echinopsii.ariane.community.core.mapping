@@ -27,7 +27,6 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.NodeAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
 public abstract class SProxNodeAbs extends NodeAbs implements SProxNode {
-    static final String SET_NODE_NAME = "setNodeName";
 
     @Override
     public void setNodeName(Session session, String name) throws MappingDSException {
@@ -35,15 +34,11 @@ public abstract class SProxNodeAbs extends NodeAbs implements SProxNode {
             session.execute(this, SET_NODE_NAME, new Object[]{name});
     }
 
-    static final String SET_NODE_CONTAINER = "setNodeContainer";
-
     @Override
     public void setNodeContainer(Session session, Container container) throws MappingDSException {
         if (session!=null && session.isRunning())
             session.execute(this, SET_NODE_CONTAINER, new Object[]{container});
     }
-
-    static final String ADD_NODE_PROPERTY = "addNodeProperty";
 
     @Override
     public void addNodeProperty(Session session, String propertyKey, Object value) throws MappingDSException {
@@ -51,23 +46,17 @@ public abstract class SProxNodeAbs extends NodeAbs implements SProxNode {
             session.execute(this, ADD_NODE_PROPERTY, new Object[]{propertyKey, value});
     }
 
-    static final String REMOVE_NODE_PROPERTY = "removeNodeProperty";
-
     @Override
     public void removeNodeProperty(Session session, String propertyKey) throws MappingDSException {
         if (session!=null && session.isRunning())
             session.execute(this, REMOVE_NODE_PROPERTY, new Object[]{propertyKey});
     }
 
-    static final String SET_NODE_PARENT_NODE = "setNodeParentNode";
-
     @Override
     public void setNodeParentNode(Session session, Node node) throws MappingDSException {
         if (session!=null && session.isRunning())
             session.execute(this, SET_NODE_PARENT_NODE, new Object[]{node});
     }
-
-    static final String ADD_NODE_CHILD_NODE = "addNodeChildNode";
 
     @Override
     public boolean addNodeChildNode(Session session, Node node) throws MappingDSException {
@@ -77,8 +66,6 @@ public abstract class SProxNodeAbs extends NodeAbs implements SProxNode {
         return ret;
     }
 
-    static final String REMOVE_NODE_CHILD_NODE = "removeNodeChildNode";
-
     @Override
     public boolean removeNodeChildNode(Session session, Node node) throws MappingDSException {
         boolean ret = false;
@@ -86,8 +73,6 @@ public abstract class SProxNodeAbs extends NodeAbs implements SProxNode {
             ret = (boolean) session.execute(this, REMOVE_NODE_CHILD_NODE, new Object[]{node});
         return ret;
     }
-
-    static final String ADD_TWIN_NODE = "addTwinNode";
 
     @Override
     public boolean addTwinNode(Session session, Node node) throws MappingDSException {
@@ -97,8 +82,6 @@ public abstract class SProxNodeAbs extends NodeAbs implements SProxNode {
         return ret;
     }
 
-    static final String REMOVE_TWIN_NODE = "removeTwinNode";
-
     @Override
     public boolean removeTwinNode(Session session, Node node) throws MappingDSException {
         boolean ret = false;
@@ -107,8 +90,6 @@ public abstract class SProxNodeAbs extends NodeAbs implements SProxNode {
         return ret;
     }
 
-    static final String ADD_ENDPOINT = "addEndpoint";
-
     @Override
     public boolean addEndpoint(Session session, Endpoint endpoint) throws MappingDSException {
         boolean ret = false;
@@ -116,8 +97,6 @@ public abstract class SProxNodeAbs extends NodeAbs implements SProxNode {
             ret = (boolean) session.execute(this, ADD_ENDPOINT, new Object[]{endpoint});
         return ret;
     }
-
-    static final String REMOVE_ENDPOINT = "removeEndpoint";
 
     @Override
     public boolean removeEndpoint(Session session, Endpoint endpoint) throws MappingDSException {

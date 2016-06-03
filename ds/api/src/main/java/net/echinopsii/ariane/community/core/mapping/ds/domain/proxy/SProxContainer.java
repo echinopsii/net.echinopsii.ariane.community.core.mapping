@@ -31,6 +31,22 @@ import java.util.Set;
 
 public interface SProxContainer extends Container {
 
+	String SET_CONTAINER_NAME = "setContainerName";
+	String SET_CONTAINER_COMPANY = "setContainerCompany";
+	String SET_CONTAINER_PRODUCT = "setContainerProduct";
+	String SET_CONTAINER_TYPE = "setContainerType";
+	String SET_CONTAINER_PRIMARY_ADMIN_GATE = "setContainerPrimaryAdminGate";
+	String SET_CONTAINER_CLUSTER = "setContainerCluster";
+	String ADD_CONTAINER_PROPERTY = "addContainerProperty";
+	String REMOVE_CONTAINER_PROPERTY = "removeContainerProperty";
+	String SET_CONTAINER_PARENT_CONTAINER = "setContainerParentContainer";
+	String ADD_CONTAINER_CHILD_CONTAINER = "addContainerChildContainer";
+	String REMOVE_CONTAINER_CHILD_CONTAINER = "removeContainerChildContainer";
+	String ADD_CONTAINER_NODE = "addContainerNode";
+	String REMOVE_CONTAINER_NODE = "removeContainerNode";
+	String ADD_CONTAINER_GATE = "addContainerGate";
+	String REMOVE_CONTAINER_GATE = "removeContainerGate";
+
 	void setContainerName(Session session, String name) throws MappingDSException;
 	void setContainerCompany(Session session, String company) throws MappingDSException;
 	void setContainerProduct(Session session, String product) throws MappingDSException;

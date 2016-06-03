@@ -26,7 +26,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import java.util.Set;
 
 public interface ContainerSce<C extends Container> {
-    String MAPPING_CONTAINER_SERVICE_Q = "ARIANE_MAPPING_CLUSTER_SERVICE_Q";
+    String MAPPING_CONTAINER_SERVICE_Q = "ARIANE_MAPPING_CONTAINER_SERVICE_Q";
 
     String CONTAINER_SCE_OP_CREATE = "createContainer";
     String CONTAINER_SCE_OP_DELETE = "deleteContainer";

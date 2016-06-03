@@ -27,6 +27,13 @@ import java.util.HashMap;
 import java.util.Set;
 
 public interface SProxEndpoint extends Endpoint {
+	String SET_ENDPOINT_URL = "setEndpointURL";
+	String SET_ENDPOINT_PARENT_NODE = "setEndpointParentNode";
+	String ADD_ENDPOINT_PROPERTY = "addEndpointProperty";
+	String REMOVE_ENDPOINT_PROPERTY = "removeEndpointProperty";
+	String ADD_TWIN_ENDPOINT = "addTwinEndpoint";
+	String REMOVE_TWIN_ENDPOINT = "removeTwinEndpoint";
+
 	void setEndpointURL(Session session, String url) throws MappingDSException;
 	void setEndpointParentNode(Session session, Node node) throws MappingDSException;
 	boolean addTwinEndpoint(Session session, Endpoint endpoint) throws MappingDSException;

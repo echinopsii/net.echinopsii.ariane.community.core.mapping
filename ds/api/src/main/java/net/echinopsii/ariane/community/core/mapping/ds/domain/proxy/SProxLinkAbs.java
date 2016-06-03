@@ -26,7 +26,6 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
 public abstract class SProxLinkAbs extends LinkAbs implements SProxLink {
-    static final String SET_LINK_TRANSPORT = "setLinkTransport";
 
     @Override
     public void setLinkTransport(Session session, Transport transport) throws MappingDSException {
@@ -34,15 +33,11 @@ public abstract class SProxLinkAbs extends LinkAbs implements SProxLink {
             session.execute(this, SET_LINK_TRANSPORT, new Object[]{transport});
     }
 
-    static final String SET_LINK_ENDPOINT_SOURCE = "setLinkEndpointSource";
-
     @Override
     public void setLinkEndpointSource(Session session, Endpoint source) throws MappingDSException {
         if (session!=null && session.isRunning())
             session.execute(this, SET_LINK_ENDPOINT_SOURCE, new Object[]{source});
     }
-
-    static final String SET_LINK_ENDPOINT_TARGET = "setLinkEndpointTarget";
 
     @Override
     public void setLinkEndpointTarget(Session session, Endpoint target) throws MappingDSException {

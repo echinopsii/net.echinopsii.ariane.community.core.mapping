@@ -26,6 +26,18 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
 public interface SProxNode extends Node{
+	String SET_NODE_NAME = "setNodeName";
+	String SET_NODE_CONTAINER = "setNodeContainer";
+	String ADD_NODE_PROPERTY = "addNodeProperty";
+	String REMOVE_NODE_PROPERTY = "removeNodeProperty";
+	String SET_NODE_PARENT_NODE = "setNodeParentNode";
+	String ADD_NODE_CHILD_NODE = "addNodeChildNode";
+	String REMOVE_NODE_CHILD_NODE = "removeNodeChildNode";
+	String ADD_TWIN_NODE = "addTwinNode";
+	String REMOVE_TWIN_NODE = "removeTwinNode";
+	String ADD_ENDPOINT = "addEndpoint";
+	String REMOVE_ENDPOINT = "removeEndpoint";
+
 	void setNodeName(Session session, String name) throws MappingDSException;
 	void setNodeContainer(Session session, Container container) throws MappingDSException;
 	void addNodeProperty(Session session, String propertyKey, Object value) throws MappingDSException;

@@ -24,7 +24,6 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.TransportAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
 public abstract class SProxTransportAbs extends TransportAbs implements SProxTransport{
-    static final String SET_TRANSPORT_NAME = "setTransportName";
 
     @Override
     public void setTransportName(Session session, String name) throws MappingDSException {
@@ -32,15 +31,11 @@ public abstract class SProxTransportAbs extends TransportAbs implements SProxTra
             session.execute(this, SET_TRANSPORT_NAME, new Object[]{name});
     }
 
-    static final String ADD_TRANSPORT_PROPERTY = "addTransportProperty";
-
     @Override
     public void addTransportProperty(Session session, String propertyKey, Object value) throws MappingDSException {
         if (session!=null && session.isRunning())
             session.execute(this, ADD_TRANSPORT_PROPERTY, new Object[]{propertyKey, value});
     }
-
-    static final String REMOVE_TRANSPORT_PROPERTY = "removeTransportProperty";
 
     @Override
     public void removeTransportProperty(Session session, String propertyKey) throws MappingDSException {

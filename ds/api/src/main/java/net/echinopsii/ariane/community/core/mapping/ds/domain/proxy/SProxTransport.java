@@ -24,6 +24,10 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
 public interface SProxTransport extends Transport {
+	String SET_TRANSPORT_NAME = "setTransportName";
+	String ADD_TRANSPORT_PROPERTY = "addTransportProperty";
+	String REMOVE_TRANSPORT_PROPERTY = "removeTransportProperty";
+
 	void setTransportName(Session session, String name) throws MappingDSException;
 	void addTransportProperty(Session session, String propertyKey, Object value) throws MappingDSException;
 	void removeTransportProperty(Session session, String propertyKey) throws MappingDSException;
