@@ -246,7 +246,8 @@ public class ClusterEp {
                             else cluster = MappingMsgsrvBootstrap.getMappingSce().getClusterSce().getCluster(cid);
 
                             if (cluster != null) {
-                                cluster.setClusterName(name);
+                                if (session!=null) ((SProxCluster)cluster).setClusterName(session, name);
+                                else cluster.setClusterName(name);
 
                                 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
                                 ClusterJSON.oneCluster2JSON(cluster, outStream);

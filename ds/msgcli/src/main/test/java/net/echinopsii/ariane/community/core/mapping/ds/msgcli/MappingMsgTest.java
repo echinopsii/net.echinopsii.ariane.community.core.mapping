@@ -37,6 +37,8 @@ import java.io.File;
 import java.util.Properties;
 import java.util.UUID;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNull;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
 
@@ -182,7 +184,6 @@ public class MappingMsgTest {
                 }
             }
         }).start();
-        Thread.sleep(20);        messagingMappingSce.closeSession();
     }
 
     @Test
@@ -192,6 +193,20 @@ public class MappingMsgTest {
         assertTrue(messagingMappingSce.getClusterSce().getClusters(null).size() == 1);
         session.rollback();
         assertTrue(messagingMappingSce.getClusterSce().getClusters(null).size() == 0);
+        messagingMappingSce.closeSession();
+    }
+
+    @Test
+    public void testTransacClusterGet() throws MappingDSException {
+        Session session = messagingMappingSce.openSession("this is a test");
+        Cluster cluster = messagingMappingSce.getClusterSce().createCluster("test");
+        assertNotNull(messagingMappingSce.getClusterSce().getCluster(cluster.getClusterID()));
+        assertNotNull(messagingMappingSce.getClusterSce().getClusterByName(cluster.getClusterName()));
+        cluster.setClusterName("test2");
+        assertEquals(cluster.getClusterName(), "test2");
+        assertNull(messagingMappingSce.getClusterSce().getClusterByName("test"));
+        assertNotNull(messagingMappingSce.getClusterSce().getCluster(cluster.getClusterID()));
+        assertNotNull(messagingMappingSce.getClusterSce().getClusterByName(cluster.getClusterName()));
         messagingMappingSce.closeSession();
     }
 }
