@@ -129,15 +129,60 @@ public class MappingMsgTest {
     }
 
     @Test
-    public void testTransacClusterCreate1() throws MappingDSException {
+    public void testTransacClusterCreate1() throws MappingDSException, InterruptedException {
         Session session = messagingMappingSce.openSession("this is a test");
         Cluster cluster = messagingMappingSce.getClusterSce().createCluster("test");
         assertTrue(messagingMappingSce.getClusterSce().getClusters(null).size() == 1);
+        new Thread(new Runnable(){
+            @Override
+            public void run() {
+                try {
+                    assertTrue(blueprintsMappingSce.getClusterSce().getClusters(null).size() == 0);
+                } catch (MappingDSException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+        Thread.sleep(20);
         session.commit();
+        assertTrue(messagingMappingSce.getClusterSce().getClusters(null).size() == 1);
+        new Thread(new Runnable(){
+            @Override
+            public void run() {
+                try {
+                    assertTrue(blueprintsMappingSce.getClusterSce().getClusters(null).size() == 1);
+                } catch (MappingDSException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+        Thread.sleep(20);
         messagingMappingSce.getClusterSce().deleteCluster(cluster.getClusterName());
+        assertTrue(messagingMappingSce.getClusterSce().getClusters(null).size() == 0);
+        new Thread(new Runnable(){
+            @Override
+            public void run() {
+                try {
+                    assertTrue(blueprintsMappingSce.getClusterSce().getClusters(null).size() == 1);
+                } catch (MappingDSException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+        Thread.sleep(20);
         session.commit();
         assertTrue(messagingMappingSce.getClusterSce().getClusters(null).size() == 0);
-        messagingMappingSce.closeSession();
+        new Thread(new Runnable(){
+            @Override
+            public void run() {
+                try {
+                    assertTrue(blueprintsMappingSce.getClusterSce().getClusters(null).size() == 0);
+                } catch (MappingDSException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+        Thread.sleep(20);        messagingMappingSce.closeSession();
     }
 
     @Test
