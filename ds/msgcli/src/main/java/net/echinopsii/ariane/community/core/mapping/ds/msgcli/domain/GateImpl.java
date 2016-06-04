@@ -23,8 +23,49 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxGate;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
+import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
+import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Map;
 
 public class GateImpl extends NodeImpl implements SProxGate {
+
+    class GateReplyWorker implements AppMsgWorker {
+        private GateImpl gate;
+
+        public GateReplyWorker(GateImpl gate) {
+            this.gate = gate;
+        }
+
+        @Override
+        public Map<String, Object> apply(Map<String, Object> message) {
+            if (gate!=null) {
+                int rc = (int) message.get(MomMsgTranslator.MSG_RC);
+                if (rc == 0) {
+                    String body = null;
+                    if (message.get(MomMsgTranslator.MSG_BODY) != null && message.get(MomMsgTranslator.MSG_BODY) instanceof String)
+                        body = (String) message.get(MomMsgTranslator.MSG_BODY);
+                    else if (message.get(MomMsgTranslator.MSG_BODY) != null && message.get(MomMsgTranslator.MSG_BODY) instanceof byte[])
+                        body = new String((byte[]) message.get(MomMsgTranslator.MSG_BODY));
+                    if (body != null) {
+                        //TODO
+                    }
+                } else GateImpl.log.error("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
+            }
+            return message;
+        }
+    }
+
+    private static final Logger log = LoggerFactory.getLogger(GateImpl.class);
+
+    private GateReplyWorker gateReplyWorker = new GateReplyWorker(this);
+
+    public GateReplyWorker getGateReplyWorker() {
+        return gateReplyWorker;
+    }
+
     @Override
     public void setNodePrimaryAdminEnpoint(Session session, Endpoint endpoint) throws MappingDSException {
 

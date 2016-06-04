@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class ClusterImpl extends SProxClusterAbs {
 
@@ -76,10 +77,10 @@ public class ClusterImpl extends SProxClusterAbs {
     }
 
     private static final Logger log = LoggerFactory.getLogger(ContainerImpl.class);
-    private AppMsgWorker clusterReplyWorker = new ClusterReplyWorker(this);
+    private ClusterReplyWorker clusterReplyWorker = new ClusterReplyWorker(this);
     private List<String> clusterContainersID;
 
-    public AppMsgWorker getClusterReplyWorker() {
+    public ClusterReplyWorker getClusterReplyWorker() {
         return clusterReplyWorker;
     }
 
@@ -159,4 +160,11 @@ public class ClusterImpl extends SProxClusterAbs {
         } else throw new MappingDSException("This cluster is not initialized !");
         return true;
     }
+
+    @Override
+    public Set<Container> getClusterContainers() {
+        //TODO
+        return super.getClusterContainers();
+    }
+
 }
