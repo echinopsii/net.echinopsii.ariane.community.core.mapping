@@ -26,6 +26,16 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import java.util.Set;
 
 public interface LinkSce<L extends Link> {
+    String Q_MAPPING_LINK_SERVICE = "ARIANE_MAPPING_LINK_SERVICE_Q";
+
+    String OP_CREATE_LINK = "createLink";
+    String OP_DELETE_LINK = "deleteLink";
+    String OP_GET_LINK = "getLink";
+    String OP_GET_LINKS = "getLinks";
+
+    String PARAM_LINK_SEPID = "SEPID";
+    String PARAM_LINK_TEPID = "TEPID";
+
     L createLink(String sourceEndpointID, String targetEndpointID, String transportID) throws MappingDSException;
 
     void deleteLink(String linkID) throws MappingDSException;

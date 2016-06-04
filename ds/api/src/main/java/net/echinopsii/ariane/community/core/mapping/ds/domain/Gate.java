@@ -26,6 +26,9 @@ public interface Gate extends Node {
 	String TOKEN_GT_ADMPEP = MappingDSGraphPropertyNames.DD_GATE_PAEP_KEY+"ID";
 	String TOKEN_GT_NODE = MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE;
 
+	String OP_GET_NODE_PRIMARY_ADMIN_ENDPOINT = "getNodePrimaryAdminEndpoint";
+	String OP_SET_NODE_PRIMARY_ADMIN_ENDPOINT = "setNodePrimaryAdminEndpoint";
+
 	boolean isAdminPrimary();
 	
 	Endpoint getNodePrimaryAdminEndpoint();

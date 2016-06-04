@@ -35,9 +35,15 @@ public interface ContainerSce<C extends Container> {
     String OP_GET_CONTAINERS = "getContainers";
 
     String PARAM_CONTAINER_NAME = "name";
-    String PARAM_CONTAINER_PAURL = "primaryAdminURL";
+    String PARAM_CONTAINER_COMPANY = "company";
+    String PARAM_CONTAINER_PRODUCT = "product";
+    String PARAM_CONTAINER_TYPE = "type";
+    String PARAM_CONTAINER_PAG_URL = "primaryAdminURL";
     String PARAM_CONTAINER_PAG_NAME = "primaryAdminGateName";
-
+    String PARAM_CONTAINER_PAG_ID = "paGateID";
+    String PARAM_CONTAINER_PCO_ID = "parentContainerID";
+    String PARAM_CONTAINER_CCO_ID = "childContainerID";
+    String PARAM_CONTAINER_GAT_ID = "gateID";
 
     C createContainer(String primaryAdminURL, String primaryAdminGateName) throws MappingDSException;
     C createContainer(String name, String primaryAdminURL, String primaryAdminGateName) throws MappingDSException;

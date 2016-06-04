@@ -37,6 +37,9 @@ public interface MappingSce {
     String GLOBAL_PARAM_OBJ_ID = "ID";
     String GLOBAL_PARAM_PAYLOAD = "payload";
     String GLOBAL_PARAM_SELECTOR = "selector";
+    String GLOBAL_PARAM_PROP_NAME = "propertyName";
+    String GLOBAL_PARAM_PROP_TYPE = "propertyType";
+    String GLOBAL_PARAM_PROP_VALUE = "propertyValue";
 
     int MAPPING_SCE_RET_SUCCESS = 0;
     int MAPPING_SCE_RET_BAD_REQ = 400;

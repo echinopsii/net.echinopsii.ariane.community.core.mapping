@@ -26,6 +26,15 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import java.util.Set;
 
 public interface TransportSce<T extends Transport> {
+    String Q_MAPPING_TRANSPORT_SERVICE = "ARIANE_MAPPING_TRANSPORT_SERVICE_Q";
+
+    String OP_CREATE_TRANSPORT = "createTransport";
+    String OP_DELETE_TRANSPORT = "deleteTransport";
+    String OP_GET_TRANSPORT = "getTransport";
+    String OP_GET_TRANSPORTS = "getTransports";
+
+    String PARAM_TRANSPORT_NAME = "name";
+
 	T    createTransport(String transportName) throws MappingDSException;
 
 	void deleteTransport(String transportID) throws MappingDSException;

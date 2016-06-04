@@ -26,6 +26,17 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import java.util.Set;
 
 public interface EndpointSce<E extends Endpoint> {
+    String Q_MAPPING_ENDPOINT_SERVICE = "ARIANE_MAPPING_ENDPOINT_SERVICE_Q";
+
+    String OP_CREATE_ENDPOINT = "createEndpoint";
+    String OP_DELETE_ENDPOINT = "deleteEndpoint";
+    String OP_GET_ENDPOINT = "getEndpoint";
+    String OP_GET_ENTPOINT_BY_URL = "getEndpointByURL";
+    String OP_GET_ENDPOINTS = "getEndpoints";
+
+    String PARAM_ENDPOINT_URL = "URL";
+    String PARAM_ENDPOINT_TEID = "twinEndpointID";
+
     E createEndpoint(String url, String parentNodeID) throws MappingDSException;
 
     void deleteEndpoint(String endpointID) throws MappingDSException;

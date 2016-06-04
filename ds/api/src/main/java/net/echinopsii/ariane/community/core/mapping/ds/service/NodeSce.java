@@ -26,7 +26,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import java.util.Set;
 
 public interface NodeSce<N extends Node> {
-    String Q_MAPPING_CONTAINER_SERVICE = "ARIANE_MAPPING_CONTAINER_SERVICE_Q";
+    String Q_MAPPING_NODE_SERVICE = "ARIANE_MAPPING_NODE_SERVICE_Q";
 
     String OP_CREATE_NODE = "createNode";
     String OP_DELETE_NODE = "deleteNode";
@@ -34,6 +34,11 @@ public interface NodeSce<N extends Node> {
     String OP_GET_NODE_BY_EPURL = "getNodeByEndpointURL";
     String OP_GET_NODE_BY_NAME = "getNodeByName";
     String OP_GET_NODES = "getNodes";
+
+    String PARAM_NODE_NAME = "name";
+    String PARAM_NODE_PNID = "parentNodeID";
+    String PARAM_NODE_CNID = "childNodeID";
+    String PARAM_NODE_TNID = "twinNodeID";
 
     N createNode(String nodeName, String containerID, String parentNodeID) throws MappingDSException;
 

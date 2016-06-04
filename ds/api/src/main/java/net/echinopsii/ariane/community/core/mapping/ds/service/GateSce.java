@@ -26,6 +26,17 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import java.util.Set;
 
 public interface GateSce<G extends Gate> {
+	String Q_MAPPING_GATE_SERVICE = "ARIANE_MAPPING_GATE_SERVICE_Q";
+
+	String OP_CREATE_GATE = "createGate";
+	String OP_DELETE_GATE = "deleteGate";
+	String OP_GET_GATE = "getGate";
+	String OP_GET_GATES = "getGates";
+
+	String PARAM_GATE_NAME = "name";
+	String PARAM_GATE_URL = "URL";
+	String PARAM_GATE_IPADM = "isPrimaryAdmin";
+
 	public G    createGate(String url, String name, String containerid, Boolean isPrimaryAdmin) throws MappingDSException;
 
 	public void deleteGate(String nodeID) throws MappingDSException;

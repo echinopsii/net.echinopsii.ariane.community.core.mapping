@@ -23,5 +23,11 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Map;
 
 public interface MapSce {
+    String Q_MAPPING_MAP_SERVICE = "ARIANE_MAPPING_MAP_SERVICE_Q";
+
+    String OP_GET_MAP = "getMap";
+
+    String PARAM_MAPPER_QUERY = "mapperQuery";
+
     Map getMap(String mapperQuery) throws MappingDSException;
 }
