@@ -23,6 +23,9 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxTransport;
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.TransportSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.TransportJSON;
@@ -147,7 +150,7 @@ public class TransportEp {
     }
 
     @GET
-    public Response displayAllTransports(@QueryParam("sessionID") String sessionId) {
+    public Response displayAllTransports(@QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get transports", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
         if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
@@ -179,13 +182,15 @@ public class TransportEp {
 
     @GET
     @Path("/get")
-    public Response getTransport(@QueryParam("ID")String transportID, @QueryParam("sessionID") String sessionId) {
-        return displayTransport(transportID);
+    public Response getTransport(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID)String transportID,
+                                 @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
+        return _displayTransport(transportID, sessionId);
     }
 
     @GET
     @Path("/create")
-    public Response createTransport(@QueryParam("name")String transportName, @QueryParam("sessionID") String sessionId) {
+    public Response createTransport(@QueryParam(TransportSce.PARAM_TRANSPORT_NAME)String transportName,
+                                    @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create transport : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), transportName});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -218,7 +223,8 @@ public class TransportEp {
     }
 
     @POST
-    public Response postTransport(@QueryParam("payload") String payload, @QueryParam("sessionID") String sessionId) throws IOException {
+    public Response postTransport(@QueryParam(MappingSce.GLOBAL_PARAM_PAYLOAD) String payload,
+                                  @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) throws IOException {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create or update transport : ({})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), payload});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -259,7 +265,8 @@ public class TransportEp {
 
     @GET
     @Path("/delete")
-    public Response deleteTransport(@QueryParam("ID")String transportID, @QueryParam("sessionID") String sessionId) {
+    public Response deleteTransport(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID)String transportID,
+                                    @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] delete transport : {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), transportID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -281,7 +288,9 @@ public class TransportEp {
 
     @GET
     @Path("/update/name")
-    public Response setTransportName(@QueryParam("ID")String id, @QueryParam("name")String name, @QueryParam("sessionID") String sessionId) {
+    public Response setTransportName(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID)String id,
+                                     @QueryParam(TransportSce.PARAM_TRANSPORT_NAME)String name,
+                                     @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update transport name: ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -308,8 +317,11 @@ public class TransportEp {
 
     @GET
     @Path("/update/properties/add")
-    public Response addTransportProperty(@QueryParam("ID")String id, @QueryParam("propertyName") String name, @QueryParam("propertyValue") String value,
-                                         @DefaultValue("String") @QueryParam("propertyType") String type, @QueryParam("sessionID") String sessionId) {
+    public Response addTransportProperty(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID)String id,
+                                         @QueryParam(MappingSce.GLOBAL_PARAM_PROP_NAME) String name,
+                                         @QueryParam(MappingSce.GLOBAL_PARAM_PROP_VALUE) String value,
+                                         @DefaultValue(MappingSce.GLOBAL_PARAM_PROP_TYPE) @QueryParam("propertyType") String type,
+                                         @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update transport by adding a property : ({},({},{},{}))", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name, value, type});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -350,7 +362,9 @@ public class TransportEp {
 
     @GET
     @Path("/update/properties/delete")
-    public Response deleteTransportProperty(@QueryParam("ID")String id, @QueryParam("propertyName") String name, @QueryParam("sessionID") String sessionId) {
+    public Response deleteTransportProperty(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID)String id,
+                                            @QueryParam(MappingSce.GLOBAL_PARAM_PROP_NAME) String name,
+                                            @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}] update transport by removing a property : ({},{})", new Object[]{Thread.currentThread().getId(), id, name});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||

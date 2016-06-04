@@ -25,6 +25,10 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxEndpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxNode;
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.service.EndpointSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.NodeSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.EndpointJSON;
@@ -206,7 +210,7 @@ public class EndpointEp {
     }
 
     @GET
-    public Response displayAllEndpoints(@QueryParam("sessionID") String sessionId) {
+    public Response displayAllEndpoints(@QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get endpoints", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
         if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
@@ -240,7 +244,10 @@ public class EndpointEp {
 
     @GET
     @Path("/get")
-    public Response getEndpoint(@QueryParam("URL")String URL, @QueryParam("ID")String id, @QueryParam("selector") String selector, @QueryParam("sessionID") String sessionId) {
+    public Response getEndpoint(@QueryParam(EndpointSce.PARAM_ENDPOINT_URL)String URL,
+                                @QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID)String id,
+                                @QueryParam(MappingSce.GLOBAL_PARAM_SELECTOR) String selector,
+                                @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         if (id!=null) {
             return _displayEndpoint(id, sessionId);
         } else if (URL!=null) {
@@ -314,7 +321,9 @@ public class EndpointEp {
 
     @GET
     @Path("/create")
-    public Response createEndpoint(@QueryParam("endpointURL")String url, @QueryParam("parentNodeID")String parentNodeID, @QueryParam("sessionID") String sessionId) {
+    public Response createEndpoint(@QueryParam(Endpoint.TOKEN_EP_URL)String url,
+                                   @QueryParam(NodeSce.PARAM_NODE_PNID)String parentNodeID,
+                                   @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create endpoint : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), url, parentNodeID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -353,7 +362,8 @@ public class EndpointEp {
     }
 
     @POST
-    public Response postEndpoint(@QueryParam("payload") String payload, @QueryParam("sessionID") String sessionId) throws IOException {
+    public Response postEndpoint(@QueryParam(MappingSce.GLOBAL_PARAM_PAYLOAD) String payload,
+                                 @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) throws IOException {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create or update endpoint : ({})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), payload});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -394,7 +404,8 @@ public class EndpointEp {
 
     @GET
     @Path("/delete")
-    public Response deleteEndpoint(@QueryParam("ID")String endpointID, @QueryParam("sessionID") String sessionId) {
+    public Response deleteEndpoint(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID)String endpointID,
+                                   @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] delete endpoint : ({})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), endpointID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -420,7 +431,9 @@ public class EndpointEp {
 
     @GET
     @Path("/update/url")
-    public Response setEndpointURL(@QueryParam("ID")String id, @QueryParam("URL") String url, @QueryParam("sessionID") String sessionId) {
+    public Response setEndpointURL(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID)String id,
+                                   @QueryParam(EndpointSce.PARAM_ENDPOINT_URL) String url,
+                                   @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update endpoint url: ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, url});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -446,7 +459,9 @@ public class EndpointEp {
 
     @GET
     @Path("/update/parentNode")
-    public Response setEndpointParentNode(@QueryParam("ID")String id, @QueryParam("parentNodeID")String parentNodeID, @QueryParam("sessionID") String sessionId) {
+    public Response setEndpointParentNode(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID)String id,
+                                          @QueryParam(NodeSce.PARAM_NODE_PNID)String parentNodeID,
+                                          @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update endpoint parent node: ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, parentNodeID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -478,7 +493,9 @@ public class EndpointEp {
 
     @GET
     @Path("/update/twinEndpoints/add")
-    public Response addTwinEndpoint(@QueryParam("ID")String id, @QueryParam("twinEndpointID") String twinEndpointID, @QueryParam("sessionID") String sessionId) {
+    public Response addTwinEndpoint(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID)String id,
+                                    @QueryParam(EndpointSce.PARAM_ENDPOINT_TEID) String twinEndpointID,
+                                    @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update endpoint by adding twin endpoint: ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, twinEndpointID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -515,7 +532,9 @@ public class EndpointEp {
 
     @GET
     @Path("/update/twinEndpoints/delete")
-    public Response deleteTwinEndpoint(@QueryParam("ID")String id, @QueryParam("twinEndpointID")String twinEndpointID, @QueryParam("sessionID") String sessionId) {
+    public Response deleteTwinEndpoint(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID)String id,
+                                       @QueryParam(EndpointSce.PARAM_ENDPOINT_TEID)String twinEndpointID,
+                                       @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update endpoint by deleting twin endpoint: ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, twinEndpointID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -553,8 +572,11 @@ public class EndpointEp {
 
     @GET
     @Path("/update/properties/add")
-    public Response addEndpointProperty(@QueryParam("ID")String id, @QueryParam("propertyName") String name, @QueryParam("propertyValue") String value,
-                                        @DefaultValue("String") @QueryParam("propertyType") String type, @QueryParam("sessionID") String sessionId) {
+    public Response addEndpointProperty(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID)String id,
+                                        @QueryParam(MappingSce.GLOBAL_PARAM_PROP_NAME) String name,
+                                        @QueryParam(MappingSce.GLOBAL_PARAM_PROP_VALUE) String value,
+                                        @DefaultValue("String") @QueryParam(MappingSce.GLOBAL_PARAM_PROP_TYPE) String type,
+                                        @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update endpoint by adding a property : ({},({},{},{}))", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name, value, type});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -596,7 +618,9 @@ public class EndpointEp {
 
     @GET
     @Path("/update/properties/delete")
-    public Response deleteEndpointProperty(@QueryParam("ID")String id, @QueryParam("propertyName") String name, @QueryParam("sessionID") String sessionId) {
+    public Response deleteEndpointProperty(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID)String id,
+                                           @QueryParam(MappingSce.GLOBAL_PARAM_PROP_NAME) String name,
+                                           @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update endpoint by removing a property : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||

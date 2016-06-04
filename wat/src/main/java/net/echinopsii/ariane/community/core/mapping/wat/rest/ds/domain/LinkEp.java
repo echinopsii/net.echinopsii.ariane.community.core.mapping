@@ -24,6 +24,9 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Link;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxLink;
+import net.echinopsii.ariane.community.core.mapping.ds.service.LinkSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.LinkJSON;
@@ -147,7 +150,7 @@ public class LinkEp {
     }
 
     @GET
-    public Response displayAllLinks(@QueryParam("sessionID") String sessionId) {
+    public Response displayAllLinks(@QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get links", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
         if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
@@ -180,7 +183,10 @@ public class LinkEp {
 
     @GET
     @Path("/get")
-    public Response getLink(@QueryParam("ID")String id, @QueryParam("SEPID") String sepid, @QueryParam("TEPID") String tepid, @QueryParam("sessionID") String sessionId) {
+    public Response getLink(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID)String id,
+                            @QueryParam(LinkSce.PARAM_LINK_SEPID) String sepid,
+                            @QueryParam(LinkSce.PARAM_LINK_TEPID) String tepid,
+                            @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         if (id!=null)
             return _displayLink(id, sessionId);
         else {
@@ -252,8 +258,10 @@ public class LinkEp {
 
     @GET
     @Path("/create")
-    public Response createLink(@QueryParam("SEPID")String sourceEndpointID, @QueryParam("TEPID")String targetEndpointID,
-                               @QueryParam("transportID")String transportID, @QueryParam("sessionID") String sessionId) {
+    public Response createLink(@QueryParam(LinkSce.PARAM_LINK_SEPID)String sourceEndpointID,
+                               @QueryParam(LinkSce.PARAM_LINK_TEPID)String targetEndpointID,
+                               @QueryParam(Transport.TOKEN_TP_ID)String transportID,
+                               @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create link : ({},{},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), sourceEndpointID, targetEndpointID, transportID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -292,7 +300,8 @@ public class LinkEp {
     }
 
     @POST
-    public Response postLink(@QueryParam("payload") String payload, @QueryParam("sessionID") String sessionId) throws IOException {
+    public Response postLink(@QueryParam(MappingSce.GLOBAL_PARAM_PAYLOAD) String payload,
+                             @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) throws IOException {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create or update link : ({})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), payload});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -333,7 +342,8 @@ public class LinkEp {
 
     @GET
     @Path("/delete")
-    public Response deleteLink(@QueryParam("ID")String linkID, @QueryParam("sessionID") String sessionId) {
+    public Response deleteLink(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID)String linkID,
+                               @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] delete link : ({})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), linkID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -360,7 +370,9 @@ public class LinkEp {
 
     @GET
     @Path("/update/transport")
-    public Response setLinkTransport(@QueryParam("ID")String id, @QueryParam("transportID")String transportID, @QueryParam("sessionID") String sessionId) {
+    public Response setLinkTransport(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID)String id,
+                                     @QueryParam(Transport.TOKEN_TP_ID)String transportID,
+                                     @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}] update link transport : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, transportID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -392,7 +404,9 @@ public class LinkEp {
 
     @GET
     @Path("/update/sourceEP")
-    public Response setLinkEndpointSource(@QueryParam("ID")String id, @QueryParam("SEPID")String SEPID, @QueryParam("sessionID") String sessionId) {
+    public Response setLinkEndpointSource(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID)String id,
+                                          @QueryParam(LinkSce.PARAM_LINK_SEPID)String SEPID,
+                                          @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update link source endpoint : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, SEPID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -423,7 +437,9 @@ public class LinkEp {
 
     @GET
     @Path("/update/targetEP")
-    public Response setLinkEndpointTarget(@QueryParam("ID")String id, @QueryParam("TEPID")String TEPID, @QueryParam("sessionID") String sessionId) {
+    public Response setLinkEndpointTarget(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID)String id,
+                                          @QueryParam(LinkSce.PARAM_LINK_TEPID)String TEPID,
+                                          @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update link target endpoint : ({},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(),  id, TEPID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||

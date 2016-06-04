@@ -26,6 +26,9 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxGate;
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.service.GateSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.GateJSON;
@@ -279,7 +282,7 @@ public class GateEp {
     }
 
     @GET
-    public Response displayAllGates(@QueryParam("sessionID") String sessionId) {
+    public Response displayAllGates(@QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] get gates", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
         if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
@@ -315,15 +318,18 @@ public class GateEp {
 
     @GET
     @Path("/get")
-    public Response getGate(@QueryParam("ID")String id, @QueryParam("sessionID") String sessionId) {
+    public Response getGate(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID)String id,
+                            @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         return _displayGate(id, sessionId);
     }
 
     @GET
     @Path("/create")
-    public Response createGate(@QueryParam("URL")String url, @QueryParam("name")String name,
-                               @QueryParam("containerID")String containerID, @QueryParam("isPrimaryAdmin")boolean isPrimaryAdmin,
-                               @QueryParam("sessionID") String sessionId) {
+    public Response createGate(@QueryParam(GateSce.PARAM_GATE_URL)String url,
+                               @QueryParam(GateSce.PARAM_GATE_NAME)String name,
+                               @QueryParam(Container.TOKEN_CT_ID)String containerID,
+                               @QueryParam(GateSce.PARAM_GATE_IPADM)boolean isPrimaryAdmin,
+                               @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create gate : ({},{},{},{})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), url, name, containerID, isPrimaryAdmin});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -366,7 +372,8 @@ public class GateEp {
     }
 
     @POST
-    public Response postGate(@QueryParam("payload") String payload, @QueryParam("sessionID") String sessionId) throws IOException {
+    public Response postGate(@QueryParam(MappingSce.GLOBAL_PARAM_PAYLOAD) String payload,
+                             @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) throws IOException {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] create or update gate : ({})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), payload});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -410,7 +417,8 @@ public class GateEp {
 
     @GET
     @Path("/delete")
-    public Response deleteGate(@QueryParam("ID")String nodeID, @QueryParam("sessionID") String sessionId) {
+    public Response deleteGate(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID)String nodeID,
+                               @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] delete gate : ({})", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), nodeID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
@@ -438,7 +446,9 @@ public class GateEp {
 
     @GET
     @Path("/update/primaryEndpoint")
-    public Response setPrimaryEndpoint(@QueryParam("ID")String id, @QueryParam("endpointID")String endpointID, @QueryParam("sessionID") String sessionId) {
+    public Response setPrimaryEndpoint(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID)String id,
+                                       @QueryParam(Endpoint.TOKEN_EP_ID)String endpointID,
+                                       @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}] update primary admin endpoint : ({},{})", new Object[]{Thread.currentThread().getId(), id, endpointID});
         if (subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:write") ||
