@@ -18,18 +18,18 @@
  */
 package net.echinopsii.ariane.community.core.mapping.ds.msgsrv.service;
 
-import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.momsp.MappingMsgsrvMomSP;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
-import net.echinopsii.ariane.community.core.mapping.ds.service.NodeSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.TransportSce;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
 
 import java.util.Map;
 
-public class NodeEp {
+public class TransportEp {
+    static class TransportWorker implements AppMsgWorker {
 
-    static class NodeWorker implements AppMsgWorker {
         @Override
         public Map<String, Object> apply(Map<String, Object> message) {
             Object oOperation = message.get(MappingSce.GLOBAL_OPERATION_FDN);
@@ -41,35 +41,18 @@ public class NodeEp {
                 operation = oOperation.toString();
 
             switch (operation) {
-                case NodeSce.OP_CREATE_NODE:
+                case TransportSce.OP_CREATE_TRANSPORT:
                     break;
-                case NodeSce.OP_DELETE_NODE:
+                case TransportSce.OP_DELETE_TRANSPORT:
                     break;
-                case NodeSce.OP_GET_NODE:
+                case TransportSce.OP_GET_TRANSPORT:
                     break;
-                case NodeSce.OP_GET_NODE_BY_EPURL:
+                case TransportSce.OP_GET_TRANSPORTS:
                     break;
-                case NodeSce.OP_GET_NODE_BY_NAME:
+                case Transport.OP_SET_TRANSPORT_NAME:
                     break;
-                case NodeSce.OP_GET_NODES:
-                    break;
-                case Node.OP_SET_NODE_NAME:
-                    break;
-                case Node.OP_SET_NODE_CONTAINER:
-                    break;
-                case Node.OP_SET_NODE_PARENT_NODE:
-                    break;
-                case Node.OP_ADD_ENDPOINT:
-                case Node.OP_REMOVE_ENDPOINT:
-                    break;
-                case Node.OP_ADD_NODE_PROPERTY:
-                case Node.OP_REMOVE_NODE_PROPERTY:
-                    break;
-                case Node.OP_ADD_NODE_CHILD_NODE:
-                case Node.OP_REMOVE_NODE_CHILD_NODE:
-                    break;
-                case Node.OP_ADD_TWIN_NODE:
-                case Node.OP_REMOVE_TWIN_NODE:
+                case Transport.OP_ADD_TRANSPORT_PROPERTY:
+                case Transport.OP_REMOVE_TRANSPORT_PROPERTY:
                     break;
                 case MappingSce.GLOBAL_OPERATION_NOT_DEFINED:
                     message.put(MomMsgTranslator.MSG_RC, 1);
@@ -80,7 +63,6 @@ public class NodeEp {
                     message.put(MomMsgTranslator.MSG_ERR, "Unknown operation (" + operation + ") ! ");
                     break;
             }
-
             return message;
         }
     }
@@ -88,7 +70,7 @@ public class NodeEp {
     public static void start() {
         if (MappingMsgsrvMomSP.getSharedMoMConnection() != null && MappingMsgsrvMomSP.getSharedMoMConnection().isConnected())
             MappingMsgsrvMomSP.getSharedMoMConnection().getServiceFactory().requestService(
-                    NodeSce.Q_MAPPING_NODE_SERVICE, new NodeWorker()
+                    TransportSce.Q_MAPPING_TRANSPORT_SERVICE, new TransportWorker()
             );
     }
 }

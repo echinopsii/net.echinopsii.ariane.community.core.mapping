@@ -19,11 +19,9 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.msgsrv;
 
-import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.service.ClusterEp;
-import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.service.ContainerEp;
+import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.service.*;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.momsp.MappingMsgsrvMomSP;
-import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.service.SessionEp;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import org.apache.felix.ipojo.annotations.*;
 import org.slf4j.Logger;
@@ -63,6 +61,12 @@ public class MappingMsgsrvBootstrap {
             SessionEp.start();
             ClusterEp.start();
             ContainerEp.start();
+            NodeEp.start();
+            GateEp.start();
+            EndpointEp.start();
+            LinkEp.start();
+            TransportEp.start();
+            MapEp.start();
             isStarted = true;
         }
     }

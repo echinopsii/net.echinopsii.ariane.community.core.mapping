@@ -18,5 +18,47 @@
  */
 package net.echinopsii.ariane.community.core.mapping.ds.msgsrv.service;
 
+import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.momsp.MappingMsgsrvMomSP;
+import net.echinopsii.ariane.community.core.mapping.ds.service.MapSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
+import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
+import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
+
+import java.util.Map;
+
 public class MapEp {
+    static class MapWorker implements AppMsgWorker {
+
+        @Override
+        public Map<String, Object> apply(Map<String, Object> message) {
+            Object oOperation = message.get(MappingSce.GLOBAL_OPERATION_FDN);
+            String operation;
+
+            if (oOperation==null)
+                operation = MappingSce.GLOBAL_OPERATION_NOT_DEFINED;
+            else
+                operation = oOperation.toString();
+
+            switch (operation) {
+                case MapSce.OP_GET_MAP:
+                    break;
+                case MappingSce.GLOBAL_OPERATION_NOT_DEFINED:
+                    message.put(MomMsgTranslator.MSG_RC, 1);
+                    message.put(MomMsgTranslator.MSG_ERR, "Operation not defined ! ");
+                    break;
+                default:
+                    message.put(MomMsgTranslator.MSG_RC, 1);
+                    message.put(MomMsgTranslator.MSG_ERR, "Unknown operation (" + operation + ") ! ");
+                    break;
+            }
+            return message;
+        }
+    }
+
+    public static void start() {
+        if (MappingMsgsrvMomSP.getSharedMoMConnection() != null && MappingMsgsrvMomSP.getSharedMoMConnection().isConnected())
+            MappingMsgsrvMomSP.getSharedMoMConnection().getServiceFactory().requestService(
+                    MapSce.Q_MAPPING_MAP_SERVICE, new MapWorker()
+            );
+    }
 }
