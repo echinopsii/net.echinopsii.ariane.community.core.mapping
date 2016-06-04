@@ -52,12 +52,10 @@ public class GateImpl extends NodeImpl implements SProxGate {
         return this.gatePrimaryAdminEndpoint;
     }
 
-    static final String SET_NODE_PRIMARY_ADMIN_ENDPOINT = "setNodePrimaryAdminEndpoint";
-
     @Override
     public void setNodePrimaryAdminEnpoint(Session session, Endpoint endpoint) throws MappingDSException {
         if (session!=null && session.isRunning())
-            session.execute(this, SET_NODE_PRIMARY_ADMIN_ENDPOINT, new Object[]{endpoint});
+            session.execute(this, OP_SET_NODE_PRIMARY_ADMIN_ENDPOINT, new Object[]{endpoint});
     }
 
     @Override
