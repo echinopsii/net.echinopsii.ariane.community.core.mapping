@@ -339,9 +339,10 @@ public class MappingDSGraphDB {
         String id = edge.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_ID);
         MappingDSBlueprintsCacheEntity ret;
         Long threadID = Thread.currentThread().getId();
-        if (threadSessionRegistry.containsKey(threadID))
-            ret = (MappingDSBlueprintsCacheEntity)((SessionImpl)threadSessionRegistry.get(threadID)).getCachedEntity("E" + id);
-        else ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("E" + id);
+        if (threadSessionRegistry.containsKey(threadID)) {
+            ret = (MappingDSBlueprintsCacheEntity) ((SessionImpl) threadSessionRegistry.get(threadID)).getCachedEntity("E" + id);
+            if (ret == null) ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("E" + id);
+        } else ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("E" + id);
         if (ret == null) {
             if (edge.getLabel().equals(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY)) {
                 ret = new LinkImpl();
@@ -358,9 +359,10 @@ public class MappingDSGraphDB {
         log.debug("Get cache entity {} if exists ...", new Object[]{"E"+id});
         MappingDSBlueprintsCacheEntity ret;
         Long threadID = Thread.currentThread().getId();
-        if (threadSessionRegistry.containsKey(threadID))
-            ret = (MappingDSBlueprintsCacheEntity)((SessionImpl)threadSessionRegistry.get(threadID)).getCachedEntity("E" + id);
-        else ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("E" + id);
+        if (threadSessionRegistry.containsKey(threadID)) {
+            ret = (MappingDSBlueprintsCacheEntity) ((SessionImpl) threadSessionRegistry.get(threadID)).getCachedEntity("E" + id);
+            if (ret == null) ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("E" + id);
+        } else ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("E" + id);
         if (ret == null) {
             if (ccgraph instanceof Neo4j2Graph)
                 //Tinkerpop Blueprint 2.5 forget to start transaction on getEdges(final String key, final Object value)
@@ -383,9 +385,10 @@ public class MappingDSGraphDB {
         String vertexType = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY);
         MappingDSBlueprintsCacheEntity ret;
         Long threadID = Thread.currentThread().getId();
-        if (threadSessionRegistry.containsKey(threadID))
-            ret = (MappingDSBlueprintsCacheEntity)((SessionImpl)threadSessionRegistry.get(threadID)).getCachedEntity("V" + id);
-        else ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("V" + id);
+        if (threadSessionRegistry.containsKey(threadID)) {
+            ret = (MappingDSBlueprintsCacheEntity) ((SessionImpl) threadSessionRegistry.get(threadID)).getCachedEntity("V" + id);
+            if (ret == null) ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("V" + id);
+        } else ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("V" + id);
         if (ret == null) {
             if (vertexType != null) {
                 switch (vertexType) {
@@ -435,9 +438,10 @@ public class MappingDSGraphDB {
         log.debug("Get cache entity {} if exists ...", new Object[]{"V" + id});
         MappingDSBlueprintsCacheEntity ret;
         Long threadID = Thread.currentThread().getId();
-        if (threadSessionRegistry.containsKey(threadID))
-            ret = (MappingDSBlueprintsCacheEntity)((SessionImpl)threadSessionRegistry.get(threadID)).getCachedEntity("V" + id);
-        else ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("V" + id);
+        if (threadSessionRegistry.containsKey(threadID)) {
+            ret = (MappingDSBlueprintsCacheEntity) ((SessionImpl) threadSessionRegistry.get(threadID)).getCachedEntity("V" + id);
+            if (ret == null) ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("V" + id);
+        } else ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("V" + id);
         if (ret == null) {
             log.debug("Get vertex {} from graph {}...", new Object[]{id, ccgraph.toString() + "(" + ccgraph.hashCode() + ")"});
             Vertex vertex = (ccgraph.getVertices(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID, id).iterator().hasNext() ?
@@ -819,9 +823,10 @@ public class MappingDSGraphDB {
             return null;
         MappingDSBlueprintsCacheEntity ret;
         Long threadID = Thread.currentThread().getId();
-        if (threadSessionRegistry.containsKey(threadID))
-            ret = (MappingDSBlueprintsCacheEntity)((SessionImpl)threadSessionRegistry.get(threadID)).getCachedEntity("E" + id);
-        else ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("E" + id);
+        if (threadSessionRegistry.containsKey(threadID)) {
+            ret = (MappingDSBlueprintsCacheEntity) ((SessionImpl) threadSessionRegistry.get(threadID)).getCachedEntity("E" + id);
+            if (ret == null) ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("E" + id);
+        } else ret = (MappingDSBlueprintsCacheEntity)MappingDSCache.getCachedEntity("E" + id);
         if (ret == null && ccgraph != null) {
             if (ccgraph instanceof Neo4j2Graph)
                 //Tinkerpop Blueprint 2.5 forget to start transaction on getEdges(final String key, final Object value)

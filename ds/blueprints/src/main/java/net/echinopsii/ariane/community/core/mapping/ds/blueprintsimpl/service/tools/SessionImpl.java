@@ -115,10 +115,10 @@ public class SessionImpl implements Session {
         }
 
 
-        private void returnToQueue(SessionWorkerRequest req, Object ret) {
+        private void returnToQueue(SessionWorkerRequest req, SessionWorkerReply ret) {
             if (req.getReplyQ() != null) {
                 try {
-                    req.getReplyQ().put(new SessionWorkerReply(false, ret, null));
+                    req.getReplyQ().put(ret);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -145,18 +145,20 @@ public class SessionImpl implements Session {
                             MappingDSCache.removeEntityFromCache(entity);
                         ((SessionImpl) this.attachedSession).sessionExistingObjectCache.clear();
                         ((SessionImpl) this.attachedSession).sessionRemovedObjectCache.clear();
-                        this.returnToQueue(msg, Void.TYPE);
+                        this.returnToQueue(msg, new SessionWorkerReply(false, Void.TYPE, null));
                     } else if (msg.getAction().equals(ROLLBACK)) {
                         MappingDSGraphDB.rollback();
-                        ((SessionImpl)this.attachedSession).sessionExistingObjectCache.clear();
-                        this.returnToQueue(msg, Void.TYPE);
+                        ((SessionImpl) this.attachedSession).sessionExistingObjectCache.clear();
+                        ((SessionImpl) this.attachedSession).sessionRemovedObjectCache.clear();
+                        this.returnToQueue(msg, new SessionWorkerReply(false, Void.TYPE, null));
                     } else if (msg.getAction().equals(EXECUTE)) {
                         try {
                             Object ret = msg.getMethod().invoke(msg.getInstance(), msg.getArgs());
                             if (msg.getMethod().getReturnType().equals(Void.TYPE))
                                 ret = Void.TYPE;
-                            this.returnToQueue(msg, ret);
+                            this.returnToQueue(msg, new SessionWorkerReply(false, ret, null));
                         } catch (Exception e) {
+                            e.printStackTrace();
                             this.returnToQueue(msg, new SessionWorkerReply(true, null, e.getMessage()));
                         }
                     }
