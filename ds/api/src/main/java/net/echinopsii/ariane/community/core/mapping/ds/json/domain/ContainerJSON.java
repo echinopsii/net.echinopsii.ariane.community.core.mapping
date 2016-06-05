@@ -34,9 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class ContainerJSON {
 
@@ -289,5 +287,30 @@ public class ContainerJSON {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return mapper.readValue(payload, JSONDeserializedContainer.class);
+    }
+
+    public static class JSONDeserializedContainers {
+        JSONDeserializedContainer[] containers;
+
+        public JSONDeserializedContainer[] getContainers() {
+            return containers;
+        }
+
+        public void setContainers(JSONDeserializedContainer[] containers) {
+            this.containers = containers;
+        }
+
+        public Set<JSONDeserializedContainer> toSet() {
+            HashSet<JSONDeserializedContainer> ret = new HashSet<>();
+            if (containers!=null)
+                Collections.addAll(ret, containers);
+            return ret;
+        }
+    }
+
+    public static Set<JSONDeserializedContainer> JSON2Containers(String payload) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return mapper.readValue(payload, JSONDeserializedContainers.class).toSet();
     }
 }

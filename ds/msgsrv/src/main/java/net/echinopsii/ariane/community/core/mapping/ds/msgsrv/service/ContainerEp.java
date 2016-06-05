@@ -74,6 +74,7 @@ public class ContainerEp {
                     case ContainerSce.OP_CREATE_CONTAINER:
                         sid = (String) message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID);
                         name = (String) message.get(ContainerSce.PARAM_CONTAINER_NAME);
+                        pc_id = (String) message.get(ContainerSce.PARAM_CONTAINER_PCO_ID);
                         pag_url = (String) message.get(ContainerSce.PARAM_CONTAINER_PAG_URL);
                         pag_name = (String) message.get(ContainerSce.PARAM_CONTAINER_PAG_NAME);
 
@@ -89,11 +90,39 @@ public class ContainerEp {
 
                             Container cont;
                             if (name!=null) {
-                                if (session!=null) cont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().createContainer(session, name, pag_url, pag_name);
-                                else cont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().createContainer(name, pag_url, pag_name);
+                                if (pc_id!=null) {
+                                    Container pcont;
+                                    if (session != null) pcont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(session, pc_id);
+                                    else pcont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(session, pc_id);
+                                    if (pcont!=null) {
+                                        if (session != null) cont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().createContainer(session, name, pag_url, pag_name, pcont);
+                                        else cont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().createContainer(name, pag_url, pag_name, pcont);
+                                    } else {
+                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                        message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : parent container with provided id not found");
+                                        return message;
+                                    }
+                                } else {
+                                    if (session != null) cont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().createContainer(session, name, pag_url, pag_name);
+                                    else cont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().createContainer(name, pag_url, pag_name);
+                                }
                             } else {
-                                if (session!=null) cont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().createContainer(session, pag_url, pag_name);
-                                else cont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().createContainer(pag_url, pag_name);
+                                if (pc_id != null) {
+                                    Container pcont;
+                                    if (session != null) pcont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(session, pc_id);
+                                    else pcont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(session, pc_id);
+                                    if (pcont!=null) {
+                                        if (session != null) cont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().createContainer(session, pag_url, pag_name, pcont);
+                                        else cont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().createContainer(pag_url, pag_name, pcont);
+                                    } else {
+                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                        message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : parent container with provided id not found");
+                                        return message;
+                                    }
+                                } else {
+                                    if (session != null) cont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().createContainer(session, pag_url, pag_name);
+                                    else cont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().createContainer(pag_url, pag_name);
+                                }
                             }
 
                             ByteArrayOutputStream outStream = new ByteArrayOutputStream();

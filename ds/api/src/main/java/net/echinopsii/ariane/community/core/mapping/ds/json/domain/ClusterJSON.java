@@ -120,7 +120,6 @@ public class ClusterJSON {
     }
 
     public static Set<JSONDeserializedCluster> JSON2Clusters(String payload) throws IOException {
-        HashSet<JSONDeserializedCluster> ret = new HashSet<>();
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return mapper.readValue(payload, JSONDeserializedClusters.class).toSet();
