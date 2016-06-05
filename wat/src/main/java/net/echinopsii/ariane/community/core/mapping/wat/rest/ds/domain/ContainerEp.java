@@ -118,7 +118,7 @@ public class ContainerEp {
             }
         }
         if (ret.getErrorMessage() == null && jsonDeserializedContainer.getContainerProperties()!=null && jsonDeserializedContainer.getContainerProperties().size() > 0) {
-            for (PropertiesJSON.JSONDeserializedProperty deserializedProperty : jsonDeserializedContainer.getContainerProperties()) {
+            for (PropertiesJSON.TypedPropertyField deserializedProperty : jsonDeserializedContainer.getContainerProperties()) {
                 try {
                     Object oValue = ToolBox.extractPropertyObjectValueFromString(deserializedProperty.getPropertyValue(), deserializedProperty.getPropertyType());
                     reqProperties.put(deserializedProperty.getPropertyName(), oValue);
@@ -962,7 +962,7 @@ public class ContainerEp {
     public Response addContainerProperty(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID) String id,
                                          @QueryParam(MappingSce.GLOBAL_PARAM_PROP_NAME) String name,
                                          @QueryParam(MappingSce.GLOBAL_PARAM_PROP_VALUE) String value,
-                                         @DefaultValue("String") @QueryParam(MappingSce.GLOBAL_PARAM_PROP_TYPE) String type,
+                                         @DefaultValue("string") @QueryParam(MappingSce.GLOBAL_PARAM_PROP_TYPE) String type,
                                          @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}] update container by adding a property : ({},({},{},{}))", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name, value, type});

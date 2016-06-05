@@ -80,7 +80,7 @@ public class EndpointEp {
         }
 
         if (ret.getErrorMessage()==null && jsonDeserializedEndpoint.getEndpointProperties()!=null && jsonDeserializedEndpoint.getEndpointProperties().size() > 0) {
-            for (PropertiesJSON.JSONDeserializedProperty deserializedProperty : jsonDeserializedEndpoint.getEndpointProperties()) {
+            for (PropertiesJSON.TypedPropertyField deserializedProperty : jsonDeserializedEndpoint.getEndpointProperties()) {
                 try {
                     Object oValue = ToolBox.extractPropertyObjectValueFromString(deserializedProperty.getPropertyValue(), deserializedProperty.getPropertyType());
                     reqEndpointProperties.put(deserializedProperty.getPropertyName(), oValue);

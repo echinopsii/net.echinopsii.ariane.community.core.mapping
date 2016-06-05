@@ -105,7 +105,7 @@ public class GateEp {
             }
         }
         if (ret.getErrorMessage() == null && jsonDeserializedGate.getNode().getNodeProperties()!=null && jsonDeserializedGate.getNode().getNodeProperties().size() > 0) {
-            for (PropertiesJSON.JSONDeserializedProperty deserializedProperty : jsonDeserializedGate.getNode().getNodeProperties()) {
+            for (PropertiesJSON.TypedPropertyField deserializedProperty : jsonDeserializedGate.getNode().getNodeProperties()) {
                 try {
                     Object oValue = ToolBox.extractPropertyObjectValueFromString(deserializedProperty.getPropertyValue(), deserializedProperty.getPropertyType());
                     reqProperties.put(deserializedProperty.getPropertyName(), oValue);

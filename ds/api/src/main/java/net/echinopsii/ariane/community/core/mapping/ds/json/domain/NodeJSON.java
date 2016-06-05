@@ -29,7 +29,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
-import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON.JSONDeserializedProperty;
+import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON.TypedPropertyField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -121,7 +121,7 @@ public class NodeJSON {
         private List<String> nodeChildNodesID;
         private List<String> nodeTwinNodesID;
         private List<String> nodeEndpointsID;
-        private List<JSONDeserializedProperty> nodeProperties;
+        private List<TypedPropertyField> nodeProperties;
 
         public String getNodeID() {
             return nodeID;
@@ -187,11 +187,11 @@ public class NodeJSON {
             this.nodeEndpointsID = nodeEndpointsID;
         }
 
-        public List<JSONDeserializedProperty> getNodeProperties() {
+        public List<TypedPropertyField> getNodeProperties() {
             return nodeProperties;
         }
 
-        public void setNodeProperties(List<JSONDeserializedProperty> nodeProperties) {
+        public void setNodeProperties(List<TypedPropertyField> nodeProperties) {
             this.nodeProperties = nodeProperties;
         }
     }

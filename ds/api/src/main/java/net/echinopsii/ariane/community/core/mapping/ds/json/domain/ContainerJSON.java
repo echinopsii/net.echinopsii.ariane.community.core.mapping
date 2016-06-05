@@ -21,7 +21,6 @@
 package net.echinopsii.ariane.community.core.mapping.ds.json.domain;
 
 import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -44,15 +43,18 @@ public class ContainerJSON {
     private final static Logger log = LoggerFactory.getLogger(ContainerJSON.class);
 
     private static void containerProps2JSON(HashMap<String, Object> props, JsonGenerator jgenerator,
-                                                  boolean writeOPropsFieldStart, boolean writeOPropsFieldEnd)
-    throws JsonGenerationException, IOException {
-        if (writeOPropsFieldStart) {
-            jgenerator.writeObjectFieldStart(Container.TOKEN_CT_PRP);
-        }
+                                                  boolean writeOPropsFieldStart, boolean writeOPropsFieldEnd) throws IOException {
+        if (writeOPropsFieldStart)jgenerator.writeObjectFieldStart(Container.TOKEN_CT_PRP);
         PropertiesJSON.propertiesToJSON(props, jgenerator);
-        if (writeOPropsFieldEnd) {
-            jgenerator.writeEndObject();
-        }
+        if (writeOPropsFieldEnd) jgenerator.writeEndObject();
+    }
+
+    private static void containerProps2JSONWithTypedProps(HashMap<String, Object> props, JsonGenerator jgenerator,
+                                                          boolean writeOPropsFieldStart, boolean writeOPropsFieldEnd) throws IOException {
+        if (writeOPropsFieldStart) jgenerator.writeArrayFieldStart(Container.TOKEN_CT_PRP);
+        for (PropertiesJSON.TypedPropertyField field : PropertiesJSON.propertiesToTypedPropertiesList(props))
+            field.toJSON(jgenerator);
+        if (writeOPropsFieldEnd) jgenerator.writeEndArray();
     }
 
     public static void container2MapJSON(Container cont, HashMap<String, Object> props, JsonGenerator jgenerator) throws IOException {
@@ -74,7 +76,7 @@ public class ContainerJSON {
         jgenerator.writeEndObject();
     }
 
-    public static void container2JSON(Container cont, JsonGenerator jgenerator) throws IOException {
+    private static void commonContainer2JSON(Container cont, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeStartObject();
         jgenerator.writeStringField(Container.TOKEN_CT_ID, cont.getContainerID());
         jgenerator.writeStringField(Container.TOKEN_CT_NAME, cont.getContainerName());
@@ -107,12 +109,17 @@ public class ContainerJSON {
         for (Node node : cont.getContainerNodes(0))
             jgenerator.writeString(node.getNodeID());
         jgenerator.writeEndArray();
+    }
 
-        if (cont.getContainerProperties() != null) {
-            log.debug("Read container properties {}", new Object[]{cont.getContainerProperties().toString()});
-            containerProps2JSON(cont.getContainerProperties(), jgenerator, true, true);
-        }
+    public static void container2JSON(Container cont, JsonGenerator jgenerator) throws IOException {
+        commonContainer2JSON(cont, jgenerator);
+        if (cont.getContainerProperties() != null) containerProps2JSON(cont.getContainerProperties(), jgenerator, true, true);
+        jgenerator.writeEndObject();
+    }
 
+    public static void container2JSONWithTypedProps(Container cont, JsonGenerator jgenerator) throws IOException {
+        commonContainer2JSON(cont, jgenerator);
+        if (cont.getContainerProperties() != null) containerProps2JSONWithTypedProps(cont.getContainerProperties(), jgenerator, true, true);
         jgenerator.writeEndObject();
     }
 
@@ -122,11 +129,27 @@ public class ContainerJSON {
         jgenerator.close();
     }
 
+    public static void oneContainer2JSONWithTypedProps(Container cont, ByteArrayOutputStream outStream) throws IOException {
+        JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
+        ContainerJSON.container2JSONWithTypedProps(cont, jgenerator);
+        jgenerator.close();
+    }
+
     public static void manyContainers2JSON(HashSet<Container> conts, ByteArrayOutputStream outStream) throws IOException {
         JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         jgenerator.writeStartObject();
         jgenerator.writeArrayFieldStart("containers");
         for (Container current : conts) ContainerJSON.container2JSON(current, jgenerator);
+        jgenerator.writeEndArray();
+        jgenerator.writeEndObject();
+        jgenerator.close();
+    }
+
+    public static void manyContainers2JSONWithTypedProps(HashSet<Container> conts, ByteArrayOutputStream outStream) throws IOException {
+        JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
+        jgenerator.writeStartObject();
+        jgenerator.writeArrayFieldStart("containers");
+        for (Container current : conts) ContainerJSON.container2JSONWithTypedProps(current, jgenerator);
         jgenerator.writeEndArray();
         jgenerator.writeEndObject();
         jgenerator.close();
@@ -146,7 +169,7 @@ public class ContainerJSON {
         private List<String> containerChildContainersID;
         private List<String> containerNodesID;
         private List<String> containerGatesID;
-        private List<PropertiesJSON.JSONDeserializedProperty> containerProperties;
+        private List<PropertiesJSON.TypedPropertyField> containerProperties;
 
 
         public String getContainerID() {
@@ -253,11 +276,11 @@ public class ContainerJSON {
             this.containerGatesID = containerGatesID;
         }
 
-        public List<PropertiesJSON.JSONDeserializedProperty> getContainerProperties() {
+        public List<PropertiesJSON.TypedPropertyField> getContainerProperties() {
             return containerProperties;
         }
 
-        public void setContainerProperties(List<PropertiesJSON.JSONDeserializedProperty> containerProperties) {
+        public void setContainerProperties(List<PropertiesJSON.TypedPropertyField> containerProperties) {
             this.containerProperties = containerProperties;
         }
     }

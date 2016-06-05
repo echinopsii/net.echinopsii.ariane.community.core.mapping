@@ -93,7 +93,7 @@ public class EndpointJSON {
         private String endpointURL;
         private String endpointParentNodeID;
         private List<String> endpointTwinEndpointsID;
-        private List<PropertiesJSON.JSONDeserializedProperty> endpointProperties;
+        private List<PropertiesJSON.TypedPropertyField> endpointProperties;
 
         public String getEndpointID() {
             return endpointID;
@@ -127,11 +127,11 @@ public class EndpointJSON {
             this.endpointTwinEndpointsID = endpointTwinEndpointsID;
         }
 
-        public List<PropertiesJSON.JSONDeserializedProperty> getEndpointProperties() {
+        public List<PropertiesJSON.TypedPropertyField> getEndpointProperties() {
             return endpointProperties;
         }
 
-        public void setEndpointProperties(List<PropertiesJSON.JSONDeserializedProperty> endpointProperties) {
+        public void setEndpointProperties(List<PropertiesJSON.TypedPropertyField> endpointProperties) {
             this.endpointProperties = endpointProperties;
         }
     }

@@ -58,7 +58,7 @@ public class TransportEp {
         HashMap<String, Object> reqProperties = new HashMap<>();
 
         if (jsonDeserializedTransport.getTransportProperties()!=null && jsonDeserializedTransport.getTransportProperties().size() > 0) {
-            for (PropertiesJSON.JSONDeserializedProperty deserializedProperty : jsonDeserializedTransport.getTransportProperties()) {
+            for (PropertiesJSON.TypedPropertyField deserializedProperty : jsonDeserializedTransport.getTransportProperties()) {
                 try {
                     Object oValue = ToolBox.extractPropertyObjectValueFromString(deserializedProperty.getPropertyValue(), deserializedProperty.getPropertyType());
                     reqProperties.put(deserializedProperty.getPropertyName(), oValue);

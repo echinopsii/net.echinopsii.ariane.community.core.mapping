@@ -108,7 +108,7 @@ public class NodeEp {
             }
         }
         if (ret.getErrorMessage() == null && jsonDeserializedNode.getNodeProperties()!=null && jsonDeserializedNode.getNodeProperties().size() > 0) {
-            for (PropertiesJSON.JSONDeserializedProperty deserializedProperty : jsonDeserializedNode.getNodeProperties()) {
+            for (PropertiesJSON.TypedPropertyField deserializedProperty : jsonDeserializedNode.getNodeProperties()) {
                 try {
                     Object oValue = ToolBox.extractPropertyObjectValueFromString(deserializedProperty.getPropertyValue(), deserializedProperty.getPropertyType());
                     reqProperties.put(deserializedProperty.getPropertyName(), oValue);

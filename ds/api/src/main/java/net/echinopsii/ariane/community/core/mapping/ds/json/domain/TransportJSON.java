@@ -76,7 +76,7 @@ public class TransportJSON {
     public static class JSONDeserializedTransport {
         private String transportID;
         private String transportName;
-        private List<PropertiesJSON.JSONDeserializedProperty> transportProperties;
+        private List<PropertiesJSON.TypedPropertyField> transportProperties;
 
         public String getTransportID() {
             return transportID;
@@ -94,11 +94,11 @@ public class TransportJSON {
             this.transportName = transportName;
         }
 
-        public List<PropertiesJSON.JSONDeserializedProperty> getTransportProperties() {
+        public List<PropertiesJSON.TypedPropertyField> getTransportProperties() {
             return transportProperties;
         }
 
-        public void setTransportProperties(List<PropertiesJSON.JSONDeserializedProperty> transportProperties) {
+        public void setTransportProperties(List<PropertiesJSON.TypedPropertyField> transportProperties) {
             this.transportProperties = transportProperties;
         }
     }
