@@ -81,24 +81,28 @@ public class MapSceImpl implements MapSce {
             switch (type) {
                 case MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE:
                     Container container = sce.getContainerSce().getContainer(id.substring(1, id.length()));
-                    addContainerToResultMap(container, map);
+                    if (container != null) addContainerToResultMap(container, map);
+                    else log.warn("Container " + id + " not found !");
                     break;
                 case MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE:
                     Node node = sce.getNodeSce().getNode(id.substring(1,id.length()));
-                    addNodeToResultMap(node, map);
+                    if (node != null) addNodeToResultMap(node, map);
+                    else log.warn("Node " + id + " not found !");
                     break;
                 case MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE:
                     Endpoint endpoint = sce.getEndpointSce().getEndpoint(id.substring(1,id.length()));
-                    addEndpointToResultMap(endpoint, map);
+                    if (endpoint != null) addEndpointToResultMap(endpoint, map);
+                    else log.warn("Endpoint " + id + " not found !");
                     break;
                 case MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE:
                     Transport transport = sce.getTransportSce().getTransport(id.substring(1,id.length()));
-                    log.debug("Add transport to result map : " + transport.getTransportName());
-                    map.addTransport(transport);
+                    if (transport != null) map.addTransport(transport);
+                    else log.warn("Transport " + id + " not found !");
                     break;
                 case MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY:
                     Link link = sce.getLinkSce().getLink(id.substring(1,id.length()));
-                    addLinkToResultMap(link, map);
+                    if (link != null) addLinkToResultMap(link, map);
+                    else log.warn("Link " + id + " not found !");
                     break;
                 default:
                     log.error("Unsupported type {} for object {} in minimal map return !", type, id.substring(1,id.length()));
