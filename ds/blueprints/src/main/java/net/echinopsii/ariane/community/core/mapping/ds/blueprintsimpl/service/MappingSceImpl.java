@@ -176,7 +176,7 @@ public class MappingSceImpl extends SProxMappingSceAbs<SessionImpl, SessionRegis
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
         if (clientThreadSessionID!=null) {
             Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
-            if (session!=null) this.getNodeByName(session, container, nodeName);
+            if (session!=null) ret = this.getNodeByName(session, container, nodeName);
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else if (container instanceof ContainerImpl) ret = globalRepo.findNodeByName((ContainerImpl) container, nodeName);
         return ret;
@@ -221,7 +221,7 @@ public class MappingSceImpl extends SProxMappingSceAbs<SessionImpl, SessionRegis
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
         if (clientThreadSessionID!=null) {
             Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
-            if (session!=null) this.getGateByName(session, container, nodeName);
+            if (session!=null) ret = this.getGateByName(session, container, nodeName);
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else if (container instanceof ContainerImpl) ret = globalRepo.findGateByName((ContainerImpl) container, nodeName);
         return ret;
@@ -234,7 +234,7 @@ public class MappingSceImpl extends SProxMappingSceAbs<SessionImpl, SessionRegis
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
         if (clientThreadSessionID!=null) {
             Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
-            if (session!=null) this.getLinksBySourceEP(session, endpoint);
+            if (session!=null) ret = this.getLinksBySourceEP(session, endpoint);
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
             if (endpoint instanceof EndpointImpl) {
