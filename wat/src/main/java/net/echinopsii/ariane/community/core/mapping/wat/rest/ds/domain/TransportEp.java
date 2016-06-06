@@ -320,7 +320,7 @@ public class TransportEp {
     public Response addTransportProperty(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID)String id,
                                          @QueryParam(MappingSce.GLOBAL_PARAM_PROP_NAME) String name,
                                          @QueryParam(MappingSce.GLOBAL_PARAM_PROP_VALUE) String value,
-                                         @DefaultValue(MappingSce.GLOBAL_PARAM_PROP_TYPE) @QueryParam("propertyType") String type,
+                                         @DefaultValue("String") @QueryParam(MappingSce.GLOBAL_PARAM_PROP_TYPE) String type,
                                          @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         Subject subject = SecurityUtils.getSubject();
         log.debug("[{}-{}] update transport by adding a property : ({},({},{},{}))", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), id, name, value, type});
