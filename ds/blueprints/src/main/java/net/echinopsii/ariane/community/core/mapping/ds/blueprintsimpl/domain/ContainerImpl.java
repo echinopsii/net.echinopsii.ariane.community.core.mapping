@@ -142,7 +142,9 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer, 
         } else {
             if (super.getContainerCluster() == null || !super.getContainerCluster().equals(cluster)) {
                 if (cluster == null || cluster instanceof ClusterImpl) {
+                    if (super.getContainerCluster()!=null) super.getContainerCluster().removeClusterContainer(this);
                     super.setContainerCluster(cluster);
+                    if (cluster!=null) cluster.addClusterContainer(this);
                     synchronizeClusterToDB();
                 }
             }
@@ -471,8 +473,11 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer, 
                     super.getContainerCluster().getClusterID());
             MappingDSGraphDB.autocommit();
             log.debug("Synchronize container cluster {} done...", new Object[]{super.getContainerCluster().getClusterID()});
-		}// else if (containerVertex!=null && super.getContainerCluster()==null)
-         //   containerVertex.removeProperty(MappingDSGraphPropertyNames.DD_CONTAINER_CLUSTER_KEY);
+		} else if (containerVertex!=null && super.getContainerCluster()==null &&
+                containerVertex.getPropertyKeys().contains(MappingDSGraphPropertyNames.DD_CONTAINER_CLUSTER_KEY)) {
+            containerVertex.removeProperty(MappingDSGraphPropertyNames.DD_CONTAINER_CLUSTER_KEY);
+            MappingDSGraphDB.autocommit();
+        }
 	}
 
     private void synchronizeParentContainerToDB() {
@@ -482,8 +487,11 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer, 
                     super.getContainerParentContainer().getContainerID());
             MappingDSGraphDB.autocommit();
             log.debug("Synchronize container parent container {} done...", new Object[]{super.getContainerParentContainer().getContainerID()});
-        }// else if (containerVertex!=null && super.getContainerParentContainer()==null)
-         //   containerVertex.removeProperty(MappingDSGraphPropertyNames.DD_CONTAINER_PCONTER_KEY);
+        } else if (containerVertex!=null && super.getContainerParentContainer()==null &&
+                containerVertex.getPropertyKeys().contains(MappingDSGraphPropertyNames.DD_CONTAINER_PCONTER_KEY)) {
+            containerVertex.removeProperty(MappingDSGraphPropertyNames.DD_CONTAINER_PCONTER_KEY);
+            MappingDSGraphDB.autocommit();
+        }
     }
 
     private void synchronizeChildContainersToDB() throws MappingDSException {

@@ -66,6 +66,9 @@ public interface Container {
 	String OP_ADD_CONTAINER_GATE = "addContainerGate";
 	String OP_REMOVE_CONTAINER_GATE = "removeContainerGate";
 
+	String JOIN_PREVIOUS_CLUSTER = MappingDSGraphPropertyNames.DD_CONTAINER_CLUSTER_KEY+"Previous";
+	String JOIN_CURRENT_CLUSTER = MappingDSGraphPropertyNames.DD_CONTAINER_CLUSTER_KEY+"Current";
+
 	String getContainerID();
 	void   setContainerID(String ID);
 

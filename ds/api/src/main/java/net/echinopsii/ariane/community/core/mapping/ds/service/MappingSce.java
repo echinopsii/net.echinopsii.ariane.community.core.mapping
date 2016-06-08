@@ -35,6 +35,7 @@ public interface MappingSce {
     String GLOBAL_OPERATION_NOT_DEFINED = "NOT_DEFINED";
 
     String GLOBAL_PARAM_OBJ_ID = "ID";
+    String GLOBAL_PARAM_OBJ_NONE = "NONE";
     String GLOBAL_PARAM_PAYLOAD = "payload";
     String GLOBAL_PARAM_SELECTOR = "selector";
     String GLOBAL_PARAM_PROP_NAME = "propertyName";

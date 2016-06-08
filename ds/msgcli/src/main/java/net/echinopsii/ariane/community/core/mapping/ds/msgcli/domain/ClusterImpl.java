@@ -157,7 +157,7 @@ public class ClusterImpl extends SProxClusterAbs {
             if (container.getContainerID()!=null) {
                 if (this.clusterContainersID.contains(container.getContainerID())) {
                     Map<String, Object> message = new HashMap<>();
-                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_ADD_CLUSTER_CONTAINER);
+                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_REMOVE_CLUSTER_CONTAINER);
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getClusterID());
                     message.put(Container.TOKEN_CT_ID, container.getContainerID());
                     if (clientThreadSessionID != null)

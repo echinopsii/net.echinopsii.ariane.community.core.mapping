@@ -76,8 +76,7 @@ public class ClusterSceImpl extends SProxClusterSceAbs<ClusterImpl> {
         if (rc != 0) throw new MappingDSException("Ariane server raised an error... Check your logs !");
     }
 
-    @Override
-    public Cluster getCluster(String clusterID) throws MappingDSException {
+    public static Cluster internalGetCluster(String clusterID) throws MappingDSException {
         ClusterImpl cluster = new ClusterImpl();
 
         String clientThreadName = Thread.currentThread().getName();
@@ -95,6 +94,11 @@ public class ClusterSceImpl extends SProxClusterSceAbs<ClusterImpl> {
         }
 
         return cluster;
+    }
+
+    @Override
+    public Cluster getCluster(String clusterID) throws MappingDSException {
+        return internalGetCluster(clusterID);
     }
 
     @Override

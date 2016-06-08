@@ -320,18 +320,29 @@ public class ContainerEp {
                                         return message;
                                     }
                                 } else if (operation.equals(Container.OP_SET_CONTAINER_CLUSTER) && cl_id!=null) {
-                                    Cluster clu;
-                                    if (session!=null) clu = MappingMsgsrvBootstrap.getMappingSce().getClusterSce().getCluster(session, cl_id);
-                                    else clu = MappingMsgsrvBootstrap.getMappingSce().getClusterSce().getCluster(cl_id);
-                                    if (clu!=null) {
+                                    Cluster clu = null;
+                                    if (!cl_id.equals(MappingSce.GLOBAL_PARAM_OBJ_NONE)) {
+                                        if (session != null) clu = MappingMsgsrvBootstrap.getMappingSce().getClusterSce().getCluster(session, cl_id);
+                                        else clu = MappingMsgsrvBootstrap.getMappingSce().getClusterSce().getCluster(cl_id);
+                                    }
+                                    if (clu!=null || cl_id.equals(MappingSce.GLOBAL_PARAM_OBJ_NONE)) {
+                                        Cluster previousCluster = cont.getContainerCluster();
                                         if (session != null) cont.setContainerCluster(session, clu);
                                         else cont.setContainerCluster(clu);
 
-                                        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-                                        ClusterJSON.oneCluster2JSON(clu, outStream);
-                                        String resultClu = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                                        if (previousCluster!=null) {
+                                            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                                            ClusterJSON.oneCluster2JSON(previousCluster, outStream);
+                                            String resultClu = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                                            message.put(Container.JOIN_PREVIOUS_CLUSTER, resultClu);
+                                        }
 
-                                        message.put(MappingDSGraphPropertyNames.DD_CONTAINER_CLUSTER_KEY, resultClu);
+                                        if (clu!=null) {
+                                            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                                            ClusterJSON.oneCluster2JSON(clu, outStream);
+                                            String resultClu = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                                            message.put(Container.JOIN_CURRENT_CLUSTER, resultClu);
+                                        }
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
                                         message.put(MomMsgTranslator.MSG_ERR, "Not Found (" + operation + ") : cluster with provided id not found");

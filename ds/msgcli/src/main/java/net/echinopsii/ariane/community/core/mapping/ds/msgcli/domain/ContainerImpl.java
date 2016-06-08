@@ -33,6 +33,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ClusterJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ContainerJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.momsp.MappingMsgcliMomSP;
+import net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.ClusterSceImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.service.ContainerSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxContainerSce;
@@ -247,7 +248,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
     @Override
     public void setContainerPrimaryAdminGate(Gate gate) throws MappingDSException {
         if (super.getContainerID() != null) {
-            if (gate.getNodeID() != null) {
+            if (gate != null && gate.getNodeID() != null) {
                 if ((super.getContainerPrimaryAdminGate()!=null && !super.getContainerPrimaryAdminGate().equals(gate)) ||
                         (primaryAdminGateID!=null && !primaryAdminGateID.equals(gate.getNodeID()))) {
                     String clientThreadName = Thread.currentThread().getName();
@@ -272,34 +273,58 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
 
     @Override
     public Cluster getContainerCluster() {
+        if (super.getContainerCluster()==null && clusterID!=null) {
+            try {
+                super.setContainerCluster(ClusterSceImpl.internalGetCluster(clusterID));
+            } catch (MappingDSException e) {
+                e.printStackTrace();
+            }
+        }
         return super.getContainerCluster();
     }
 
     @Override
     public void setContainerCluster(Cluster cluster) throws MappingDSException {
         if (super.getContainerID() != null) {
-            if (cluster.getClusterID() != null) {
+            if (cluster == null || cluster.getClusterID() != null) {
                 if ((super.getContainerCluster()!=null && !super.getContainerCluster().equals(cluster)) ||
-                    (clusterID!=null && !clusterID.equals(cluster.getClusterID()) )) {
+                    (clusterID!=null && !clusterID.equals(cluster.getClusterID())) || clusterID == null) {
                     String clientThreadName = Thread.currentThread().getName();
                     String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
                     Map<String, Object> message = new HashMap<>();
                     message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_SET_CONTAINER_CLUSTER);
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getContainerID());
-                    message.put(SProxContainerSce.PARAM_CONTAINER_PAG_ID, cluster.getClusterID());
+                    message.put(Cluster.TOKEN_CL_ID, (cluster != null) ? cluster.getClusterID() : MappingSce.GLOBAL_PARAM_OBJ_NONE);
                     if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
                     Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
+                        Cluster previousCluster = super.getContainerCluster();
+                        if (previousCluster!=null) {
+                            try {
+                                if (retMsg.containsKey(Container.JOIN_PREVIOUS_CLUSTER)) {
+                                    ClusterJSON.JSONDeserializedCluster jsonDeserializedCluster = ClusterJSON.JSON2Cluster(
+                                            (String) retMsg.get(Container.JOIN_PREVIOUS_CLUSTER)
+                                    );
+                                    ((ClusterImpl) previousCluster).synchronizeFromJSON(jsonDeserializedCluster);
+                                }
+                            } catch(IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
                         super.setContainerCluster(cluster);
-                        clusterID = cluster.getClusterID();
-                        try {
-                            ClusterJSON.JSONDeserializedCluster jsonDeserializedCluster = ClusterJSON.JSON2Cluster(
-                                    (String) retMsg.get(MappingDSGraphPropertyNames.DD_CONTAINER_CLUSTER_KEY)
-                            );
-                            ((ClusterImpl)cluster).synchronizeFromJSON(jsonDeserializedCluster);
-                        } catch(IOException e) {
-                            e.printStackTrace();
+                        clusterID = (cluster!=null) ? cluster.getClusterID() : null;
+                        if (cluster!=null) {
+                            try {
+                                if (retMsg.containsKey(Container.JOIN_CURRENT_CLUSTER)) {
+                                    ClusterJSON.JSONDeserializedCluster jsonDeserializedCluster = ClusterJSON.JSON2Cluster(
+                                            (String) retMsg.get(Container.JOIN_CURRENT_CLUSTER)
+                                    );
+                                    ((ClusterImpl) cluster).synchronizeFromJSON(jsonDeserializedCluster);
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                     else throw new MappingDSException("Ariane server raised an error... Check your logs !");
@@ -355,7 +380,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
     @Override
     public void setContainerParentContainer(Container container) throws MappingDSException {
         if (super.getContainerID() != null) {
-            if (container.getContainerID() != null) {
+            if (container == null || container.getContainerID() != null) {
                 if ((super.getContainerParentContainer()!=null && !super.getContainerParentContainer().equals(container)) ||
                     (parentContainerID != null && !parentContainerID.equals(container.getContainerID()))) {
                     String clientThreadName = Thread.currentThread().getName();

@@ -23,6 +23,8 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cfg.MappingBlueprintsDSCfgLoader;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Cluster;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
+import net.echinopsii.ariane.community.core.mapping.ds.msgcli.domain.ClusterImpl;
+import net.echinopsii.ariane.community.core.mapping.ds.msgcli.domain.ContainerImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.momsp.MappingMsgcliMomSP;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.MappingMsgsrvBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.momsp.MappingMsgsrvMomSP;
@@ -40,6 +42,7 @@ import java.util.Properties;
 import java.util.UUID;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
@@ -232,9 +235,12 @@ public class MappingMsgTest {
             assertNotNull(messagingMappingSce.getClusterSce().getClusterByName(cluster.getClusterName()));
             cluster.setClusterName("test2");
             assertEquals(cluster.getClusterName(), "test2");
+            session.commit();
             assertNull(messagingMappingSce.getClusterSce().getClusterByName("test"));
             assertNotNull(messagingMappingSce.getClusterSce().getCluster(cluster.getClusterID()));
             assertNotNull(messagingMappingSce.getClusterSce().getClusterByName(cluster.getClusterName()));
+            messagingMappingSce.getClusterSce().deleteCluster(cluster.getClusterName());
+            session.commit();
             messagingMappingSce.closeSession();
         }
     }
@@ -376,6 +382,29 @@ public class MappingMsgTest {
                 }
             }).start();
             messagingMappingSce.closeSession();
+        }
+    }
+
+    @Test
+    public void testClusterJoinContainer() throws MappingDSException {
+        if (momTest!=null) {
+            Cluster cluster = messagingMappingSce.getClusterSce().createCluster("test");
+            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn", "SERVER SSH DAEMON");
+            cluster.addClusterContainer(container);
+            assertTrue(((ClusterImpl) cluster).getClusterContainersID().contains(container.getContainerID()));
+            assertTrue(((ContainerImpl) container).getClusterID().equals(cluster.getClusterID()));
+            assertTrue(container.getContainerCluster().equals(cluster));
+            cluster.removeClusterContainer(container);
+            assertFalse(((ClusterImpl) cluster).getClusterContainersID().contains(container.getContainerID()));
+            assertTrue(((ContainerImpl) container).getClusterID() == null);
+            container.setContainerCluster(cluster);
+            assertTrue(((ClusterImpl) cluster).getClusterContainersID().contains(container.getContainerID()));
+            assertTrue(((ContainerImpl) container).getClusterID().equals(cluster.getClusterID()));
+            container.setContainerCluster(null);
+            assertFalse(((ClusterImpl) cluster).getClusterContainersID().contains(container.getContainerID()));
+            assertTrue(((ContainerImpl) container).getClusterID() == null);
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
+            messagingMappingSce.getClusterSce().deleteCluster(cluster.getClusterName());
         }
     }
 }

@@ -72,8 +72,8 @@ public class ClusterImpl extends SProxClusterAbs implements MappingDSBlueprintsC
                 try {
                     ret = super.addClusterContainer(container);
                     if (ret) {
-                        synchronizeContainerToDB((ContainerImpl) container);
                         container.setContainerCluster(this);
+                        synchronizeContainerToDB((ContainerImpl) container);
                     }
                 } catch (MappingDSException E) {
                     E.printStackTrace();
@@ -99,8 +99,8 @@ public class ClusterImpl extends SProxClusterAbs implements MappingDSBlueprintsC
             if (container instanceof ContainerImpl) {
                 ret = super.removeClusterContainer(container);
                 if (ret) {
-                    removeContainerFromDB((ContainerImpl) container);
                     container.setContainerCluster(null);
+                    removeContainerFromDB((ContainerImpl) container);
                 }
             }
         }
