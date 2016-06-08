@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
+import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesException;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
 import org.slf4j.Logger;
@@ -48,7 +49,7 @@ public class ContainerJSON {
     }
 
     private static void containerProps2JSONWithTypedProps(HashMap<String, Object> props, JsonGenerator jgenerator,
-                                                          boolean writeOPropsFieldStart, boolean writeOPropsFieldEnd) throws IOException {
+                                                          boolean writeOPropsFieldStart, boolean writeOPropsFieldEnd) throws IOException, PropertiesException {
         if (writeOPropsFieldStart) jgenerator.writeArrayFieldStart(Container.TOKEN_CT_PRP);
         for (PropertiesJSON.TypedPropertyField field : PropertiesJSON.propertiesToTypedPropertiesList(props))
             field.toJSON(jgenerator);
@@ -115,7 +116,7 @@ public class ContainerJSON {
         jgenerator.writeEndObject();
     }
 
-    public static void container2JSONWithTypedProps(Container cont, JsonGenerator jgenerator) throws IOException {
+    public static void container2JSONWithTypedProps(Container cont, JsonGenerator jgenerator) throws IOException, PropertiesException {
         commonContainer2JSON(cont, jgenerator);
         if (cont.getContainerProperties() != null) containerProps2JSONWithTypedProps(cont.getContainerProperties(), jgenerator, true, true);
         jgenerator.writeEndObject();
@@ -127,7 +128,7 @@ public class ContainerJSON {
         jgenerator.close();
     }
 
-    public static void oneContainer2JSONWithTypedProps(Container cont, ByteArrayOutputStream outStream) throws IOException {
+    public static void oneContainer2JSONWithTypedProps(Container cont, ByteArrayOutputStream outStream) throws IOException, PropertiesException {
         JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         ContainerJSON.container2JSONWithTypedProps(cont, jgenerator);
         jgenerator.close();
@@ -143,7 +144,7 @@ public class ContainerJSON {
         jgenerator.close();
     }
 
-    public static void manyContainers2JSONWithTypedProps(HashSet<Container> conts, ByteArrayOutputStream outStream) throws IOException {
+    public static void manyContainers2JSONWithTypedProps(HashSet<Container> conts, ByteArrayOutputStream outStream) throws IOException, PropertiesException {
         JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         jgenerator.writeStartObject();
         jgenerator.writeArrayFieldStart("containers");

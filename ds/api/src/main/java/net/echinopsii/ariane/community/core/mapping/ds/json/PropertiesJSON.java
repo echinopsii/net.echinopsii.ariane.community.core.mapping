@@ -298,7 +298,7 @@ public class PropertiesJSON {
 
 
 
-    private static String getTypeFromObject(Object object) {
+    public static String getTypeFromObject(Object object) throws PropertiesException {
         String type = null;
         if (object instanceof String) type = "string";
         else if (object instanceof Long) type = "long";
@@ -314,10 +314,11 @@ public class PropertiesJSON {
         else if (object instanceof Double[]) type = "array";
         else if (object instanceof BigDecimal[]) type = "array";
         else if (object instanceof Boolean[]) type = "array";
+        else throw new PropertiesException("Type " + object.getClass().getName() + " not supported !");
         return type;
     }
 
-    private static void valueToJSON(Object value,  JsonGenerator jgenerator) throws IOException {
+    private static void valueToJSON(Object value,  JsonGenerator jgenerator) throws IOException, PropertiesException {
         if (value instanceof String) jgenerator.writeString((String) value);
         else if (value instanceof Long) jgenerator.writeNumber((Long) value);
         else if (value instanceof Integer) jgenerator.writeNumber((Integer) value);
@@ -334,7 +335,7 @@ public class PropertiesJSON {
         else if (value instanceof ArrayList) arrayListToTypedArrayJSON((ArrayList<Object>) value, null, jgenerator);
     }
 
-    private static void hashMapToTypedHashMapJSON(HashMap<String, Object> mobj, JsonGenerator jgenerator) throws IOException {
+    private static void hashMapToTypedHashMapJSON(HashMap<String, Object> mobj, JsonGenerator jgenerator) throws IOException, PropertiesException {
         jgenerator.writeStartObject();
         for (String key : mobj.keySet()) {
             Object val = mobj.get(key);
@@ -348,7 +349,7 @@ public class PropertiesJSON {
         jgenerator.writeEndObject();
     }
 
-    private static String hashMapToTypedHashMapJSONString(HashMap<String, Object> mobj) throws IOException {
+    private static String hashMapToTypedHashMapJSONString(HashMap<String, Object> mobj) throws IOException, PropertiesException {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         hashMapToTypedHashMapJSON(mobj, jgenerator);
@@ -356,7 +357,7 @@ public class PropertiesJSON {
         return ToolBox.getOuputStreamContent(outStream, "UTF-8");
     }
 
-    private static void arrayListToTypedArrayJSON(ArrayList<Object> aobj, String type, JsonGenerator jgenerator) throws IOException {
+    private static void arrayListToTypedArrayJSON(ArrayList<Object> aobj, String type, JsonGenerator jgenerator) throws IOException, PropertiesException {
         jgenerator.writeStartArray();
         if (type==null) {
             Object item = (aobj.size()>0) ? aobj.get(0) : null;
@@ -367,7 +368,7 @@ public class PropertiesJSON {
         jgenerator.writeEndArray();
     }
 
-    private static String arrayListToTypedArrayJSONString(ArrayList<Object> aobj, String type) throws IOException {
+    private static String arrayListToTypedArrayJSONString(ArrayList<Object> aobj, String type) throws IOException, PropertiesException {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         arrayListToTypedArrayJSON(aobj, type, jgenerator);
@@ -376,7 +377,7 @@ public class PropertiesJSON {
     }
 
 
-    public static List<TypedPropertyField> propertiesToTypedPropertiesList(Map<String, Object> props) throws IOException {
+    public static List<TypedPropertyField> propertiesToTypedPropertiesList(Map<String, Object> props) throws IOException, PropertiesException {
         List<TypedPropertyField> list = new ArrayList<>();
         for (String key : props.keySet()) {
             Object obj = props.get(key);
