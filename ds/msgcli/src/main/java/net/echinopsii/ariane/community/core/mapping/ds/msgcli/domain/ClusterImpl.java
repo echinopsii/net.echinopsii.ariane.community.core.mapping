@@ -61,11 +61,8 @@ public class ClusterImpl extends SProxClusterAbs {
                     if (body!=null) {
                         try {
                             ClusterJSON.JSONDeserializedCluster jsonDeserializedCluster = ClusterJSON.JSON2Cluster(body);
-                            if (cluster.getClusterID() == null) {
-                                cluster.setClusterID(jsonDeserializedCluster.getClusterID());
-                                cluster.setClusterName(jsonDeserializedCluster.getClusterName());
-                                cluster.setClusterContainersID(jsonDeserializedCluster.getClusterContainersID());
-                            }
+                            if (cluster.getClusterID() == null || cluster.getClusterID().equals(jsonDeserializedCluster.getClusterID()))
+                                synchronizeFromJSON(jsonDeserializedCluster);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -90,6 +87,12 @@ public class ClusterImpl extends SProxClusterAbs {
 
     public void setClusterContainersID(List<String> clusterContainersID) {
         this.clusterContainersID = clusterContainersID;
+    }
+
+    public void synchronizeFromJSON(ClusterJSON.JSONDeserializedCluster jsonDeserializedCluster) throws MappingDSException {
+        this.setClusterID(jsonDeserializedCluster.getClusterID());
+        this.setClusterName(jsonDeserializedCluster.getClusterName());
+        this.setClusterContainersID(jsonDeserializedCluster.getClusterContainersID());
     }
 
     @Override

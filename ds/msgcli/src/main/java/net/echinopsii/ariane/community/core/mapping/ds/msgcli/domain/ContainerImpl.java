@@ -66,20 +66,9 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                         body = new String((byte[]) message.get(MomMsgTranslator.MSG_BODY));
                     if (body != null) {
                         try {
-                            ContainerJSON.JSONDeserializedContainer jsonDeserializedCluster = ContainerJSON.JSON2Container(body);
-                            if (container.getContainerID() == null) {
-                                container.setClusterID(jsonDeserializedCluster.getContainerID());
-                                container.setContainerName(jsonDeserializedCluster.getContainerName());
-                                container.setContainerCompany(jsonDeserializedCluster.getContainerCompany());
-                                container.setContainerProduct(jsonDeserializedCluster.getContainerProduct());
-                                container.setContainerType(jsonDeserializedCluster.getContainerType());
-                                container.setPrimaryAdminGateID(jsonDeserializedCluster.getContainerPrimaryAdminGateID());
-                                container.setClusterID(jsonDeserializedCluster.getContainerClusterID());
-                                container.setParentContainerID(jsonDeserializedCluster.getContainerParentContainerID());
-                                container.setChildContainersID(jsonDeserializedCluster.getContainerChildContainersID());
-                                container.setNodesID(jsonDeserializedCluster.getContainerNodesID());
-                                container.setGatesID(jsonDeserializedCluster.getContainerGatesID());
-                            }
+                            ContainerJSON.JSONDeserializedContainer jsonDeserializedContainer = ContainerJSON.JSON2Container(body);
+                            if (container.getContainerID() == null || container.getContainerID().equals(jsonDeserializedContainer.getContainerID()))
+                                container.synchronizeFromJSON(jsonDeserializedContainer);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -150,6 +139,20 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
 
     public void setGatesID(List<String> gatesID) {
         this.gatesID = gatesID;
+    }
+
+    public void synchronizeFromJSON(ContainerJSON.JSONDeserializedContainer jsonDeserializedCluster) throws MappingDSException {
+        this.setClusterID(jsonDeserializedCluster.getContainerID());
+        this.setContainerName(jsonDeserializedCluster.getContainerName());
+        this.setContainerCompany(jsonDeserializedCluster.getContainerCompany());
+        this.setContainerProduct(jsonDeserializedCluster.getContainerProduct());
+        this.setContainerType(jsonDeserializedCluster.getContainerType());
+        this.setPrimaryAdminGateID(jsonDeserializedCluster.getContainerPrimaryAdminGateID());
+        this.setClusterID(jsonDeserializedCluster.getContainerClusterID());
+        this.setParentContainerID(jsonDeserializedCluster.getContainerParentContainerID());
+        this.setChildContainersID(jsonDeserializedCluster.getContainerChildContainersID());
+        this.setNodesID(jsonDeserializedCluster.getContainerNodesID());
+        this.setGatesID(jsonDeserializedCluster.getContainerGatesID());
     }
 
     @Override
