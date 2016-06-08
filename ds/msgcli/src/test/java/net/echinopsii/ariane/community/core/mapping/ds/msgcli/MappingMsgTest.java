@@ -22,6 +22,7 @@ package net.echinopsii.ariane.community.core.mapping.ds.msgcli;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cfg.MappingBlueprintsDSCfgLoader;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Cluster;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.momsp.MappingMsgcliMomSP;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.MappingMsgsrvBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.momsp.MappingMsgsrvMomSP;
@@ -168,7 +169,7 @@ public class MappingMsgTest {
                     }
                 }
             }).start();
-            Thread.sleep(20);
+            Thread.sleep(1);
             session.commit();
             assertTrue(messagingMappingSce.getClusterSce().getClusters(null).size() == 1);
             new Thread(new Runnable() {
@@ -181,7 +182,7 @@ public class MappingMsgTest {
                     }
                 }
             }).start();
-            Thread.sleep(20);
+            Thread.sleep(1);
             messagingMappingSce.getClusterSce().deleteCluster(cluster.getClusterName());
             assertTrue(messagingMappingSce.getClusterSce().getClusters(null).size() == 0);
             new Thread(new Runnable() {
@@ -194,7 +195,7 @@ public class MappingMsgTest {
                     }
                 }
             }).start();
-            Thread.sleep(20);
+            Thread.sleep(1);
             session.commit();
             assertTrue(messagingMappingSce.getClusterSce().getClusters(null).size() == 0);
             new Thread(new Runnable() {
@@ -234,6 +235,146 @@ public class MappingMsgTest {
             assertNull(messagingMappingSce.getClusterSce().getClusterByName("test"));
             assertNotNull(messagingMappingSce.getClusterSce().getCluster(cluster.getClusterID()));
             assertNotNull(messagingMappingSce.getClusterSce().getClusterByName(cluster.getClusterName()));
+            messagingMappingSce.closeSession();
+        }
+    }
+
+    @Test
+    public void testCreateContainer1() throws MappingDSException {
+        if (momTest!=null) {
+            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn", "SERVER SSH DAEMON");
+            assertNotNull(container.getContainerID());
+            assertNull(container.getContainerName());
+            //assertEquals(container.getContainerPrimaryAdminGateURL(), "ssh://a.server.fqdn");
+            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).size() == 1);
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
+            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).size() == 0);
+        }
+    }
+
+    @Test
+    public void testTransacCreateContainer1() throws MappingDSException, InterruptedException {
+        if (momTest!=null) {
+            Session session = messagingMappingSce.openSession("this is a test");
+            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn", "SERVER SSH DAEMON");
+            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).size() == 1);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        assertTrue(blueprintsMappingSce.getContainerSce().getContainers(null).size() == 0);
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            Thread.sleep(1);
+            session.commit();
+            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).size() == 1);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        assertTrue(blueprintsMappingSce.getContainerSce().getContainers(null).size() == 1);
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
+            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).size() == 0);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        assertTrue(blueprintsMappingSce.getContainerSce().getContainers(null).size() == 1);
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).size() == 0);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        assertTrue(blueprintsMappingSce.getContainerSce().getContainers(null).size() == 0);
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            messagingMappingSce.closeSession();
+        }
+    }
+
+
+    @Test
+    public void testCreateContainer2() throws MappingDSException {
+        if (momTest!=null) {
+            Container container = messagingMappingSce.getContainerSce().createContainer("a.server", "ssh://a.server.fqdn", "SERVER SSH DAEMON");
+            assertNotNull(container.getContainerID());
+            assertNotNull(container.getContainerName());
+            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).size() == 1);
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
+            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).size() == 0);
+        }
+    }
+
+    @Test
+    public void testTransacCreateContainer2() throws MappingDSException, InterruptedException {
+        if (momTest!=null) {
+            Session session = messagingMappingSce.openSession("this is a test");
+            Container container = messagingMappingSce.getContainerSce().createContainer("a.server", "ssh://a.server.fqdn", "SERVER SSH DAEMON");
+            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).size() == 1);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        assertTrue(blueprintsMappingSce.getContainerSce().getContainers(null).size() == 0);
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            Thread.sleep(1);
+            session.commit();
+            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).size() == 1);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        assertTrue(blueprintsMappingSce.getContainerSce().getContainers(null).size() == 1);
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
+            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).size() == 0);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        assertTrue(blueprintsMappingSce.getContainerSce().getContainers(null).size() == 1);
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).size() == 0);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        assertTrue(blueprintsMappingSce.getContainerSce().getContainers(null).size() == 0);
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
             messagingMappingSce.closeSession();
         }
     }

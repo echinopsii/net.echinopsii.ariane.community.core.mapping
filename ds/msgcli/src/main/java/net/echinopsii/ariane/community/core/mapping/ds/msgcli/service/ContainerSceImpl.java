@@ -200,17 +200,7 @@ public class ContainerSceImpl extends SProxContainerSceAbs<ContainerImpl> {
                     containers = new HashSet<>();
                     for (ContainerJSON.JSONDeserializedContainer jsonDeserializedCluster : ContainerJSON.JSON2Containers(body)) {
                         ContainerImpl container = new ContainerImpl();
-                        container.setClusterID(jsonDeserializedCluster.getContainerID());
-                        container.setContainerName(jsonDeserializedCluster.getContainerName());
-                        container.setContainerCompany(jsonDeserializedCluster.getContainerCompany());
-                        container.setContainerProduct(jsonDeserializedCluster.getContainerProduct());
-                        container.setContainerType(jsonDeserializedCluster.getContainerType());
-                        container.setPrimaryAdminGateID(jsonDeserializedCluster.getContainerPrimaryAdminGateID());
-                        container.setClusterID(jsonDeserializedCluster.getContainerClusterID());
-                        container.setParentContainerID(jsonDeserializedCluster.getContainerParentContainerID());
-                        container.setChildContainersID(jsonDeserializedCluster.getContainerChildContainersID());
-                        container.setNodesID(jsonDeserializedCluster.getContainerNodesID());
-                        container.setGatesID(jsonDeserializedCluster.getContainerGatesID());
+                        container.synchronizeFromJSON(jsonDeserializedCluster);
                         containers.add(container);
                     }
                 } catch (Exception e) {
@@ -230,7 +220,7 @@ public class ContainerSceImpl extends SProxContainerSceAbs<ContainerImpl> {
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxClusterSce.OP_GET_CLUSTERS);
+        message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxContainerSce.OP_GET_CONTAINERS);
         //message.put(MappingSce.GLOBAL_PARAM_SELECTOR, selector);
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
 

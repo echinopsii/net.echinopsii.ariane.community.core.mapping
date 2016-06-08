@@ -20,6 +20,7 @@
 package net.echinopsii.ariane.community.core.mapping.ds.msgcli.domain;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Cluster;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
@@ -29,6 +30,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxContain
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxContainerAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesException;
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ClusterJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ContainerJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.momsp.MappingMsgcliMomSP;
 import net.echinopsii.ariane.community.core.mapping.ds.service.ContainerSce;
@@ -40,6 +42,7 @@ import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -142,11 +145,11 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
     }
 
     public void synchronizeFromJSON(ContainerJSON.JSONDeserializedContainer jsonDeserializedCluster) throws MappingDSException {
-        this.setClusterID(jsonDeserializedCluster.getContainerID());
-        this.setContainerName(jsonDeserializedCluster.getContainerName());
-        this.setContainerCompany(jsonDeserializedCluster.getContainerCompany());
-        this.setContainerProduct(jsonDeserializedCluster.getContainerProduct());
-        this.setContainerType(jsonDeserializedCluster.getContainerType());
+        super.setContainerID(jsonDeserializedCluster.getContainerID());
+        super.setContainerName(jsonDeserializedCluster.getContainerName());
+        super.setContainerCompany(jsonDeserializedCluster.getContainerCompany());
+        super.setContainerProduct(jsonDeserializedCluster.getContainerProduct());
+        super.setContainerType(jsonDeserializedCluster.getContainerType());
         this.setPrimaryAdminGateID(jsonDeserializedCluster.getContainerPrimaryAdminGateID());
         this.setClusterID(jsonDeserializedCluster.getContainerClusterID());
         this.setParentContainerID(jsonDeserializedCluster.getContainerParentContainerID());
@@ -170,7 +173,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                 Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
                 if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.setContainerName(name);
                 else throw new MappingDSException("Ariane server raised an error... Check your logs !");
-            } else if (super.getContainerName() == null) super.setContainerName(name);
+            }// else if (super.getContainerName() == null) super.setContainerName(name);
         } else throw new MappingDSException("This container is not initialized !");
     }
 
@@ -189,7 +192,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                 Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
                 if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.setContainerCompany(company);
                 else throw new MappingDSException("Ariane server raised an error... Check your logs !");
-            } else if (super.getContainerCompany() == null) super.setContainerCompany(company);
+            }// else if (super.getContainerCompany() == null) super.setContainerCompany(company);
         } else throw new MappingDSException("This container is not initialized !");
     }
 
@@ -208,7 +211,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                 Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
                 if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.setContainerProduct(product);
                 else throw new MappingDSException("Ariane server raised an error... Check your logs !");
-            } else if (super.getContainerCompany() == null) super.setContainerProduct(product);
+            }// else if (super.getContainerCompany() == null) super.setContainerProduct(product);
         } else throw new MappingDSException("This container is not initialized !");
     }
 
@@ -227,7 +230,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                 Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
                 if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.setContainerType(type);
                 else throw new MappingDSException("Ariane server raised an error... Check your logs !");
-            } else if (super.getContainerCompany() == null) super.setContainerType(type);
+            }// else if (super.getContainerCompany() == null) super.setContainerType(type);
         } else throw new MappingDSException("This container is not initialized !");
     }
 
@@ -289,8 +292,15 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                     Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
                         super.setContainerCluster(cluster);
-                        cluster.addClusterContainer(this);
                         clusterID = cluster.getClusterID();
+                        try {
+                            ClusterJSON.JSONDeserializedCluster jsonDeserializedCluster = ClusterJSON.JSON2Cluster(
+                                    (String) retMsg.get(MappingDSGraphPropertyNames.DD_CONTAINER_CLUSTER_KEY)
+                            );
+                            ((ClusterImpl)cluster).synchronizeFromJSON(jsonDeserializedCluster);
+                        } catch(IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                     else throw new MappingDSException("Ariane server raised an error... Check your logs !");
                 }
@@ -359,8 +369,15 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                     if (clientThreadSessionID != null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
                         super.setContainerParentContainer(container);
-                        container.addContainerChildContainer(this);
                         parentContainerID = container.getContainerID();
+                        try {
+                            ContainerJSON.JSONDeserializedContainer jsonDeserializedContainer = ContainerJSON.JSON2Container(
+                                    (String)retMsg.get(MappingDSGraphPropertyNames.DD_CONTAINER_PCONTER_KEY)
+                            );
+                            ((ContainerImpl)container).synchronizeFromJSON(jsonDeserializedContainer);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             } else throw new MappingDSException("Provided container is not initialized !");
@@ -389,8 +406,15 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                     if (clientThreadSessionID != null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
                         super.addContainerChildContainer(container);
-                        container.setContainerParentContainer(this);
                         childContainersID.add(container.getContainerID());
+                        try {
+                            ContainerJSON.JSONDeserializedContainer jsonDeserializedContainer = ContainerJSON.JSON2Container(
+                                    (String)retMsg.get(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_CHILD_CONTAINER_KEY)
+                            );
+                            ((ContainerImpl)container).synchronizeFromJSON(jsonDeserializedContainer);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             } else throw new MappingDSException("Provided container is not initialized !");
@@ -415,8 +439,15 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                     if (clientThreadSessionID != null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
                         super.removeContainerChildContainer(container);
-                        container.setContainerParentContainer(null);
                         childContainersID.remove(container.getContainerID());
+                        try {
+                            ContainerJSON.JSONDeserializedContainer jsonDeserializedContainer = ContainerJSON.JSON2Container(
+                                    (String)retMsg.get(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_CHILD_CONTAINER_KEY)
+                            );
+                            ((ContainerImpl)container).synchronizeFromJSON(jsonDeserializedContainer);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             } else throw new MappingDSException("Provided container is not initialized !");

@@ -20,10 +20,12 @@
 package net.echinopsii.ariane.community.core.mapping.ds.msgcli.domain;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxClusterAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ClusterJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ContainerJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.momsp.MappingMsgcliMomSP;
 import net.echinopsii.ariane.community.core.mapping.ds.service.ClusterSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
@@ -34,6 +36,7 @@ import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +65,7 @@ public class ClusterImpl extends SProxClusterAbs {
                         try {
                             ClusterJSON.JSONDeserializedCluster jsonDeserializedCluster = ClusterJSON.JSON2Cluster(body);
                             if (cluster.getClusterID() == null || cluster.getClusterID().equals(jsonDeserializedCluster.getClusterID()))
-                                synchronizeFromJSON(jsonDeserializedCluster);
+                                cluster.synchronizeFromJSON(jsonDeserializedCluster);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -90,8 +93,8 @@ public class ClusterImpl extends SProxClusterAbs {
     }
 
     public void synchronizeFromJSON(ClusterJSON.JSONDeserializedCluster jsonDeserializedCluster) throws MappingDSException {
-        this.setClusterID(jsonDeserializedCluster.getClusterID());
-        this.setClusterName(jsonDeserializedCluster.getClusterName());
+        super.setClusterID(jsonDeserializedCluster.getClusterID());
+        super.setClusterName(jsonDeserializedCluster.getClusterName());
         this.setClusterContainersID(jsonDeserializedCluster.getClusterContainersID());
     }
 
@@ -110,7 +113,7 @@ public class ClusterImpl extends SProxClusterAbs {
                 Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ClusterSce.Q_MAPPING_CLUSTER_SERVICE, clusterReplyWorker);
                 if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.setClusterName(name);
                 else throw new MappingDSException("Ariane server raised an error... Check your logs !");
-            } else if (super.getClusterName() == null) super.setClusterName(name);
+            }// else if (super.getClusterName() == null) super.setClusterName(name);
         } else throw new MappingDSException("This cluster is not initialized !");
     }
 
@@ -131,7 +134,14 @@ public class ClusterImpl extends SProxClusterAbs {
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
                         this.clusterContainersID.add(container.getContainerID());
                         super.addClusterContainer(container);
-                        container.setContainerCluster(this);
+                        try {
+                            ContainerJSON.JSONDeserializedContainer jsonDeserializedContainer = ContainerJSON.JSON2Container(
+                                    (String)retMsg.get(MappingDSGraphPropertyNames.DD_CLUSTER_EDGE_CONT_KEY)
+                            );
+                            ((ContainerImpl)container).synchronizeFromJSON(jsonDeserializedContainer);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     } else throw new MappingDSException("Ariane server raised an error... Check your logs !");
                 }
             } else throw new MappingDSException("Provided container is not initialized !");
@@ -156,7 +166,14 @@ public class ClusterImpl extends SProxClusterAbs {
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
                         this.clusterContainersID.remove(container.getContainerID());
                         super.removeClusterContainer(container);
-                        container.setContainerCluster(null);
+                        try {
+                            ContainerJSON.JSONDeserializedContainer jsonDeserializedContainer = ContainerJSON.JSON2Container(
+                                    (String)retMsg.get(MappingDSGraphPropertyNames.DD_CLUSTER_EDGE_CONT_KEY)
+                            );
+                            ((ContainerImpl)container).synchronizeFromJSON(jsonDeserializedContainer);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     } else throw new MappingDSException("Ariane server raised an error... Check your logs !");
                 }
             } else throw new MappingDSException("Provided container is not initialized !");

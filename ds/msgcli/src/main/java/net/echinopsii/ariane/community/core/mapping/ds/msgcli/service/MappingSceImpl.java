@@ -43,7 +43,7 @@ public class MappingSceImpl extends SProxMappingSceAbs<SessionImpl, SessionRegis
 
     //private MapSceImpl mapSce = new MapSceImpl(this);
     private ClusterSceImpl clusterSce = new ClusterSceImpl();
-    //private ContainerSceImpl containerSce = new ContainerSceImpl(this);
+    private ContainerSceImpl containerSce = new ContainerSceImpl();
     //private GateSceImpl gateSce = new GateSceImpl(this);
     //private NodeSceImpl nodeSce = new NodeSceImpl(this);
     //private EndpointSceImpl endpointSce = new EndpointSceImpl(this);
@@ -142,7 +142,7 @@ public class MappingSceImpl extends SProxMappingSceAbs<SessionImpl, SessionRegis
 
     @Override
     public SProxContainerSce<? extends Container> getContainerSce() {
-        return null;
+        return containerSce;
     }
 
     @Override

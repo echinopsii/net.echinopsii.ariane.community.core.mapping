@@ -134,9 +134,7 @@ public class ClusterSceImpl extends SProxClusterSceAbs<ClusterImpl> {
                     clusters = new HashSet<>();
                     for (ClusterJSON.JSONDeserializedCluster jsonDeserializedCluster : ClusterJSON.JSON2Clusters(body)) {
                         ClusterImpl cluster = new ClusterImpl();
-                        cluster.setClusterID(jsonDeserializedCluster.getClusterID());
-                        cluster.setClusterName(jsonDeserializedCluster.getClusterName());
-                        cluster.setClusterContainersID(jsonDeserializedCluster.getClusterContainersID());
+                        cluster.synchronizeFromJSON(jsonDeserializedCluster);
                         clusters.add(cluster);
                     }
                 } catch (Exception e) {
