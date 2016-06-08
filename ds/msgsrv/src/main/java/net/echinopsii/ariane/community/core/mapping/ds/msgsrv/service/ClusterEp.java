@@ -18,11 +18,13 @@
  */
 package net.echinopsii.ariane.community.core.mapping.ds.msgsrv.service;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Cluster;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxCluster;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ClusterJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ContainerJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.MappingMsgsrvBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.momsp.MappingMsgsrvMomSP;
 import net.echinopsii.ariane.community.core.mapping.ds.service.ClusterSce;
@@ -245,6 +247,12 @@ public class ClusterEp {
                                     }
 
                                     ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                                    ContainerJSON.oneContainer2JSONWithTypedProps(container, outStream);
+                                    String resultCCo = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+
+                                    message.put(MappingDSGraphPropertyNames.DD_CLUSTER_EDGE_CONT_KEY, resultCCo);
+
+                                    outStream = new ByteArrayOutputStream();
                                     ClusterJSON.oneCluster2JSON(cluster, outStream);
                                     String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
 

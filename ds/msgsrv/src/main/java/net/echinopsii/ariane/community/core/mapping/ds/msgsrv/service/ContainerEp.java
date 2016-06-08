@@ -18,13 +18,17 @@
  */
 package net.echinopsii.ariane.community.core.mapping.ds.msgsrv.service;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Cluster;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxContainer;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
+import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ClusterJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ContainerJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.json.domain.GateJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.json.domain.NodeJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.MappingMsgsrvBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.momsp.MappingMsgsrvMomSP;
 import net.echinopsii.ariane.community.core.mapping.ds.service.ContainerSce;
@@ -279,13 +283,20 @@ public class ContainerEp {
                                     if (session!=null) cont.setContainerType(session, type);
                                     else cont.setContainerType(type);
                                 else if (operation.equals(Container.OP_SET_CONTAINER_PRIMARY_ADMIN_GATE) && pag_id!=null) {
-                                    Gate gat ;
-                                    if (session != null) gat = MappingMsgsrvBootstrap.getMappingSce().getGateSce().getGate(session, pag_id);
+                                    Gate gat;
+                                    if (session != null)
+                                        gat = MappingMsgsrvBootstrap.getMappingSce().getGateSce().getGate(session, pag_id);
                                     else gat = MappingMsgsrvBootstrap.getMappingSce().getGateSce().getGate(pag_id);
-                                    if (gat!=null)
-                                        if (session!=null) cont.setContainerPrimaryAdminGate(session, gat);
+                                    if (gat != null) {
+                                        if (session != null) cont.setContainerPrimaryAdminGate(session, gat);
                                         else cont.setContainerPrimaryAdminGate(gat);
-                                    else {
+
+                                        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                                        GateJSON.oneGate2JSONWithTypedProps(gat, outStream);
+                                        String resultGate = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+
+                                        message.put(MappingDSGraphPropertyNames.DD_CONTAINER_PAGATE_KEY, resultGate);
+                                    } else {
                                         message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
                                         message.put(MomMsgTranslator.MSG_ERR, "Not Found (" + operation + ") : gate with provided id not found");
                                         return message;
@@ -294,10 +305,16 @@ public class ContainerEp {
                                     Container pcont ;
                                     if (session!=null) pcont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(session, pc_id);
                                     else pcont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(pc_id);
-                                    if (pcont!=null)
-                                        if (session!=null) cont.setContainerParentContainer(session, pcont);
+                                    if (pcont!=null) {
+                                        if (session != null) cont.setContainerParentContainer(session, pcont);
                                         else cont.setContainerParentContainer(pcont);
-                                    else {
+
+                                        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                                        ContainerJSON.oneContainer2JSONWithTypedProps(pcont, outStream);
+                                        String resultPcont = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+
+                                        message.put(MappingDSGraphPropertyNames.DD_CONTAINER_PCONTER_KEY, resultPcont);
+                                    } else {
                                         message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
                                         message.put(MomMsgTranslator.MSG_ERR, "Not Found (" + operation + ") : parent container with provided id not found");
                                         return message;
@@ -306,10 +323,16 @@ public class ContainerEp {
                                     Cluster clu;
                                     if (session!=null) clu = MappingMsgsrvBootstrap.getMappingSce().getClusterSce().getCluster(session, cl_id);
                                     else clu = MappingMsgsrvBootstrap.getMappingSce().getClusterSce().getCluster(cl_id);
-                                    if (clu!=null)
-                                        if (session!=null) cont.setContainerCluster(session, clu);
+                                    if (clu!=null) {
+                                        if (session != null) cont.setContainerCluster(session, clu);
                                         else cont.setContainerCluster(clu);
-                                    else {
+
+                                        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                                        ClusterJSON.oneCluster2JSON(clu, outStream);
+                                        String resultClu = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+
+                                        message.put(MappingDSGraphPropertyNames.DD_CONTAINER_CLUSTER_KEY, resultClu);
+                                    } else {
                                         message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
                                         message.put(MomMsgTranslator.MSG_ERR, "Not Found (" + operation + ") : cluster with provided id not found");
                                         return message;
@@ -321,11 +344,17 @@ public class ContainerEp {
                                     else ccont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(cc_id);
                                     if (ccont!=null) {
                                         if (operation.equals(Container.OP_ADD_CONTAINER_CHILD_CONTAINER))
-                                            if (session!=null) cont.addContainerChildContainer(session, ccont);
+                                            if (session != null) cont.addContainerChildContainer(session, ccont);
                                             else cont.addContainerChildContainer(ccont);
                                         else
                                             if (session!=null) cont.addContainerChildContainer(session, ccont);
                                             else cont.addContainerChildContainer(ccont);
+
+                                        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                                        ContainerJSON.oneContainer2JSONWithTypedProps(ccont, outStream);
+                                        String resultCCo = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+
+                                        message.put(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_CHILD_CONTAINER_KEY, resultCCo);
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
                                         message.put(MomMsgTranslator.MSG_ERR, "Not Found (" + operation + ") : child container with provided id not found");
@@ -338,11 +367,17 @@ public class ContainerEp {
                                     else gate = MappingMsgsrvBootstrap.getMappingSce().getGateSce().getGate(ga_id);
                                     if (gate!=null) {
                                         if (operation.equals(Container.OP_ADD_CONTAINER_GATE))
-                                            if (session!=null) cont.addContainerGate(session, gate);
+                                            if (session != null) cont.addContainerGate(session, gate);
                                             else cont.addContainerGate(gate);
                                         else
                                             if (session!=null) cont.removeContainerGate(session, gate);
                                             else cont.removeContainerGate(gate);
+
+                                        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                                        GateJSON.oneGate2JSONWithTypedProps(gate, outStream);
+                                        String resultGate = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+
+                                        message.put(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_GATE_KEY, resultGate);
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
                                         message.put(MomMsgTranslator.MSG_ERR, "Not Found (" + operation + ") : gate with provided id not found");
@@ -357,6 +392,15 @@ public class ContainerEp {
                                         if (operation.equals(Container.OP_ADD_CONTAINER_NODE))
                                             if (session!=null) cont.addContainerNode(session, node);
                                             else cont.addContainerNode(node);
+                                        else
+                                            if (session!=null) cont.removeContainerNode(session, node);
+                                            else cont.removeContainerNode(node);
+
+                                        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                                        NodeJSON.oneNode2JSONWithTypedProps(node, outStream);
+                                        String resultNode = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+
+                                        message.put(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_NODE_KEY, resultNode);
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
                                         message.put(MomMsgTranslator.MSG_ERR, "Not Found (" + operation + ") : node with provided id not found");
