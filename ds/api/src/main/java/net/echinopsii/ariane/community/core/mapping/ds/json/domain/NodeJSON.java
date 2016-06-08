@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
+import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesException;
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON.TypedPropertyField;
@@ -35,8 +36,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class NodeJSON {
 
@@ -46,6 +49,15 @@ public class NodeJSON {
         if (node.getNodeProperties()!=null && node.getNodeProperties().size()!=0) {
             jgenerator.writeObjectFieldStart(Node.TOKEN_ND_PRP);
             PropertiesJSON.propertiesToJSON(node.getNodeProperties(), jgenerator);
+            jgenerator.writeEndObject();
+        }
+    }
+
+    private static void nodeProps2JSONWithTypedProps(Node node, JsonGenerator jgenerator) throws JsonGenerationException, IOException, PropertiesException {
+        if (node.getNodeProperties()!=null && node.getNodeProperties().size()!=0) {
+            jgenerator.writeObjectFieldStart(Node.TOKEN_ND_PRP);
+            for (PropertiesJSON.TypedPropertyField field : PropertiesJSON.propertiesToTypedPropertiesList(node.getNodeProperties()))
+                field.toJSON(jgenerator);
             jgenerator.writeEndObject();
         }
     }
@@ -64,7 +76,7 @@ public class NodeJSON {
         jgenerator.writeEndObject();
     }
 
-    public static void node2JSON(Node node, JsonGenerator jgenerator) throws IOException {
+    public static void commonNode2JSON(Node node, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeStringField(Node.TOKEN_ND_ID, node.getNodeID());
         jgenerator.writeStringField(Node.TOKEN_ND_NAME, node.getNodeName());
         jgenerator.writeNumberField(Node.TOKEN_ND_DEPTH, node.getNodeDepth());
@@ -84,16 +96,30 @@ public class NodeJSON {
         jgenerator.writeArrayFieldStart(Node.TOKEN_ND_EPSID);
         for (Endpoint ep : node.getNodeEndpoints()) jgenerator.writeString(ep.getEndpointID());
         jgenerator.writeEndArray();
+    }
 
-        if (node.getNodeProperties() != null) {
-            nodeProps2JSON(node, jgenerator);
-        }
+    public static void node2JSON(Node node, JsonGenerator jgenerator) throws IOException {
+        commonNode2JSON(node, jgenerator);
+        if (node.getNodeProperties() != null) nodeProps2JSON(node, jgenerator);
+    }
+
+    public static void node2JSONWithTypedProps(Node node, JsonGenerator jgenerator) throws IOException, PropertiesException {
+        commonNode2JSON(node, jgenerator);
+        if (node.getNodeProperties() != null) nodeProps2JSONWithTypedProps(node, jgenerator);
     }
 
     public static void oneNode2JSON(Node node, ByteArrayOutputStream outStream) throws IOException {
         JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         jgenerator.writeStartObject();
         node2JSON(node, jgenerator);
+        jgenerator.writeEndObject();
+        jgenerator.close();
+    }
+
+    public static void oneNode2JSONWithTypedProps(Node node, ByteArrayOutputStream outStream) throws IOException, PropertiesException {
+        JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
+        jgenerator.writeStartObject();
+        node2JSONWithTypedProps(node, jgenerator);
         jgenerator.writeEndObject();
         jgenerator.close();
     }
@@ -105,6 +131,20 @@ public class NodeJSON {
         for (Node current : nodes) {
             jgenerator.writeStartObject();
             NodeJSON.node2JSON(current, jgenerator);
+            jgenerator.writeEndObject();
+        }
+        jgenerator.writeEndArray();
+        jgenerator.writeEndObject();
+        jgenerator.close();
+    }
+
+    public static void manyNodes2JSONWithTypedProps(HashSet<Node> nodes, ByteArrayOutputStream outStream) throws IOException, PropertiesException {
+        JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
+        jgenerator.writeStartObject();
+        jgenerator.writeArrayFieldStart("nodes");
+        for (Node current : nodes) {
+            jgenerator.writeStartObject();
+            NodeJSON.node2JSONWithTypedProps(current, jgenerator);
             jgenerator.writeEndObject();
         }
         jgenerator.writeEndArray();
@@ -200,5 +240,30 @@ public class NodeJSON {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return mapper.readValue(payload, JSONDeserializedNode.class);
+    }
+
+    public static class JSONDeserializedNodes {
+        JSONDeserializedNode[] nodes;
+
+        public JSONDeserializedNode[] getNodes() {
+            return nodes;
+        }
+
+        public void setGates(JSONDeserializedNode[] nodes) {
+            this.nodes = nodes;
+        }
+
+        public Set<JSONDeserializedNode> toSet() {
+            HashSet<JSONDeserializedNode> ret = new HashSet<>();
+            if (nodes!=null)
+                Collections.addAll(ret, nodes);
+            return ret;
+        }
+    }
+
+    public static Set<JSONDeserializedNode> JSON2Nodes(String payload) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return mapper.readValue(payload, JSONDeserializedNodes.class).toSet();
     }
 }
