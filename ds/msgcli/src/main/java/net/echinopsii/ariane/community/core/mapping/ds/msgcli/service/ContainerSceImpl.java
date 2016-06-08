@@ -187,7 +187,7 @@ public class ContainerSceImpl extends SProxContainerSceAbs<ContainerImpl> {
     class getContainerWorker implements AppMsgWorker {
         @Override
         public Map<String, Object> apply(Map<String, Object> message) {
-            Set<ContainerImpl> clusters = null;
+            Set<ContainerImpl> containers = null;
             int rc = (int) message.get(MomMsgTranslator.MSG_RC);
             if (rc == 0) {
                 try {
@@ -197,19 +197,27 @@ public class ContainerSceImpl extends SProxContainerSceAbs<ContainerImpl> {
                     else if (message.get(MomMsgTranslator.MSG_BODY) != null && message.get(MomMsgTranslator.MSG_BODY) instanceof byte[])
                         body = new String((byte[]) message.get(MomMsgTranslator.MSG_BODY));
 
-                    clusters = new HashSet<>();
+                    containers = new HashSet<>();
                     for (ContainerJSON.JSONDeserializedContainer jsonDeserializedCluster : ContainerJSON.JSON2Containers(body)) {
                         ContainerImpl container = new ContainerImpl();
                         container.setClusterID(jsonDeserializedCluster.getContainerID());
                         container.setContainerName(jsonDeserializedCluster.getContainerName());
-                        //container.setClusterContainersID(jsonDeserializedCluster.getClusterContainersID());
-                        clusters.add(container);
+                        container.setContainerCompany(jsonDeserializedCluster.getContainerCompany());
+                        container.setContainerProduct(jsonDeserializedCluster.getContainerProduct());
+                        container.setContainerType(jsonDeserializedCluster.getContainerType());
+                        container.setPrimaryAdminGateID(jsonDeserializedCluster.getContainerPrimaryAdminGateID());
+                        container.setClusterID(jsonDeserializedCluster.getContainerClusterID());
+                        container.setParentContainerID(jsonDeserializedCluster.getContainerParentContainerID());
+                        container.setChildContainersID(jsonDeserializedCluster.getContainerChildContainersID());
+                        container.setNodesID(jsonDeserializedCluster.getContainerNodesID());
+                        container.setGatesID(jsonDeserializedCluster.getContainerGatesID());
+                        containers.add(container);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             } else ContainerSceImpl.log.error("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
-            message.put("RET", clusters);
+            message.put("RET", containers);
             return message;
         }
     }
