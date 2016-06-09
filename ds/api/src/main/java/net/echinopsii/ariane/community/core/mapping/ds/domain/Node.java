@@ -48,6 +48,11 @@ public interface Node {
 	String OP_ADD_ENDPOINT = "addEndpoint";
 	String OP_REMOVE_ENDPOINT = "removeEndpoint";
 
+	String JOIN_PREVIOUS_PCONTAINER = MappingDSGraphPropertyNames.DD_NODE_CONT_KEY+"Previous";
+	String JOIN_CURRENT_PCONTAINER = MappingDSGraphPropertyNames.DD_NODE_CONT_KEY+"Current";
+	String JOIN_PREVIOUS_PNODE = MappingDSGraphPropertyNames.DD_NODE_PNODE_KEY+"Previous";
+	String JOIN_CURRENT_PNODE = MappingDSGraphPropertyNames.DD_NODE_PNODE_KEY+"Current";
+
 	String getNodeID();
 	void   setNodeID(String ID);
 	
