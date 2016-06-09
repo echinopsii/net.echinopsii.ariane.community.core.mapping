@@ -27,6 +27,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxCluster
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ClusterJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ContainerJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.momsp.MappingMsgcliMomSP;
+import net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.ContainerSceImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.service.ClusterSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxClusterSce;
@@ -37,10 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class ClusterImpl extends SProxClusterAbs {
 
@@ -183,7 +181,19 @@ public class ClusterImpl extends SProxClusterAbs {
 
     @Override
     public Set<Container> getClusterContainers() {
-        //TODO
+        for (Container cont : new ArrayList<>(super.getClusterContainers()))
+            if (!clusterContainersID.contains(cont.getContainerID()))
+                super.getClusterContainers().remove(cont);
+
+        for (String contID : clusterContainersID)
+            try {
+                boolean toAdd = true;
+                for (Container cont : super.getClusterContainers())
+                    if (cont.getContainerID().equals(contID)) toAdd = false;
+                if (toAdd) super.getClusterContainers().add(ContainerSceImpl.internalGetContainer(contID));
+            } catch (MappingDSException e) {
+                e.printStackTrace();
+            }
         return super.getClusterContainers();
     }
 

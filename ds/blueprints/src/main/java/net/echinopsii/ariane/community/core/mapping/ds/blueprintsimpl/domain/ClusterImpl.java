@@ -215,7 +215,7 @@ public class ClusterImpl extends SProxClusterAbs implements MappingDSBlueprintsC
             query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_COMPOSEDBY_LABEL_KEY);
             query.has(MappingDSGraphPropertyNames.DD_CLUSTER_EDGE_CONT_KEY, true);
             for (Edge edge : query.edges()) {
-                if (edge.getVertex(Direction.OUT).equals(container.getElement())) {
+                if (edge.getVertex(Direction.IN).equals(container.getElement())) {
                     MappingDSGraphDB.getGraph().removeEdge(edge);
                 }
             }

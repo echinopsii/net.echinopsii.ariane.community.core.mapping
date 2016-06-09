@@ -193,7 +193,10 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer, 
         } else {
             if (super.getContainerParentContainer() == null || !super.getContainerParentContainer().equals(container)) {
                 if (container == null || container instanceof ContainerImpl) {
+                    Container previousContainer = super.getContainerParentContainer();
+                    if (previousContainer!=null) previousContainer.removeContainerChildContainer(this);
                     super.setContainerParentContainer(container);
+                    if (container!=null) container.addContainerChildContainer(this);
                     synchronizeParentContainerToDB();
                 }
             }
@@ -701,7 +704,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer, 
             query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
             query.has(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_CHILD_CONTAINER_KEY, true);
             for (Edge edge : query.edges()) {
-                if (edge.getVertex(Direction.OUT).equals(container.getElement())) {
+                if (edge.getVertex(Direction.IN).equals(container.getElement())) {
                     MappingDSGraphDB.getGraph().removeEdge(edge);
                 }
             }
@@ -736,7 +739,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer, 
 			query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
 			query.has(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_NODE_KEY, true);
 			for (Edge edge : query.edges()) {
-				if (edge.getVertex(Direction.OUT).equals(node.getElement())) {
+				if (edge.getVertex(Direction.IN).equals(node.getElement())) {
 					MappingDSGraphDB.getGraph().removeEdge(edge);
 				}						
 			}
@@ -773,7 +776,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer, 
             query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
             query.has(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_GATE_KEY, true);
             for (Edge edge : query.edges()) {
-                if (edge.getVertex(Direction.OUT).equals(node.getElement())) {
+                if (edge.getVertex(Direction.IN).equals(node.getElement())) {
                     MappingDSGraphDB.getGraph().removeEdge(edge);
                 }
             }

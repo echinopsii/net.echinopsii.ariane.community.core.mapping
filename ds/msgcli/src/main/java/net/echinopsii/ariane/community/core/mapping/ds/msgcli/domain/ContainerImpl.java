@@ -34,6 +34,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ClusterJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ContainerJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.momsp.MappingMsgcliMomSP;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.ClusterSceImpl;
+import net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.ContainerSceImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.service.ContainerSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxContainerSce;
@@ -44,10 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
 
@@ -273,13 +271,18 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
 
     @Override
     public Cluster getContainerCluster() {
-        if (super.getContainerCluster()==null && clusterID!=null) {
+        if (clusterID!=null && (super.getContainerCluster()==null || !super.getContainerCluster().getClusterID().equals(clusterID))) {
             try {
                 super.setContainerCluster(ClusterSceImpl.internalGetCluster(clusterID));
             } catch (MappingDSException e) {
                 e.printStackTrace();
             }
-        }
+        } else if (super.getContainerCluster()!=null && clusterID==null)
+            try {
+                super.setContainerCluster(null);
+            } catch (MappingDSException e) {
+                e.printStackTrace();
+            }
         return super.getContainerCluster();
     }
 
@@ -288,7 +291,8 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
         if (super.getContainerID() != null) {
             if (cluster == null || cluster.getClusterID() != null) {
                 if ((super.getContainerCluster()!=null && !super.getContainerCluster().equals(cluster)) ||
-                    (clusterID!=null && !clusterID.equals(cluster.getClusterID())) || clusterID == null) {
+                    (clusterID!=null && cluster !=null && !clusterID.equals(cluster.getClusterID())) ||
+                    (clusterID == null && cluster != null) || (clusterID!=null && cluster == null)) {
                     String clientThreadName = Thread.currentThread().getName();
                     String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
@@ -374,6 +378,18 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
 
     @Override
     public Container getContainerParentContainer() {
+        if (parentContainerID!=null && (super.getContainerParentContainer()==null || !super.getContainerParentContainer().getContainerID().equals(parentContainerID))) {
+            try {
+                super.setContainerParentContainer(ContainerSceImpl.internalGetContainer(parentContainerID));
+            } catch (MappingDSException e) {
+                e.printStackTrace();
+            }
+        } else if (super.getContainerParentContainer()!=null && parentContainerID==null)
+            try {
+                super.setContainerParentContainer(null);
+            } catch (MappingDSException e) {
+                e.printStackTrace();
+            }
         return super.getContainerParentContainer();
     }
 
@@ -382,26 +398,44 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
         if (super.getContainerID() != null) {
             if (container == null || container.getContainerID() != null) {
                 if ((super.getContainerParentContainer()!=null && !super.getContainerParentContainer().equals(container)) ||
-                    (parentContainerID != null && !parentContainerID.equals(container.getContainerID()))) {
+                    (parentContainerID != null && container != null && !parentContainerID.equals(container.getContainerID())) ||
+                    (parentContainerID == null && container != null) || (parentContainerID!=null && container == null)) {
                     String clientThreadName = Thread.currentThread().getName();
                     String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
                     Map<String, Object> message = new HashMap<>();
                     message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_SET_CONTAINER_PARENT_CONTAINER);
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getContainerID());
-                    message.put(SProxContainerSce.PARAM_CONTAINER_PCO_ID, container.getContainerID());
+                    message.put(SProxContainerSce.PARAM_CONTAINER_PCO_ID, (container != null) ? container.getContainerID() : MappingSce.GLOBAL_PARAM_OBJ_NONE);
                     Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
                     if (clientThreadSessionID != null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
+                        Container previousParentContainer = super.getContainerParentContainer();
+                        if (previousParentContainer!=null) {
+                            try {
+                                if (retMsg.containsKey(Container.JOIN_PREVIOUS_PCONTAINER)) {
+                                    ContainerJSON.JSONDeserializedContainer jsonDeserializedContainer = ContainerJSON.JSON2Container(
+                                            (String) retMsg.get(Container.JOIN_PREVIOUS_PCONTAINER)
+                                    );
+                                    ((ContainerImpl) previousParentContainer).synchronizeFromJSON(jsonDeserializedContainer);
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
                         super.setContainerParentContainer(container);
-                        parentContainerID = container.getContainerID();
-                        try {
-                            ContainerJSON.JSONDeserializedContainer jsonDeserializedContainer = ContainerJSON.JSON2Container(
-                                    (String)retMsg.get(MappingDSGraphPropertyNames.DD_CONTAINER_PCONTER_KEY)
-                            );
-                            ((ContainerImpl)container).synchronizeFromJSON(jsonDeserializedContainer);
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                        parentContainerID = (container!=null) ? container.getContainerID() : null;
+                        if (container!=null) {
+                            try {
+                                if (retMsg.containsKey(Container.JOIN_CURRENT_PCONTAINER)) {
+                                    ContainerJSON.JSONDeserializedContainer jsonDeserializedContainer = ContainerJSON.JSON2Container(
+                                            (String) retMsg.get(Container.JOIN_CURRENT_PCONTAINER)
+                                    );
+                                    ((ContainerImpl) container).synchronizeFromJSON(jsonDeserializedContainer);
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }
@@ -411,6 +445,19 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
 
     @Override
     public Set<Container> getContainerChildContainers() {
+        for (Container cont : new ArrayList<>(super.getContainerChildContainers()))
+            if (!childContainersID.contains(cont.getContainerID()))
+                super.getContainerChildContainers().remove(cont);
+
+        for (String contID : childContainersID)
+            try {
+                boolean toAdd = true;
+                for (Container cont : super.getContainerChildContainers())
+                    if (cont.getContainerID().equals(contID)) toAdd = false;
+                if (toAdd) super.getContainerChildContainers().add(ContainerSceImpl.internalGetContainer(contID));
+            } catch (MappingDSException e) {
+                e.printStackTrace();
+            }
         return super.getContainerChildContainers();
     }
 

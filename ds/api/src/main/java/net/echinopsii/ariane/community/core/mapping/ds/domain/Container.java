@@ -68,6 +68,8 @@ public interface Container {
 
 	String JOIN_PREVIOUS_CLUSTER = MappingDSGraphPropertyNames.DD_CONTAINER_CLUSTER_KEY+"Previous";
 	String JOIN_CURRENT_CLUSTER = MappingDSGraphPropertyNames.DD_CONTAINER_CLUSTER_KEY+"Current";
+	String JOIN_PREVIOUS_PCONTAINER = MappingDSGraphPropertyNames.DD_CONTAINER_PCONTER_KEY+"Previous";
+	String JOIN_CURRENT_PCONTAINER = MappingDSGraphPropertyNames.DD_CONTAINER_PCONTER_KEY+"Current";
 
 	String getContainerID();
 	void   setContainerID(String ID);

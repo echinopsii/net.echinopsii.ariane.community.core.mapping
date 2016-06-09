@@ -513,7 +513,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode, MappingDSBluepr
             query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
             query.has(MappingDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY, true);
             for (Edge edge : query.edges()) {
-                if (edge.getVertex(Direction.OUT).equals(node.getElement())) {
+                if (edge.getVertex(Direction.IN).equals(node.getElement())) {
                     MappingDSGraphDB.getGraph().removeEdge(edge);
                 }
             }

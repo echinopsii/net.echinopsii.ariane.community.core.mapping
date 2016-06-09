@@ -302,18 +302,29 @@ public class ContainerEp {
                                         return message;
                                     }
                                 } else if (operation.equals(Container.OP_SET_CONTAINER_PARENT_CONTAINER) && pc_id!=null) {
-                                    Container pcont ;
-                                    if (session!=null) pcont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(session, pc_id);
-                                    else pcont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(pc_id);
-                                    if (pcont!=null) {
+                                    Container pcont = null;
+                                    if (!pc_id.equals(MappingSce.GLOBAL_PARAM_OBJ_NONE)) {
+                                        if (session != null) pcont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(session, pc_id);
+                                        else pcont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(pc_id);
+                                    }
+                                    if (pcont!=null || pc_id.equals(MappingSce.GLOBAL_PARAM_OBJ_NONE)) {
+                                        Container previousParentContaner = cont.getContainerParentContainer();
                                         if (session != null) cont.setContainerParentContainer(session, pcont);
                                         else cont.setContainerParentContainer(pcont);
 
-                                        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-                                        ContainerJSON.oneContainer2JSONWithTypedProps(pcont, outStream);
-                                        String resultPcont = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                                        if (previousParentContaner!=null) {
+                                            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                                            ContainerJSON.oneContainer2JSONWithTypedProps(previousParentContaner, outStream);
+                                            String resultPcont = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                                            message.put(Container.JOIN_PREVIOUS_PCONTAINER, resultPcont);
+                                        }
 
-                                        message.put(MappingDSGraphPropertyNames.DD_CONTAINER_PCONTER_KEY, resultPcont);
+                                        if (pcont!=null) {
+                                            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                                            ContainerJSON.oneContainer2JSONWithTypedProps(pcont, outStream);
+                                            String resultPcont = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                                            message.put(Container.JOIN_CURRENT_PCONTAINER, resultPcont);
+                                        }
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
                                         message.put(MomMsgTranslator.MSG_ERR, "Not Found (" + operation + ") : parent container with provided id not found");
@@ -350,16 +361,16 @@ public class ContainerEp {
                                     }
                                 } else if ((operation.equals(Container.OP_ADD_CONTAINER_CHILD_CONTAINER) || operation.equals(Container.OP_REMOVE_CONTAINER_CHILD_CONTAINER))
                                         && cc_id!=null) {
-                                    Container ccont;
-                                    if (session!=null) ccont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(session, cc_id);
+                                    Container ccont = null;
+                                    if (session != null) ccont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(session, cc_id);
                                     else ccont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(cc_id);
                                     if (ccont!=null) {
                                         if (operation.equals(Container.OP_ADD_CONTAINER_CHILD_CONTAINER))
                                             if (session != null) cont.addContainerChildContainer(session, ccont);
                                             else cont.addContainerChildContainer(ccont);
                                         else
-                                            if (session!=null) cont.addContainerChildContainer(session, ccont);
-                                            else cont.addContainerChildContainer(ccont);
+                                            if (session!=null) cont.removeContainerChildContainer(session, ccont);
+                                            else cont.removeContainerChildContainer(ccont);
 
                                         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
                                         ContainerJSON.oneContainer2JSONWithTypedProps(ccont, outStream);

@@ -144,8 +144,7 @@ public class ContainerSceImpl extends SProxContainerSceAbs<ContainerImpl> {
         if (rc != 0) throw new MappingDSException("Ariane server raised an error... Check your logs !");
     }
 
-    @Override
-    public Container getContainer(String id) throws MappingDSException {
+    public static Container internalGetContainer(String id) throws MappingDSException {
         ContainerImpl container = new ContainerImpl();
 
         String clientThreadName = Thread.currentThread().getName();
@@ -162,6 +161,11 @@ public class ContainerSceImpl extends SProxContainerSceAbs<ContainerImpl> {
         if (rc != 0) throw new MappingDSException("Ariane server raised an error... Check your logs !");
 
         return container;
+    }
+
+    @Override
+    public Container getContainer(String id) throws MappingDSException {
+        return internalGetContainer(id);
     }
 
     @Override

@@ -392,19 +392,56 @@ public class MappingMsgTest {
             Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn", "SERVER SSH DAEMON");
             cluster.addClusterContainer(container);
             assertTrue(((ClusterImpl) cluster).getClusterContainersID().contains(container.getContainerID()));
+            assertTrue(cluster.getClusterContainers().contains(container));
             assertTrue(((ContainerImpl) container).getClusterID().equals(cluster.getClusterID()));
             assertTrue(container.getContainerCluster().equals(cluster));
             cluster.removeClusterContainer(container);
             assertFalse(((ClusterImpl) cluster).getClusterContainersID().contains(container.getContainerID()));
+            assertFalse(cluster.getClusterContainers().contains(container));
             assertTrue(((ContainerImpl) container).getClusterID() == null);
+            assertTrue(container.getContainerCluster() == null);
             container.setContainerCluster(cluster);
             assertTrue(((ClusterImpl) cluster).getClusterContainersID().contains(container.getContainerID()));
+            assertTrue(cluster.getClusterContainers().contains(container));
             assertTrue(((ContainerImpl) container).getClusterID().equals(cluster.getClusterID()));
+            assertTrue(container.getContainerCluster().equals(cluster));
             container.setContainerCluster(null);
             assertFalse(((ClusterImpl) cluster).getClusterContainersID().contains(container.getContainerID()));
+            assertFalse(cluster.getClusterContainers().contains(container));
             assertTrue(((ContainerImpl) container).getClusterID() == null);
+            assertTrue(container.getContainerCluster() == null);
             messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
             messagingMappingSce.getClusterSce().deleteCluster(cluster.getClusterName());
+        }
+    }
+
+    @Test
+    public void testContainerJoinContainer() throws MappingDSException {
+        if (momTest!=null) {
+            Container containerA = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn", "SERVER SSH DAEMON");
+            Container containerB = messagingMappingSce.getContainerSce().createContainer("ssh://b.server.fqdn", "SERVER SSH DAEMON");
+            containerA.addContainerChildContainer(containerB);
+            assertTrue(((ContainerImpl) containerA).getChildContainersID().contains(containerB.getContainerID()));
+            assertTrue(containerA.getContainerChildContainers().contains(containerB));
+            assertTrue(((ContainerImpl) containerB).getParentContainerID().equals(containerA.getContainerID()));
+            assertTrue(containerB.getContainerParentContainer().equals(containerA));
+            containerA.removeContainerChildContainer(containerB);
+            assertFalse(((ContainerImpl) containerA).getChildContainersID().contains(containerB.getContainerID()));
+            assertFalse(containerA.getContainerChildContainers().contains(containerB));
+            assertTrue(((ContainerImpl) containerB).getParentContainerID() == null);
+            assertTrue(containerB.getContainerParentContainer() == null);
+            containerB.setContainerParentContainer(containerA);
+            assertTrue(((ContainerImpl) containerA).getChildContainersID().contains(containerB.getContainerID()));
+            assertTrue(containerA.getContainerChildContainers().contains(containerB));
+            assertTrue(((ContainerImpl) containerB).getParentContainerID().equals(containerA.getContainerID()));
+            assertTrue(containerB.getContainerParentContainer().equals(containerA));
+            containerB.setContainerParentContainer(null);
+            assertFalse(((ContainerImpl) containerA).getChildContainersID().contains(containerB.getContainerID()));
+            assertFalse(containerA.getContainerChildContainers().contains(containerB));
+            assertTrue(((ContainerImpl) containerB).getParentContainerID() == null);
+            assertTrue(containerB.getContainerParentContainer() == null);
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://b.server.fqdn");
         }
     }
 }
