@@ -19,6 +19,7 @@
  */
 package net.echinopsii.ariane.community.core.mapping.ds.msgcli;
 
+import junit.framework.Assert;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cfg.MappingBlueprintsDSCfgLoader;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Cluster;
@@ -38,6 +39,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -259,6 +262,42 @@ public class MappingMsgTest {
             assertEquals(container.getContainerCompany(), "RedHat");
             assertEquals(container.getContainerProduct(), "RedHat Linux x86 7");
             assertEquals(container.getContainerType(), "Operating System");
+            container.addContainerProperty("stringProp", "a string");
+            assertTrue(container.getContainerProperties().containsKey("stringProp"));
+            assertTrue(container.getContainerProperties().get("stringProp").equals("a string"));
+            container.removeContainerProperty("stringProp");
+            assertFalse(container.getContainerProperties().containsKey("stringProp"));
+            container.addContainerProperty("boolProp", false);
+            assertTrue(container.getContainerProperties().containsKey("boolProp"));
+            assertTrue(container.getContainerProperties().get("boolProp").equals(false));
+            container.removeContainerProperty("boolProp");
+            assertFalse(container.getContainerProperties().containsKey("boolProp"));
+            container.addContainerProperty("intProp", 1);
+            assertTrue(container.getContainerProperties().containsKey("intProp"));
+            assertTrue(container.getContainerProperties().get("intProp").equals(1));
+            container.removeContainerProperty("intProp");
+            assertFalse(container.getContainerProperties().containsKey("intProp"));
+            container.addContainerProperty("doubleProp", 2.1);
+            assertTrue(container.getContainerProperties().containsKey("doubleProp"));
+            assertTrue(container.getContainerProperties().get("doubleProp").equals(2.1));
+            container.removeContainerProperty("doubleProp");
+            assertFalse(container.getContainerProperties().containsKey("doubleProp"));
+            ArrayList<String> listProp = new ArrayList<>();
+            listProp.add("test1");
+            listProp.add("test2");
+            container.addContainerProperty("listProp", listProp);
+            assertTrue(container.getContainerProperties().containsKey("listProp"));
+            assertTrue(container.getContainerProperties().get("listProp").equals(listProp));
+            container.removeContainerProperty("listProp");
+            assertFalse(container.getContainerProperties().containsKey("listProp"));
+            HashMap<String, Object> mapProp = new HashMap<>();
+            mapProp.put("boolVal", true);
+            mapProp.put("stringVal", "test");
+            container.addContainerProperty("mapProp", mapProp);
+            assertTrue(container.getContainerProperties().containsKey("mapProp"));
+            assertTrue(container.getContainerProperties().get("mapProp").equals(mapProp));
+            container.removeContainerProperty("mapProp");
+            assertFalse(container.getContainerProperties().containsKey("mapProp"));
             //assertEquals(container.getContainerPrimaryAdminGateURL(), "ssh://a.server.fqdn");
             assertTrue(messagingMappingSce.getContainerSce().getContainers(null).size() == 1);
             messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");

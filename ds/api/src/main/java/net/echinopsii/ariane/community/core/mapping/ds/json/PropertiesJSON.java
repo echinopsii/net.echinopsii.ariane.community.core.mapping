@@ -340,8 +340,7 @@ public class PropertiesJSON {
         for (String key : mobj.keySet()) {
             Object val = mobj.get(key);
             String type = getTypeFromObject(val);
-            jgenerator.writeObjectFieldStart(key);
-            jgenerator.writeStartArray();
+            jgenerator.writeArrayFieldStart(key);
             jgenerator.writeString(type);
             valueToJSON(val, jgenerator);
             jgenerator.writeEndArray();
@@ -364,7 +363,9 @@ public class PropertiesJSON {
             if (item!=null) type = getTypeFromObject(item);
         }
         if (type!=null) jgenerator.writeString(type);
+        jgenerator.writeStartArray();
         for (Object value : aobj) valueToJSON(value, jgenerator);
+        jgenerator.writeEndArray();
         jgenerator.writeEndArray();
     }
 
@@ -376,28 +377,32 @@ public class PropertiesJSON {
         return ToolBox.getOuputStreamContent(outStream, "UTF-8");
     }
 
+    public static TypedPropertyField propertyFieldToTypedPropertyField(String name, Object obj) throws IOException, PropertiesException {
+        TypedPropertyField typedPropertyField = null;
+        if (obj instanceof String) typedPropertyField = new TypedPropertyField(name, "string", obj.toString());
+        else if (obj instanceof Boolean)  typedPropertyField = new TypedPropertyField(name, "boolean", obj.toString());
+        else if (obj instanceof Long) typedPropertyField = new TypedPropertyField(name, "long", obj.toString());
+        else if (obj instanceof Integer) typedPropertyField = new TypedPropertyField(name, "int", obj.toString());
+        else if (obj instanceof Double) typedPropertyField = new TypedPropertyField(name, "double", obj.toString());
+        else if (obj instanceof BigDecimal) typedPropertyField = new TypedPropertyField(name, "decimal", obj.toString());
+        else if (obj instanceof Map<?, ?>) typedPropertyField = new TypedPropertyField(name, "map", hashMapToTypedHashMapJSONString((HashMap) obj));
+        else if (obj instanceof List<?>) typedPropertyField = new TypedPropertyField(name, "array", arrayListToTypedArrayJSONString((ArrayList<Object>) obj, null));
+        else if (obj instanceof String[]) typedPropertyField = new TypedPropertyField(name, "array", arrayListToTypedArrayJSONString((ArrayList<Object>) obj, "string"));
+        else if (obj instanceof Long[]) typedPropertyField = new TypedPropertyField(name, "array", arrayListToTypedArrayJSONString((ArrayList<Object>) obj, "long"));
+        else if (obj instanceof Integer[]) typedPropertyField = new TypedPropertyField(name, "array", arrayListToTypedArrayJSONString((ArrayList<Object>) obj, "int"));
+        else if (obj instanceof Double[]) typedPropertyField = new TypedPropertyField(name, "array", arrayListToTypedArrayJSONString((ArrayList<Object>) obj, "double"));
+        else if (obj instanceof BigDecimal[]) typedPropertyField = new TypedPropertyField(name, "array", arrayListToTypedArrayJSONString((ArrayList<Object>) obj, "decimal"));
+        else if (obj instanceof Boolean[]) typedPropertyField = new TypedPropertyField(name, "array", arrayListToTypedArrayJSONString((ArrayList<Object>) obj, "boolean"));
+        else log.error("Property {} type is not managed...", new Object[]{name});
+        return typedPropertyField;
+    }
 
     public static List<TypedPropertyField> propertiesToTypedPropertiesList(Map<String, Object> props) throws IOException, PropertiesException {
         List<TypedPropertyField> list = new ArrayList<>();
         for (String key : props.keySet()) {
             Object obj = props.get(key);
             if (obj!=null) {
-                TypedPropertyField typedPropertyField = null;
-                if (obj instanceof String) typedPropertyField = new TypedPropertyField(key, "string", obj.toString());
-                else if (obj instanceof Boolean)  typedPropertyField = new TypedPropertyField(key, "boolean", obj.toString());
-                else if (obj instanceof Long) typedPropertyField = new TypedPropertyField(key, "long", obj.toString());
-                else if (obj instanceof Integer) typedPropertyField = new TypedPropertyField(key, "int", obj.toString());
-                else if (obj instanceof Double) typedPropertyField = new TypedPropertyField(key, "double", obj.toString());
-                else if (obj instanceof BigDecimal) typedPropertyField = new TypedPropertyField(key, "decimal", obj.toString());
-                else if (obj instanceof Map<?, ?>) typedPropertyField = new TypedPropertyField(key, "map", hashMapToTypedHashMapJSONString((HashMap) obj));
-                else if (obj instanceof List<?>) typedPropertyField = new TypedPropertyField(key, "array", arrayListToTypedArrayJSONString((ArrayList<Object>) obj, null));
-                else if (obj instanceof String[]) typedPropertyField = new TypedPropertyField(key, "array", arrayListToTypedArrayJSONString((ArrayList<Object>) obj, "string"));
-                else if (obj instanceof Long[]) typedPropertyField = new TypedPropertyField(key, "array", arrayListToTypedArrayJSONString((ArrayList<Object>) obj, "long"));
-                else if (obj instanceof Integer[]) typedPropertyField = new TypedPropertyField(key, "array", arrayListToTypedArrayJSONString((ArrayList<Object>) obj, "int"));
-                else if (obj instanceof Double[]) typedPropertyField = new TypedPropertyField(key, "array", arrayListToTypedArrayJSONString((ArrayList<Object>) obj, "double"));
-                else if (obj instanceof BigDecimal[]) typedPropertyField = new TypedPropertyField(key, "array", arrayListToTypedArrayJSONString((ArrayList<Object>) obj, "decimal"));
-                else if (obj instanceof Boolean[]) typedPropertyField = new TypedPropertyField(key, "array", arrayListToTypedArrayJSONString((ArrayList<Object>) obj, "boolean"));
-                else log.error("Property {} type is not managed...", new Object[]{key});
+                TypedPropertyField typedPropertyField = propertyFieldToTypedPropertyField(key, obj);
                 if (typedPropertyField!=null) list.add(typedPropertyField);
             } else log.error("Property {} value is null...", new Object[]{key});
         }
@@ -460,5 +465,10 @@ public class PropertiesJSON {
             jgenerator.close();
             return ToolBox.getOuputStreamContent(outStream, "UTF-8");
         }
+    }
+
+    public static TypedPropertyField typedPropertyFieldFromJSON(String payload) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(payload, TypedPropertyField.class);
     }
 }

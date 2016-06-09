@@ -24,6 +24,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxContainer;
+import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ClusterJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ContainerJSON;
@@ -64,8 +65,7 @@ public class ContainerEp {
             String ga_id;
             String nd_id;
             String prop_name;
-            String prop_type;
-            String prop_value;
+            String prop_field;
             Session session = null;
 
             if (oOperation==null)
@@ -487,11 +487,8 @@ public class ContainerEp {
                     case Container.OP_REMOVE_CONTAINER_PROPERTY:
                         sid = (String) message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID);
                         cid = (String) message.get(MappingSce.GLOBAL_PARAM_OBJ_ID);
-                        prop_name = (String) message.get(MappingSce.GLOBAL_PARAM_PROP_NAME);
-                        prop_type = (String) message.get(MappingSce.GLOBAL_PARAM_PROP_TYPE);
-                        prop_value = (String) message.get(MappingSce.GLOBAL_PARAM_PROP_VALUE);
-                        if (prop_type==null) prop_type="string";
-                        if (cid!=null && prop_name!=null) {
+                        prop_field = (message.containsKey(MappingSce.GLOBAL_PARAM_PROP_FIELD)) ? message.get(MappingSce.GLOBAL_PARAM_PROP_FIELD).toString() : null;
+                        if (cid!=null) {
                             if (sid!=null) {
                                 session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sid);
                                 if (session == null) {
@@ -507,12 +504,26 @@ public class ContainerEp {
 
                             if (cont!=null) {
                                 if (operation.equals(Container.OP_ADD_CONTAINER_PROPERTY)) {
-                                    Object oValue = ToolBox.extractPropertyObjectValueFromString(prop_value, prop_type);
-                                    if (session!=null) cont.addContainerProperty(session, prop_name, oValue);
-                                    else cont.addContainerProperty(prop_name, oValue);
+                                    if (prop_field!=null) {
+                                        PropertiesJSON.TypedPropertyField typedPropertyField = PropertiesJSON.typedPropertyFieldFromJSON(prop_field);
+                                        Object value = ToolBox.extractPropertyObjectValueFromString(typedPropertyField.getPropertyValue(), typedPropertyField.getPropertyType());
+                                        if (session != null) cont.addContainerProperty(session, typedPropertyField.getPropertyName(), value);
+                                        else cont.addContainerProperty(typedPropertyField.getPropertyName(), value);
+                                    } else {
+                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                        message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : property field not provided.");
+                                        return message;
+                                    }
                                 } else {
-                                    if (session!=null) cont.removeContainerProperty(session, prop_name);
-                                    else cont.removeContainerProperty(prop_name);
+                                    prop_name = (String) message.get(MappingSce.GLOBAL_PARAM_PROP_NAME);
+                                    if (prop_name!=null) {
+                                        if (session != null) cont.removeContainerProperty(session, prop_name);
+                                        else cont.removeContainerProperty(prop_name);
+                                    } else {
+                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                        message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : property name not provided.");
+                                        return message;
+                                    }
                                 }
 
                                 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -527,7 +538,7 @@ public class ContainerEp {
                             }
                         } else {
                             message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
-                            message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : id or property name not provided.");
+                            message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : id not provided.");
                         }
                         break;
                     case MappingSce.GLOBAL_OPERATION_NOT_DEFINED:

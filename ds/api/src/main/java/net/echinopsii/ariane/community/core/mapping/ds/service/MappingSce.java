@@ -41,6 +41,7 @@ public interface MappingSce {
     String GLOBAL_PARAM_PROP_NAME = "propertyName";
     String GLOBAL_PARAM_PROP_TYPE = "propertyType";
     String GLOBAL_PARAM_PROP_VALUE = "propertyValue";
+    String GLOBAL_PARAM_PROP_FIELD = "propertyField";
 
     int MAPPING_SCE_RET_SUCCESS = 0;
     int MAPPING_SCE_RET_BAD_REQ = 400;

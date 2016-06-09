@@ -28,7 +28,6 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxContainer;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxContainerAbs;
-import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesException;
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ClusterJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ContainerJSON;
@@ -350,13 +349,17 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
             Map<String, Object> message = new HashMap<>();
             message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_ADD_CONTAINER_PROPERTY);
             message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getContainerID());
-            message.put(MappingSce.GLOBAL_PARAM_PROP_NAME, propertyKey);
+            //message.put(MappingSce.GLOBAL_PARAM_PROP_NAME, propertyKey);
+            //try {
+            //    message.put(MappingSce.GLOBAL_PARAM_PROP_TYPE, PropertiesJSON.getTypeFromObject(value));
+            //} catch (PropertiesException e) {
+            //    throw new MappingDSException(e.getMessage());
+            //}
             try {
-                message.put(MappingSce.GLOBAL_PARAM_PROP_TYPE, PropertiesJSON.getTypeFromObject(value));
-            } catch (PropertiesException e) {
-                throw new MappingDSException(e.getMessage());
+                message.put(MappingSce.GLOBAL_PARAM_PROP_FIELD, PropertiesJSON.propertyFieldToTypedPropertyField(propertyKey, value).toJSONString());
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            message.put(MappingSce.GLOBAL_PARAM_PROP_VALUE, value);
             Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
             if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
             if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.addContainerProperty(propertyKey, value);
