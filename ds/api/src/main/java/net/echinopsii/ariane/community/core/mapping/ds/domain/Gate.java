@@ -29,6 +29,9 @@ public interface Gate extends Node {
 	String OP_GET_NODE_PRIMARY_ADMIN_ENDPOINT = "getNodePrimaryAdminEndpoint";
 	String OP_SET_NODE_PRIMARY_ADMIN_ENDPOINT = "setNodePrimaryAdminEndpoint";
 
+	String JOIN_PREVIOUS_PAEP = MappingDSGraphPropertyNames.DD_GATE_PAEP_KEY+"Previous";
+	String JOIN_CURRENT_PAEP = MappingDSGraphPropertyNames.DD_GATE_PAEP_KEY+"Current";
+
 	boolean isAdminPrimary();
 	
 	Endpoint getNodePrimaryAdminEndpoint();
