@@ -160,7 +160,8 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
     @Override
     public void setContainerName(String name) throws MappingDSException {
         if (super.getContainerID() != null) {
-            if (super.getContainerName()!=null && !super.getContainerName().equals(name)) {
+            if ((super.getContainerName()!=null && !super.getContainerName().equals(name)) ||
+                (super.getContainerName() == null && name != null)) {
                 String clientThreadName = Thread.currentThread().getName();
                 String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
@@ -172,14 +173,15 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                 Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
                 if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.setContainerName(name);
                 else throw new MappingDSException("Ariane server raised an error... Check your logs !");
-            }// else if (super.getContainerName() == null) super.setContainerName(name);
+            }
         } else throw new MappingDSException("This container is not initialized !");
     }
 
     @Override
     public void setContainerCompany(String company) throws MappingDSException {
         if (super.getContainerID() != null) {
-            if (super.getContainerCompany()!=null && !super.getContainerCompany().equals(company)) {
+            if ((super.getContainerCompany()!=null && !super.getContainerCompany().equals(company)) ||
+                (super.getContainerCompany() == null && company!=null)) {
                 String clientThreadName = Thread.currentThread().getName();
                 String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
@@ -191,14 +193,15 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                 Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
                 if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.setContainerCompany(company);
                 else throw new MappingDSException("Ariane server raised an error... Check your logs !");
-            }// else if (super.getContainerCompany() == null) super.setContainerCompany(company);
+            }
         } else throw new MappingDSException("This container is not initialized !");
     }
 
     @Override
     public void setContainerProduct(String product) throws MappingDSException {
         if (super.getContainerID() != null) {
-            if (super.getContainerProduct()!=null && !super.getContainerProduct().equals(product)) {
+            if ((super.getContainerProduct()!=null && !super.getContainerProduct().equals(product)) ||
+                (super.getContainerProduct() == null && product!=null)) {
                 String clientThreadName = Thread.currentThread().getName();
                 String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
@@ -210,14 +213,15 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                 Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
                 if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.setContainerProduct(product);
                 else throw new MappingDSException("Ariane server raised an error... Check your logs !");
-            }// else if (super.getContainerCompany() == null) super.setContainerProduct(product);
+            }
         } else throw new MappingDSException("This container is not initialized !");
     }
 
     @Override
     public void setContainerType(String type) throws MappingDSException {
         if (super.getContainerID() != null) {
-            if (super.getContainerType()!=null && !super.getContainerType().equals(type)) {
+            if ((super.getContainerType()!=null && !super.getContainerType().equals(type)) ||
+                (super.getContainerType()==null && type!=null)) {
                 String clientThreadName = Thread.currentThread().getName();
                 String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 

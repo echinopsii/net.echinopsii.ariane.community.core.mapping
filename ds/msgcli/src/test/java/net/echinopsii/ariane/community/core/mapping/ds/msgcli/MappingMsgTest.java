@@ -251,6 +251,14 @@ public class MappingMsgTest {
             Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn", "SERVER SSH DAEMON");
             assertNotNull(container.getContainerID());
             assertNull(container.getContainerName());
+            container.setContainerName("a.server");
+            container.setContainerCompany("RedHat");
+            container.setContainerProduct("RedHat Linux x86 7");
+            container.setContainerType("Operating System");
+            assertEquals(container.getContainerName(), "a.server");
+            assertEquals(container.getContainerCompany(), "RedHat");
+            assertEquals(container.getContainerProduct(), "RedHat Linux x86 7");
+            assertEquals(container.getContainerType(), "Operating System");
             //assertEquals(container.getContainerPrimaryAdminGateURL(), "ssh://a.server.fqdn");
             assertTrue(messagingMappingSce.getContainerSce().getContainers(null).size() == 1);
             messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
