@@ -90,7 +90,7 @@ public class GateJSON {
         private NodeJSON.JSONDeserializedNode node = null;
         private String gateURL = null;
         private boolean gateIsPrimaryAdmin = false;
-        private long containerGatePrimaryAdminEndpointID = 0;
+        private String containerGatePrimaryAdminEndpointID = null;
 
         public NodeJSON.JSONDeserializedNode getNode() {
             return node;
@@ -116,11 +116,11 @@ public class GateJSON {
             this.gateIsPrimaryAdmin = gateIsPrimaryAdmin;
         }
 
-        public long getContainerGatePrimaryAdminEndpointID() {
+        public String getContainerGatePrimaryAdminEndpointID() {
             return containerGatePrimaryAdminEndpointID;
         }
 
-        public void setContainerGatePrimaryAdminEndpointID(long containerGatePrimaryAdminEndpointID) {
+        public void setContainerGatePrimaryAdminEndpointID(String containerGatePrimaryAdminEndpointID) {
             this.containerGatePrimaryAdminEndpointID = containerGatePrimaryAdminEndpointID;
         }
     }

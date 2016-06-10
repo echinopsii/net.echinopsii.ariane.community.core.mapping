@@ -41,14 +41,14 @@ public class MappingSceImpl extends SProxMappingSceAbs<SessionImpl, SessionRegis
 
     private final static Logger log = LoggerFactory.getLogger(MappingSceImpl.class);
 
-    //private MapSceImpl mapSce = new MapSceImpl(this);
+    private MapSceImpl mapSce = new MapSceImpl();
     private ClusterSceImpl clusterSce = new ClusterSceImpl();
     private ContainerSceImpl containerSce = new ContainerSceImpl();
-    //private GateSceImpl gateSce = new GateSceImpl(this);
-    //private NodeSceImpl nodeSce = new NodeSceImpl(this);
-    //private EndpointSceImpl endpointSce = new EndpointSceImpl(this);
-    //private LinkSceImpl linkSce = new LinkSceImpl(this);
-    //private TransportSceImpl transportSce = new TransportSceImpl(this);
+    private GateSceImpl gateSce = new GateSceImpl();
+    private NodeSceImpl nodeSce = new NodeSceImpl();
+    private EndpointSceImpl endpointSce = new EndpointSceImpl();
+    private LinkSceImpl linkSce = new LinkSceImpl();
+    private TransportSceImpl transportSce = new TransportSceImpl();
 
     public MappingSceImpl() {
         super.setSessionRegistry(new SessionRegistryImpl());
@@ -132,7 +132,7 @@ public class MappingSceImpl extends SProxMappingSceAbs<SessionImpl, SessionRegis
 
     @Override
     public MapSce getMapSce() {
-        return null;
+        return mapSce;
     }
 
     @Override
@@ -147,27 +147,27 @@ public class MappingSceImpl extends SProxMappingSceAbs<SessionImpl, SessionRegis
 
     @Override
     public SProxGateSce<? extends Gate> getGateSce() {
-        return null;
+        return gateSce;
     }
 
     @Override
     public SProxNodeSce<? extends Node> getNodeSce() {
-        return null;
+        return nodeSce;
     }
 
     @Override
     public SProxEndpointSce<? extends Endpoint> getEndpointSce() {
-        return null;
+        return endpointSce;
     }
 
     @Override
     public SProxLinkSce<? extends Link> getLinkSce() {
-        return null;
+        return linkSce;
     }
 
     @Override
     public SProxTransportSce<? extends Transport> getTransportSce() {
-        return null;
+        return transportSce;
     }
 
     @Override

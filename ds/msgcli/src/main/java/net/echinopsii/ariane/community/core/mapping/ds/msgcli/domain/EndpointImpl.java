@@ -25,6 +25,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxEndpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxEndpointAbs;
+import net.echinopsii.ariane.community.core.mapping.ds.json.domain.EndpointJSON;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
 import org.slf4j.Logger;
@@ -86,6 +87,10 @@ public class EndpointImpl extends SProxEndpointAbs implements SProxEndpoint {
 
     public void setTwinEndpointsID(List<String> twinEndpointsID) {
         this.twinEndpointsID = twinEndpointsID;
+    }
+
+    public void synchronizeFromJSON(EndpointJSON.JSONDeserializedEndpoint jsonDeserializedEndpoint) throws MappingDSException {
+
     }
 
     @Override

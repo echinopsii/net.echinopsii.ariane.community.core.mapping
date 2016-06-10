@@ -42,9 +42,13 @@ public class EndpointSceImpl extends SProxEndpointSceAbs<EndpointImpl>{
 
     }
 
+    public static Endpoint internalGetEndpoint(String id) throws MappingDSException {
+        return null;
+    }
+
     @Override
     public Endpoint getEndpoint(String id) throws MappingDSException {
-        return null;
+        return internalGetEndpoint(id);
     }
 
     @Override

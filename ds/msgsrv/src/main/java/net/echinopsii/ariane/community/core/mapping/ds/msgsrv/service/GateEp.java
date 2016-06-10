@@ -203,11 +203,13 @@ public class GateEp {
                             else gate = MappingMsgsrvBootstrap.getMappingSce().getGateSce().getGate(gid);
 
                             if (gate!=null) {
-                                Endpoint endpoint;
-                                if (session!=null) endpoint = MappingMsgsrvBootstrap.getMappingSce().getEndpointSce().getEndpoint(session, ep_id);
-                                else endpoint = MappingMsgsrvBootstrap.getMappingSce().getEndpointSce().getEndpoint(ep_id);
+                                Endpoint endpoint = null;
+                                if (!ep_id.equals(MappingSce.GLOBAL_PARAM_OBJ_NONE)) {
+                                    if (session != null) endpoint = MappingMsgsrvBootstrap.getMappingSce().getEndpointSce().getEndpoint(session, ep_id);
+                                    else endpoint = MappingMsgsrvBootstrap.getMappingSce().getEndpointSce().getEndpoint(ep_id);
+                                }
 
-                                if (endpoint!=null) {
+                                if (endpoint!=null || ep_id.equals(MappingSce.GLOBAL_PARAM_OBJ_NONE)) {
                                     Endpoint previousAGEP = gate.getNodePrimaryAdminEndpoint();
                                     if (session!=null) ((SProxGate)gate).setNodePrimaryAdminEnpoint(session, endpoint);
                                     else gate.setNodePrimaryAdminEnpoint(endpoint);
@@ -219,12 +221,14 @@ public class GateEp {
                                         message.put(Gate.JOIN_PREVIOUS_PAEP, resultEp);
                                     }
 
-                                    ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-                                    EndpointJSON.oneEndpoint2JSONWithTypedProps(endpoint, outStream);
-                                    String resultEp = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                                    message.put(Gate.JOIN_CURRENT_PAEP, resultEp);
+                                    if (endpoint!=null) {
+                                        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                                        EndpointJSON.oneEndpoint2JSONWithTypedProps(endpoint, outStream);
+                                        String resultEp = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                                        message.put(Gate.JOIN_CURRENT_PAEP, resultEp);
+                                    }
 
-                                    outStream = new ByteArrayOutputStream();
+                                    ByteArrayOutputStream outStream = new ByteArrayOutputStream();
                                     GateJSON.oneGate2JSONWithTypedProps(gate, outStream);
                                     String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
                                     message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
