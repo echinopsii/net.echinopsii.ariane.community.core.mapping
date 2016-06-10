@@ -68,8 +68,8 @@ public class GateEp {
             else reqNodeContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(jsonDeserializedGate.getNode().getNodeContainerID());
             if (reqNodeContainer == null) ret.setErrorMessage("Request Error : container with provided ID " + jsonDeserializedGate.getNode().getNodeContainerID() + " was not found.");
         }
-        if (ret.getErrorMessage() == null && jsonDeserializedGate.getNode().getNodeChildNodesID()!=null && jsonDeserializedGate.getNode().getNodeChildNodesID().size() > 0 ) {
-            for (String id : jsonDeserializedGate.getNode().getNodeChildNodesID()) {
+        if (ret.getErrorMessage() == null && jsonDeserializedGate.getNode().getNodeChildNodeID()!=null && jsonDeserializedGate.getNode().getNodeChildNodeID().size() > 0 ) {
+            for (String id : jsonDeserializedGate.getNode().getNodeChildNodeID()) {
                 Node childNode ;
                 if (mappingSession!=null) childNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(mappingSession, id);
                 else childNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
@@ -80,8 +80,8 @@ public class GateEp {
                 }
             }
         }
-        if (ret.getErrorMessage() == null && jsonDeserializedGate.getNode().getNodeTwinNodesID()!=null && jsonDeserializedGate.getNode().getNodeTwinNodesID().size() > 0 ) {
-            for (String id : jsonDeserializedGate.getNode().getNodeTwinNodesID()) {
+        if (ret.getErrorMessage() == null && jsonDeserializedGate.getNode().getNodeTwinNodeID()!=null && jsonDeserializedGate.getNode().getNodeTwinNodeID().size() > 0 ) {
+            for (String id : jsonDeserializedGate.getNode().getNodeTwinNodeID()) {
                 Node twinNode ;
                 if (mappingSession!=null) twinNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(mappingSession, id);
                 else twinNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
@@ -92,8 +92,8 @@ public class GateEp {
                 }
             }
         }
-        if (ret.getErrorMessage() == null && jsonDeserializedGate.getNode().getNodeEndpointsID()!=null && jsonDeserializedGate.getNode().getNodeEndpointsID().size() > 0) {
-            for (String id : jsonDeserializedGate.getNode().getNodeTwinNodesID()) {
+        if (ret.getErrorMessage() == null && jsonDeserializedGate.getNode().getNodeEndpointID()!=null && jsonDeserializedGate.getNode().getNodeEndpointID().size() > 0) {
+            for (String id : jsonDeserializedGate.getNode().getNodeTwinNodeID()) {
                 Endpoint endpoint ;
                 if (mappingSession!=null) endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, id);
                 else endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
@@ -160,7 +160,7 @@ public class GateEp {
                 }
             }
 
-            if (jsonDeserializedGate.getNode().getNodeChildNodesID()!=null) {
+            if (jsonDeserializedGate.getNode().getNodeChildNodeID()!=null) {
                 List<Node> childNodesToDelete = new ArrayList<>();
                 for (Node existingChildNode : deserializedGate.getNodeChildNodes())
                     if (!reqNodeChildNodes.contains(existingChildNode))
@@ -174,7 +174,7 @@ public class GateEp {
                     else deserializedGate.addNodeChildNode(childNodeReq);
             }
 
-            if (jsonDeserializedGate.getNode().getNodeTwinNodesID()!=null) {
+            if (jsonDeserializedGate.getNode().getNodeTwinNodeID()!=null) {
                 List<Node> twinNodesToDelete = new ArrayList<>();
                 for (Node existingTwinNode : deserializedGate.getTwinNodes())
                     if (!reqNodeTwinNodes.contains(existingTwinNode))
@@ -200,7 +200,7 @@ public class GateEp {
                 }
             }
 
-            if (jsonDeserializedGate.getNode().getNodeEndpointsID()!=null) {
+            if (jsonDeserializedGate.getNode().getNodeEndpointID()!=null) {
                 List<Endpoint> endpointsToDelete = new ArrayList<>();
                 for (Endpoint existingEndpoint : deserializedGate.getNodeEndpoints())
                     if (!reqNodeEndpoints.contains(existingEndpoint))

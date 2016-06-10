@@ -34,6 +34,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ContainerJSON
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.momsp.MappingMsgcliMomSP;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.ClusterSceImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.ContainerSceImpl;
+import net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.NodeSceImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.service.ContainerSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxContainerSce;
@@ -274,6 +275,13 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
 
     @Override
     public Cluster getContainerCluster() {
+        try {
+            Container update = ContainerSceImpl.internalGetContainer(super.getContainerID());
+            this.setClusterID(((ContainerImpl)update).getClusterID());
+        } catch (MappingDSException e) {
+            e.printStackTrace();
+        }
+
         if (clusterID!=null && (super.getContainerCluster()==null || !super.getContainerCluster().getClusterID().equals(clusterID))) {
             try {
                 super.setContainerCluster(ClusterSceImpl.internalGetCluster(clusterID));
@@ -379,6 +387,13 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
 
     @Override
     public Container getContainerParentContainer() {
+        try {
+            Container update = ContainerSceImpl.internalGetContainer(super.getContainerID());
+            this.setParentContainerID(((ContainerImpl) update).getParentContainerID());
+        } catch (MappingDSException e) {
+            e.printStackTrace();
+        }
+
         if (parentContainerID!=null && (super.getContainerParentContainer()==null || !super.getContainerParentContainer().getContainerID().equals(parentContainerID))) {
             try {
                 super.setContainerParentContainer(ContainerSceImpl.internalGetContainer(parentContainerID));
@@ -446,6 +461,13 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
 
     @Override
     public Set<Container> getContainerChildContainers() {
+        try {
+            Container update = ContainerSceImpl.internalGetContainer(super.getContainerID());
+            this.setChildContainersID(((ContainerImpl) update).getChildContainersID());
+        } catch (MappingDSException e) {
+            e.printStackTrace();
+        }
+
         for (Container cont : new ArrayList<>(super.getContainerChildContainers()))
             if (!childContainersID.contains(cont.getContainerID()))
                 super.getContainerChildContainers().remove(cont);
@@ -533,6 +555,26 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
 
     @Override
     public Set<Node> getContainerNodes(long depth) {
+        try {
+            Container update = ContainerSceImpl.internalGetContainer(super.getContainerID());
+            this.setNodesID(((ContainerImpl)update).getNodesID());
+        } catch (MappingDSException e) {
+            e.printStackTrace();
+        }
+
+        for (Node node : new ArrayList<>(super.getContainerNodes(0)))
+            if (!nodesID.contains(node.getNodeID()))
+                super.getContainerNodes(0).remove(node);
+
+        for (String nodeID : nodesID)
+            try {
+                boolean toAdd = true;
+                for (Node node : super.getContainerNodes(0))
+                    if (node.getNodeID().equals(nodeID)) toAdd = false;
+                if (toAdd) super.getContainerNodes(0).add(NodeSceImpl.internalGetNode(nodeID));
+            } catch (MappingDSException e) {
+                e.printStackTrace();
+            }
         return super.getContainerNodes(depth);
     }
 

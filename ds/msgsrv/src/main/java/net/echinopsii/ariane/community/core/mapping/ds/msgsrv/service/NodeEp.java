@@ -37,6 +37,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
 
+import javax.tools.Tool;
 import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
 import java.util.Map;
@@ -95,21 +96,20 @@ public class NodeEp {
                                 if (session != null) pnode = MappingMsgsrvBootstrap.getMappingSce().getNodeSce().getNode(session, pn_id);
                                 else pnode = MappingMsgsrvBootstrap.getMappingSce().getNodeSce().getNode(pn_id);
 
-                                if (pnode==null) {
+                                if (pnode==null && !pn_id.equals(MappingSce.GLOBAL_PARAM_OBJ_NONE)) {
                                     message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
                                     message.put(MomMsgTranslator.MSG_ERR, "Parent node not found with provided ID.");
                                     return message;
                                 }
 
-                                if (session != null) node = MappingMsgsrvBootstrap.getMappingSce().getNodeSce().createNode(session, name, pc_id, pn_id);
-                                else node = MappingMsgsrvBootstrap.getMappingSce().getNodeSce().createNode(name,pc_id, pn_id);
+                                if (session != null) node = MappingMsgsrvBootstrap.getMappingSce().getNodeSce().createNode(session, name, pc_id, (pnode!=null) ? pn_id : null);
+                                else node = MappingMsgsrvBootstrap.getMappingSce().getNodeSce().createNode(name,pc_id, (pnode!=null) ? pn_id : null);
 
                                 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
                                 NodeJSON.oneNode2JSONWithTypedProps(node, outStream);
                                 String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
                                 message.put(MomMsgTranslator.MSG_BODY, result);
+                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
                             } else {
                                 message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
                                 message.put(MomMsgTranslator.MSG_ERR, "Parent container not found with provided ID.");

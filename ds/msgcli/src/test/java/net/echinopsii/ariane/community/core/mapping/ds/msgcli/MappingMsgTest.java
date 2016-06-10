@@ -24,6 +24,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cfg.MappingBlueprintsDSCfgLoader;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Cluster;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.domain.ClusterImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.domain.ContainerImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.momsp.MappingMsgcliMomSP;
@@ -262,42 +263,6 @@ public class MappingMsgTest {
             assertEquals(container.getContainerCompany(), "RedHat");
             assertEquals(container.getContainerProduct(), "RedHat Linux x86 7");
             assertEquals(container.getContainerType(), "Operating System");
-            container.addContainerProperty("stringProp", "a string");
-            assertTrue(container.getContainerProperties().containsKey("stringProp"));
-            assertTrue(container.getContainerProperties().get("stringProp").equals("a string"));
-            container.removeContainerProperty("stringProp");
-            assertFalse(container.getContainerProperties().containsKey("stringProp"));
-            container.addContainerProperty("boolProp", false);
-            assertTrue(container.getContainerProperties().containsKey("boolProp"));
-            assertTrue(container.getContainerProperties().get("boolProp").equals(false));
-            container.removeContainerProperty("boolProp");
-            assertFalse(container.getContainerProperties().containsKey("boolProp"));
-            container.addContainerProperty("intProp", 1);
-            assertTrue(container.getContainerProperties().containsKey("intProp"));
-            assertTrue(container.getContainerProperties().get("intProp").equals(1));
-            container.removeContainerProperty("intProp");
-            assertFalse(container.getContainerProperties().containsKey("intProp"));
-            container.addContainerProperty("doubleProp", 2.1);
-            assertTrue(container.getContainerProperties().containsKey("doubleProp"));
-            assertTrue(container.getContainerProperties().get("doubleProp").equals(2.1));
-            container.removeContainerProperty("doubleProp");
-            assertFalse(container.getContainerProperties().containsKey("doubleProp"));
-            ArrayList<String> listProp = new ArrayList<>();
-            listProp.add("test1");
-            listProp.add("test2");
-            container.addContainerProperty("listProp", listProp);
-            assertTrue(container.getContainerProperties().containsKey("listProp"));
-            assertTrue(container.getContainerProperties().get("listProp").equals(listProp));
-            container.removeContainerProperty("listProp");
-            assertFalse(container.getContainerProperties().containsKey("listProp"));
-            HashMap<String, Object> mapProp = new HashMap<>();
-            mapProp.put("boolVal", true);
-            mapProp.put("stringVal", "test");
-            container.addContainerProperty("mapProp", mapProp);
-            assertTrue(container.getContainerProperties().containsKey("mapProp"));
-            assertTrue(container.getContainerProperties().get("mapProp").equals(mapProp));
-            container.removeContainerProperty("mapProp");
-            assertFalse(container.getContainerProperties().containsKey("mapProp"));
             //assertEquals(container.getContainerPrimaryAdminGateURL(), "ssh://a.server.fqdn");
             assertTrue(messagingMappingSce.getContainerSce().getContainers(null).size() == 1);
             messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
@@ -433,6 +398,64 @@ public class MappingMsgTest {
     }
 
     @Test
+    public void testContainerProperties() throws MappingDSException {
+        if (momTest!=null) {
+            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn", "SERVER SSH DAEMON");
+            container.addContainerProperty("stringProp", "a string");
+            assertTrue(container.getContainerProperties().containsKey("stringProp"));
+            assertTrue(container.getContainerProperties().get("stringProp").equals("a string"));
+            container.removeContainerProperty("stringProp");
+            assertFalse(container.getContainerProperties().containsKey("stringProp"));
+            container.addContainerProperty("boolProp", false);
+            assertTrue(container.getContainerProperties().containsKey("boolProp"));
+            assertTrue(container.getContainerProperties().get("boolProp").equals(false));
+            container.removeContainerProperty("boolProp");
+            assertFalse(container.getContainerProperties().containsKey("boolProp"));
+            container.addContainerProperty("intProp", 1);
+            assertTrue(container.getContainerProperties().containsKey("intProp"));
+            assertTrue(container.getContainerProperties().get("intProp").equals(1));
+            container.removeContainerProperty("intProp");
+            assertFalse(container.getContainerProperties().containsKey("intProp"));
+            container.addContainerProperty("doubleProp", 2.1);
+            assertTrue(container.getContainerProperties().containsKey("doubleProp"));
+            assertTrue(container.getContainerProperties().get("doubleProp").equals(2.1));
+            container.removeContainerProperty("doubleProp");
+            assertFalse(container.getContainerProperties().containsKey("doubleProp"));
+            ArrayList<String> listProp = new ArrayList<>();
+            listProp.add("test1");
+            listProp.add("test2");
+            container.addContainerProperty("listProp", listProp);
+            assertTrue(container.getContainerProperties().containsKey("listProp"));
+            assertTrue(container.getContainerProperties().get("listProp").equals(listProp));
+            container.removeContainerProperty("listProp");
+            assertFalse(container.getContainerProperties().containsKey("listProp"));
+            HashMap<String, Object> mapProp = new HashMap<>();
+            mapProp.put("boolVal", true);
+            mapProp.put("stringVal", "test");
+            container.addContainerProperty("mapProp", mapProp);
+            assertTrue(container.getContainerProperties().containsKey("mapProp"));
+            assertTrue(container.getContainerProperties().get("mapProp").equals(mapProp));
+            container.removeContainerProperty("mapProp");
+            assertFalse(container.getContainerProperties().containsKey("mapProp"));
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
+        }
+    }
+
+    @Test
+    public void testCreateContainer3() throws MappingDSException {
+        if (momTest!=null) {
+            Container server = messagingMappingSce.getContainerSce().createContainer("a.server", "ssh://a.server.fqdn", "SERVER SSH DAEMON");
+            Container container = messagingMappingSce.getContainerSce().createContainer("a.container", "ssh://a.server.fqdn:a.container", "SERVER SSH DAEMON", server);
+            assertTrue(server.getContainerChildContainers().contains(container));
+            assertTrue(container.getContainerParentContainer().equals(server));
+            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).size() == 2);
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn:a.container");
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
+            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).size() == 0);
+        }
+    }
+
+    @Test
     public void testClusterJoinContainer() throws MappingDSException {
         if (momTest!=null) {
             Cluster cluster = messagingMappingSce.getClusterSce().createCluster("test");
@@ -489,6 +512,62 @@ public class MappingMsgTest {
             assertTrue(containerB.getContainerParentContainer() == null);
             messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
             messagingMappingSce.getContainerSce().deleteContainer("ssh://b.server.fqdn");
+        }
+    }
+
+    @Test
+    public void testCreateNode1() throws MappingDSException {
+        if (momTest!=null) {
+            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn", "SERVER SSH DAEMON");
+            Node process = messagingMappingSce.getNodeSce().createNode("a process", container.getContainerID(), null);
+            assertNotNull(process.getNodeID());
+            assertTrue(process.getNodeContainer().equals(container));
+            assertTrue(container.getContainerNodes(0).contains(process));
+            messagingMappingSce.getNodeSce().deleteNode(process.getNodeID());
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
+        }
+    }
+
+    @Test
+    public void testTransacCreateNode2() {
+        if (momTest!=null) {
+
+        }
+    }
+
+    @Test
+    public void testCreateNode2() throws MappingDSException {
+        if (momTest!=null) {
+            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn", "SERVER SSH DAEMON");
+            Node process = messagingMappingSce.getNodeSce().createNode("a process", container.getContainerID(), null);
+            Node thread = messagingMappingSce.getNodeSce().createNode("a thread", container.getContainerID(), process.getNodeID());
+            assertNotNull(thread.getNodeID());
+            assertTrue(process.getNodeChildNodes().contains(thread));
+            assertTrue(thread.getNodeParentNode().equals(process));
+            messagingMappingSce.getNodeSce().deleteNode(thread.getNodeID());
+            messagingMappingSce.getNodeSce().deleteNode(process.getNodeID());
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
+        }
+    }
+
+    @Test
+    public void testTransacCreateNode1() {
+        if (momTest!=null) {
+
+        }
+    }
+
+    @Test
+    public void testContainerJoinNode() {
+        if (momTest!=null) {
+
+        }
+    }
+
+    @Test
+    public void testNodeJoinNode() {
+        if (momTest!=null) {
+
         }
     }
 }

@@ -56,7 +56,7 @@ public class NodeSceImpl extends SProxNodeSceAbs<NodeImpl> {
         message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxNodeSce.OP_CREATE_NODE);
         message.put(NodeSce.PARAM_NODE_NAME, nodeName);
         message.put(Container.TOKEN_CT_ID, containerID);
-        message.put(NodeSce.PARAM_NODE_PNID, parentNodeID);
+        message.put(NodeSce.PARAM_NODE_PNID, (parentNodeID!=null) ? parentNodeID : MappingSce.GLOBAL_PARAM_OBJ_NONE);
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
         Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, node.getNodeReplyWorker());
 

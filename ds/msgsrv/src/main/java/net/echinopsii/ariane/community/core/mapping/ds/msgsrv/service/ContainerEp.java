@@ -97,7 +97,7 @@ public class ContainerEp {
                                 if (pc_id!=null) {
                                     Container pcont;
                                     if (session != null) pcont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(session, pc_id);
-                                    else pcont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(session, pc_id);
+                                    else pcont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(pc_id);
                                     if (pcont!=null) {
                                         if (session != null) cont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().createContainer(session, name, pag_url, pag_name, pcont);
                                         else cont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().createContainer(name, pag_url, pag_name, pcont);
@@ -114,7 +114,7 @@ public class ContainerEp {
                                 if (pc_id != null) {
                                     Container pcont;
                                     if (session != null) pcont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(session, pc_id);
-                                    else pcont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(session, pc_id);
+                                    else pcont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(pc_id);
                                     if (pcont!=null) {
                                         if (session != null) cont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().createContainer(session, pag_url, pag_name, pcont);
                                         else cont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().createContainer(pag_url, pag_name, pcont);

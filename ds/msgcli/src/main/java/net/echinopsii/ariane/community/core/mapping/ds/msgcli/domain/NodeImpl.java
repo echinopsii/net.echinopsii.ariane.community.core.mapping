@@ -129,12 +129,14 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
     }
 
     public void synchronizeFromJSON(NodeJSON.JSONDeserializedNode jsonDeserializedNode) throws MappingDSException {
+        super.setNodeID(jsonDeserializedNode.getNodeID());
+        super.setNodeDepth(jsonDeserializedNode.getNodeDepth());
         super.setNodeName(jsonDeserializedNode.getNodeName());
         this.setContainerID(jsonDeserializedNode.getNodeContainerID());
         this.setParentNodeID(jsonDeserializedNode.getNodeParentNodeID());
-        this.setChildNodesID(jsonDeserializedNode.getNodeChildNodesID());
-        this.setTwinNodesID(jsonDeserializedNode.getNodeTwinNodesID());
-        this.setEndpointsID(jsonDeserializedNode.getNodeEndpointsID());
+        this.setChildNodesID(jsonDeserializedNode.getNodeChildNodeID());
+        this.setTwinNodesID(jsonDeserializedNode.getNodeTwinNodeID());
+        this.setEndpointsID(jsonDeserializedNode.getNodeEndpointID());
     }
 
     @Override
@@ -159,6 +161,13 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
 
     @Override
     public Container getNodeContainer() {
+        try {
+            Node update = NodeSceImpl.internalGetNode(super.getNodeID());
+            this.setContainerID(((NodeImpl) update).getContainerID());
+        } catch (MappingDSException e) {
+            e.printStackTrace();
+        }
+
         if (containerID!=null && (super.getNodeContainer()==null || !super.getNodeContainer().getContainerID().equals(containerID))) {
             try {
                 super.setNodeContainer(ContainerSceImpl.internalGetContainer(containerID));
@@ -261,6 +270,12 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
 
     @Override
     public Node getNodeParentNode() {
+        try {
+            Node update = NodeSceImpl.internalGetNode(super.getNodeID());
+            this.setParentNodeID(((NodeImpl) update).getParentNodeID());
+        } catch (MappingDSException e) {
+            e.printStackTrace();
+        }
         if (parentNodeID!=null && (super.getNodeParentNode()==null || !super.getNodeParentNode().getNodeID().equals(parentNodeID))) {
             try {
                 super.setNodeParentNode(NodeSceImpl.internalGetNode(parentNodeID));
@@ -329,6 +344,13 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
 
     @Override
     public Set<Node> getNodeChildNodes(){
+        try {
+            Node update = NodeSceImpl.internalGetNode(super.getNodeID());
+            this.setChildNodesID(((NodeImpl) update).getChildNodesID());
+        } catch (MappingDSException e) {
+            e.printStackTrace();
+        }
+
         for (Node node : new ArrayList<>(super.getNodeChildNodes()))
             if (!childNodesID.contains(node.getNodeID()))
                 super.getNodeChildNodes().remove(node);
@@ -415,6 +437,13 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
 
     @Override
     public Set<Node> getTwinNodes() {
+        try {
+            Node update = NodeSceImpl.internalGetNode(super.getNodeID());
+            this.setTwinNodesID(((NodeImpl) update).getTwinNodesID());
+        } catch (MappingDSException e) {
+            e.printStackTrace();
+        }
+
         for (Node node : new ArrayList<>(super.getTwinNodes()))
             if (!twinNodesID.contains(node.getNodeID()))
                 super.getTwinNodes().remove(node);

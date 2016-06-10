@@ -165,7 +165,7 @@ public abstract class ContainerAbs implements Container {
     @Override
     public Set<Node> getContainerNodes(long depth) {
         Set<Node> ret;
-        if (depth==1) {
+        if (depth==0) {
             ret = this.containerNodes;
         } else {
             ret = new HashSet<>();

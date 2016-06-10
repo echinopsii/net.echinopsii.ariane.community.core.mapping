@@ -156,14 +156,7 @@ public abstract class NodeAbs implements Node {
 
         Node tmp = (Node) o;
 
-        boolean nameEq = false;
-        if (this.nodeName != null && this.nodeContainer != null) {
-            if (this.nodeParentNode != null)
-                nameEq = this.nodeName.equals(tmp.getNodeName()) && this.nodeParentNode.equals(tmp.getNodeParentNode());
-            else
-                nameEq = this.nodeName.equals(tmp.getNodeName()) && this.nodeContainer.equals(tmp.getNodeContainer());
-        }
-        return (this.getNodeID().equals(tmp.getNodeID()) && nameEq);
+        return (this.getNodeID().equals(tmp.getNodeID()));
     }
 
     @Override
