@@ -142,18 +142,18 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
         this.gatesID = gatesID;
     }
 
-    public void synchronizeFromJSON(ContainerJSON.JSONDeserializedContainer jsonDeserializedCluster) throws MappingDSException {
-        super.setContainerID(jsonDeserializedCluster.getContainerID());
-        super.setContainerName(jsonDeserializedCluster.getContainerName());
-        super.setContainerCompany(jsonDeserializedCluster.getContainerCompany());
-        super.setContainerProduct(jsonDeserializedCluster.getContainerProduct());
-        super.setContainerType(jsonDeserializedCluster.getContainerType());
-        this.setPrimaryAdminGateID(jsonDeserializedCluster.getContainerPrimaryAdminGateID());
-        this.setClusterID(jsonDeserializedCluster.getContainerClusterID());
-        this.setParentContainerID(jsonDeserializedCluster.getContainerParentContainerID());
-        this.setChildContainersID(jsonDeserializedCluster.getContainerChildContainersID());
-        this.setNodesID(jsonDeserializedCluster.getContainerNodesID());
-        this.setGatesID(jsonDeserializedCluster.getContainerGatesID());
+    public void synchronizeFromJSON(ContainerJSON.JSONDeserializedContainer jsonDeserializedContainer) throws MappingDSException {
+        super.setContainerID(jsonDeserializedContainer.getContainerID());
+        super.setContainerName(jsonDeserializedContainer.getContainerName());
+        super.setContainerCompany(jsonDeserializedContainer.getContainerCompany());
+        super.setContainerProduct(jsonDeserializedContainer.getContainerProduct());
+        super.setContainerType(jsonDeserializedContainer.getContainerType());
+        this.setPrimaryAdminGateID(jsonDeserializedContainer.getContainerPrimaryAdminGateID());
+        this.setClusterID(jsonDeserializedContainer.getContainerClusterID());
+        this.setParentContainerID(jsonDeserializedContainer.getContainerParentContainerID());
+        this.setChildContainersID(jsonDeserializedContainer.getContainerChildContainersID());
+        this.setNodesID(jsonDeserializedContainer.getContainerNodesID());
+        this.setGatesID(jsonDeserializedContainer.getContainerGatesID());
     }
 
     @Override
@@ -333,8 +333,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                                 e.printStackTrace();
                             }
                         }
-                    }
-                    else throw new MappingDSException("Ariane server raised an error... Check your logs !");
+                    } else throw new MappingDSException("Ariane server raised an error... Check your logs !");
                 }
             } else throw new MappingDSException("Provided cluster is not initialized !");
         } else throw new MappingDSException("This container is not initialized !");
@@ -349,16 +348,11 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
             Map<String, Object> message = new HashMap<>();
             message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_ADD_CONTAINER_PROPERTY);
             message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getContainerID());
-            //message.put(MappingSce.GLOBAL_PARAM_PROP_NAME, propertyKey);
-            //try {
-            //    message.put(MappingSce.GLOBAL_PARAM_PROP_TYPE, PropertiesJSON.getTypeFromObject(value));
-            //} catch (PropertiesException e) {
-            //    throw new MappingDSException(e.getMessage());
-            //}
             try {
                 message.put(MappingSce.GLOBAL_PARAM_PROP_FIELD, PropertiesJSON.propertyFieldToTypedPropertyField(propertyKey, value).toJSONString());
             } catch (Exception e) {
                 e.printStackTrace();
+                throw new MappingDSException(e.getMessage());
             }
             Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
             if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -471,7 +465,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
     @Override
     public boolean addContainerChildContainer(Container container) throws MappingDSException {
         if (super.getContainerID() != null) {
-            if (container.getContainerID() != null) {
+            if (container != null && container.getContainerID() != null) {
                 if ((super.getContainerChildContainers()!=null && !super.getContainerChildContainers().contains(container)) ||
                     (childContainersID != null && !childContainersID.contains(container.getContainerID()))) {
                     String clientThreadName = Thread.currentThread().getName();
@@ -493,18 +487,20 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                             ((ContainerImpl)container).synchronizeFromJSON(jsonDeserializedContainer);
                         } catch (IOException e) {
                             e.printStackTrace();
+                            return false;
                         }
                     }
-                }
+                    return true;
+                } else return false;
             } else throw new MappingDSException("Provided container is not initialized !");
         } else throw new MappingDSException("This container is not initialized !");
-        return false;
+
     }
 
     @Override
     public boolean removeContainerChildContainer(Container container) throws MappingDSException {
         if (super.getContainerID() != null) {
-            if (container.getContainerID() != null) {
+            if (container!= null && container.getContainerID() != null) {
                 if ((super.getContainerChildContainers()!=null && super.getContainerChildContainers().contains(container)) ||
                     (childContainersID!=null && childContainersID.contains(container.getContainerID()))) {
                     String clientThreadName = Thread.currentThread().getName();
@@ -526,12 +522,13 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                             ((ContainerImpl)container).synchronizeFromJSON(jsonDeserializedContainer);
                         } catch (IOException e) {
                             e.printStackTrace();
+                            return false;
                         }
                     }
-                }
+                    return true;
+                } else return false;
             } else throw new MappingDSException("Provided container is not initialized !");
         } else throw new MappingDSException("This container is not initialized !");
-        return false;
     }
 
     @Override
@@ -559,10 +556,10 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                         node.setNodeContainer(this);
                         nodesID.add(node.getNodeID());
                     }
-                }
+                    return true;
+                } else return false;
             } else throw new MappingDSException("Provided node is not initialized !");
         } else throw new MappingDSException("This container is not initialized !");
-        return false;
     }
 
     @Override
@@ -585,10 +582,10 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                         node.setNodeContainer(null);
                         nodesID.remove(node.getNodeID());
                     }
-                }
+                    return true;
+                } else return false;
             } else throw new MappingDSException("Provided node is not initialized !");
         } else throw new MappingDSException("This container is not initialized !");
-        return false;
     }
 
     @Override
@@ -616,10 +613,10 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                         gate.setNodeContainer(this);
                         gatesID.add(gate.getNodeID());
                     }
-                }
+                    return true;
+                } else return false;
             } else throw new MappingDSException("Provided gate is not initialized !");
         } else throw new MappingDSException("This container is not initialized !");
-        return false;
     }
 
     @Override
@@ -642,9 +639,9 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                         gate.setNodeContainer(null);
                         gatesID.remove(gate.getNodeID());
                     }
-                }
+                    return true;
+                } else return false;
             } else throw new MappingDSException("Provided gate is not initialized !");
         } else throw new MappingDSException("This container is not initialized !");
-        return false;
     }
 }

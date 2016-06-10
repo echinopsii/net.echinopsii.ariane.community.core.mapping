@@ -202,9 +202,9 @@ public class ContainerSceImpl extends SProxContainerSceAbs<ContainerImpl> {
                         body = new String((byte[]) message.get(MomMsgTranslator.MSG_BODY));
 
                     containers = new HashSet<>();
-                    for (ContainerJSON.JSONDeserializedContainer jsonDeserializedCluster : ContainerJSON.JSON2Containers(body)) {
+                    for (ContainerJSON.JSONDeserializedContainer jsonDeserializedContainer : ContainerJSON.JSON2Containers(body)) {
                         ContainerImpl container = new ContainerImpl();
-                        container.synchronizeFromJSON(jsonDeserializedCluster);
+                        container.synchronizeFromJSON(jsonDeserializedContainer);
                         containers.add(container);
                     }
                 } catch (Exception e) {

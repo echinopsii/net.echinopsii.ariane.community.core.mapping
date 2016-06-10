@@ -20,19 +20,30 @@
 package net.echinopsii.ariane.community.core.mapping.ds.msgcli.domain;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
+import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxNode;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxNodeAbs;
+import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ContainerJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.json.domain.NodeJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.msgcli.momsp.MappingMsgcliMomSP;
+import net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.ContainerSceImpl;
+import net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.NodeSceImpl;
+import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.NodeSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxNodeSce;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.io.IOException;
+import java.util.*;
 
 public class NodeImpl extends SProxNodeAbs implements SProxNode {
 
@@ -54,7 +65,13 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                     else if (message.get(MomMsgTranslator.MSG_BODY) != null && message.get(MomMsgTranslator.MSG_BODY) instanceof byte[])
                         body = new String((byte[]) message.get(MomMsgTranslator.MSG_BODY));
                     if (body != null) {
-                        //TODO
+                        try {
+                            NodeJSON.JSONDeserializedNode jsonDeserializedNode = NodeJSON.JSON2Node(body);
+                            if (node.getNodeID() == null || node.getNodeID().equals(jsonDeserializedNode.getNodeID()))
+                                node.synchronizeFromJSON(jsonDeserializedNode);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 } else NodeImpl.log.error("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
             }
@@ -69,7 +86,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
     private String parentNodeID;
     private List<String> childNodesID;
     private List<String> twinNodesID;
-    private List<String> nodeEndpoints;
+    private List<String> endpointsID;
 
     public NodeReplyWorker getNodeReplyWorker() {
         return nodeReplyWorker;
@@ -107,73 +124,379 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
         this.twinNodesID = twinNodesID;
     }
 
-    public void setNodeEndpoints(List<String> nodeEndpoints) {
-        this.nodeEndpoints = nodeEndpoints;
+    public void setEndpointsID(List<String> endpointsID) {
+        this.endpointsID = endpointsID;
+    }
+
+    public void synchronizeFromJSON(NodeJSON.JSONDeserializedNode jsonDeserializedNode) throws MappingDSException {
+        super.setNodeName(jsonDeserializedNode.getNodeName());
+        this.setContainerID(jsonDeserializedNode.getNodeContainerID());
+        this.setParentNodeID(jsonDeserializedNode.getNodeParentNodeID());
+        this.setChildNodesID(jsonDeserializedNode.getNodeChildNodesID());
+        this.setTwinNodesID(jsonDeserializedNode.getNodeTwinNodesID());
+        this.setEndpointsID(jsonDeserializedNode.getNodeEndpointsID());
     }
 
     @Override
     public void setNodeName(String name) throws MappingDSException {
+        if (super.getNodeID()!=null) {
+            if ((super.getNodeName()!=null && !super.getNodeName().equals(name)) ||
+                    (super.getNodeName() == null && name != null)) {
+                String clientThreadName = Thread.currentThread().getName();
+                String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
+                Map<String, Object> message = new HashMap<>();
+                message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_SET_NODE_NAME);
+                message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
+                message.put(SProxNodeSce.PARAM_NODE_NAME, name);
+                if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+                Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
+                if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.setNodeName(name);
+                else throw new MappingDSException("Ariane server raised an error... Check your logs !");
+            }
+        } else throw new MappingDSException("This node is not initialized !");
     }
 
     @Override
     public Container getNodeContainer() {
+        if (containerID!=null && (super.getNodeContainer()==null || !super.getNodeContainer().getContainerID().equals(containerID))) {
+            try {
+                super.setNodeContainer(ContainerSceImpl.internalGetContainer(containerID));
+            } catch (MappingDSException e) {
+                e.printStackTrace();
+            }
+        } else if (super.getNodeContainer()!=null && containerID==null)
+            try {
+                super.setNodeContainer(null);
+            } catch (MappingDSException e) {
+                e.printStackTrace();
+            }
         return super.getNodeContainer();
     }
 
     @Override
     public void setNodeContainer(Container container) throws MappingDSException {
+        if (super.getNodeID()!=null) {
+            if (container!=null && container.getContainerID()!=null) {
+                if ((super.getNodeContainer()!=null && !super.getNodeContainer().getContainerID().equals(container.getContainerID())) ||
+                    (containerID!=null && !containerID.equals(container.getContainerID())) || (containerID==null)) {
+                    String clientThreadName = Thread.currentThread().getName();
+                    String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
+                    Map<String, Object> message = new HashMap<>();
+                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_SET_NODE_CONTAINER);
+                    message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
+                    message.put(Container.TOKEN_CT_ID, container.getContainerID());
+                    if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
+                    if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
+                        Container previousPContainer = super.getNodeContainer();
+                        if (previousPContainer!=null) {
+                            try {
+                                if (retMsg.containsKey(Node.JOIN_PREVIOUS_PCONTAINER)) {
+                                    ContainerJSON.JSONDeserializedContainer jsonDeserializedContainer = ContainerJSON.JSON2Container(
+                                            (String) retMsg.get(Node.JOIN_PREVIOUS_PCONTAINER)
+                                    );
+                                    ((ContainerImpl)previousPContainer).synchronizeFromJSON(jsonDeserializedContainer);
+                                }
+                            } catch(IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        super.setNodeContainer(container);
+                        containerID = container.getContainerID();
+                        try {
+                            if (retMsg.containsKey(Node.JOIN_CURRENT_PCONTAINER)) {
+                                ContainerJSON.JSONDeserializedContainer jsonDeserializedContainer = ContainerJSON.JSON2Container(
+                                        (String) retMsg.get(Node.JOIN_CURRENT_PCONTAINER)
+                                );
+                                ((ContainerImpl)container).synchronizeFromJSON(jsonDeserializedContainer);
+                            }
+                        } catch(IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else throw new MappingDSException("Ariane server raised an error... Check your logs !");
+                }
+            } else throw new MappingDSException("Provided container is not initialized !");
+        } else throw new MappingDSException("This node is not initialized !");
     }
 
     @Override
     public void addNodeProperty(String propertyKey, Object value) throws MappingDSException {
+        if (super.getNodeID()!=null) {
+            String clientThreadName = Thread.currentThread().getName();
+            String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
+            Map<String, Object> message = new HashMap<>();
+            message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_ADD_NODE_PROPERTY);
+            message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
+            try {
+                message.put(MappingSce.GLOBAL_PARAM_PROP_FIELD, PropertiesJSON.propertyFieldToTypedPropertyField(propertyKey, value).toJSONString());
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new MappingDSException(e.getMessage());
+            }
+            Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
+            if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+            if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.addNodeProperty(propertyKey, value);
+            else throw new MappingDSException("Ariane server raised an error... Check your logs !");
+        } else throw new MappingDSException("This node is not initialized !");
     }
 
     @Override
     public void removeNodeProperty(String propertyKey) throws MappingDSException {
+        if (super.getNodeID()!=null) {
+            String clientThreadName = Thread.currentThread().getName();
+            String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
+            Map<String, Object> message = new HashMap<>();
+            message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_REMOVE_NODE_PROPERTY);
+            message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
+            message.put(MappingSce.GLOBAL_PARAM_PROP_NAME, propertyKey);
+            Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
+            if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+            if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.removeNodeProperty(propertyKey);
+        } else throw new MappingDSException("This node is not initialized !");
     }
 
     @Override
     public Node getNodeParentNode() {
+        if (parentNodeID!=null && (super.getNodeParentNode()==null || !super.getNodeParentNode().getNodeID().equals(parentNodeID))) {
+            try {
+                super.setNodeParentNode(NodeSceImpl.internalGetNode(parentNodeID));
+            } catch (MappingDSException e) {
+                e.printStackTrace();
+            }
+        } else if (super.getNodeParentNode()!=null && parentNodeID==null)
+            try {
+                super.setNodeParentNode(null);
+            } catch (MappingDSException e) {
+                e.printStackTrace();
+            }
+
         return super.getNodeParentNode();
     }
 
     @Override
     public void setNodeParentNode(Node node) throws MappingDSException {
+        if (super.getNodeID()!=null) {
+            if (node == null || (node.getNodeID()!=null)) {
+                if ((super.getNodeParentNode()!=null && node!=null && !super.getNodeParentNode().getNodeID().equals(node.getNodeID())) ||
+                    (parentNodeID!=null && node!=null && !parentNodeID.equals(node.getNodeID())) ||
+                    (parentNodeID==null && node!=null) || (parentNodeID!=null && node==null)) {
+                    String clientThreadName = Thread.currentThread().getName();
+                    String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
+                    Map<String, Object> message = new HashMap<>();
+                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_SET_NODE_PARENT_NODE);
+                    message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
+                    message.put(NodeSce.PARAM_NODE_PNID, (node != null) ? node.getNodeID() : MappingSce.GLOBAL_PARAM_OBJ_NONE);
+                    if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
+                    if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
+                        Node previousPNode = super.getNodeParentNode();
+                        if (previousPNode!=null) {
+                            try {
+                                if (retMsg.containsKey(Node.JOIN_PREVIOUS_PNODE)) {
+                                    NodeJSON.JSONDeserializedNode jsonDeserializedNode = NodeJSON.JSON2Node(
+                                            (String) retMsg.get(Node.JOIN_PREVIOUS_PNODE)
+                                    );
+                                    ((NodeImpl)previousPNode).synchronizeFromJSON(jsonDeserializedNode);
+                                }
+                            } catch(IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        super.setNodeParentNode(node);
+                        parentNodeID = (node!=null) ? node.getNodeID() : null;
+                        if (node!=null) {
+                            try {
+                                if (retMsg.containsKey(Node.JOIN_CURRENT_PNODE)) {
+                                    NodeJSON.JSONDeserializedNode jsonDeserializedNode = NodeJSON.JSON2Node(
+                                            (String) retMsg.get(Node.JOIN_CURRENT_PNODE)
+                                    );
+                                    ((NodeImpl) node).synchronizeFromJSON(jsonDeserializedNode);
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    } else throw new MappingDSException("Ariane server raised an error... Check your logs !");
+                }
+            } else throw new MappingDSException("Provided node is not initialized !");
+        } else throw new MappingDSException("This node is not initialized !");
     }
 
     @Override
     public Set<Node> getNodeChildNodes(){
+        for (Node node : new ArrayList<>(super.getNodeChildNodes()))
+            if (!childNodesID.contains(node.getNodeID()))
+                super.getNodeChildNodes().remove(node);
+
+        for (String nodeID : childNodesID)
+            try {
+                boolean toAdd = true;
+                for (Node node : super.getNodeChildNodes())
+                    if (node.getNodeID().equals(nodeID)) toAdd = false;
+                if (toAdd) super.getNodeChildNodes().add(NodeSceImpl.internalGetNode(nodeID));
+            } catch (MappingDSException e) {
+                e.printStackTrace();
+            }
         return super.getNodeChildNodes();
     }
 
     @Override
     public boolean addNodeChildNode(Node node) throws MappingDSException {
-        return false;
+        if (super.getNodeID()!=null) {
+            if (node!=null && node.getNodeID()!=null) {
+                if ((super.getNodeChildNodes()!=null && !super.getNodeChildNodes().contains(node)) ||
+                    (childNodesID!=null && !childNodesID.contains(node.getNodeID()))) {
+                    String clientThreadName = Thread.currentThread().getName();
+                    String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+
+                    Map<String, Object> message = new HashMap<>();
+                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_ADD_NODE_CHILD_NODE);
+                    message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
+                    message.put(NodeSce.PARAM_NODE_CNID, node.getNodeID());
+                    if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
+                    if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
+                        super.addNodeChildNode(node);
+                        childNodesID.add(node.getNodeID());
+                        try {
+                            NodeJSON.JSONDeserializedNode jsonDeserializedNode = NodeJSON.JSON2Node(
+                                    (String) retMsg.get(MappingDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY)
+                            );
+                            ((NodeImpl)node).synchronizeFromJSON(jsonDeserializedNode);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            return false;
+                        }
+                    }
+                    return true;
+                } else return false;
+            } else throw new MappingDSException("Provided node is not initialized !");
+        } else throw new MappingDSException("This node is not initialized !");
     }
 
     @Override
     public boolean removeNodeChildNode(Node node) throws MappingDSException {
-        return false;
+        if (super.getNodeID()!=null) {
+            if (node!=null && node.getNodeID()!=null) {
+                if ((super.getNodeChildNodes()!=null && super.getNodeChildNodes().contains(node)) ||
+                        (childNodesID!=null && childNodesID.contains(node.getNodeID()))) {
+                    String clientThreadName = Thread.currentThread().getName();
+                    String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+
+                    Map<String, Object> message = new HashMap<>();
+                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_REMOVE_NODE_CHILD_NODE);
+                    message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
+                    message.put(NodeSce.PARAM_NODE_CNID, node.getNodeID());
+                    if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
+                    if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
+                        super.removeNodeChildNode(node);
+                        childNodesID.remove(node.getNodeID());
+                        try {
+                            NodeJSON.JSONDeserializedNode jsonDeserializedNode = NodeJSON.JSON2Node(
+                                    (String) retMsg.get(MappingDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY)
+                            );
+                            ((NodeImpl)node).synchronizeFromJSON(jsonDeserializedNode);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            return false;
+                        }
+                    }
+                    return true;
+                } else return false;
+            } else throw new MappingDSException("Provided node is not initialized !");
+        } else throw new MappingDSException("This node is not initialized !");
     }
 
     @Override
     public Set<Node> getTwinNodes() {
+        for (Node node : new ArrayList<>(super.getTwinNodes()))
+            if (!twinNodesID.contains(node.getNodeID()))
+                super.getTwinNodes().remove(node);
+
+        for (String nodeID : twinNodesID)
+            try {
+                boolean toAdd = true;
+                for (Node node : super.getTwinNodes())
+                    if (node.getNodeID().equals(nodeID)) toAdd = false;
+                if (toAdd) super.getTwinNodes().add(NodeSceImpl.internalGetNode(nodeID));
+            } catch (MappingDSException e) {
+                e.printStackTrace();
+            }
         return super.getTwinNodes();
     }
 
     @Override
     public boolean addTwinNode(Node node) throws MappingDSException {
-        return false;
+        if (super.getNodeID()!=null) {
+            if (node!=null && node.getNodeID()!=null) {
+                if ((super.getTwinNodes()!=null && !super.getTwinNodes().contains(node)) ||
+                     (twinNodesID!=null && !twinNodesID.contains(node.getNodeID()))) {
+                    String clientThreadName = Thread.currentThread().getName();
+                    String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+
+                    Map<String, Object> message = new HashMap<>();
+                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_ADD_TWIN_NODE);
+                    message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
+                    message.put(NodeSce.PARAM_NODE_TNID, node.getNodeID());
+                    if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
+                    if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
+                        super.addTwinNode(node);
+                        twinNodesID.add(node.getNodeID());
+                        try {
+                            NodeJSON.JSONDeserializedNode jsonDeserializedNode = NodeJSON.JSON2Node(
+                                    (String) retMsg.get(MappingDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY)
+                            );
+                            ((NodeImpl)node).synchronizeFromJSON(jsonDeserializedNode);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            return false;
+                        }
+                    }
+                    return true;
+                } else return false;
+            } else throw new MappingDSException("Provided node is not initialized !");
+        } else throw new MappingDSException("This node is not initialized !");
     }
 
     @Override
     public boolean removeTwinNode(Node node) throws MappingDSException {
-        return false;
+        if (super.getNodeID()!=null) {
+            if (node!=null && node.getNodeID()!=null) {
+                if ((super.getTwinNodes()!=null && super.getTwinNodes().contains(node)) ||
+                    (twinNodesID!=null && twinNodesID.contains(node.getNodeID()))) {
+                    String clientThreadName = Thread.currentThread().getName();
+                    String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+
+                    Map<String, Object> message = new HashMap<>();
+                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_REMOVE_TWIN_NODE);
+                    message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
+                    message.put(NodeSce.PARAM_NODE_TNID, node.getNodeID());
+                    if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
+                    if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
+                        super.removeTwinNode(node);
+                        twinNodesID.remove(node.getNodeID());
+                        try {
+                            NodeJSON.JSONDeserializedNode jsonDeserializedNode = NodeJSON.JSON2Node(
+                                    (String) retMsg.get(MappingDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY)
+                            );
+                            ((NodeImpl)node).synchronizeFromJSON(jsonDeserializedNode);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            return false;
+                        }
+                    }
+                    return true;
+                } else return false;
+            } else throw new MappingDSException("Provided node is not initialized !");
+        } else throw new MappingDSException("This node is not initialized !");
     }
 
     @Override
@@ -183,11 +506,17 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
 
     @Override
     public boolean addEndpoint(Endpoint endpoint) throws MappingDSException {
+        if (super.getNodeID()!=null) {
+
+        } else throw new MappingDSException("This node is not initialized !");
         return false;
     }
 
     @Override
     public boolean removeEndpoint(Endpoint endpoint) throws MappingDSException {
+        if (super.getNodeID()!=null) {
+
+        } else throw new MappingDSException("This node is not initialized !");
         return false;
     }
 }

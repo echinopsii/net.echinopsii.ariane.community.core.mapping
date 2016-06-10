@@ -224,6 +224,8 @@ public class NodeEp {
                     case NodeSce.OP_GET_NODES:
                         sid = (String) message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID);
                         selector = (String) message.get(MappingSce.GLOBAL_PARAM_SELECTOR);
+                        prop_field = (message.containsKey(MappingSce.GLOBAL_PARAM_PROP_FIELD)) ? message.get(MappingSce.GLOBAL_PARAM_PROP_FIELD).toString() : null;
+
                         if (sid!=null) {
                             session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sid);
                             if (session == null) {
@@ -234,8 +236,15 @@ public class NodeEp {
                         }
 
                         HashSet<Node> nodes;
-                        if (session!=null) nodes = (HashSet<Node>) MappingMsgsrvBootstrap.getMappingSce().getNodeSce().getNodes(session, selector);
-                        else nodes = (HashSet<Node>) MappingMsgsrvBootstrap.getMappingSce().getNodeSce().getNodes(selector);
+                        if (prop_field!=null) {
+                            PropertiesJSON.TypedPropertyField typedPropertyField = PropertiesJSON.typedPropertyFieldFromJSON(prop_field);
+                            Object value = ToolBox.extractPropertyObjectValueFromString(typedPropertyField.getPropertyValue(), typedPropertyField.getPropertyType());
+                            if (session != null) nodes = (HashSet<Node>) MappingMsgsrvBootstrap.getMappingSce().getNodeSce().getNodes(session, typedPropertyField.getPropertyName(), value);
+                            else nodes = (HashSet<Node>) MappingMsgsrvBootstrap.getMappingSce().getNodeSce().getNodes(typedPropertyField.getPropertyName(), value);
+                        } else {
+                            if (session != null) nodes = (HashSet<Node>) MappingMsgsrvBootstrap.getMappingSce().getNodeSce().getNodes(session, selector);
+                            else nodes = (HashSet<Node>) MappingMsgsrvBootstrap.getMappingSce().getNodeSce().getNodes(selector);
+                        }
 
                         if (nodes!=null) {
                             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
