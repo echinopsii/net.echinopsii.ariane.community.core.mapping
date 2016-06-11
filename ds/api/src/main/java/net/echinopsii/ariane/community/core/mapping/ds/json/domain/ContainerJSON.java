@@ -76,7 +76,6 @@ public class ContainerJSON {
     }
 
     private static void commonContainer2JSON(Container cont, JsonGenerator jgenerator) throws IOException {
-        jgenerator.writeStartObject();
         jgenerator.writeStringField(Container.TOKEN_CT_ID, cont.getContainerID());
         jgenerator.writeStringField(Container.TOKEN_CT_NAME, cont.getContainerName());
         jgenerator.writeStringField(Container.TOKEN_CT_COMPANY, cont.getContainerCompany());
@@ -111,12 +110,14 @@ public class ContainerJSON {
     }
 
     public static void container2JSON(Container cont, JsonGenerator jgenerator) throws IOException {
+        jgenerator.writeStartObject();
         commonContainer2JSON(cont, jgenerator);
         if (cont.getContainerProperties() != null) containerProps2JSON(cont.getContainerProperties(), jgenerator, true, true);
         jgenerator.writeEndObject();
     }
 
     public static void container2JSONWithTypedProps(Container cont, JsonGenerator jgenerator) throws IOException, PropertiesException {
+        jgenerator.writeStartObject();
         commonContainer2JSON(cont, jgenerator);
         if (cont.getContainerProperties() != null) containerProps2JSONWithTypedProps(cont.getContainerProperties(), jgenerator, true, true);
         jgenerator.writeEndObject();

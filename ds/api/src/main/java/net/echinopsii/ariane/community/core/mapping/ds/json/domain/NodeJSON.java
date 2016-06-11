@@ -55,10 +55,10 @@ public class NodeJSON {
 
     private static void nodeProps2JSONWithTypedProps(Node node, JsonGenerator jgenerator) throws JsonGenerationException, IOException, PropertiesException {
         if (node.getNodeProperties()!=null && node.getNodeProperties().size()!=0) {
-            jgenerator.writeObjectFieldStart(Node.TOKEN_ND_PRP);
+            jgenerator.writeArrayFieldStart(Node.TOKEN_ND_PRP);
             for (PropertiesJSON.TypedPropertyField field : PropertiesJSON.propertiesToTypedPropertiesList(node.getNodeProperties()))
                 field.toJSON(jgenerator);
-            jgenerator.writeEndObject();
+            jgenerator.writeEndArray();
         }
     }
 

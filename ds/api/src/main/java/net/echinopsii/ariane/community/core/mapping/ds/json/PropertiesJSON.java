@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -470,5 +471,38 @@ public class PropertiesJSON {
     public static TypedPropertyField typedPropertyFieldFromJSON(String payload) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(payload, TypedPropertyField.class);
+    }
+
+    public static Object getValueFromTypedPropertyField(TypedPropertyField typedPropertyField) throws IOException, PropertiesException {
+        Object value;
+        switch (typedPropertyField.getPropertyType()) {
+            case "string":
+                value = typedPropertyField.getPropertyValue();
+                break;
+            case "int":
+            case "integer":
+                value = new Integer(typedPropertyField.getPropertyValue());
+                break;
+            case "long":
+                value = new Long(typedPropertyField.getPropertyValue());
+                break;
+            case "double":
+                value = new Double(typedPropertyField.getPropertyValue());
+                break;
+            case "decimal":
+                value = new BigInteger(typedPropertyField.getPropertyValue());
+                break;
+            case "boolean":
+                value = new Boolean(typedPropertyField.getPropertyValue());
+                break;
+            case "array":
+            case "map":
+                value = PropertiesJSON.JSONStringToPropertyObject(typedPropertyField.getPropertyType(), typedPropertyField.getPropertyValue());
+                break;
+            default:
+                throw new PropertiesException("Unsupported json type (" + typedPropertyField.getPropertyType() + "). " +
+                        "Supported types are : array, boolean, decimal, double, integer, long, map");
+        }
+        return value;
     }
 }

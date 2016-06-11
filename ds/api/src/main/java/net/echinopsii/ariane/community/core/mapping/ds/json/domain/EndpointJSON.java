@@ -54,10 +54,10 @@ public class EndpointJSON {
     private static void endpointProps2JSONWithTypedProps(Endpoint endpoint, JsonGenerator jgenerator) throws IOException, PropertiesException {
         HashMap<String, Object> props = endpoint.getEndpointProperties();
         if (props != null && props.size()!=0) {
-            jgenerator.writeObjectFieldStart(Endpoint.TOKEN_EP_PRP);
+            jgenerator.writeArrayFieldStart(Endpoint.TOKEN_EP_PRP);
             for (PropertiesJSON.TypedPropertyField field : PropertiesJSON.propertiesToTypedPropertiesList(props))
                 field.toJSON(jgenerator);
-            jgenerator.writeEndObject();
+            jgenerator.writeEndArray();
         }
     }
 
