@@ -53,7 +53,7 @@ public class GateEp {
             String name;
             String pc_id;
             String ep_id;
-            String is_admin;
+            Boolean is_admin;
             Session session=null;
 
             if (oOperation==null)
@@ -68,7 +68,7 @@ public class GateEp {
                         name = (String) message.get(GateSce.PARAM_GATE_NAME);
                         url = (String) message.get(GateSce.PARAM_GATE_URL);
                         pc_id  = (String) message.get(Container.TOKEN_CT_ID);
-                        is_admin = (String) message.get(GateSce.PARAM_GATE_IPADM);
+                        is_admin = (Boolean) message.get(GateSce.PARAM_GATE_IPADM);
                         if (name!=null && url!=null && pc_id!=null && is_admin!=null) {
                             if (sid != null) {
                                 session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sid);
@@ -85,8 +85,8 @@ public class GateEp {
 
                             if (parentContainer!=null) {
                                 Gate gate ;
-                                if (session!=null) gate = MappingMsgsrvBootstrap.getMappingSce().getGateSce().createGate(session, url, name, pc_id, new Boolean(is_admin));
-                                else gate = MappingMsgsrvBootstrap.getMappingSce().getGateSce().createGate(url, name, pc_id, new Boolean(is_admin));
+                                if (session!=null) gate = MappingMsgsrvBootstrap.getMappingSce().getGateSce().createGate(session, url, name, pc_id, is_admin);
+                                else gate = MappingMsgsrvBootstrap.getMappingSce().getGateSce().createGate(url, name, pc_id, is_admin);
 
                                 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
                                 GateJSON.oneGate2JSONWithTypedProps(gate, outStream);

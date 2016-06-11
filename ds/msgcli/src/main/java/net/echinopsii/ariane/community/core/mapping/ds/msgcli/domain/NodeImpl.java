@@ -132,6 +132,15 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
         super.setNodeID(jsonDeserializedNode.getNodeID());
         super.setNodeDepth(jsonDeserializedNode.getNodeDepth());
         super.setNodeName(jsonDeserializedNode.getNodeName());
+        super.getNodeProperties().clear();
+        if (jsonDeserializedNode.getNodeProperties()!=null)
+            for (PropertiesJSON.TypedPropertyField typedPropertyField : jsonDeserializedNode.getNodeProperties())
+                try {
+                    super.addNodeProperty(typedPropertyField.getPropertyName(), PropertiesJSON.getValueFromTypedPropertyField(typedPropertyField));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    throw new MappingDSException("Error with property " + typedPropertyField.getPropertyName() + " deserialization : " + e.getMessage());
+                }
         this.setContainerID(jsonDeserializedNode.getNodeContainerID());
         this.setParentNodeID(jsonDeserializedNode.getNodeParentNodeID());
         this.setChildNodesID(jsonDeserializedNode.getNodeChildNodesID());

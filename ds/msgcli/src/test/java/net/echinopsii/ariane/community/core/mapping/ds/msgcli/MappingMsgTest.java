@@ -19,11 +19,11 @@
  */
 package net.echinopsii.ariane.community.core.mapping.ds.msgcli;
 
-import junit.framework.Assert;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cfg.MappingBlueprintsDSCfgLoader;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Cluster;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.domain.ClusterImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.domain.ContainerImpl;
@@ -398,50 +398,6 @@ public class MappingMsgTest {
     }
 
     @Test
-    public void testContainerProperties() throws MappingDSException {
-        if (momTest!=null) {
-            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn", "SERVER SSH DAEMON");
-            container.addContainerProperty("stringProp", "a string");
-            assertTrue(container.getContainerProperties().containsKey("stringProp"));
-            assertTrue(container.getContainerProperties().get("stringProp").equals("a string"));
-            container.removeContainerProperty("stringProp");
-            assertFalse(container.getContainerProperties().containsKey("stringProp"));
-            container.addContainerProperty("boolProp", false);
-            assertTrue(container.getContainerProperties().containsKey("boolProp"));
-            assertTrue(container.getContainerProperties().get("boolProp").equals(false));
-            container.removeContainerProperty("boolProp");
-            assertFalse(container.getContainerProperties().containsKey("boolProp"));
-            container.addContainerProperty("intProp", 1);
-            assertTrue(container.getContainerProperties().containsKey("intProp"));
-            assertTrue(container.getContainerProperties().get("intProp").equals(1));
-            container.removeContainerProperty("intProp");
-            assertFalse(container.getContainerProperties().containsKey("intProp"));
-            container.addContainerProperty("doubleProp", 2.1);
-            assertTrue(container.getContainerProperties().containsKey("doubleProp"));
-            assertTrue(container.getContainerProperties().get("doubleProp").equals(2.1));
-            container.removeContainerProperty("doubleProp");
-            assertFalse(container.getContainerProperties().containsKey("doubleProp"));
-            ArrayList<String> listProp = new ArrayList<>();
-            listProp.add("test1");
-            listProp.add("test2");
-            container.addContainerProperty("listProp", listProp);
-            assertTrue(container.getContainerProperties().containsKey("listProp"));
-            assertTrue(container.getContainerProperties().get("listProp").equals(listProp));
-            container.removeContainerProperty("listProp");
-            assertFalse(container.getContainerProperties().containsKey("listProp"));
-            HashMap<String, Object> mapProp = new HashMap<>();
-            mapProp.put("boolVal", true);
-            mapProp.put("stringVal", "test");
-            container.addContainerProperty("mapProp", mapProp);
-            assertTrue(container.getContainerProperties().containsKey("mapProp"));
-            assertTrue(container.getContainerProperties().get("mapProp").equals(mapProp));
-            container.removeContainerProperty("mapProp");
-            assertFalse(container.getContainerProperties().containsKey("mapProp"));
-            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
-        }
-    }
-
-    @Test
     public void testCreateContainer3() throws MappingDSException {
         if (momTest!=null) {
             Container server = messagingMappingSce.getContainerSce().createContainer("a.server", "ssh://a.server.fqdn", "SERVER SSH DAEMON");
@@ -452,6 +408,80 @@ public class MappingMsgTest {
             messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn:a.container");
             messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
             assertTrue(messagingMappingSce.getContainerSce().getContainers(null).size() == 0);
+        }
+    }
+
+    @Test
+    public void testContainerProperties() throws MappingDSException {
+        if (momTest!=null) {
+            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn", "SERVER SSH DAEMON");
+            container.addContainerProperty("stringProp", "a string");
+            assertTrue(container.getContainerProperties().containsKey("stringProp"));
+            assertTrue(container.getContainerProperties().get("stringProp").equals("a string"));
+            Container bis = messagingMappingSce.getContainerSce().getContainer(container.getContainerID());
+            assertTrue(bis.getContainerProperties().containsKey("stringProp"));
+            assertTrue(bis.getContainerProperties().get("stringProp").equals("a string"));
+            container.removeContainerProperty("stringProp");
+            assertFalse(container.getContainerProperties().containsKey("stringProp"));
+            bis = messagingMappingSce.getContainerSce().getContainer(container.getContainerID());
+            assertFalse(bis.getContainerProperties().containsKey("stringProp"));
+            container.addContainerProperty("boolProp", false);
+            assertTrue(container.getContainerProperties().containsKey("boolProp"));
+            assertTrue(container.getContainerProperties().get("boolProp").equals(false));
+            bis = messagingMappingSce.getContainerSce().getContainer(container.getContainerID());
+            assertTrue(bis.getContainerProperties().containsKey("boolProp"));
+            assertTrue(bis.getContainerProperties().get("boolProp").equals(false));
+            container.removeContainerProperty("boolProp");
+            assertFalse(container.getContainerProperties().containsKey("boolProp"));
+            bis = messagingMappingSce.getContainerSce().getContainer(container.getContainerID());
+            assertFalse(bis.getContainerProperties().containsKey("boolProp"));
+            container.addContainerProperty("intProp", 1);
+            assertTrue(container.getContainerProperties().containsKey("intProp"));
+            assertTrue(container.getContainerProperties().get("intProp").equals(1));
+            bis = messagingMappingSce.getContainerSce().getContainer(container.getContainerID());
+            assertTrue(bis.getContainerProperties().containsKey("intProp"));
+            assertTrue(bis.getContainerProperties().get("intProp").equals(1));
+            container.removeContainerProperty("intProp");
+            assertFalse(container.getContainerProperties().containsKey("intProp"));
+            bis = messagingMappingSce.getContainerSce().getContainer(container.getContainerID());
+            assertFalse(bis.getContainerProperties().containsKey("intProp"));
+            container.addContainerProperty("doubleProp", 2.1);
+            assertTrue(container.getContainerProperties().containsKey("doubleProp"));
+            assertTrue(container.getContainerProperties().get("doubleProp").equals(2.1));
+            bis = messagingMappingSce.getContainerSce().getContainer(container.getContainerID());
+            assertTrue(bis.getContainerProperties().containsKey("doubleProp"));
+            assertTrue(bis.getContainerProperties().get("doubleProp").equals(2.1));
+            container.removeContainerProperty("doubleProp");
+            assertFalse(container.getContainerProperties().containsKey("doubleProp"));
+            bis = messagingMappingSce.getContainerSce().getContainer(container.getContainerID());
+            assertFalse(bis.getContainerProperties().containsKey("doubleProp"));
+            ArrayList<String> listProp = new ArrayList<>();
+            listProp.add("test1");
+            listProp.add("test2");
+            container.addContainerProperty("listProp", listProp);
+            assertTrue(container.getContainerProperties().containsKey("listProp"));
+            assertTrue(container.getContainerProperties().get("listProp").equals(listProp));
+            bis = messagingMappingSce.getContainerSce().getContainer(container.getContainerID());
+            assertTrue(bis.getContainerProperties().containsKey("listProp"));
+            assertTrue(bis.getContainerProperties().get("listProp").equals(listProp));
+            container.removeContainerProperty("listProp");
+            assertFalse(container.getContainerProperties().containsKey("listProp"));
+            bis = messagingMappingSce.getContainerSce().getContainer(container.getContainerID());
+            assertFalse(bis.getContainerProperties().containsKey("listProp"));
+            HashMap<String, Object> mapProp = new HashMap<>();
+            mapProp.put("boolVal", true);
+            mapProp.put("stringVal", "test");
+            container.addContainerProperty("mapProp", mapProp);
+            assertTrue(container.getContainerProperties().containsKey("mapProp"));
+            assertTrue(container.getContainerProperties().get("mapProp").equals(mapProp));
+            bis = messagingMappingSce.getContainerSce().getContainer(container.getContainerID());
+            assertTrue(bis.getContainerProperties().containsKey("mapProp"));
+            assertTrue(bis.getContainerProperties().get("mapProp").equals(mapProp));
+            container.removeContainerProperty("mapProp");
+            assertFalse(container.getContainerProperties().containsKey("mapProp"));
+            bis = messagingMappingSce.getContainerSce().getContainer(container.getContainerID());
+            assertFalse(bis.getContainerProperties().containsKey("mapProp"));
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
         }
     }
 
@@ -529,9 +559,65 @@ public class MappingMsgTest {
     }
 
     @Test
-    public void testTransacCreateNode2() {
+    public void testTransacCreateNode1() throws MappingDSException, InterruptedException {
         if (momTest!=null) {
-
+            Session session = messagingMappingSce.openSession("this is a test");
+            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn", "SERVER SSH DAEMON");
+            Node process = messagingMappingSce.getNodeSce().createNode("a process", container.getContainerID(), null);
+            assertNotNull(process.getNodeID());
+            assertTrue(process.getNodeContainer().equals(container));
+            assertTrue(container.getContainerNodes(0).contains(process));
+            assertTrue(messagingMappingSce.getNodeSce().getNodes(null).size() == 2);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        assertTrue(blueprintsMappingSce.getNodeSce().getNodes(null).size() == 0);
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            Thread.sleep(1);
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        assertTrue(blueprintsMappingSce.getNodeSce().getNodes(null).size() == 2);
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            Thread.sleep(1);
+            messagingMappingSce.getNodeSce().deleteNode(process.getNodeID());
+            assertTrue(messagingMappingSce.getNodeSce().getNodes(null).size() == 1);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        assertTrue(blueprintsMappingSce.getNodeSce().getNodes(null).size() == 2);
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            Thread.sleep(1);
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        assertTrue(blueprintsMappingSce.getNodeSce().getNodes(null).size() == 1);
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            Thread.sleep(1);
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
+            messagingMappingSce.closeSession();
         }
     }
 
@@ -551,23 +637,245 @@ public class MappingMsgTest {
     }
 
     @Test
-    public void testTransacCreateNode1() {
+    public void testTransacCreateNode2() throws MappingDSException, InterruptedException {
         if (momTest!=null) {
+            Session session = messagingMappingSce.openSession("this is a test");
+            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn", "SERVER SSH DAEMON");
+            Node process = messagingMappingSce.getNodeSce().createNode("a process", container.getContainerID(), null);
+            Node thread = messagingMappingSce.getNodeSce().createNode("a thread", container.getContainerID(), process.getNodeID());
+            assertNotNull(thread.getNodeID());
+            assertTrue(process.getNodeChildNodes().contains(thread));
+            assertTrue(thread.getNodeParentNode().equals(process));
+            assertTrue(messagingMappingSce.getNodeSce().getNodes(null).size() == 3);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        assertTrue(blueprintsMappingSce.getNodeSce().getNodes(null).size() == 0);
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            Thread.sleep(1);
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        assertTrue(blueprintsMappingSce.getNodeSce().getNodes(null).size() == 3);
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            Thread.sleep(1);
+            messagingMappingSce.getNodeSce().deleteNode(thread.getNodeID());
+            assertTrue(messagingMappingSce.getNodeSce().getNodes(null).size() == 2);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        assertTrue(blueprintsMappingSce.getNodeSce().getNodes(null).size() == 3);
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            Thread.sleep(1);
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        assertTrue(blueprintsMappingSce.getNodeSce().getNodes(null).size() == 2);
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            Thread.sleep(1);
+            messagingMappingSce.getNodeSce().deleteNode(process.getNodeID());
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
+            messagingMappingSce.closeSession();
+        }
+    }
 
+    @Test
+    public void testNodeProperties() throws MappingDSException {
+        if (momTest!=null) {
+            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn", "SERVER SSH DAEMON");
+            Node process = messagingMappingSce.getNodeSce().createNode("a process", container.getContainerID(), null);
+            process.addNodeProperty("stringProp", "a string");
+            assertTrue(process.getNodeProperties().containsKey("stringProp"));
+            assertTrue(process.getNodeProperties().get("stringProp").equals("a string"));
+            Node bis = messagingMappingSce.getNodeSce().getNode(process.getNodeID());
+            assertTrue(bis.getNodeProperties().containsKey("stringProp"));
+            assertTrue(bis.getNodeProperties().get("stringProp").equals("a string"));
+            process.removeNodeProperty("stringProp");
+            assertFalse(process.getNodeProperties().containsKey("stringProp"));
+            bis = messagingMappingSce.getNodeSce().getNode(process.getNodeID());
+            assertFalse(bis.getNodeProperties().containsKey("stringProp"));
+            process.addNodeProperty("boolProp", false);
+            assertTrue(process.getNodeProperties().containsKey("boolProp"));
+            assertTrue(process.getNodeProperties().get("boolProp").equals(false));
+            bis = messagingMappingSce.getNodeSce().getNode(process.getNodeID());
+            assertTrue(bis.getNodeProperties().containsKey("boolProp"));
+            assertTrue(bis.getNodeProperties().get("boolProp").equals(false));
+            process.removeNodeProperty("boolProp");
+            assertFalse(process.getNodeProperties().containsKey("boolProp"));
+            bis = messagingMappingSce.getNodeSce().getNode(process.getNodeID());
+            assertFalse(bis.getNodeProperties().containsKey("boolProp"));
+            process.addNodeProperty("intProp", 1);
+            assertTrue(process.getNodeProperties().containsKey("intProp"));
+            assertTrue(process.getNodeProperties().get("intProp").equals(1));
+            bis = messagingMappingSce.getNodeSce().getNode(process.getNodeID());
+            assertTrue(bis.getNodeProperties().containsKey("intProp"));
+            assertTrue(bis.getNodeProperties().get("intProp").equals(1));
+            process.removeNodeProperty("intProp");
+            assertFalse(process.getNodeProperties().containsKey("intProp"));
+            bis = messagingMappingSce.getNodeSce().getNode(process.getNodeID());
+            assertFalse(bis.getNodeProperties().containsKey("intProp"));
+            process.addNodeProperty("doubleProp", 2.1);
+            assertTrue(process.getNodeProperties().containsKey("doubleProp"));
+            assertTrue(process.getNodeProperties().get("doubleProp").equals(2.1));
+            bis = messagingMappingSce.getNodeSce().getNode(process.getNodeID());
+            assertTrue(bis.getNodeProperties().containsKey("doubleProp"));
+            assertTrue(bis.getNodeProperties().get("doubleProp").equals(2.1));
+            process.removeNodeProperty("doubleProp");
+            assertFalse(process.getNodeProperties().containsKey("doubleProp"));
+            bis = messagingMappingSce.getNodeSce().getNode(process.getNodeID());
+            assertFalse(bis.getNodeProperties().containsKey("doubleProp"));
+            ArrayList<String> listProp = new ArrayList<>();
+            listProp.add("test1");
+            listProp.add("test2");
+            process.addNodeProperty("listProp", listProp);
+            assertTrue(process.getNodeProperties().containsKey("listProp"));
+            assertTrue(process.getNodeProperties().get("listProp").equals(listProp));
+            bis = messagingMappingSce.getNodeSce().getNode(process.getNodeID());
+            assertTrue(bis.getNodeProperties().containsKey("listProp"));
+            assertTrue(bis.getNodeProperties().get("listProp").equals(listProp));
+            process.removeNodeProperty("listProp");
+            assertFalse(process.getNodeProperties().containsKey("listProp"));
+            bis = messagingMappingSce.getNodeSce().getNode(process.getNodeID());
+            assertFalse(bis.getNodeProperties().containsKey("listProp"));
+            HashMap<String, Object> mapProp = new HashMap<>();
+            mapProp.put("boolVal", true);
+            mapProp.put("stringVal", "test");
+            process.addNodeProperty("mapProp", mapProp);
+            assertTrue(process.getNodeProperties().containsKey("mapProp"));
+            assertTrue(process.getNodeProperties().get("mapProp").equals(mapProp));
+            bis = messagingMappingSce.getNodeSce().getNode(process.getNodeID());
+            assertTrue(bis.getNodeProperties().containsKey("mapProp"));
+            assertTrue(bis.getNodeProperties().get("mapProp").equals(mapProp));
+            process.removeNodeProperty("mapProp");
+            assertFalse(process.getNodeProperties().containsKey("mapProp"));
+            bis = messagingMappingSce.getNodeSce().getNode(process.getNodeID());
+            assertFalse(bis.getNodeProperties().containsKey("mapProp"));
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
         }
     }
 
     @Test
     public void testContainerJoinNode() {
         if (momTest!=null) {
+        }
+    }
+
+    @Test
+    public void testNodeJoinChildNode() {
+        if (momTest!=null) {
 
         }
     }
 
     @Test
-    public void testNodeJoinNode() {
+    public void testNodeJoinTwinNode() {
         if (momTest!=null) {
 
+        }
+    }
+
+    @Test
+    public void testCreateGate1() throws MappingDSException {
+        if (momTest!=null) {
+            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn", "SERVER SSH DAEMON");
+            Gate daemon = messagingMappingSce.getGateSce().createGate("tcp://myserviceurl:6969", "myservice", container.getContainerID(), false);
+            assertNotNull(daemon.getNodeID());
+            assertTrue(daemon.getNodeContainer().equals(container));
+            assertTrue(container.getContainerGates().contains(daemon));
+            assertTrue(container.getContainerNodes(0).contains(daemon));
+            messagingMappingSce.getGateSce().deleteGate(daemon.getNodeID());
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
+        }
+    }
+
+    @Test
+    public void testTransacCreateGate1() throws MappingDSException, InterruptedException {
+        if (momTest != null) {
+            Session session = messagingMappingSce.openSession("this is a test");
+            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn", "SERVER SSH DAEMON");
+            Gate daemon = messagingMappingSce.getGateSce().createGate("tcp://myserviceurl:6969", "myservice", container.getContainerID(), false);
+            assertNotNull(daemon.getNodeID());
+            assertTrue(daemon.getNodeContainer().equals(container));
+            assertTrue(container.getContainerGates().contains(daemon));
+            assertTrue(container.getContainerNodes(0).contains(daemon));
+            assertTrue(messagingMappingSce.getNodeSce().getNodes(null).size() == 2);
+            assertTrue(messagingMappingSce.getGateSce().getGates(null).size() == 2);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        assertTrue(blueprintsMappingSce.getNodeSce().getNodes(null).size() == 0);
+                        assertTrue(blueprintsMappingSce.getGateSce().getGates(null).size() == 0);
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            Thread.sleep(1);
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        assertTrue(blueprintsMappingSce.getNodeSce().getNodes(null).size() == 2);
+                        assertTrue(blueprintsMappingSce.getGateSce().getGates(null).size() == 2);
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            Thread.sleep(1);
+            messagingMappingSce.getGateSce().deleteGate(daemon.getNodeID());
+            assertTrue(messagingMappingSce.getNodeSce().getNodes(null).size() == 1);
+            assertTrue(messagingMappingSce.getGateSce().getGates(null).size() == 1);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        assertTrue(blueprintsMappingSce.getNodeSce().getNodes(null).size() == 2);
+                        assertTrue(blueprintsMappingSce.getGateSce().getGates(null).size() == 2);
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            Thread.sleep(1);
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        assertTrue(blueprintsMappingSce.getNodeSce().getNodes(null).size() == 1);
+                        assertTrue(blueprintsMappingSce.getGateSce().getGates(null).size() == 1);
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
+            messagingMappingSce.closeSession();
         }
     }
 }

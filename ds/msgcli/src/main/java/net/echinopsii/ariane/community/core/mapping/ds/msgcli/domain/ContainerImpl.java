@@ -28,12 +28,14 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxContainer;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxContainerAbs;
+import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesException;
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ClusterJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ContainerJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.momsp.MappingMsgcliMomSP;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.ClusterSceImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.ContainerSceImpl;
+import net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.GateSceImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.NodeSceImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.service.ContainerSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
@@ -45,6 +47,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.*;
 
 public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
@@ -149,6 +152,15 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
         super.setContainerCompany(jsonDeserializedContainer.getContainerCompany());
         super.setContainerProduct(jsonDeserializedContainer.getContainerProduct());
         super.setContainerType(jsonDeserializedContainer.getContainerType());
+        super.getContainerProperties().clear();
+        if (jsonDeserializedContainer.getContainerProperties()!=null)
+            for (PropertiesJSON.TypedPropertyField typedPropertyField : jsonDeserializedContainer.getContainerProperties())
+                try {
+                    super.addContainerProperty(typedPropertyField.getPropertyName(), PropertiesJSON.getValueFromTypedPropertyField(typedPropertyField));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    throw new MappingDSException("Error with property " + typedPropertyField.getPropertyName() + " deserialization : " + e.getMessage());
+                }
         this.setPrimaryAdminGateID(jsonDeserializedContainer.getContainerPrimaryAdminGateID());
         this.setClusterID(jsonDeserializedContainer.getContainerClusterID());
         this.setParentContainerID(jsonDeserializedContainer.getContainerParentContainerID());
@@ -632,6 +644,27 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
 
     @Override
     public Set<Gate> getContainerGates() {
+        try {
+            Container update = ContainerSceImpl.internalGetContainer(super.getContainerID());
+            this.setGatesID(((ContainerImpl) update).getGatesID());
+        } catch (MappingDSException e) {
+            e.printStackTrace();
+        }
+
+        for (Gate gate : new ArrayList<>(super.getContainerGates()))
+            if (!gatesID.contains(gate.getNodeID()))
+                super.getContainerGates().remove(gate);
+
+        for (String gateID : gatesID)
+            try {
+                boolean toAdd = true;
+                for (Gate gate : super.getContainerGates())
+                    if (gate.getNodeID().equals(gateID)) toAdd = false;
+                if (toAdd) super.getContainerGates().add(GateSceImpl.internalGetGate(gateID));
+            } catch (MappingDSException e) {
+                e.printStackTrace();
+            }
+
         return super.getContainerGates();
     }
 
