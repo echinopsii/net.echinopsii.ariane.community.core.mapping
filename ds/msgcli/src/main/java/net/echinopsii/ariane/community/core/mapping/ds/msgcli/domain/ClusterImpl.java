@@ -68,7 +68,16 @@ public class ClusterImpl extends SProxClusterAbs {
                             e.printStackTrace();
                         }
                     }
-                } else ClusterImpl.log.error("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
+                } else {
+                    switch (rc) {
+                        case MappingSce.MAPPING_SCE_RET_NOT_FOUND:
+                            ClusterImpl.log.warn("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
+                            break;
+                        default:
+                            ClusterImpl.log.error("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
+                            break;
+                    }
+                }
             }
             return message;
         }

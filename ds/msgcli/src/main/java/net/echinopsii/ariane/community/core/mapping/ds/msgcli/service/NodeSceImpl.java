@@ -96,7 +96,10 @@ public class NodeSceImpl extends SProxNodeSceAbs<NodeImpl> {
         Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, node.getNodeReplyWorker());
 
         int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
-        if (rc != 0) throw new MappingDSException("Ariane server raised an error... Check your logs !");
+        if (rc != 0) {
+            if (rc == MappingSce.MAPPING_SCE_RET_NOT_FOUND) node = null;
+            else throw new MappingDSException("Ariane server raised an error... Check your logs !");
+        }
 
         return node;
     }
@@ -120,7 +123,10 @@ public class NodeSceImpl extends SProxNodeSceAbs<NodeImpl> {
         Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, node.getNodeReplyWorker());
 
         int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
-        if (rc != 0) throw new MappingDSException("Ariane server raised an error... Check your logs !");
+        if (rc != 0) {
+            if (rc == MappingSce.MAPPING_SCE_RET_NOT_FOUND) node = null;
+            else throw new MappingDSException("Ariane server raised an error... Check your logs !");
+        }
 
         return node;
     }
@@ -142,7 +148,10 @@ public class NodeSceImpl extends SProxNodeSceAbs<NodeImpl> {
             Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, node.getNodeReplyWorker());
 
             int rc = (int) retMsg.get(MomMsgTranslator.MSG_RC);
-            if (rc != 0) throw new MappingDSException("Ariane server raised an error... Check your logs !");
+            if (rc != 0) {
+                if (rc == MappingSce.MAPPING_SCE_RET_NOT_FOUND) node = null;
+                else throw new MappingDSException("Ariane server raised an error... Check your logs !");
+            }
             return node;
         } else throw new MappingDSException("Parent node is not initialized !");
     }
@@ -184,7 +193,7 @@ public class NodeSceImpl extends SProxNodeSceAbs<NodeImpl> {
 
         Map<String, Object> message = new HashMap<>();
         message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxNodeSce.OP_GET_NODES);
-        message.put(MappingSce.GLOBAL_PARAM_SELECTOR, selector);
+        message.put(MappingSce.GLOBAL_PARAM_SELECTOR, (selector!=null) ? selector : MappingSce.GLOBAL_PARAM_OBJ_NONE);
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
 
         Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, new getNodesWorker());

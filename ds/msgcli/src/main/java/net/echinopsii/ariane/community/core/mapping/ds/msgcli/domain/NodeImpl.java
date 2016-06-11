@@ -73,7 +73,16 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                             e.printStackTrace();
                         }
                     }
-                } else NodeImpl.log.error("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
+                } else {
+                    switch (rc) {
+                        case MappingSce.MAPPING_SCE_RET_NOT_FOUND:
+                            NodeImpl.log.warn("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
+                            break;
+                        default:
+                            NodeImpl.log.error("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
+                            break;
+                    }
+                }
             }
             return message;
         }
@@ -489,7 +498,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                         twinNodesID.add(node.getNodeID());
                         try {
                             NodeJSON.JSONDeserializedNode jsonDeserializedNode = NodeJSON.JSON2Node(
-                                    (String) retMsg.get(MappingDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY)
+                                    (String) retMsg.get(MappingDSGraphPropertyNames.DD_NODE_EDGE_TWIN_KEY)
                             );
                             ((NodeImpl)node).synchronizeFromJSON(jsonDeserializedNode);
                         } catch (IOException e) {
@@ -523,7 +532,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                         twinNodesID.remove(node.getNodeID());
                         try {
                             NodeJSON.JSONDeserializedNode jsonDeserializedNode = NodeJSON.JSON2Node(
-                                    (String) retMsg.get(MappingDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY)
+                                    (String) retMsg.get(MappingDSGraphPropertyNames.DD_NODE_EDGE_TWIN_KEY)
                             );
                             ((NodeImpl)node).synchronizeFromJSON(jsonDeserializedNode);
                         } catch (IOException e) {

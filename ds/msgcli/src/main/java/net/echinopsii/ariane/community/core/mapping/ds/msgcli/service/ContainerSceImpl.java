@@ -158,7 +158,10 @@ public class ContainerSceImpl extends SProxContainerSceAbs<ContainerImpl> {
         Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, container.getContainerReplyWorker());
 
         int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
-        if (rc != 0) throw new MappingDSException("Ariane server raised an error... Check your logs !");
+        if (rc != 0) {
+            if (rc == MappingSce.MAPPING_SCE_RET_NOT_FOUND) container = null;
+            else throw new MappingDSException("Ariane server raised an error... Check your logs !");
+        }
 
         return container;
     }
@@ -183,7 +186,10 @@ public class ContainerSceImpl extends SProxContainerSceAbs<ContainerImpl> {
         Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, container.getContainerReplyWorker());
 
         int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
-        if (rc != 0) throw new MappingDSException("Ariane server raised an error... Check your logs !");
+        if (rc != 0) {
+            if (rc == MappingSce.MAPPING_SCE_RET_NOT_FOUND) container = null;
+            else throw new MappingDSException("Ariane server raised an error... Check your logs !");
+        }
 
         return container;
     }

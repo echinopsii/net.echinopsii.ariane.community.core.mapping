@@ -122,7 +122,10 @@ public class GateSceImpl implements SProxGateSce<GateImpl> {
         Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, GateSce.Q_MAPPING_GATE_SERVICE, gate.getGateReplyWorker());
 
         int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
-        if (rc != 0) throw new MappingDSException("Ariane server raised an error... Check your logs !");
+        if (rc != 0) {
+            if (rc == MappingSce.MAPPING_SCE_RET_NOT_FOUND) gate = null;
+            else throw new MappingDSException("Ariane server raised an error... Check your logs !");
+        }
 
         return gate;
     }

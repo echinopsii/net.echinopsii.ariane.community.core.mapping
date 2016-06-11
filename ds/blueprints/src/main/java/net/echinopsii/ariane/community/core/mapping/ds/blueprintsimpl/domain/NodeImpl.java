@@ -188,7 +188,10 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode, MappingDSBluepr
             if (node instanceof NodeImpl) {
                 try {
                     ret = super.addTwinNode(node);
-                    if (ret) synchronizeTwinNodeToDB((NodeImpl) node);
+                    if (ret) {
+                        node.addTwinNode(this);
+                        synchronizeTwinNodeToDB((NodeImpl) node);
+                    }
                 } catch (MappingDSException E) {
                     E.printStackTrace();
                     log.error("Exception while adding twin node {}...", new Object[]{node.getNodeID()});
@@ -212,7 +215,10 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode, MappingDSBluepr
         } else {
             if (node instanceof NodeImpl) {
                 ret = super.removeTwinNode(node);
-                if (ret) removeTwindNodeFromDB((NodeImpl) node);
+                if (ret) {
+                    node.removeTwinNode(this);
+                    removeTwindNodeFromDB((NodeImpl) node);
+                }
             }
         }
         return ret;

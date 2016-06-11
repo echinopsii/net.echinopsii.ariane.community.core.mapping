@@ -223,7 +223,7 @@ public class NodeEp {
                         break;
                     case NodeSce.OP_GET_NODES:
                         sid = (String) message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID);
-                        selector = (String) message.get(MappingSce.GLOBAL_PARAM_SELECTOR);
+                        selector = (message.get(MappingSce.GLOBAL_PARAM_SELECTOR)==null || ((String) message.get(MappingSce.GLOBAL_PARAM_SELECTOR)).equals(MappingSce.GLOBAL_PARAM_OBJ_NONE)) ? null : (String) message.get(MappingSce.GLOBAL_PARAM_SELECTOR);
                         prop_field = (message.containsKey(MappingSce.GLOBAL_PARAM_PROP_FIELD)) ? message.get(MappingSce.GLOBAL_PARAM_PROP_FIELD).toString() : null;
 
                         if (sid!=null) {
@@ -455,11 +455,11 @@ public class NodeEp {
                                     }
                                 } else if ((operation.equals(Node.OP_ADD_TWIN_NODE) || operation.equals(Node.OP_REMOVE_TWIN_NODE)) && tn_id != null) {
                                     Node tnode;
-                                    if (session!=null) tnode = MappingMsgsrvBootstrap.getMappingSce().getNodeSce().getNode(session, cn_id);
-                                    else tnode = MappingMsgsrvBootstrap.getMappingSce().getNodeSce().getNode(cn_id);
+                                    if (session!=null) tnode = MappingMsgsrvBootstrap.getMappingSce().getNodeSce().getNode(session, tn_id);
+                                    else tnode = MappingMsgsrvBootstrap.getMappingSce().getNodeSce().getNode(tn_id);
 
                                     if (tnode!=null) {
-                                        if (operation.equals(Node.OP_ADD_NODE_CHILD_NODE)) {
+                                        if (operation.equals(Node.OP_ADD_TWIN_NODE)) {
                                             if (session != null) ((SProxNode) node).addTwinNode(session, tnode);
                                             else node.addTwinNode(tnode);
                                         } else {
@@ -485,6 +485,7 @@ public class NodeEp {
                                 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
                                 NodeJSON.oneNode2JSONWithTypedProps(node, outStream);
                                 String resultNode = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
                                 message.put(MomMsgTranslator.MSG_BODY, resultNode);
                             } else {
                                 message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
