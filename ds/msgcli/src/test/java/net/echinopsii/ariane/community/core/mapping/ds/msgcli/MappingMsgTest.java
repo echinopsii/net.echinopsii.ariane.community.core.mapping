@@ -787,9 +787,24 @@ public class MappingMsgTest {
     }
 
     @Test
-    public void testNodeJoinChildNode() {
+    public void testNodeJoinChildNode() throws MappingDSException {
         if (momTest!=null) {
-
+            Container acontainer = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn", "SERVER SSH DAEMON");
+            Node aprocess = messagingMappingSce.getNodeSce().createNode("a process", acontainer.getContainerID(), null);
+            Node thread = messagingMappingSce.getNodeSce().createNode("a thread", acontainer.getContainerID(), aprocess.getNodeID());
+            assertTrue(aprocess.getNodeChildNodes().contains(thread));
+            assertTrue(thread.getNodeParentNode().equals(aprocess));
+            aprocess.removeNodeChildNode(thread);
+            assertFalse(aprocess.getNodeChildNodes().contains(thread));
+            assertTrue(thread.getNodeParentNode() == null);
+            aprocess.addNodeChildNode(thread);
+            assertTrue(aprocess.getNodeChildNodes().contains(thread));
+            assertTrue(thread.getNodeParentNode().equals(aprocess));
+            aprocess.removeNodeChildNode(thread);
+            thread.setNodeParentNode(aprocess);
+            assertTrue(aprocess.getNodeChildNodes().contains(thread));
+            assertTrue(thread.getNodeParentNode().equals(aprocess));
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
         }
     }
 

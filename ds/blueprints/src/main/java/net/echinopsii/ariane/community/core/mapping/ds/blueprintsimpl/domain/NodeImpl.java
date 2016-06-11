@@ -122,9 +122,13 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode, MappingDSBluepr
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
             if (super.getNodeParentNode() == null || !super.getNodeParentNode().equals(node)) {
-                if (node instanceof NodeImpl) {
+                if (node instanceof NodeImpl || node ==null) {
                     super.setNodeParentNode(node);
-                    super.setNodeDepth(1 + node.getNodeDepth());
+                    if (node != null) {
+                        if (!node.getNodeChildNodes().contains(this)) node.addNodeChildNode(this);
+                        super.setNodeDepth(1 + node.getNodeDepth());
+                    }
+                    else super.setNodeDepth(1);
                     synchronizeParentNodeToDB();
                     synchronizeDepthToDB();
                 }
@@ -145,7 +149,10 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode, MappingDSBluepr
             if (node instanceof NodeImpl) {
                 try {
                     ret = super.addNodeChildNode(node);
-                    if (ret) synchronizeChildNodeToDB((NodeImpl) node);
+                    if (ret) {
+                        if (node.getNodeParentNode()==null || !node.getNodeParentNode().equals(this)) node.setNodeParentNode(this);
+                        synchronizeChildNodeToDB((NodeImpl) node);
+                    }
                 } catch (MappingDSException E) {
                     E.printStackTrace();
                     log.error("Exception while adding child node {}...", new Object[]{node.getNodeID()});
@@ -169,7 +176,10 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode, MappingDSBluepr
         } else {
             if (node instanceof NodeImpl) {
                 ret = super.removeNodeChildNode(node);
-                if (ret) removeChildNodeFromDB((NodeImpl) node);
+                if (ret) {
+                    node.setNodeParentNode(null);
+                    removeChildNodeFromDB((NodeImpl) node);
+                }
             }
         }
         return ret;
@@ -341,6 +351,9 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode, MappingDSBluepr
         if (this.nodeVertex != null && super.getNodeParentNode() != null && ((NodeImpl)super.getNodeParentNode()).getElement() != null) {
             log.debug("Synchronize node parent node {} to db...", new Object[]{super.getNodeParentNode().getNodeID()});
             nodeVertex.setProperty(MappingDSGraphPropertyNames.DD_NODE_PNODE_KEY, ((NodeImpl) super.getNodeParentNode()).getElement().getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
+            MappingDSGraphDB.autocommit();
+        } else if (this.nodeVertex != null && super.getNodeParentNode()==null && nodeVertex.getPropertyKeys().contains(MappingDSGraphPropertyNames.DD_NODE_PNODE_KEY)) {
+            nodeVertex.removeProperty(MappingDSGraphPropertyNames.DD_NODE_PNODE_KEY);
             MappingDSGraphDB.autocommit();
         }
     }
