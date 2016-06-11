@@ -71,8 +71,8 @@ public class NodeEp {
             else reqNodeParentNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(jsonDeserializedNode.getNodeParentNodeID());
             if (reqNodeParentNode == null) ret.setErrorMessage("Request Error : parent node with provided ID " + jsonDeserializedNode.getNodeParentNodeID() + " was not found.");
         }
-        if (ret.getErrorMessage() == null && jsonDeserializedNode.getNodeChildNodeID()!=null && jsonDeserializedNode.getNodeChildNodeID().size() > 0 ) {
-            for (String id : jsonDeserializedNode.getNodeChildNodeID()) {
+        if (ret.getErrorMessage() == null && jsonDeserializedNode.getNodeChildNodesID()!=null && jsonDeserializedNode.getNodeChildNodesID().size() > 0 ) {
+            for (String id : jsonDeserializedNode.getNodeChildNodesID()) {
                 Node childNode ;
                 if (mappingSession!=null) childNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(mappingSession, id);
                 else childNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
@@ -83,8 +83,8 @@ public class NodeEp {
                 }
             }
         }
-        if (ret.getErrorMessage() == null && jsonDeserializedNode.getNodeTwinNodeID()!=null && jsonDeserializedNode.getNodeTwinNodeID().size() > 0 ) {
-            for (String id : jsonDeserializedNode.getNodeTwinNodeID()) {
+        if (ret.getErrorMessage() == null && jsonDeserializedNode.getNodeTwinNodesID()!=null && jsonDeserializedNode.getNodeTwinNodesID().size() > 0 ) {
+            for (String id : jsonDeserializedNode.getNodeTwinNodesID()) {
                 Node twinNode ;
                 if (mappingSession!=null) twinNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(mappingSession, id);
                 else twinNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
@@ -95,8 +95,8 @@ public class NodeEp {
                 }
             }
         }
-        if (ret.getErrorMessage() == null && jsonDeserializedNode.getNodeEndpointID()!=null && jsonDeserializedNode.getNodeEndpointID().size() > 0) {
-            for (String id : jsonDeserializedNode.getNodeTwinNodeID()) {
+        if (ret.getErrorMessage() == null && jsonDeserializedNode.getNodeEndpointsID()!=null && jsonDeserializedNode.getNodeEndpointsID().size() > 0) {
+            for (String id : jsonDeserializedNode.getNodeTwinNodesID()) {
                 Endpoint endpoint ;
                 if (mappingSession!=null) endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, id);
                 else endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
@@ -153,7 +153,7 @@ public class NodeEp {
                     else deserializedNode.setNodeParentNode(reqNodeParentNode);
             }
 
-            if (jsonDeserializedNode.getNodeChildNodeID()!=null) {
+            if (jsonDeserializedNode.getNodeChildNodesID()!=null) {
                 List<Node> childNodesToDelete = new ArrayList<>();
                 for (Node existingChildNode : deserializedNode.getNodeChildNodes())
                     if (!reqNodeChildNodes.contains(existingChildNode))
@@ -167,7 +167,7 @@ public class NodeEp {
                     else deserializedNode.addNodeChildNode(childNodeReq);
             }
 
-            if (jsonDeserializedNode.getNodeTwinNodeID()!=null) {
+            if (jsonDeserializedNode.getNodeTwinNodesID()!=null) {
                 List<Node> twinNodesToDelete = new ArrayList<>();
                 for (Node existingTwinNode : deserializedNode.getTwinNodes())
                     if (!reqNodeTwinNodes.contains(existingTwinNode))
@@ -193,7 +193,7 @@ public class NodeEp {
                 }
             }
 
-            if (jsonDeserializedNode.getNodeEndpointID()!=null) {
+            if (jsonDeserializedNode.getNodeEndpointsID()!=null) {
                 List<Endpoint> endpointsToDelete = new ArrayList<>();
                 for (Endpoint existingEndpoint : deserializedNode.getNodeEndpoints())
                     if (!reqNodeEndpoints.contains(existingEndpoint))

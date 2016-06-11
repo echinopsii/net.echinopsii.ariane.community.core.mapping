@@ -158,9 +158,9 @@ public class NodeJSON {
         private long nodeDepth;
         private String nodeContainerID;
         private String nodeParentNodeID;
-        private List<String> nodeChildNodeID;
-        private List<String> nodeTwinNodeID;
-        private List<String> nodeEndpointID;
+        private List<String> nodeChildNodesID;
+        private List<String> nodeTwinNodesID;
+        private List<String> nodeEndpointsID;
         private List<TypedPropertyField> nodeProperties;
 
         public String getNodeID() {
@@ -203,28 +203,28 @@ public class NodeJSON {
             this.nodeParentNodeID = nodeParentNodeID;
         }
 
-        public List<String> getNodeChildNodeID() {
-            return nodeChildNodeID;
+        public List<String> getNodeChildNodesID() {
+            return nodeChildNodesID;
         }
 
-        public void setNodeChildNodeID(List<String> nodeChildNodeID) {
-            this.nodeChildNodeID = nodeChildNodeID;
+        public void setNodeChildNodesID(List<String> nodeChildNodesID) {
+            this.nodeChildNodesID = nodeChildNodesID;
         }
 
-        public List<String> getNodeTwinNodeID() {
-            return nodeTwinNodeID;
+        public List<String> getNodeTwinNodesID() {
+            return nodeTwinNodesID;
         }
 
-        public void setNodeTwinNodeID(List<String> nodeTwinNodeID) {
-            this.nodeTwinNodeID = nodeTwinNodeID;
+        public void setNodeTwinNodesID(List<String> nodeTwinNodesID) {
+            this.nodeTwinNodesID = nodeTwinNodesID;
         }
 
-        public List<String> getNodeEndpointID() {
-            return nodeEndpointID;
+        public List<String> getNodeEndpointsID() {
+            return nodeEndpointsID;
         }
 
-        public void setNodeEndpointID(List<String> nodeEndpointID) {
-            this.nodeEndpointID = nodeEndpointID;
+        public void setNodeEndpointsID(List<String> nodeEndpointsID) {
+            this.nodeEndpointsID = nodeEndpointsID;
         }
 
         public List<TypedPropertyField> getNodeProperties() {

@@ -31,9 +31,9 @@ public interface Node {
 	String TOKEN_ND_DEPTH = MappingDSGraphPropertyNames.DD_NODE_DEPTH_KEY;
 	String TOKEN_ND_CONID = MappingDSGraphPropertyNames.DD_NODE_CONT_KEY+"ID";
 	String TOKEN_ND_PNDID = MappingDSGraphPropertyNames.DD_NODE_PNODE_KEY+"ID";
-	String TOKEN_ND_CNDID = MappingDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY+"ID";
-	String TOKEN_ND_TWNID = MappingDSGraphPropertyNames.DD_NODE_EDGE_TWIN_KEY+"ID";
-	String TOKEN_ND_EPSID = MappingDSGraphPropertyNames.DD_NODE_EDGE_ENDPT_KEY+"ID";
+	String TOKEN_ND_CNDID = MappingDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY+"sID";
+	String TOKEN_ND_TWNID = MappingDSGraphPropertyNames.DD_NODE_EDGE_TWIN_KEY+"sID";
+	String TOKEN_ND_EPSID = MappingDSGraphPropertyNames.DD_NODE_EDGE_ENDPT_KEY+"sID";
 	String TOKEN_ND_PRP = MappingDSGraphPropertyNames.DD_NODE_PROPS_KEY;
 
 	String OP_SET_NODE_NAME = "setNodeName";

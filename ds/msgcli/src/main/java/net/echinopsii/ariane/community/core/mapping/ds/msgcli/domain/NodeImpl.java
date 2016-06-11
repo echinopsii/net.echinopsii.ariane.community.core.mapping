@@ -134,9 +134,9 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
         super.setNodeName(jsonDeserializedNode.getNodeName());
         this.setContainerID(jsonDeserializedNode.getNodeContainerID());
         this.setParentNodeID(jsonDeserializedNode.getNodeParentNodeID());
-        this.setChildNodesID(jsonDeserializedNode.getNodeChildNodeID());
-        this.setTwinNodesID(jsonDeserializedNode.getNodeTwinNodeID());
-        this.setEndpointsID(jsonDeserializedNode.getNodeEndpointID());
+        this.setChildNodesID(jsonDeserializedNode.getNodeChildNodesID());
+        this.setTwinNodesID(jsonDeserializedNode.getNodeTwinNodesID());
+        this.setEndpointsID(jsonDeserializedNode.getNodeEndpointsID());
     }
 
     @Override
