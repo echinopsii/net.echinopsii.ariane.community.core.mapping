@@ -207,7 +207,7 @@ public abstract class ContainerAbs implements Container {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (o == null || (getClass() != o.getClass() && !o.getClass().isAssignableFrom(getClass()))) {
             return false;
         }
 

@@ -69,15 +69,15 @@ public abstract class ClusterAbs implements Cluster {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (o == null || (getClass() != o.getClass() && !o.getClass().isAssignableFrom(getClass()))) {
             return false;
         }
 
         ClusterAbs tmp = (ClusterAbs) o;
-        if (this.clusterName == null || this.clusterID == null) {
+        if (this.clusterID == null) {
             return super.equals(o);
         }
-        return (clusterName.equals(tmp.getClusterName()) && clusterID.equals(tmp.getClusterID()));
+        return (clusterID.equals(tmp.getClusterID()));
     }
 
     @Override

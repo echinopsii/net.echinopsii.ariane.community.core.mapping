@@ -62,4 +62,29 @@ public abstract class TransportAbs implements Transport {
     public void removeTransportProperty(String propertyKey) throws MappingDSException {
         this.transportProperties.remove(propertyKey);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || (getClass() != o.getClass() && !o.getClass().isAssignableFrom(getClass()))) {
+            return false;
+        }
+
+        Transport tmp = (Transport) o;
+
+        return (this.getTransportID().equals(tmp.getTransportID()));
+    }
+
+    @Override
+    public int hashCode() {
+        return (this.transportID != null && !this.transportID.equals("")) ? this.getTransportID().hashCode() : super.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Transport{ID='%s', transportname='%s'}", this.getTransportID(), this.transportName);
+    }
+
 }
