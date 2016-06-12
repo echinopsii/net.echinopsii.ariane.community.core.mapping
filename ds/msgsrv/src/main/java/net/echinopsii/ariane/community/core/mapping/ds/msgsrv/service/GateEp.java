@@ -18,7 +18,6 @@
  */
 package net.echinopsii.ariane.community.core.mapping.ds.msgsrv.service;
 
-import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
@@ -26,7 +25,6 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxGate;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.EndpointJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.GateJSON;
-import net.echinopsii.ariane.community.core.mapping.ds.json.domain.NodeJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.MappingMsgsrvBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.momsp.MappingMsgsrvMomSP;
 import net.echinopsii.ariane.community.core.mapping.ds.service.GateSce;
@@ -61,24 +59,24 @@ public class GateEp {
             else
                 operation = oOperation.toString();
 
+            sid = (String) message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID);
+            if (sid != null) {
+                session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sid);
+                if (session == null) {
+                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                    message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : session with provided id not found");
+                    return message;
+                }
+            }
+
             try {
                 switch (operation) {
                     case GateSce.OP_CREATE_GATE:
-                        sid = (String) message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID);
                         name = (String) message.get(GateSce.PARAM_GATE_NAME);
                         url = (String) message.get(GateSce.PARAM_GATE_URL);
                         pc_id  = (String) message.get(Container.TOKEN_CT_ID);
                         is_admin = (Boolean) message.get(GateSce.PARAM_GATE_IPADM);
                         if (name!=null && url!=null && pc_id!=null && is_admin!=null) {
-                            if (sid != null) {
-                                session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sid);
-                                if (session == null) {
-                                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
-                                    message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : session with provided id not found");
-                                    return message;
-                                }
-                            }
-
                             Container parentContainer;
                             if (session!=null) parentContainer = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(session, pc_id);
                             else parentContainer = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(pc_id);
@@ -105,18 +103,8 @@ public class GateEp {
                         }
                         break;
                     case GateSce.OP_DELETE_GATE:
-                        sid = (String) message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID);
                         gid = (String) message.get(MappingSce.GLOBAL_PARAM_OBJ_ID);
                         if (gid!=null) {
-                            if (sid != null) {
-                                session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sid);
-                                if (session == null) {
-                                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
-                                    message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : session with provided id not found");
-                                    return message;
-                                }
-                            }
-
                             if (session!=null) MappingMsgsrvBootstrap.getMappingSce().getGateSce().deleteGate(session, gid);
                             else MappingMsgsrvBootstrap.getMappingSce().getGateSce().deleteGate(gid);
 
@@ -127,18 +115,8 @@ public class GateEp {
                         }
                         break;
                     case GateSce.OP_GET_GATE:
-                        sid = (String) message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID);
                         gid = (String) message.get(MappingSce.GLOBAL_PARAM_OBJ_ID);
                         if (gid!=null) {
-                            if (sid != null) {
-                                session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sid);
-                                if (session == null) {
-                                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
-                                    message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : session with provided id not found");
-                                    return message;
-                                }
-                            }
-
                             Gate gate;
                             if (session!=null) gate = MappingMsgsrvBootstrap.getMappingSce().getGateSce().getGate(session, gid);
                             else gate = MappingMsgsrvBootstrap.getMappingSce().getGateSce().getGate(gid);
@@ -161,16 +139,6 @@ public class GateEp {
                         }
                         break;
                     case GateSce.OP_GET_GATES:
-                        sid = (String) message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID);
-                        if (sid != null) {
-                            session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sid);
-                            if (session == null) {
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
-                                message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : session with provided id not found");
-                                return message;
-                            }
-                        }
-
                         HashSet<Gate> gates;
                         if (session!=null) gates = (HashSet<Gate>) MappingMsgsrvBootstrap.getMappingSce().getGateSce().getGates(session, null);
                         else gates = (HashSet<Gate>) MappingMsgsrvBootstrap.getMappingSce().getGateSce().getGates(null);
@@ -185,19 +153,9 @@ public class GateEp {
                         }
                         break;
                     case Gate.OP_SET_NODE_PRIMARY_ADMIN_ENDPOINT:
-                        sid = (String) message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID);
                         gid = (String) message.get(MappingSce.GLOBAL_PARAM_OBJ_ID);
                         ep_id = (String) message.get(Endpoint.TOKEN_EP_ID);
                         if (gid!=null && ep_id!=null) {
-                            if (sid != null) {
-                                session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sid);
-                                if (session == null) {
-                                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
-                                    message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : session with provided id not found");
-                                    return message;
-                                }
-                            }
-
                             Gate gate;
                             if (session!=null) gate = MappingMsgsrvBootstrap.getMappingSce().getGateSce().getGate(session, gid);
                             else gate = MappingMsgsrvBootstrap.getMappingSce().getGateSce().getGate(gid);

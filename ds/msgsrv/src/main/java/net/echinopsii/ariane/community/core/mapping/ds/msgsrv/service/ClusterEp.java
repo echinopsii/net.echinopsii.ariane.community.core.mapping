@@ -56,21 +56,21 @@ public class ClusterEp {
             else
                 operation = oOperation.toString();
 
+            sid = (String) message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID);
+            if (sid!=null) {
+                session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sid);
+                if (session == null) {
+                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                    message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : session with provided id not found");
+                    return message;
+                }
+            }
+
             try {
                 switch (operation) {
                     case ClusterSce.OP_CREATE_CLUSTER:
-                        sid = (String) message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID);
                         name = (String) message.get(ClusterSce.PARAM_CLUSTER_NAME);
                         if (name != null) {
-                            if (sid!=null) {
-                                session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sid);
-                                if (session == null) {
-                                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
-                                    message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : session with provided id not found");
-                                    return message;
-                                }
-                            }
-
                             Cluster cluster;
                             if (session != null) cluster = MappingMsgsrvBootstrap.getMappingSce().getClusterSce().createCluster(session, name);
                             else cluster = MappingMsgsrvBootstrap.getMappingSce().getClusterSce().createCluster(name);
@@ -87,18 +87,8 @@ public class ClusterEp {
                         }
                         break;
                     case ClusterSce.OP_DELETE_CLUSTER:
-                        sid = (String) message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID);
                         name = (String) message.get(ClusterSce.PARAM_CLUSTER_NAME);
                         if (name != null) {
-                            if (sid != null) {
-                                session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sid);
-                                if (session == null) {
-                                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
-                                    message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : session with provided id not found");
-                                    return message;
-                                }
-                            }
-
                             if (session != null)
                                 MappingMsgsrvBootstrap.getMappingSce().getClusterSce().deleteCluster(session, name);
                             else MappingMsgsrvBootstrap.getMappingSce().getClusterSce().deleteCluster(name);
@@ -111,20 +101,10 @@ public class ClusterEp {
                         break;
                     case ClusterSce.OP_GET_CLUSTER:
                     case ClusterSce.OP_GET_CLUSTER_BY_NAME:
-                        sid = (String) message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID);
                         name = (String) message.get(ClusterSce.PARAM_CLUSTER_NAME);
                         cid = (String) message.get(MappingSce.GLOBAL_PARAM_OBJ_ID);
 
                         if (cid != null || name != null) {
-                            if (sid != null) {
-                                session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sid);
-                                if (session == null) {
-                                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
-                                    message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : session with provided id not found");
-                                    return message;
-                                }
-                            }
-
                             Cluster cluster;
                             if (cid != null) {
                                 if (session != null) cluster = MappingMsgsrvBootstrap.getMappingSce().getClusterSce().getCluster(session, cid);
@@ -153,16 +133,6 @@ public class ClusterEp {
                         }
                         break;
                     case ClusterSce.OP_GET_CLUSTERS:
-                        sid = (String) message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID);
-                        if (sid != null) {
-                            session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sid);
-                            if (session == null) {
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
-                                message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : session with provided id not found");
-                                return message;
-                            }
-                        }
-
                         HashSet<Cluster> clusters;
                         if (session != null) clusters = (HashSet<Cluster>)MappingMsgsrvBootstrap.getMappingSce().getClusterSce().getClusters(session, null);
                         else clusters = (HashSet<Cluster>)MappingMsgsrvBootstrap.getMappingSce().getClusterSce().getClusters(null);
@@ -177,19 +147,9 @@ public class ClusterEp {
                         }
                         break;
                     case Cluster.OP_SET_CLUSTER_NAME:
-                        sid = (String) message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID);
                         name = (String) message.get(ClusterSce.PARAM_CLUSTER_NAME);
                         cid = (String) message.get(MappingSce.GLOBAL_PARAM_OBJ_ID);
                         if (name != null && cid != null) {
-                            if (sid != null) {
-                                session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sid);
-                                if (session == null) {
-                                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
-                                    message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : session with provided id not found");
-                                    return message;
-                                }
-                            }
-
                             Cluster cluster;
                             if (session != null) cluster = MappingMsgsrvBootstrap.getMappingSce().getClusterSce().getCluster(session, cid);
                             else cluster = MappingMsgsrvBootstrap.getMappingSce().getClusterSce().getCluster(cid);
@@ -215,19 +175,9 @@ public class ClusterEp {
                         break;
                     case Cluster.OP_ADD_CLUSTER_CONTAINER:
                     case Cluster.OP_REMOVE_CLUSTER_CONTAINER:
-                        sid = (String) message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID);
                         cid = (String) message.get(MappingSce.GLOBAL_PARAM_OBJ_ID);
                         ccid = (String) message.get(Container.TOKEN_CT_ID);
                         if (ccid != null && cid != null) {
-                            if (sid != null) {
-                                session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sid);
-                                if (session == null) {
-                                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
-                                    message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : session with provided id not found");
-                                    return message;
-                                }
-                            }
-
                             Cluster cluster;
                             if (session != null) cluster = MappingMsgsrvBootstrap.getMappingSce().getClusterSce().getCluster(session, cid);
                             else cluster = MappingMsgsrvBootstrap.getMappingSce().getClusterSce().getCluster(cid);

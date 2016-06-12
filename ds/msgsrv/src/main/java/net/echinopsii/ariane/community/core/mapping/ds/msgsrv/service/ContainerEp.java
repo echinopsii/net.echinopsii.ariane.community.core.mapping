@@ -73,25 +73,25 @@ public class ContainerEp {
             else
                 operation = oOperation.toString();
 
+            sid = (String) message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID);
+            if (sid!=null) {
+                session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sid);
+                if (session == null) {
+                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                    message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : session with provided id not found");
+                    return message;
+                }
+            }
+
             try {
                 switch (operation) {
                     case ContainerSce.OP_CREATE_CONTAINER:
-                        sid = (String) message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID);
                         name = (String) message.get(ContainerSce.PARAM_CONTAINER_NAME);
                         pc_id = (String) message.get(ContainerSce.PARAM_CONTAINER_PCO_ID);
                         pag_url = (String) message.get(ContainerSce.PARAM_CONTAINER_PAG_URL);
                         pag_name = (String) message.get(ContainerSce.PARAM_CONTAINER_PAG_NAME);
 
                         if (pag_url!=null && pag_name!=null) {
-                            if (sid!=null) {
-                                session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sid);
-                                if (session == null) {
-                                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
-                                    message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : session with provided id not found");
-                                    return message;
-                                }
-                            }
-
                             Container cont;
                             if (name!=null) {
                                 if (pc_id!=null) {
@@ -141,18 +141,8 @@ public class ContainerEp {
                         }
                         break;
                     case ContainerSce.OP_DELETE_CONTAINER:
-                        sid = (String) message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID);
                         pag_url = (String) message.get(ContainerSce.PARAM_CONTAINER_PAG_URL);
                         if (pag_url!=null) {
-                            if (sid!=null) {
-                                session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sid);
-                                if (session == null) {
-                                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
-                                    message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : session with provided id not found");
-                                    return message;
-                                }
-                            }
-
                             if (session != null) MappingMsgsrvBootstrap.getMappingSce().getContainerSce().deleteContainer(session, pag_url);
                             else MappingMsgsrvBootstrap.getMappingSce().getContainerSce().deleteContainer(pag_url);
 
@@ -164,19 +154,9 @@ public class ContainerEp {
                         break;
                     case ContainerSce.OP_GET_CONTAINER:
                     case ContainerSce.OP_GET_CONTAINER_BY_PRIMARY_ADMIN_URL:
-                        sid = (String) message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID);
                         pag_url = (String) message.get(ContainerSce.PARAM_CONTAINER_PAG_URL);
                         cid = (String) message.get(MappingSce.GLOBAL_PARAM_OBJ_ID);
                         if (cid!=null || pag_url != null) {
-                            if (sid!=null) {
-                                session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sid);
-                                if (session == null) {
-                                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
-                                    message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : session with provided id not found");
-                                    return message;
-                                }
-                            }
-
                             Container cont;
                             if (cid!=null) {
                                 if (session != null) cont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(session, cid);
@@ -205,16 +185,6 @@ public class ContainerEp {
                         }
                         break;
                     case ContainerSce.OP_GET_CONTAINERS:
-                        sid = (String) message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID);
-                        if (sid!=null) {
-                            session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sid);
-                            if (session == null) {
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
-                                message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : session with provided id not found");
-                                return message;
-                            }
-                        }
-
                         HashSet<Container> containers;
                         if (session!=null) containers = (HashSet<Container>) MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainers(session, null);
                         else containers = (HashSet<Container>) MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainers(null);
@@ -241,7 +211,6 @@ public class ContainerEp {
                     case Container.OP_REMOVE_CONTAINER_GATE:
                     case Container.OP_ADD_CONTAINER_NODE:
                     case Container.OP_REMOVE_CONTAINER_NODE:
-                        sid = (String) message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID);
                         cid = (String) message.get(MappingSce.GLOBAL_PARAM_OBJ_ID);
                         name = (String) message.get(ContainerSce.PARAM_CONTAINER_NAME);
                         company = (String) message.get(ContainerSce.PARAM_CONTAINER_COMPANY);
@@ -256,15 +225,6 @@ public class ContainerEp {
                         if (cid!=null &&
                                 (name!=null || company!=null || product!=null || type!=null || pag_id!=null ||
                                         pc_id!=null || cl_id!=null || cc_id!=null || ga_id!=null || nd_id!=null)) {
-                            if (sid!=null) {
-                                session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sid);
-                                if (session == null) {
-                                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
-                                    message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : session with provided id not found");
-                                    return message;
-                                }
-                            }
-
                             SProxContainer cont;
                             if (session != null) cont = (SProxContainer) MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(session, cid);
                             else cont = (SProxContainer) MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(cid);
@@ -485,19 +445,9 @@ public class ContainerEp {
                         break;
                     case Container.OP_ADD_CONTAINER_PROPERTY:
                     case Container.OP_REMOVE_CONTAINER_PROPERTY:
-                        sid = (String) message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID);
                         cid = (String) message.get(MappingSce.GLOBAL_PARAM_OBJ_ID);
                         prop_field = (message.containsKey(MappingSce.GLOBAL_PARAM_PROP_FIELD)) ? message.get(MappingSce.GLOBAL_PARAM_PROP_FIELD).toString() : null;
                         if (cid!=null) {
-                            if (sid!=null) {
-                                session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sid);
-                                if (session == null) {
-                                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
-                                    message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : session with provided id not found");
-                                    return message;
-                                }
-                            }
-
                             SProxContainer cont;
                             if (session != null) cont = (SProxContainer) MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(session, cid);
                             else cont = (SProxContainer) MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(cid);
