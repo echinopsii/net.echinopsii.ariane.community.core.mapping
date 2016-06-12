@@ -71,9 +71,30 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode, MappingDSBluepr
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
             if (super.getNodeContainer() == null || !super.getNodeContainer().equals(container)) {
-                if (container instanceof ContainerImpl) {
+                if (container!=null && container instanceof ContainerImpl) {
+                    Container previousParentContainer = super.getNodeContainer();
                     super.setNodeContainer(container);
+                    if (previousParentContainer!=null) previousParentContainer.removeContainerNode(this);
+                    if (!container.getContainerNodes().contains(this) && super.getNodeDepth()==1) container.addContainerNode(this);
                     synchronizeContainerToDB();
+                } else if (container == null) {
+                    if(super.getNodeContainer()!=null) super.getNodeContainer().removeContainerNode(this);
+                    super.setNodeContainer(null);
+                    synchronizeContainerToDB();
+                    log.warn("Node " + this.toString() + " has no more parent container. This state should be avoided.");
+                    log.warn("trace last calls : \n\t{}\n\t{}\n\t{}\n\t{}\n\t{}\n\t{}\n\t{}\n\t{}\n\t{}\n\t{}",
+                            new Object[]{
+                                    (Thread.currentThread().getStackTrace().length > 0) ? Thread.currentThread().getStackTrace()[0].getClassName() +"."+ Thread.currentThread().getStackTrace()[0].getMethodName() + " - " + Thread.currentThread().getStackTrace()[0].getLineNumber() : "",
+                                    (Thread.currentThread().getStackTrace().length > 1) ? Thread.currentThread().getStackTrace()[1].getClassName() +"."+ Thread.currentThread().getStackTrace()[1].getMethodName() + " - " + Thread.currentThread().getStackTrace()[1].getLineNumber() : "",
+                                    (Thread.currentThread().getStackTrace().length > 2) ? Thread.currentThread().getStackTrace()[2].getClassName() +"."+ Thread.currentThread().getStackTrace()[2].getMethodName() + " - " + Thread.currentThread().getStackTrace()[2].getLineNumber() : "",
+                                    (Thread.currentThread().getStackTrace().length > 3) ? Thread.currentThread().getStackTrace()[3].getClassName() +"."+ Thread.currentThread().getStackTrace()[3].getMethodName() + " - " + Thread.currentThread().getStackTrace()[3].getLineNumber() : "",
+                                    (Thread.currentThread().getStackTrace().length > 4) ? Thread.currentThread().getStackTrace()[4].getClassName() +"."+ Thread.currentThread().getStackTrace()[4].getMethodName() + " - " + Thread.currentThread().getStackTrace()[4].getLineNumber() : "",
+                                    (Thread.currentThread().getStackTrace().length > 5) ? Thread.currentThread().getStackTrace()[5].getClassName() +"."+ Thread.currentThread().getStackTrace()[5].getMethodName() + " - " + Thread.currentThread().getStackTrace()[5].getLineNumber() : "",
+                                    (Thread.currentThread().getStackTrace().length > 6) ? Thread.currentThread().getStackTrace()[6].getClassName() +"."+ Thread.currentThread().getStackTrace()[6].getMethodName() + " - " + Thread.currentThread().getStackTrace()[6].getLineNumber() : "",
+                                    (Thread.currentThread().getStackTrace().length > 7) ? Thread.currentThread().getStackTrace()[7].getClassName() +"."+ Thread.currentThread().getStackTrace()[7].getMethodName() + " - " + Thread.currentThread().getStackTrace()[7].getLineNumber() : "",
+                                    (Thread.currentThread().getStackTrace().length > 8) ? Thread.currentThread().getStackTrace()[8].getClassName() +"."+ Thread.currentThread().getStackTrace()[8].getMethodName() + " - " + Thread.currentThread().getStackTrace()[8].getLineNumber() : "",
+                                    (Thread.currentThread().getStackTrace().length > 9) ? Thread.currentThread().getStackTrace()[9].getClassName() +"."+ Thread.currentThread().getStackTrace()[9].getMethodName() + " - " + Thread.currentThread().getStackTrace()[9].getLineNumber() : "",
+                            });
                 }
             }
         }
@@ -125,10 +146,15 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode, MappingDSBluepr
                 if (node instanceof NodeImpl || node ==null) {
                     super.setNodeParentNode(node);
                     if (node != null) {
+                        if ((super.getNodeDepth()==1) && super.getNodeContainer()!=null)
+                            super.getNodeContainer().removeContainerNode(this);
                         if (!node.getNodeChildNodes().contains(this)) node.addNodeChildNode(this);
                         super.setNodeDepth(1 + node.getNodeDepth());
+                    } else {
+                        super.setNodeDepth(1);
+                        if (super.getNodeContainer()!=null) super.getNodeContainer().addContainerNode(this);
+
                     }
-                    else super.setNodeDepth(1);
                     synchronizeParentNodeToDB();
                     synchronizeDepthToDB();
                 }
@@ -343,6 +369,9 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode, MappingDSBluepr
         if (this.nodeVertex != null && super.getNodeContainer() != null && ((ContainerImpl)super.getNodeContainer()).getElement() != null) {
             log.debug("Synchronize node container {} to db...", new Object[]{super.getNodeContainer().getContainerID()});
             nodeVertex.setProperty(MappingDSGraphPropertyNames.DD_NODE_CONT_KEY, ((ContainerImpl) super.getNodeContainer()).getElement().getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
+            MappingDSGraphDB.autocommit();
+        } else if (this.nodeVertex!=null && this.nodeVertex.getPropertyKeys().contains(MappingDSGraphPropertyNames.DD_NODE_CONT_KEY) && super.getNodeContainer()==null) {
+            nodeVertex.removeProperty(MappingDSGraphPropertyNames.DD_NODE_CONT_KEY);
             MappingDSGraphDB.autocommit();
         }
     }

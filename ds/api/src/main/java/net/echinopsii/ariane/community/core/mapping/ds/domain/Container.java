@@ -110,16 +110,11 @@ public interface Container {
 	
 	/**
 	 * 
-	 * return ALL the nodes in this container until we rich the depth limit.
-	 * if depth limit == 0 => NO DEPTH LIMIT 
-	 * if depth limit == 1 => return only node behind the container
-	 * if depth limit == 2 => return node behind the container and also node behind the first nodes 
-	 * ...
-	 * 
-	 * @param depth : depth of nodes you want. default = 0 (means all depth)
+	 * return nodes behind this container. do not return node of node ...
+	 *
 	 * @return nodes with specified depth
 	 */
-	Set<? extends Node>  getContainerNodes(long depth);
+	Set<? extends Node>  getContainerNodes();
 	boolean              addContainerNode(Node node) throws MappingDSException;
 	boolean              removeContainerNode(Node node) throws MappingDSException;
 	

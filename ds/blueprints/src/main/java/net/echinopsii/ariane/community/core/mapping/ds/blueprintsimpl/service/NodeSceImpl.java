@@ -59,7 +59,6 @@ public class NodeSceImpl extends SProxNodeSceAbs<NodeImpl> {
                     ret = new NodeImpl();
                     sce.getGlobalRepo().getNodeRepo().saveNode(ret);
                     ret.setNodeName(nodeName);
-                    ret.setNodeContainer(container);
                     if (parentNodeID != null) {
                         NodeImpl parent = sce.getGlobalRepo().getNodeRepo().findNodeByID(parentNodeID);
                         if (parent != null) {
@@ -68,6 +67,7 @@ public class NodeSceImpl extends SProxNodeSceAbs<NodeImpl> {
                             throw new MappingDSException("Node creation failed : provided parend node " + parentNodeID + " doesn't exists.");
                         }
                     } else ret.setNodeDepth(1);
+                    ret.setNodeContainer(container);
 
                     if (ret.getNodeParentNode() != null)
                         ret.getNodeParentNode().addNodeChildNode(ret);

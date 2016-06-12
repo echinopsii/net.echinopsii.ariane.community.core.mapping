@@ -152,7 +152,7 @@ public class MappingMsgTest {
     @Test
     public void testClusterCreate() throws MappingDSException {
         if (momTest!=null) {
-            Cluster cluster = messagingMappingSce.getClusterSce().createCluster("test");
+            Cluster cluster = messagingMappingSce.getClusterSce().createCluster("testClusterCreate-test");
             assertTrue(cluster.getClusterID() != null);
             assertTrue(messagingMappingSce.getClusterSce().getClusters(null).size() == 1);
             messagingMappingSce.getClusterSce().deleteCluster(cluster.getClusterName());
@@ -163,8 +163,8 @@ public class MappingMsgTest {
     @Test
     public void testTransacClusterCreate1() throws MappingDSException, InterruptedException {
         if (momTest!=null) {
-            Session session = messagingMappingSce.openSession("this is a test");
-            Cluster cluster = messagingMappingSce.getClusterSce().createCluster("test");
+            Session session = messagingMappingSce.openSession("testTransacClusterCreate1-this is a test");
+            Cluster cluster = messagingMappingSce.getClusterSce().createCluster("testTransacClusterCreate1-test");
             assertTrue(messagingMappingSce.getClusterSce().getClusters(null).size() == 1);
             new Thread(new Runnable() {
                 @Override
@@ -221,8 +221,8 @@ public class MappingMsgTest {
     @Test
     public void testTransacClusterCreate2() throws MappingDSException {
         if (momTest!=null) {
-            Session session = messagingMappingSce.openSession("this is a test");
-            Cluster cluster = messagingMappingSce.getClusterSce().createCluster("test");
+            Session session = messagingMappingSce.openSession("testTransacClusterCreate2-this is a test");
+            Cluster cluster = messagingMappingSce.getClusterSce().createCluster("testTransacClusterCreate2-test");
             assertTrue(messagingMappingSce.getClusterSce().getClusters(null).size() == 1);
             session.rollback();
             assertTrue(messagingMappingSce.getClusterSce().getClusters(null).size() == 0);
@@ -233,14 +233,14 @@ public class MappingMsgTest {
     @Test
     public void testTransacClusterGet() throws MappingDSException {
         if (momTest!=null) {
-            Session session = messagingMappingSce.openSession("this is a test");
-            Cluster cluster = messagingMappingSce.getClusterSce().createCluster("test");
+            Session session = messagingMappingSce.openSession("testTransacClusterGet-this is a test");
+            Cluster cluster = messagingMappingSce.getClusterSce().createCluster("testTransacClusterGet-test");
             assertNotNull(messagingMappingSce.getClusterSce().getCluster(cluster.getClusterID()));
             assertNotNull(messagingMappingSce.getClusterSce().getClusterByName(cluster.getClusterName()));
-            cluster.setClusterName("test2");
-            assertEquals(cluster.getClusterName(), "test2");
+            cluster.setClusterName("testTransacClusterGet-test2");
+            assertEquals(cluster.getClusterName(), "testTransacClusterGet-test2");
             session.commit();
-            assertNull(messagingMappingSce.getClusterSce().getClusterByName("test"));
+            assertNull(messagingMappingSce.getClusterSce().getClusterByName("testTransacClusterGet-test"));
             assertNotNull(messagingMappingSce.getClusterSce().getCluster(cluster.getClusterID()));
             assertNotNull(messagingMappingSce.getClusterSce().getClusterByName(cluster.getClusterName()));
             messagingMappingSce.getClusterSce().deleteCluster(cluster.getClusterName());
@@ -252,35 +252,35 @@ public class MappingMsgTest {
     @Test
     public void testCreateContainer1() throws MappingDSException {
         if (momTest!=null) {
-            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn", "SERVER SSH DAEMON");
+            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testCreateContainer1", "SERVER SSH DAEMON");
             assertNotNull(container.getContainerID());
             assertNull(container.getContainerName());
-            container.setContainerName("a.server");
+            container.setContainerName("a.server-testCreateContainer1");
             container.setContainerCompany("RedHat");
             container.setContainerProduct("RedHat Linux x86 7");
             container.setContainerType("Operating System");
-            assertEquals(container.getContainerName(), "a.server");
+            assertEquals(container.getContainerName(), "a.server-testCreateContainer1");
             assertEquals(container.getContainerCompany(), "RedHat");
             assertEquals(container.getContainerProduct(), "RedHat Linux x86 7");
             assertEquals(container.getContainerType(), "Operating System");
             //assertEquals(container.getContainerPrimaryAdminGateURL(), "ssh://a.server.fqdn");
-            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).size() == 1);
-            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
-            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).size() == 0);
+            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).contains(container));
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testCreateContainer1");
+            assertTrue(!messagingMappingSce.getContainerSce().getContainers(null).contains(container));
         }
     }
 
     @Test
     public void testTransacCreateContainer1() throws MappingDSException, InterruptedException {
         if (momTest!=null) {
-            Session session = messagingMappingSce.openSession("this is a test");
-            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn", "SERVER SSH DAEMON");
-            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).size() == 1);
+            Session session = messagingMappingSce.openSession("testTransacCreateContainer1-this is a test");
+            final Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testTransacCreateContainer1", "SERVER SSH DAEMON");
+            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).contains(container));
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        assertTrue(blueprintsMappingSce.getContainerSce().getContainers(null).size() == 0);
+                        assertNull(blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID()));
                     } catch (MappingDSException e) {
                         e.printStackTrace();
                     }
@@ -288,36 +288,36 @@ public class MappingMsgTest {
             }).start();
             Thread.sleep(2);
             session.commit();
-            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).size() == 1);
+            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).contains(container));
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        assertTrue(blueprintsMappingSce.getContainerSce().getContainers(null).size() == 1);
+                        assertNotNull(blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID()));
                     } catch (MappingDSException e) {
                         e.printStackTrace();
                     }
                 }
             }).start();
-            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
-            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).size() == 0);
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testTransacCreateContainer1");
+            assertTrue(!messagingMappingSce.getContainerSce().getContainers(null).contains(container));
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        assertTrue(blueprintsMappingSce.getContainerSce().getContainers(null).size() == 1);
+                        assertNotNull(blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID()));
                     } catch (MappingDSException e) {
                         e.printStackTrace();
                     }
                 }
             }).start();
             session.commit();
-            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).size() == 0);
+            assertTrue(!messagingMappingSce.getContainerSce().getContainers(null).contains(container));
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        assertTrue(blueprintsMappingSce.getContainerSce().getContainers(null).size() == 0);
+                        assertNull(blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID()));
                     } catch (MappingDSException e) {
                         e.printStackTrace();
                     }
@@ -331,26 +331,26 @@ public class MappingMsgTest {
     @Test
     public void testCreateContainer2() throws MappingDSException {
         if (momTest!=null) {
-            Container container = messagingMappingSce.getContainerSce().createContainer("a.server", "ssh://a.server.fqdn", "SERVER SSH DAEMON");
+            Container container = messagingMappingSce.getContainerSce().createContainer("a.server-testCreateContainer2", "ssh://a.server.fqdn-testCreateContainer2", "SERVER SSH DAEMON");
             assertNotNull(container.getContainerID());
             assertNotNull(container.getContainerName());
-            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).size() == 1);
-            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
-            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).size() == 0);
+            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).contains(container));
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testCreateContainer2");
+            assertTrue(!messagingMappingSce.getContainerSce().getContainers(null).contains(container));
         }
     }
 
     @Test
     public void testTransacCreateContainer2() throws MappingDSException, InterruptedException {
         if (momTest!=null) {
-            Session session = messagingMappingSce.openSession("this is a test");
-            Container container = messagingMappingSce.getContainerSce().createContainer("a.server", "ssh://a.server.fqdn", "SERVER SSH DAEMON");
-            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).size() == 1);
+            Session session = messagingMappingSce.openSession("testTransacCreateContainer2-this is a test");
+            final Container container = messagingMappingSce.getContainerSce().createContainer("a.server-testTransacCreateContainer2", "ssh://a.server.fqdn-testTransacCreateContainer2", "SERVER SSH DAEMON");
+            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).contains(container));
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        assertTrue(blueprintsMappingSce.getContainerSce().getContainers(null).size() == 0);
+                        assertNull(blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID()));
                     } catch (MappingDSException e) {
                         e.printStackTrace();
                     }
@@ -358,36 +358,36 @@ public class MappingMsgTest {
             }).start();
             Thread.sleep(2);
             session.commit();
-            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).size() == 1);
+            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).contains(container));
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        assertTrue(blueprintsMappingSce.getContainerSce().getContainers(null).size() == 1);
+                        assertNotNull(blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID()));
                     } catch (MappingDSException e) {
                         e.printStackTrace();
                     }
                 }
             }).start();
-            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
-            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).size() == 0);
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testTransacCreateContainer2");
+            assertTrue(!messagingMappingSce.getContainerSce().getContainers(null).contains(container));
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        assertTrue(blueprintsMappingSce.getContainerSce().getContainers(null).size() == 1);
+                        assertNotNull(blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID()));
                     } catch (MappingDSException e) {
                         e.printStackTrace();
                     }
                 }
             }).start();
             session.commit();
-            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).size() == 0);
+            assertTrue(!messagingMappingSce.getContainerSce().getContainers(null).contains(container));
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        assertTrue(blueprintsMappingSce.getContainerSce().getContainers(null).size() == 0);
+                        assertNull(blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID()));
                     } catch (MappingDSException e) {
                         e.printStackTrace();
                     }
@@ -400,21 +400,23 @@ public class MappingMsgTest {
     @Test
     public void testCreateContainer3() throws MappingDSException {
         if (momTest!=null) {
-            Container server = messagingMappingSce.getContainerSce().createContainer("a.server", "ssh://a.server.fqdn", "SERVER SSH DAEMON");
-            Container container = messagingMappingSce.getContainerSce().createContainer("a.container", "ssh://a.server.fqdn:a.container", "SERVER SSH DAEMON", server);
+            Container server = messagingMappingSce.getContainerSce().createContainer("a.server-testCreateContainer3", "ssh://a.server.fqdn-testCreateContainer3", "SERVER SSH DAEMON");
+            Container container = messagingMappingSce.getContainerSce().createContainer("a.container-testCreateContainer3", "ssh://a.server.fqdn:a.container-testCreateContainer3", "SERVER SSH DAEMON", server);
             assertTrue(server.getContainerChildContainers().contains(container));
             assertTrue(container.getContainerParentContainer().equals(server));
-            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).size() == 2);
-            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn:a.container");
-            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
-            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).size() == 0);
+            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).contains(server));
+            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).contains(container));
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn:a.container-testCreateContainer3");
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testCreateContainer3");
+            assertTrue(!messagingMappingSce.getContainerSce().getContainers(null).contains(server));
+            assertTrue(!messagingMappingSce.getContainerSce().getContainers(null).contains(server));
         }
     }
 
     @Test
     public void testContainerProperties() throws MappingDSException {
         if (momTest!=null) {
-            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn", "SERVER SSH DAEMON");
+            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testContainerProperties", "SERVER SSH DAEMON");
             container.addContainerProperty("stringProp", "a string");
             assertTrue(container.getContainerProperties().containsKey("stringProp"));
             assertTrue(container.getContainerProperties().get("stringProp").equals("a string"));
@@ -481,15 +483,15 @@ public class MappingMsgTest {
             assertFalse(container.getContainerProperties().containsKey("mapProp"));
             bis = messagingMappingSce.getContainerSce().getContainer(container.getContainerID());
             assertFalse(bis.getContainerProperties().containsKey("mapProp"));
-            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testContainerProperties");
         }
     }
 
     @Test
     public void testClusterJoinContainer() throws MappingDSException {
         if (momTest!=null) {
-            Cluster cluster = messagingMappingSce.getClusterSce().createCluster("test");
-            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn", "SERVER SSH DAEMON");
+            Cluster cluster = messagingMappingSce.getClusterSce().createCluster("testClusterJoinContainer-test");
+            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testClusterJoinContainer", "SERVER SSH DAEMON");
             cluster.addClusterContainer(container);
             assertTrue(((ClusterImpl) cluster).getClusterContainersID().contains(container.getContainerID()));
             assertTrue(cluster.getClusterContainers().contains(container));
@@ -510,7 +512,7 @@ public class MappingMsgTest {
             assertFalse(cluster.getClusterContainers().contains(container));
             assertTrue(((ContainerImpl) container).getClusterID() == null);
             assertTrue(container.getContainerCluster() == null);
-            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testClusterJoinContainer");
             messagingMappingSce.getClusterSce().deleteCluster(cluster.getClusterName());
         }
     }
@@ -518,8 +520,8 @@ public class MappingMsgTest {
     @Test
     public void testContainerJoinContainer() throws MappingDSException {
         if (momTest!=null) {
-            Container containerA = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn", "SERVER SSH DAEMON");
-            Container containerB = messagingMappingSce.getContainerSce().createContainer("ssh://b.server.fqdn", "SERVER SSH DAEMON");
+            Container containerA = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testContainerJoinContainer", "SERVER SSH DAEMON");
+            Container containerB = messagingMappingSce.getContainerSce().createContainer("ssh://b.server.fqdn-testContainerJoinContainer", "SERVER SSH DAEMON");
             containerA.addContainerChildContainer(containerB);
             assertTrue(((ContainerImpl) containerA).getChildContainersID().contains(containerB.getContainerID()));
             assertTrue(containerA.getContainerChildContainers().contains(containerB));
@@ -540,41 +542,39 @@ public class MappingMsgTest {
             assertFalse(containerA.getContainerChildContainers().contains(containerB));
             assertTrue(((ContainerImpl) containerB).getParentContainerID() == null);
             assertTrue(containerB.getContainerParentContainer() == null);
-            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
-            messagingMappingSce.getContainerSce().deleteContainer("ssh://b.server.fqdn");
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testContainerJoinContainer");
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://b.server.fqdn-testContainerJoinContainer");
         }
     }
 
     @Test
     public void testCreateNode1() throws MappingDSException {
         if (momTest!=null) {
-            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn", "SERVER SSH DAEMON");
-            Node process = messagingMappingSce.getNodeSce().createNode("a process", container.getContainerID(), null);
+            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testCreateNode1", "SERVER SSH DAEMON");
+            Node process = messagingMappingSce.getNodeSce().createNode("a process-testCreateNode1", container.getContainerID(), null);
             assertNotNull(process.getNodeID());
             assertTrue(process.getNodeContainer().equals(container));
-            assertTrue(container.getContainerNodes(0).contains(process));
+            assertTrue(container.getContainerNodes().contains(process));
             messagingMappingSce.getNodeSce().deleteNode(process.getNodeID());
-            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testCreateNode1");
         }
     }
 
     @Test
     public void testTransacCreateNode1() throws MappingDSException, InterruptedException {
         if (momTest!=null) {
-            Session session = messagingMappingSce.openSession("this is a test");
-            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn", "SERVER SSH DAEMON");
-            final Node process = messagingMappingSce.getNodeSce().createNode("a process", container.getContainerID(), null);
+            Session session = messagingMappingSce.openSession("this is a test-testTransacCreateNode1");
+            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testTransacCreateNode1", "SERVER SSH DAEMON");
+            final Node process = messagingMappingSce.getNodeSce().createNode("a process-testTransacCreateNode1", container.getContainerID(), null);
             assertNotNull(process.getNodeID());
             assertTrue(process.getNodeContainer().equals(container));
-            assertTrue(container.getContainerNodes(0).contains(process));
-            assertTrue(messagingMappingSce.getNodeSce().getNodes(null).size() == 2);
+            assertTrue(container.getContainerNodes().contains(process));
+            assertTrue(messagingMappingSce.getNodeSce().getNodes(null).contains(process));
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-//                        int size = blueprintsMappingSce.getNodeSce().getNodes(null).size();
-//                        System.out.println(size);
-                        assertTrue(!blueprintsMappingSce.getNodeSce().getNodes(null).contains(process));
+                        assertNull(blueprintsMappingSce.getNodeSce().getNode(process.getNodeID()));
                     } catch (MappingDSException e) {
                         e.printStackTrace();
                     }
@@ -586,7 +586,7 @@ public class MappingMsgTest {
                 @Override
                 public void run() {
                     try {
-                        assertTrue(blueprintsMappingSce.getNodeSce().getNodes(null).size() == 2);
+                        assertNotNull(blueprintsMappingSce.getNodeSce().getNode(process.getNodeID()));
                     } catch (MappingDSException e) {
                         e.printStackTrace();
                     }
@@ -594,12 +594,12 @@ public class MappingMsgTest {
             }).start();
             Thread.sleep(2);
             messagingMappingSce.getNodeSce().deleteNode(process.getNodeID());
-            assertTrue(messagingMappingSce.getNodeSce().getNodes(null).size() == 1);
+            assertTrue(!messagingMappingSce.getNodeSce().getNodes(null).contains(process));
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        assertTrue(blueprintsMappingSce.getNodeSce().getNodes(null).size() == 2);
+                        assertNotNull(blueprintsMappingSce.getNodeSce().getNode(process.getNodeID()));
                     } catch (MappingDSException e) {
                         e.printStackTrace();
                     }
@@ -611,14 +611,14 @@ public class MappingMsgTest {
                 @Override
                 public void run() {
                     try {
-                        assertTrue(blueprintsMappingSce.getNodeSce().getNodes(null).size() == 1);
+                        assertNull(blueprintsMappingSce.getNodeSce().getNode(process.getNodeID()));
                     } catch (MappingDSException e) {
                         e.printStackTrace();
                     }
                 }
             }).start();
             Thread.sleep(2);
-            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testTransacCreateNode1");
             messagingMappingSce.closeSession();
         }
     }
@@ -626,37 +626,36 @@ public class MappingMsgTest {
     @Test
     public void testCreateNode2() throws MappingDSException {
         if (momTest!=null) {
-            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn", "SERVER SSH DAEMON");
-            Node process = messagingMappingSce.getNodeSce().createNode("a process", container.getContainerID(), null);
-            Node thread = messagingMappingSce.getNodeSce().createNode("a thread", container.getContainerID(), process.getNodeID());
+            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testCreateNode2", "SERVER SSH DAEMON");
+            Node process = messagingMappingSce.getNodeSce().createNode("a process-testCreateNode2", container.getContainerID(), null);
+            Node thread = messagingMappingSce.getNodeSce().createNode("a thread-testCreateNode2", container.getContainerID(), process.getNodeID());
             assertNotNull(thread.getNodeID());
             assertTrue(process.getNodeChildNodes().contains(thread));
             assertTrue(thread.getNodeParentNode().equals(process));
             messagingMappingSce.getNodeSce().deleteNode(thread.getNodeID());
             messagingMappingSce.getNodeSce().deleteNode(process.getNodeID());
-            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testCreateNode2");
         }
     }
 
     @Test
     public void testTransacCreateNode2() throws MappingDSException, InterruptedException {
         if (momTest!=null) {
-            Session session = messagingMappingSce.openSession("this is a test");
-            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn", "SERVER SSH DAEMON");
-            final Node process = messagingMappingSce.getNodeSce().createNode("a process", container.getContainerID(), null);
-            final Node thread = messagingMappingSce.getNodeSce().createNode("a thread", container.getContainerID(), process.getNodeID());
+            Session session = messagingMappingSce.openSession("this is a test-testTransacCreateNode2");
+            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testTransacCreateNode2", "SERVER SSH DAEMON");
+            final Node process = messagingMappingSce.getNodeSce().createNode("a process-testTransacCreateNode2", container.getContainerID(), null);
+            final Node thread = messagingMappingSce.getNodeSce().createNode("a thread-testTransacCreateNode2", container.getContainerID(), process.getNodeID());
             assertNotNull(thread.getNodeID());
             assertTrue(process.getNodeChildNodes().contains(thread));
             assertTrue(thread.getNodeParentNode().equals(process));
-            assertTrue(messagingMappingSce.getNodeSce().getNodes(null).size() == 3);
+            assertTrue(messagingMappingSce.getNodeSce().getNodes(null).contains(process));
+            assertTrue(messagingMappingSce.getNodeSce().getNodes(null).contains(thread));
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        //int size = blueprintsMappingSce.getNodeSce().getNodes(null).size();
-                        //System.out.println(size);
-                        assertTrue(!blueprintsMappingSce.getNodeSce().getNodes(null).contains(process));
-                        assertTrue(!blueprintsMappingSce.getNodeSce().getNodes(null).contains(thread));
+                        assertNull(blueprintsMappingSce.getNodeSce().getNode(process.getNodeID()));
+                        assertNull(blueprintsMappingSce.getNodeSce().getNode(thread.getNodeID()));
                     } catch (MappingDSException e) {
                         e.printStackTrace();
                     }
@@ -668,7 +667,8 @@ public class MappingMsgTest {
                 @Override
                 public void run() {
                     try {
-                        assertTrue(blueprintsMappingSce.getNodeSce().getNodes(null).size() == 3);
+                        assertNotNull(blueprintsMappingSce.getNodeSce().getNode(process.getNodeID()));
+                        assertNotNull(blueprintsMappingSce.getNodeSce().getNode(thread.getNodeID()));
                     } catch (MappingDSException e) {
                         e.printStackTrace();
                     }
@@ -676,12 +676,14 @@ public class MappingMsgTest {
             }).start();
             Thread.sleep(2);
             messagingMappingSce.getNodeSce().deleteNode(thread.getNodeID());
-            assertTrue(messagingMappingSce.getNodeSce().getNodes(null).size() == 2);
+            assertTrue(messagingMappingSce.getNodeSce().getNodes(null).contains(process));
+            assertTrue(!messagingMappingSce.getNodeSce().getNodes(null).contains(thread));
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        assertTrue(blueprintsMappingSce.getNodeSce().getNodes(null).size() == 3);
+                        assertNotNull(blueprintsMappingSce.getNodeSce().getNode(process.getNodeID()));
+                        assertNotNull(blueprintsMappingSce.getNodeSce().getNode(thread.getNodeID()));
                     } catch (MappingDSException e) {
                         e.printStackTrace();
                     }
@@ -693,14 +695,15 @@ public class MappingMsgTest {
                 @Override
                 public void run() {
                     try {
-                        assertTrue(blueprintsMappingSce.getNodeSce().getNodes(null).size() == 2);
+                        assertNotNull(blueprintsMappingSce.getNodeSce().getNode(process.getNodeID()));
+                        assertNull(blueprintsMappingSce.getNodeSce().getNode(thread.getNodeID()));
                     } catch (MappingDSException e) {
                         e.printStackTrace();
                     }
                 }
             }).start();
             messagingMappingSce.getNodeSce().deleteNode(process.getNodeID());
-            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testTransacCreateNode2");
             messagingMappingSce.closeSession();
         }
     }
@@ -708,8 +711,8 @@ public class MappingMsgTest {
     @Test
     public void testNodeProperties() throws MappingDSException {
         if (momTest!=null) {
-            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn", "SERVER SSH DAEMON");
-            Node process = messagingMappingSce.getNodeSce().createNode("a process", container.getContainerID(), null);
+            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testNodeProperties", "SERVER SSH DAEMON");
+            Node process = messagingMappingSce.getNodeSce().createNode("a process-testNodeProperties", container.getContainerID(), null);
             process.addNodeProperty("stringProp", "a string");
             assertTrue(process.getNodeProperties().containsKey("stringProp"));
             assertTrue(process.getNodeProperties().get("stringProp").equals("a string"));
@@ -776,22 +779,47 @@ public class MappingMsgTest {
             assertFalse(process.getNodeProperties().containsKey("mapProp"));
             bis = messagingMappingSce.getNodeSce().getNode(process.getNodeID());
             assertFalse(bis.getNodeProperties().containsKey("mapProp"));
-            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testNodeProperties");
         }
     }
 
     @Test
     public void testContainerJoinNode() throws MappingDSException {
         if (momTest!=null) {
+            Container ahypervisor = messagingMappingSce.getContainerSce().createContainer("ssh://a.hypervisor.fqdn-testContainerJoinNode", "SERVER SSH DAEMON");
+            Container bhypervisor = messagingMappingSce.getContainerSce().createContainer("ssh://b.hypervisor.fqdn-testContainerJoinNode", "SERVER SSH DAEMON");
+            Node avm = messagingMappingSce.getNodeSce().createNode("a vm-testContainerJoinNode", ahypervisor.getContainerID(), null);
+            assertTrue(ahypervisor.getContainerNodes().contains(avm));
+            assertFalse(bhypervisor.getContainerNodes().contains(avm));
+            assertTrue(avm.getNodeContainer().equals(ahypervisor));
+            avm.setNodeContainer(bhypervisor);
+            assertTrue(avm.getNodeContainer().equals(bhypervisor));
+            assertTrue(bhypervisor.getContainerNodes().contains(avm));
+            assertFalse(ahypervisor.getContainerNodes().contains(avm));
+            ahypervisor.addContainerNode(avm);
+            assertTrue(avm.getNodeContainer().equals(ahypervisor));
+            assertTrue(ahypervisor.getContainerNodes().contains(avm));
+            assertFalse(bhypervisor.getContainerNodes().contains(avm));
+            ahypervisor.removeContainerNode(avm);
+            assertTrue(avm.getNodeContainer()==null);
+            assertFalse(ahypervisor.getContainerNodes().contains(avm));
+            assertFalse(bhypervisor.getContainerNodes().contains(avm));
+            avm.setNodeContainer(bhypervisor);
+            assertTrue(avm.getNodeContainer().equals(bhypervisor));
+            assertTrue(bhypervisor.getContainerNodes().contains(avm));
+            assertFalse(ahypervisor.getContainerNodes().contains(avm));
+            messagingMappingSce.getNodeSce().deleteNode(avm.getNodeID());
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.hypervisor.fqdn-testContainerJoinNode");
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://b.hypervisor.fqdn-testContainerJoinNode");
         }
     }
 
     @Test
     public void testNodeJoinChildNode() throws MappingDSException {
         if (momTest!=null) {
-            Container acontainer = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn", "SERVER SSH DAEMON");
-            Node aprocess = messagingMappingSce.getNodeSce().createNode("a process", acontainer.getContainerID(), null);
-            Node thread = messagingMappingSce.getNodeSce().createNode("a thread", acontainer.getContainerID(), aprocess.getNodeID());
+            Container acontainer = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testNodeJoinChildNode", "SERVER SSH DAEMON");
+            Node aprocess = messagingMappingSce.getNodeSce().createNode("a process-testNodeJoinChildNode", acontainer.getContainerID(), null);
+            Node thread = messagingMappingSce.getNodeSce().createNode("a thread-testNodeJoinChildNode", acontainer.getContainerID(), aprocess.getNodeID());
             assertTrue(aprocess.getNodeChildNodes().contains(thread));
             assertTrue(thread.getNodeParentNode().equals(aprocess));
             aprocess.removeNodeChildNode(thread);
@@ -804,25 +832,25 @@ public class MappingMsgTest {
             thread.setNodeParentNode(aprocess);
             assertTrue(aprocess.getNodeChildNodes().contains(thread));
             assertTrue(thread.getNodeParentNode().equals(aprocess));
-            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testNodeJoinChildNode");
         }
     }
 
     @Test
     public void testNodeJoinTwinNode() throws MappingDSException {
         if (momTest!=null) {
-            Cluster cluster = messagingMappingSce.getClusterSce().createCluster("test");
-            Container acontainer = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn", "SERVER SSH DAEMON");
+            Cluster cluster = messagingMappingSce.getClusterSce().createCluster("test-testNodeJoinTwinNode");
+            Container acontainer = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testNodeJoinTwinNode", "SERVER SSH DAEMON");
             cluster.addClusterContainer(acontainer);
-            Node aprocess = messagingMappingSce.getNodeSce().createNode("a process", acontainer.getContainerID(), null);
-            Container bcontainer = messagingMappingSce.getContainerSce().createContainer("ssh://b.server.fqdn", "SERVER SSH DAEMON");
+            Node aprocess = messagingMappingSce.getNodeSce().createNode("a process-testNodeJoinTwinNode", acontainer.getContainerID(), null);
+            Container bcontainer = messagingMappingSce.getContainerSce().createContainer("ssh://b.server.fqdn-testNodeJoinTwinNode", "SERVER SSH DAEMON");
             cluster.addClusterContainer(bcontainer);
-            Node bprocess = messagingMappingSce.getNodeSce().createNode("b process", acontainer.getContainerID(), null);
+            Node bprocess = messagingMappingSce.getNodeSce().createNode("b process-testNodeJoinTwinNode", acontainer.getContainerID(), null);
             aprocess.addTwinNode(bprocess);
             assertTrue(aprocess.getTwinNodes().contains(bprocess));
             assertTrue(bprocess.getTwinNodes().contains(aprocess));
-            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
-            messagingMappingSce.getContainerSce().deleteContainer("ssh://b.server.fqdn");
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testNodeJoinTwinNode");
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://b.server.fqdn-testNodeJoinTwinNode");
             messagingMappingSce.getClusterSce().deleteCluster(cluster.getClusterName());
         }
     }
@@ -830,35 +858,35 @@ public class MappingMsgTest {
     @Test
     public void testCreateGate1() throws MappingDSException {
         if (momTest!=null) {
-            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn", "SERVER SSH DAEMON");
-            Gate daemon = messagingMappingSce.getGateSce().createGate("tcp://myserviceurl:6969", "myservice", container.getContainerID(), false);
+            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testCreateGate1", "SERVER SSH DAEMON");
+            Gate daemon = messagingMappingSce.getGateSce().createGate("tcp://myserviceurl-testCreateGate1:6969", "myservice-testCreateGate1", container.getContainerID(), false);
             assertNotNull(daemon.getNodeID());
             assertTrue(daemon.getNodeContainer().equals(container));
             assertTrue(container.getContainerGates().contains(daemon));
-            assertTrue(container.getContainerNodes(0).contains(daemon));
+            assertTrue(container.getContainerNodes().contains(daemon));
             messagingMappingSce.getGateSce().deleteGate(daemon.getNodeID());
-            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testCreateGate1");
         }
     }
 
     @Test
     public void testTransacCreateGate1() throws MappingDSException, InterruptedException {
         if (momTest != null) {
-            Session session = messagingMappingSce.openSession("this is a test");
-            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn", "SERVER SSH DAEMON");
-            Gate daemon = messagingMappingSce.getGateSce().createGate("tcp://myserviceurl:6969", "myservice", container.getContainerID(), false);
+            Session session = messagingMappingSce.openSession("this is a test-testTransacCreateGate1");
+            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testTransacCreateGate1", "SERVER SSH DAEMON");
+            final Gate daemon = messagingMappingSce.getGateSce().createGate("tcp://myserviceurl-testTransacCreateGate1:6969", "myservice-testTransacCreateGate1", container.getContainerID(), false);
             assertNotNull(daemon.getNodeID());
             assertTrue(daemon.getNodeContainer().equals(container));
             assertTrue(container.getContainerGates().contains(daemon));
-            assertTrue(container.getContainerNodes(0).contains(daemon));
-            assertTrue(messagingMappingSce.getNodeSce().getNodes(null).size() == 2);
-            assertTrue(messagingMappingSce.getGateSce().getGates(null).size() == 2);
+            assertTrue(container.getContainerNodes().contains(daemon));
+            assertTrue(messagingMappingSce.getNodeSce().getNodes(null).contains(daemon));
+            assertTrue(messagingMappingSce.getGateSce().getGates(null).contains(daemon));
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        assertTrue(blueprintsMappingSce.getNodeSce().getNodes(null).size() == 0);
-                        assertTrue(blueprintsMappingSce.getGateSce().getGates(null).size() == 0);
+                        assertNull(blueprintsMappingSce.getNodeSce().getNode(daemon.getNodeID()));
+                        assertNull(blueprintsMappingSce.getGateSce().getGate(daemon.getNodeID()));
                     } catch (MappingDSException e) {
                         e.printStackTrace();
                     }
@@ -870,8 +898,8 @@ public class MappingMsgTest {
                 @Override
                 public void run() {
                     try {
-                        assertTrue(blueprintsMappingSce.getNodeSce().getNodes(null).size() == 2);
-                        assertTrue(blueprintsMappingSce.getGateSce().getGates(null).size() == 2);
+                        assertNotNull(blueprintsMappingSce.getNodeSce().getNode(daemon.getNodeID()));
+                        assertNotNull(blueprintsMappingSce.getGateSce().getGate(daemon.getNodeID()));
                     } catch (MappingDSException e) {
                         e.printStackTrace();
                     }
@@ -879,14 +907,14 @@ public class MappingMsgTest {
             }).start();
             Thread.sleep(1);
             messagingMappingSce.getGateSce().deleteGate(daemon.getNodeID());
-            assertTrue(messagingMappingSce.getNodeSce().getNodes(null).size() == 1);
-            assertTrue(messagingMappingSce.getGateSce().getGates(null).size() == 1);
+            assertTrue(!messagingMappingSce.getNodeSce().getNodes(null).contains(daemon));
+            assertTrue(!messagingMappingSce.getGateSce().getGates(null).contains(daemon));
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        assertTrue(blueprintsMappingSce.getNodeSce().getNodes(null).size() == 2);
-                        assertTrue(blueprintsMappingSce.getGateSce().getGates(null).size() == 2);
+                        assertNotNull(blueprintsMappingSce.getNodeSce().getNode(daemon.getNodeID()));
+                        assertNotNull(blueprintsMappingSce.getGateSce().getGate(daemon.getNodeID()));
                     } catch (MappingDSException e) {
                         e.printStackTrace();
                     }
@@ -898,14 +926,14 @@ public class MappingMsgTest {
                 @Override
                 public void run() {
                     try {
-                        assertTrue(blueprintsMappingSce.getNodeSce().getNodes(null).size() == 1);
-                        assertTrue(blueprintsMappingSce.getGateSce().getGates(null).size() == 1);
+                        assertNull(blueprintsMappingSce.getNodeSce().getNode(daemon.getNodeID()));
+                        assertNull(blueprintsMappingSce.getGateSce().getGate(daemon.getNodeID()));
                     } catch (MappingDSException e) {
                         e.printStackTrace();
                     }
                 }
             }).start();
-            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn");
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testTransacCreateGate1");
             messagingMappingSce.closeSession();
         }
     }

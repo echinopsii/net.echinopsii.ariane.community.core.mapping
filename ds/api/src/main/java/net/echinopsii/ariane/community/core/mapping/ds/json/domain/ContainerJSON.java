@@ -104,7 +104,7 @@ public class ContainerJSON {
         jgenerator.writeEndArray();
 
         jgenerator.writeArrayFieldStart(Container.TOKEN_CT_NID);
-        for (Node node : cont.getContainerNodes(0))
+        for (Node node : cont.getContainerNodes())
             jgenerator.writeString(node.getNodeID());
         jgenerator.writeEndArray();
     }

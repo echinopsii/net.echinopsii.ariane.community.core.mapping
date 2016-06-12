@@ -163,18 +163,8 @@ public abstract class ContainerAbs implements Container {
     }
 
     @Override
-    public Set<Node> getContainerNodes(long depth) {
-        Set<Node> ret;
-        if (depth==0) {
-            ret = this.containerNodes;
-        } else {
-            ret = new HashSet<>();
-            for (Node tmp : this.containerNodes) {
-                if (tmp.getNodeDepth() == depth)
-                    ret.add(tmp);
-            }
-        }
-        return ret;
+    public Set<Node> getContainerNodes() {
+        return this.containerNodes;
     }
 
     @Override

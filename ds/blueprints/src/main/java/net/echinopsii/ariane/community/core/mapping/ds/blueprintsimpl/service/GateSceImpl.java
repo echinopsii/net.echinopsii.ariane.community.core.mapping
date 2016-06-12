@@ -75,11 +75,11 @@ public class GateSceImpl implements SProxGateSce<GateImpl> {
 					}
 
 					ret = new GateImpl();
+					sce.getGlobalRepo().getGateRepo().save(ret);
 					ret.setNodeName(name);
 					ret.setNodeContainer(container);
 					if (isPrimaryAdmin)
 						ret.setNodePrimaryAdminEnpoint(ep);
-					sce.getGlobalRepo().getGateRepo().save(ret);
 					ret.addEndpoint(ep);
 					ep.setEndpointParentNode(ret);
 					container.addContainerGate(ret);

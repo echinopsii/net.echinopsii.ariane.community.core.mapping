@@ -264,9 +264,8 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer, 
             if (node instanceof NodeImpl) {
                 try {
                     ret = super.addContainerNode(node);
-                    node.setNodeContainer(this);
-                    if (ret)
-                        synchronizeNodeToDB((NodeImpl) node);
+                    if (!node.getNodeContainer().equals(this)) node.setNodeContainer(this);
+                    if (ret) synchronizeNodeToDB((NodeImpl) node);
                 } catch (MappingDSException E) {
                     E.printStackTrace();
                     log.error("Exception while adding node {}...", new Object[]{node.getNodeID()});
@@ -292,7 +291,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer, 
             if (node instanceof NodeImpl) {
                 ret = super.removeContainerNode(node);
                 if (ret) {
-                    node.setNodeContainer(null);
+                    //if (node.getNodeContainer().equals(this)) node.setNodeContainer(null);
                     removeNodeFromDB((NodeImpl) node);
                 }
             }
@@ -314,16 +313,16 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer, 
                 boolean addToNodes = false;
                 boolean addToGates = false;
                 try {
-                    addToNodes = super.addContainerNode(gate);
-                    addToGates = super.addContainerGate(gate);
+                    addToNodes = (super.getContainerNodes().contains(gate)) || super.addContainerNode(gate);
+                    addToGates = (super.getContainerGates().contains(gate)) || super.addContainerGate(gate);
                     if (addToNodes && addToGates) {
-                        gate.setNodeContainer(this);
+                        if (gate.getNodeContainer()==null || !gate.getNodeContainer().equals(this)) gate.setNodeContainer(this);
                         synchronizeNodeToDB((NodeImpl) gate);
                         synchronizeGateToDB((GateImpl) gate);
                     } else {
                         gate.setNodeContainer(null);
                         if (addToNodes) super.removeContainerNode(gate);
-                        if (addToGates) super.removeContainerNode(gate);
+                        if (addToGates) super.removeContainerGate(gate);
                     }
                 } catch (MappingDSException E) {
                     E.printStackTrace();
@@ -521,7 +520,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer, 
 
 	private void synchronizeNodesToDB() throws MappingDSException {
 		if (containerVertex!=null)
-            for (Node aNode : super.getContainerNodes(0))
+            for (Node aNode : super.getContainerNodes())
                 synchronizeNodeToDB((NodeImpl) aNode);
 	}
 	
@@ -718,7 +717,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer, 
 			query.direction(Direction.OUT);
 			query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
 			query.has(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_NODE_KEY, true);
-            super.getContainerNodes(0).clear();
+            super.getContainerNodes().clear();
 			for (Vertex vertex : query.vertices()) {
 				NodeImpl node = null;
                 MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((String) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));

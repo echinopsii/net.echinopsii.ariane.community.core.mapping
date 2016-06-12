@@ -204,8 +204,8 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
     @Override
     public void setNodeContainer(Container container) throws MappingDSException {
         if (super.getNodeID()!=null) {
-            if (container!=null && container.getContainerID()!=null) {
-                if ((super.getNodeContainer()!=null && !super.getNodeContainer().getContainerID().equals(container.getContainerID())) ||
+            if (container==null || container.getContainerID()!=null) {
+                if ((container==null) || (super.getNodeContainer()!=null && !super.getNodeContainer().getContainerID().equals(container.getContainerID())) ||
                     (containerID!=null && !containerID.equals(container.getContainerID())) || (containerID==null)) {
                     String clientThreadName = Thread.currentThread().getName();
                     String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
@@ -213,7 +213,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                     Map<String, Object> message = new HashMap<>();
                     message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_SET_NODE_CONTAINER);
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
-                    message.put(Container.TOKEN_CT_ID, container.getContainerID());
+                    message.put(Container.TOKEN_CT_ID, (container != null) ? container.getContainerID() : MappingSce.GLOBAL_PARAM_OBJ_NONE);
                     if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
                     Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
@@ -231,7 +231,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                             }
                         }
                         super.setNodeContainer(container);
-                        containerID = container.getContainerID();
+                        containerID = (container!=null) ? container.getContainerID() : null;
                         try {
                             if (retMsg.containsKey(Node.JOIN_CURRENT_PCONTAINER)) {
                                 ContainerJSON.JSONDeserializedContainer jsonDeserializedContainer = ContainerJSON.JSON2Container(

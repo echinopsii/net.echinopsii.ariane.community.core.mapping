@@ -575,7 +575,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
     }
 
     @Override
-    public Set<Node> getContainerNodes(long depth) {
+    public Set<Node> getContainerNodes() {
         try {
             Container update = ContainerSceImpl.internalGetContainer(super.getContainerID());
             this.setNodesID(((ContainerImpl)update).getNodesID());
@@ -583,27 +583,27 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
             e.printStackTrace();
         }
 
-        for (Node node : new ArrayList<>(super.getContainerNodes(0)))
+        for (Node node : new ArrayList<>(super.getContainerNodes()))
             if (!nodesID.contains(node.getNodeID()))
-                super.getContainerNodes(0).remove(node);
+                super.getContainerNodes().remove(node);
 
         for (String nodeID : nodesID)
             try {
                 boolean toAdd = true;
-                for (Node node : super.getContainerNodes(0))
+                for (Node node : super.getContainerNodes())
                     if (node.getNodeID().equals(nodeID)) toAdd = false;
-                if (toAdd) super.getContainerNodes(0).add(NodeSceImpl.internalGetNode(nodeID));
+                if (toAdd) super.getContainerNodes().add(NodeSceImpl.internalGetNode(nodeID));
             } catch (MappingDSException e) {
                 e.printStackTrace();
             }
-        return super.getContainerNodes(depth);
+        return super.getContainerNodes();
     }
 
     @Override
     public boolean addContainerNode(Node node) throws MappingDSException {
         if (super.getContainerID() != null) {
             if (node.getNodeID() != null) {
-                if ((super.getContainerNodes(0)!=null && !super.getContainerNodes(0).contains(node)) ||
+                if ((super.getContainerNodes()!=null && !super.getContainerNodes().contains(node)) ||
                     (nodesID!=null && !nodesID.contains(node.getNodeID()))) {
                     String clientThreadName = Thread.currentThread().getName();
                     String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
@@ -616,7 +616,6 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                     if (clientThreadSessionID != null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
                         super.addContainerNode(node);
-                        node.setNodeContainer(this);
                         nodesID.add(node.getNodeID());
                     }
                     return true;
@@ -629,7 +628,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
     public boolean removeContainerNode(Node node) throws MappingDSException {
         if (super.getContainerID() != null) {
             if (node.getNodeID() != null) {
-                if ((super.getContainerNodes(0)!=null && super.getContainerNodes(0).contains(node)) ||
+                if ((super.getContainerNodes()!=null && super.getContainerNodes().contains(node)) ||
                         (nodesID!=null && nodesID.contains(node.getNodeID()))) {
                     String clientThreadName = Thread.currentThread().getName();
                     String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);

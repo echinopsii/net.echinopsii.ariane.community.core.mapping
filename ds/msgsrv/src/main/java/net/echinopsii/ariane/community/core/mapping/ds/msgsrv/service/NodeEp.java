@@ -358,21 +358,24 @@ public class NodeEp {
 
                                     if (parentContainer!=null || pc_id.equals(MappingSce.GLOBAL_PARAM_OBJ_NONE)) {
                                         Container previousParentContainer = node.getNodeContainer();
-                                        if (session != null) ((SProxNode) node).setNodeContainer(session, parentContainer);
-                                        else node.setNodeContainer(parentContainer);
+                                        if (previousParentContainer==null || (previousParentContainer!=null && !previousParentContainer.equals(parentContainer))) {
+                                            if (session != null)
+                                                ((SProxNode) node).setNodeContainer(session, parentContainer);
+                                            else node.setNodeContainer(parentContainer);
 
-                                        if (previousParentContainer!=null) {
-                                            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-                                            ContainerJSON.oneContainer2JSONWithTypedProps(previousParentContainer, outStream);
-                                            String resultPcont = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                                            message.put(Node.JOIN_PREVIOUS_PCONTAINER, resultPcont);
-                                        }
+                                            if (previousParentContainer != null) {
+                                                ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                                                ContainerJSON.oneContainer2JSONWithTypedProps(previousParentContainer, outStream);
+                                                String resultPcont = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                                                message.put(Node.JOIN_PREVIOUS_PCONTAINER, resultPcont);
+                                            }
 
-                                        if (parentContainer!=null) {
-                                            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-                                            ContainerJSON.oneContainer2JSONWithTypedProps(parentContainer, outStream);
-                                            String resultPcont = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                                            message.put(Node.JOIN_CURRENT_PCONTAINER, resultPcont);
+                                            if (parentContainer != null) {
+                                                ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                                                ContainerJSON.oneContainer2JSONWithTypedProps(parentContainer, outStream);
+                                                String resultPcont = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                                                message.put(Node.JOIN_CURRENT_PCONTAINER, resultPcont);
+                                            }
                                         }
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);

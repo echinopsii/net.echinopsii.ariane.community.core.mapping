@@ -185,6 +185,9 @@ public class ContainerEp {
                     else deserializedContainer.setContainerPrimaryAdminGate(reqPrimaryAdminGate);
             }
 
+            reqContainerChildNodes.add(deserializedContainer.getContainerPrimaryAdminGate());
+            reqContainerChildGates.add(deserializedContainer.getContainerPrimaryAdminGate());
+
             if (reqContainerCluster != null)
                 if (mappingSession!=null) ((SProxContainer)deserializedContainer).setContainerCluster(mappingSession, reqContainerCluster);
                 else deserializedContainer.setContainerCluster(reqContainerCluster);
@@ -213,7 +216,7 @@ public class ContainerEp {
 
             if (jsonDeserializedContainer.getContainerNodesID() != null) {
                 List<Node> nodesToDelete = new ArrayList<>();
-                for (Node nodeToDel : deserializedContainer.getContainerNodes(0))
+                for (Node nodeToDel : deserializedContainer.getContainerNodes())
                     if (!reqContainerChildNodes.contains(nodeToDel))
                         nodesToDelete.add(nodeToDel);
                 for (Node nodeToDel : nodesToDelete)

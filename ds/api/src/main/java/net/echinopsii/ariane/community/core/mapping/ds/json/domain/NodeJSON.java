@@ -80,7 +80,8 @@ public class NodeJSON {
         jgenerator.writeStringField(Node.TOKEN_ND_ID, node.getNodeID());
         jgenerator.writeStringField(Node.TOKEN_ND_NAME, node.getNodeName());
         jgenerator.writeNumberField(Node.TOKEN_ND_DEPTH, node.getNodeDepth());
-        jgenerator.writeStringField(Node.TOKEN_ND_CONID, node.getNodeContainer().getContainerID());
+        if (node.getNodeContainer()!=null)
+            jgenerator.writeStringField(Node.TOKEN_ND_CONID, node.getNodeContainer().getContainerID());
         if (node.getNodeParentNode()!=null)
             jgenerator.writeStringField(Node.TOKEN_ND_PNDID, node.getNodeParentNode().getNodeID());
 
