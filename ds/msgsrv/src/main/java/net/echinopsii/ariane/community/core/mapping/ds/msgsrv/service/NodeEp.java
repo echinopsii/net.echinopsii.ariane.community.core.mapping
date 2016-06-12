@@ -331,7 +331,7 @@ public class NodeEp {
                                         }
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
-                                        message.put(MomMsgTranslator.MSG_ERR, "Not Found (" + operation + ") : parent container with provided id not found");
+                                        message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : parent container with provided id not found");
                                         return message;
                                     }
                                 } else if (operation.equals(Node.OP_SET_NODE_PARENT_NODE) && pn_id != null) {
@@ -359,7 +359,7 @@ public class NodeEp {
                                         }
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
-                                        message.put(MomMsgTranslator.MSG_ERR, "Not Found (" + operation + ") : parent node with provided id not found");
+                                        message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : parent node with provided id not found");
                                         return message;
                                     }
                                 } else if ((operation.equals(Node.OP_ADD_ENDPOINT) || operation.equals(Node.OP_REMOVE_ENDPOINT)) && ep_id != null) {
@@ -382,7 +382,7 @@ public class NodeEp {
                                         message.put(MappingDSGraphPropertyNames.DD_NODE_EDGE_ENDPT_KEY, resultEp);
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
-                                        message.put(MomMsgTranslator.MSG_ERR, "Not Found (" + operation + ") : endpoint with provided id not found");
+                                        message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : endpoint with provided id not found");
                                         return message;
                                     }
                                 } else if ((operation.equals(Node.OP_ADD_NODE_CHILD_NODE) || operation.equals(Node.OP_REMOVE_NODE_CHILD_NODE)) && cn_id != null) {
@@ -405,7 +405,7 @@ public class NodeEp {
                                         message.put(MappingDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY, resultCn);
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
-                                        message.put(MomMsgTranslator.MSG_ERR, "Not Found (" + operation + ") : child node with provided id not found");
+                                        message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : child node with provided id not found");
                                         return message;
                                     }
                                 } else if ((operation.equals(Node.OP_ADD_TWIN_NODE) || operation.equals(Node.OP_REMOVE_TWIN_NODE)) && tn_id != null) {
@@ -428,7 +428,7 @@ public class NodeEp {
                                         message.put(MappingDSGraphPropertyNames.DD_NODE_EDGE_TWIN_KEY, resultTn);
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
-                                        message.put(MomMsgTranslator.MSG_ERR, "Not Found (" + operation + ") : twin node with provided id not found");
+                                        message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : twin node with provided id not found");
                                         return message;
                                     }
                                 } else {
@@ -444,7 +444,7 @@ public class NodeEp {
                                 message.put(MomMsgTranslator.MSG_BODY, resultNode);
                             } else {
                                 message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
-                                message.put(MomMsgTranslator.MSG_ERR, "Not Found (" + operation + ") : node with provided id not found");
+                                message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : node with provided id not found");
                             }
                         } else {
                             message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);

@@ -93,7 +93,7 @@ public class GateEp {
                                 message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
                                 message.put(MomMsgTranslator.MSG_BODY, result);
                             } else {
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
+                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
                                 message.put(MomMsgTranslator.MSG_ERR, "Parent container not found with provided ID.");
                             }
                         } else {
@@ -192,13 +192,13 @@ public class GateEp {
                                     message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
                                     message.put(MomMsgTranslator.MSG_BODY, result);
                                 } else {
-                                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
-                                    message.put(MomMsgTranslator.MSG_ERR, "Gate not found.");
+                                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                    message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : endpoint not found with provided ID.");
                                     return message;
                                 }
                             } else {
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
-                                message.put(MomMsgTranslator.MSG_ERR, "Gate not found.");
+                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : Gate not found with provided ID.");
                                 return message;
                             }
                         } else {

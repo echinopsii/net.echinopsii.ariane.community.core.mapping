@@ -70,6 +70,7 @@ public class EndpointEp {
                     return message;
                 }
             }
+
             try {
                 switch (operation) {
                     case EndpointSce.OP_CREATE_ENDPOINT:
@@ -191,6 +192,13 @@ public class EndpointEp {
                                         return message;
                                     }
                                 }
+
+                                ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                                EndpointJSON.oneEndpoint2JSONWithTypedProps(endpoint, outStream);
+                                String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+
+                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                                message.put(MomMsgTranslator.MSG_BODY, result);
                             } else {
                                 message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
                                 message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : Endpoint not found.");
@@ -219,8 +227,7 @@ public class EndpointEp {
                                         node = MappingMsgsrvBootstrap.getMappingSce().getNodeSce().getNode(session, pn_id);
                                     else node = MappingMsgsrvBootstrap.getMappingSce().getNodeSce().getNode(pn_id);
                                     if (node != null) {
-                                        if (session != null)
-                                            ((SProxEndpoint) endpoint).setEndpointParentNode(session, node);
+                                        if (session != null) ((SProxEndpoint) endpoint).setEndpointParentNode(session, node);
                                         else endpoint.setEndpointParentNode(node);
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);

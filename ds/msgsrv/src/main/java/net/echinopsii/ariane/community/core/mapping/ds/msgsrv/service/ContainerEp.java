@@ -257,8 +257,8 @@ public class ContainerEp {
 
                                         message.put(MappingDSGraphPropertyNames.DD_CONTAINER_PAGATE_KEY, resultGate);
                                     } else {
-                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
-                                        message.put(MomMsgTranslator.MSG_ERR, "Not Found (" + operation + ") : gate with provided id not found");
+                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                        message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : gate with provided id not found");
                                         return message;
                                     }
                                 } else if (operation.equals(Container.OP_SET_CONTAINER_PARENT_CONTAINER) && pc_id!=null) {
@@ -286,8 +286,8 @@ public class ContainerEp {
                                             message.put(Container.JOIN_CURRENT_PCONTAINER, resultPcont);
                                         }
                                     } else {
-                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
-                                        message.put(MomMsgTranslator.MSG_ERR, "Not Found (" + operation + ") : parent container with provided id not found");
+                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                        message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : parent container with provided id not found");
                                         return message;
                                     }
                                 } else if (operation.equals(Container.OP_SET_CONTAINER_CLUSTER) && cl_id!=null) {
@@ -315,8 +315,8 @@ public class ContainerEp {
                                             message.put(Container.JOIN_CURRENT_CLUSTER, resultClu);
                                         }
                                     } else {
-                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
-                                        message.put(MomMsgTranslator.MSG_ERR, "Not Found (" + operation + ") : cluster with provided id not found");
+                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                        message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : cluster with provided id not found");
                                         return message;
                                     }
                                 } else if ((operation.equals(Container.OP_ADD_CONTAINER_CHILD_CONTAINER) || operation.equals(Container.OP_REMOVE_CONTAINER_CHILD_CONTAINER))
@@ -338,8 +338,8 @@ public class ContainerEp {
 
                                         message.put(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_CHILD_CONTAINER_KEY, resultCCo);
                                     } else {
-                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
-                                        message.put(MomMsgTranslator.MSG_ERR, "Not Found (" + operation + ") : child container with provided id not found");
+                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                        message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : child container with provided id not found");
                                         return message;
                                     }
                                 } else if ((operation.equals(Container.OP_ADD_CONTAINER_GATE) || operation.equals(Container.OP_REMOVE_CONTAINER_GATE))
@@ -361,8 +361,8 @@ public class ContainerEp {
 
                                         message.put(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_GATE_KEY, resultGate);
                                     } else {
-                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
-                                        message.put(MomMsgTranslator.MSG_ERR, "Not Found (" + operation + ") : gate with provided id not found");
+                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                        message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : gate with provided id not found");
                                         return message;
                                     }
                                 } else if ((operation.equals(Container.OP_ADD_CONTAINER_NODE) || operation.equals(Container.OP_REMOVE_CONTAINER_NODE))
@@ -384,8 +384,8 @@ public class ContainerEp {
 
                                         message.put(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_NODE_KEY, resultNode);
                                     } else {
-                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
-                                        message.put(MomMsgTranslator.MSG_ERR, "Not Found (" + operation + ") : node with provided id not found");
+                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                        message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : node with provided id not found");
                                         return message;
                                     }
                                 } else {
@@ -483,8 +483,8 @@ public class ContainerEp {
                                 message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
                                 message.put(MomMsgTranslator.MSG_BODY, result);
                             } else {
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
-                                message.put(MomMsgTranslator.MSG_ERR, "Not Found (" + operation + ") : container with provided id not found");
+                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : container with provided id not found");
                             }
                         } else {
                             message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
