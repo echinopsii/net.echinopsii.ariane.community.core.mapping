@@ -18,12 +18,14 @@
  */
 package net.echinopsii.ariane.community.core.mapping.ds.msgsrv.service;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxEndpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.EndpointJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.json.domain.NodeJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.MappingMsgsrvBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.momsp.MappingMsgsrvMomSP;
 import net.echinopsii.ariane.community.core.mapping.ds.service.EndpointSce;
@@ -223,12 +225,22 @@ public class EndpointEp {
                                     else endpoint.setEndpointURL(url);
                                 } else if (operation.equals(Endpoint.OP_SET_ENDPOINT_PARENT_NODE) && pn_id!=null) {
                                     Node node = null;
-                                    if (session != null)
-                                        node = MappingMsgsrvBootstrap.getMappingSce().getNodeSce().getNode(session, pn_id);
+                                    if (session != null) node = MappingMsgsrvBootstrap.getMappingSce().getNodeSce().getNode(session, pn_id);
                                     else node = MappingMsgsrvBootstrap.getMappingSce().getNodeSce().getNode(pn_id);
                                     if (node != null) {
+                                        Node previousParentNode = endpoint.getEndpointParentNode();
                                         if (session != null) ((SProxEndpoint) endpoint).setEndpointParentNode(session, node);
                                         else endpoint.setEndpointParentNode(node);
+                                        if (previousParentNode!=null) {
+                                            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                                            NodeJSON.oneNode2JSONWithTypedProps(previousParentNode, outStream);
+                                            String resultPnode = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                                            message.put(Endpoint.JOIN_PREVIOUS_PNODE, resultPnode);
+                                        }
+                                        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                                        NodeJSON.oneNode2JSONWithTypedProps(node, outStream);
+                                        String resultPnode = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                                        message.put(Endpoint.JOIN_CURRENT_PNODE, resultPnode);
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : Parent node not found.");
@@ -246,15 +258,14 @@ public class EndpointEp {
                                             if (session!=null) ((SProxEndpoint)twinEndpoint).removeTwinEndpoint(session, twinEndpoint);
                                             else endpoint.removeTwinEndpoint(twinEndpoint);
                                         }
-
                                         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-                                        EndpointJSON.oneEndpoint2JSONWithTypedProps(endpoint, outStream);
-                                        String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                                        message.put(MomMsgTranslator.MSG_BODY, result);
-                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                                        EndpointJSON.oneEndpoint2JSONWithTypedProps(twinEndpoint, outStream);
+                                        String resultEp = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                                        message.put(MappingDSGraphPropertyNames.DD_ENDPOINT_EDGE_TWIN_KEY, resultEp);
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : twin endpoint not found.");
+                                        return message;
                                     }
                                 } else {
                                     message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
@@ -270,7 +281,13 @@ public class EndpointEp {
                                             message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : twin endpoint id not provided.");
                                             break;
                                     }
+                                    return message;
                                 }
+                                ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                                EndpointJSON.oneEndpoint2JSONWithTypedProps(endpoint, outStream);
+                                String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                                message.put(MomMsgTranslator.MSG_BODY, result);
+                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
                             } else {
                                 message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
                                 message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : Endpoint not found.");

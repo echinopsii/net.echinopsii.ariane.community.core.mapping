@@ -25,6 +25,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
+import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesException;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
 //import org.slf4j.Logger;
@@ -49,11 +50,30 @@ public class TransportJSON {
         }
     }
 
+    private static void transportProps2JSONWithTypedProps(Transport transport, JsonGenerator jgenerator) throws IOException, PropertiesException {
+        HashMap<String, Object> props = transport.getTransportProperties();
+        if (props != null && props.size()!=0) {
+            jgenerator.writeArrayFieldStart(Transport.TOKEN_TP_PRP);
+            for (PropertiesJSON.TypedPropertyField field : PropertiesJSON.propertiesToTypedPropertiesList(props))
+                field.toJSON(jgenerator);
+            jgenerator.writeEndArray();
+        }
+    }
+
+
     public static void transport2JSON(Transport transport, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeStartObject();
         jgenerator.writeStringField(Transport.TOKEN_TP_ID, transport.getTransportID());
         jgenerator.writeStringField(Transport.TOKEN_TP_NAME, transport.getTransportName());
         transportProps2JSON(transport, jgenerator);
+        jgenerator.writeEndObject();
+    }
+
+    public static void transport2JSONWithTypedProps(Transport transport, JsonGenerator jgenerator) throws IOException, PropertiesException {
+        jgenerator.writeStartObject();
+        jgenerator.writeStringField(Transport.TOKEN_TP_ID, transport.getTransportID());
+        jgenerator.writeStringField(Transport.TOKEN_TP_NAME, transport.getTransportName());
+        transportProps2JSONWithTypedProps(transport, jgenerator);
         jgenerator.writeEndObject();
     }
 
@@ -63,11 +83,27 @@ public class TransportJSON {
         jgenerator.close();
     }
 
+    public static void oneTransport2JSONWithTypedProps(Transport transport, ByteArrayOutputStream outStream) throws IOException, PropertiesException {
+        JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
+        transport2JSONWithTypedProps(transport, jgenerator);
+        jgenerator.close();
+    }
+
     public static void manyTransports2JSON(HashSet<Transport> transports, ByteArrayOutputStream outStream) throws IOException {
         JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         jgenerator.writeStartObject();
         jgenerator.writeArrayFieldStart("transports");
         for (Transport current : transports) TransportJSON.transport2JSON(current, jgenerator);
+        jgenerator.writeEndArray();
+        jgenerator.writeEndObject();
+        jgenerator.close();
+    }
+
+    public static void manyTransports2JSONWithTypedProps(HashSet<Transport> transports, ByteArrayOutputStream outStream) throws IOException, PropertiesException {
+        JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
+        jgenerator.writeStartObject();
+        jgenerator.writeArrayFieldStart("transports");
+        for (Transport current : transports) TransportJSON.transport2JSONWithTypedProps(current, jgenerator);
         jgenerator.writeEndArray();
         jgenerator.writeEndObject();
         jgenerator.close();

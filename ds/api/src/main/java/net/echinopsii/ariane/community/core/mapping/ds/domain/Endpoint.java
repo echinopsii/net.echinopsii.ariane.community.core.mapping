@@ -38,6 +38,9 @@ public interface Endpoint {
 	String OP_ADD_TWIN_ENDPOINT = "addTwinEndpoint";
 	String OP_REMOVE_TWIN_ENDPOINT = "removeTwinEndpoint";
 
+	String JOIN_PREVIOUS_PNODE = MappingDSGraphPropertyNames.DD_ENDPOINT_PNODE_KEY+"Previous";
+	String JOIN_CURRENT_PNODE = MappingDSGraphPropertyNames.DD_ENDPOINT_PNODE_KEY+"Current";
+
 	String getEndpointID();
 	void   setEndpointID(String ID);
 	

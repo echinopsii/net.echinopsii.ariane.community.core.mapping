@@ -23,7 +23,9 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Link;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxLink;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
+import net.echinopsii.ariane.community.core.mapping.ds.json.domain.EndpointJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.LinkJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.json.domain.TransportJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.MappingMsgsrvBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.momsp.MappingMsgsrvMomSP;
 import net.echinopsii.ariane.community.core.mapping.ds.service.LinkSce;
@@ -149,8 +151,19 @@ public class LinkEp {
                                     if (session!=null) sourceEndpoint = MappingMsgsrvBootstrap.getMappingSce().getEndpointSce().getEndpoint(session, sep_id);
                                     else sourceEndpoint = MappingMsgsrvBootstrap.getMappingSce().getEndpointSce().getEndpoint(sep_id);
                                     if (sourceEndpoint!=null) {
+                                        Endpoint previousSourceEndpoint = link.getLinkEndpointSource();
                                         if (session!=null) ((SProxLink)link).setLinkEndpointSource(session, sourceEndpoint);
                                         else link.setLinkEndpointSource(sourceEndpoint);
+                                        if (previousSourceEndpoint!=null) {
+                                            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                                            EndpointJSON.oneEndpoint2JSONWithTypedProps(previousSourceEndpoint, outStream);
+                                            String resultPep = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                                            message.put(Link.JOIN_PREVIOUS_SEP, resultPep);
+                                        }
+                                        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                                        EndpointJSON.oneEndpoint2JSONWithTypedProps(sourceEndpoint, outStream);
+                                        String resultCep = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                                        message.put(Link.JOIN_CURRENT_SEP, resultCep);
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : source endpoint not found with provided ID.");
@@ -160,8 +173,19 @@ public class LinkEp {
                                     if (session!=null) targetEndpoint = MappingMsgsrvBootstrap.getMappingSce().getEndpointSce().getEndpoint(session, t_id);
                                     else targetEndpoint = MappingMsgsrvBootstrap.getMappingSce().getEndpointSce().getEndpoint(t_id);
                                     if (targetEndpoint!=null) {
+                                        Endpoint previousTargetEndpoint = link.getLinkEndpointTarget();
                                         if (session!=null) ((SProxLink)link).setLinkEndpointTarget(session, targetEndpoint);
                                         else link.setLinkEndpointTarget(targetEndpoint);
+                                        if (previousTargetEndpoint!=null) {
+                                            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                                            EndpointJSON.oneEndpoint2JSONWithTypedProps(previousTargetEndpoint, outStream);
+                                            String resultPep = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                                            message.put(Link.JOIN_PREVIOUS_TEP, resultPep);
+                                        }
+                                        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                                        EndpointJSON.oneEndpoint2JSONWithTypedProps(sourceEndpoint, outStream);
+                                        String resultCep = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                                        message.put(Link.JOIN_CURRENT_TEP, resultCep);
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : target endpoint not found with provided ID.");
@@ -171,8 +195,20 @@ public class LinkEp {
                                     if (session!=null) transport = MappingMsgsrvBootstrap.getMappingSce().getTransportSce().getTransport(session, t_id);
                                     else transport = MappingMsgsrvBootstrap.getMappingSce().getTransportSce().getTransport(t_id);
                                     if (transport!=null) {
+                                        Transport previousTransport = link.getLinkTransport();
                                         if (session!=null) ((SProxLink)link).setLinkTransport(transport);
                                         else link.setLinkTransport(transport);
+                                        if (previousTransport!=null) {
+                                            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                                            TransportJSON.oneTransport2JSONWithTypedProps(previousTransport, outStream);
+                                            String resultPtransport = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                                            message.put(Link.JOIN_PREVIOUS_TEP, resultPtransport);
+                                        }
+                                        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                                        EndpointJSON.oneEndpoint2JSONWithTypedProps(sourceEndpoint, outStream);
+                                        String resultPnode = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                                        message.put(Link.JOIN_CURRENT_TEP, resultPnode);
+
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : transport not found with provided ID.");

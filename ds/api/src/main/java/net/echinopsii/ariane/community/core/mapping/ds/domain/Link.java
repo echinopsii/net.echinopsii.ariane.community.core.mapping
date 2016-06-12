@@ -33,6 +33,13 @@ public interface Link {
 	String OP_SET_LINK_ENDPOINT_SOURCE = "setLinkEndpointSource";
 	String OP_SET_LINK_ENDPOINT_TARGET = "setLinkEndpointTarget";
 
+	String JOIN_PREVIOUS_SEP = MappingDSGraphPropertyNames.DD_LINK_SOURCE_EP_KEY+"Previous";
+	String JOIN_CURRENT_SEP = MappingDSGraphPropertyNames.DD_LINK_SOURCE_EP_KEY+"Current";
+	String JOIN_PREVIOUS_TEP = MappingDSGraphPropertyNames.DD_LINK_TARGET_EP_KEY+"Previous";
+	String JOIN_CURRENT_TEP = MappingDSGraphPropertyNames.DD_LINK_TARGET_EP_KEY+"Current";
+	String JOIN_PREVIOUS_TRP = MappingDSGraphPropertyNames.DD_LINK_TRANSPORT_KEY+"Previous";
+	String JOIN_CURRENT_TRP = MappingDSGraphPropertyNames.DD_LINK_TRANSPORT_KEY+"Current";
+
 	String getLinkID();
 	void   setLinkID(String ID);
 
