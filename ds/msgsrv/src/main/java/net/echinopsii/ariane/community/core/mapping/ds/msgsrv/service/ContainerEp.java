@@ -196,6 +196,9 @@ public class ContainerEp {
 
                             message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
                             message.put(MomMsgTranslator.MSG_BODY, result);
+                        } else {
+                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
+                            message.put(MomMsgTranslator.MSG_ERR, "Containers not found.");
                         }
                         break;
                     case Container.OP_SET_CONTAINER_NAME:

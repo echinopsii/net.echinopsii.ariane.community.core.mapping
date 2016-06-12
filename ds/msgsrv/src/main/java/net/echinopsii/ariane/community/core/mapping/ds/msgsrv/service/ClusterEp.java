@@ -144,6 +144,9 @@ public class ClusterEp {
 
                             message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
                             message.put(MomMsgTranslator.MSG_BODY, result);
+                        } else {
+                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
+                            message.put(MomMsgTranslator.MSG_ERR, "Clusters not found.");
                         }
                         break;
                     case Cluster.OP_SET_CLUSTER_NAME:

@@ -150,6 +150,9 @@ public class GateEp {
 
                             message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
                             message.put(MomMsgTranslator.MSG_BODY, result);
+                        } else {
+                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
+                            message.put(MomMsgTranslator.MSG_ERR, "Gates not found.");
                         }
                         break;
                     case Gate.OP_SET_NODE_PRIMARY_ADMIN_ENDPOINT:
