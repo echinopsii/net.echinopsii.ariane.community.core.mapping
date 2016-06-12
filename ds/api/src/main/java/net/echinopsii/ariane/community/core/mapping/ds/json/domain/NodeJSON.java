@@ -66,7 +66,6 @@ public class NodeJSON {
         jgenerator.writeStartObject();
         jgenerator.writeStringField(Node.TOKEN_ND_ID, node.getNodeID());
         jgenerator.writeStringField(Node.TOKEN_ND_NAME, node.getNodeName());
-        jgenerator.writeNumberField(Node.TOKEN_ND_DEPTH, node.getNodeDepth());
         jgenerator.writeStringField(Node.TOKEN_ND_CONID, node.getNodeContainer().getContainerID());
         if (node.getNodeParentNode()!=null)
             jgenerator.writeStringField(Node.TOKEN_ND_PNDID, node.getNodeParentNode().getNodeID());
@@ -79,7 +78,6 @@ public class NodeJSON {
     public static void commonNode2JSON(Node node, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeStringField(Node.TOKEN_ND_ID, node.getNodeID());
         jgenerator.writeStringField(Node.TOKEN_ND_NAME, node.getNodeName());
-        jgenerator.writeNumberField(Node.TOKEN_ND_DEPTH, node.getNodeDepth());
         if (node.getNodeContainer()!=null)
             jgenerator.writeStringField(Node.TOKEN_ND_CONID, node.getNodeContainer().getContainerID());
         if (node.getNodeParentNode()!=null)
@@ -156,7 +154,6 @@ public class NodeJSON {
     public static class JSONDeserializedNode {
         private String nodeID;
         private String nodeName;
-        private long nodeDepth;
         private String nodeContainerID;
         private String nodeParentNodeID;
         private List<String> nodeChildNodesID;
@@ -178,14 +175,6 @@ public class NodeJSON {
 
         public void setNodeName(String nodeName) {
             this.nodeName = nodeName;
-        }
-
-        public long getNodeDepth() {
-            return nodeDepth;
-        }
-
-        public void setNodeDepth(long nodeDepth) {
-            this.nodeDepth = nodeDepth;
         }
 
         public String getNodeContainerID() {

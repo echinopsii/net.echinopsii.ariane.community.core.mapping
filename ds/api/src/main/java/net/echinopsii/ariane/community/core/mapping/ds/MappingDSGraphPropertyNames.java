@@ -53,7 +53,6 @@ public final class MappingDSGraphPropertyNames {
 
     public static final String DD_TYPE_NODE_VALUE = "node";
     public static final String DD_NODE_NAME_KEY = "nodeName";
-    public static final String DD_NODE_DEPTH_KEY = "nodeDepth";
     public static final String DD_NODE_PROPS_KEY = "nodeProperties";
     public static final String DD_NODE_CONT_KEY = "nodeContainer";
     public static final String DD_NODE_PNODE_KEY = "nodeParentNode";

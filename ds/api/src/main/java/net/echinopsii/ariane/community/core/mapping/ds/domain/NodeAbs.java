@@ -28,7 +28,6 @@ import java.util.Set;
 public abstract class NodeAbs implements Node {
     private String nodeID = null;
     private String nodeName = null;
-    private long nodeDepth = 0;
     private Container nodeContainer = null;
     private HashMap<String, Object> nodeProperties = new HashMap<>();
     private Node nodeParentNode = null;
@@ -54,15 +53,6 @@ public abstract class NodeAbs implements Node {
     @Override
     public void setNodeName(String name) throws MappingDSException {
         this.nodeName = name;
-    }
-
-    @Override
-    public long getNodeDepth() {
-        return this.nodeDepth;
-    }
-
-    public void setNodeDepth(long depth) {
-        this.nodeDepth = depth;
     }
 
     @Override

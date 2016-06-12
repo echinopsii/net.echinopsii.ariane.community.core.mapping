@@ -67,7 +67,7 @@ public class NodeRepoImpl implements NodeRepo<NodeImpl> {
 
         if (node.getNodeParentNode() != null) node.getNodeParentNode().removeNodeChildNode(node);
 
-        if (node.getNodeDepth() == 0) node.getNodeContainer().removeContainerNode(node);
+        if (node.getNodeParentNode()==null) node.getNodeContainer().removeContainerNode(node);
 
         MappingDSGraphDB.deleteEntity(node);
         log.debug("Deleted node {} and all its linked entities from graph.", new Object[]{node.toString()});

@@ -28,7 +28,6 @@ import java.util.Set;
 public interface Node {
 	String TOKEN_ND_ID = MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE+"ID";
 	String TOKEN_ND_NAME = MappingDSGraphPropertyNames.DD_NODE_NAME_KEY;
-	String TOKEN_ND_DEPTH = MappingDSGraphPropertyNames.DD_NODE_DEPTH_KEY;
 	String TOKEN_ND_CONID = MappingDSGraphPropertyNames.DD_NODE_CONT_KEY+"ID";
 	String TOKEN_ND_PNDID = MappingDSGraphPropertyNames.DD_NODE_PNODE_KEY+"ID";
 	String TOKEN_ND_CNDID = MappingDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY+"sID";
@@ -64,8 +63,6 @@ public interface Node {
 	
 	Container getNodeContainer();
 	void      setNodeContainer(Container container) throws MappingDSException;
-	
-	long getNodeDepth();
 	
 	HashMap<String, Object> getNodeProperties();
 	void addNodeProperty(String propertyKey, Object value) throws MappingDSException;

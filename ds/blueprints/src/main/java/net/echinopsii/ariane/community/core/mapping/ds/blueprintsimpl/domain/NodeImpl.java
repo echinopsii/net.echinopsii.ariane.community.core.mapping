@@ -75,7 +75,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode, MappingDSBluepr
                     Container previousParentContainer = super.getNodeContainer();
                     super.setNodeContainer(container);
                     if (previousParentContainer!=null) previousParentContainer.removeContainerNode(this);
-                    if (!container.getContainerNodes().contains(this) && super.getNodeDepth()==1) container.addContainerNode(this);
+                    if (!container.getContainerNodes().contains(this) && super.getNodeParentNode()==null) container.addContainerNode(this);
                     synchronizeContainerToDB();
                 } else if (container == null) {
                     if(super.getNodeContainer()!=null) super.getNodeContainer().removeContainerNode(this);
@@ -144,19 +144,14 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode, MappingDSBluepr
         } else {
             if (super.getNodeParentNode() == null || !super.getNodeParentNode().equals(node)) {
                 if (node instanceof NodeImpl || node ==null) {
+                    Node previousParentNode = super.getNodeParentNode();
                     super.setNodeParentNode(node);
                     if (node != null) {
-                        if ((super.getNodeDepth()==1) && super.getNodeContainer()!=null)
+                        if (previousParentNode!=null && super.getNodeContainer()!=null)
                             super.getNodeContainer().removeContainerNode(this);
                         if (!node.getNodeChildNodes().contains(this)) node.addNodeChildNode(this);
-                        super.setNodeDepth(1 + node.getNodeDepth());
-                    } else {
-                        super.setNodeDepth(1);
-                        if (super.getNodeContainer()!=null) super.getNodeContainer().addContainerNode(this);
-
-                    }
+                    } else if (super.getNodeContainer()!=null) super.getNodeContainer().addContainerNode(this);
                     synchronizeParentNodeToDB();
-                    synchronizeDepthToDB();
                 }
             }
         }
@@ -323,7 +318,6 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode, MappingDSBluepr
     }
 
     public void synchronizeToDB() throws MappingDSException {
-        synchronizeDepthToDB();
         synchronizeNameToDB();
         synchronizePropertiesToDB();
         synchronizeContainerToDB();
@@ -331,14 +325,6 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode, MappingDSBluepr
         synchronizeChildNodesToDB();
         synchronizeTwinNodesToDB();
         synchronizeEndpointsToDB();
-    }
-
-    private void synchronizeDepthToDB() {
-        if (this.nodeVertex != null) {
-            log.debug("Synchronize node depth {} to db...", new Object[]{super.getNodeDepth()});
-            nodeVertex.setProperty(MappingDSGraphPropertyNames.DD_NODE_DEPTH_KEY, super.getNodeDepth());
-            MappingDSGraphDB.autocommit();
-        }
     }
 
     private void synchronizeNameToDB() {
@@ -464,7 +450,6 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode, MappingDSBluepr
         if (!isBeingSyncFromDB) {
             isBeingSyncFromDB = true;
             synchronizeIDFromDB();
-            synchronizeDepthFromDB();
             synchronizeNameFromDB();
             synchronizePropertiesFromDB();
             synchronizeContainerFromDB();
@@ -479,12 +464,6 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode, MappingDSBluepr
     private void synchronizeIDFromDB() {
         if (this.nodeVertex != null) {
             super.setNodeID((String) this.nodeVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
-        }
-    }
-
-    private void synchronizeDepthFromDB() {
-        if (this.nodeVertex != null) {
-            super.setNodeDepth((Long) nodeVertex.getProperty(MappingDSGraphPropertyNames.DD_NODE_DEPTH_KEY));
         }
     }
 

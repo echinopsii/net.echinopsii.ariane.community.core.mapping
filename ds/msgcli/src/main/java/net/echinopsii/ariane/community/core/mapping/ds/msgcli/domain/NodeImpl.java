@@ -139,7 +139,6 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
 
     public void synchronizeFromJSON(NodeJSON.JSONDeserializedNode jsonDeserializedNode) throws MappingDSException {
         super.setNodeID(jsonDeserializedNode.getNodeID());
-        super.setNodeDepth(jsonDeserializedNode.getNodeDepth());
         super.setNodeName(jsonDeserializedNode.getNodeName());
         super.getNodeProperties().clear();
         if (jsonDeserializedNode.getNodeProperties()!=null)
