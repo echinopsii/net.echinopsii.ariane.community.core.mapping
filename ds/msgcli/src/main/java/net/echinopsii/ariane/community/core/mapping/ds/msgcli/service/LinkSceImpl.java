@@ -42,9 +42,13 @@ public class LinkSceImpl extends SProxLinkSceAbs<LinkImpl>{
 
     }
 
+    public static Link internalGetLink(String id) throws MappingDSException {
+        return null;
+    }
+
     @Override
     public Link getLink(String id) throws MappingDSException {
-        return null;
+        return internalGetLink(id);
     }
 
     @Override

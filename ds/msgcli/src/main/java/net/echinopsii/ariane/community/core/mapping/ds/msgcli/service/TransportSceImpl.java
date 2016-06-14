@@ -42,9 +42,13 @@ public class TransportSceImpl extends SProxTransportSceAbs<TransportImpl> {
 
     }
 
+    public static Transport internalGetTransport(String transportID) throws MappingDSException {
+        return null;
+    }
+
     @Override
     public Transport getTransport(String transportID) throws MappingDSException {
-        return null;
+        return internalGetTransport(transportID);
     }
 
     @Override

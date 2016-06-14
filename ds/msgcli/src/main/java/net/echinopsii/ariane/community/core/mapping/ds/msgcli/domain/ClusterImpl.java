@@ -71,7 +71,7 @@ public class ClusterImpl extends SProxClusterAbs {
                 } else {
                     switch (rc) {
                         case MappingSce.MAPPING_SCE_RET_NOT_FOUND:
-                            ClusterImpl.log.warn("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
+                            ClusterImpl.log.debug("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
                             break;
                         default:
                             ClusterImpl.log.error("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
@@ -108,10 +108,10 @@ public class ClusterImpl extends SProxClusterAbs {
     @Override
     public void setClusterName(String name) throws MappingDSException {
         if (super.getClusterID()!=null) {
-            String clientThreadName = Thread.currentThread().getName();
-            String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
-
             if (super.getClusterName()!=null && !super.getClusterName().equals(name)) {
+                String clientThreadName = Thread.currentThread().getName();
+                String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+
                 Map<String, Object> message = new HashMap<>();
                 message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_SET_CLUSTER_NAME);
                 message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getClusterID());
@@ -120,17 +120,18 @@ public class ClusterImpl extends SProxClusterAbs {
                 Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ClusterSce.Q_MAPPING_CLUSTER_SERVICE, clusterReplyWorker);
                 if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.setClusterName(name);
                 else throw new MappingDSException("Ariane server raised an error... Check your logs !");
-            }// else if (super.getClusterName() == null) super.setClusterName(name);
+            }
         } else throw new MappingDSException("This cluster is not initialized !");
     }
 
     @Override
     public boolean addClusterContainer(Container container) throws MappingDSException {
         if (super.getClusterID()!=null) {
-            String clientThreadName = Thread.currentThread().getName();
-            String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
             if (container.getContainerID()!=null) {
                 if (!this.clusterContainersID.contains(container.getContainerID())) {
+                    String clientThreadName = Thread.currentThread().getName();
+                    String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+
                     Map<String, Object> message = new HashMap<>();
                     message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_ADD_CLUSTER_CONTAINER);
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getClusterID());
@@ -159,10 +160,11 @@ public class ClusterImpl extends SProxClusterAbs {
     @Override
     public boolean removeClusterContainer(Container container) throws MappingDSException {
         if (super.getClusterID()!=null) {
-            String clientThreadName = Thread.currentThread().getName();
-            String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
             if (container.getContainerID()!=null) {
                 if (this.clusterContainersID.contains(container.getContainerID())) {
+                    String clientThreadName = Thread.currentThread().getName();
+                    String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+
                     Map<String, Object> message = new HashMap<>();
                     message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_REMOVE_CLUSTER_CONTAINER);
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getClusterID());
@@ -205,5 +207,4 @@ public class ClusterImpl extends SProxClusterAbs {
             }
         return super.getClusterContainers();
     }
-
 }

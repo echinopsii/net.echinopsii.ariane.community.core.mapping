@@ -21,19 +21,30 @@
 package net.echinopsii.ariane.community.core.mapping.ds.msgcli.domain;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
+import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxEndpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxEndpointAbs;
+import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.EndpointJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.json.domain.NodeJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.msgcli.momsp.MappingMsgcliMomSP;
+import net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.EndpointSceImpl;
+import net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.NodeSceImpl;
+import net.echinopsii.ariane.community.core.mapping.ds.service.EndpointSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.NodeSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxEndpointSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.io.IOException;
+import java.util.*;
 
 public class EndpointImpl extends SProxEndpointAbs implements SProxEndpoint {
 
@@ -55,9 +66,23 @@ public class EndpointImpl extends SProxEndpointAbs implements SProxEndpoint {
                     else if (message.get(MomMsgTranslator.MSG_BODY) != null && message.get(MomMsgTranslator.MSG_BODY) instanceof byte[])
                         body = new String((byte[]) message.get(MomMsgTranslator.MSG_BODY));
                     if (body != null) {
-                        //TODO
+                        try {
+                            EndpointJSON.JSONDeserializedEndpoint jsonDeserializedEndpoint = EndpointJSON.JSON2Endpoint(body);
+                            if (endpoint.getEndpointID() == null || endpoint.getEndpointID().equals(jsonDeserializedEndpoint.getEndpointID()))
+                                endpoint.synchronizeFromJSON(jsonDeserializedEndpoint);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
-                } else EndpointImpl.log.error("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
+                } else
+                    switch (rc) {
+                    case MappingSce.MAPPING_SCE_RET_NOT_FOUND:
+                        EndpointImpl.log.debug("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
+                        break;
+                    default:
+                        EndpointImpl.log.error("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
+                        break;
+                }
             }
             return message;
         }
@@ -90,46 +115,238 @@ public class EndpointImpl extends SProxEndpointAbs implements SProxEndpoint {
     }
 
     public void synchronizeFromJSON(EndpointJSON.JSONDeserializedEndpoint jsonDeserializedEndpoint) throws MappingDSException {
-
+        super.setEndpointID(jsonDeserializedEndpoint.getEndpointID());
+        super.setEndpointURL(jsonDeserializedEndpoint.getEndpointURL());
+        if (jsonDeserializedEndpoint.getEndpointProperties()!=null)
+            for (PropertiesJSON.TypedPropertyField typedPropertyField : jsonDeserializedEndpoint.getEndpointProperties())
+                try {
+                    super.addEndpointProperty(typedPropertyField.getPropertyName(), PropertiesJSON.getValueFromTypedPropertyField(typedPropertyField));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    throw new MappingDSException("Error with property " + typedPropertyField.getPropertyName() + " deserialization : " + e.getMessage());
+                }
+        this.setParentNodeID(jsonDeserializedEndpoint.getEndpointParentNodeID());
+        this.setTwinEndpointsID(jsonDeserializedEndpoint.getEndpointTwinEndpointsID());
     }
 
     @Override
     public void setEndpointURL(String url) throws MappingDSException {
-
+        if (super.getEndpointID()!=null) {
+            if ((super.getEndpointURL()!=null && !super.getEndpointURL().equals(url)) ||
+                (super.getEndpointURL() == null && url != null)) {
+                String clientThreadName = Thread.currentThread().getName();
+                String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+                Map<String, Object> message = new HashMap<>();
+                message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_SET_ENDPOINT_URL);
+                message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getEndpointID());
+                message.put(SProxEndpointSce.PARAM_ENDPOINT_URL, url);
+                if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+                Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, EndpointSce.Q_MAPPING_ENDPOINT_SERVICE, endpointReplyWorker);
+                if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.setEndpointURL(url);
+                else throw new MappingDSException("Ariane server raised an error... Check your logs !");
+            }
+        } else throw new MappingDSException("This endpoint is not initialized !");
     }
 
     @Override
     public Node getEndpointParentNode() {
+        try {
+            Endpoint update = EndpointSceImpl.internalGetEndpoint(super.getEndpointID());
+            this.setParentNodeID(((EndpointImpl) update).getParentNodeID());
+        } catch (MappingDSException e) {
+            e.printStackTrace();
+        }
+
+        if (parentNodeID!=null && (super.getEndpointParentNode()==null || !super.getEndpointParentNode().getNodeID().equals(parentNodeID))) {
+            try {
+                super.setEndpointParentNode(NodeSceImpl.internalGetNode(parentNodeID));
+            } catch (MappingDSException e) {
+                e.printStackTrace();
+            }
+        }
         return super.getEndpointParentNode();
     }
 
     @Override
     public void setEndpointParentNode(Node node) throws MappingDSException {
-
+        if (super.getEndpointID()!=null) {
+            if (node!=null && node.getNodeID()!=null) {
+                if ((super.getEndpointParentNode()!=null && !super.getEndpointParentNode().equals(node)) ||
+                    (parentNodeID!=null && !parentNodeID.equals(node.getNodeID()))) {
+                    String clientThreadName = Thread.currentThread().getName();
+                    String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+                    Map<String, Object> message = new HashMap<>();
+                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_SET_ENDPOINT_URL);
+                    message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getEndpointID());
+                    message.put(NodeSce.PARAM_NODE_PNID, node.getNodeID());
+                    if (clientThreadSessionID != null)
+                        message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, EndpointSce.Q_MAPPING_ENDPOINT_SERVICE, endpointReplyWorker);
+                    if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
+                        Node previousParentNode = super.getEndpointParentNode();
+                        if (previousParentNode != null) {
+                            try {
+                                if (retMsg.containsKey(Endpoint.JOIN_PREVIOUS_PNODE)) {
+                                    NodeJSON.JSONDeserializedNode jsonDeserializedNode = NodeJSON.JSON2Node(
+                                            (String) retMsg.get(Endpoint.JOIN_PREVIOUS_PNODE)
+                                    );
+                                    ((NodeImpl) previousParentNode).synchronizeFromJSON(jsonDeserializedNode);
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        super.setEndpointParentNode(node);
+                        parentNodeID = node.getNodeID();
+                        try {
+                            if (retMsg.containsKey(Endpoint.JOIN_CURRENT_PNODE)) {
+                                NodeJSON.JSONDeserializedNode jsonDeserializedEndpoint = NodeJSON.JSON2Node(
+                                        (String) retMsg.get(Endpoint.JOIN_CURRENT_PNODE)
+                                );
+                                ((NodeImpl) node).synchronizeFromJSON(jsonDeserializedEndpoint);
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else throw new MappingDSException("Ariane server raised an error... Check your logs !");
+                }
+            } else throw new MappingDSException("Provided node is null or not initialized !");
+        } else throw new MappingDSException("This endpoint is not initialized !");
     }
 
     @Override
     public void addEndpointProperty(String propertyKey, Object value) throws MappingDSException {
+        if (super.getEndpointID()!=null) {
+            String clientThreadName = Thread.currentThread().getName();
+            String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
+            Map<String, Object> message = new HashMap<>();
+            message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_ADD_ENDPOINT_PROPERTY);
+            message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getEndpointID());
+            try {
+                message.put(MappingSce.GLOBAL_PARAM_PROP_FIELD, PropertiesJSON.propertyFieldToTypedPropertyField(propertyKey, value).toJSONString());
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new MappingDSException(e.getMessage());
+            }
+            if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+            Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, EndpointSce.Q_MAPPING_ENDPOINT_SERVICE, endpointReplyWorker);
+            if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
+                super.addEndpointProperty(propertyKey, value);
+            }
+        } else throw new MappingDSException("This endpoint is not initialized !");
     }
 
     @Override
     public void removeEndpointProperty(String propertyKey) throws MappingDSException {
+        if (super.getEndpointID()!=null) {
+            String clientThreadName = Thread.currentThread().getName();
+            String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
+            Map<String, Object> message = new HashMap<>();
+            message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_REMOVE_ENDPOINT_PROPERTY);
+            message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getEndpointID());
+            message.put(MappingSce.GLOBAL_PARAM_PROP_NAME, propertyKey);
+            if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+            Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, EndpointSce.Q_MAPPING_ENDPOINT_SERVICE, endpointReplyWorker);
+            if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.removeEndpointProperty(propertyKey);
+        } else throw new MappingDSException("This endpoint is not initialized !");
     }
 
     @Override
     public Set<Endpoint> getTwinEndpoints() {
+        try {
+            Endpoint update = EndpointSceImpl.internalGetEndpoint(super.getEndpointID());
+            this.setTwinEndpointsID(((EndpointImpl) update).getTwinEndpointsID());
+        } catch (MappingDSException e) {
+            e.printStackTrace();
+        }
+
+        for (Endpoint ep : new ArrayList<>(super.getTwinEndpoints()))
+            if (!twinEndpointsID.contains(ep.getEndpointID()))
+                super.getTwinEndpoints().remove(ep);
+
+        for (String epID : twinEndpointsID)
+            try {
+                boolean toAdd = true;
+                for (Endpoint ep : super.getTwinEndpoints())
+                    if (ep.getEndpointID().equals(epID)) toAdd = false;
+                if (toAdd) super.getTwinEndpoints().add(EndpointSceImpl.internalGetEndpoint(epID));
+            } catch (MappingDSException e) {
+                e.printStackTrace();
+            }
         return super.getTwinEndpoints();
     }
 
     @Override
     public boolean addTwinEndpoint(Endpoint endpoint) throws MappingDSException {
-        return false;
+        if (super.getEndpointID()!=null) {
+            if (endpoint!=null && endpoint.getEndpointID()!=null) {
+                if ((super.getTwinEndpoints()!=null && !super.getTwinEndpoints().contains(endpoint)) ||
+                    (twinEndpointsID!=null && !twinEndpointsID.contains(endpoint.getEndpointID()))) {
+                    String clientThreadName = Thread.currentThread().getName();
+                    String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+
+                    Map<String, Object> message = new HashMap<>();
+                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_ADD_TWIN_ENDPOINT);
+                    message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getEndpointID());
+                    message.put(EndpointSce.PARAM_ENDPOINT_TEID, endpoint.getEndpointID());
+                    if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, EndpointSce.Q_MAPPING_ENDPOINT_SERVICE, endpointReplyWorker);
+                    if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
+                        super.addTwinEndpoint(endpoint);
+                        twinEndpointsID.add(endpoint.getEndpointID());
+                        try {
+                            if (retMsg.containsKey(MappingDSGraphPropertyNames.DD_NODE_EDGE_TWIN_KEY)) {
+                                EndpointJSON.JSONDeserializedEndpoint jsonDeserializedEndpoint = EndpointJSON.JSON2Endpoint(
+                                        (String) retMsg.get(MappingDSGraphPropertyNames.DD_NODE_EDGE_TWIN_KEY)
+                                );
+                                ((EndpointImpl) endpoint).synchronizeFromJSON(jsonDeserializedEndpoint);
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            return false;
+                        }
+                    } else return false;
+                    return true;
+                } else return false;
+            } else throw new MappingDSException("Provided twin endpoint is null or not initialized !");
+        } else throw new MappingDSException("This endpoint is not initialized !");
     }
 
     @Override
     public boolean removeTwinEndpoint(Endpoint endpoint) throws MappingDSException {
-        return false;
+        if (super.getEndpointID()!=null) {
+            if (endpoint!=null && endpoint.getEndpointID()!=null) {
+                if ((super.getTwinEndpoints()!=null && super.getTwinEndpoints().contains(endpoint)) ||
+                    (twinEndpointsID!=null && twinEndpointsID.contains(endpoint.getEndpointID()))) {
+                    String clientThreadName = Thread.currentThread().getName();
+                    String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+
+                    Map<String, Object> message = new HashMap<>();
+                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_REMOVE_TWIN_ENDPOINT);
+                    message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getEndpointID());
+                    message.put(EndpointSce.PARAM_ENDPOINT_TEID, endpoint.getEndpointID());
+                    if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, EndpointSce.Q_MAPPING_ENDPOINT_SERVICE, endpointReplyWorker);
+                    if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
+                        super.removeTwinEndpoint(endpoint);
+                        twinEndpointsID.remove(endpoint.getEndpointID());
+                        try {
+                            if (retMsg.containsKey(MappingDSGraphPropertyNames.DD_NODE_EDGE_TWIN_KEY)) {
+                                EndpointJSON.JSONDeserializedEndpoint jsonDeserializedEndpoint = EndpointJSON.JSON2Endpoint(
+                                        (String) retMsg.get(MappingDSGraphPropertyNames.DD_NODE_EDGE_TWIN_KEY)
+                                );
+                                ((EndpointImpl) endpoint).synchronizeFromJSON(jsonDeserializedEndpoint);
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            return false;
+                        }
+                    } else return false;
+                    return true;
+                } else return false;
+            } else throw new MappingDSException("Provided twin endpoint is null or not initialized !");
+        } else throw new MappingDSException("This endpoint is not initialized !");
     }
 }

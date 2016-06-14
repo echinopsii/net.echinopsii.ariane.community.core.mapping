@@ -81,7 +81,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                 } else {
                     switch (rc) {
                         case MappingSce.MAPPING_SCE_RET_NOT_FOUND:
-                            ContainerImpl.log.warn("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
+                            ContainerImpl.log.debug("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
                             break;
                         default:
                             ContainerImpl.log.error("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
@@ -383,8 +383,8 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                 e.printStackTrace();
                 throw new MappingDSException(e.getMessage());
             }
-            Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
             if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+            Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
             if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.addContainerProperty(propertyKey, value);
             else throw new MappingDSException("Ariane server raised an error... Check your logs !");
         } else throw new MappingDSException("This container is not initialized !");
@@ -400,8 +400,8 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
             message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_REMOVE_CONTAINER_PROPERTY);
             message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getContainerID());
             message.put(MappingSce.GLOBAL_PARAM_PROP_NAME, propertyKey);
-            Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
             if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+            Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
             if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.removeContainerProperty(propertyKey);
         } else throw new MappingDSException("This container is not initialized !");
     }
@@ -444,8 +444,8 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                     message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_SET_CONTAINER_PARENT_CONTAINER);
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getContainerID());
                     message.put(SProxContainerSce.PARAM_CONTAINER_PCO_ID, (container != null) ? container.getContainerID() : MappingSce.GLOBAL_PARAM_OBJ_NONE);
-                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
                     if (clientThreadSessionID != null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
                         Container previousParentContainer = super.getContainerParentContainer();
                         if (previousParentContainer!=null) {
@@ -518,8 +518,8 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                     message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_ADD_CONTAINER_CHILD_CONTAINER);
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getContainerID());
                     message.put(SProxContainerSce.PARAM_CONTAINER_CCO_ID, container.getContainerID());
-                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
                     if (clientThreadSessionID != null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
                         super.addContainerChildContainer(container);
                         childContainersID.add(container.getContainerID());
@@ -553,8 +553,8 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                     message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_REMOVE_CONTAINER_CHILD_CONTAINER);
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getContainerID());
                     message.put(SProxContainerSce.PARAM_CONTAINER_CCO_ID, container.getContainerID());
-                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
                     if (clientThreadSessionID != null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
                         super.removeContainerChildContainer(container);
                         childContainersID.remove(container.getContainerID());
@@ -612,8 +612,8 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                     message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_ADD_CONTAINER_NODE);
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getContainerID());
                     message.put(Node.TOKEN_ND_ID, node.getNodeID());
-                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
                     if (clientThreadSessionID != null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
                         super.addContainerNode(node);
                         nodesID.add(node.getNodeID());
@@ -637,8 +637,8 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                     message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_REMOVE_CONTAINER_NODE);
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getContainerID());
                     message.put(Node.TOKEN_ND_ID, node.getNodeID());
-                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
                     if (clientThreadSessionID != null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
                         super.removeContainerNode(node);
                         node.setNodeContainer(null);
@@ -689,8 +689,8 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                     message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_ADD_CONTAINER_GATE);
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getContainerID());
                     message.put(Node.TOKEN_ND_ID, gate.getNodeID());
-                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
                     if (clientThreadSessionID != null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
                         super.addContainerGate(gate);
                         gate.setNodeContainer(this);
@@ -715,8 +715,8 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                     message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_REMOVE_CONTAINER_GATE);
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getContainerID());
                     message.put(Node.TOKEN_ND_ID, gate.getNodeID());
-                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
                     if (clientThreadSessionID != null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
                         super.removeContainerGate(gate);
                         gate.setNodeContainer(null);

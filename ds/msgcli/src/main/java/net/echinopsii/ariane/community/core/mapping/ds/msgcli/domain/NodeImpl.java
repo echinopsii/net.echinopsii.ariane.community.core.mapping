@@ -76,7 +76,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                 } else {
                     switch (rc) {
                         case MappingSce.MAPPING_SCE_RET_NOT_FOUND:
-                            NodeImpl.log.warn("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
+                            NodeImpl.log.debug("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
                             break;
                         default:
                             NodeImpl.log.error("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
@@ -231,15 +231,17 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                         }
                         super.setNodeContainer(container);
                         containerID = (container!=null) ? container.getContainerID() : null;
-                        try {
-                            if (retMsg.containsKey(Node.JOIN_CURRENT_PCONTAINER)) {
-                                ContainerJSON.JSONDeserializedContainer jsonDeserializedContainer = ContainerJSON.JSON2Container(
-                                        (String) retMsg.get(Node.JOIN_CURRENT_PCONTAINER)
-                                );
-                                ((ContainerImpl)container).synchronizeFromJSON(jsonDeserializedContainer);
+                        if (container!=null) {
+                            try {
+                                if (retMsg.containsKey(Node.JOIN_CURRENT_PCONTAINER)) {
+                                    ContainerJSON.JSONDeserializedContainer jsonDeserializedContainer = ContainerJSON.JSON2Container(
+                                            (String) retMsg.get(Node.JOIN_CURRENT_PCONTAINER)
+                                    );
+                                    ((ContainerImpl) container).synchronizeFromJSON(jsonDeserializedContainer);
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
-                        } catch(IOException e) {
-                            e.printStackTrace();
                         }
                     } else throw new MappingDSException("Ariane server raised an error... Check your logs !");
                 }
@@ -262,8 +264,8 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                 e.printStackTrace();
                 throw new MappingDSException(e.getMessage());
             }
-            Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
             if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+            Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
             if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.addNodeProperty(propertyKey, value);
             else throw new MappingDSException("Ariane server raised an error... Check your logs !");
         } else throw new MappingDSException("This node is not initialized !");
@@ -279,8 +281,8 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
             message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_REMOVE_NODE_PROPERTY);
             message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
             message.put(MappingSce.GLOBAL_PARAM_PROP_NAME, propertyKey);
-            Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
             if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+            Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
             if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.removeNodeProperty(propertyKey);
         } else throw new MappingDSException("This node is not initialized !");
     }
@@ -403,10 +405,12 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                         super.addNodeChildNode(node);
                         childNodesID.add(node.getNodeID());
                         try {
-                            NodeJSON.JSONDeserializedNode jsonDeserializedNode = NodeJSON.JSON2Node(
-                                    (String) retMsg.get(MappingDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY)
-                            );
-                            ((NodeImpl)node).synchronizeFromJSON(jsonDeserializedNode);
+                            if (retMsg.containsKey(MappingDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY)) {
+                                NodeJSON.JSONDeserializedNode jsonDeserializedNode = NodeJSON.JSON2Node(
+                                        (String) retMsg.get(MappingDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY)
+                                );
+                                ((NodeImpl) node).synchronizeFromJSON(jsonDeserializedNode);
+                            }
                         } catch (IOException e) {
                             e.printStackTrace();
                             return false;
@@ -437,10 +441,12 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                         super.removeNodeChildNode(node);
                         childNodesID.remove(node.getNodeID());
                         try {
-                            NodeJSON.JSONDeserializedNode jsonDeserializedNode = NodeJSON.JSON2Node(
-                                    (String) retMsg.get(MappingDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY)
-                            );
-                            ((NodeImpl)node).synchronizeFromJSON(jsonDeserializedNode);
+                            if (retMsg.containsKey(MappingDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY)) {
+                                NodeJSON.JSONDeserializedNode jsonDeserializedNode = NodeJSON.JSON2Node(
+                                        (String) retMsg.get(MappingDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY)
+                                );
+                                ((NodeImpl) node).synchronizeFromJSON(jsonDeserializedNode);
+                            }
                         } catch (IOException e) {
                             e.printStackTrace();
                             return false;
@@ -496,15 +502,17 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                         super.addTwinNode(node);
                         twinNodesID.add(node.getNodeID());
                         try {
-                            NodeJSON.JSONDeserializedNode jsonDeserializedNode = NodeJSON.JSON2Node(
-                                    (String) retMsg.get(MappingDSGraphPropertyNames.DD_NODE_EDGE_TWIN_KEY)
-                            );
-                            ((NodeImpl)node).synchronizeFromJSON(jsonDeserializedNode);
+                            if (retMsg.containsKey(MappingDSGraphPropertyNames.DD_NODE_EDGE_TWIN_KEY)) {
+                                NodeJSON.JSONDeserializedNode jsonDeserializedNode = NodeJSON.JSON2Node(
+                                        (String) retMsg.get(MappingDSGraphPropertyNames.DD_NODE_EDGE_TWIN_KEY)
+                                );
+                                ((NodeImpl) node).synchronizeFromJSON(jsonDeserializedNode);
+                            }
                         } catch (IOException e) {
                             e.printStackTrace();
                             return false;
                         }
-                    }
+                    } else return false;
                     return true;
                 } else return false;
             } else throw new MappingDSException("Provided node is not initialized !");
@@ -530,15 +538,17 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                         super.removeTwinNode(node);
                         twinNodesID.remove(node.getNodeID());
                         try {
-                            NodeJSON.JSONDeserializedNode jsonDeserializedNode = NodeJSON.JSON2Node(
-                                    (String) retMsg.get(MappingDSGraphPropertyNames.DD_NODE_EDGE_TWIN_KEY)
-                            );
-                            ((NodeImpl)node).synchronizeFromJSON(jsonDeserializedNode);
+                            if (retMsg.containsKey(MappingDSGraphPropertyNames.DD_NODE_EDGE_TWIN_KEY)) {
+                                NodeJSON.JSONDeserializedNode jsonDeserializedNode = NodeJSON.JSON2Node(
+                                        (String) retMsg.get(MappingDSGraphPropertyNames.DD_NODE_EDGE_TWIN_KEY)
+                                );
+                                ((NodeImpl) node).synchronizeFromJSON(jsonDeserializedNode);
+                            }
                         } catch (IOException e) {
                             e.printStackTrace();
                             return false;
                         }
-                    }
+                    } else return false;
                     return true;
                 } else return false;
             } else throw new MappingDSException("Provided node is not initialized !");

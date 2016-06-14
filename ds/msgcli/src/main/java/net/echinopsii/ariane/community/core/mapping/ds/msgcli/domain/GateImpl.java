@@ -72,7 +72,7 @@ public class GateImpl extends NodeImpl implements SProxGate {
                 } else {
                     switch (rc) {
                         case MappingSce.MAPPING_SCE_RET_NOT_FOUND:
-                            GateImpl.log.warn("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
+                            GateImpl.log.debug("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
                             break;
                         default:
                             GateImpl.log.error("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
