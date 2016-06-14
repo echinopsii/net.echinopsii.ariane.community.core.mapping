@@ -74,7 +74,7 @@ public class MappingRepoImpl implements MappingRepo<ContainerImpl, NodeImpl, Gat
     public NodeImpl findNodeByName(ContainerImpl cont, String name) throws MappingDSException {
         NodeImpl ret = null;
         for (NodeImpl node : MappingDSGraphDB.getIndexedNodes(name)) {
-            if (node.getNodeContainer().equals(cont)) {
+            if (node.getNodeContainer()!=null && node.getNodeContainer().equals(cont)) {
                 ret = node;
                 break;
             }
@@ -87,7 +87,7 @@ public class MappingRepoImpl implements MappingRepo<ContainerImpl, NodeImpl, Gat
                                               NodeImpl node) throws MappingDSException {
         NodeImpl ret = null;
         for (NodeImpl pnode : MappingDSGraphDB.getNodes()) {
-            if (pnode.getNodeContainer().equals(container)) {
+            if (pnode.getNodeContainer()!=null && pnode.getNodeContainer().equals(container)) {
                 for (Node cnode : pnode.getNodeChildNodes()) {
                     if (cnode.equals(node)) {
                         ret = pnode;
@@ -104,7 +104,7 @@ public class MappingRepoImpl implements MappingRepo<ContainerImpl, NodeImpl, Gat
                                                NodeImpl node) throws MappingDSException {
         Set<NodeImpl> ret = new HashSet<NodeImpl>();
         for (NodeImpl cnode : MappingDSGraphDB.getNodes()) {
-            if (cnode.getNodeContainer().equals(container) && cnode.getNodeParentNode().equals(node)) {
+            if (cnode.getNodeContainer()!=null && cnode.getNodeContainer().equals(container) && cnode.getNodeParentNode().equals(node)) {
                 ret.add(cnode);
             }
         }

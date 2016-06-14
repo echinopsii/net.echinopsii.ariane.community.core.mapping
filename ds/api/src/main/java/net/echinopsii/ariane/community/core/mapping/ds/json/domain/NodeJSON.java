@@ -66,12 +66,11 @@ public class NodeJSON {
         jgenerator.writeStartObject();
         jgenerator.writeStringField(Node.TOKEN_ND_ID, node.getNodeID());
         jgenerator.writeStringField(Node.TOKEN_ND_NAME, node.getNodeName());
-        jgenerator.writeStringField(Node.TOKEN_ND_CONID, node.getNodeContainer().getContainerID());
+        if (node.getNodeContainer()!=null)
+            jgenerator.writeStringField(Node.TOKEN_ND_CONID, node.getNodeContainer().getContainerID());
         if (node.getNodeParentNode()!=null)
             jgenerator.writeStringField(Node.TOKEN_ND_PNDID, node.getNodeParentNode().getNodeID());
-        if (node.getNodeProperties() != null) {
-            nodeProps2JSON(node, jgenerator);
-        }
+        if (node.getNodeProperties() != null) nodeProps2JSON(node, jgenerator);
         jgenerator.writeEndObject();
     }
 
