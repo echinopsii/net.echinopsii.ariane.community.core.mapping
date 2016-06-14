@@ -239,7 +239,7 @@ public class NodeJSON {
             return nodes;
         }
 
-        public void setGates(JSONDeserializedNode[] nodes) {
+        public void setNodes(JSONDeserializedNode[] nodes) {
             this.nodes = nodes;
         }
 

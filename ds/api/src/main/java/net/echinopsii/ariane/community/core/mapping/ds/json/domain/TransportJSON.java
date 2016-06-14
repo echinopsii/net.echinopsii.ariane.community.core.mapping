@@ -33,9 +33,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class TransportJSON {
     //private final static Logger log   = LoggerFactory.getLogger(TransportJSON.class);
@@ -143,5 +141,29 @@ public class TransportJSON {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return mapper.readValue(payload, JSONDeserializedTransport.class);
+    }
+
+    public static class JSONDeserializedTransports {
+        JSONDeserializedTransport[] transports;
+
+        public JSONDeserializedTransport[] getTransports() {
+            return transports;
+        }
+
+        public void setTransports(JSONDeserializedTransport[] transports) {
+            this.transports = transports;
+        }
+
+        public Set<JSONDeserializedTransport> toSet() {
+            HashSet<JSONDeserializedTransport> ret = new HashSet<>();
+            if (transports!=null) Collections.addAll(ret, transports);
+            return ret;
+        }
+    }
+
+    public static Set<JSONDeserializedTransport> JSON2Transports(String payload) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return mapper.readValue(payload, JSONDeserializedTransports.class).toSet();
     }
 }

@@ -33,9 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class EndpointJSON {
 
@@ -181,5 +179,30 @@ public class EndpointJSON {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return mapper.readValue(payload, JSONDeserializedEndpoint.class);
+    }
+
+    public static class JSONDeserializedEndpoints {
+        JSONDeserializedEndpoint[] endpoints;
+
+        public JSONDeserializedEndpoint[] getEndpoints() {
+            return endpoints;
+        }
+
+        public void setEndpoints(JSONDeserializedEndpoint[] endpoints) {
+            this.endpoints = endpoints;
+        }
+
+        public Set<JSONDeserializedEndpoint> toSet() {
+            HashSet<JSONDeserializedEndpoint> ret = new HashSet<>();
+            if (endpoints!=null)
+                Collections.addAll(ret, endpoints);
+            return ret;
+        }
+    }
+
+    public static Set<JSONDeserializedEndpoint> JSON2Endpoints(String payload) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return mapper.readValue(payload, JSONDeserializedEndpoints.class).toSet();
     }
 }

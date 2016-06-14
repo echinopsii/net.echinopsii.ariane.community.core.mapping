@@ -29,7 +29,9 @@ import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 
 public class LinkJSON {
     //private final static Logger  log   = LoggerFactory.getLogger(EndpointJSON.class);
@@ -103,5 +105,29 @@ public class LinkJSON {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return mapper.readValue(payload, JSONDeserializedLink.class);
+    }
+
+    public static class JSONDeserializedLinks {
+        JSONDeserializedLink[] links;
+
+        public JSONDeserializedLink[] getLinks() {
+            return links;
+        }
+
+        public void setLinks(JSONDeserializedLink[] links) {
+            this.links = links;
+        }
+
+        public Set<JSONDeserializedLink> toSet() {
+            HashSet<JSONDeserializedLink> ret = new HashSet<>();
+            if (links!=null) Collections.addAll(ret, links);
+            return ret;
+        }
+    }
+
+    public static Set<JSONDeserializedLink> JSON2Links(String payload) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return mapper.readValue(payload, JSONDeserializedLinks.class).toSet();
     }
 }

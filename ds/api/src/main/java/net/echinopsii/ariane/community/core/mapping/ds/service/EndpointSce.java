@@ -31,7 +31,7 @@ public interface EndpointSce<E extends Endpoint> {
     String OP_CREATE_ENDPOINT = "createEndpoint";
     String OP_DELETE_ENDPOINT = "deleteEndpoint";
     String OP_GET_ENDPOINT = "getEndpoint";
-    String OP_GET_ENTPOINT_BY_URL = "getEndpointByURL";
+    String OP_GET_ENDPOINT_BY_URL = "getEndpointByURL";
     String OP_GET_ENDPOINTS = "getEndpoints";
 
     String PARAM_ENDPOINT_URL = "URL";
