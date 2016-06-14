@@ -147,8 +147,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode, MappingDSBluepr
                     Node previousParentNode = super.getNodeParentNode();
                     super.setNodeParentNode(node);
                     if (node != null) {
-                        if (previousParentNode!=null && super.getNodeContainer()!=null)
-                            super.getNodeContainer().removeContainerNode(this);
+                        if (previousParentNode==null && super.getNodeContainer()!=null) super.getNodeContainer().removeContainerNode(this);
                         if (!node.getNodeChildNodes().contains(this)) node.addNodeChildNode(this);
                     } else if (super.getNodeContainer()!=null) super.getNodeContainer().addContainerNode(this);
                     synchronizeParentNodeToDB();
