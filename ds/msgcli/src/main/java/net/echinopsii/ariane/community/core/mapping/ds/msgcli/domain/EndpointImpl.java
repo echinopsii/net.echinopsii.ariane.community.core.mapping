@@ -139,7 +139,7 @@ public class EndpointImpl extends SProxEndpointAbs implements SProxEndpoint {
                 Map<String, Object> message = new HashMap<>();
                 message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_SET_ENDPOINT_URL);
                 message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getEndpointID());
-                message.put(SProxEndpointSce.PARAM_ENDPOINT_URL, url);
+                message.put(Endpoint.TOKEN_EP_URL, url);
                 if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
                 Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, EndpointSce.Q_MAPPING_ENDPOINT_SERVICE, endpointReplyWorker);
                 if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.setEndpointURL(url);
@@ -163,7 +163,12 @@ public class EndpointImpl extends SProxEndpointAbs implements SProxEndpoint {
             } catch (MappingDSException e) {
                 e.printStackTrace();
             }
-        }
+        } else if (parentNodeID==null)
+            try {
+                super.setEndpointParentNode(null);
+            } catch (MappingDSException e) {
+                e.printStackTrace();
+            }
         return super.getEndpointParentNode();
     }
 
@@ -171,12 +176,12 @@ public class EndpointImpl extends SProxEndpointAbs implements SProxEndpoint {
     public void setEndpointParentNode(Node node) throws MappingDSException {
         if (super.getEndpointID()!=null) {
             if (node!=null && node.getNodeID()!=null) {
-                if ((super.getEndpointParentNode()!=null && !super.getEndpointParentNode().equals(node)) ||
+                if (parentNodeID == null || (super.getEndpointParentNode()!=null && !super.getEndpointParentNode().equals(node)) ||
                     (parentNodeID!=null && !parentNodeID.equals(node.getNodeID()))) {
                     String clientThreadName = Thread.currentThread().getName();
                     String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
                     Map<String, Object> message = new HashMap<>();
-                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_SET_ENDPOINT_URL);
+                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_SET_ENDPOINT_PARENT_NODE);
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getEndpointID());
                     message.put(NodeSce.PARAM_NODE_PNID, node.getNodeID());
                     if (clientThreadSessionID != null)

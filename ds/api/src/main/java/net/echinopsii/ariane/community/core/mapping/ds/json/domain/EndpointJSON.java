@@ -64,10 +64,6 @@ public class EndpointJSON {
         jgenerator.writeStringField(Endpoint.TOKEN_EP_URL, endpoint.getEndpointURL());
         if (endpoint.getEndpointParentNode()!=null)
             jgenerator.writeStringField(Endpoint.TOKEN_EP_PNODEID, endpoint.getEndpointParentNode().getNodeID());
-        else
-            throw new MappingDSException("Endpoint (" + endpoint.getEndpointID() +
-                    ":" + endpoint.getEndpointURL() + ")");
-
         jgenerator.writeArrayFieldStart(Endpoint.TOKEN_EP_TWNEPID);
         for (Endpoint tep : endpoint.getTwinEndpoints()) jgenerator.writeString(tep.getEndpointID());
         jgenerator.writeEndArray();

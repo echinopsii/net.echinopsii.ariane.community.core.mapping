@@ -291,7 +291,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer, 
             if (node instanceof NodeImpl) {
                 ret = super.removeContainerNode(node);
                 if (ret) {
-                    //if (node.getNodeContainer().equals(this)) node.setNodeContainer(null);
+                    if (node.getNodeContainer().equals(this)) node.setNodeContainer(null);
                     removeNodeFromDB((NodeImpl) node);
                 }
             }

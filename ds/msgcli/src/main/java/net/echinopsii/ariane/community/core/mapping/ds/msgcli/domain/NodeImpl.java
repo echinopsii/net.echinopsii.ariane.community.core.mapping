@@ -29,9 +29,11 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxNode;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxNodeAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ContainerJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.json.domain.EndpointJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.NodeJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.momsp.MappingMsgcliMomSP;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.ContainerSceImpl;
+import net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.EndpointSceImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.NodeSceImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.NodeSce;
@@ -135,6 +137,10 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
 
     public void setEndpointsID(List<String> endpointsID) {
         this.endpointsID = endpointsID;
+    }
+
+    public List<String> getEndpointsID() {
+        return endpointsID;
     }
 
     public void synchronizeFromJSON(NodeJSON.JSONDeserializedNode jsonDeserializedNode) throws MappingDSException {
@@ -557,22 +563,98 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
 
     @Override
     public Set<Endpoint> getNodeEndpoints() {
+        try {
+            Node update = NodeSceImpl.internalGetNode(super.getNodeID());
+            this.setEndpointsID(((NodeImpl) update).getEndpointsID());
+        } catch (MappingDSException e) {
+            e.printStackTrace();
+        }
+
+        for (Endpoint endpoint : new ArrayList<>(super.getNodeEndpoints()))
+            if (!endpointsID.contains(endpoint.getEndpointID()))
+                super.getNodeEndpoints().remove(endpoint);
+
+        for (String endpointID : endpointsID)
+            try {
+                boolean toAdd = true;
+                for (Endpoint endpoint : super.getNodeEndpoints())
+                    if (endpoint.getEndpointID().equals(endpointID)) toAdd = false;
+                if (toAdd) super.getNodeEndpoints().add(EndpointSceImpl.internalGetEndpoint(endpointID));
+            } catch (MappingDSException e) {
+                e.printStackTrace();
+            }
         return super.getNodeEndpoints();
     }
 
     @Override
     public boolean addEndpoint(Endpoint endpoint) throws MappingDSException {
         if (super.getNodeID()!=null) {
+            if (endpoint!=null && endpoint.getEndpointID()!=null) {
+                if ((super.getNodeEndpoints()!=null && !super.getNodeEndpoints().contains(endpoint)) ||
+                    (endpointsID!=null && !endpointsID.contains(endpoint.getEndpointID()))) {
+                    String clientThreadName = Thread.currentThread().getName();
+                    String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
+                    Map<String, Object> message = new HashMap<>();
+                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_ADD_ENDPOINT);
+                    message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
+                    message.put(Endpoint.TOKEN_EP_ID, endpoint.getEndpointID());
+                    if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
+                    if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
+                        super.addEndpoint(endpoint);
+                        endpointsID.add(endpoint.getEndpointID());
+                        try {
+                            if (retMsg.containsKey(MappingDSGraphPropertyNames.DD_NODE_EDGE_ENDPT_KEY)) {
+                                EndpointJSON.JSONDeserializedEndpoint jsonDeserializedEndpoint = EndpointJSON.JSON2Endpoint(
+                                        (String) retMsg.get(MappingDSGraphPropertyNames.DD_NODE_EDGE_ENDPT_KEY)
+                                );
+                                ((EndpointImpl) endpoint).synchronizeFromJSON(jsonDeserializedEndpoint);
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            return false;
+                        }
+                    } else return false;
+                    return true;
+                } else return false;
+            } else throw new MappingDSException("Provided endpoint is null or not initialized !");
         } else throw new MappingDSException("This node is not initialized !");
-        return false;
     }
 
     @Override
     public boolean removeEndpoint(Endpoint endpoint) throws MappingDSException {
         if (super.getNodeID()!=null) {
+            if (endpoint!=null && endpoint.getEndpointID()!=null) {
+                if ((super.getNodeEndpoints()!=null && super.getNodeEndpoints().contains(endpoint)) ||
+                        (endpointsID!=null && endpointsID.contains(endpoint.getEndpointID()))) {
+                    String clientThreadName = Thread.currentThread().getName();
+                    String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
+                    Map<String, Object> message = new HashMap<>();
+                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_REMOVE_ENDPOINT);
+                    message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
+                    message.put(Endpoint.TOKEN_EP_ID, endpoint.getEndpointID());
+                    if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
+                    if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
+                        super.removeEndpoint(endpoint);
+                        endpointsID.remove(endpoint.getEndpointID());
+                        try {
+                            if (retMsg.containsKey(MappingDSGraphPropertyNames.DD_NODE_EDGE_ENDPT_KEY)) {
+                                EndpointJSON.JSONDeserializedEndpoint jsonDeserializedEndpoint = EndpointJSON.JSON2Endpoint(
+                                        (String) retMsg.get(MappingDSGraphPropertyNames.DD_NODE_EDGE_ENDPT_KEY)
+                                );
+                                ((EndpointImpl) endpoint).synchronizeFromJSON(jsonDeserializedEndpoint);
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            return false;
+                        }
+                    } else return false;
+                    return true;
+                } else return false;
+            } else throw new MappingDSException("Provided endpoint is null or not initialized !");
         } else throw new MappingDSException("This node is not initialized !");
-        return false;
     }
 }

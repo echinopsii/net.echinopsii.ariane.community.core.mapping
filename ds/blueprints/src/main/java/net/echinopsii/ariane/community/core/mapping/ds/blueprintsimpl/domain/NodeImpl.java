@@ -78,22 +78,25 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode, MappingDSBluepr
                     if (!container.getContainerNodes().contains(this) && super.getNodeParentNode()==null) container.addContainerNode(this);
                     synchronizeContainerToDB();
                 } else if (container == null) {
-                    if(super.getNodeContainer()!=null) super.getNodeContainer().removeContainerNode(this);
+                    Container previousParentContainer = super.getNodeContainer();
                     super.setNodeContainer(null);
                     synchronizeContainerToDB();
-                    log.warn("Node " + this.toString() + " has no more parent container. This state should be avoided.");
-                    log.warn("trace last calls : \n\t{}\n\t{}\n\t{}\n\t{}\n\t{}\n\t{}\n\t{}\n\t{}\n\t{}\n\t{}",
+                    if (previousParentContainer!=null && previousParentContainer.getContainerNodes().contains(this))
+                        previousParentContainer.removeContainerNode(this);
+                    log.info("Node " + this.toString() + " has no more parent container. This state should be avoided.");
+                    log.info("Activate debug logs if you want to investigate on this unstable state...");
+                    log.debug("trace last calls : \n\t{}\n\t{}\n\t{}\n\t{}\n\t{}\n\t{}\n\t{}\n\t{}\n\t{}\n\t{}",
                             new Object[]{
-                                    (Thread.currentThread().getStackTrace().length > 0) ? Thread.currentThread().getStackTrace()[0].getClassName() +"."+ Thread.currentThread().getStackTrace()[0].getMethodName() + " - " + Thread.currentThread().getStackTrace()[0].getLineNumber() : "",
-                                    (Thread.currentThread().getStackTrace().length > 1) ? Thread.currentThread().getStackTrace()[1].getClassName() +"."+ Thread.currentThread().getStackTrace()[1].getMethodName() + " - " + Thread.currentThread().getStackTrace()[1].getLineNumber() : "",
-                                    (Thread.currentThread().getStackTrace().length > 2) ? Thread.currentThread().getStackTrace()[2].getClassName() +"."+ Thread.currentThread().getStackTrace()[2].getMethodName() + " - " + Thread.currentThread().getStackTrace()[2].getLineNumber() : "",
-                                    (Thread.currentThread().getStackTrace().length > 3) ? Thread.currentThread().getStackTrace()[3].getClassName() +"."+ Thread.currentThread().getStackTrace()[3].getMethodName() + " - " + Thread.currentThread().getStackTrace()[3].getLineNumber() : "",
-                                    (Thread.currentThread().getStackTrace().length > 4) ? Thread.currentThread().getStackTrace()[4].getClassName() +"."+ Thread.currentThread().getStackTrace()[4].getMethodName() + " - " + Thread.currentThread().getStackTrace()[4].getLineNumber() : "",
-                                    (Thread.currentThread().getStackTrace().length > 5) ? Thread.currentThread().getStackTrace()[5].getClassName() +"."+ Thread.currentThread().getStackTrace()[5].getMethodName() + " - " + Thread.currentThread().getStackTrace()[5].getLineNumber() : "",
-                                    (Thread.currentThread().getStackTrace().length > 6) ? Thread.currentThread().getStackTrace()[6].getClassName() +"."+ Thread.currentThread().getStackTrace()[6].getMethodName() + " - " + Thread.currentThread().getStackTrace()[6].getLineNumber() : "",
-                                    (Thread.currentThread().getStackTrace().length > 7) ? Thread.currentThread().getStackTrace()[7].getClassName() +"."+ Thread.currentThread().getStackTrace()[7].getMethodName() + " - " + Thread.currentThread().getStackTrace()[7].getLineNumber() : "",
-                                    (Thread.currentThread().getStackTrace().length > 8) ? Thread.currentThread().getStackTrace()[8].getClassName() +"."+ Thread.currentThread().getStackTrace()[8].getMethodName() + " - " + Thread.currentThread().getStackTrace()[8].getLineNumber() : "",
-                                    (Thread.currentThread().getStackTrace().length > 9) ? Thread.currentThread().getStackTrace()[9].getClassName() +"."+ Thread.currentThread().getStackTrace()[9].getMethodName() + " - " + Thread.currentThread().getStackTrace()[9].getLineNumber() : "",
+                                    (Thread.currentThread().getStackTrace().length > 0) ? Thread.currentThread().getStackTrace()[0].getClassName() + "." + Thread.currentThread().getStackTrace()[0].getMethodName() + " - " + Thread.currentThread().getStackTrace()[0].getLineNumber() : "",
+                                    (Thread.currentThread().getStackTrace().length > 1) ? Thread.currentThread().getStackTrace()[1].getClassName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + " - " + Thread.currentThread().getStackTrace()[1].getLineNumber() : "",
+                                    (Thread.currentThread().getStackTrace().length > 2) ? Thread.currentThread().getStackTrace()[2].getClassName() + "." + Thread.currentThread().getStackTrace()[2].getMethodName() + " - " + Thread.currentThread().getStackTrace()[2].getLineNumber() : "",
+                                    (Thread.currentThread().getStackTrace().length > 3) ? Thread.currentThread().getStackTrace()[3].getClassName() + "." + Thread.currentThread().getStackTrace()[3].getMethodName() + " - " + Thread.currentThread().getStackTrace()[3].getLineNumber() : "",
+                                    (Thread.currentThread().getStackTrace().length > 4) ? Thread.currentThread().getStackTrace()[4].getClassName() + "." + Thread.currentThread().getStackTrace()[4].getMethodName() + " - " + Thread.currentThread().getStackTrace()[4].getLineNumber() : "",
+                                    (Thread.currentThread().getStackTrace().length > 5) ? Thread.currentThread().getStackTrace()[5].getClassName() + "." + Thread.currentThread().getStackTrace()[5].getMethodName() + " - " + Thread.currentThread().getStackTrace()[5].getLineNumber() : "",
+                                    (Thread.currentThread().getStackTrace().length > 6) ? Thread.currentThread().getStackTrace()[6].getClassName() + "." + Thread.currentThread().getStackTrace()[6].getMethodName() + " - " + Thread.currentThread().getStackTrace()[6].getLineNumber() : "",
+                                    (Thread.currentThread().getStackTrace().length > 7) ? Thread.currentThread().getStackTrace()[7].getClassName() + "." + Thread.currentThread().getStackTrace()[7].getMethodName() + " - " + Thread.currentThread().getStackTrace()[7].getLineNumber() : "",
+                                    (Thread.currentThread().getStackTrace().length > 8) ? Thread.currentThread().getStackTrace()[8].getClassName() + "." + Thread.currentThread().getStackTrace()[8].getMethodName() + " - " + Thread.currentThread().getStackTrace()[8].getLineNumber() : "",
+                                    (Thread.currentThread().getStackTrace().length > 9) ? Thread.currentThread().getStackTrace()[9].getClassName() + "." + Thread.currentThread().getStackTrace()[9].getMethodName() + " - " + Thread.currentThread().getStackTrace()[9].getLineNumber() : "",
                             });
                 }
             }
@@ -267,7 +270,11 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode, MappingDSBluepr
             if (endpoint instanceof EndpointImpl) {
                 try {
                     ret = super.addEndpoint(endpoint);
-                    if (ret) synchronizeEndpointToDB((EndpointImpl) endpoint);
+                    if (ret) {
+                        if (endpoint.getEndpointParentNode()==null || !endpoint.getEndpointParentNode().equals(this))
+                            endpoint.setEndpointParentNode(this);
+                        synchronizeEndpointToDB((EndpointImpl) endpoint);
+                    }
                 } catch (MappingDSException E) {
                     E.printStackTrace();
                     log.error("Exception while adding endpoint {}...", new Object[]{endpoint.getEndpointID()});
@@ -291,7 +298,10 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode, MappingDSBluepr
         } else {
             if (endpoint instanceof EndpointImpl) {
                 ret = super.removeEndpoint(endpoint);
-                if (ret) removeEndpointFromDB((EndpointImpl) endpoint);
+                if (ret) {
+                    if (endpoint.getEndpointParentNode().equals(this)) endpoint.setEndpointParentNode(null);
+                    removeEndpointFromDB((EndpointImpl) endpoint);
+                }
             }
         }
         return ret;
@@ -612,6 +622,17 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode, MappingDSBluepr
     }
 
     private void removeEndpointFromDB(EndpointImpl endpoint) {
-        MappingDSGraphDB.deleteEntity(endpoint);
+        if (this.nodeVertex != null && endpoint.getElement() != null) {
+            VertexQuery query = this.nodeVertex.query();
+            query.direction(Direction.OUT);
+            query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
+            query.has(MappingDSGraphPropertyNames.DD_NODE_EDGE_ENDPT_KEY, true);
+            for (Edge edge : query.edges()) {
+                if (edge.getVertex(Direction.IN).equals(endpoint.getElement())) {
+                    MappingDSGraphDB.getGraph().removeEdge(edge);
+                }
+            }
+            MappingDSGraphDB.autocommit();
+        }
     }
 }

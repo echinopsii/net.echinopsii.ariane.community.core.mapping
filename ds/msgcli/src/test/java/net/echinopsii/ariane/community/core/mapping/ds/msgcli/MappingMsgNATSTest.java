@@ -21,10 +21,7 @@ package net.echinopsii.ariane.community.core.mapping.ds.msgcli;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cfg.MappingBlueprintsDSCfgLoader;
-import net.echinopsii.ariane.community.core.mapping.ds.domain.Cluster;
-import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
-import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
-import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.domain.ClusterImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.domain.ContainerImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.momsp.MappingMsgcliMomSP;
@@ -51,7 +48,7 @@ import static junit.framework.Assert.assertNull;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
 
-public class MappingMsgTest {
+public class MappingMsgNATSTest {
 
     private static SProxMappingSce blueprintsMappingSce = new net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.MappingSceImpl();
     private static SProxMappingSce messagingMappingSce = new net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.MappingSceImpl();
@@ -62,7 +59,7 @@ public class MappingMsgTest {
     @BeforeClass
     public static void testSetup() throws Exception {
         Properties natsConfig = new Properties();
-        natsConfig.load(MappingMsgTest.class.getResourceAsStream("/nats-test.properties"));
+        natsConfig.load(MappingMsgNATSTest.class.getResourceAsStream("/nats-test.properties"));
 
         momTest = MomClientFactory.make(natsConfig.getProperty(MomClient.MOM_CLI));
         try {
@@ -74,7 +71,7 @@ public class MappingMsgTest {
 
         if (momTest!=null) {
             Properties mappingDSConfig = new Properties();
-            mappingDSConfig.load(MappingMsgTest.class.getResourceAsStream("/net.echinopsii.ariane.community.core.MappingRimManagedService.properties"));
+            mappingDSConfig.load(MappingMsgNATSTest.class.getResourceAsStream("/net.echinopsii.ariane.community.core.MappingRimManagedService.properties"));
             mappingDSConfig.setProperty("mapping.ds.blueprints.graphpath", ((String) mappingDSConfig.get("mapping.ds.blueprints.graphpath")) + UUID.randomUUID());
 
             blueprintsMappingSce.init(mappingDSConfig);
@@ -935,6 +932,34 @@ public class MappingMsgTest {
             }).start();
             messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testTransacCreateGate1");
             messagingMappingSce.closeSession();
+        }
+    }
+
+    @Test
+    public void testCreateEndpointAndJoinNode() throws MappingDSException {
+        if (momTest!=null) {
+            Container acontainer = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testNodeJoinEndpoint", "SERVER SSH DAEMON");
+            Node aprocess = messagingMappingSce.getNodeSce().createNode("a process-testNodeJoinEndpoint", acontainer.getContainerID(), null);
+            Endpoint endpoint = messagingMappingSce.getEndpointSce().createEndpoint("tcp://process-endpoint:1234", aprocess.getNodeID());
+            assertTrue(endpoint.getEndpointID()!=null);
+            assertTrue(endpoint.getEndpointParentNode().equals(aprocess));
+            assertTrue(aprocess.getNodeEndpoints().contains(endpoint));
+            assertTrue(endpoint.getEndpointURL().equals("tcp://process-endpoint:1234"));
+            endpoint.setEndpointURL("tcp://process-endpoint:2345");
+            assertTrue(endpoint.getEndpointURL().equals("tcp://process-endpoint:2345"));
+            aprocess.removeEndpoint(endpoint);
+            assertTrue(!aprocess.getNodeEndpoints().contains(endpoint));
+            assertTrue(endpoint.getEndpointParentNode() == null);
+            aprocess.addEndpoint(endpoint);
+            assertTrue(aprocess.getNodeEndpoints().contains(endpoint));
+            assertTrue(endpoint.getEndpointParentNode().equals(aprocess));
+            aprocess.removeEndpoint(endpoint);
+            assertTrue(!aprocess.getNodeEndpoints().contains(endpoint));
+            assertTrue(endpoint.getEndpointParentNode() == null);
+            endpoint.setEndpointParentNode(aprocess);
+            assertTrue(aprocess.getNodeEndpoints().contains(endpoint));
+            assertTrue(endpoint.getEndpointParentNode().equals(aprocess));
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testNodeJoinEndpoint");
         }
     }
 }

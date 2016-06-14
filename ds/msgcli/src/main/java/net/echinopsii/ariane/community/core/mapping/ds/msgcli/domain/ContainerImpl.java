@@ -254,7 +254,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                 Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
                 if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.setContainerType(type);
                 else throw new MappingDSException("Ariane server raised an error... Check your logs !");
-            }// else if (super.getContainerCompany() == null) super.setContainerType(type);
+            }
         } else throw new MappingDSException("This container is not initialized !");
     }
 
@@ -265,6 +265,19 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
 
     @Override
     public Gate getContainerPrimaryAdminGate() {
+        try {
+            Container update = ContainerSceImpl.internalGetContainer(super.getContainerID());
+            this.setPrimaryAdminGateID(((ContainerImpl) update).getPrimaryAdminGateID());
+        } catch (MappingDSException e) {
+            e.printStackTrace();
+        }
+        if (primaryAdminGateID!=null && (super.getContainerPrimaryAdminGate()==null || !super.getContainerPrimaryAdminGate().getNodeName().equals(primaryAdminGateID))) {
+            try {
+                super.setContainerPrimaryAdminGate(GateSceImpl.internalGetGate(primaryAdminGateID));
+            } catch (MappingDSException e) {
+                e.printStackTrace();
+            }
+        } else if (primaryAdminGateID==null) log.error("No primary admin gate for container " + super.getContainerID() + " !?");
         return super.getContainerPrimaryAdminGate();
     }
 
@@ -287,8 +300,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                         super.setContainerPrimaryAdminGate(gate);
                         gate.setNodeContainer(this);
                         primaryAdminGateID = gate.getNodeID();
-                    }
-                    else throw new MappingDSException("Ariane server raised an error... Check your logs !");
+                    } else throw new MappingDSException("Ariane server raised an error... Check your logs !");
                 }
             } else throw new MappingDSException("Provided gate is not initialized !");
         } else throw new MappingDSException("This container is not initialized !");

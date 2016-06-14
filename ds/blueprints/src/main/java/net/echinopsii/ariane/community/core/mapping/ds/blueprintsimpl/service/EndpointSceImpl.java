@@ -56,9 +56,8 @@ public class EndpointSceImpl extends SProxEndpointSceAbs<EndpointImpl> {
                 if (parentNode != null) {
                     ret = new EndpointImpl();
                     ret.setEndpointURL(url);
-                    ret.setEndpointParentNode(parentNode);
                     sce.getGlobalRepo().getEndpointRepo().save(ret);
-                    parentNode.addEndpoint(ret);
+                    ret.setEndpointParentNode(parentNode);
                 } else {
                     throw new MappingDSException("Endpoint creation failed : provided parent node " + parentNodeID + " doesn't exists.");
                 }
