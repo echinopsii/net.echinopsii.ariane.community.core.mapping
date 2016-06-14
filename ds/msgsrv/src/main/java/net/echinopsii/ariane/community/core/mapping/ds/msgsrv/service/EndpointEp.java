@@ -112,14 +112,14 @@ public class EndpointEp {
                         }
                         break;
                     case EndpointSce.OP_GET_ENDPOINT:
-                    case EndpointSce.OP_GET_ENTPOINT_BY_URL:
+                    case EndpointSce.OP_GET_ENDPOINT_BY_URL:
                         id = (String) message.get(MappingSce.GLOBAL_PARAM_OBJ_ID);
                         url = (String) message.get(Endpoint.TOKEN_EP_URL);
 
                         if (operation.equals(EndpointSce.OP_GET_ENDPOINT) && id!=null) {
                             if (session!=null) endpoint = MappingMsgsrvBootstrap.getMappingSce().getEndpointSce().getEndpoint(session, id);
                             else endpoint = MappingMsgsrvBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
-                        } else if (operation.equals(EndpointSce.OP_GET_ENTPOINT_BY_URL) && url!=null) {
+                        } else if (operation.equals(EndpointSce.OP_GET_ENDPOINT_BY_URL) && url!=null) {
                             if (session!=null) endpoint = MappingMsgsrvBootstrap.getMappingSce().getEndpointSce().getEndpointByURL(session, url);
                             else endpoint = MappingMsgsrvBootstrap.getMappingSce().getEndpointSce().getEndpointByURL(url);
                         } else {
@@ -128,7 +128,7 @@ public class EndpointEp {
                                 case EndpointSce.OP_GET_ENDPOINT:
                                     message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : endpoint ID not provided.");
                                     break;
-                                case EndpointSce.OP_GET_ENTPOINT_BY_URL:
+                                case EndpointSce.OP_GET_ENDPOINT_BY_URL:
                                     message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : endpoint URL not provided.");
                                     break;
                             }
@@ -147,9 +147,18 @@ public class EndpointEp {
                         break;
                     case EndpointSce.OP_GET_ENDPOINTS:
                         selector = (message.get(MappingSce.GLOBAL_PARAM_SELECTOR)==null || ((String) message.get(MappingSce.GLOBAL_PARAM_SELECTOR)).equals(MappingSce.GLOBAL_PARAM_OBJ_NONE)) ? null : (String) message.get(MappingSce.GLOBAL_PARAM_SELECTOR);
+                        prop_field = (message.containsKey(MappingSce.GLOBAL_PARAM_PROP_FIELD)) ? message.get(MappingSce.GLOBAL_PARAM_PROP_FIELD).toString() : null;
+
                         HashSet<Endpoint> endpoints;
-                        if (session!=null) endpoints = (HashSet<Endpoint>) MappingMsgsrvBootstrap.getMappingSce().getEndpointSce().getEndpoints(session, selector);
-                        else endpoints = (HashSet<Endpoint>) MappingMsgsrvBootstrap.getMappingSce().getEndpointSce().getEndpoints(selector);
+                        if (prop_field!=null) {
+                            PropertiesJSON.TypedPropertyField typedPropertyField = PropertiesJSON.typedPropertyFieldFromJSON(prop_field);
+                            Object value = ToolBox.extractPropertyObjectValueFromString(typedPropertyField.getPropertyValue(), typedPropertyField.getPropertyType());
+                            if (session != null) endpoints = (HashSet<Endpoint>) MappingMsgsrvBootstrap.getMappingSce().getEndpointSce().getEndpoints(session, typedPropertyField.getPropertyName(), value);
+                            else endpoints = (HashSet<Endpoint>) MappingMsgsrvBootstrap.getMappingSce().getEndpointSce().getEndpoints(typedPropertyField.getPropertyName(), value);
+                        } else {
+                            if (session != null) endpoints = (HashSet<Endpoint>) MappingMsgsrvBootstrap.getMappingSce().getEndpointSce().getEndpoints(session, selector);
+                            else endpoints = (HashSet<Endpoint>) MappingMsgsrvBootstrap.getMappingSce().getEndpointSce().getEndpoints(selector);
+                        }
 
                         if (endpoints!=null){
                             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
