@@ -963,4 +963,29 @@ public class MappingMsgRabbitMQTest {
             messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testNodeJoinEndpoint");
         }
     }
+
+    @Test
+    public void testEndpointJoinTwinEP() throws MappingDSException {
+        if (momTest!=null) {
+            Cluster cluster = messagingMappingSce.getClusterSce().createCluster("test-testEndpointJoinTwinEP");
+            Container acontainer = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testEndpointJoinTwinEP", "SERVER SSH DAEMON");
+            cluster.addClusterContainer(acontainer);
+            Node aprocess = messagingMappingSce.getNodeSce().createNode("a process-testEndpointJoinTwinEP", acontainer.getContainerID(), null);
+            Container bcontainer = messagingMappingSce.getContainerSce().createContainer("ssh://b.server.fqdn-testEndpointJoinTwinEP", "SERVER SSH DAEMON");
+            cluster.addClusterContainer(bcontainer);
+            Node bprocess = messagingMappingSce.getNodeSce().createNode("b process-testEndpointJoinTwinEP", acontainer.getContainerID(), null);
+            aprocess.addTwinNode(bprocess);
+            Endpoint aendpoint = messagingMappingSce.getEndpointSce().createEndpoint("tcp://process-endpoint:1234", aprocess.getNodeID());
+            Endpoint bendpoint = messagingMappingSce.getEndpointSce().createEndpoint("tcp://process-endpoint:2345", bprocess.getNodeID());
+            aendpoint.addTwinEndpoint(bendpoint);
+            assertTrue(aendpoint.getTwinEndpoints().contains(bendpoint));
+            assertTrue(bendpoint.getTwinEndpoints().contains(aendpoint));
+            bendpoint.removeTwinEndpoint(aendpoint);
+            assertTrue(!aendpoint.getTwinEndpoints().contains(bendpoint));
+            assertTrue(!bendpoint.getTwinEndpoints().contains(aendpoint));
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testEndpointJoinTwinEP");
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://b.server.fqdn-testEndpointJoinTwinEP");
+            messagingMappingSce.getClusterSce().deleteCluster(cluster.getClusterName());
+        }
+    }
 }

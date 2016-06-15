@@ -153,7 +153,10 @@ public class EndpointImpl extends SProxEndpointAbs implements SProxEndpoint, Map
             if (endpoint instanceof EndpointImpl) {
                 try {
                     ret = super.addTwinEndpoint(endpoint);
-                    if (ret) synchronizeTwinEndpointToDB((EndpointImpl) endpoint);
+                    if (ret) {
+                        if (!endpoint.getTwinEndpoints().contains(this)) endpoint.addTwinEndpoint(this);
+                        synchronizeTwinEndpointToDB((EndpointImpl) endpoint);
+                    }
                 } catch (MappingDSException E) {
                     E.printStackTrace();
                     log.error("Exception while adding twin node {}...", new Object[]{endpoint.getEndpointID()});
@@ -178,7 +181,10 @@ public class EndpointImpl extends SProxEndpointAbs implements SProxEndpoint, Map
         }
         if (endpoint instanceof EndpointImpl) {
             ret = super.removeTwinEndpoint(endpoint);
-            if (ret) removeTwinEndpointFromDB((EndpointImpl)endpoint);
+            if (ret) {
+                if (endpoint.getTwinEndpoints().contains(this)) endpoint.removeTwinEndpoint(this);
+                removeTwinEndpointFromDB((EndpointImpl) endpoint);
+            }
         }
         return ret;
     }
@@ -357,9 +363,7 @@ public class EndpointImpl extends SProxEndpointAbs implements SProxEndpoint, Map
             for (Edge edge : query.edges()) {
                 Vertex vo = edge.getVertex(Direction.OUT);
                 Vertex vi = edge.getVertex(Direction.IN);
-                if (vo != null && vo.equals(endpoint.getElement()))
-                    MappingDSGraphDB.getGraph().removeEdge(edge);
-                if (vi != null && vi.equals(endpoint.getElement()))
+                if ((vo != null && vo.equals(endpoint.getElement())) || (vi != null && vi.equals(endpoint.getElement())))
                     MappingDSGraphDB.getGraph().removeEdge(edge);
             }
             MappingDSGraphDB.autocommit();

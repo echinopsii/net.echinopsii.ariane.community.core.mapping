@@ -261,10 +261,10 @@ public class EndpointEp {
                                     else twinEndpoint = MappingMsgsrvBootstrap.getMappingSce().getEndpointSce().getEndpoint(te_id);
                                     if (twinEndpoint!=null) {
                                         if (operation.equals(Endpoint.OP_ADD_TWIN_ENDPOINT)) {
-                                            if (session!=null) ((SProxEndpoint)twinEndpoint).addTwinEndpoint(session, twinEndpoint);
+                                            if (session!=null) ((SProxEndpoint)endpoint).addTwinEndpoint(session, twinEndpoint);
                                             else endpoint.addTwinEndpoint(twinEndpoint);
                                         } else {
-                                            if (session!=null) ((SProxEndpoint)twinEndpoint).removeTwinEndpoint(session, twinEndpoint);
+                                            if (session!=null) ((SProxEndpoint)endpoint).removeTwinEndpoint(session, twinEndpoint);
                                             else endpoint.removeTwinEndpoint(twinEndpoint);
                                         }
                                         ByteArrayOutputStream outStream = new ByteArrayOutputStream();

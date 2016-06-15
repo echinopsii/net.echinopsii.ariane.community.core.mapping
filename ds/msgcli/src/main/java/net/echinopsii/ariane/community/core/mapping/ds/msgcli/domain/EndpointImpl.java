@@ -300,6 +300,7 @@ public class EndpointImpl extends SProxEndpointAbs implements SProxEndpoint {
                     Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, EndpointSce.Q_MAPPING_ENDPOINT_SERVICE, endpointReplyWorker);
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
                         super.addTwinEndpoint(endpoint);
+                        if (twinEndpointsID==null) twinEndpointsID = new ArrayList<>();
                         twinEndpointsID.add(endpoint.getEndpointID());
                         try {
                             if (retMsg.containsKey(MappingDSGraphPropertyNames.DD_NODE_EDGE_TWIN_KEY)) {

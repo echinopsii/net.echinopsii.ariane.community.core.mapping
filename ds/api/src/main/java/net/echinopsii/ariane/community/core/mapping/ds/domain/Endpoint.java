@@ -28,7 +28,7 @@ public interface Endpoint {
 	String TOKEN_EP_ID = MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE+"ID";
 	String TOKEN_EP_URL = MappingDSGraphPropertyNames.DD_ENDPOINT_URL_KEY;
 	String TOKEN_EP_PNODEID = MappingDSGraphPropertyNames.DD_ENDPOINT_PNODE_KEY+"ID";
-	String TOKEN_EP_TWNEPID = MappingDSGraphPropertyNames.DD_ENDPOINT_EDGE_TWIN_KEY+"ID";
+	String TOKEN_EP_TWNEPID = MappingDSGraphPropertyNames.DD_ENDPOINT_EDGE_TWIN_KEY+"sID";
 	String TOKEN_EP_PRP = MappingDSGraphPropertyNames.DD_ENDPOINT_PROPS_KEY;
 
 	String OP_SET_ENDPOINT_URL = "setEndpointURL";
