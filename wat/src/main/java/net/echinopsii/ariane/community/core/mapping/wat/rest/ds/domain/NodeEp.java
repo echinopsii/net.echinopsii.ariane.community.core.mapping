@@ -96,7 +96,7 @@ public class NodeEp {
             }
         }
         if (ret.getErrorMessage() == null && jsonDeserializedNode.getNodeEndpointsID()!=null && jsonDeserializedNode.getNodeEndpointsID().size() > 0) {
-            for (String id : jsonDeserializedNode.getNodeTwinNodesID()) {
+            for (String id : jsonDeserializedNode.getNodeEndpointsID()) {
                 Endpoint endpoint ;
                 if (mappingSession!=null) endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, id);
                 else endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
