@@ -43,6 +43,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode, MappingDSBluepr
     private static final Logger log = LoggerFactory.getLogger(NodeImpl.class);
 
     private transient Vertex nodeVertex = null;
+    private boolean isBeingDeleted = false;
     private boolean isBeingSyncFromDB = false;
 
     @Override
@@ -70,7 +71,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode, MappingDSBluepr
             if (session!=null) this.setNodeContainer(session, container);
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            if (super.getNodeContainer() == null || !super.getNodeContainer().equals(container)) {
+            if (!isBeingDeleted && (super.getNodeContainer() == null || !super.getNodeContainer().equals(container))) {
                 if (container!=null && container instanceof ContainerImpl) {
                     Container previousParentContainer = super.getNodeContainer();
                     super.setNodeContainer(container);
@@ -149,7 +150,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode, MappingDSBluepr
             if (session!=null) this.setNodeParentNode(session, node);
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            if (super.getNodeParentNode() == null || !super.getNodeParentNode().equals(node)) {
+            if (!isBeingDeleted && (super.getNodeParentNode() == null || !super.getNodeParentNode().equals(node))) {
                 if (node instanceof NodeImpl || node ==null) {
                     Node previousParentNode = super.getNodeParentNode();
                     super.setNodeParentNode(node);
@@ -328,6 +329,14 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode, MappingDSBluepr
     @Override
     public String getEntityCacheID() {
         return "V" + super.getNodeID();
+    }
+
+    public void setIsBeingDeleted() {
+        this.isBeingDeleted = true;
+    }
+
+    public boolean isBeingDeleted() {
+        return isBeingDeleted;
     }
 
     public void synchronizeToDB() throws MappingDSException {

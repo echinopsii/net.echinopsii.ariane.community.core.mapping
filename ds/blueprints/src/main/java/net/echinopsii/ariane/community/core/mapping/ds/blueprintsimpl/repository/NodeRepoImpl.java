@@ -50,6 +50,7 @@ public class NodeRepoImpl implements NodeRepo<NodeImpl> {
 
     @Override
     public void deleteNode(NodeImpl node) throws MappingDSException {
+        node.setIsBeingDeleted();
         Set<Node> childNodesToRemove = new HashSet<>(node.getNodeChildNodes());
         for (Node childNode : childNodesToRemove) this.deleteNode((NodeImpl)childNode);
         childNodesToRemove.clear();
