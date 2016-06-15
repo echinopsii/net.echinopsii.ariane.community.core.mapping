@@ -51,6 +51,12 @@
 
         <dependency>
             <groupId>net.echinopsii.ariane.community.messaging</groupId>
+            <artifactId>net.echinopsii.ariane.community.messaging.rabbitmq</artifactId>
+            <version>${version.net.echinopsii.ariane.messaging}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.echinopsii.ariane.community.messaging</groupId>
             <artifactId>net.echinopsii.ariane.community.messaging.nats</artifactId>
             <version>${version.net.echinopsii.ariane.messaging}</version>
             <scope>test</scope>
@@ -60,6 +66,12 @@
             <!-- bundleized and compiled with Java 1.7 -->
             <artifactId>net.echinopsii.3rdparty.jnats</artifactId>
             <version>0.4.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.rabbitmq</groupId>
+            <artifactId>amqp-client</artifactId>
+            <version>3.3.5</version>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -86,6 +86,7 @@ public class MappingSceImpl extends SProxMappingSceAbs<SessionImpl, SessionRegis
         for (Session session: super.getSessionRegistry().getSessionRegistry().values())
             session.stop();
         MappingDSGraphDB.stop();
+        MappingDSCache.stop();
         return true;
     }
 

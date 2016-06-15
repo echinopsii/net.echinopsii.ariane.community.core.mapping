@@ -42,13 +42,11 @@ import java.util.HashMap;
 import java.util.Properties;
 import java.util.UUID;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.*;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
 
-public class MappingMsgNATSTest {
+public class MappingMsgRabbitMQTest {
 
     private static SProxMappingSce blueprintsMappingSce = new net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.MappingSceImpl();
     private static SProxMappingSce messagingMappingSce = new net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.MappingSceImpl();
@@ -58,12 +56,12 @@ public class MappingMsgNATSTest {
 
     @BeforeClass
     public static void testSetup() throws Exception {
-        Properties natsConfig = new Properties();
-        natsConfig.load(MappingMsgNATSTest.class.getResourceAsStream("/nats-test.properties"));
+        Properties rbmqConfig = new Properties();
+        rbmqConfig.load(MappingMsgRabbitMQTest.class.getResourceAsStream("/rabbitmq-test.properties"));
 
-        momTest = MomClientFactory.make(natsConfig.getProperty(MomClient.MOM_CLI));
+        momTest = MomClientFactory.make(rbmqConfig.getProperty(MomClient.MOM_CLI));
         try {
-            momTest.init(natsConfig);
+            momTest.init(rbmqConfig);
         } catch (Exception e) {
             System.err.println("No local NATS to test");
             momTest = null;
@@ -71,23 +69,23 @@ public class MappingMsgNATSTest {
 
         if (momTest!=null) {
             Properties mappingDSConfig = new Properties();
-            mappingDSConfig.load(MappingMsgNATSTest.class.getResourceAsStream("/net.echinopsii.ariane.community.core.MappingRimManagedService-nats.properties"));
+            mappingDSConfig.load(MappingMsgRabbitMQTest.class.getResourceAsStream("/net.echinopsii.ariane.community.core.MappingRimManagedService-rbmq.properties"));
             mappingDSConfig.setProperty("mapping.ds.blueprints.graphpath", ((String) mappingDSConfig.get("mapping.ds.blueprints.graphpath")) + UUID.randomUUID());
 
             try {
                 blueprintsMappingSce.init(mappingDSConfig);
-                blueprintsMappingSce.init(mappingDSConfig);
                 if (blueprintsMappingSce.start()) {
                     msgsrvBootstrap.bindMappingBSce(blueprintsMappingSce);
-                    msgsrvBootstrap.updated(natsConfig);
+                    msgsrvBootstrap.updated(rbmqConfig);
 
-                    messagingMappingSce.init(natsConfig);
+                    messagingMappingSce.init(rbmqConfig);
 
                     msgsrvBootstrap.validate();
                     messagingMappingSce.start();
                 } else throw new MappingDSException("Error while starting blueprint mappingdb");
             } catch (Exception e) {
-                e.printStackTrace();
+                //e.printStackTrace();
+                System.err.println(e.getMessage());
                 momTest.close();
                 momTest=null;
                 //msgsrvBootstrap.invalidate();
