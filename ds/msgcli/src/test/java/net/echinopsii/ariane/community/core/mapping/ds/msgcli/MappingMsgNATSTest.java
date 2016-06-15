@@ -941,15 +941,15 @@ public class MappingMsgNATSTest {
     @Test
     public void testCreateEndpointAndJoinNode() throws MappingDSException {
         if (momTest!=null) {
-            Container acontainer = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testNodeJoinEndpoint", "SERVER SSH DAEMON");
-            Node aprocess = messagingMappingSce.getNodeSce().createNode("a process-testNodeJoinEndpoint", acontainer.getContainerID(), null);
-            Endpoint endpoint = messagingMappingSce.getEndpointSce().createEndpoint("tcp://process-endpoint:1234", aprocess.getNodeID());
+            Container acontainer = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testCreateEndpointAndJoinNode", "SERVER SSH DAEMON");
+            Node aprocess = messagingMappingSce.getNodeSce().createNode("a process-testCreateEndpointAndJoinNode", acontainer.getContainerID(), null);
+            Endpoint endpoint = messagingMappingSce.getEndpointSce().createEndpoint("tcp://process-endpoint-testCreateEndpointAndJoinNode:1234", aprocess.getNodeID());
             assertTrue(endpoint.getEndpointID()!=null);
             assertTrue(endpoint.getEndpointParentNode().equals(aprocess));
             assertTrue(aprocess.getNodeEndpoints().contains(endpoint));
-            assertTrue(endpoint.getEndpointURL().equals("tcp://process-endpoint:1234"));
-            endpoint.setEndpointURL("tcp://process-endpoint:2345");
-            assertTrue(endpoint.getEndpointURL().equals("tcp://process-endpoint:2345"));
+            assertTrue(endpoint.getEndpointURL().equals("tcp://process-endpoint-testCreateEndpointAndJoinNode:1234"));
+            endpoint.setEndpointURL("tcp://process-endpoint-testCreateEndpointAndJoinNode:2345");
+            assertTrue(endpoint.getEndpointURL().equals("tcp://process-endpoint-testCreateEndpointAndJoinNode:2345"));
             aprocess.removeEndpoint(endpoint);
             assertTrue(!aprocess.getNodeEndpoints().contains(endpoint));
             assertTrue(endpoint.getEndpointParentNode() == null);
@@ -962,7 +962,7 @@ public class MappingMsgNATSTest {
             endpoint.setEndpointParentNode(aprocess);
             assertTrue(aprocess.getNodeEndpoints().contains(endpoint));
             assertTrue(endpoint.getEndpointParentNode().equals(aprocess));
-            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testNodeJoinEndpoint");
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testCreateEndpointAndJoinNode");
         }
     }
 
@@ -977,8 +977,8 @@ public class MappingMsgNATSTest {
             cluster.addClusterContainer(bcontainer);
             Node bprocess = messagingMappingSce.getNodeSce().createNode("b process-testEndpointJoinTwinEP", acontainer.getContainerID(), null);
             aprocess.addTwinNode(bprocess);
-            Endpoint aendpoint = messagingMappingSce.getEndpointSce().createEndpoint("tcp://process-endpoint:1234", aprocess.getNodeID());
-            Endpoint bendpoint = messagingMappingSce.getEndpointSce().createEndpoint("tcp://process-endpoint:2345", bprocess.getNodeID());
+            Endpoint aendpoint = messagingMappingSce.getEndpointSce().createEndpoint("tcp://process-endpoint-testEndpointJoinTwinEP:1234", aprocess.getNodeID());
+            Endpoint bendpoint = messagingMappingSce.getEndpointSce().createEndpoint("tcp://process-endpoint-testEndpointJoinTwinEP:2345", bprocess.getNodeID());
             aendpoint.addTwinEndpoint(bendpoint);
             assertTrue(aendpoint.getTwinEndpoints().contains(bendpoint));
             assertTrue(bendpoint.getTwinEndpoints().contains(aendpoint));
@@ -988,6 +988,63 @@ public class MappingMsgNATSTest {
             messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testEndpointJoinTwinEP");
             messagingMappingSce.getContainerSce().deleteContainer("ssh://b.server.fqdn-testEndpointJoinTwinEP");
             messagingMappingSce.getClusterSce().deleteCluster(cluster.getClusterName());
+        }
+    }
+
+    @Test
+    public void testUnicastLink() throws MappingDSException {
+        if (momTest!=null) {
+            Container acontainer = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testUnicastLink", "SERVER SSH DAEMON");
+            Node aprocess = messagingMappingSce.getNodeSce().createNode("a process-testUnicastLink", acontainer.getContainerID(), null);
+            Container bcontainer = messagingMappingSce.getContainerSce().createContainer("ssh://b.server.fqdn-testUnicastLink", "SERVER SSH DAEMON");
+            Node bprocess = messagingMappingSce.getNodeSce().createNode("b process-testUnicastLink", acontainer.getContainerID(), null);
+            Endpoint aendpoint = messagingMappingSce.getEndpointSce().createEndpoint("tcp://process-endpoint-testUnicastLink:1234", aprocess.getNodeID());
+            Endpoint bendpoint = messagingMappingSce.getEndpointSce().createEndpoint("tcp://process-endpoint-testUnicastLink:2345", bprocess.getNodeID());
+            Transport transport = messagingMappingSce.getTransportSce().createTransport("tcp-testUnicastLink://");
+            Link link = messagingMappingSce.getLinkSce().createLink(aendpoint.getEndpointID(), bendpoint.getEndpointID(), transport.getTransportID());
+            assertTrue(link.getLinkEndpointSource().equals(aendpoint));
+            assertTrue(link.getLinkEndpointTarget().equals(bendpoint));
+            assertTrue(link.getLinkTransport().equals(transport));
+            assertTrue(messagingMappingSce.getLinkSce().getLinks(null).contains(link));
+            assertTrue(messagingMappingSce.getTransportSce().getTransports(null).contains(transport));
+            messagingMappingSce.getLinkSce().deleteLink(link.getLinkID());
+            messagingMappingSce.getTransportSce().deleteTransport(transport.getTransportID());
+            assertTrue(!messagingMappingSce.getLinkSce().getLinks(null).contains(link));
+            assertTrue(!messagingMappingSce.getTransportSce().getTransports(null).contains(transport));
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testUnicastLink");
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://b.server.fqdn-testUnicastLink");
+        }
+    }
+
+    @Test
+    public void testMulticastLink() throws MappingDSException {
+        if (momTest!=null) {
+            Container acontainer = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testMulticastLink", "SERVER SSH DAEMON");
+            Node aprocess = messagingMappingSce.getNodeSce().createNode("a process-testUnicastLink", acontainer.getContainerID(), null);
+            Container bcontainer = messagingMappingSce.getContainerSce().createContainer("ssh://b.server.fqdn-testMulticastLink", "SERVER SSH DAEMON");
+            Node bprocess = messagingMappingSce.getNodeSce().createNode("b process-testUnicastLink", acontainer.getContainerID(), null);
+            Endpoint aendpoint = messagingMappingSce.getEndpointSce().createEndpoint("tcp://process-endpoint-testMulticastLink:1234", aprocess.getNodeID());
+            Endpoint bendpoint = messagingMappingSce.getEndpointSce().createEndpoint("tcp://process-endpoint-testMulticastLink:2345", bprocess.getNodeID());
+            Transport transport = messagingMappingSce.getTransportSce().createTransport("multicast-udp-testMulticastLink://");
+            Link alink = messagingMappingSce.getLinkSce().createLink(aendpoint.getEndpointID(), null, transport.getTransportID());
+            assertTrue(alink.getLinkEndpointSource().equals(aendpoint));
+            assertNull(alink.getLinkEndpointTarget());
+            assertTrue(alink.getLinkTransport().equals(transport));
+            Link blink = messagingMappingSce.getLinkSce().createLink(bendpoint.getEndpointID(), null, transport.getTransportID());
+            assertTrue(blink.getLinkEndpointSource().equals(bendpoint));
+            assertNull(blink.getLinkEndpointTarget());
+            assertTrue(blink.getLinkTransport().equals(transport));
+            assertTrue(messagingMappingSce.getLinkSce().getLinks(null).contains(alink));
+            assertTrue(messagingMappingSce.getLinkSce().getLinks(null).contains(blink));
+            assertTrue(messagingMappingSce.getTransportSce().getTransports(null).contains(transport));
+            messagingMappingSce.getLinkSce().deleteLink(alink.getLinkID());
+            messagingMappingSce.getLinkSce().deleteLink(blink.getLinkID());
+            messagingMappingSce.getTransportSce().deleteTransport(transport.getTransportID());
+            assertTrue(!messagingMappingSce.getLinkSce().getLinks(null).contains(alink));
+            assertTrue(!messagingMappingSce.getLinkSce().getLinks(null).contains(blink));
+            assertTrue(!messagingMappingSce.getTransportSce().getTransports(null).contains(transport));
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testMulticastLink");
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://b.server.fqdn-testMulticastLink");
         }
     }
 }

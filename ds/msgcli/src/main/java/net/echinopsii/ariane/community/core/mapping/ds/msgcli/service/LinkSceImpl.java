@@ -51,7 +51,7 @@ public class LinkSceImpl extends SProxLinkSceAbs<LinkImpl>{
         Map<String, Object> message = new HashMap<>();
         message.put(MappingSce.GLOBAL_OPERATION_FDN, LinkSce.OP_CREATE_LINK);
         message.put(LinkSce.PARAM_LINK_SEPID, sourceEndpointID);
-        message.put(LinkSce.PARAM_LINK_TEPID, targetEndpointID);
+        message.put(LinkSce.PARAM_LINK_TEPID, (targetEndpointID!=null) ? targetEndpointID : MappingSce.GLOBAL_PARAM_OBJ_NONE);
         message.put(Transport.TOKEN_TP_ID, transportID);
 
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
