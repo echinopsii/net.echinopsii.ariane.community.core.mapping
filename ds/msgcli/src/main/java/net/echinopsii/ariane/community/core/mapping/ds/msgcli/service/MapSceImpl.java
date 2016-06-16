@@ -19,11 +19,19 @@
  */
 package net.echinopsii.ariane.community.core.mapping.ds.msgcli.service;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MapperEmptyResultException;
+import net.echinopsii.ariane.community.core.mapping.ds.MapperParserException;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
+import net.echinopsii.ariane.community.core.mapping.ds.msgcli.momsp.MappingMsgcliMomSP;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MapSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Map;
+import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
+import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
 
 public class MapSceImpl implements MapSce {
 
@@ -31,6 +39,28 @@ public class MapSceImpl implements MapSce {
 
     @Override
     public String getMapJSON(String mapperQuery) throws MappingDSException {
-        return null;
+        String jsonMap = null;
+        java.util.Map<String, Object> message = new HashMap<>();
+        message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_GET_MAP);
+        message.put(MapSce.PARAM_MAPPER_QUERY, mapperQuery);
+        java.util.Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, MapSce.Q_MAPPING_MAP_SERVICE, new AppMsgWorker() {
+            @Override
+            public java.util.Map<String, Object> apply(java.util.Map<String, Object> message) {
+                return message;
+            }
+        });
+        int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
+        if (rc != 0) {
+            String msg_err = (String) retMsg.get(MomMsgTranslator.MSG_ERR);
+            switch (rc) {
+                case  MappingSce.MAPPING_SCE_RET_BAD_REQ:
+                    throw new MapperParserException(msg_err);
+                case MappingSce.MAPPING_SCE_RET_NOT_FOUND:
+                    throw new MapperEmptyResultException(msg_err);
+                default:
+                    throw new MappingDSException(msg_err);
+            }
+        } else jsonMap = (String) retMsg.get(MomMsgTranslator.MSG_BODY);
+        return jsonMap;
     }
 }

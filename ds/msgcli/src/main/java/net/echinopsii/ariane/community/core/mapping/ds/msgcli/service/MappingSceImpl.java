@@ -22,20 +22,23 @@ package net.echinopsii.ariane.community.core.mapping.ds.msgcli.service;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
+import net.echinopsii.ariane.community.core.mapping.ds.json.domain.LinkJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.msgcli.domain.GateImpl;
+import net.echinopsii.ariane.community.core.mapping.ds.msgcli.domain.LinkImpl;
+import net.echinopsii.ariane.community.core.mapping.ds.msgcli.domain.NodeImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.momsp.MappingMsgcliMomSP;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.tools.SessionImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.tools.SessionRegistryImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.service.*;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.*;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
+import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
+import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class MappingSceImpl extends SProxMappingSceAbs<SessionImpl, SessionRegistryImpl> {
 
@@ -172,31 +175,156 @@ public class MappingSceImpl extends SProxMappingSceAbs<SessionImpl, SessionRegis
 
     @Override
     public Node getNodeByName(Container container, String nodeName) throws MappingDSException {
-        return null;
+        NodeImpl node = new NodeImpl();
+
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+
+        Map<String, Object> message = new HashMap<>();
+        message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_GET_NODE_BY_NAME);
+        message.put(NodeSce.PARAM_NODE_NAME, container.getContainerID());
+        message.put(Container.TOKEN_CT_ID, nodeName);
+        if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+
+        Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, MappingSce.Q_MAPPING_SCE_SERVICE, node.getNodeReplyWorker());
+        int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
+        if (rc != 0) {
+            if (rc == MappingSce.MAPPING_SCE_RET_NOT_FOUND) node = null;
+            else throw new MappingDSException("Ariane server raised an error... Check your logs !");
+        }
+
+        return node;
     }
 
     @Override
     public Gate getGateByName(Container container, String nodeName) throws MappingDSException {
-        return null;
+        GateImpl gate = new GateImpl();
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+
+        Map<String, Object> message = new HashMap<>();
+        message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_GET_GATE_BY_NAME);
+        message.put(GateSce.PARAM_GATE_NAME, container.getContainerID());
+        message.put(Container.TOKEN_CT_ID, nodeName);
+        if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+
+        Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, MappingSce.Q_MAPPING_SCE_SERVICE, gate.getGateReplyWorker());
+        int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
+        if (rc != 0) {
+            if (rc == MappingSce.MAPPING_SCE_RET_NOT_FOUND) gate = null;
+            else throw new MappingDSException("Ariane server raised an error... Check your logs !");
+        }
+        return gate;
+    }
+
+    class getLinksWorker implements AppMsgWorker {
+        @Override
+        public Map<String, Object> apply(Map<String, Object> message) {
+            Set<LinkImpl> links = null;
+            int rc = (int) message.get(MomMsgTranslator.MSG_RC);
+            if (rc == 0) {
+                try {
+                    String body = null;
+                    if (message.get(MomMsgTranslator.MSG_BODY) != null && message.get(MomMsgTranslator.MSG_BODY) instanceof String)
+                        body = (String) message.get(MomMsgTranslator.MSG_BODY);
+                    else if (message.get(MomMsgTranslator.MSG_BODY) != null && message.get(MomMsgTranslator.MSG_BODY) instanceof byte[])
+                        body = new String((byte[]) message.get(MomMsgTranslator.MSG_BODY));
+
+                    links = new HashSet<>();
+                    for (LinkJSON.JSONDeserializedLink jsonDeserializedLink : LinkJSON.JSON2Links(body)) {
+                        LinkImpl link = new LinkImpl();
+                        link.synchronizeFromJSON(jsonDeserializedLink);
+                        links.add(link);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else log.error("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
+            message.put("RET", links);
+            return message;
+        }
     }
 
     @Override
     public Set<Link> getLinksBySourceEP(Endpoint endpoint) throws MappingDSException {
-        return null;
+        Set<Link> ret = new HashSet<>();
+
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+
+        Map<String, Object> message = new HashMap<>();
+        message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_GET_LINKS_BY_SOURCE_EP);
+        message.put(LinkSce.PARAM_LINK_SEPID, endpoint.getEndpointID());
+        if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+
+        Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, LinkSce.Q_MAPPING_LINK_SERVICE, new getLinksWorker());
+        int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
+        if (rc != 0) throw new MappingDSException("Ariane server raised an error... Check your logs !");
+        ret.addAll((Collection<? extends Link>) retMsg.get("RET"));
+
+        return ret;
+
     }
 
     @Override
     public Set<Link> getLinksByDestinationEP(Endpoint endpoint) throws MappingDSException {
-        return null;
+        Set<Link> ret = new HashSet<>();
+
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+
+        Map<String, Object> message = new HashMap<>();
+        message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_GET_LINKS_BY_DESTINATION_EP);
+        message.put(LinkSce.PARAM_LINK_TEPID, endpoint.getEndpointID());
+        if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+
+        Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, LinkSce.Q_MAPPING_LINK_SERVICE, new getLinksWorker());
+        int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
+        if (rc != 0) throw new MappingDSException("Ariane server raised an error... Check your logs !");
+        ret.addAll((Collection<? extends Link>) retMsg.get("RET"));
+
+        return ret;
     }
 
     @Override
     public Link getLinkBySourceEPandDestinationEP(Endpoint esource, Endpoint edest) throws MappingDSException {
-        return null;
+        LinkImpl link = new LinkImpl();
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+
+        Map<String, Object> message = new HashMap<>();
+        message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_GET_LINK_BY_SOURCE_EP_AND_DESTINATION_EP);
+        message.put(LinkSce.PARAM_LINK_SEPID, esource.getEndpointID());
+        message.put(LinkSce.PARAM_LINK_TEPID, edest.getEndpointID());
+        if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+
+        Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, MappingSce.Q_MAPPING_SCE_SERVICE, link.getLinkReplyWorker());
+        int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
+        if (rc != 0) {
+            if (rc == MappingSce.MAPPING_SCE_RET_NOT_FOUND) link = null;
+            else throw new MappingDSException("Ariane server raised an error... Check your logs !");
+        }
+        return link;
     }
 
     @Override
     public Link getMulticastLinkBySourceEPAndTransport(Endpoint esource, Transport transport) throws MappingDSException {
-        return null;
+        LinkImpl link = new LinkImpl();
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+
+        Map<String, Object> message = new HashMap<>();
+        message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_GET_LINK_BY_SOURCE_EP_AND_TRANSPORT);
+        message.put(LinkSce.PARAM_LINK_SEPID, esource.getEndpointID());
+        message.put(Transport.TOKEN_TP_ID, transport.getTransportID());
+        if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+
+        Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, MappingSce.Q_MAPPING_SCE_SERVICE, link.getLinkReplyWorker());
+        int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
+        if (rc != 0) {
+            if (rc == MappingSce.MAPPING_SCE_RET_NOT_FOUND) link = null;
+            else throw new MappingDSException("Ariane server raised an error... Check your logs !");
+        }
+        return link;
     }
 }
