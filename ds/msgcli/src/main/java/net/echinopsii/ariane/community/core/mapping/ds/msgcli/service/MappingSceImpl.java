@@ -176,16 +176,6 @@ public class MappingSceImpl extends SProxMappingSceAbs<SessionImpl, SessionRegis
     }
 
     @Override
-    public Node getNodeContainingSubnode(Container container, Node node) throws MappingDSException {
-        return null;
-    }
-
-    @Override
-    public Set<Node> getNodesInParentNode(Container container, Node node) throws MappingDSException {
-        return null;
-    }
-
-    @Override
     public Gate getGateByName(Container container, String nodeName) throws MappingDSException {
         return null;
     }

@@ -34,15 +34,6 @@ public interface SProxMappingSce<S extends Session, SR extends SessionRegistry> 
     String SESSION_MGR_PARAM_CLIENT_ID = "clientID";
     String SESSION_MGR_PARAM_SESSION_ID = "sessionID";
 
-    String GET_NODE_BY_NAME = "getNodeByName";
-    String GET_NODE_CONTAINING_SUB_NODE = "getNodeContainingSubnode";
-    String GET_NODES_IN_PARENT_NODE = "getNodesInParentNode";
-    String GET_GATE_BY_NAME = "getGateByName";
-    String GET_LINKS_BY_SOURCE_EP = "getLinksBySourceEP";
-    String GET_LINKS_BY_DESTINATION_EP = "getLinksByDestinationEP";
-    String GET_LINK_BY_SOURCE_EP_AND_DESTINATION_EP = "getLinkBySourceEPandDestinationEP";
-    String GET_LINK_BY_SOURCE_EP_AND_TRANSPORT = "getLinkBySourceEPandTransport";
-
     SR getSessionRegistry();
 
     S openSession(String clientID);
@@ -54,10 +45,6 @@ public interface SProxMappingSce<S extends Session, SR extends SessionRegistry> 
     S closeSession();
 
     Node getNodeByName(Session session, Container container, String nodeName) throws MappingDSException;
-
-    Node getNodeContainingSubnode(Session session, Container container, Node node) throws MappingDSException;
-
-    Set<Node> getNodesInParentNode(Session session, Container container, Node node) throws MappingDSException;
 
     Gate getGateByName(Session session, Container container, String nodeName) throws MappingDSException;
 

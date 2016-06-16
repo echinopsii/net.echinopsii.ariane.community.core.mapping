@@ -22,6 +22,8 @@ package net.echinopsii.ariane.community.core.mapping.ds.service;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Map;
 
+import java.io.IOException;
+
 public interface MapSce {
     String Q_MAPPING_MAP_SERVICE = "ARIANE_MAPPING_MAP_SERVICE_Q";
 
@@ -29,5 +31,5 @@ public interface MapSce {
 
     String PARAM_MAPPER_QUERY = "mapperQuery";
 
-    Map getMap(String mapperQuery) throws MappingDSException;
+    String getMapJSON(String mapperQuery) throws MappingDSException, IOException;
 }

@@ -25,12 +25,17 @@ import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.End
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.tools.MapImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
+import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
+import net.echinopsii.ariane.community.core.mapping.ds.json.service.MapJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MapSce;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 public class MapSceImpl implements MapSce {
@@ -71,8 +76,7 @@ public class MapSceImpl implements MapSce {
             map.addTransport(link.getLinkTransport());
     }
 
-    @Override
-    public MapImpl getMap(String mapperQuery) throws MappingDSException {
+    private MapImpl getMap(String mapperQuery) throws MappingDSException {
         MapImpl map = new MapImpl();
         Map<String, String> minimalMap = MappingDSGraphDB.executeQuery(mapperQuery);
 
@@ -143,5 +147,17 @@ public class MapSceImpl implements MapSce {
             }
         }
         return map;
+    }
+
+    @Override
+    public String getMapJSON(String mapperQuery) throws MappingDSException, IOException {
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        net.echinopsii.ariane.community.core.mapping.ds.service.tools.Map map = this.getMap(mapperQuery);
+        MapJSON.allMap2JSON((HashSet<Container>) map.getContainers(),
+                    (HashSet<Node>) map.getNodes(),
+                    (HashSet<Endpoint>) map.getEndpoints(),
+                    (HashSet<Link>) map.getLinks(),
+                    (HashSet<Transport>) map.getTransports(), outStream);
+        return ToolBox.getOuputStreamContent(outStream, "UTF-8");
     }
 }

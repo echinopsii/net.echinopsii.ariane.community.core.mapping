@@ -41,23 +41,7 @@ public abstract class SProxMappingSceAbs<S extends Session, SR extends SessionRe
     public Node getNodeByName(Session session, Container container, String nodeName) throws MappingDSException {
         Node ret = null;
         if (session!=null && session.isRunning())
-            ret = (Node)session.execute(this, GET_NODE_BY_NAME, new Object[]{container, nodeName});
-        return ret;
-    }
-
-    @Override
-    public Node getNodeContainingSubnode(Session session, Container container, Node node) throws MappingDSException {
-        Node ret = null;
-        if (session!=null && session.isRunning())
-            ret = (Node)session.execute(this, GET_NODE_CONTAINING_SUB_NODE, new Object[]{container, node});
-        return ret;
-    }
-
-    @Override
-    public Set<Node> getNodesInParentNode(Session session, Container container, Node node) throws MappingDSException {
-        Set<Node> ret = null;
-        if (session!=null && session.isRunning())
-            ret = (Set<Node>)session.execute(this, GET_NODES_IN_PARENT_NODE, new Object[]{container, node});
+            ret = (Node)session.execute(this, OP_GET_NODE_BY_NAME, new Object[]{container, nodeName});
         return ret;
     }
 
@@ -65,7 +49,7 @@ public abstract class SProxMappingSceAbs<S extends Session, SR extends SessionRe
     public Gate getGateByName(Session session, Container container, String nodeName) throws MappingDSException {
         Gate ret = null;
         if (session!=null && session.isRunning())
-            ret = (Gate)session.execute(this, GET_GATE_BY_NAME, new Object[]{container, nodeName});
+            ret = (Gate)session.execute(this, OP_GET_GATE_BY_NAME, new Object[]{container, nodeName});
         return ret;
     }
 
@@ -73,7 +57,7 @@ public abstract class SProxMappingSceAbs<S extends Session, SR extends SessionRe
     public Set<Link> getLinksBySourceEP(Session session, Endpoint endpoint) throws MappingDSException {
         Set<Link> ret = null;
         if (session!=null && session.isRunning())
-            ret = (Set<Link>)session.execute(this, GET_LINKS_BY_SOURCE_EP, new Object[]{endpoint});
+            ret = (Set<Link>)session.execute(this, OP_GET_LINKS_BY_SOURCE_EP, new Object[]{endpoint});
         return ret;
     }
 
@@ -81,7 +65,7 @@ public abstract class SProxMappingSceAbs<S extends Session, SR extends SessionRe
     public Set<Link> getLinksByDestinationEP(Session session, Endpoint endpoint) throws MappingDSException {
         Set<Link> ret = null;
         if (session!=null && session.isRunning())
-            ret = (Set<Link>)session.execute(this, GET_LINKS_BY_DESTINATION_EP, new Object[]{endpoint});
+            ret = (Set<Link>)session.execute(this, OP_GET_LINKS_BY_DESTINATION_EP, new Object[]{endpoint});
         return ret;
     }
 
@@ -89,7 +73,7 @@ public abstract class SProxMappingSceAbs<S extends Session, SR extends SessionRe
     public Link getLinkBySourceEPandDestinationEP(Session session, Endpoint esource, Endpoint edest) throws MappingDSException {
         Link ret = null;
         if (session!=null && session.isRunning())
-            ret = (Link)session.execute(this, GET_LINK_BY_SOURCE_EP_AND_DESTINATION_EP, new Object[]{esource, edest});
+            ret = (Link)session.execute(this, OP_GET_LINK_BY_SOURCE_EP_AND_DESTINATION_EP, new Object[]{esource, edest});
         return ret;
     }
 
@@ -97,7 +81,7 @@ public abstract class SProxMappingSceAbs<S extends Session, SR extends SessionRe
     public Link getMulticastLinkBySourceEPAndTransport(Session session, Endpoint esource, Transport transport) throws MappingDSException {
         Link ret = null;
         if (session!=null && session.isRunning())
-            ret = (Link)session.execute(this, GET_LINK_BY_SOURCE_EP_AND_TRANSPORT, new Object[]{esource, transport});
+            ret = (Link)session.execute(this, OP_GET_LINK_BY_SOURCE_EP_AND_TRANSPORT, new Object[]{esource, transport});
         return ret;
     }
 }

@@ -42,10 +42,6 @@ public interface MappingRepo<C extends Container, N extends Node, G extends Gate
 
     public N findNodeByName(C container, String name) throws MappingDSException;
 
-    public N findNodeContainingSubnode(C container, N node) throws MappingDSException;
-
-    public Set<N> findNodesInParentNode(C container, N node) throws MappingDSException;
-
     public G findGateByName(C container, String name) throws MappingDSException;
 
     public Set<L> findLinksBySourceEP(E endpoint) throws MappingDSException;

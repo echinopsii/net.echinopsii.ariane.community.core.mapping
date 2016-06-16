@@ -184,38 +184,6 @@ public class MappingSceImpl extends SProxMappingSceAbs<SessionImpl, SessionRegis
     }
 
     @Override
-    public Node getNodeContainingSubnode(Container container, Node node) throws MappingDSException {
-        Node ret = null;
-        String clientThreadName = Thread.currentThread().getName();
-        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
-        if (clientThreadSessionID!=null) {
-            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
-            if (session!=null) ret = this.getNodeContainingSubnode(session, container, node);
-            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
-        } else if (container instanceof ContainerImpl && node instanceof NodeImpl) ret = globalRepo.findNodeContainingSubnode((ContainerImpl) container, (NodeImpl) node);
-        return ret;
-    }
-
-    @Override
-    public Set<Node> getNodesInParentNode(Container container, Node node) throws MappingDSException {
-        Set<Node> ret = new HashSet<Node>();
-        String clientThreadName = Thread.currentThread().getName();
-        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
-        if (clientThreadSessionID!=null) {
-            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
-            if (session!=null) ret = this.getNodesInParentNode(session, container, node);
-            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
-        } else {
-            if (container instanceof ContainerImpl && node instanceof NodeImpl) {
-                for (NodeImpl nodeLoop : globalRepo.findNodesInParentNode((ContainerImpl) container, (NodeImpl) node)) {
-                    ret.add((Node) nodeLoop);
-                }
-            }
-        }
-        return ret;
-    }
-
-    @Override
     public Gate getGateByName(Container container, String nodeName) throws MappingDSException {
         Gate ret = null;
         String clientThreadName = Thread.currentThread().getName();

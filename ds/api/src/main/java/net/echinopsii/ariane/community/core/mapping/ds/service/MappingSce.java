@@ -48,6 +48,13 @@ public interface MappingSce {
     int MAPPING_SCE_RET_NOT_FOUND = 404;
     int MAPPING_SCE_RET_SERVER_ERR = 500;
 
+    String OP_GET_NODE_BY_NAME = "getNodeByName";
+    String OP_GET_GATE_BY_NAME = "getGateByName";
+    String OP_GET_LINKS_BY_SOURCE_EP = "getLinksBySourceEP";
+    String OP_GET_LINKS_BY_DESTINATION_EP = "getLinksByDestinationEP";
+    String OP_GET_LINK_BY_SOURCE_EP_AND_DESTINATION_EP = "getLinkBySourceEPandDestinationEP";
+    String OP_GET_LINK_BY_SOURCE_EP_AND_TRANSPORT = "getLinkBySourceEPandTransport";
+
     MapSce getMapSce();
 
     SProxClusterSce<? extends Cluster> getClusterSce();
@@ -65,10 +72,6 @@ public interface MappingSce {
     SProxTransportSce<? extends Transport> getTransportSce();
 
     Node getNodeByName(Container container, String nodeName) throws MappingDSException;
-
-    Node getNodeContainingSubnode(Container container, Node node) throws MappingDSException;
-
-    Set<Node> getNodesInParentNode(Container container, Node node) throws MappingDSException;
 
     Gate getGateByName(Container container, String nodeName) throws MappingDSException;
 

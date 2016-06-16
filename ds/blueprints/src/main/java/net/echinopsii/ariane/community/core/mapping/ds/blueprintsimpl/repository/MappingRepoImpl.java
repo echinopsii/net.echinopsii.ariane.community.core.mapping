@@ -83,35 +83,6 @@ public class MappingRepoImpl implements MappingRepo<ContainerImpl, NodeImpl, Gat
     }
 
     @Override
-    public NodeImpl findNodeContainingSubnode(ContainerImpl container,
-                                              NodeImpl node) throws MappingDSException {
-        NodeImpl ret = null;
-        for (NodeImpl pnode : MappingDSGraphDB.getNodes()) {
-            if (pnode.getNodeContainer()!=null && pnode.getNodeContainer().equals(container)) {
-                for (Node cnode : pnode.getNodeChildNodes()) {
-                    if (cnode.equals(node)) {
-                        ret = pnode;
-                        break;
-                    }
-                }
-            }
-        }
-        return ret;
-    }
-
-    @Override
-    public Set<NodeImpl> findNodesInParentNode(ContainerImpl container,
-                                               NodeImpl node) throws MappingDSException {
-        Set<NodeImpl> ret = new HashSet<NodeImpl>();
-        for (NodeImpl cnode : MappingDSGraphDB.getNodes()) {
-            if (cnode.getNodeContainer()!=null && cnode.getNodeContainer().equals(container) && cnode.getNodeParentNode().equals(node)) {
-                ret.add(cnode);
-            }
-        }
-        return ret;
-    }
-
-    @Override
     public GateImpl findGateByName(ContainerImpl container, String name) throws MappingDSException {
         return (GateImpl) findNodeByName(container, name);
     }

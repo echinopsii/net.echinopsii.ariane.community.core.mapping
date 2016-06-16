@@ -81,17 +81,9 @@ public class MapEp {
         if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
             subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
         {
-            MappingSce mapping = MappingBootstrap.getMappingSce();
-            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             try {
-                Map map = mapping.getMapSce().getMap(query);
-                MapJSON.allMap2JSON((HashSet<Container>) map.getContainers(),
-                        (HashSet<Node>) map.getNodes(),
-                        (HashSet<Endpoint>) map.getEndpoints(),
-                        (HashSet<Link>) map.getLinks(),
-                        (HashSet<Transport>) map.getTransports(), outStream);
-                String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                return Response.status(Status.OK).entity(result).build();
+                String map = MappingBootstrap.getMappingSce().getMapSce().getMapJSON(query);
+                return Response.status(Status.OK).entity(map).build();
             } catch (MapperParserException e) {
                 String result = e.getMessage();
                 return Response.status(Status.BAD_REQUEST).entity(result).build();

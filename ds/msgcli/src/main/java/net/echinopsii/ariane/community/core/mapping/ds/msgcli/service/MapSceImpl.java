@@ -30,7 +30,7 @@ public class MapSceImpl implements MapSce {
     private static final Logger log = LoggerFactory.getLogger(MapSceImpl.class);
 
     @Override
-    public Map getMap(String mapperQuery) throws MappingDSException {
+    public String getMapJSON(String mapperQuery) throws MappingDSException {
         return null;
     }
 }
