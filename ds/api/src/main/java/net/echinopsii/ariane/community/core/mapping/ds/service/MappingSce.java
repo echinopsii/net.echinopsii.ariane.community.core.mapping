@@ -53,7 +53,7 @@ public interface MappingSce {
     String OP_GET_LINKS_BY_SOURCE_EP = "getLinksBySourceEP";
     String OP_GET_LINKS_BY_DESTINATION_EP = "getLinksByDestinationEP";
     String OP_GET_LINK_BY_SOURCE_EP_AND_DESTINATION_EP = "getLinkBySourceEPandDestinationEP";
-    String OP_GET_LINK_BY_SOURCE_EP_AND_TRANSPORT = "getLinkBySourceEPandTransport";
+    String OP_GET_LINK_BY_SOURCE_EP_AND_TRANSPORT = "getMulticastLinkBySourceEPAndTransport";
 
     MapSce getMapSce();
 

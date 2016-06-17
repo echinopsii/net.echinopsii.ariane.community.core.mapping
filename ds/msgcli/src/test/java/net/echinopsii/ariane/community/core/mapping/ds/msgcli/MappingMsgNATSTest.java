@@ -3052,6 +3052,88 @@ public class MappingMsgNATSTest {
     }
 
     @Test
+    public void testTransacEndpointJoinTwinEP() throws MappingDSException {
+        if (momTest!=null) {
+            Session session = messagingMappingSce.openSession("testTransacEndpointProperties-this is a test");
+            Cluster cluster = messagingMappingSce.getClusterSce().createCluster("test-testTransacEndpointJoinTwinEP");
+            Container acontainer = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testTransacEndpointJoinTwinEP", "SERVER SSH DAEMON");
+            Container bcontainer = messagingMappingSce.getContainerSce().createContainer("ssh://b.server.fqdn-testTransacEndpointJoinTwinEP", "SERVER SSH DAEMON");
+            cluster.addClusterContainer(acontainer);
+            cluster.addClusterContainer(bcontainer);
+            Node aprocess = messagingMappingSce.getNodeSce().createNode("a process-testTransacEndpointJoinTwinEP", acontainer.getContainerID(), null);
+            Node bprocess = messagingMappingSce.getNodeSce().createNode("b process-testTransacEndpointJoinTwinEP", acontainer.getContainerID(), null);
+            aprocess.addTwinNode(bprocess);
+            final Endpoint aendpoint = messagingMappingSce.getEndpointSce().createEndpoint("tcp://process-endpoint-testTransacEndpointJoinTwinEP:1234", aprocess.getNodeID());
+            final Endpoint bendpoint = messagingMappingSce.getEndpointSce().createEndpoint("tcp://process-endpoint-testTransacEndpointJoinTwinEP:2345", bprocess.getNodeID());
+            session.commit();
+            aendpoint.addTwinEndpoint(bendpoint);
+            assertTrue(aendpoint.getTwinEndpoints().contains(bendpoint));
+            assertTrue(bendpoint.getTwinEndpoints().contains(aendpoint));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Endpoint detachedAEP = blueprintsMappingSce.getEndpointSce().getEndpoint(aendpoint.getEndpointID());
+                        Endpoint detachedBEP = blueprintsMappingSce.getEndpointSce().getEndpoint(bendpoint.getEndpointID());
+                        assertTrue(!detachedAEP.getTwinEndpoints().contains(detachedBEP));
+                        assertTrue(!detachedBEP.getTwinEndpoints().contains(detachedAEP));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Endpoint detachedAEP = blueprintsMappingSce.getEndpointSce().getEndpoint(aendpoint.getEndpointID());
+                        Endpoint detachedBEP = blueprintsMappingSce.getEndpointSce().getEndpoint(bendpoint.getEndpointID());
+                        assertTrue(detachedAEP.getTwinEndpoints().contains(detachedBEP));
+                        assertTrue(detachedBEP.getTwinEndpoints().contains(detachedAEP));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            bendpoint.removeTwinEndpoint(aendpoint);
+            assertTrue(!aendpoint.getTwinEndpoints().contains(bendpoint));
+            assertTrue(!bendpoint.getTwinEndpoints().contains(aendpoint));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Endpoint detachedAEP = blueprintsMappingSce.getEndpointSce().getEndpoint(aendpoint.getEndpointID());
+                        Endpoint detachedBEP = blueprintsMappingSce.getEndpointSce().getEndpoint(bendpoint.getEndpointID());
+                        assertTrue(detachedAEP.getTwinEndpoints().contains(detachedBEP));
+                        assertTrue(detachedBEP.getTwinEndpoints().contains(detachedAEP));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Endpoint detachedAEP = blueprintsMappingSce.getEndpointSce().getEndpoint(aendpoint.getEndpointID());
+                        Endpoint detachedBEP = blueprintsMappingSce.getEndpointSce().getEndpoint(bendpoint.getEndpointID());
+                        assertTrue(!detachedAEP.getTwinEndpoints().contains(detachedBEP));
+                        assertTrue(!detachedBEP.getTwinEndpoints().contains(detachedAEP));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testTransacEndpointJoinTwinEP");
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://b.server.fqdn-testTransacEndpointJoinTwinEP");
+            messagingMappingSce.getClusterSce().deleteCluster(cluster.getClusterName());
+            messagingMappingSce.closeSession();
+        }
+    }
+
+    @Test
     public void testUnicastLink() throws MappingDSException {
         if (momTest!=null) {
             Container acontainer = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testUnicastLink", "SERVER SSH DAEMON");
@@ -3076,6 +3158,102 @@ public class MappingMsgNATSTest {
             assertTrue(!messagingMappingSce.getTransportSce().getTransports(null).contains(transport));
             messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testUnicastLink");
             messagingMappingSce.getContainerSce().deleteContainer("ssh://b.server.fqdn-testUnicastLink");
+        }
+    }
+
+    @Test
+    public void testTransacUnicastLink() throws MappingDSException {
+        if (momTest!=null) {
+            Session session = messagingMappingSce.openSession("testTransacEndpointProperties-this is a test");
+            Container acontainer = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testTransacUnicastLink", "SERVER SSH DAEMON");
+            Node aprocess = messagingMappingSce.getNodeSce().createNode("a process-testTransacUnicastLink", acontainer.getContainerID(), null);
+            Container bcontainer = messagingMappingSce.getContainerSce().createContainer("ssh://b.server.fqdn-testTransacUnicastLink", "SERVER SSH DAEMON");
+            Node bprocess = messagingMappingSce.getNodeSce().createNode("b process-testTransacUnicastLink", acontainer.getContainerID(), null);
+            final Endpoint aendpoint = messagingMappingSce.getEndpointSce().createEndpoint("tcp://process-endpoint-testTransacUnicastLink:1234", aprocess.getNodeID());
+            final Endpoint bendpoint = messagingMappingSce.getEndpointSce().createEndpoint("tcp://process-endpoint-testTransacUnicastLink:2345", bprocess.getNodeID());
+            final Transport transport = messagingMappingSce.getTransportSce().createTransport("tcp-testTransacUnicastLink://");
+            final Link link = messagingMappingSce.getLinkSce().createLink(aendpoint.getEndpointID(), bendpoint.getEndpointID(), transport.getTransportID());
+            assertTrue(link.getLinkEndpointSource().equals(aendpoint));
+            assertTrue(link.getLinkEndpointTarget().equals(bendpoint));
+            assertTrue(link.getLinkTransport().equals(transport));
+            assertTrue(messagingMappingSce.getLinkSce().getLinks(null).contains(link));
+            assertTrue(messagingMappingSce.getTransportSce().getTransports(null).contains(transport));
+            assertTrue(messagingMappingSce.getLinkBySourceEPandDestinationEP(aendpoint, bendpoint).equals(link));
+            assertTrue(messagingMappingSce.getLinksBySourceEP(aendpoint).contains(link));
+            assertTrue(messagingMappingSce.getLinksByDestinationEP(bendpoint).contains(link));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        assertNull(blueprintsMappingSce.getTransportSce().getTransport(transport.getTransportID()));
+                        assertNull(blueprintsMappingSce.getLinkSce().getLink(link.getLinkID()));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Endpoint detachedAEP = blueprintsMappingSce.getEndpointSce().getEndpoint(aendpoint.getEndpointID());
+                        Endpoint detachedBEP = blueprintsMappingSce.getEndpointSce().getEndpoint(bendpoint.getEndpointID());
+                        Transport detachedTransport = blueprintsMappingSce.getTransportSce().getTransport(transport.getTransportID());
+                        Link detachedLink = blueprintsMappingSce.getLinkSce().getLink(link.getLinkID());
+                        assertTrue(detachedLink.getLinkEndpointSource().equals(detachedAEP));
+                        assertTrue(detachedLink.getLinkEndpointTarget().equals(detachedBEP));
+                        assertTrue(detachedLink.getLinkTransport().equals(detachedTransport));
+                        assertTrue(blueprintsMappingSce.getLinkSce().getLinks(null).contains(detachedLink));
+                        assertTrue(blueprintsMappingSce.getTransportSce().getTransports(null).contains(detachedTransport));
+                        assertTrue(blueprintsMappingSce.getLinkBySourceEPandDestinationEP(detachedAEP, detachedBEP).equals(detachedLink));
+                        assertTrue(blueprintsMappingSce.getLinksBySourceEP(detachedAEP).contains(detachedLink));
+                        assertTrue(blueprintsMappingSce.getLinksByDestinationEP(detachedBEP).contains(detachedLink));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            messagingMappingSce.getLinkSce().deleteLink(link.getLinkID());
+            messagingMappingSce.getTransportSce().deleteTransport(transport.getTransportID());
+            assertTrue(!messagingMappingSce.getLinkSce().getLinks(null).contains(link));
+            assertTrue(!messagingMappingSce.getTransportSce().getTransports(null).contains(transport));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Endpoint detachedAEP = blueprintsMappingSce.getEndpointSce().getEndpoint(aendpoint.getEndpointID());
+                        Endpoint detachedBEP = blueprintsMappingSce.getEndpointSce().getEndpoint(bendpoint.getEndpointID());
+                        Transport detachedTransport = blueprintsMappingSce.getTransportSce().getTransport(transport.getTransportID());
+                        Link detachedLink = blueprintsMappingSce.getLinkSce().getLink(link.getLinkID());
+                        assertTrue(detachedLink.getLinkEndpointSource().equals(detachedAEP));
+                        assertTrue(detachedLink.getLinkEndpointTarget().equals(detachedBEP));
+                        assertTrue(detachedLink.getLinkTransport().equals(detachedTransport));
+                        assertTrue(blueprintsMappingSce.getLinkSce().getLinks(null).contains(detachedLink));
+                        assertTrue(blueprintsMappingSce.getTransportSce().getTransports(null).contains(detachedTransport));
+                        assertTrue(blueprintsMappingSce.getLinkBySourceEPandDestinationEP(detachedAEP, detachedBEP).equals(detachedLink));
+                        assertTrue(blueprintsMappingSce.getLinksBySourceEP(detachedAEP).contains(detachedLink));
+                        assertTrue(blueprintsMappingSce.getLinksByDestinationEP(detachedBEP).contains(detachedLink));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        assertNull(blueprintsMappingSce.getTransportSce().getTransport(transport.getTransportID()));
+                        assertNull(blueprintsMappingSce.getLinkSce().getLink(link.getLinkID()));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testTransacUnicastLink");
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://b.server.fqdn-testTransacUnicastLink");
+            messagingMappingSce.closeSession();
         }
     }
 
@@ -3110,6 +3288,118 @@ public class MappingMsgNATSTest {
             assertTrue(!messagingMappingSce.getTransportSce().getTransports(null).contains(transport));
             messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testMulticastLink");
             messagingMappingSce.getContainerSce().deleteContainer("ssh://b.server.fqdn-testMulticastLink");
+        }
+    }
+
+    @Test
+    public void testTransacMulticastLink() throws MappingDSException {
+        if (momTest!=null) {
+            Session session = messagingMappingSce.openSession("testTransacEndpointProperties-this is a test");
+            Container acontainer = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testTransacMulticastLink", "SERVER SSH DAEMON");
+            Node aprocess = messagingMappingSce.getNodeSce().createNode("a process-testTransacMulticastLink", acontainer.getContainerID(), null);
+            Container bcontainer = messagingMappingSce.getContainerSce().createContainer("ssh://b.server.fqdn-testTransacMulticastLink", "SERVER SSH DAEMON");
+            Node bprocess = messagingMappingSce.getNodeSce().createNode("b process-testUnicastLink", acontainer.getContainerID(), null);
+            final Endpoint aendpoint = messagingMappingSce.getEndpointSce().createEndpoint("tcp://process-endpoint-testTransacMulticastLink:1234", aprocess.getNodeID());
+            final Endpoint bendpoint = messagingMappingSce.getEndpointSce().createEndpoint("tcp://process-endpoint-testTransacMulticastLink:2345", bprocess.getNodeID());
+            final Transport transport = messagingMappingSce.getTransportSce().createTransport("multicast-udp-testTransacMulticastLink://");
+            final Link alink = messagingMappingSce.getLinkSce().createLink(aendpoint.getEndpointID(), null, transport.getTransportID());
+            final Link blink = messagingMappingSce.getLinkSce().createLink(bendpoint.getEndpointID(), null, transport.getTransportID());
+            assertTrue(alink.getLinkEndpointSource().equals(aendpoint));
+            assertNull(alink.getLinkEndpointTarget());
+            assertTrue(alink.getLinkTransport().equals(transport));
+            assertTrue(blink.getLinkEndpointSource().equals(bendpoint));
+            assertNull(blink.getLinkEndpointTarget());
+            assertTrue(blink.getLinkTransport().equals(transport));
+            assertTrue(messagingMappingSce.getLinkSce().getLinks(null).contains(alink));
+            assertTrue(messagingMappingSce.getLinkSce().getLinks(null).contains(blink));
+            assertTrue(messagingMappingSce.getTransportSce().getTransports(null).contains(transport));
+            assertTrue(messagingMappingSce.getMulticastLinkBySourceEPAndTransport(aendpoint, transport).equals(alink));
+            assertTrue(messagingMappingSce.getMulticastLinkBySourceEPAndTransport(bendpoint, transport).equals(blink));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        assertNull(blueprintsMappingSce.getTransportSce().getTransport(transport.getTransportID()));
+                        assertNull(blueprintsMappingSce.getLinkSce().getLink(alink.getLinkID()));
+                        assertNull(blueprintsMappingSce.getLinkSce().getLink(blink.getLinkID()));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Endpoint detachedAEP = blueprintsMappingSce.getEndpointSce().getEndpoint(aendpoint.getEndpointID());
+                        Endpoint detachedBEP = blueprintsMappingSce.getEndpointSce().getEndpoint(bendpoint.getEndpointID());
+                        Transport detachedTransport = blueprintsMappingSce.getTransportSce().getTransport(transport.getTransportID());
+                        Link detachedALink = blueprintsMappingSce.getLinkSce().getLink(alink.getLinkID());
+                        Link detachedBLink = blueprintsMappingSce.getLinkSce().getLink(blink.getLinkID());
+                        assertTrue(detachedALink.getLinkEndpointSource().equals(detachedAEP));
+                        assertNull(detachedALink.getLinkEndpointTarget());
+                        assertTrue(detachedALink.getLinkTransport().equals(detachedTransport));
+                        assertTrue(detachedBLink.getLinkEndpointSource().equals(detachedBEP));
+                        assertNull(detachedBLink.getLinkEndpointTarget());
+                        assertTrue(detachedBLink.getLinkTransport().equals(detachedTransport));
+                        assertTrue(blueprintsMappingSce.getLinkSce().getLinks(null).contains(detachedALink));
+                        assertTrue(blueprintsMappingSce.getLinkSce().getLinks(null).contains(detachedBLink));
+                        assertTrue(blueprintsMappingSce.getTransportSce().getTransports(null).contains(detachedTransport));
+                        assertTrue(blueprintsMappingSce.getMulticastLinkBySourceEPAndTransport(detachedAEP, detachedTransport).equals(detachedALink));
+                        assertTrue(blueprintsMappingSce.getMulticastLinkBySourceEPAndTransport(detachedBEP, detachedTransport).equals(detachedBLink));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            messagingMappingSce.getLinkSce().deleteLink(alink.getLinkID());
+            messagingMappingSce.getLinkSce().deleteLink(blink.getLinkID());
+            messagingMappingSce.getTransportSce().deleteTransport(transport.getTransportID());
+            assertTrue(!messagingMappingSce.getLinkSce().getLinks(null).contains(alink));
+            assertTrue(!messagingMappingSce.getLinkSce().getLinks(null).contains(blink));
+            assertTrue(!messagingMappingSce.getTransportSce().getTransports(null).contains(transport));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Endpoint detachedAEP = blueprintsMappingSce.getEndpointSce().getEndpoint(aendpoint.getEndpointID());
+                        Endpoint detachedBEP = blueprintsMappingSce.getEndpointSce().getEndpoint(bendpoint.getEndpointID());
+                        Transport detachedTransport = blueprintsMappingSce.getTransportSce().getTransport(transport.getTransportID());
+                        Link detachedALink = blueprintsMappingSce.getLinkSce().getLink(alink.getLinkID());
+                        Link detachedBLink = blueprintsMappingSce.getLinkSce().getLink(blink.getLinkID());
+                        assertTrue(detachedALink.getLinkEndpointSource().equals(detachedAEP));
+                        assertNull(detachedALink.getLinkEndpointTarget());
+                        assertTrue(detachedALink.getLinkTransport().equals(detachedTransport));
+                        assertTrue(detachedBLink.getLinkEndpointSource().equals(detachedBEP));
+                        assertNull(detachedBLink.getLinkEndpointTarget());
+                        assertTrue(detachedBLink.getLinkTransport().equals(detachedTransport));
+                        assertTrue(blueprintsMappingSce.getLinkSce().getLinks(null).contains(detachedALink));
+                        assertTrue(blueprintsMappingSce.getLinkSce().getLinks(null).contains(detachedBLink));
+                        assertTrue(blueprintsMappingSce.getTransportSce().getTransports(null).contains(detachedTransport));
+                        assertTrue(blueprintsMappingSce.getMulticastLinkBySourceEPAndTransport(detachedAEP, detachedTransport).equals(detachedALink));
+                        assertTrue(blueprintsMappingSce.getMulticastLinkBySourceEPAndTransport(detachedBEP, detachedTransport).equals(detachedBLink));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        assertNull(blueprintsMappingSce.getTransportSce().getTransport(transport.getTransportID()));
+                        assertNull(blueprintsMappingSce.getLinkSce().getLink(alink.getLinkID()));
+                        assertNull(blueprintsMappingSce.getLinkSce().getLink(blink.getLinkID()));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testTransacMulticastLink");
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://b.server.fqdn-testTransacMulticastLink");
+            messagingMappingSce.closeSession();
         }
     }
 
