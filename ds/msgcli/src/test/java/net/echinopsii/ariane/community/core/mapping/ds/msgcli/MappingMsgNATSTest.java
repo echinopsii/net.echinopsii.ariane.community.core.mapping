@@ -171,7 +171,8 @@ public class MappingMsgNATSTest {
                 @Override
                 public void run() {
                     try {
-                        assertTrue(!blueprintsMappingSce.getClusterSce().getClusters(null).contains(cluster));
+                        Cluster detachedCluster = blueprintsMappingSce.getClusterSce().getCluster(cluster.getClusterID());
+                        assertTrue(!blueprintsMappingSce.getClusterSce().getClusters(null).contains(detachedCluster));
                     } catch (MappingDSException e) {
                         e.printStackTrace();
                     }
@@ -183,7 +184,8 @@ public class MappingMsgNATSTest {
                 @Override
                 public void run() {
                     try {
-                        assertTrue(blueprintsMappingSce.getClusterSce().getClusters(null).contains(cluster));
+                        Cluster detachedCluster = blueprintsMappingSce.getClusterSce().getCluster(cluster.getClusterID());
+                        assertTrue(blueprintsMappingSce.getClusterSce().getClusters(null).contains(detachedCluster));
                     } catch (MappingDSException e) {
                         e.printStackTrace();
                     }
@@ -195,7 +197,8 @@ public class MappingMsgNATSTest {
                 @Override
                 public void run() {
                     try {
-                        assertTrue(blueprintsMappingSce.getClusterSce().getClusters(null).contains(cluster));
+                        Cluster detachedCluster = blueprintsMappingSce.getClusterSce().getCluster(cluster.getClusterID());
+                        assertTrue(blueprintsMappingSce.getClusterSce().getClusters(null).contains(detachedCluster));
                     } catch (MappingDSException e) {
                         e.printStackTrace();
                     }
@@ -207,7 +210,8 @@ public class MappingMsgNATSTest {
                 @Override
                 public void run() {
                     try {
-                        assertTrue(!blueprintsMappingSce.getClusterSce().getClusters(null).contains(cluster));
+                        Cluster detachedCluster = blueprintsMappingSce.getClusterSce().getCluster(cluster.getClusterID());
+                        assertTrue(!blueprintsMappingSce.getClusterSce().getClusters(null).contains(detachedCluster));
                     } catch (MappingDSException e) {
                         e.printStackTrace();
                     }
@@ -1901,6 +1905,180 @@ public class MappingMsgNATSTest {
     }
 
     @Test
+    public void testTransacContainerJoinNode() throws MappingDSException {
+        if (momTest!=null) {
+            Session session = messagingMappingSce.openSession("testTransacNodeProperties-this is a test");
+            final Container ahypervisor = messagingMappingSce.getContainerSce().createContainer("ssh://a.hypervisor.fqdn-testTransacContainerJoinNode", "SERVER SSH DAEMON");
+            final Container bhypervisor = messagingMappingSce.getContainerSce().createContainer("ssh://b.hypervisor.fqdn-testTransacContainerJoinNode", "SERVER SSH DAEMON");
+            final Node avm = messagingMappingSce.getNodeSce().createNode("a vm-testTransacContainerJoinNode", ahypervisor.getContainerID(), null);
+            session.commit();
+            assertTrue(ahypervisor.getContainerNodes().contains(avm));
+            assertFalse(bhypervisor.getContainerNodes().contains(avm));
+            assertTrue(avm.getNodeContainer().equals(ahypervisor));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container detachecHYPA = blueprintsMappingSce.getContainerSce().getContainer(ahypervisor.getContainerID());
+                        Container detachecHYPB = blueprintsMappingSce.getContainerSce().getContainer(bhypervisor.getContainerID());
+                        Node detachedAVM = blueprintsMappingSce.getNodeSce().getNode(avm.getNodeID());
+                        assertTrue(detachecHYPA.getContainerNodes().contains(detachedAVM));
+                        assertFalse(detachecHYPB.getContainerNodes().contains(detachedAVM));
+                        assertTrue(detachedAVM.getNodeContainer().equals(detachecHYPA));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            avm.setNodeContainer(bhypervisor);
+            assertTrue(avm.getNodeContainer().equals(bhypervisor));
+            assertTrue(bhypervisor.getContainerNodes().contains(avm));
+            assertFalse(ahypervisor.getContainerNodes().contains(avm));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container detachecHYPA = blueprintsMappingSce.getContainerSce().getContainer(ahypervisor.getContainerID());
+                        Container detachecHYPB = blueprintsMappingSce.getContainerSce().getContainer(bhypervisor.getContainerID());
+                        Node detachedAVM = blueprintsMappingSce.getNodeSce().getNode(avm.getNodeID());
+                        assertTrue(detachecHYPA.getContainerNodes().contains(detachedAVM));
+                        assertFalse(detachecHYPB.getContainerNodes().contains(detachedAVM));
+                        assertTrue(detachedAVM.getNodeContainer().equals(detachecHYPA));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container detachecHYPA = blueprintsMappingSce.getContainerSce().getContainer(ahypervisor.getContainerID());
+                        Container detachecHYPB = blueprintsMappingSce.getContainerSce().getContainer(bhypervisor.getContainerID());
+                        Node detachedAVM = blueprintsMappingSce.getNodeSce().getNode(avm.getNodeID());
+                        assertFalse(detachecHYPA.getContainerNodes().contains(detachedAVM));
+                        assertTrue(detachecHYPB.getContainerNodes().contains(detachedAVM));
+                        assertTrue(detachedAVM.getNodeContainer().equals(detachecHYPB));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            ahypervisor.addContainerNode(avm);
+            assertTrue(avm.getNodeContainer().equals(ahypervisor));
+            assertTrue(ahypervisor.getContainerNodes().contains(avm));
+            assertFalse(bhypervisor.getContainerNodes().contains(avm));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container detachecHYPA = blueprintsMappingSce.getContainerSce().getContainer(ahypervisor.getContainerID());
+                        Container detachecHYPB = blueprintsMappingSce.getContainerSce().getContainer(bhypervisor.getContainerID());
+                        Node detachedAVM = blueprintsMappingSce.getNodeSce().getNode(avm.getNodeID());
+                        assertFalse(detachecHYPA.getContainerNodes().contains(detachedAVM));
+                        assertTrue(detachecHYPB.getContainerNodes().contains(detachedAVM));
+                        assertTrue(detachedAVM.getNodeContainer().equals(detachecHYPB));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container detachecHYPA = blueprintsMappingSce.getContainerSce().getContainer(ahypervisor.getContainerID());
+                        Container detachecHYPB = blueprintsMappingSce.getContainerSce().getContainer(bhypervisor.getContainerID());
+                        Node detachedAVM = blueprintsMappingSce.getNodeSce().getNode(avm.getNodeID());
+                        assertTrue(detachecHYPA.getContainerNodes().contains(detachedAVM));
+                        assertFalse(detachecHYPB.getContainerNodes().contains(detachedAVM));
+                        assertTrue(detachedAVM.getNodeContainer().equals(detachecHYPA));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            //Container.removeContainerNode should be used by Ariane internals only and avoided on client side.
+            ahypervisor.removeContainerNode(avm);
+            assertTrue(avm.getNodeContainer() == null);
+            assertFalse(ahypervisor.getContainerNodes().contains(avm));
+            assertFalse(bhypervisor.getContainerNodes().contains(avm));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container detachecHYPA = blueprintsMappingSce.getContainerSce().getContainer(ahypervisor.getContainerID());
+                        Container detachecHYPB = blueprintsMappingSce.getContainerSce().getContainer(bhypervisor.getContainerID());
+                        Node detachedAVM = blueprintsMappingSce.getNodeSce().getNode(avm.getNodeID());
+                        assertTrue(detachecHYPA.getContainerNodes().contains(detachedAVM));
+                        assertFalse(detachecHYPB.getContainerNodes().contains(detachedAVM));
+                        assertTrue(detachedAVM.getNodeContainer().equals(detachecHYPA));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container detachecHYPA = blueprintsMappingSce.getContainerSce().getContainer(ahypervisor.getContainerID());
+                        Container detachecHYPB = blueprintsMappingSce.getContainerSce().getContainer(bhypervisor.getContainerID());
+                        Node detachedAVM = blueprintsMappingSce.getNodeSce().getNode(avm.getNodeID());
+                        assertFalse(detachecHYPA.getContainerNodes().contains(detachedAVM));
+                        assertFalse(detachecHYPB.getContainerNodes().contains(detachedAVM));
+                        assertNull(detachedAVM.getNodeContainer());
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            avm.setNodeContainer(bhypervisor);
+            assertTrue(avm.getNodeContainer().equals(bhypervisor));
+            assertTrue(bhypervisor.getContainerNodes().contains(avm));
+            assertFalse(ahypervisor.getContainerNodes().contains(avm));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container detachecHYPA = blueprintsMappingSce.getContainerSce().getContainer(ahypervisor.getContainerID());
+                        Container detachecHYPB = blueprintsMappingSce.getContainerSce().getContainer(bhypervisor.getContainerID());
+                        Node detachedAVM = blueprintsMappingSce.getNodeSce().getNode(avm.getNodeID());
+                        assertFalse(detachecHYPA.getContainerNodes().contains(detachedAVM));
+                        assertFalse(detachecHYPB.getContainerNodes().contains(detachedAVM));
+                        assertNull(detachedAVM.getNodeContainer());
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container detachecHYPA = blueprintsMappingSce.getContainerSce().getContainer(ahypervisor.getContainerID());
+                        Container detachecHYPB = blueprintsMappingSce.getContainerSce().getContainer(bhypervisor.getContainerID());
+                        Node detachedAVM = blueprintsMappingSce.getNodeSce().getNode(avm.getNodeID());
+                        assertFalse(detachecHYPA.getContainerNodes().contains(detachedAVM));
+                        assertTrue(detachecHYPB.getContainerNodes().contains(detachedAVM));
+                        assertTrue(detachedAVM.getNodeContainer().equals(detachecHYPB));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            messagingMappingSce.getNodeSce().deleteNode(avm.getNodeID());
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.hypervisor.fqdn-testTransacContainerJoinNode");
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://b.hypervisor.fqdn-testTransacContainerJoinNode");
+            messagingMappingSce.closeSession();
+        }
+    }
+
+    @Test
     public void testNodeJoinChildNode() throws MappingDSException {
         if (momTest!=null) {
             Container acontainer = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testNodeJoinChildNode", "SERVER SSH DAEMON");
@@ -1923,6 +2101,152 @@ public class MappingMsgNATSTest {
     }
 
     @Test
+    public void testTransacNodeJoinChildNode() throws MappingDSException {
+        if (momTest!=null) {
+            Session session = messagingMappingSce.openSession("testTransacNodeProperties-this is a test");
+            final Container acontainer = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testTransacNodeJoinChildNode", "SERVER SSH DAEMON");
+            final Node aprocess = messagingMappingSce.getNodeSce().createNode("a process-testTransacNodeJoinChildNode", acontainer.getContainerID(), null);
+            final Node thread = messagingMappingSce.getNodeSce().createNode("a thread-testTransacNodeJoinChildNode", acontainer.getContainerID(), aprocess.getNodeID());
+            session.commit();
+            assertTrue(aprocess.getNodeChildNodes().contains(thread));
+            assertTrue(thread.getNodeParentNode().equals(aprocess));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node detachecProcess = blueprintsMappingSce.getNodeSce().getNode(aprocess.getNodeID());
+                        Node detachedThread = blueprintsMappingSce.getNodeSce().getNode(thread.getNodeID());
+                        assertTrue(detachecProcess.getNodeChildNodes().contains(detachedThread));
+                        assertTrue(detachedThread.getNodeParentNode().equals(detachecProcess));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            aprocess.removeNodeChildNode(thread);
+            assertFalse(aprocess.getNodeChildNodes().contains(thread));
+            assertTrue(thread.getNodeParentNode() == null);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node detachecProcess = blueprintsMappingSce.getNodeSce().getNode(aprocess.getNodeID());
+                        Node detachedThread = blueprintsMappingSce.getNodeSce().getNode(thread.getNodeID());
+                        assertTrue(detachecProcess.getNodeChildNodes().contains(detachedThread));
+                        assertTrue(detachedThread.getNodeParentNode().equals(detachecProcess));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node detachecProcess = blueprintsMappingSce.getNodeSce().getNode(aprocess.getNodeID());
+                        Node detachedThread = blueprintsMappingSce.getNodeSce().getNode(thread.getNodeID());
+                        assertFalse(detachecProcess.getNodeChildNodes().contains(detachedThread));
+                        assertNull(detachedThread.getNodeParentNode());
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            aprocess.addNodeChildNode(thread);
+            assertTrue(aprocess.getNodeChildNodes().contains(thread));
+            assertTrue(thread.getNodeParentNode().equals(aprocess));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node detachecProcess = blueprintsMappingSce.getNodeSce().getNode(aprocess.getNodeID());
+                        Node detachedThread = blueprintsMappingSce.getNodeSce().getNode(thread.getNodeID());
+                        assertFalse(detachecProcess.getNodeChildNodes().contains(detachedThread));
+                        assertNull(detachedThread.getNodeParentNode());
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node detachecProcess = blueprintsMappingSce.getNodeSce().getNode(aprocess.getNodeID());
+                        Node detachedThread = blueprintsMappingSce.getNodeSce().getNode(thread.getNodeID());
+                        assertTrue(detachecProcess.getNodeChildNodes().contains(detachedThread));
+                        assertTrue(detachedThread.getNodeParentNode().equals(detachecProcess));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            aprocess.removeNodeChildNode(thread);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node detachecProcess = blueprintsMappingSce.getNodeSce().getNode(aprocess.getNodeID());
+                        Node detachedThread = blueprintsMappingSce.getNodeSce().getNode(thread.getNodeID());
+                        assertTrue(detachecProcess.getNodeChildNodes().contains(detachedThread));
+                        assertTrue(detachedThread.getNodeParentNode().equals(detachecProcess));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node detachecProcess = blueprintsMappingSce.getNodeSce().getNode(aprocess.getNodeID());
+                        Node detachedThread = blueprintsMappingSce.getNodeSce().getNode(thread.getNodeID());
+                        assertFalse(detachecProcess.getNodeChildNodes().contains(detachedThread));
+                        assertNull(detachedThread.getNodeParentNode());
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            thread.setNodeParentNode(aprocess);
+            assertTrue(aprocess.getNodeChildNodes().contains(thread));
+            assertTrue(thread.getNodeParentNode().equals(aprocess));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node detachecProcess = blueprintsMappingSce.getNodeSce().getNode(aprocess.getNodeID());
+                        Node detachedThread = blueprintsMappingSce.getNodeSce().getNode(thread.getNodeID());
+                        assertFalse(detachecProcess.getNodeChildNodes().contains(detachedThread));
+                        assertNull(detachedThread.getNodeParentNode());
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node detachecProcess = blueprintsMappingSce.getNodeSce().getNode(aprocess.getNodeID());
+                        Node detachedThread = blueprintsMappingSce.getNodeSce().getNode(thread.getNodeID());
+                        assertTrue(detachecProcess.getNodeChildNodes().contains(detachedThread));
+                        assertTrue(detachedThread.getNodeParentNode().equals(detachecProcess));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testTransacNodeJoinChildNode");
+            messagingMappingSce.closeSession();
+        }
+    }
+
+    @Test
     public void testNodeJoinTwinNode() throws MappingDSException {
         if (momTest!=null) {
             Cluster cluster = messagingMappingSce.getClusterSce().createCluster("test-testNodeJoinTwinNode");
@@ -1935,9 +2259,91 @@ public class MappingMsgNATSTest {
             aprocess.addTwinNode(bprocess);
             assertTrue(aprocess.getTwinNodes().contains(bprocess));
             assertTrue(bprocess.getTwinNodes().contains(aprocess));
+            bprocess.removeTwinNode(aprocess);
+            assertFalse(aprocess.getTwinNodes().contains(bprocess));
+            assertFalse(bprocess.getTwinNodes().contains(aprocess));
             messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testNodeJoinTwinNode");
             messagingMappingSce.getContainerSce().deleteContainer("ssh://b.server.fqdn-testNodeJoinTwinNode");
             messagingMappingSce.getClusterSce().deleteCluster(cluster.getClusterName());
+        }
+    }
+
+    @Test
+    public void testTransacNodeJoinTwinNode() throws MappingDSException {
+        if (momTest!=null) {
+            Session session = messagingMappingSce.openSession("testTransacNodeProperties-this is a test");
+            Cluster cluster = messagingMappingSce.getClusterSce().createCluster("test-testNodeJoinTwinNode");
+            Container acontainer = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testNodeJoinTwinNode", "SERVER SSH DAEMON");
+            Container bcontainer = messagingMappingSce.getContainerSce().createContainer("ssh://b.server.fqdn-testNodeJoinTwinNode", "SERVER SSH DAEMON");
+            cluster.addClusterContainer(acontainer);
+            cluster.addClusterContainer(bcontainer);
+            final Node aprocess = messagingMappingSce.getNodeSce().createNode("a process-testNodeJoinTwinNode", acontainer.getContainerID(), null);
+            final Node bprocess = messagingMappingSce.getNodeSce().createNode("b process-testNodeJoinTwinNode", acontainer.getContainerID(), null);
+            session.commit();
+            aprocess.addTwinNode(bprocess);
+            assertTrue(aprocess.getTwinNodes().contains(bprocess));
+            assertTrue(bprocess.getTwinNodes().contains(aprocess));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node detachecAProcess = blueprintsMappingSce.getNodeSce().getNode(aprocess.getNodeID());
+                        Node detachedBProcess = blueprintsMappingSce.getNodeSce().getNode(bprocess.getNodeID());
+                        assertFalse(detachecAProcess.getTwinNodes().contains(detachedBProcess));
+                        assertFalse(detachedBProcess.getTwinNodes().contains(detachecAProcess));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node detachecAProcess = blueprintsMappingSce.getNodeSce().getNode(aprocess.getNodeID());
+                        Node detachedBProcess = blueprintsMappingSce.getNodeSce().getNode(bprocess.getNodeID());
+                        assertTrue(detachecAProcess.getTwinNodes().contains(detachedBProcess));
+                        assertTrue(detachedBProcess.getTwinNodes().contains(detachecAProcess));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            bprocess.removeTwinNode(aprocess);
+            assertFalse(aprocess.getTwinNodes().contains(bprocess));
+            assertFalse(bprocess.getTwinNodes().contains(aprocess));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node detachecAProcess = blueprintsMappingSce.getNodeSce().getNode(aprocess.getNodeID());
+                        Node detachedBProcess = blueprintsMappingSce.getNodeSce().getNode(bprocess.getNodeID());
+                        assertTrue(detachecAProcess.getTwinNodes().contains(detachedBProcess));
+                        assertTrue(detachedBProcess.getTwinNodes().contains(detachecAProcess));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node detachecAProcess = blueprintsMappingSce.getNodeSce().getNode(aprocess.getNodeID());
+                        Node detachedBProcess = blueprintsMappingSce.getNodeSce().getNode(bprocess.getNodeID());
+                        assertFalse(detachecAProcess.getTwinNodes().contains(detachedBProcess));
+                        assertFalse(detachedBProcess.getTwinNodes().contains(detachecAProcess));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testNodeJoinTwinNode");
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://b.server.fqdn-testNodeJoinTwinNode");
+            messagingMappingSce.getClusterSce().deleteCluster(cluster.getClusterName());
+            messagingMappingSce.closeSession();
         }
     }
 
