@@ -64,17 +64,17 @@ public class TransportImpl extends SProxTransportAbs implements SProxTransport {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                    } else {
-                        switch (rc) {
-                            case MappingSce.MAPPING_SCE_RET_NOT_FOUND:
-                                TransportImpl.log.debug("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
-                                break;
-                            default:
-                                TransportImpl.log.error("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
-                                break;
-                        }
                     }
-                } else TransportImpl.log.error("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
+                } else {
+                    switch (rc) {
+                        case MappingSce.MAPPING_SCE_RET_NOT_FOUND:
+                            TransportImpl.log.debug("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
+                            break;
+                        default:
+                            TransportImpl.log.error("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
+                            break;
+                    }
+                }
             }
             return message;
         }

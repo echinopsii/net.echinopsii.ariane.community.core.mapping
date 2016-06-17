@@ -182,8 +182,8 @@ public class MappingSceImpl extends SProxMappingSceAbs<SessionImpl, SessionRegis
 
         Map<String, Object> message = new HashMap<>();
         message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_GET_NODE_BY_NAME);
-        message.put(NodeSce.PARAM_NODE_NAME, container.getContainerID());
-        message.put(Container.TOKEN_CT_ID, nodeName);
+        message.put(Container.TOKEN_CT_ID, container.getContainerID());
+        message.put(NodeSce.PARAM_NODE_NAME, nodeName);
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
 
         Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, MappingSce.Q_MAPPING_SCE_SERVICE, node.getNodeReplyWorker());
@@ -204,8 +204,8 @@ public class MappingSceImpl extends SProxMappingSceAbs<SessionImpl, SessionRegis
 
         Map<String, Object> message = new HashMap<>();
         message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_GET_GATE_BY_NAME);
-        message.put(GateSce.PARAM_GATE_NAME, container.getContainerID());
-        message.put(Container.TOKEN_CT_ID, nodeName);
+        message.put(Container.TOKEN_CT_ID, container.getContainerID());
+        message.put(GateSce.PARAM_GATE_NAME, nodeName);
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
 
         Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, MappingSce.Q_MAPPING_SCE_SERVICE, gate.getGateReplyWorker());
@@ -257,13 +257,12 @@ public class MappingSceImpl extends SProxMappingSceAbs<SessionImpl, SessionRegis
         message.put(LinkSce.PARAM_LINK_SEPID, endpoint.getEndpointID());
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
 
-        Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, LinkSce.Q_MAPPING_LINK_SERVICE, new getLinksWorker());
+        Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, MappingSce.Q_MAPPING_SCE_SERVICE, new getLinksWorker());
         int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
         if (rc != 0) throw new MappingDSException("Ariane server raised an error... Check your logs !");
         ret.addAll((Collection<? extends Link>) retMsg.get("RET"));
 
         return ret;
-
     }
 
     @Override
@@ -278,7 +277,7 @@ public class MappingSceImpl extends SProxMappingSceAbs<SessionImpl, SessionRegis
         message.put(LinkSce.PARAM_LINK_TEPID, endpoint.getEndpointID());
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
 
-        Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, LinkSce.Q_MAPPING_LINK_SERVICE, new getLinksWorker());
+        Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, MappingSce.Q_MAPPING_SCE_SERVICE, new getLinksWorker());
         int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
         if (rc != 0) throw new MappingDSException("Ariane server raised an error... Check your logs !");
         ret.addAll((Collection<? extends Link>) retMsg.get("RET"));

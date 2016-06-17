@@ -66,6 +66,7 @@ public class MappingMsgsrvBootstrap {
             EndpointEp.start();
             LinkEp.start();
             TransportEp.start();
+            MappingEp.start();
             MapEp.start();
             isStarted = true;
         }

@@ -555,6 +555,7 @@ public class MappingMsgNATSTest {
             assertNotNull(process.getNodeID());
             assertTrue(process.getNodeContainer().equals(container));
             assertTrue(container.getContainerNodes().contains(process));
+            assertTrue(messagingMappingSce.getNodeByName(container, "a process-testCreateNode1").equals(process));
             messagingMappingSce.getNodeSce().deleteNode(process.getNodeID());
             messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testCreateNode1");
         }
@@ -564,17 +565,19 @@ public class MappingMsgNATSTest {
     public void testTransacCreateNode1() throws MappingDSException, InterruptedException {
         if (momTest!=null) {
             Session session = messagingMappingSce.openSession("this is a test-testTransacCreateNode1");
-            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testTransacCreateNode1", "SERVER SSH DAEMON");
+            final Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testTransacCreateNode1", "SERVER SSH DAEMON");
             final Node process = messagingMappingSce.getNodeSce().createNode("a process-testTransacCreateNode1", container.getContainerID(), null);
             assertNotNull(process.getNodeID());
             assertTrue(process.getNodeContainer().equals(container));
             assertTrue(container.getContainerNodes().contains(process));
             assertTrue(messagingMappingSce.getNodeSce().getNodes(null).contains(process));
+            assertTrue(messagingMappingSce.getNodeByName(container, "a process-testTransacCreateNode1").equals(process));
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         assertNull(blueprintsMappingSce.getNodeSce().getNode(process.getNodeID()));
+                        assertNull(blueprintsMappingSce.getNodeByName(container, "a process-testTransacCreateNode1"));
                     } catch (MappingDSException e) {
                         e.printStackTrace();
                     }
@@ -864,6 +867,7 @@ public class MappingMsgNATSTest {
             assertTrue(daemon.getNodeContainer().equals(container));
             assertTrue(container.getContainerGates().contains(daemon));
             assertTrue(container.getContainerNodes().contains(daemon));
+            //assertTrue(messagingMappingSce.getGateByName(container, "myservice-testCreateGate1").equals(daemon));
             messagingMappingSce.getGateSce().deleteGate(daemon.getNodeID());
             messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testCreateGate1");
         }
@@ -881,6 +885,7 @@ public class MappingMsgNATSTest {
             assertTrue(container.getContainerNodes().contains(daemon));
             assertTrue(messagingMappingSce.getNodeSce().getNodes(null).contains(daemon));
             assertTrue(messagingMappingSce.getGateSce().getGates(null).contains(daemon));
+            //assertTrue(messagingMappingSce.getGateByName(container, "myservice-testTransacCreateGate1").equals(daemon));
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -1007,6 +1012,9 @@ public class MappingMsgNATSTest {
             assertTrue(link.getLinkTransport().equals(transport));
             assertTrue(messagingMappingSce.getLinkSce().getLinks(null).contains(link));
             assertTrue(messagingMappingSce.getTransportSce().getTransports(null).contains(transport));
+            assertTrue(messagingMappingSce.getLinkBySourceEPandDestinationEP(aendpoint, bendpoint).equals(link));
+            assertTrue(messagingMappingSce.getLinksBySourceEP(aendpoint).contains(link));
+            assertTrue(messagingMappingSce.getLinksByDestinationEP(bendpoint).contains(link));
             messagingMappingSce.getLinkSce().deleteLink(link.getLinkID());
             messagingMappingSce.getTransportSce().deleteTransport(transport.getTransportID());
             assertTrue(!messagingMappingSce.getLinkSce().getLinks(null).contains(link));
@@ -1037,6 +1045,8 @@ public class MappingMsgNATSTest {
             assertTrue(messagingMappingSce.getLinkSce().getLinks(null).contains(alink));
             assertTrue(messagingMappingSce.getLinkSce().getLinks(null).contains(blink));
             assertTrue(messagingMappingSce.getTransportSce().getTransports(null).contains(transport));
+            assertTrue(messagingMappingSce.getMulticastLinkBySourceEPAndTransport(aendpoint, transport).equals(alink));
+            assertTrue(messagingMappingSce.getMulticastLinkBySourceEPAndTransport(bendpoint, transport).equals(blink));
             messagingMappingSce.getLinkSce().deleteLink(alink.getLinkID());
             messagingMappingSce.getLinkSce().deleteLink(blink.getLinkID());
             messagingMappingSce.getTransportSce().deleteTransport(transport.getTransportID());

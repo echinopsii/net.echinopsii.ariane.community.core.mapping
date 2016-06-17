@@ -71,17 +71,17 @@ public class LinkImpl extends SProxLinkAbs implements SProxLink {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                    } else {
-                        switch (rc) {
-                            case MappingSce.MAPPING_SCE_RET_NOT_FOUND:
-                                LinkImpl.log.debug("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
-                                break;
-                            default:
-                                LinkImpl.log.error("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
-                                break;
-                        }
                     }
-                } else LinkImpl.log.error("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
+                } else {
+                    switch (rc) {
+                        case MappingSce.MAPPING_SCE_RET_NOT_FOUND:
+                            LinkImpl.log.debug("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
+                            break;
+                        default:
+                            LinkImpl.log.error("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
+                            break;
+                    }
+                }
             }
             return message;
         }
