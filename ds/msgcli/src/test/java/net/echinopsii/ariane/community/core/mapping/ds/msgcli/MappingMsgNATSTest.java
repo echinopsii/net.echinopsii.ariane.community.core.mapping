@@ -162,7 +162,7 @@ public class MappingMsgNATSTest {
     }
 
     @Test
-    public void testTransacClusterCreate1() throws MappingDSException, InterruptedException {
+    public void testTransacClusterCreate1() throws MappingDSException {
         if (momTest!=null) {
             Session session = messagingMappingSce.openSession("testTransacClusterCreate1-this is a test");
             final Cluster cluster = messagingMappingSce.getClusterSce().createCluster("testTransacClusterCreate1-test");
@@ -274,7 +274,7 @@ public class MappingMsgNATSTest {
     }
 
     @Test
-    public void testTransacCreateContainer1() throws MappingDSException, InterruptedException {
+    public void testTransacCreateContainer1() throws MappingDSException {
         if (momTest!=null) {
             Session session = messagingMappingSce.openSession("testTransacCreateContainer1-this is a test");
             final Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testTransacCreateContainer1", "SERVER SSH DAEMON");
@@ -347,7 +347,7 @@ public class MappingMsgNATSTest {
     }
 
     @Test
-    public void testTransacCreateContainer2() throws MappingDSException, InterruptedException {
+    public void testTransacCreateContainer2() throws MappingDSException {
         if (momTest!=null) {
             Session session = messagingMappingSce.openSession("testTransacCreateContainer2-this is a test");
             final Container container = messagingMappingSce.getContainerSce().createContainer("a.server-testTransacCreateContainer2", "ssh://a.server.fqdn-testTransacCreateContainer2", "SERVER SSH DAEMON");
@@ -419,7 +419,7 @@ public class MappingMsgNATSTest {
     }
 
     @Test
-    public void testTransacCreateContainer3() throws MappingDSException, InterruptedException {
+    public void testTransacCreateContainer3() throws MappingDSException {
         if (momTest!=null) {
             Session session = messagingMappingSce.openSession("testTransacCreateContainer2-this is a test");
             final Container server = messagingMappingSce.getContainerSce().createContainer("a.server-testTransacCreateContainer3", "ssh://a.server.fqdn-testTransacCreateContainer3", "SERVER SSH DAEMON");
@@ -1292,7 +1292,7 @@ public class MappingMsgNATSTest {
     }
 
     @Test
-    public void testTransacCreateNode1() throws MappingDSException, InterruptedException {
+    public void testTransacCreateNode1() throws MappingDSException {
         if (momTest!=null) {
             Session session = messagingMappingSce.openSession("this is a test-testTransacCreateNode1");
             final Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testTransacCreateNode1", "SERVER SSH DAEMON");
@@ -1313,7 +1313,6 @@ public class MappingMsgNATSTest {
                     }
                 }
             }).start();
-            Thread.sleep(2);
             session.commit();
             new Thread(new Runnable() {
                 @Override
@@ -1325,7 +1324,6 @@ public class MappingMsgNATSTest {
                     }
                 }
             }).start();
-            Thread.sleep(2);
             messagingMappingSce.getNodeSce().deleteNode(process.getNodeID());
             assertTrue(!messagingMappingSce.getNodeSce().getNodes(null).contains(process));
             new Thread(new Runnable() {
@@ -1338,7 +1336,6 @@ public class MappingMsgNATSTest {
                     }
                 }
             }).start();
-            Thread.sleep(2);
             session.commit();
             new Thread(new Runnable() {
                 @Override
@@ -1350,7 +1347,6 @@ public class MappingMsgNATSTest {
                     }
                 }
             }).start();
-            Thread.sleep(2);
             messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testTransacCreateNode1");
             messagingMappingSce.closeSession();
         }
@@ -1372,7 +1368,7 @@ public class MappingMsgNATSTest {
     }
 
     @Test
-    public void testTransacCreateNode2() throws MappingDSException, InterruptedException {
+    public void testTransacCreateNode2() throws MappingDSException {
         if (momTest!=null) {
             Session session = messagingMappingSce.openSession("this is a test-testTransacCreateNode2");
             Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testTransacCreateNode2", "SERVER SSH DAEMON");
@@ -1394,7 +1390,6 @@ public class MappingMsgNATSTest {
                     }
                 }
             }).start();
-            Thread.sleep(2);
             session.commit();
             new Thread(new Runnable() {
                 @Override
@@ -1407,7 +1402,6 @@ public class MappingMsgNATSTest {
                     }
                 }
             }).start();
-            Thread.sleep(2);
             messagingMappingSce.getNodeSce().deleteNode(thread.getNodeID());
             assertTrue(messagingMappingSce.getNodeSce().getNodes(null).contains(process));
             assertTrue(!messagingMappingSce.getNodeSce().getNodes(null).contains(thread));
@@ -1422,7 +1416,6 @@ public class MappingMsgNATSTest {
                     }
                 }
             }).start();
-            Thread.sleep(2);
             session.commit();
             new Thread(new Runnable() {
                 @Override
@@ -2363,7 +2356,7 @@ public class MappingMsgNATSTest {
     }
 
     @Test
-    public void testTransacCreateGate1() throws MappingDSException, InterruptedException {
+    public void testTransacCreateGate1() throws MappingDSException {
         if (momTest != null) {
             Session session = messagingMappingSce.openSession("this is a test-testTransacCreateGate1");
             Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testTransacCreateGate1", "SERVER SSH DAEMON");
@@ -2386,7 +2379,6 @@ public class MappingMsgNATSTest {
                     }
                 }
             }).start();
-            Thread.sleep(1);
             session.commit();
             new Thread(new Runnable() {
                 @Override
@@ -2399,7 +2391,6 @@ public class MappingMsgNATSTest {
                     }
                 }
             }).start();
-            Thread.sleep(1);
             messagingMappingSce.getGateSce().deleteGate(daemon.getNodeID());
             assertTrue(!messagingMappingSce.getNodeSce().getNodes(null).contains(daemon));
             assertTrue(!messagingMappingSce.getGateSce().getGates(null).contains(daemon));
@@ -2414,7 +2405,6 @@ public class MappingMsgNATSTest {
                     }
                 }
             }).start();
-            Thread.sleep(1);
             session.commit();
             new Thread(new Runnable() {
                 @Override
@@ -2459,6 +2449,147 @@ public class MappingMsgNATSTest {
             assertTrue(aprocess.getNodeEndpoints().contains(endpoint));
             assertTrue(endpoint.getEndpointParentNode().equals(aprocess));
             messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testCreateEndpointAndJoinNode");
+        }
+    }
+
+    @Test
+    public void testTransacCreateEndpointAndJoinNode() throws MappingDSException {
+        if (momTest!=null) {
+            Session session = messagingMappingSce.openSession("this is a test-testTransacCreateGate1");
+            Container acontainer = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testTransacCreateEndpointAndJoinNode", "SERVER SSH DAEMON");
+            final Node aprocess = messagingMappingSce.getNodeSce().createNode("a process-testTransacCreateEndpointAndJoinNode", acontainer.getContainerID(), null);
+            final Endpoint endpoint = messagingMappingSce.getEndpointSce().createEndpoint("tcp://process-endpoint-testTransacCreateEndpointAndJoinNode:1234", aprocess.getNodeID());
+            session.commit();
+            assertTrue(endpoint.getEndpointID() != null);
+            assertTrue(endpoint.getEndpointParentNode().equals(aprocess));
+            assertTrue(aprocess.getNodeEndpoints().contains(endpoint));
+            assertTrue(endpoint.getEndpointURL().equals("tcp://process-endpoint-testTransacCreateEndpointAndJoinNode:1234"));
+            endpoint.setEndpointURL("tcp://process-endpoint-testTransacCreateEndpointAndJoinNode:2345");
+            assertTrue(endpoint.getEndpointURL().equals("tcp://process-endpoint-testTransacCreateEndpointAndJoinNode:2345"));
+            //Node.removeEndpoint should be used by internal ariane call only and avoided on client side.
+            aprocess.removeEndpoint(endpoint);
+            assertTrue(!aprocess.getNodeEndpoints().contains(endpoint));
+            assertTrue(endpoint.getEndpointParentNode() == null);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node detachedAProc = blueprintsMappingSce.getNodeSce().getNode(aprocess.getNodeID());
+                        Endpoint detachedEP = blueprintsMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+                        assertTrue(detachedAProc.getNodeEndpoints().contains(detachedEP));
+                        assertTrue(detachedEP.getEndpointParentNode().equals(detachedAProc));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node detachedAProc = blueprintsMappingSce.getNodeSce().getNode(aprocess.getNodeID());
+                        Endpoint detachedEP = blueprintsMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+                        assertTrue(!detachedAProc.getNodeEndpoints().contains(detachedEP));
+                        assertNull(detachedEP.getEndpointParentNode());
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            aprocess.addEndpoint(endpoint);
+            assertTrue(aprocess.getNodeEndpoints().contains(endpoint));
+            assertTrue(endpoint.getEndpointParentNode().equals(aprocess));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node detachedAProc = blueprintsMappingSce.getNodeSce().getNode(aprocess.getNodeID());
+                        Endpoint detachedEP = blueprintsMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+                        assertTrue(!detachedAProc.getNodeEndpoints().contains(detachedEP));
+                        assertNull(detachedEP.getEndpointParentNode());
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node detachedAProc = blueprintsMappingSce.getNodeSce().getNode(aprocess.getNodeID());
+                        Endpoint detachedEP = blueprintsMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+                        assertTrue(detachedAProc.getNodeEndpoints().contains(detachedEP));
+                        assertTrue(detachedEP.getEndpointParentNode().equals(detachedAProc));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            //Node.removeEndpoint should be used by internal ariane call only and avoided on client side.
+            aprocess.removeEndpoint(endpoint);
+            assertTrue(!aprocess.getNodeEndpoints().contains(endpoint));
+            assertTrue(endpoint.getEndpointParentNode() == null);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node detachedAProc = blueprintsMappingSce.getNodeSce().getNode(aprocess.getNodeID());
+                        Endpoint detachedEP = blueprintsMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+                        assertTrue(detachedAProc.getNodeEndpoints().contains(detachedEP));
+                        assertTrue(detachedEP.getEndpointParentNode().equals(detachedAProc));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node detachedAProc = blueprintsMappingSce.getNodeSce().getNode(aprocess.getNodeID());
+                        Endpoint detachedEP = blueprintsMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+                        assertTrue(!detachedAProc.getNodeEndpoints().contains(detachedEP));
+                        assertNull(detachedEP.getEndpointParentNode());
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            endpoint.setEndpointParentNode(aprocess);
+            assertTrue(aprocess.getNodeEndpoints().contains(endpoint));
+            assertTrue(endpoint.getEndpointParentNode().equals(aprocess));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node detachedAProc = blueprintsMappingSce.getNodeSce().getNode(aprocess.getNodeID());
+                        Endpoint detachedEP = blueprintsMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+                        assertTrue(!detachedAProc.getNodeEndpoints().contains(detachedEP));
+                        assertNull(detachedEP.getEndpointParentNode());
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node detachedAProc = blueprintsMappingSce.getNodeSce().getNode(aprocess.getNodeID());
+                        Endpoint detachedEP = blueprintsMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+                        assertTrue(detachedAProc.getNodeEndpoints().contains(detachedEP));
+                        assertTrue(detachedEP.getEndpointParentNode().equals(detachedAProc));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testTransacCreateEndpointAndJoinNode");
+            messagingMappingSce.closeSession();
         }
     }
 
