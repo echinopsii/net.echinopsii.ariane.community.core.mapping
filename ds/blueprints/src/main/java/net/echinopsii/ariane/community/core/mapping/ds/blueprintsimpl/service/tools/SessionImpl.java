@@ -143,13 +143,13 @@ public class SessionImpl implements Session {
                             MappingDSCache.putEntityToCache(entity);
                         for (MappingDSCacheEntity entity: ((SessionImpl)this.attachedSession).sessionRemovedObjectCache.values())
                             MappingDSCache.removeEntityFromCache(entity);
-                        ((SessionImpl) this.attachedSession).sessionExistingObjectCache.clear();
-                        ((SessionImpl) this.attachedSession).sessionRemovedObjectCache.clear();
+                        ((SessionImpl)this.attachedSession).sessionExistingObjectCache.clear();
+                        ((SessionImpl)this.attachedSession).sessionRemovedObjectCache.clear();
                         this.returnToQueue(msg, new SessionWorkerReply(false, Void.TYPE, null));
                     } else if (msg.getAction().equals(ROLLBACK)) {
                         MappingDSGraphDB.rollback();
-                        ((SessionImpl) this.attachedSession).sessionExistingObjectCache.clear();
-                        ((SessionImpl) this.attachedSession).sessionRemovedObjectCache.clear();
+                        ((SessionImpl)this.attachedSession).sessionExistingObjectCache.clear();
+                        ((SessionImpl)this.attachedSession).sessionRemovedObjectCache.clear();
                         this.returnToQueue(msg, new SessionWorkerReply(false, Void.TYPE, null));
                     } else if (msg.getAction().equals(EXECUTE)) {
                         try {

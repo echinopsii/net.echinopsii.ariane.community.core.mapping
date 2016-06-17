@@ -28,6 +28,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.json.domain.EndpointJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.GateJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.momsp.MappingMsgcliMomSP;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.EndpointSceImpl;
+import net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.GateSceImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.service.GateSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
@@ -120,6 +121,13 @@ public class GateImpl extends NodeImpl implements SProxGate {
 
     @Override
     public Endpoint getNodePrimaryAdminEndpoint() {
+        try {
+            Gate update = GateSceImpl.internalGetGate(super.getNodeID());
+            this.setGatePrimaryAdminEndpointID(((GateImpl) update).getGatePrimaryAdminEndpointID());
+        } catch (MappingDSException e) {
+            e.printStackTrace();
+        }
+
         if (gatePrimaryAdminEndpointID!=null && (gatePrimaryAdminEndpoint==null || !gatePrimaryAdminEndpoint.getEndpointID().equals(gatePrimaryAdminEndpointID))) {
             try {
                 gatePrimaryAdminEndpoint = (EndpointImpl) EndpointSceImpl.internalGetEndpoint(gatePrimaryAdminEndpointID);

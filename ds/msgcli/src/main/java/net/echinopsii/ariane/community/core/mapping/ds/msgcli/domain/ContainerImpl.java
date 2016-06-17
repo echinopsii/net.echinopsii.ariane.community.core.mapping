@@ -260,7 +260,21 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
 
     @Override
     public String getContainerPrimaryAdminGateURL() {
-        return super.getContainerPrimaryAdminGateURL();
+        try {
+            Container update = ContainerSceImpl.internalGetContainer(super.getContainerID());
+            this.setPrimaryAdminGateID(((ContainerImpl) update).getPrimaryAdminGateID());
+        } catch (MappingDSException e) {
+            e.printStackTrace();
+        }
+        if (primaryAdminGateID!=null && (super.getContainerPrimaryAdminGate()==null || !super.getContainerPrimaryAdminGate().getNodeName().equals(primaryAdminGateID))) {
+            try {
+                super.setContainerPrimaryAdminGate(GateSceImpl.internalGetGate(primaryAdminGateID));
+            } catch (MappingDSException e) {
+                e.printStackTrace();
+            }
+        } else if (primaryAdminGateID==null) log.error("No primary admin gate for container " + super.getContainerID() + " !?");
+
+        return this.getContainerPrimaryAdminGate().getNodePrimaryAdminEndpoint().getEndpointURL();
     }
 
     @Override

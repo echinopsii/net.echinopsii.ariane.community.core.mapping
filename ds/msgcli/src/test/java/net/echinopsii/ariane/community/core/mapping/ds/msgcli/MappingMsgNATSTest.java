@@ -150,7 +150,7 @@ public class MappingMsgNATSTest {
     }
 
     @Test
-    public void testClusterCreate() throws MappingDSException {
+    public void testClusterCreate1() throws MappingDSException {
         if (momTest!=null) {
             Cluster cluster = messagingMappingSce.getClusterSce().createCluster("testClusterCreate-test");
             assertTrue(cluster.getClusterID() != null);
@@ -176,7 +176,6 @@ public class MappingMsgNATSTest {
                     }
                 }
             }).start();
-            Thread.sleep(2);
             session.commit();
             assertTrue(messagingMappingSce.getClusterSce().getClusters(null).size() == 1);
             new Thread(new Runnable() {
@@ -189,7 +188,6 @@ public class MappingMsgNATSTest {
                     }
                 }
             }).start();
-            Thread.sleep(2);
             messagingMappingSce.getClusterSce().deleteCluster(cluster.getClusterName());
             assertTrue(messagingMappingSce.getClusterSce().getClusters(null).size() == 0);
             new Thread(new Runnable() {
@@ -202,7 +200,6 @@ public class MappingMsgNATSTest {
                     }
                 }
             }).start();
-            Thread.sleep(2);
             session.commit();
             assertTrue(messagingMappingSce.getClusterSce().getClusters(null).size() == 0);
             new Thread(new Runnable() {
@@ -223,9 +220,9 @@ public class MappingMsgNATSTest {
         if (momTest!=null) {
             Session session = messagingMappingSce.openSession("testTransacClusterCreate2-this is a test");
             Cluster cluster = messagingMappingSce.getClusterSce().createCluster("testTransacClusterCreate2-test");
-            assertTrue(messagingMappingSce.getClusterSce().getClusters(null).size() == 1);
+            assertTrue(messagingMappingSce.getClusterSce().getClusters(null).contains(cluster));
             session.rollback();
-            assertTrue(messagingMappingSce.getClusterSce().getClusters(null).size() == 0);
+            assertFalse(messagingMappingSce.getClusterSce().getClusters(null).contains(cluster));
             messagingMappingSce.closeSession();
         }
     }
@@ -263,7 +260,7 @@ public class MappingMsgNATSTest {
             assertEquals(container.getContainerCompany(), "RedHat");
             assertEquals(container.getContainerProduct(), "RedHat Linux x86 7");
             assertEquals(container.getContainerType(), "Operating System");
-            //assertEquals(container.getContainerPrimaryAdminGateURL(), "ssh://a.server.fqdn");
+            assertEquals(container.getContainerPrimaryAdminGateURL(), "ssh://a.server.fqdn-testCreateContainer1");
             assertTrue(messagingMappingSce.getContainerSce().getContainers(null).contains(container));
             messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testCreateContainer1");
             assertTrue(!messagingMappingSce.getContainerSce().getContainers(null).contains(container));
@@ -276,6 +273,7 @@ public class MappingMsgNATSTest {
             Session session = messagingMappingSce.openSession("testTransacCreateContainer1-this is a test");
             final Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testTransacCreateContainer1", "SERVER SSH DAEMON");
             assertTrue(messagingMappingSce.getContainerSce().getContainers(null).contains(container));
+            assertEquals(container.getContainerPrimaryAdminGateURL(), "ssh://a.server.fqdn-testTransacCreateContainer1");
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -286,14 +284,15 @@ public class MappingMsgNATSTest {
                     }
                 }
             }).start();
-            Thread.sleep(2);
             session.commit();
             assertTrue(messagingMappingSce.getContainerSce().getContainers(null).contains(container));
+            assertEquals(container.getContainerPrimaryAdminGateURL(), "ssh://a.server.fqdn-testTransacCreateContainer1");
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         assertNotNull(blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID()));
+                        assertEquals(container.getContainerPrimaryAdminGateURL(), "ssh://a.server.fqdn-testTransacCreateContainer1");
                     } catch (MappingDSException e) {
                         e.printStackTrace();
                     }
@@ -356,7 +355,6 @@ public class MappingMsgNATSTest {
                     }
                 }
             }).start();
-            Thread.sleep(2);
             session.commit();
             assertTrue(messagingMappingSce.getContainerSce().getContainers(null).contains(container));
             new Thread(new Runnable() {
@@ -410,6 +408,78 @@ public class MappingMsgNATSTest {
             messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testCreateContainer3");
             assertTrue(!messagingMappingSce.getContainerSce().getContainers(null).contains(server));
             assertTrue(!messagingMappingSce.getContainerSce().getContainers(null).contains(server));
+        }
+    }
+
+    @Test
+    public void testTransacCreateContainer3() throws MappingDSException, InterruptedException {
+        if (momTest!=null) {
+            Session session = messagingMappingSce.openSession("testTransacCreateContainer2-this is a test");
+            final Container server = messagingMappingSce.getContainerSce().createContainer("a.server-testTransacCreateContainer3", "ssh://a.server.fqdn-testTransacCreateContainer3", "SERVER SSH DAEMON");
+            final Container container = messagingMappingSce.getContainerSce().createContainer("a.container-testTransacCreateContainer3", "ssh://a.server.fqdn:a.container-testTransacCreateContainer3", "SERVER SSH DAEMON", server);
+            assertTrue(server.getContainerChildContainers().contains(container));
+            assertTrue(container.getContainerParentContainer().equals(server));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        assertNull(blueprintsMappingSce.getContainerSce().getContainer(server.getContainerID()));
+                        assertNull(blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID()));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        assertNotNull(blueprintsMappingSce.getContainerSce().getContainer(server.getContainerID()));
+                        assertNotNull(blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID()));
+                        Container serviceBis = blueprintsMappingSce.getContainerSce().getContainer(server.getContainerID());
+                        Container containerBis = blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID());
+                        assertTrue(serviceBis.getContainerChildContainers().contains(containerBis));
+                        assertTrue(containerBis.getContainerParentContainer().equals(serviceBis));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).contains(server));
+            assertTrue(messagingMappingSce.getContainerSce().getContainers(null).contains(container));
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn:a.container-testTransacCreateContainer3");
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testTransacCreateContainer3");
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        assertNotNull(blueprintsMappingSce.getContainerSce().getContainer(server.getContainerID()));
+                        assertNotNull(blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID()));
+                        Container serviceBis = blueprintsMappingSce.getContainerSce().getContainer(server.getContainerID());
+                        Container containerBis = blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID());
+                        assertTrue(serviceBis.getContainerChildContainers().contains(containerBis));
+                        assertTrue(containerBis.getContainerParentContainer().equals(serviceBis));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        assertNull(blueprintsMappingSce.getContainerSce().getContainer(server.getContainerID()));
+                        assertNull(blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID()));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            assertTrue(!messagingMappingSce.getContainerSce().getContainers(null).contains(server));
+            assertTrue(!messagingMappingSce.getContainerSce().getContainers(null).contains(server));
+            messagingMappingSce.closeSession();
         }
     }
 
@@ -972,6 +1042,82 @@ public class MappingMsgNATSTest {
     }
 
     @Test
+    public void testEndpointProperties() throws MappingDSException {
+        if (momTest!=null) {
+            Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testEndpointProperties", "SERVER SSH DAEMON");
+            Node process = messagingMappingSce.getNodeSce().createNode("a process-testEndpointProperties", container.getContainerID(), null);
+            Endpoint endpoint = messagingMappingSce.getEndpointSce().createEndpoint("tcp://process-endpoint-testEndpointProperties:1234", process.getNodeID());
+            endpoint.addEndpointProperty("stringProp", "a string");
+            assertTrue(endpoint.getEndpointProperties().containsKey("stringProp"));
+            assertTrue(endpoint.getEndpointProperties().get("stringProp").equals("a string"));
+            Endpoint bis = messagingMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+            assertTrue(bis.getEndpointProperties().containsKey("stringProp"));
+            assertTrue(bis.getEndpointProperties().get("stringProp").equals("a string"));
+            endpoint.removeEndpointProperty("stringProp");
+            assertFalse(endpoint.getEndpointProperties().containsKey("stringProp"));
+            bis = messagingMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+            assertFalse(bis.getEndpointProperties().containsKey("stringProp"));
+            endpoint.addEndpointProperty("boolProp", false);
+            assertTrue(endpoint.getEndpointProperties().containsKey("boolProp"));
+            assertTrue(endpoint.getEndpointProperties().get("boolProp").equals(false));
+            bis = messagingMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+            assertTrue(bis.getEndpointProperties().containsKey("boolProp"));
+            assertTrue(bis.getEndpointProperties().get("boolProp").equals(false));
+            endpoint.removeEndpointProperty("boolProp");
+            assertFalse(endpoint.getEndpointProperties().containsKey("boolProp"));
+            bis = messagingMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+            assertFalse(bis.getEndpointProperties().containsKey("boolProp"));
+            endpoint.addEndpointProperty("intProp", 1);
+            assertTrue(endpoint.getEndpointProperties().containsKey("intProp"));
+            assertTrue(endpoint.getEndpointProperties().get("intProp").equals(1));
+            bis = messagingMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+            assertTrue(bis.getEndpointProperties().containsKey("intProp"));
+            assertTrue(bis.getEndpointProperties().get("intProp").equals(1));
+            endpoint.removeEndpointProperty("intProp");
+            assertFalse(endpoint.getEndpointProperties().containsKey("intProp"));
+            bis = messagingMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+            assertFalse(bis.getEndpointProperties().containsKey("intProp"));
+            endpoint.addEndpointProperty("doubleProp", 2.1);
+            assertTrue(endpoint.getEndpointProperties().containsKey("doubleProp"));
+            assertTrue(endpoint.getEndpointProperties().get("doubleProp").equals(2.1));
+            bis = messagingMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+            assertTrue(bis.getEndpointProperties().containsKey("doubleProp"));
+            assertTrue(bis.getEndpointProperties().get("doubleProp").equals(2.1));
+            endpoint.removeEndpointProperty("doubleProp");
+            assertFalse(endpoint.getEndpointProperties().containsKey("doubleProp"));
+            bis = messagingMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+            assertFalse(bis.getEndpointProperties().containsKey("doubleProp"));
+            ArrayList<String> listProp = new ArrayList<>();
+            listProp.add("test1");
+            listProp.add("test2");
+            endpoint.addEndpointProperty("listProp", listProp);
+            assertTrue(endpoint.getEndpointProperties().containsKey("listProp"));
+            assertTrue(endpoint.getEndpointProperties().get("listProp").equals(listProp));
+            bis = messagingMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+            assertTrue(bis.getEndpointProperties().containsKey("listProp"));
+            assertTrue(bis.getEndpointProperties().get("listProp").equals(listProp));
+            endpoint.removeEndpointProperty("listProp");
+            assertFalse(endpoint.getEndpointProperties().containsKey("listProp"));
+            bis = messagingMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+            assertFalse(bis.getEndpointProperties().containsKey("listProp"));
+            HashMap<String, Object> mapProp = new HashMap<>();
+            mapProp.put("boolVal", true);
+            mapProp.put("stringVal", "test");
+            endpoint.addEndpointProperty("mapProp", mapProp);
+            assertTrue(endpoint.getEndpointProperties().containsKey("mapProp"));
+            assertTrue(endpoint.getEndpointProperties().get("mapProp").equals(mapProp));
+            bis = messagingMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+            assertTrue(bis.getEndpointProperties().containsKey("mapProp"));
+            assertTrue(bis.getEndpointProperties().get("mapProp").equals(mapProp));
+            endpoint.removeEndpointProperty("mapProp");
+            assertFalse(endpoint.getEndpointProperties().containsKey("mapProp"));
+            bis = messagingMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+            assertFalse(bis.getEndpointProperties().containsKey("mapProp"));
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testEndpointProperties");
+        }
+    }
+
+    @Test
     public void testEndpointJoinTwinEP() throws MappingDSException {
         if (momTest!=null) {
             Cluster cluster = messagingMappingSce.getClusterSce().createCluster("test-testEndpointJoinTwinEP");
@@ -1055,6 +1201,80 @@ public class MappingMsgNATSTest {
             assertTrue(!messagingMappingSce.getTransportSce().getTransports(null).contains(transport));
             messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testMulticastLink");
             messagingMappingSce.getContainerSce().deleteContainer("ssh://b.server.fqdn-testMulticastLink");
+        }
+    }
+
+    @Test
+    public void testTransportProperties() throws MappingDSException {
+        if (momTest!=null) {
+            Transport transport = messagingMappingSce.getTransportSce().createTransport("multicast-udp-testTransportProperties://");
+            transport.addTransportProperty("stringProp", "a string");
+            assertTrue(transport.getTransportProperties().containsKey("stringProp"));
+            assertTrue(transport.getTransportProperties().get("stringProp").equals("a string"));
+            Transport bis = messagingMappingSce.getTransportSce().getTransport(transport.getTransportID());
+            assertTrue(bis.getTransportProperties().containsKey("stringProp"));
+            assertTrue(bis.getTransportProperties().get("stringProp").equals("a string"));
+            transport.removeTransportProperty("stringProp");
+            assertFalse(transport.getTransportProperties().containsKey("stringProp"));
+            bis = messagingMappingSce.getTransportSce().getTransport(transport.getTransportID());
+            assertFalse(bis.getTransportProperties().containsKey("stringProp"));
+            transport.addTransportProperty("boolProp", false);
+            assertTrue(transport.getTransportProperties().containsKey("boolProp"));
+            assertTrue(transport.getTransportProperties().get("boolProp").equals(false));
+            bis = messagingMappingSce.getTransportSce().getTransport(transport.getTransportID());
+            assertTrue(bis.getTransportProperties().containsKey("boolProp"));
+            assertTrue(bis.getTransportProperties().get("boolProp").equals(false));
+            transport.removeTransportProperty("boolProp");
+            assertFalse(transport.getTransportProperties().containsKey("boolProp"));
+            bis = messagingMappingSce.getTransportSce().getTransport(transport.getTransportID());
+            assertFalse(bis.getTransportProperties().containsKey("boolProp"));
+            transport.addTransportProperty("intProp", 1);
+            assertTrue(transport.getTransportProperties().containsKey("intProp"));
+            assertTrue(transport.getTransportProperties().get("intProp").equals(1));
+            bis = messagingMappingSce.getTransportSce().getTransport(transport.getTransportID());
+            assertTrue(bis.getTransportProperties().containsKey("intProp"));
+            assertTrue(bis.getTransportProperties().get("intProp").equals(1));
+            transport.removeTransportProperty("intProp");
+            assertFalse(transport.getTransportProperties().containsKey("intProp"));
+            bis = messagingMappingSce.getTransportSce().getTransport(transport.getTransportID());
+            assertFalse(bis.getTransportProperties().containsKey("intProp"));
+            transport.addTransportProperty("doubleProp", 2.1);
+            assertTrue(transport.getTransportProperties().containsKey("doubleProp"));
+            assertTrue(transport.getTransportProperties().get("doubleProp").equals(2.1));
+            bis = messagingMappingSce.getTransportSce().getTransport(transport.getTransportID());
+            assertTrue(bis.getTransportProperties().containsKey("doubleProp"));
+            assertTrue(bis.getTransportProperties().get("doubleProp").equals(2.1));
+            transport.removeTransportProperty("doubleProp");
+            assertFalse(transport.getTransportProperties().containsKey("doubleProp"));
+            bis = messagingMappingSce.getTransportSce().getTransport(transport.getTransportID());
+            assertFalse(bis.getTransportProperties().containsKey("doubleProp"));
+            ArrayList<String> listProp = new ArrayList<>();
+            listProp.add("test1");
+            listProp.add("test2");
+            transport.addTransportProperty("listProp", listProp);
+            assertTrue(transport.getTransportProperties().containsKey("listProp"));
+            assertTrue(transport.getTransportProperties().get("listProp").equals(listProp));
+            bis = messagingMappingSce.getTransportSce().getTransport(transport.getTransportID());
+            assertTrue(bis.getTransportProperties().containsKey("listProp"));
+            assertTrue(bis.getTransportProperties().get("listProp").equals(listProp));
+            transport.removeTransportProperty("listProp");
+            assertFalse(transport.getTransportProperties().containsKey("listProp"));
+            bis = messagingMappingSce.getTransportSce().getTransport(transport.getTransportID());
+            assertFalse(bis.getTransportProperties().containsKey("listProp"));
+            HashMap<String, Object> mapProp = new HashMap<>();
+            mapProp.put("boolVal", true);
+            mapProp.put("stringVal", "test");
+            transport.addTransportProperty("mapProp", mapProp);
+            assertTrue(transport.getTransportProperties().containsKey("mapProp"));
+            assertTrue(transport.getTransportProperties().get("mapProp").equals(mapProp));
+            bis = messagingMappingSce.getTransportSce().getTransport(transport.getTransportID());
+            assertTrue(bis.getTransportProperties().containsKey("mapProp"));
+            assertTrue(bis.getTransportProperties().get("mapProp").equals(mapProp));
+            transport.removeTransportProperty("mapProp");
+            assertFalse(transport.getTransportProperties().containsKey("mapProp"));
+            bis = messagingMappingSce.getTransportSce().getTransport(transport.getTransportID());
+            assertFalse(bis.getTransportProperties().containsKey("mapProp"));
+            messagingMappingSce.getTransportSce().deleteTransport(transport.getTransportID());
         }
     }
 }

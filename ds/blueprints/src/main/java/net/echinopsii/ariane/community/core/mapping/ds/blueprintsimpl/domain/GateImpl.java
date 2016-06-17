@@ -70,6 +70,7 @@ public class GateImpl extends NodeImpl implements SProxGate {
             if (this.gatePrimaryAdminEndpoint == null || !this.gatePrimaryAdminEndpoint.equals(endpoint)) {
                 if (endpoint instanceof EndpointImpl) {
                     this.gatePrimaryAdminEndpoint = (EndpointImpl) endpoint;
+                    synchronizeNodePrimaryAdminEndpointToDB();
                 }
             }
         }

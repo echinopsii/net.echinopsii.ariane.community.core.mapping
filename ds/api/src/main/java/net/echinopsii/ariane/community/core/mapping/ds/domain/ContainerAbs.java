@@ -97,7 +97,7 @@ public abstract class ContainerAbs implements Container {
     @Override
     public String getContainerPrimaryAdminGateURL() {
         String ret = null;
-        if (this.containerPrimaryAdminGate != null)
+        if (this.containerPrimaryAdminGate != null && containerPrimaryAdminGate.getNodePrimaryAdminEndpoint() != null)
             ret = containerPrimaryAdminGate.getNodePrimaryAdminEndpoint().getEndpointURL();
         return ret;
     }
