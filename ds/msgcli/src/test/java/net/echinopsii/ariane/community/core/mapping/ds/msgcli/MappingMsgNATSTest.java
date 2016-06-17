@@ -19,6 +19,7 @@
  */
 package net.echinopsii.ariane.community.core.mapping.ds.msgcli;
 
+import junit.framework.TestCase;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cfg.MappingBlueprintsDSCfgLoader;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
@@ -154,9 +155,9 @@ public class MappingMsgNATSTest {
         if (momTest!=null) {
             Cluster cluster = messagingMappingSce.getClusterSce().createCluster("testClusterCreate-test");
             assertTrue(cluster.getClusterID() != null);
-            assertTrue(messagingMappingSce.getClusterSce().getClusters(null).size() == 1);
+            assertTrue(messagingMappingSce.getClusterSce().getClusters(null).contains(cluster));
             messagingMappingSce.getClusterSce().deleteCluster(cluster.getClusterName());
-            assertTrue(messagingMappingSce.getClusterSce().getClusters(null).size() == 0);
+            assertTrue(!messagingMappingSce.getClusterSce().getClusters(null).contains(cluster));
         }
     }
 
@@ -164,37 +165,37 @@ public class MappingMsgNATSTest {
     public void testTransacClusterCreate1() throws MappingDSException, InterruptedException {
         if (momTest!=null) {
             Session session = messagingMappingSce.openSession("testTransacClusterCreate1-this is a test");
-            Cluster cluster = messagingMappingSce.getClusterSce().createCluster("testTransacClusterCreate1-test");
-            assertTrue(messagingMappingSce.getClusterSce().getClusters(null).size() == 1);
+            final Cluster cluster = messagingMappingSce.getClusterSce().createCluster("testTransacClusterCreate1-test");
+            assertTrue(messagingMappingSce.getClusterSce().getClusters(null).contains(cluster));
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        assertTrue(blueprintsMappingSce.getClusterSce().getClusters(null).size() == 0);
+                        assertTrue(!blueprintsMappingSce.getClusterSce().getClusters(null).contains(cluster));
                     } catch (MappingDSException e) {
                         e.printStackTrace();
                     }
                 }
             }).start();
             session.commit();
-            assertTrue(messagingMappingSce.getClusterSce().getClusters(null).size() == 1);
+            assertTrue(messagingMappingSce.getClusterSce().getClusters(null).contains(cluster));
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        assertTrue(blueprintsMappingSce.getClusterSce().getClusters(null).size() == 1);
+                        assertTrue(blueprintsMappingSce.getClusterSce().getClusters(null).contains(cluster));
                     } catch (MappingDSException e) {
                         e.printStackTrace();
                     }
                 }
             }).start();
             messagingMappingSce.getClusterSce().deleteCluster(cluster.getClusterName());
-            assertTrue(messagingMappingSce.getClusterSce().getClusters(null).size() == 0);
+            assertTrue(!messagingMappingSce.getClusterSce().getClusters(null).contains(cluster));
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        assertTrue(blueprintsMappingSce.getClusterSce().getClusters(null).size() == 1);
+                        assertTrue(blueprintsMappingSce.getClusterSce().getClusters(null).contains(cluster));
                     } catch (MappingDSException e) {
                         e.printStackTrace();
                     }
@@ -206,7 +207,7 @@ public class MappingMsgNATSTest {
                 @Override
                 public void run() {
                     try {
-                        assertTrue(blueprintsMappingSce.getClusterSce().getClusters(null).size() == 0);
+                        assertTrue(!blueprintsMappingSce.getClusterSce().getClusters(null).contains(cluster));
                     } catch (MappingDSException e) {
                         e.printStackTrace();
                     }
@@ -945,6 +946,155 @@ public class MappingMsgNATSTest {
     }
 
     @Test
+    public void testTransacClusterJoinContainer() throws MappingDSException {
+        if (momTest!=null) {
+            Session session = messagingMappingSce.openSession("this is a test-testTransacClusterJoinContainer");
+            final Cluster cluster = messagingMappingSce.getClusterSce().createCluster("testTransacClusterJoinContainer-test");
+            final Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testTransacClusterJoinContainer", "SERVER SSH DAEMON");
+            session.commit();
+            cluster.addClusterContainer(container);
+            assertTrue(((ClusterImpl) cluster).getClusterContainersID().contains(container.getContainerID()));
+            assertTrue(cluster.getClusterContainers().contains(container));
+            assertTrue(((ContainerImpl) container).getClusterID().equals(cluster.getClusterID()));
+            assertTrue(container.getContainerCluster().equals(cluster));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Cluster detachedCluster = blueprintsMappingSce.getClusterSce().getCluster(cluster.getClusterID());
+                        Container detachedContainer = blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID());
+                        assertFalse(detachedCluster.getClusterContainers().contains(detachedContainer));
+                        assertNull(detachedContainer.getContainerCluster());
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Cluster detachedCluster = blueprintsMappingSce.getClusterSce().getCluster(cluster.getClusterID());
+                        Container detachedContainer = blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID());
+                        assertTrue(detachedCluster.getClusterContainers().contains(detachedContainer));
+                        assertTrue(detachedContainer.getContainerCluster().equals(detachedCluster));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }).start();
+            cluster.removeClusterContainer(container);
+            assertFalse(((ClusterImpl) cluster).getClusterContainersID().contains(container.getContainerID()));
+            assertFalse(cluster.getClusterContainers().contains(container));
+            assertTrue(((ContainerImpl) container).getClusterID() == null);
+            assertTrue(container.getContainerCluster() == null);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Cluster detachedCluster = blueprintsMappingSce.getClusterSce().getCluster(cluster.getClusterID());
+                        Container detachedContainer = blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID());
+                        assertTrue(detachedCluster.getClusterContainers().contains(detachedContainer));
+                        assertTrue(detachedContainer.getContainerCluster().equals(detachedCluster));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Cluster detachedCluster = blueprintsMappingSce.getClusterSce().getCluster(cluster.getClusterID());
+                        Container detachedContainer = blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID());
+                        assertFalse(detachedCluster.getClusterContainers().contains(detachedContainer));
+                        assertNull(detachedContainer.getContainerCluster());
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }).start();
+            container.setContainerCluster(cluster);
+            assertTrue(((ClusterImpl) cluster).getClusterContainersID().contains(container.getContainerID()));
+            assertTrue(cluster.getClusterContainers().contains(container));
+            assertTrue(((ContainerImpl) container).getClusterID().equals(cluster.getClusterID()));
+            assertTrue(container.getContainerCluster().equals(cluster));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Cluster detachedCluster = blueprintsMappingSce.getClusterSce().getCluster(cluster.getClusterID());
+                        Container detachedContainer = blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID());
+                        assertFalse(detachedCluster.getClusterContainers().contains(detachedContainer));
+                        assertNull(detachedContainer.getContainerCluster());
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Cluster detachedCluster = blueprintsMappingSce.getClusterSce().getCluster(cluster.getClusterID());
+                        Container detachedContainer = blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID());
+                        assertTrue(detachedCluster.getClusterContainers().contains(detachedContainer));
+                        assertTrue(detachedContainer.getContainerCluster().equals(detachedCluster));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }).start();
+            container.setContainerCluster(null);
+            assertFalse(((ClusterImpl) cluster).getClusterContainersID().contains(container.getContainerID()));
+            assertFalse(cluster.getClusterContainers().contains(container));
+            assertTrue(((ContainerImpl) container).getClusterID() == null);
+            assertTrue(container.getContainerCluster() == null);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Cluster detachedCluster = blueprintsMappingSce.getClusterSce().getCluster(cluster.getClusterID());
+                        Container detachedContainer = blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID());
+                        assertTrue(detachedCluster.getClusterContainers().contains(detachedContainer));
+                        assertTrue(detachedContainer.getContainerCluster().equals(detachedCluster));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Cluster detachedCluster = blueprintsMappingSce.getClusterSce().getCluster(cluster.getClusterID());
+                        Container detachedContainer = blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID());
+                        assertFalse(detachedCluster.getClusterContainers().contains(detachedContainer));
+                        assertNull(detachedContainer.getContainerCluster());
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }).start();
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testTransacClusterJoinContainer");
+            messagingMappingSce.getClusterSce().deleteCluster(cluster.getClusterName());
+            messagingMappingSce.closeSession();
+        }
+    }
+
+    @Test
     public void testContainerJoinContainer() throws MappingDSException {
         if (momTest!=null) {
             Container containerA = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testContainerJoinContainer", "SERVER SSH DAEMON");
@@ -971,6 +1121,155 @@ public class MappingMsgNATSTest {
             assertTrue(containerB.getContainerParentContainer() == null);
             messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testContainerJoinContainer");
             messagingMappingSce.getContainerSce().deleteContainer("ssh://b.server.fqdn-testContainerJoinContainer");
+        }
+    }
+
+    @Test
+    public void testTransacContainerJoinContainer() throws MappingDSException {
+        if (momTest!=null) {
+            Session session = messagingMappingSce.openSession("this is a test-testTransacClusterJoinContainer");
+            final Container containerA = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testTransacContainerJoinContainer", "SERVER SSH DAEMON");
+            final Container containerB = messagingMappingSce.getContainerSce().createContainer("ssh://b.server.fqdn-testTransacContainerJoinContainer", "SERVER SSH DAEMON");
+            session.commit();
+            containerA.addContainerChildContainer(containerB);
+            assertTrue(((ContainerImpl) containerA).getChildContainersID().contains(containerB.getContainerID()));
+            assertTrue(containerA.getContainerChildContainers().contains(containerB));
+            assertTrue(((ContainerImpl) containerB).getParentContainerID().equals(containerA.getContainerID()));
+            assertTrue(containerB.getContainerParentContainer().equals(containerA));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container detachedContainerA = blueprintsMappingSce.getContainerSce().getContainer(containerA.getContainerID());
+                        Container detachedContainerB = blueprintsMappingSce.getContainerSce().getContainer(containerB.getContainerID());
+                        assertFalse(detachedContainerA.getContainerChildContainers().contains(detachedContainerB));
+                        assertNull(detachedContainerB.getContainerParentContainer());
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container detachedContainerA = blueprintsMappingSce.getContainerSce().getContainer(containerA.getContainerID());
+                        Container detachedContainerB = blueprintsMappingSce.getContainerSce().getContainer(containerB.getContainerID());
+                        assertTrue(detachedContainerA.getContainerChildContainers().contains(detachedContainerB));
+                        assertTrue(detachedContainerB.getContainerParentContainer().equals(detachedContainerA));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }).start();
+            containerA.removeContainerChildContainer(containerB);
+            assertFalse(((ContainerImpl) containerA).getChildContainersID().contains(containerB.getContainerID()));
+            assertFalse(containerA.getContainerChildContainers().contains(containerB));
+            assertTrue(((ContainerImpl) containerB).getParentContainerID() == null);
+            assertTrue(containerB.getContainerParentContainer() == null);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container detachedContainerA = blueprintsMappingSce.getContainerSce().getContainer(containerA.getContainerID());
+                        Container detachedContainerB = blueprintsMappingSce.getContainerSce().getContainer(containerB.getContainerID());
+                        assertTrue(detachedContainerA.getContainerChildContainers().contains(detachedContainerB));
+                        assertTrue(detachedContainerB.getContainerParentContainer().equals(detachedContainerA));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container detachedContainerA = blueprintsMappingSce.getContainerSce().getContainer(containerA.getContainerID());
+                        Container detachedContainerB = blueprintsMappingSce.getContainerSce().getContainer(containerB.getContainerID());
+                        assertFalse(detachedContainerA.getContainerChildContainers().contains(detachedContainerB));
+                        assertNull(detachedContainerB.getContainerParentContainer());
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }).start();
+            containerB.setContainerParentContainer(containerA);
+            assertTrue(((ContainerImpl) containerA).getChildContainersID().contains(containerB.getContainerID()));
+            assertTrue(containerA.getContainerChildContainers().contains(containerB));
+            assertTrue(((ContainerImpl) containerB).getParentContainerID().equals(containerA.getContainerID()));
+            assertTrue(containerB.getContainerParentContainer().equals(containerA));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container detachedContainerA = blueprintsMappingSce.getContainerSce().getContainer(containerA.getContainerID());
+                        Container detachedContainerB = blueprintsMappingSce.getContainerSce().getContainer(containerB.getContainerID());
+                        assertFalse(detachedContainerA.getContainerChildContainers().contains(detachedContainerB));
+                        assertNull(detachedContainerB.getContainerParentContainer());
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container detachedContainerA = blueprintsMappingSce.getContainerSce().getContainer(containerA.getContainerID());
+                        Container detachedContainerB = blueprintsMappingSce.getContainerSce().getContainer(containerB.getContainerID());
+                        assertTrue(detachedContainerA.getContainerChildContainers().contains(detachedContainerB));
+                        assertTrue(detachedContainerB.getContainerParentContainer().equals(detachedContainerA));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }).start();
+            containerB.setContainerParentContainer(null);
+            assertFalse(((ContainerImpl) containerA).getChildContainersID().contains(containerB.getContainerID()));
+            assertFalse(containerA.getContainerChildContainers().contains(containerB));
+            assertTrue(((ContainerImpl) containerB).getParentContainerID() == null);
+            assertTrue(containerB.getContainerParentContainer() == null);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container detachedContainerA = blueprintsMappingSce.getContainerSce().getContainer(containerA.getContainerID());
+                        Container detachedContainerB = blueprintsMappingSce.getContainerSce().getContainer(containerB.getContainerID());
+                        assertTrue(detachedContainerA.getContainerChildContainers().contains(detachedContainerB));
+                        assertTrue(detachedContainerB.getContainerParentContainer().equals(detachedContainerA));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container detachedContainerA = blueprintsMappingSce.getContainerSce().getContainer(containerA.getContainerID());
+                        Container detachedContainerB = blueprintsMappingSce.getContainerSce().getContainer(containerB.getContainerID());
+                        assertFalse(detachedContainerA.getContainerChildContainers().contains(detachedContainerB));
+                        assertNull(detachedContainerB.getContainerParentContainer());
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }).start();
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testTransacContainerJoinContainer");
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://b.server.fqdn-testTransacContainerJoinContainer");
+            messagingMappingSce.closeSession();
         }
     }
 

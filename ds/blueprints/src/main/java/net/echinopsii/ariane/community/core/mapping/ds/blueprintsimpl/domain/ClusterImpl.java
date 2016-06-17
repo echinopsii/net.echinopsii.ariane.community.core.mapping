@@ -188,7 +188,7 @@ public class ClusterImpl extends SProxClusterAbs implements MappingDSBlueprintsC
         if (this.clusterVertex != null) {
             VertexQuery query = this.clusterVertex.query();
             query.direction(Direction.OUT);
-            query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
+            query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_COMPOSEDBY_LABEL_KEY);
             query.has(MappingDSGraphPropertyNames.DD_CLUSTER_EDGE_CONT_KEY, true);
             super.getClusterContainers().clear();
             for (Vertex vertex : query.vertices()) {
