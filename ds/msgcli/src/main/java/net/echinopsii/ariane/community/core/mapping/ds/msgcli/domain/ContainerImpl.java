@@ -274,7 +274,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
             }
         } else if (primaryAdminGateID==null) log.error("No primary admin gate for container " + super.getContainerID() + " !?");
 
-        return this.getContainerPrimaryAdminGate().getNodePrimaryAdminEndpoint().getEndpointURL();
+        return super.getContainerPrimaryAdminGate().getNodePrimaryAdminEndpoint().getEndpointURL();
     }
 
     @Override

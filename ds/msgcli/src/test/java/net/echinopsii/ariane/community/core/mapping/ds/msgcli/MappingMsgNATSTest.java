@@ -292,7 +292,8 @@ public class MappingMsgNATSTest {
                 public void run() {
                     try {
                         assertNotNull(blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID()));
-                        assertEquals(container.getContainerPrimaryAdminGateURL(), "ssh://a.server.fqdn-testTransacCreateContainer1");
+                        Container containerBis = blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID());
+                        assertEquals(containerBis.getContainerPrimaryAdminGateURL(), "ssh://a.server.fqdn-testTransacCreateContainer1");
                     } catch (MappingDSException e) {
                         e.printStackTrace();
                     }
@@ -873,6 +874,7 @@ public class MappingMsgNATSTest {
             assertTrue(avm.getNodeContainer().equals(ahypervisor));
             assertTrue(ahypervisor.getContainerNodes().contains(avm));
             assertFalse(bhypervisor.getContainerNodes().contains(avm));
+            //Container.removeContainerNode should be used by Ariane internals only and avoided on client side.
             ahypervisor.removeContainerNode(avm);
             assertTrue(avm.getNodeContainer()==null);
             assertFalse(ahypervisor.getContainerNodes().contains(avm));
@@ -1025,12 +1027,14 @@ public class MappingMsgNATSTest {
             assertTrue(endpoint.getEndpointURL().equals("tcp://process-endpoint-testCreateEndpointAndJoinNode:1234"));
             endpoint.setEndpointURL("tcp://process-endpoint-testCreateEndpointAndJoinNode:2345");
             assertTrue(endpoint.getEndpointURL().equals("tcp://process-endpoint-testCreateEndpointAndJoinNode:2345"));
+            //Node.removeEndpoint should be used by internal ariane call only and avoided on client side.
             aprocess.removeEndpoint(endpoint);
             assertTrue(!aprocess.getNodeEndpoints().contains(endpoint));
             assertTrue(endpoint.getEndpointParentNode() == null);
             aprocess.addEndpoint(endpoint);
             assertTrue(aprocess.getNodeEndpoints().contains(endpoint));
             assertTrue(endpoint.getEndpointParentNode().equals(aprocess));
+            //Node.removeEndpoint should be used by internal ariane call only and avoided on client side.
             aprocess.removeEndpoint(endpoint);
             assertTrue(!aprocess.getNodeEndpoints().contains(endpoint));
             assertTrue(endpoint.getEndpointParentNode() == null);
