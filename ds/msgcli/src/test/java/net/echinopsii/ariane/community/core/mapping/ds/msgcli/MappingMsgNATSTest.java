@@ -212,6 +212,7 @@ public class MappingMsgNATSTest {
                     }
                 }
             }).start();
+            messagingMappingSce.closeSession();
         }
     }
 
@@ -559,6 +560,361 @@ public class MappingMsgNATSTest {
     }
 
     @Test
+    public void testTransacContainerProperties() throws MappingDSException {
+        if (momTest!=null) {
+            Session session = messagingMappingSce.openSession("testTransacCreateContainer2-this is a test");
+            final Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testTransacContainerProperties", "SERVER SSH DAEMON");
+            session.commit();
+            container.addContainerProperty("stringProp", "a string");
+            assertTrue(container.getContainerProperties().containsKey("stringProp"));
+            assertTrue(container.getContainerProperties().get("stringProp").equals("a string"));
+            Container bis = messagingMappingSce.getContainerSce().getContainer(container.getContainerID());
+            assertTrue(bis.getContainerProperties().containsKey("stringProp"));
+            assertTrue(bis.getContainerProperties().get("stringProp").equals("a string"));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container ter = blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID());
+                        assertFalse(ter.getContainerProperties().containsKey("stringProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container ter = blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID());
+                        assertTrue(ter.getContainerProperties().containsKey("stringProp"));
+                        assertTrue(ter.getContainerProperties().get("stringProp").equals("a string"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            container.removeContainerProperty("stringProp");
+            assertFalse(container.getContainerProperties().containsKey("stringProp"));
+            bis = messagingMappingSce.getContainerSce().getContainer(container.getContainerID());
+            assertFalse(bis.getContainerProperties().containsKey("stringProp"));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container ter = blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID());
+                        assertTrue(ter.getContainerProperties().containsKey("stringProp"));
+                        assertTrue(ter.getContainerProperties().get("stringProp").equals("a string"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container ter = blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID());
+                        assertFalse(ter.getContainerProperties().containsKey("stringProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            container.addContainerProperty("boolProp", false);
+            assertTrue(container.getContainerProperties().containsKey("boolProp"));
+            assertTrue(container.getContainerProperties().get("boolProp").equals(false));
+            bis = messagingMappingSce.getContainerSce().getContainer(container.getContainerID());
+            assertTrue(bis.getContainerProperties().containsKey("boolProp"));
+            assertTrue(bis.getContainerProperties().get("boolProp").equals(false));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container ter = blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID());
+                        assertFalse(ter.getContainerProperties().containsKey("boolProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container ter = blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID());
+                        assertTrue(ter.getContainerProperties().containsKey("boolProp"));
+                        assertTrue(ter.getContainerProperties().get("boolProp").equals(false));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            container.removeContainerProperty("boolProp");
+            assertFalse(container.getContainerProperties().containsKey("boolProp"));
+            bis = messagingMappingSce.getContainerSce().getContainer(container.getContainerID());
+            assertFalse(bis.getContainerProperties().containsKey("boolProp"));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container ter = blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID());
+                        assertTrue(ter.getContainerProperties().containsKey("boolProp"));
+                        assertTrue(ter.getContainerProperties().get("boolProp").equals(false));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container ter = blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID());
+                        assertFalse(ter.getContainerProperties().containsKey("boolProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            container.addContainerProperty("intProp", 1);
+            assertTrue(container.getContainerProperties().containsKey("intProp"));
+            assertTrue(container.getContainerProperties().get("intProp").equals(1));
+            bis = messagingMappingSce.getContainerSce().getContainer(container.getContainerID());
+            assertTrue(bis.getContainerProperties().containsKey("intProp"));
+            assertTrue(bis.getContainerProperties().get("intProp").equals(1));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container ter = blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID());
+                        assertFalse(ter.getContainerProperties().containsKey("intProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            container.removeContainerProperty("intProp");
+            assertFalse(container.getContainerProperties().containsKey("intProp"));
+            bis = messagingMappingSce.getContainerSce().getContainer(container.getContainerID());
+            assertFalse(bis.getContainerProperties().containsKey("intProp"));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container ter = blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID());
+                        assertTrue(ter.getContainerProperties().containsKey("intProp"));
+                        assertTrue(ter.getContainerProperties().get("intProp").equals(1));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container ter = blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID());
+                        assertFalse(ter.getContainerProperties().containsKey("intProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            container.addContainerProperty("doubleProp", 2.1);
+            assertTrue(container.getContainerProperties().containsKey("doubleProp"));
+            assertTrue(container.getContainerProperties().get("doubleProp").equals(2.1));
+            bis = messagingMappingSce.getContainerSce().getContainer(container.getContainerID());
+            assertTrue(bis.getContainerProperties().containsKey("doubleProp"));
+            assertTrue(bis.getContainerProperties().get("doubleProp").equals(2.1));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container ter = blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID());
+                        assertFalse(ter.getContainerProperties().containsKey("doubleProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container ter = blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID());
+                        assertTrue(ter.getContainerProperties().containsKey("doubleProp"));
+                        assertTrue(ter.getContainerProperties().get("doubleProp").equals(2.1));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            container.removeContainerProperty("doubleProp");
+            assertFalse(container.getContainerProperties().containsKey("doubleProp"));
+            bis = messagingMappingSce.getContainerSce().getContainer(container.getContainerID());
+            assertFalse(bis.getContainerProperties().containsKey("doubleProp"));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container ter = blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID());
+                        assertTrue(ter.getContainerProperties().containsKey("doubleProp"));
+                        assertTrue(ter.getContainerProperties().get("doubleProp").equals(2.1));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container ter = blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID());
+                        assertFalse(ter.getContainerProperties().containsKey("doubleProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            ArrayList<String> listProp = new ArrayList<>();
+            listProp.add("test1");
+            listProp.add("test2");
+            final ArrayList<String> finalListProp = new ArrayList<>(listProp);
+            container.addContainerProperty("listProp", listProp);
+            assertTrue(container.getContainerProperties().containsKey("listProp"));
+            assertTrue(container.getContainerProperties().get("listProp").equals(listProp));
+            bis = messagingMappingSce.getContainerSce().getContainer(container.getContainerID());
+            assertTrue(bis.getContainerProperties().containsKey("listProp"));
+            assertTrue(bis.getContainerProperties().get("listProp").equals(listProp));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container ter = blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID());
+                        assertFalse(ter.getContainerProperties().containsKey("listProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container ter = blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID());
+                        assertTrue(ter.getContainerProperties().containsKey("listProp"));
+                        assertTrue(ter.getContainerProperties().get("listProp").equals(finalListProp));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            container.removeContainerProperty("listProp");
+            assertFalse(container.getContainerProperties().containsKey("listProp"));
+            bis = messagingMappingSce.getContainerSce().getContainer(container.getContainerID());
+            assertFalse(bis.getContainerProperties().containsKey("listProp"));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container ter = blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID());
+                        assertTrue(ter.getContainerProperties().containsKey("listProp"));
+                        assertTrue(ter.getContainerProperties().get("listProp").equals(finalListProp));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container ter = blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID());
+                        assertFalse(ter.getContainerProperties().containsKey("listProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            HashMap<String, Object> mapProp = new HashMap<>();
+            mapProp.put("boolVal", true);
+            mapProp.put("stringVal", "test");
+            final HashMap<String, Object> finalMapProp = new HashMap<>(mapProp);
+            container.addContainerProperty("mapProp", mapProp);
+            assertTrue(container.getContainerProperties().containsKey("mapProp"));
+            assertTrue(container.getContainerProperties().get("mapProp").equals(mapProp));
+            bis = messagingMappingSce.getContainerSce().getContainer(container.getContainerID());
+            assertTrue(bis.getContainerProperties().containsKey("mapProp"));
+            assertTrue(bis.getContainerProperties().get("mapProp").equals(mapProp));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container ter = blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID());
+                        assertFalse(ter.getContainerProperties().containsKey("mapProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container ter = blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID());
+                        assertTrue(ter.getContainerProperties().containsKey("mapProp"));
+                        assertTrue(ter.getContainerProperties().get("mapProp").equals(finalMapProp));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            container.removeContainerProperty("mapProp");
+            assertFalse(container.getContainerProperties().containsKey("mapProp"));
+            bis = messagingMappingSce.getContainerSce().getContainer(container.getContainerID());
+            assertFalse(bis.getContainerProperties().containsKey("mapProp"));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container ter = blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID());
+                        assertTrue(ter.getContainerProperties().containsKey("mapProp"));
+                        assertTrue(ter.getContainerProperties().get("mapProp").equals(finalMapProp));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Container ter = blueprintsMappingSce.getContainerSce().getContainer(container.getContainerID());
+                        assertFalse(ter.getContainerProperties().containsKey("mapProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testTransacContainerProperties");
+            messagingMappingSce.closeSession();
+        }
+    }
+
+    @Test
     public void testClusterJoinContainer() throws MappingDSException {
         if (momTest!=null) {
             Cluster cluster = messagingMappingSce.getClusterSce().createCluster("testClusterJoinContainer-test");
@@ -858,6 +1214,362 @@ public class MappingMsgNATSTest {
     }
 
     @Test
+    public void testTransacNodeProperties() throws MappingDSException {
+        if (momTest!=null) {
+            Session session = messagingMappingSce.openSession("testTransacNodeProperties-this is a test");
+            final Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testTransacNodeProperties", "SERVER SSH DAEMON");
+            final Node process = messagingMappingSce.getNodeSce().createNode("a process-testTransacNodeProperties", container.getContainerID(), null);
+            session.commit();
+            process.addNodeProperty("stringProp", "a string");
+            assertTrue(process.getNodeProperties().containsKey("stringProp"));
+            assertTrue(process.getNodeProperties().get("stringProp").equals("a string"));
+            Node bis = messagingMappingSce.getNodeSce().getNode(process.getNodeID());
+            assertTrue(bis.getNodeProperties().containsKey("stringProp"));
+            assertTrue(bis.getNodeProperties().get("stringProp").equals("a string"));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node ter = blueprintsMappingSce.getNodeSce().getNode(process.getNodeID());
+                        assertFalse(ter.getNodeProperties().containsKey("stringProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node ter = blueprintsMappingSce.getNodeSce().getNode(process.getNodeID());
+                        assertTrue(ter.getNodeProperties().containsKey("stringProp"));
+                        assertTrue(ter.getNodeProperties().get("stringProp").equals("a string"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            process.removeNodeProperty("stringProp");
+            assertFalse(process.getNodeProperties().containsKey("stringProp"));
+            bis = messagingMappingSce.getNodeSce().getNode(process.getNodeID());
+            assertFalse(bis.getNodeProperties().containsKey("stringProp"));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node ter = blueprintsMappingSce.getNodeSce().getNode(process.getNodeID());
+                        assertTrue(ter.getNodeProperties().containsKey("stringProp"));
+                        assertTrue(ter.getNodeProperties().get("stringProp").equals("a string"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node ter = blueprintsMappingSce.getNodeSce().getNode(process.getNodeID());
+                        assertFalse(ter.getNodeProperties().containsKey("stringProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            process.addNodeProperty("boolProp", false);
+            assertTrue(process.getNodeProperties().containsKey("boolProp"));
+            assertTrue(process.getNodeProperties().get("boolProp").equals(false));
+            bis = messagingMappingSce.getNodeSce().getNode(process.getNodeID());
+            assertTrue(bis.getNodeProperties().containsKey("boolProp"));
+            assertTrue(bis.getNodeProperties().get("boolProp").equals(false));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node ter = blueprintsMappingSce.getNodeSce().getNode(process.getNodeID());
+                        assertFalse(ter.getNodeProperties().containsKey("boolProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node ter = blueprintsMappingSce.getNodeSce().getNode(process.getNodeID());
+                        assertTrue(ter.getNodeProperties().containsKey("boolProp"));
+                        assertTrue(ter.getNodeProperties().get("boolProp").equals(false));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            process.removeNodeProperty("boolProp");
+            assertFalse(process.getNodeProperties().containsKey("boolProp"));
+            bis = messagingMappingSce.getNodeSce().getNode(process.getNodeID());
+            assertFalse(bis.getNodeProperties().containsKey("boolProp"));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node ter = blueprintsMappingSce.getNodeSce().getNode(process.getNodeID());
+                        assertTrue(ter.getNodeProperties().containsKey("boolProp"));
+                        assertTrue(ter.getNodeProperties().get("boolProp").equals(false));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node ter = blueprintsMappingSce.getNodeSce().getNode(process.getNodeID());
+                        assertFalse(ter.getNodeProperties().containsKey("boolProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            process.addNodeProperty("intProp", 1);
+            assertTrue(process.getNodeProperties().containsKey("intProp"));
+            assertTrue(process.getNodeProperties().get("intProp").equals(1));
+            bis = messagingMappingSce.getNodeSce().getNode(process.getNodeID());
+            assertTrue(bis.getNodeProperties().containsKey("intProp"));
+            assertTrue(bis.getNodeProperties().get("intProp").equals(1));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node ter = blueprintsMappingSce.getNodeSce().getNode(process.getNodeID());
+                        assertFalse(ter.getNodeProperties().containsKey("intProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            process.removeNodeProperty("intProp");
+            assertFalse(process.getNodeProperties().containsKey("intProp"));
+            bis = messagingMappingSce.getNodeSce().getNode(process.getNodeID());
+            assertFalse(bis.getNodeProperties().containsKey("intProp"));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node ter = blueprintsMappingSce.getNodeSce().getNode(process.getNodeID());
+                        assertTrue(ter.getNodeProperties().containsKey("intProp"));
+                        assertTrue(ter.getNodeProperties().get("intProp").equals(1));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node ter = blueprintsMappingSce.getNodeSce().getNode(process.getNodeID());
+                        assertFalse(ter.getNodeProperties().containsKey("intProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            process.addNodeProperty("doubleProp", 2.1);
+            assertTrue(process.getNodeProperties().containsKey("doubleProp"));
+            assertTrue(process.getNodeProperties().get("doubleProp").equals(2.1));
+            bis = messagingMappingSce.getNodeSce().getNode(process.getNodeID());
+            assertTrue(bis.getNodeProperties().containsKey("doubleProp"));
+            assertTrue(bis.getNodeProperties().get("doubleProp").equals(2.1));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node ter = blueprintsMappingSce.getNodeSce().getNode(process.getNodeID());
+                        assertFalse(ter.getNodeProperties().containsKey("doubleProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node ter = blueprintsMappingSce.getNodeSce().getNode(process.getNodeID());
+                        assertTrue(ter.getNodeProperties().containsKey("doubleProp"));
+                        assertTrue(ter.getNodeProperties().get("doubleProp").equals(2.1));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            process.removeNodeProperty("doubleProp");
+            assertFalse(process.getNodeProperties().containsKey("doubleProp"));
+            bis = messagingMappingSce.getNodeSce().getNode(process.getNodeID());
+            assertFalse(bis.getNodeProperties().containsKey("doubleProp"));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node ter = blueprintsMappingSce.getNodeSce().getNode(process.getNodeID());
+                        assertTrue(ter.getNodeProperties().containsKey("doubleProp"));
+                        assertTrue(ter.getNodeProperties().get("doubleProp").equals(2.1));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node ter = blueprintsMappingSce.getNodeSce().getNode(process.getNodeID());
+                        assertFalse(ter.getNodeProperties().containsKey("doubleProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            ArrayList<String> listProp = new ArrayList<>();
+            listProp.add("test1");
+            listProp.add("test2");
+            final ArrayList<String> finalListProp = new ArrayList<>(listProp);
+            process.addNodeProperty("listProp", listProp);
+            assertTrue(process.getNodeProperties().containsKey("listProp"));
+            assertTrue(process.getNodeProperties().get("listProp").equals(listProp));
+            bis = messagingMappingSce.getNodeSce().getNode(process.getNodeID());
+            assertTrue(bis.getNodeProperties().containsKey("listProp"));
+            assertTrue(bis.getNodeProperties().get("listProp").equals(listProp));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node ter = blueprintsMappingSce.getNodeSce().getNode(process.getNodeID());
+                        assertFalse(ter.getNodeProperties().containsKey("listProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node ter = blueprintsMappingSce.getNodeSce().getNode(process.getNodeID());
+                        assertTrue(ter.getNodeProperties().containsKey("listProp"));
+                        assertTrue(ter.getNodeProperties().get("listProp").equals(finalListProp));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            process.removeNodeProperty("listProp");
+            assertFalse(process.getNodeProperties().containsKey("listProp"));
+            bis = messagingMappingSce.getNodeSce().getNode(process.getNodeID());
+            assertFalse(bis.getNodeProperties().containsKey("listProp"));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node ter = blueprintsMappingSce.getNodeSce().getNode(process.getNodeID());
+                        assertTrue(ter.getNodeProperties().containsKey("listProp"));
+                        assertTrue(ter.getNodeProperties().get("listProp").equals(finalListProp));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node ter = blueprintsMappingSce.getNodeSce().getNode(process.getNodeID());
+                        assertFalse(ter.getNodeProperties().containsKey("listProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            HashMap<String, Object> mapProp = new HashMap<>();
+            mapProp.put("boolVal", true);
+            mapProp.put("stringVal", "test");
+            final HashMap<String, Object> finalMapProp = new HashMap<>(mapProp);
+            process.addNodeProperty("mapProp", mapProp);
+            assertTrue(process.getNodeProperties().containsKey("mapProp"));
+            assertTrue(process.getNodeProperties().get("mapProp").equals(mapProp));
+            bis = messagingMappingSce.getNodeSce().getNode(process.getNodeID());
+            assertTrue(bis.getNodeProperties().containsKey("mapProp"));
+            assertTrue(bis.getNodeProperties().get("mapProp").equals(mapProp));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node ter = blueprintsMappingSce.getNodeSce().getNode(process.getNodeID());
+                        assertFalse(ter.getNodeProperties().containsKey("mapProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node ter = blueprintsMappingSce.getNodeSce().getNode(process.getNodeID());
+                        assertTrue(ter.getNodeProperties().containsKey("mapProp"));
+                        assertTrue(ter.getNodeProperties().get("mapProp").equals(finalMapProp));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            process.removeNodeProperty("mapProp");
+            assertFalse(process.getNodeProperties().containsKey("mapProp"));
+            bis = messagingMappingSce.getNodeSce().getNode(process.getNodeID());
+            assertFalse(bis.getNodeProperties().containsKey("mapProp"));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node ter = blueprintsMappingSce.getNodeSce().getNode(process.getNodeID());
+                        assertTrue(ter.getNodeProperties().containsKey("mapProp"));
+                        assertTrue(ter.getNodeProperties().get("mapProp").equals(finalMapProp));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Node ter = blueprintsMappingSce.getNodeSce().getNode(process.getNodeID());
+                        assertFalse(ter.getNodeProperties().containsKey("mapProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testTransacNodeProperties");
+            messagingMappingSce.closeSession();
+        }
+    }
+
+    @Test
     public void testContainerJoinNode() throws MappingDSException {
         if (momTest!=null) {
             Container ahypervisor = messagingMappingSce.getContainerSce().createContainer("ssh://a.hypervisor.fqdn-testContainerJoinNode", "SERVER SSH DAEMON");
@@ -1122,6 +1834,363 @@ public class MappingMsgNATSTest {
     }
 
     @Test
+    public void testTransacEndpointProperties() throws MappingDSException {
+        if (momTest!=null) {
+            Session session = messagingMappingSce.openSession("testTransacEndpointProperties-this is a test");
+            final Container container = messagingMappingSce.getContainerSce().createContainer("ssh://a.server.fqdn-testTransacEndpointProperties", "SERVER SSH DAEMON");
+            final Node process = messagingMappingSce.getNodeSce().createNode("a process-testTransacEndpointProperties", container.getContainerID(), null);
+            final Endpoint endpoint = messagingMappingSce.getEndpointSce().createEndpoint("tcp://process-endpoint-testTransaceEndpointProperties:1234", process.getNodeID());
+            session.commit();
+            endpoint.addEndpointProperty("stringProp", "a string");
+            assertTrue(endpoint.getEndpointProperties().containsKey("stringProp"));
+            assertTrue(endpoint.getEndpointProperties().get("stringProp").equals("a string"));
+            Endpoint bis = messagingMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+            assertTrue(bis.getEndpointProperties().containsKey("stringProp"));
+            assertTrue(bis.getEndpointProperties().get("stringProp").equals("a string"));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Endpoint ter = blueprintsMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+                        assertFalse(ter.getEndpointProperties().containsKey("stringProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Endpoint ter = blueprintsMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+                        assertTrue(ter.getEndpointProperties().containsKey("stringProp"));
+                        assertTrue(ter.getEndpointProperties().get("stringProp").equals("a string"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            endpoint.removeEndpointProperty("stringProp");
+            assertFalse(endpoint.getEndpointProperties().containsKey("stringProp"));
+            bis = messagingMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+            assertFalse(bis.getEndpointProperties().containsKey("stringProp"));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Endpoint ter = blueprintsMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+                        assertTrue(ter.getEndpointProperties().containsKey("stringProp"));
+                        assertTrue(ter.getEndpointProperties().get("stringProp").equals("a string"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Endpoint ter = blueprintsMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+                        assertFalse(ter.getEndpointProperties().containsKey("stringProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            endpoint.addEndpointProperty("boolProp", false);
+            assertTrue(endpoint.getEndpointProperties().containsKey("boolProp"));
+            assertTrue(endpoint.getEndpointProperties().get("boolProp").equals(false));
+            bis = messagingMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+            assertTrue(bis.getEndpointProperties().containsKey("boolProp"));
+            assertTrue(bis.getEndpointProperties().get("boolProp").equals(false));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Endpoint ter = blueprintsMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+                        assertFalse(ter.getEndpointProperties().containsKey("boolProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Endpoint ter = blueprintsMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+                        assertTrue(ter.getEndpointProperties().containsKey("boolProp"));
+                        assertTrue(ter.getEndpointProperties().get("boolProp").equals(false));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            endpoint.removeEndpointProperty("boolProp");
+            assertFalse(endpoint.getEndpointProperties().containsKey("boolProp"));
+            bis = messagingMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+            assertFalse(bis.getEndpointProperties().containsKey("boolProp"));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Endpoint ter = blueprintsMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+                        assertTrue(ter.getEndpointProperties().containsKey("boolProp"));
+                        assertTrue(ter.getEndpointProperties().get("boolProp").equals(false));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Endpoint ter = blueprintsMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+                        assertFalse(ter.getEndpointProperties().containsKey("boolProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            endpoint.addEndpointProperty("intProp", 1);
+            assertTrue(endpoint.getEndpointProperties().containsKey("intProp"));
+            assertTrue(endpoint.getEndpointProperties().get("intProp").equals(1));
+            bis = messagingMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+            assertTrue(bis.getEndpointProperties().containsKey("intProp"));
+            assertTrue(bis.getEndpointProperties().get("intProp").equals(1));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Endpoint ter = blueprintsMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+                        assertFalse(ter.getEndpointProperties().containsKey("intProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            endpoint.removeEndpointProperty("intProp");
+            assertFalse(endpoint.getEndpointProperties().containsKey("intProp"));
+            bis = messagingMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+            assertFalse(bis.getEndpointProperties().containsKey("intProp"));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Endpoint ter = blueprintsMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+                        assertTrue(ter.getEndpointProperties().containsKey("intProp"));
+                        assertTrue(ter.getEndpointProperties().get("intProp").equals(1));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Endpoint ter = blueprintsMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+                        assertFalse(ter.getEndpointProperties().containsKey("intProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            endpoint.addEndpointProperty("doubleProp", 2.1);
+            assertTrue(endpoint.getEndpointProperties().containsKey("doubleProp"));
+            assertTrue(endpoint.getEndpointProperties().get("doubleProp").equals(2.1));
+            bis = messagingMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+            assertTrue(bis.getEndpointProperties().containsKey("doubleProp"));
+            assertTrue(bis.getEndpointProperties().get("doubleProp").equals(2.1));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Endpoint ter = blueprintsMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+                        assertFalse(ter.getEndpointProperties().containsKey("doubleProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Endpoint ter = blueprintsMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+                        assertTrue(ter.getEndpointProperties().containsKey("doubleProp"));
+                        assertTrue(ter.getEndpointProperties().get("doubleProp").equals(2.1));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            endpoint.removeEndpointProperty("doubleProp");
+            assertFalse(endpoint.getEndpointProperties().containsKey("doubleProp"));
+            bis = messagingMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+            assertFalse(bis.getEndpointProperties().containsKey("doubleProp"));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Endpoint ter = blueprintsMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+                        assertTrue(ter.getEndpointProperties().containsKey("doubleProp"));
+                        assertTrue(ter.getEndpointProperties().get("doubleProp").equals(2.1));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Endpoint ter = blueprintsMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+                        assertFalse(ter.getEndpointProperties().containsKey("doubleProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            ArrayList<String> listProp = new ArrayList<>();
+            listProp.add("test1");
+            listProp.add("test2");
+            final ArrayList<String> finalListProp = new ArrayList<>(listProp);
+            endpoint.addEndpointProperty("listProp", listProp);
+            assertTrue(endpoint.getEndpointProperties().containsKey("listProp"));
+            assertTrue(endpoint.getEndpointProperties().get("listProp").equals(listProp));
+            bis = messagingMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+            assertTrue(bis.getEndpointProperties().containsKey("listProp"));
+            assertTrue(bis.getEndpointProperties().get("listProp").equals(listProp));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Endpoint ter = blueprintsMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+                        assertFalse(ter.getEndpointProperties().containsKey("listProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Endpoint ter = blueprintsMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+                        assertTrue(ter.getEndpointProperties().containsKey("listProp"));
+                        assertTrue(ter.getEndpointProperties().get("listProp").equals(finalListProp));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            endpoint.removeEndpointProperty("listProp");
+            assertFalse(endpoint.getEndpointProperties().containsKey("listProp"));
+            bis = messagingMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+            assertFalse(bis.getEndpointProperties().containsKey("listProp"));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Endpoint ter = blueprintsMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+                        assertTrue(ter.getEndpointProperties().containsKey("listProp"));
+                        assertTrue(ter.getEndpointProperties().get("listProp").equals(finalListProp));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Endpoint ter = blueprintsMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+                        assertFalse(ter.getEndpointProperties().containsKey("listProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            HashMap<String, Object> mapProp = new HashMap<>();
+            mapProp.put("boolVal", true);
+            mapProp.put("stringVal", "test");
+            final HashMap<String, Object> finalMapProp = new HashMap<>(mapProp);
+            endpoint.addEndpointProperty("mapProp", mapProp);
+            assertTrue(endpoint.getEndpointProperties().containsKey("mapProp"));
+            assertTrue(endpoint.getEndpointProperties().get("mapProp").equals(mapProp));
+            bis = messagingMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+            assertTrue(bis.getEndpointProperties().containsKey("mapProp"));
+            assertTrue(bis.getEndpointProperties().get("mapProp").equals(mapProp));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Endpoint ter = blueprintsMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+                        assertFalse(ter.getEndpointProperties().containsKey("mapProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Endpoint ter = blueprintsMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+                        assertTrue(ter.getEndpointProperties().containsKey("mapProp"));
+                        assertTrue(ter.getEndpointProperties().get("mapProp").equals(finalMapProp));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            endpoint.removeEndpointProperty("mapProp");
+            assertFalse(endpoint.getEndpointProperties().containsKey("mapProp"));
+            bis = messagingMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+            assertFalse(bis.getEndpointProperties().containsKey("mapProp"));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Endpoint ter = blueprintsMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+                        assertTrue(ter.getEndpointProperties().containsKey("mapProp"));
+                        assertTrue(ter.getEndpointProperties().get("mapProp").equals(finalMapProp));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Endpoint ter = blueprintsMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID());
+                        assertFalse(ter.getEndpointProperties().containsKey("mapProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            messagingMappingSce.getContainerSce().deleteContainer("ssh://a.server.fqdn-testTransacEndpointProperties");
+            messagingMappingSce.closeSession();
+        }
+    }
+
+    @Test
     public void testEndpointJoinTwinEP() throws MappingDSException {
         if (momTest!=null) {
             Cluster cluster = messagingMappingSce.getClusterSce().createCluster("test-testEndpointJoinTwinEP");
@@ -1279,6 +2348,361 @@ public class MappingMsgNATSTest {
             bis = messagingMappingSce.getTransportSce().getTransport(transport.getTransportID());
             assertFalse(bis.getTransportProperties().containsKey("mapProp"));
             messagingMappingSce.getTransportSce().deleteTransport(transport.getTransportID());
+        }
+    }
+
+    @Test
+    public void testTransacTransportProperties() throws MappingDSException {
+        if (momTest!=null) {
+            Session session = messagingMappingSce.openSession("testTransacTransportProperties-this is a test");
+            final Transport transport = messagingMappingSce.getTransportSce().createTransport("multicast-udp-testTransacTransportProperties://");
+            session.commit();
+            transport.addTransportProperty("stringProp", "a string");
+            assertTrue(transport.getTransportProperties().containsKey("stringProp"));
+            assertTrue(transport.getTransportProperties().get("stringProp").equals("a string"));
+            Transport bis = messagingMappingSce.getTransportSce().getTransport(transport.getTransportID());
+            assertTrue(bis.getTransportProperties().containsKey("stringProp"));
+            assertTrue(bis.getTransportProperties().get("stringProp").equals("a string"));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Transport ter = blueprintsMappingSce.getTransportSce().getTransport(transport.getTransportID());
+                        assertFalse(ter.getTransportProperties().containsKey("stringProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Transport ter = blueprintsMappingSce.getTransportSce().getTransport(transport.getTransportID());
+                        assertTrue(ter.getTransportProperties().containsKey("stringProp"));
+                        assertTrue(ter.getTransportProperties().get("stringProp").equals("a string"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            transport.removeTransportProperty("stringProp");
+            assertFalse(transport.getTransportProperties().containsKey("stringProp"));
+            bis = messagingMappingSce.getTransportSce().getTransport(transport.getTransportID());
+            assertFalse(bis.getTransportProperties().containsKey("stringProp"));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Transport ter = blueprintsMappingSce.getTransportSce().getTransport(transport.getTransportID());
+                        assertTrue(ter.getTransportProperties().containsKey("stringProp"));
+                        assertTrue(ter.getTransportProperties().get("stringProp").equals("a string"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Transport ter = blueprintsMappingSce.getTransportSce().getTransport(transport.getTransportID());
+                        assertFalse(ter.getTransportProperties().containsKey("stringProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            transport.addTransportProperty("boolProp", false);
+            assertTrue(transport.getTransportProperties().containsKey("boolProp"));
+            assertTrue(transport.getTransportProperties().get("boolProp").equals(false));
+            bis = messagingMappingSce.getTransportSce().getTransport(transport.getTransportID());
+            assertTrue(bis.getTransportProperties().containsKey("boolProp"));
+            assertTrue(bis.getTransportProperties().get("boolProp").equals(false));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Transport ter = blueprintsMappingSce.getTransportSce().getTransport(transport.getTransportID());
+                        assertFalse(ter.getTransportProperties().containsKey("boolProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Transport ter = blueprintsMappingSce.getTransportSce().getTransport(transport.getTransportID());
+                        assertTrue(ter.getTransportProperties().containsKey("boolProp"));
+                        assertTrue(ter.getTransportProperties().get("boolProp").equals(false));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            transport.removeTransportProperty("boolProp");
+            assertFalse(transport.getTransportProperties().containsKey("boolProp"));
+            bis = messagingMappingSce.getTransportSce().getTransport(transport.getTransportID());
+            assertFalse(bis.getTransportProperties().containsKey("boolProp"));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Transport ter = blueprintsMappingSce.getTransportSce().getTransport(transport.getTransportID());
+                        assertTrue(ter.getTransportProperties().containsKey("boolProp"));
+                        assertTrue(ter.getTransportProperties().get("boolProp").equals(false));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Transport ter = blueprintsMappingSce.getTransportSce().getTransport(transport.getTransportID());
+                        assertFalse(ter.getTransportProperties().containsKey("boolProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            transport.addTransportProperty("intProp", 1);
+            assertTrue(transport.getTransportProperties().containsKey("intProp"));
+            assertTrue(transport.getTransportProperties().get("intProp").equals(1));
+            bis = messagingMappingSce.getTransportSce().getTransport(transport.getTransportID());
+            assertTrue(bis.getTransportProperties().containsKey("intProp"));
+            assertTrue(bis.getTransportProperties().get("intProp").equals(1));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Transport ter = blueprintsMappingSce.getTransportSce().getTransport(transport.getTransportID());
+                        assertFalse(ter.getTransportProperties().containsKey("intProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            transport.removeTransportProperty("intProp");
+            assertFalse(transport.getTransportProperties().containsKey("intProp"));
+            bis = messagingMappingSce.getTransportSce().getTransport(transport.getTransportID());
+            assertFalse(bis.getTransportProperties().containsKey("intProp"));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Transport ter = blueprintsMappingSce.getTransportSce().getTransport(transport.getTransportID());
+                        assertTrue(ter.getTransportProperties().containsKey("intProp"));
+                        assertTrue(ter.getTransportProperties().get("intProp").equals(1));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Transport ter = blueprintsMappingSce.getTransportSce().getTransport(transport.getTransportID());
+                        assertFalse(ter.getTransportProperties().containsKey("intProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            transport.addTransportProperty("doubleProp", 2.1);
+            assertTrue(transport.getTransportProperties().containsKey("doubleProp"));
+            assertTrue(transport.getTransportProperties().get("doubleProp").equals(2.1));
+            bis = messagingMappingSce.getTransportSce().getTransport(transport.getTransportID());
+            assertTrue(bis.getTransportProperties().containsKey("doubleProp"));
+            assertTrue(bis.getTransportProperties().get("doubleProp").equals(2.1));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Transport ter = blueprintsMappingSce.getTransportSce().getTransport(transport.getTransportID());
+                        assertFalse(ter.getTransportProperties().containsKey("doubleProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Transport ter = blueprintsMappingSce.getTransportSce().getTransport(transport.getTransportID());
+                        assertTrue(ter.getTransportProperties().containsKey("doubleProp"));
+                        assertTrue(ter.getTransportProperties().get("doubleProp").equals(2.1));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            transport.removeTransportProperty("doubleProp");
+            assertFalse(transport.getTransportProperties().containsKey("doubleProp"));
+            bis = messagingMappingSce.getTransportSce().getTransport(transport.getTransportID());
+            assertFalse(bis.getTransportProperties().containsKey("doubleProp"));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Transport ter = blueprintsMappingSce.getTransportSce().getTransport(transport.getTransportID());
+                        assertTrue(ter.getTransportProperties().containsKey("doubleProp"));
+                        assertTrue(ter.getTransportProperties().get("doubleProp").equals(2.1));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Transport ter = blueprintsMappingSce.getTransportSce().getTransport(transport.getTransportID());
+                        assertFalse(ter.getTransportProperties().containsKey("doubleProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            ArrayList<String> listProp = new ArrayList<>();
+            listProp.add("test1");
+            listProp.add("test2");
+            final ArrayList<String> finalListProp = new ArrayList<>(listProp);
+            transport.addTransportProperty("listProp", listProp);
+            assertTrue(transport.getTransportProperties().containsKey("listProp"));
+            assertTrue(transport.getTransportProperties().get("listProp").equals(listProp));
+            bis = messagingMappingSce.getTransportSce().getTransport(transport.getTransportID());
+            assertTrue(bis.getTransportProperties().containsKey("listProp"));
+            assertTrue(bis.getTransportProperties().get("listProp").equals(listProp));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Transport ter = blueprintsMappingSce.getTransportSce().getTransport(transport.getTransportID());
+                        assertFalse(ter.getTransportProperties().containsKey("listProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Transport ter = blueprintsMappingSce.getTransportSce().getTransport(transport.getTransportID());
+                        assertTrue(ter.getTransportProperties().containsKey("listProp"));
+                        assertTrue(ter.getTransportProperties().get("listProp").equals(finalListProp));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            transport.removeTransportProperty("listProp");
+            assertFalse(transport.getTransportProperties().containsKey("listProp"));
+            bis = messagingMappingSce.getTransportSce().getTransport(transport.getTransportID());
+            assertFalse(bis.getTransportProperties().containsKey("listProp"));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Transport ter = blueprintsMappingSce.getTransportSce().getTransport(transport.getTransportID());
+                        assertTrue(ter.getTransportProperties().containsKey("listProp"));
+                        assertTrue(ter.getTransportProperties().get("listProp").equals(finalListProp));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Transport ter = blueprintsMappingSce.getTransportSce().getTransport(transport.getTransportID());
+                        assertFalse(ter.getTransportProperties().containsKey("listProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            HashMap<String, Object> mapProp = new HashMap<>();
+            mapProp.put("boolVal", true);
+            mapProp.put("stringVal", "test");
+            final HashMap<String, Object> finalMapProp = new HashMap<>(mapProp);
+            transport.addTransportProperty("mapProp", mapProp);
+            assertTrue(transport.getTransportProperties().containsKey("mapProp"));
+            assertTrue(transport.getTransportProperties().get("mapProp").equals(mapProp));
+            bis = messagingMappingSce.getTransportSce().getTransport(transport.getTransportID());
+            assertTrue(bis.getTransportProperties().containsKey("mapProp"));
+            assertTrue(bis.getTransportProperties().get("mapProp").equals(mapProp));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Transport ter = blueprintsMappingSce.getTransportSce().getTransport(transport.getTransportID());
+                        assertFalse(ter.getTransportProperties().containsKey("mapProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Transport ter = blueprintsMappingSce.getTransportSce().getTransport(transport.getTransportID());
+                        assertTrue(ter.getTransportProperties().containsKey("mapProp"));
+                        assertTrue(ter.getTransportProperties().get("mapProp").equals(finalMapProp));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            transport.removeTransportProperty("mapProp");
+            assertFalse(transport.getTransportProperties().containsKey("mapProp"));
+            bis = messagingMappingSce.getTransportSce().getTransport(transport.getTransportID());
+            assertFalse(bis.getTransportProperties().containsKey("mapProp"));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Transport ter = blueprintsMappingSce.getTransportSce().getTransport(transport.getTransportID());
+                        assertTrue(ter.getTransportProperties().containsKey("mapProp"));
+                        assertTrue(ter.getTransportProperties().get("mapProp").equals(finalMapProp));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            session.commit();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Transport ter = blueprintsMappingSce.getTransportSce().getTransport(transport.getTransportID());
+                        assertFalse(ter.getTransportProperties().containsKey("mapProp"));
+                    } catch (MappingDSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            messagingMappingSce.getTransportSce().deleteTransport(transport.getTransportID());
+            messagingMappingSce.closeSession();
         }
     }
 }
