@@ -88,17 +88,22 @@ public class MappingDSGraphDBObjectProps {
         keyName = splittedKey.split(prefixObjKey + "_|\\.")[1].split("_")[0];
         if (splittedKey.split("_|\\.").length>2) {
             type = splittedKey.split(keyName + "_")[1].split("_|\\.")[0];
-            String[] splittedKeyTab = splittedKey.split(keyName + "_");
-            if (splittedKeyTab.length == 1)
-                subKey = splittedKey.split(keyName + "_")[1];
-            else {
-                subKey = "";
-                for (int idx = 0; idx < splittedKeyTab.length; idx ++) {
-                    if (idx == 1)
-                        subKey += splittedKeyTab[idx];
-                    else if (idx > 0)
-                        subKey += keyName + "_" + splittedKeyTab[idx];
+            if (type.equals("HashMap") || type.equals("ArrayList") || type.contains("BigDecimal")) {
+                String[] splittedKeyTab = splittedKey.split(keyName + "_");
+                if (splittedKeyTab.length == 1)
+                    subKey = splittedKey.split(keyName + "_")[1];
+                else {
+                    subKey = "";
+                    for (int idx = 0; idx < splittedKeyTab.length; idx++) {
+                        if (idx == 1)
+                            subKey += splittedKeyTab[idx];
+                        else if (idx > 0)
+                            subKey += keyName + "_" + splittedKeyTab[idx];
+                    }
                 }
+            } else {
+                keyName = splittedKey.split(prefixObjKey + "_|\\.")[1];
+                type = null;
             }
         }
 
