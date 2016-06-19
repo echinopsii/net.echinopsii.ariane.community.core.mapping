@@ -52,6 +52,7 @@ public class SessionEp {
                         if (message.get(SProxMappingSce.SESSION_MGR_PARAM_CLIENT_ID)!=null) {
                             clientID = message.get(SProxMappingSce.SESSION_MGR_PARAM_CLIENT_ID).toString();
                             Session session = MappingMsgsrvBootstrap.getMappingSce().openSession(clientID, true);
+                            MappingMsgsrvMomSP.getSharedMoMConnection().openMsgGroupService(session.getSessionID());
                             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
                             SessionJSON.oneSession2JSON(session, outStream);
                             String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
@@ -73,6 +74,7 @@ public class SessionEp {
                             sessionID = message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID).toString();
                             Session session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sessionID);
                             if (session != null) {
+                                MappingMsgsrvMomSP.getSharedMoMConnection().closeMsgGroupService(session.getSessionID());
                                 MappingMsgsrvBootstrap.getMappingSce().closeSession(session);
                                 message.put(MomMsgTranslator.MSG_RC, 0);
                             } else {
@@ -151,7 +153,7 @@ public class SessionEp {
 
     public static void start() {
         if (MappingMsgsrvMomSP.getSharedMoMConnection() != null && MappingMsgsrvMomSP.getSharedMoMConnection().isConnected())
-            MappingMsgsrvMomSP.getSharedMoMConnection().getServiceFactory().requestService(
+            MappingMsgsrvMomSP.getSharedMoMConnection().getServiceFactory().msgGroupRequestService(
                     Session.MAPPING_SESSION_SERVICE_Q, new SessionWorker()
             );
     }

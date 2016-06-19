@@ -324,7 +324,7 @@ public class EndpointEp {
 
     public static void start() {
         if (MappingMsgsrvMomSP.getSharedMoMConnection() != null && MappingMsgsrvMomSP.getSharedMoMConnection().isConnected())
-            MappingMsgsrvMomSP.getSharedMoMConnection().getServiceFactory().requestService(
+            MappingMsgsrvMomSP.getSharedMoMConnection().getServiceFactory().msgGroupRequestService(
                     EndpointSce.Q_MAPPING_ENDPOINT_SERVICE, new EndpointWorker()
             );
     }

@@ -185,6 +185,7 @@ public class SessionImpl implements Session {
     private HashMap<String, MappingDSCacheEntity> sessionRemovedObjectCache = new HashMap<>();
 
     public SessionImpl(String clientId) {
+        clientId = clientId.replace(" ", "_");
         this.sessionId = clientId + '-' + UUID.randomUUID();
         this.sessionThread.setName(sessionId);
     }

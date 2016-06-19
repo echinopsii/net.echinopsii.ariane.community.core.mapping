@@ -245,7 +245,7 @@ public class ClusterEp {
 
     public static void start() {
         if (MappingMsgsrvMomSP.getSharedMoMConnection() != null && MappingMsgsrvMomSP.getSharedMoMConnection().isConnected())
-            MappingMsgsrvMomSP.getSharedMoMConnection().getServiceFactory().requestService(
+            MappingMsgsrvMomSP.getSharedMoMConnection().getServiceFactory().msgGroupRequestService(
                     ClusterSce.Q_MAPPING_CLUSTER_SERVICE, new ClusterWorker()
             );
     }

@@ -494,7 +494,7 @@ public class NodeEp {
 
     public static void start() {
         if (MappingMsgsrvMomSP.getSharedMoMConnection() != null && MappingMsgsrvMomSP.getSharedMoMConnection().isConnected())
-            MappingMsgsrvMomSP.getSharedMoMConnection().getServiceFactory().requestService(
+            MappingMsgsrvMomSP.getSharedMoMConnection().getServiceFactory().msgGroupRequestService(
                     NodeSce.Q_MAPPING_NODE_SERVICE, new NodeWorker()
             );
     }

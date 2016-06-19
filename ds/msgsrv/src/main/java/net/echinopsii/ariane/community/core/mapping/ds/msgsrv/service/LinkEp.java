@@ -264,7 +264,7 @@ public class LinkEp {
 
     public static void start() {
         if (MappingMsgsrvMomSP.getSharedMoMConnection() != null && MappingMsgsrvMomSP.getSharedMoMConnection().isConnected())
-            MappingMsgsrvMomSP.getSharedMoMConnection().getServiceFactory().requestService(
+            MappingMsgsrvMomSP.getSharedMoMConnection().getServiceFactory().msgGroupRequestService(
                     LinkSce.Q_MAPPING_LINK_SERVICE, new LinkWorker()
             );
     }

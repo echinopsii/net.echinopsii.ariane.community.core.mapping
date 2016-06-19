@@ -96,6 +96,7 @@ public class MappingSceImpl extends SProxMappingSceAbs<SessionImpl, SessionRegis
         if (session.isRunning()) {
             ClientThreadSessionRegistry.addCliThreadSession(Thread.currentThread().getName(), session.getSessionID());
             super.getSessionRegistry().put(session);
+            MappingMsgcliMomSP.getSharedMoMConnection().openMsgGroupRequest(session.getSessionID());
         }
         else session = null;
         return session;
@@ -114,6 +115,7 @@ public class MappingSceImpl extends SProxMappingSceAbs<SessionImpl, SessionRegis
         message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxMappingSce.SESSION_MGR_OP_CLOSE);
         message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, toClose.getSessionID());
         MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, Session.MAPPING_SESSION_SERVICE_Q, ((SessionImpl) toClose).getSessionReplyWorker());
+        MappingMsgcliMomSP.getSharedMoMConnection().closeMsgGroupRequest(toClose.getSessionID());
         if (!toClose.isRunning()) {
             super.getSessionRegistry().remove(toClose);
             ClientThreadSessionRegistry.removeCliThreadSession(Thread.currentThread().getName());
