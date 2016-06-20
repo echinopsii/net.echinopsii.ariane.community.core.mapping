@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Dictionary;
 
-@Component
+@Component(managedservice="net.echinopsii.ariane.community.core.MappingMsgsrvManagedService")
 @Instantiate
 public class MappingMsgsrvBootstrap {
     private static final Logger log = LoggerFactory.getLogger(MappingMsgsrvBootstrap.class);

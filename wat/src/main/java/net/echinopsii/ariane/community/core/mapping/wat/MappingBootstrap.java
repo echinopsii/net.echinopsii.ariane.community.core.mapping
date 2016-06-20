@@ -19,7 +19,6 @@
 
 package net.echinopsii.ariane.community.core.mapping.wat;
 
-import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.core.portal.base.model.*;
 import net.echinopsii.ariane.community.core.portal.base.plugin.FaceletsResourceResolverService;

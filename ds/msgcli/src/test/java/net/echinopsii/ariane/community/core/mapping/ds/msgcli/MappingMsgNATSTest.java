@@ -19,7 +19,6 @@
  */
 package net.echinopsii.ariane.community.core.mapping.ds.msgcli;
 
-import junit.framework.TestCase;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.cfg.MappingBlueprintsDSCfgLoader;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
@@ -76,7 +75,6 @@ public class MappingMsgNATSTest {
             mappingDSConfig.setProperty("mapping.ds.blueprints.graphpath", ((String) mappingDSConfig.get("mapping.ds.blueprints.graphpath")) + UUID.randomUUID());
 
             try {
-                blueprintsMappingSce.init(mappingDSConfig);
                 blueprintsMappingSce.init(mappingDSConfig);
                 if (blueprintsMappingSce.start()) {
                     msgsrvBootstrap.bindMappingBSce(blueprintsMappingSce);
