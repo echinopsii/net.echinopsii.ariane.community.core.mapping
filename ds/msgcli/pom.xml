@@ -106,58 +106,6 @@
                 <!-- This plugin takes care of packaging the artifact as an OSGi Bundle -->
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-                <configuration>
-                    <instructions>
-                        <Import-Package>
-                            com.fasterxml.jackson.datatype.jsonorg;version="${version.com.fasterxml.jackson}",
-                            com.fasterxml.jackson.databind;version="${version.com.fasterxml.jackson}",
-                            com.fasterxml.jackson.databind.annotation;version="${version.com.fasterxml.jackson}",
-                            com.fasterxml.jackson.databind.cfg;version="${version.com.fasterxml.jackson}",
-                            com.fasterxml.jackson.databind.deser;version="${version.com.fasterxml.jackson}",
-                            com.fasterxml.jackson.databind.deser.impl;version="${version.com.fasterxml.jackson}",
-                            com.fasterxml.jackson.databind.deser.std;version="${version.com.fasterxml.jackson}",
-                            com.fasterxml.jackson.databind.exc;version="${version.com.fasterxml.jackson}",
-                            com.fasterxml.jackson.databind.ext;version="${version.com.fasterxml.jackson}",
-                            com.fasterxml.jackson.databind.introspect;version="${version.com.fasterxml.jackson}",
-                            com.fasterxml.jackson.databind.jsonFormatVisitors;version="${version.com.fasterxml.jackson}",
-                            com.fasterxml.jackson.databind.jsonschema;version="${version.com.fasterxml.jackson}",
-                            com.fasterxml.jackson.databind.jsontype;version="${version.com.fasterxml.jackson}",
-                            com.fasterxml.jackson.databind.jsontype.impl;version="${version.com.fasterxml.jackson}",
-                            com.fasterxml.jackson.databind.module;version="${version.com.fasterxml.jackson}",
-                            com.fasterxml.jackson.databind.node;version="${version.com.fasterxml.jackson}",
-                            com.fasterxml.jackson.databind.ser;version="${version.com.fasterxml.jackson}",
-                            com.fasterxml.jackson.databind.ser.impl;version="${version.com.fasterxml.jackson}",
-                            com.fasterxml.jackson.databind.ser.std;version="${version.com.fasterxml.jackson}",
-                            com.fasterxml.jackson.databind.type;version="${version.com.fasterxml.jackson}",
-                            com.fasterxml.jackson.databind.util;version="${version.com.fasterxml.jackson}",
-                            com.fasterxml.jackson.annotation;version="${version.com.fasterxml.jackson}",
-                            com.fasterxml.jackson.core;version="${version.com.fasterxml.jackson}",
-                            com.fasterxml.jackson.core.base;version="${version.com.fasterxml.jackson}",
-                            com.fasterxml.jackson.core.format;version="${version.com.fasterxml.jackson}",
-                            com.fasterxml.jackson.core.io;version="${version.com.fasterxml.jackson}",
-                            com.fasterxml.jackson.core.json;version="${version.com.fasterxml.jackson}",
-                            com.fasterxml.jackson.core.sym;version="${version.com.fasterxml.jackson}",
-                            com.fasterxml.jackson.core.type;version="${version.com.fasterxml.jackson}",
-                            com.fasterxml.jackson.core.util;version="${version.com.fasterxml.jackson}",
-                            net.echinopsii.ariane.community.core.mapping.ds;version="${project.version}",
-                            net.echinopsii.ariane.community.core.mapping.ds.cache;version=${project.version},
-                            net.echinopsii.ariane.community.core.mapping.ds.cfg;version=${project.version},
-                            net.echinopsii.ariane.community.core.mapping.ds.cli;version=${project.version},
-                            net.echinopsii.ariane.community.core.mapping.ds.service;version="${project.version}",
-                            net.echinopsii.ariane.community.core.mapping.ds.service.proxy;version=${project.version},
-                            net.echinopsii.ariane.community.core.mapping.ds.service.tools;version=${project.version},
-                            net.echinopsii.ariane.community.core.mapping.ds.domain;version="${project.version}",
-                            net.echinopsii.ariane.community.core.mapping.ds.domain.proxy;version="${project.version}",
-                            net.echinopsii.ariane.community.core.mapping.ds.mdsl;version="${project.version}",
-                            net.echinopsii.ariane.community.core.mapping.ds.sdsl;version="${project.version}",
-                            net.echinopsii.ariane.community.core.mapping.ds.repository;version="${project.version}"
-                        </Import-Package>
-                        <Export-Package>
-                            net.echinopsii.ariane.core.mapping.ds.blueprintsimpl.repository;version=${project.version},
-                            net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service;version=${project.version}
-                        </Export-Package>
-                    </instructions>
-                </configuration>
             </plugin>
         </plugins>
     </build>
