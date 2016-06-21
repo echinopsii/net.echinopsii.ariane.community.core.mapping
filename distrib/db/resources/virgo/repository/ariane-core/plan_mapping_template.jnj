@@ -4,8 +4,8 @@
 				xsi:schemaLocation="
 				        http://www.eclipse.org/virgo/schema/plan
 				        http://www.eclipse.org/virgo/schema/plan/eclipse-virgo-plan.xsd">
-
         <artifact type="configuration" name="net.echinopsii.ariane.community.core.MappingRimManagedService"/>
+        <artifact type="configuration" name="net.echinopsii.ariane.community.core.MappingMsgsrvManagedService"/>
         {% for s in submodules -%}
                 <artifact type="bundle" name="{{ s.artifactId }}" version="[{{vmin}},{{vmax}})"/>
         {% endfor -%}

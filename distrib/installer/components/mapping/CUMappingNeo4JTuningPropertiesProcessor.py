@@ -20,10 +20,22 @@ from tools.AConfUnit import AConfUnit
 __author__ = 'mffrench'
 
 
-class cuMappingNeo4JTuningPropertiesProcessor(AConfUnit):
+class CUMappingNeo4JTuningPropertiesProcessor(AConfUnit):
 
-    def __init__(self, targetConfDir):
+    def __init__(self, target_conf_dir):
         self.confUnitName = "Mapping Neo4J tuning configuration file"
         self.confTemplatePath = os.path.abspath("resources/templates/components/neo4j.properties.tpl")
-        self.confFinalPath = targetConfDir + "/neo4j.properties"
+        self.confFinalPath = target_conf_dir + "/neo4j.properties"
         self.paramsDictionary = {}
+
+    def set_key_param_value(self, key, value):
+        return super(CUMappingNeo4JTuningPropertiesProcessor, self).set_key_param_value(key, value)
+
+    def get_params_keys_list(self):
+        return super(CUMappingNeo4JTuningPropertiesProcessor, self).get_params_keys_list()
+
+    def process(self):
+        return super(CUMappingNeo4JTuningPropertiesProcessor, self).process()
+
+    def get_param_from_key(self, key):
+        return super(CUMappingNeo4JTuningPropertiesProcessor, self).get_param_from_key(key)

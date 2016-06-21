@@ -15,15 +15,27 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import os
-from tools.AConfParamNotNone import AConfParamNotNone
 from tools.AConfUnit import AConfUnit
 
 __author__ = 'mffrench'
 
 
-class cuMappingNeo4JLoggingXMLProcessor(AConfUnit):
-    def __init__(self, targetConfDir):
+class CUMappingNeo4JLoggingXMLProcessor(AConfUnit):
+
+    def __init__(self, target_conf_dir):
         self.confUnitName = "Mapping Neo4J logging configuration file"
         self.confTemplatePath = os.path.abspath("resources/templates/components/neo4j-http-logging.xml.tpl")
-        self.confFinalPath = targetConfDir + "/neo4j-http-logging.xml"
+        self.confFinalPath = target_conf_dir + "/neo4j-http-logging.xml"
         self.paramsDictionary = {}
+
+    def set_key_param_value(self, key, value):
+        return super(CUMappingNeo4JLoggingXMLProcessor, self).set_key_param_value(key, value)
+
+    def get_params_keys_list(self):
+        return super(CUMappingNeo4JLoggingXMLProcessor, self).get_params_keys_list()
+
+    def process(self):
+        return super(CUMappingNeo4JLoggingXMLProcessor, self).process()
+
+    def get_param_from_key(self, key):
+        return super(CUMappingNeo4JLoggingXMLProcessor, self).get_param_from_key(key)

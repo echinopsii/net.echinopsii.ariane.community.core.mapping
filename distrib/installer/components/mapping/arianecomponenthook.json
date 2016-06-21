@@ -2,7 +2,7 @@
     "order": 2,
     "hook": {
         "package": "components.mapping",
-        "module": "mappingProcessor",
-        "class": "mappingProcessor"
+        "module": "MappingProcessor",
+        "class": "MappingProcessor"
     }
 }
