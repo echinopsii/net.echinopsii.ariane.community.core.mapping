@@ -73,7 +73,7 @@ public class ClusterEp {
 
         // LOOK IF CLUSTER MAYBE UPDATED OR CREATED
         Cluster deserializedCluster = null;
-        if (ret.getErrorMessage()!=null && jsonDeserializedCluster.getClusterID()!=null) {
+        if (ret.getErrorMessage()==null && jsonDeserializedCluster.getClusterID()!=null) {
             if (mappingSession!=null)
                 deserializedCluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(mappingSession, jsonDeserializedCluster.getClusterID());
             else deserializedCluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(jsonDeserializedCluster.getClusterID());
