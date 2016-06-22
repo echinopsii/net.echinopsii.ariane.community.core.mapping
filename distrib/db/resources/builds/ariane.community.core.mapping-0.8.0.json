@@ -1,0 +1,10 @@
+[
+    "net/echinopsii/ariane/community/core/mapping/net.echinopsii.ariane.community.core.mapping.reqregistry/0.8.0/net.echinopsii.ariane.community.core.mapping.reqregistry-0.8.0.jar",
+    "net/echinopsii/ariane/community/core/mapping/ds/net.echinopsii.ariane.community.core.mapping.ds.rim/0.8.0/net.echinopsii.ariane.community.core.mapping.ds.rim-0.8.0.jar",
+    "net/echinopsii/ariane/community/core/mapping/ds/net.echinopsii.ariane.community.core.mapping.ds.dsl/0.8.0/net.echinopsii.ariane.community.core.mapping.ds.dsl-0.8.0.jar",
+    "net/echinopsii/ariane/community/core/mapping/ds/net.echinopsii.ariane.community.core.mapping.ds.msgcli/0.8.0/net.echinopsii.ariane.community.core.mapping.ds.msgcli-0.8.0.jar",
+    "net/echinopsii/ariane/community/core/mapping/ds/net.echinopsii.ariane.community.core.mapping.ds.msgsrv/0.8.0/net.echinopsii.ariane.community.core.mapping.ds.msgsrv-0.8.0.jar",
+    "net/echinopsii/ariane/community/core/mapping/ds/net.echinopsii.ariane.community.core.mapping.ds.blueprints/0.8.0/net.echinopsii.ariane.community.core.mapping.ds.blueprints-0.8.0.jar",
+    "net/echinopsii/ariane/community/core/mapping/ds/net.echinopsii.ariane.community.core.mapping.ds.api/0.8.0/net.echinopsii.ariane.community.core.mapping.ds.api-0.8.0.jar",
+    "net/echinopsii/ariane/community/core/mapping/net.echinopsii.ariane.community.core.mapping.wat/0.8.0/net.echinopsii.ariane.community.core.mapping.wat-0.8.0.jar"
+]
