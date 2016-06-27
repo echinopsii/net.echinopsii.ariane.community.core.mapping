@@ -23,28 +23,25 @@ define(
     function () {
         function mapOptions() {
             var layout,
-                mode,
                 uri,
                 view;
 
             var rootTreeSorting = 1,
                 subTreesSorting = 1;
 
-            this.displayDC   = false;
-            this.displayAREA = false;
-            this.displayLAN  = false;
+            this.displayDC     = false;
+            this.displayAREA   = false;
+            this.displayLAN    = false;
+            this.displayLegend = false;
+
+            this.edition = false;
+            this.epreset = false;
 
             this.getLayout = function() {
                 return layout;
             };
             this.setLayout = function(layout_) {
                 layout = layout_;
-            };
-            this.getMode = function () {
-                return mode;
-            };
-            this.setMode = function(mode_) {
-                mode = mode_;
             };
             this.getURI = function () {
                 return uri;

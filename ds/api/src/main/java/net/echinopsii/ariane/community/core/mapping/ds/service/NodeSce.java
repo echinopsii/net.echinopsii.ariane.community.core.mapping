@@ -21,21 +21,33 @@ package net.echinopsii.ariane.community.core.mapping.ds.service;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
 import java.util.Set;
 
 public interface NodeSce<N extends Node> {
-    public N createNode(String nodeName, long containerID, long parentNodeID) throws MappingDSException;
+    String Q_MAPPING_NODE_SERVICE = "ARIANE_MAPPING_NODE_SERVICE_Q";
 
-    public void deleteNode(long nodeID) throws MappingDSException;
+    String OP_CREATE_NODE = "createNode";
+    String OP_DELETE_NODE = "deleteNode";
+    String OP_GET_NODE = "getNode";
+    String OP_GET_NODE_BY_EPURL = "getNodeByEndpointURL";
+    String OP_GET_NODE_BY_NAME = "getNodeByName";
+    String OP_GET_NODES = "getNodes";
 
-    public N getNode(long id);
+    String PARAM_NODE_NAME = "name";
+    String PARAM_NODE_PNID = "parentNodeID";
+    String PARAM_NODE_CNID = "childNodeID";
+    String PARAM_NODE_TNID = "twinNodeID";
 
-    public N getNode(String endpointURL);
+    N createNode(String nodeName, String containerID, String parentNodeID) throws MappingDSException;
 
-    public N getNode(Node parentNode, String nodeName);
+    void deleteNode(String nodeID) throws MappingDSException;
 
-    public Set<N> getNodes(String selector);
+    N getNode(String id) throws MappingDSException;
+    N getNodeByEndpointURL(String endpointURL) throws MappingDSException;
+    N getNodeByName(Node parentNode, String nodeName) throws MappingDSException;
 
-    public Set<N> getNodes(String key, Object value);
+    Set<N> getNodes(String selector) throws MappingDSException;
+    Set<N> getNodes(String key, Object value) throws MappingDSException;
 }

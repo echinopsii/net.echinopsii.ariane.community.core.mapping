@@ -21,79 +21,102 @@
 package net.echinopsii.ariane.community.core.mapping.ds.json.domain;
 
 import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
+import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesException;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class TransportJSON {
-    private final static Logger log   = LoggerFactory.getLogger(TransportJSON.class);
+    //private final static Logger log   = LoggerFactory.getLogger(TransportJSON.class);
 
-    public final static String TP_ID_TOKEN   = MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE+"ID";
-    public final static String TP_NAME_TOKEN = MappingDSGraphPropertyNames.DD_TRANSPORT_NAME_KEY;
-    public final static String TP_PRP_TOKEN  = MappingDSGraphPropertyNames.DD_TRANSPORT_PROPS_KEY;
-
-    private final static void transportProps2JSON(Transport transport, JsonGenerator jgenerator)
-            throws JsonGenerationException, IOException {
+    private static void transportProps2JSON(Transport transport, JsonGenerator jgenerator)
+            throws IOException {
         HashMap<String, Object> props = transport.getTransportProperties();
         if (props != null && props.size()!=0) {
-            jgenerator.writeObjectFieldStart(TP_PRP_TOKEN);
+            jgenerator.writeObjectFieldStart(Transport.TOKEN_TP_PRP);
             PropertiesJSON.propertiesToJSON(props, jgenerator);
             jgenerator.writeEndObject();
         }
     }
 
-    public final static void transport2JSON(Transport transport, JsonGenerator jgenerator) throws JsonGenerationException, IOException {
+    private static void transportProps2JSONWithTypedProps(Transport transport, JsonGenerator jgenerator) throws IOException, PropertiesException {
+        HashMap<String, Object> props = transport.getTransportProperties();
+        if (props != null && props.size()!=0) {
+            jgenerator.writeArrayFieldStart(Transport.TOKEN_TP_PRP);
+            for (PropertiesJSON.TypedPropertyField field : PropertiesJSON.propertiesToTypedPropertiesList(props))
+                field.toJSON(jgenerator);
+            jgenerator.writeEndArray();
+        }
+    }
+
+
+    public static void transport2JSON(Transport transport, JsonGenerator jgenerator) throws IOException {
         jgenerator.writeStartObject();
-        jgenerator.writeNumberField(TP_ID_TOKEN, transport.getTransportID());
-        jgenerator.writeStringField(TP_NAME_TOKEN, transport.getTransportName());
+        jgenerator.writeStringField(Transport.TOKEN_TP_ID, transport.getTransportID());
+        jgenerator.writeStringField(Transport.TOKEN_TP_NAME, transport.getTransportName());
         transportProps2JSON(transport, jgenerator);
         jgenerator.writeEndObject();
     }
 
-    public final static void oneTransport2JSON(Transport transport, ByteArrayOutputStream outStream) throws IOException {
+    public static void transport2JSONWithTypedProps(Transport transport, JsonGenerator jgenerator) throws IOException, PropertiesException {
+        jgenerator.writeStartObject();
+        jgenerator.writeStringField(Transport.TOKEN_TP_ID, transport.getTransportID());
+        jgenerator.writeStringField(Transport.TOKEN_TP_NAME, transport.getTransportName());
+        transportProps2JSONWithTypedProps(transport, jgenerator);
+        jgenerator.writeEndObject();
+    }
+
+    public static void oneTransport2JSON(Transport transport, ByteArrayOutputStream outStream) throws IOException {
         JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         transport2JSON(transport, jgenerator);
         jgenerator.close();
     }
 
-    public final static void manyTransports2JSON(HashSet<Transport> transports, ByteArrayOutputStream outStream) throws IOException {
+    public static void oneTransport2JSONWithTypedProps(Transport transport, ByteArrayOutputStream outStream) throws IOException, PropertiesException {
+        JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
+        transport2JSONWithTypedProps(transport, jgenerator);
+        jgenerator.close();
+    }
+
+    public static void manyTransports2JSON(HashSet<Transport> transports, ByteArrayOutputStream outStream) throws IOException {
         JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         jgenerator.writeStartObject();
         jgenerator.writeArrayFieldStart("transports");
-        Iterator<Transport> iterC = transports.iterator();
-        while (iterC.hasNext()) {
-            Transport current = iterC.next();
-            TransportJSON.transport2JSON(current, jgenerator);
-        }
+        for (Transport current : transports) TransportJSON.transport2JSON(current, jgenerator);
+        jgenerator.writeEndArray();
+        jgenerator.writeEndObject();
+        jgenerator.close();
+    }
+
+    public static void manyTransports2JSONWithTypedProps(HashSet<Transport> transports, ByteArrayOutputStream outStream) throws IOException, PropertiesException {
+        JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
+        jgenerator.writeStartObject();
+        jgenerator.writeArrayFieldStart("transports");
+        for (Transport current : transports) TransportJSON.transport2JSONWithTypedProps(current, jgenerator);
         jgenerator.writeEndArray();
         jgenerator.writeEndObject();
         jgenerator.close();
     }
 
     public static class JSONDeserializedTransport {
-        private long transportID;
+        private String transportID;
         private String transportName;
-        private List<PropertiesJSON.JSONDeserializedProperty> transportProperties;
+        private List<PropertiesJSON.TypedPropertyField> transportProperties;
 
-        public long getTransportID() {
+        public String getTransportID() {
             return transportID;
         }
 
-        public void setTransportID(long transportID) {
+        public void setTransportID(String transportID) {
             this.transportID = transportID;
         }
 
@@ -105,11 +128,11 @@ public class TransportJSON {
             this.transportName = transportName;
         }
 
-        public List<PropertiesJSON.JSONDeserializedProperty> getTransportProperties() {
+        public List<PropertiesJSON.TypedPropertyField> getTransportProperties() {
             return transportProperties;
         }
 
-        public void setTransportProperties(List<PropertiesJSON.JSONDeserializedProperty> transportProperties) {
+        public void setTransportProperties(List<PropertiesJSON.TypedPropertyField> transportProperties) {
             this.transportProperties = transportProperties;
         }
     }
@@ -120,4 +143,27 @@ public class TransportJSON {
         return mapper.readValue(payload, JSONDeserializedTransport.class);
     }
 
+    public static class JSONDeserializedTransports {
+        JSONDeserializedTransport[] transports;
+
+        public JSONDeserializedTransport[] getTransports() {
+            return transports;
+        }
+
+        public void setTransports(JSONDeserializedTransport[] transports) {
+            this.transports = transports;
+        }
+
+        public Set<JSONDeserializedTransport> toSet() {
+            HashSet<JSONDeserializedTransport> ret = new HashSet<>();
+            if (transports!=null) Collections.addAll(ret, transports);
+            return ret;
+        }
+    }
+
+    public static Set<JSONDeserializedTransport> JSON2Transports(String payload) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return mapper.readValue(payload, JSONDeserializedTransports.class).toSet();
+    }
 }

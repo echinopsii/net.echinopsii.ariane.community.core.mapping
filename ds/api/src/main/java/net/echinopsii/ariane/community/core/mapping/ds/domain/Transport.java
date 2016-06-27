@@ -19,19 +19,31 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.domain;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
+
 import java.util.HashMap;
 
 public interface Transport {
-	public long   getTransportID();
+	String TOKEN_TP_ID = MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE+"ID";
+	String TOKEN_TP_NAME = MappingDSGraphPropertyNames.DD_TRANSPORT_NAME_KEY;
+	String TOKEN_TP_PRP = MappingDSGraphPropertyNames.DD_TRANSPORT_PROPS_KEY;
+
+	String OP_SET_TRANSPORT_NAME = "setTransportName";
+	String OP_ADD_TRANSPORT_PROPERTY = "addTransportProperty";
+	String OP_REMOVE_TRANSPORT_PROPERTY = "removeTransportProperty";
+
+	String  getTransportID();
+	void    setTransportID(String ID);
 	
 	/*
 	 * MUST BE UNIQUE
 	 */
-	public String getTransportName();
-	public void   setTransportName(String name);
+	String getTransportName();
+	void   setTransportName(String name) throws MappingDSException;
 
-    public HashMap<String, Object> getTransportProperties();
-    public void addTransportProperty(String propertyKey, Object value);
-    public void removeTransportProperty(String propertyKey);
+    HashMap<String, Object> getTransportProperties();
+    void addTransportProperty(String propertyKey, Object value) throws MappingDSException;
+    void removeTransportProperty(String propertyKey) throws MappingDSException;
 
 }

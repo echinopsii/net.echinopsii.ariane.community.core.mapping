@@ -18,18 +18,31 @@
  */ 
 package net.echinopsii.ariane.community.core.mapping.ds.domain;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
+
 import java.util.Set;
 
 public interface Cluster {
-	public long getClusterID();
+
+	String TOKEN_CL_ID = MappingDSGraphPropertyNames.DD_TYPE_CLUSTER_VALUE+"ID";
+	String TOKEN_CL_NAME = MappingDSGraphPropertyNames.DD_CLUSTER_NAME_KEY;
+	String TOKEN_CL_CONT = MappingDSGraphPropertyNames.DD_CLUSTER_EDGE_CONT_KEY+"ID";
+
+	String OP_SET_CLUSTER_NAME = "setClusterName";
+	String OP_ADD_CLUSTER_CONTAINER = "addClusterContainer";
+	String OP_REMOVE_CLUSTER_CONTAINER = "removeClusterContainer";
+
+	String getClusterID();
+	void   setClusterID(String ID);
 	
 	/*
 	 * cluster name MUST be unique
 	 */
-	public String  getClusterName();
-	public void    setClusterName(String name);
+	String  getClusterName();
+	void    setClusterName(String name) throws MappingDSException;
 	
-	public Set<? extends Container> getClusterContainers();
-	public boolean                  addClusterContainer(Container container);
-    public boolean                  removeClusterContainer(Container container);
+	Set<? extends Container> getClusterContainers();
+	boolean                  addClusterContainer(Container container) throws MappingDSException;
+    boolean                  removeClusterContainer(Container container) throws MappingDSException;
 }

@@ -24,14 +24,17 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSBlueprintsCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
+import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.tools.SessionRegistryImpl;
+import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
-import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxGate;
 import com.tinkerpop.blueprints.Element;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GateImpl extends NodeImpl implements Gate {
+public class GateImpl extends NodeImpl implements SProxGate {
 
     private final static Logger log = LoggerFactory.getLogger(GateImpl.class);
 
@@ -50,20 +53,35 @@ public class GateImpl extends NodeImpl implements Gate {
     }
 
     @Override
-    public void setNodePrimaryAdminEnpoint(Endpoint endpoint) {
-        if (this.gatePrimaryAdminEndpoint == null || !this.gatePrimaryAdminEndpoint.equals(endpoint)) {
-            if (endpoint instanceof EndpointImpl) {
-                this.gatePrimaryAdminEndpoint = (EndpointImpl) endpoint;
+    public void setNodePrimaryAdminEnpoint(Session session, Endpoint endpoint) throws MappingDSException {
+        if (session!=null && session.isRunning())
+            session.execute(this, OP_SET_NODE_PRIMARY_ADMIN_ENDPOINT, new Object[]{endpoint});
+    }
+
+    @Override
+    public void setNodePrimaryAdminEnpoint(Endpoint endpoint) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.setNodePrimaryAdminEnpoint(session, endpoint);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (this.gatePrimaryAdminEndpoint == null || !this.gatePrimaryAdminEndpoint.equals(endpoint)) {
+                if (endpoint instanceof EndpointImpl) {
+                    this.gatePrimaryAdminEndpoint = (EndpointImpl) endpoint;
+                    synchronizeNodePrimaryAdminEndpointToDB();
+                }
             }
         }
     }
 
     @Override
-    public void setNodeParentNode(Node node) {
+    public void setNodeParentNode(Node node) throws MappingDSException {
         // a container gate can't have a parent node
         // as it's contained by the container
         super.setNodeParentNode(null);
-        // TODO : raise exception
+        throw new MappingDSException("Modelisation error : Gate can be contained by containers only.");
     }
 
     @Override
@@ -89,7 +107,7 @@ public class GateImpl extends NodeImpl implements Gate {
         }
     }
 
-    public void synchronizeFromDB() {
+    public void synchronizeFromDB() throws MappingDSException {
         if (!isBeingSyncFromDB) {
             isBeingSyncFromDB = true;
             super.synchronizeFromDB();
@@ -98,11 +116,11 @@ public class GateImpl extends NodeImpl implements Gate {
         }
     }
 
-    private void synchronizeNodePrimaryAdminEndpointFromDB() {
+    private void synchronizeNodePrimaryAdminEndpointFromDB() throws MappingDSException {
         if (super.getElement() != null) {
             Object paEndpointID = super.getElement().getProperty(MappingDSGraphPropertyNames.DD_GATE_PAEP_KEY);
             if (paEndpointID != null) {
-                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) paEndpointID);
+                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((String)paEndpointID);
                 if (entity != null) {
                     if (entity instanceof EndpointImpl) {
                         this.gatePrimaryAdminEndpoint = (EndpointImpl) entity;

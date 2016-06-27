@@ -125,7 +125,7 @@ define(
 
             var mouseDown = function(e){
                     if (e.which == 3) {
-                        if (epRef.menuHided) {
+                        if (epRef.properties != null && epRef.menuHided) {
                             epRef.menuSet = epRef.endpointMenuSet;
                             epRef.menuSet.mousedown(menuMouseDown);
                             var fieldRect, fieldRectWidth, fieldRectHeight;
@@ -155,7 +155,7 @@ define(
                             epRef.menuSet.toFront();
                             epRef.menuSet.show();
                             epRef.menuHided=false;
-                        } else {
+                        } else if (epRef.properties != null) {
                             epRef.menu.toBack();
                             epRef.menuSet.toBack();
                             epRef.menu.hide();
@@ -170,7 +170,7 @@ define(
                     }
                 },
                 menuMouseDown = function(e) {
-                    if (e.which == 3) {
+                    if (this.properties != null && e.which == 3) {
                         epRef.menu.toBack();
                         epRef.menuSet.toBack();
                         epRef.menu.hide();
@@ -218,6 +218,8 @@ define(
                         epRef.moveInit();
                 },
                 epMove = function (dx, dy) {
+                    var zoomedMoveCoord = epRef.r.getZPDZoomedMoveCoord(dx, dy);
+                    dx = zoomedMoveCoord.dx; dy = zoomedMoveCoord.dy;
                     if (!epRef.rightClick) {
                         var att = {cx: epRef.cx + dx, cy: epRef.cy + dy};//,
 
@@ -510,14 +512,18 @@ define(
                 this.circle.remove();
                 this.label.remove();
                 this.frame.remove();
-                this.endpointMenuTitle.remove();
-                this.endpointMenuPropertiesRect.remove();
-                this.endpointMenuProperties.remove();
-                this.endpointMenuSet.clear();
+                if (this.properties != null) {
+                    this.endpointMenuTitle.remove();
+                    this.endpointMenuPropertiesRect.remove();
+                    this.endpointMenuProperties.remove();
+                    this.endpointMenuSet.clear();
+                }
             };
 
             this.print = function(r_) {
                 this.r=r_;
+
+                if (this.color == 0) this.color = this.epNode.color;
 
                 this.circle = this.r.circle(this.x,this.y);
                 this.circle.attr({fill: this.color, stroke: this.color, "fill-opacity": this.oUnselected, "r": this.rUnselected,"stroke-width": this.strokeWidth, cursor: "crosshair"});
@@ -537,24 +543,26 @@ define(
                 this.frame.toBack();
                 this.frame.hide();
 
-                this.endpointMenuTitle = this.r.text(0,10,"Endpoint menu").attr(this.endpointMainTitleTXT);
-                var fieldTitle = "Display all properties";
-                this.endpointMenuPropertiesRect = this.r.rect(0,10,fieldTitle.width(this.endpointFieldTXT),fieldTitle.height(this.endpointFieldTXT));
-                this.endpointMenuPropertiesRect.attr({fill: this.color, stroke: this.color, "fill-opacity": 0, "stroke-width": 0});
-                this.endpointMenuPropertiesRect.mouseover(menuFieldOver);
-                this.endpointMenuPropertiesRect.mouseout(menuFieldOut);
-                this.endpointMenuPropertiesRect.mousedown(menuFieldPropertyClick);
-                this.endpointMenuProperties = this.r.text(0,10,fieldTitle).attr(this.endpointFieldTXT);
-                this.endpointMenuProperties.mouseover(menuFieldOver);
-                this.endpointMenuProperties.mouseout(menuFieldOut);
-                this.endpointMenuProperties.mousedown(menuFieldPropertyClick);
+                if (this.properties != null) {
+                    this.endpointMenuTitle = this.r.text(0, 10, "Endpoint menu").attr(this.endpointMainTitleTXT);
+                    var fieldTitle = "Display all properties";
+                    this.endpointMenuPropertiesRect = this.r.rect(0, 10, fieldTitle.width(this.endpointFieldTXT), fieldTitle.height(this.endpointFieldTXT));
+                    this.endpointMenuPropertiesRect.attr({fill: this.color, stroke: this.color, "fill-opacity": 0, "stroke-width": 0});
+                    this.endpointMenuPropertiesRect.mouseover(menuFieldOver);
+                    this.endpointMenuPropertiesRect.mouseout(menuFieldOut);
+                    this.endpointMenuPropertiesRect.mousedown(menuFieldPropertyClick);
+                    this.endpointMenuProperties = this.r.text(0, 10, fieldTitle).attr(this.endpointFieldTXT);
+                    this.endpointMenuProperties.mouseover(menuFieldOver);
+                    this.endpointMenuProperties.mouseout(menuFieldOut);
+                    this.endpointMenuProperties.mousedown(menuFieldPropertyClick);
 
-                this.endpointMenuSet = this.r.set();
-                this.endpointMenuSet.push(this.endpointMenuTitle);
-                this.endpointMenuSet.push(this.endpointMenuPropertiesRect);
-                this.endpointMenuSet.push(this.endpointMenuProperties);
-                this.endpointMenuSet.toBack();
-                this.endpointMenuSet.hide();
+                    this.endpointMenuSet = this.r.set();
+                    this.endpointMenuSet.push(this.endpointMenuTitle);
+                    this.endpointMenuSet.push(this.endpointMenuPropertiesRect);
+                    this.endpointMenuSet.push(this.endpointMenuProperties);
+                    this.endpointMenuSet.toBack();
+                    this.endpointMenuSet.hide();
+                }
             };
 
             this.toFront = function() {
@@ -572,7 +580,7 @@ define(
                 this.cx = this.circle.attr("cx");
                 this.cy = this.circle.attr("cy");
 
-                if (!this.menuHided) {
+                if (this.properties != null && !this.menuHided) {
                     this.menu.toBack();
                     this.menuSet.toBack();
                     this.menu.hide();

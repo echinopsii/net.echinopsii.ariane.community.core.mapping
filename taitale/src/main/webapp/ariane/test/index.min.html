@@ -31,20 +31,24 @@
                         <td>
                             <strong>MAP SAMPLE :</strong><br/>
                             <select name="test" id="test">
-                                <option value="dekatonmac">dekatonmac</option>
+                                <option value="altan">altan</option>
+                                <option value="dekatonmac_linux">Dekatonmac on linux</option>
+                                <option value="dekatonmac_osx">Dekatonmac on osx</option>
+                                <option value="dekatonmac_osx_2">Dekatonmac on osx 2</option>
+                                <option value="dekatonmac_osx_3">Dekatonmac on osx 3</option>
                                 <option value="rabbitmq-fdfo">RabbitMQ Feeder To Front</option>
                                 <option value="rabbitmq-moriskbo">RabbitMQ Middle / Risk / Back</option>
-                                <option value="rabbitmq-simplereqrep">RabbitMQ req/rep</option>
-                                <option value="rabbitmq-simplepubsub">RabbitMQ pub/sub</option>
-                                <option value="rvrdfr01">rvrd france 01</option>
-                                <option value="rvrdfr02">rvrd france 02</option>
-                                <option value="rvrdfr03">rvrd france 03</option>
-                                <option value="rvrdfr01moulticast">rvrd france 01 moulticast</option>
-                                <option value="rvrdfr02moulticast">rvrd france 02 moulticast</option>
-                                <option value="rvrdww01">rvrd worlwide 01</option>
-                                <option value="rvrdww01moulticast">rvrd worlwide 01 moulticast</option>
-                                <option value="rvrdww02">rvrd worlwide 02</option>
-                                <option value="rvrdww03moulticast">rvrd worlwide 03 moulticast</option>
+                                <option value="rabbitmq-simplereqrep">RabbitMQ Req / Rep</option>
+                                <option value="rabbitmq-simplepubsub">RabbitMQ Pub / Sub</option>
+                                <option value="rvrdfr01">RVRD france 01</option>
+                                <option value="rvrdfr02">RVRD france 02</option>
+                                <option value="rvrdfr03">RVRD france 03</option>
+                                <option value="rvrdfr01moulticast">RVRD france 01 moulticast</option>
+                                <option value="rvrdfr02moulticast">RVRD france 02 moulticast</option>
+                                <option value="rvrdww01">RVRD worlwide 01</option>
+                                <option value="rvrdww01moulticast">RVRD worlwide 01 moulticast</option>
+                                <option value="rvrdww02">RVRD worlwide 02</option>
+                                <option value="rvrdww03moulticast">RVRD worlwide 03 moulticast</option>
                                 <option value="jms01">JMS 01</option>
                                 <option value="application01">Application 01</option>
                                 <option value="application02">Application 02</option>
@@ -52,15 +56,13 @@
                                 <option value="application04">Application 04</option>
                                 <option value="application05">Application 05</option>
                                 <option value="application06">Application 06</option>
-                                <option value="application07">Application 07</option>
                             </select>
                         </td>
                         <td>
                             <strong>LAYOUT :</strong><br/>
                             <select name="layout" id="layout">
-                                <option value="Network">Network</option>
-                                <option value="Tree">Tree</option>
-                                <option value="BBTree">BBTree</option>
+                                <option value="Middleware">Middleware</option>
+                                <option value="BBTree">Tree</option>
                             </select>
                         </td>
                         <!--
@@ -74,20 +76,19 @@
                         </td>
                         -->
                         <td>
-                            <strong>MODE :</strong><br/>
-                            <select name="mode" id="mode">
-                                <option value="Navigation">Navigation</option>
-                                <option value="Edition">Edition</option>
-                            </select>
+                            <strong>TOOLS :</strong><br/>
+                            <input type="checkbox" name="edition" id="edition" value="edition"/>Edition Helper
+                            <input type="checkbox" name="epreset" id="epreset" value="epreset"/>Endpoint Helper
+                            <input type="checkbox" name="legend" id="legend" value="legend"/>Legend
                         </td>
                         <td>
-                            <strong>MAP ACTIONS :</strong><br/>
+                            <strong>ACTIONS :</strong><br/>
                             <button type="button" name="reload" id="reload" style="font-weight: bold">RELOAD</button>
                             <button type="button" name="nsize"  id="nsize" style="font-weight: bold">[1:1]</button>
                             <button type="button" name="center" id="center" style="font-weight: bold">CENTER</button>
                         </td>
                         <td>
-                            <strong>MAP EXPORT :</strong><br/>
+                            <strong>EXPORT :</strong><br/>
                             <button type="button" name="JPG" id="JPG" style="font-weight: bold">JPG</button>
                             <button type="button" name="PNG" id="PNG" style="font-weight: bold">PNG</button>
                             <button type="button" name="SVG" id="SVG" style="font-weight: bold">SVG</button>
@@ -100,8 +101,8 @@
                         </td>
                     </tr>
                 </table><br/>
-                <div id="networkOptions">
-                    <strong>NETWORK LAYOUT OPTIONS :</strong><br/>
+                <div id="middlewareOptions">
+                    <strong>MIDDLEWARE LAYOUT OPTIONS :</strong><br/>
                     <input type="checkbox" name="displayDC"   value="displayDC"   id="displayDC"/>Display Datacenters
                     <input type="checkbox" name="displayArea" value="displayArea" id="displayArea"/>Display Areas
                     <input type="checkbox" name="displayLan"  value="displayLan"  id="displayLan"/>Display Lans

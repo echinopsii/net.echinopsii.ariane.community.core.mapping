@@ -19,39 +19,67 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.domain;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
+
 import java.util.HashMap;
 import java.util.Set;
 
 public interface Node {
-	public long   getNodeID();
+	String TOKEN_ND_ID = MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE+"ID";
+	String TOKEN_ND_NAME = MappingDSGraphPropertyNames.DD_NODE_NAME_KEY;
+	String TOKEN_ND_CONID = MappingDSGraphPropertyNames.DD_NODE_CONT_KEY+"ID";
+	String TOKEN_ND_PNDID = MappingDSGraphPropertyNames.DD_NODE_PNODE_KEY+"ID";
+	String TOKEN_ND_CNDID = MappingDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY+"sID";
+	String TOKEN_ND_TWNID = MappingDSGraphPropertyNames.DD_NODE_EDGE_TWIN_KEY+"sID";
+	String TOKEN_ND_EPSID = MappingDSGraphPropertyNames.DD_NODE_EDGE_ENDPT_KEY+"sID";
+	String TOKEN_ND_PRP = MappingDSGraphPropertyNames.DD_NODE_PROPS_KEY;
+
+	String OP_SET_NODE_NAME = "setNodeName";
+	String OP_SET_NODE_CONTAINER = "setNodeContainer";
+	String OP_ADD_NODE_PROPERTY = "addNodeProperty";
+	String OP_REMOVE_NODE_PROPERTY = "removeNodeProperty";
+	String OP_SET_NODE_PARENT_NODE = "setNodeParentNode";
+	String OP_ADD_NODE_CHILD_NODE = "addNodeChildNode";
+	String OP_REMOVE_NODE_CHILD_NODE = "removeNodeChildNode";
+	String OP_ADD_TWIN_NODE = "addTwinNode";
+	String OP_REMOVE_TWIN_NODE = "removeTwinNode";
+	String OP_ADD_ENDPOINT = "addEndpoint";
+	String OP_REMOVE_ENDPOINT = "removeEndpoint";
+
+	String JOIN_PREVIOUS_PCONTAINER = MappingDSGraphPropertyNames.DD_NODE_CONT_KEY+"Previous";
+	String JOIN_CURRENT_PCONTAINER = MappingDSGraphPropertyNames.DD_NODE_CONT_KEY+"Current";
+	String JOIN_PREVIOUS_PNODE = MappingDSGraphPropertyNames.DD_NODE_PNODE_KEY+"Previous";
+	String JOIN_CURRENT_PNODE = MappingDSGraphPropertyNames.DD_NODE_PNODE_KEY+"Current";
+
+	String getNodeID();
+	void   setNodeID(String ID);
 	
 	/*
 	 * 	node name MUST be unique
 	 */
-	public String getNodeName();	
-	public void   setNodeName(String name);
+	String getNodeName();
+	void   setNodeName(String name) throws MappingDSException;
 	
-	public Container getNodeContainer();
-	public void      setNodeContainer(Container container);
+	Container getNodeContainer();
+	void      setNodeContainer(Container container) throws MappingDSException;
 	
-	public long getNodeDepth();
+	HashMap<String, Object> getNodeProperties();
+	void addNodeProperty(String propertyKey, Object value) throws MappingDSException;
+    void removeNodeProperty(String propertyKey) throws MappingDSException;
 	
-	public HashMap<String, Object> getNodeProperties();
-	public void addNodeProperty(String propertyKey, Object value);
-    public void removeNodeProperty(String propertyKey);
+	Node getNodeParentNode();
+	void setNodeParentNode(Node node) throws MappingDSException;
 	
-	public Node getNodeParentNode();
-	public void setNodeParentNode(Node node);
-	
-	public Set<? extends Node> getNodeChildNodes();
-	public boolean             addNodeChildNode(Node node);
-	public boolean             removeNodeChildNode(Node node);
+	Set<? extends Node> getNodeChildNodes();
+	boolean             addNodeChildNode(Node node) throws MappingDSException;
+	boolean             removeNodeChildNode(Node node) throws MappingDSException;
 
-	public Set<? extends Node> getTwinNodes();
-	public boolean             addTwinNode(Node node);
-	public boolean             removeTwinNode(Node node);
-	
-	public Set<? extends Endpoint> getNodeEndpoints();
-	public boolean                 addEnpoint(Endpoint endpoint);
-	public boolean                 removeEndpoint(Endpoint endpoint);
+	Set<? extends Node> getTwinNodes();
+	boolean             addTwinNode(Node node) throws MappingDSException;
+	boolean             removeTwinNode(Node node) throws MappingDSException;
+
+	Set<? extends Endpoint> getNodeEndpoints();
+	boolean addEndpoint(Endpoint endpoint) throws MappingDSException;
+	boolean removeEndpoint(Endpoint endpoint) throws MappingDSException;
 }

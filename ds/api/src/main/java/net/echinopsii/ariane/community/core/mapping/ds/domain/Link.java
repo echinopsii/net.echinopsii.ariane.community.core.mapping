@@ -19,16 +19,36 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.domain;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
+
 public interface Link {
 
-	public long getLinkID();
+	String TOKEN_LK_ID = MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY+"ID";
+	String TOKEN_LK_SEP = MappingDSGraphPropertyNames.DD_LINK_SOURCE_EP_REST_KEY;
+	String TOKEN_LK_TEP = MappingDSGraphPropertyNames.DD_LINK_TARGET_EP_REST_KEY;
+	String TOKEN_LK_TRP = MappingDSGraphPropertyNames.DD_LINK_TRANSPORT_REST_KEY;
+
+	String OP_SET_LINK_TRANSPORT = "setLinkTransport";
+	String OP_SET_LINK_ENDPOINT_SOURCE = "setLinkEndpointSource";
+	String OP_SET_LINK_ENDPOINT_TARGET = "setLinkEndpointTarget";
+
+	String JOIN_PREVIOUS_SEP = MappingDSGraphPropertyNames.DD_LINK_SOURCE_EP_KEY+"Previous";
+	String JOIN_CURRENT_SEP = MappingDSGraphPropertyNames.DD_LINK_SOURCE_EP_KEY+"Current";
+	String JOIN_PREVIOUS_TEP = MappingDSGraphPropertyNames.DD_LINK_TARGET_EP_KEY+"Previous";
+	String JOIN_CURRENT_TEP = MappingDSGraphPropertyNames.DD_LINK_TARGET_EP_KEY+"Current";
+	String JOIN_PREVIOUS_TRP = MappingDSGraphPropertyNames.DD_LINK_TRANSPORT_KEY+"Previous";
+	String JOIN_CURRENT_TRP = MappingDSGraphPropertyNames.DD_LINK_TRANSPORT_KEY+"Current";
+
+	String getLinkID();
+	void   setLinkID(String ID);
+
+	Transport getLinkTransport();
+	void      setLinkTransport(Transport transport) throws MappingDSException;
 	
-	public Transport getLinkTransport();
-	public void      setLinkTransport(Transport transport);
+	Endpoint getLinkEndpointSource();
+	void     setLinkEndpointSource(Endpoint source) throws MappingDSException;
 	
-	public Endpoint getLinkEndpointSource();
-	public void     setLinkEndpointSource(Endpoint source);
-	
-	public Endpoint getLinkEndpointTarget();
-	public void     setLinkEndpointTarget(Endpoint target);
+	Endpoint getLinkEndpointTarget();
+	void     setLinkEndpointTarget(Endpoint target) throws MappingDSException;
 }

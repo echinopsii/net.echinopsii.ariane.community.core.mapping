@@ -19,6 +19,7 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.repository;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
 
 import java.util.Set;
@@ -39,19 +40,15 @@ public interface MappingRepo<C extends Container, N extends Node, G extends Gate
 
     public TransportRepo<? extends Transport> getTransportRepo();
 
-    public N findNodeByName(C container, String name);
+    public N findNodeByName(C container, String name) throws MappingDSException;
 
-    public N findNodeContainingSubnode(C container, N node);
+    public G findGateByName(C container, String name) throws MappingDSException;
 
-    public Set<N> findNodesInParentNode(C container, N node);
+    public Set<L> findLinksBySourceEP(E endpoint) throws MappingDSException;
 
-    public G findGateByName(C container, String name);
+    public Set<L> findLinksByDestinationEP(E endpoint) throws MappingDSException;
 
-    public Set<L> findLinksBySourceEP(E endpoint);
+    public L findLinkBySourceEPandDestinationEP(E esource, E edest) throws MappingDSException;
 
-    public Set<L> findLinksByDestinationEP(E endpoint);
-
-    public L findLinkBySourceEPandDestinationEP(E esource, E edest);
-
-    public L findMulticastLinkBySourceEPandTransport(E esource, T transport);
+    public L findMulticastLinkBySourceEPandTransport(E esource, T transport) throws MappingDSException;
 }

@@ -58,25 +58,22 @@ require.config({
         'taitale-transport': 'js/taitale/core/transport/transport',
         'taitale-transport-multicastbus': 'js/taitale/core/transport/multicastBus',
         'taitale-link': 'js/taitale/core/link',
-        /*taitale tree layout*/
-        'taitale-tree': 'js/taitale/layout/tree/tree',
-        'taitale-vertex': 'js/taitale/layout/tree/vertex',
         /*taitale bubble tree layout*/
         'taitale-btree': 'js/taitale/layout/bubbletree/btree',
         'taitale-bvertex': 'js/taitale/layout/bubbletree/bvertex',
-        /*taitale network layout*/
-        'taitale-map-splitter': 'js/taitale/layout/network/mapSplitter',
-        'taitale-layoutntw-registries' : 'js/taitale/layout/network/registries',
-        'taitale-datacenter': 'js/taitale/layout/network/datacenter/datacenter',
-        'taitale-datacenter-splitter': 'js/taitale/layout/network/datacenter/dcSplitter',
-        'taitale-datacenter-hat': 'js/taitale/layout/network/datacenter/hat',
-        'taitale-datacenter-matrix': 'js/taitale/layout/network/datacenter/matrix',
-        'taitale-area': 'js/taitale/layout/network/area/area',
-        'taitale-area-hat': 'js/taitale/layout/network/area/hat',
-        'taitale-area-matrix': 'js/taitale/layout/network/area/matrix',
-        'taitale-lan': 'js/taitale/layout/network/lan/lan',
-        'taitale-lan-matrix': 'js/taitale/layout/network/lan/matrix',
-        'taitale-lan-hat': 'js/taitale/layout/network/lan/hat'
+        /*taitale middleware layout*/
+        'taitale-map-splitter': 'js/taitale/layout/middleware/mapSplitter',
+        'taitale-layoutntw-registries' : 'js/taitale/layout/middleware/registries',
+        'taitale-datacenter': 'js/taitale/layout/middleware/datacenter/datacenter',
+        'taitale-datacenter-splitter': 'js/taitale/layout/middleware/datacenter/dcSplitter',
+        'taitale-datacenter-hat': 'js/taitale/layout/middleware/datacenter/hat',
+        'taitale-datacenter-matrix': 'js/taitale/layout/middleware/datacenter/matrix',
+        'taitale-area': 'js/taitale/layout/middleware/area/area',
+        'taitale-area-hat': 'js/taitale/layout/middleware/area/hat',
+        'taitale-area-matrix': 'js/taitale/layout/middleware/area/matrix',
+        'taitale-lan': 'js/taitale/layout/middleware/lan/lan',
+        'taitale-lan-matrix': 'js/taitale/layout/middleware/lan/matrix',
+        'taitale-lan-hat': 'js/taitale/layout/middleware/lan/hat'
     },
     shim: {
         "jquery-ui": {
@@ -116,7 +113,9 @@ requirejs (
 
         var test = $('#test'),
             layout = $('#layout'),
-            mode = $('#mode'),
+            edition = $('#edition'),
+            epreset = $('#epreset'),
+            legend = $('#legend'),
             notifyI = $('#notifyInfo'),
             notifyW = $('#notifyWarn'),
             notifyE = $('#notifyErrs'),
@@ -137,27 +136,27 @@ requirejs (
 
         test.puidropdown({
             change: function() {
+                helper_.hideErrorBox();
                 options.setURI(homeURI + "/js/taitale.samples/json/sample.taitale.input."+test.val()+".json");
                 try {
                     loader_.reloadMap(options);
-                    loader_.editionMode(options);
                 } catch (e) {
                     helper_.addMsgToGrowl(e);
                     helper_.growlMsgs(
                         {
                             severity: 'error',
                             summary: 'Failed to load map',
-                            detail: 'Name: '+test.val()+'<br>Layout: '+options.getLayout()+"<br>Mode: "+options.getMode(),
+                            detail: 'Name: '+test.val()+'<br>Layout: '+options.getLayout(),
                             sticky: true
                         }
                     );
                     console.log(e.stack);
-                    var msg = "<h3>oO ! We have some problem here ! <br/> Let's find a way to correct it ... </h3>" +
+                    var msg = "<h3>oO ! We have some problem to load the map  here ! <br/> Let's find a way to correct it ... </h3>" +
                         '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
                         '<p>2) complete the ticket : <ul>' +
+                        '<li>setup ticket title as "map loading error"</li>' +
                         '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
-                        '<li>specify the layout (' + options.getLayout() +')</li>' +
-                        '<li>specify the mode ('+options.getMode()+')</li></ul></p>' +
+                        '<li>specify the layout (' + options.getLayout() +')</li></ul></p>' +
                         "<p>3) wait the ticket to be resolved ... </p>";
                     helper_.showErrorBox(msg);
                 }
@@ -165,20 +164,20 @@ requirejs (
         });
         layout.puidropdown({
             change: function() {
+                helper_.hideErrorBox();
                 options.setLayout(layout.val());
                 try {
-                    if (options.getLayout()===dic.mapLayout.NTWWW) {
-                        document.getElementById('networkOptions').style.display = "";
+                    if (options.getLayout()===dic.mapLayout.MDW) {
+                        document.getElementById('middlewareOptions').style.display = "";
                         document.getElementById('treeOptions').style.display    = "none";
-                    } else if (options.getLayout()===dic.mapLayout.TREE || options.getLayout()===dic.mapLayout.BBTREE) {
-                        document.getElementById('networkOptions').style.display = "none";
+                    } else if (options.getLayout()===dic.mapLayout.BBTREE) {
+                        document.getElementById('middlewareOptions').style.display = "none";
                         document.getElementById('treeOptions').style.display    = "";
                     } else {
-                        document.getElementById('networkOptions').style.display = "none";
+                        document.getElementById('middlewareOptions').style.display = "none";
                         document.getElementById('treeOptions').style.display    = "none";
                     }
                     loader_.rebuildMap(options);
-                    loader_.editionMode(options);
                     loader_.displayDC(displayDC[0].checked);
                     loader_.displayArea(displayArea[0].checked);
                     loader_.displayLan(displayLan[0].checked);
@@ -188,25 +187,25 @@ requirejs (
                         {
                             severity: 'error',
                             summary: 'Failed to load map',
-                            detail: 'Name: '+test.val()+'<br>Layout: '+options.getLayout()+"<br>Mode: "+options.getMode(),
+                            detail: 'Name: '+test.val()+'<br>Layout: '+options.getLayout(),
                             sticky: true
                         }
                     );
                     console.log(e.stack);
-                    var msg = "<h3>oO ! We have some problem here ! <br/> Let's find a way to correct it ... </h3>" +
+                    var msg = "<h3>oO ! We have some problem to load the map here ! <br/> Let's find a way to correct it ... </h3>" +
                         '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
                         '<p>2) complete the ticket : <ul>' +
+                        '<li>setup ticket title as "map loading error"</li>' +
                         '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
-                        '<li>specify the layout (' + options.getLayout() +')</li>' +
-                        '<li>specify the mode ('+options.getMode()+')</li></ul></p>' +
+                        '<li>specify the layout (' + options.getLayout() +')</li></ul></p>' +
                         "<p>3) wait the ticket to be resolved ... </p>";
                     helper_.showErrorBox(msg);
                 }
             }
         });
-        mode.puidropdown({
-            change: function () {
-                options.setMode(mode.val());
+        edition.puicheckbox({
+            change: function() {
+                options.edition = edition[0].checked;
                 try {
                     loader_.editionMode(options);
                 } catch (e) {
@@ -214,20 +213,66 @@ requirejs (
                     helper_.growlMsgs(
                         {
                             severity: 'error',
-                            summary: 'Failed to refresh map',
-                            detail: 'Name: ' + test.val() + '<br>Layout: ' + options.getLayout() + "<br>Mode: " + options.getMode(),
+                            summary: 'Failed to activate edition helper',
+                            detail: 'Name: ' + test.val() + '<br>Layout: ' + options.getLayout(),
                             sticky: true
                         }
                     );
                     console.log(e.stack);
-                    var msg = "<h3>oO ! We have some problem here ! <br/> Let's find a way to correct it ... </h3>" +
+                    var msg = "<h3>oO ! We have some problem to activate edition helper here ! <br/> Let's find a way to correct it ... </h3>" +
                         '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
                         '<p>2) complete the ticket : <ul>' +
+                        '<li>setup ticket title as "edition helper activation error"</li>' +
                         '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
-                        '<li>specify the layout (' + options.getLayout() +')</li>' +
-                        '<li>specify the mode ('+options.getMode()+')</li></ul></p>' +
+                        '<li>specify the layout (' + options.getLayout() +')</li></ul></p>' +
                         "<p>3) wait the ticket to be resolved ... </p>";
                     helper_.showErrorBox(msg);
+                }
+            }
+        });
+        epreset.puicheckbox({
+            change: function() {
+                options.epreset = epreset[0].checked;
+                try {
+                    loader_.endpointReset(options);
+                } catch (e) {
+                    helper_.addMsgToGrowl(e);
+                    helper_.growlMsgs(
+                        {
+                            severity: 'error',
+                            summary: 'Failed to activate endpoint helper',
+                            detail: 'Name: ' + test.val() + '<br>Layout: ' + options.getLayout(),
+                            sticky: true
+                        }
+                    );
+                    console.log(e.stack);
+                    var msg = "<h3>oO ! We have some problem to activate endpoint helper here ! <br/> Let's find a way to correct it ... </h3>" +
+                        '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
+                        '<p>2) complete the ticket : <ul>' +
+                        '<li>setup ticket title as "endpoint helper activation error"</li>' +
+                        '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
+                        '<li>specify the layout (' + options.getLayout() +')</li></ul></p>' +
+                        "<p>3) wait the ticket to be resolved ... </p>";
+                    helper_.showErrorBox(msg);
+                }
+            }
+        });
+        legend.puicheckbox({
+            change: function () {
+                options.displayLegend = legend[0].checked;
+                try {
+                    loader_.legend(options)
+                } catch (e) {
+                    helper_.addMsgToGrowl(e);
+                    helper_.growlMsgs(
+                        {
+                            severity: 'error',
+                            summary: 'Failed to display legend',
+                            detail: 'Name: ' + test.val() + '<br>Layout: ' + options.getLayout(),
+                            sticky: true
+                        }
+                    );
+                    console.log(e.stack);
                 }
             }
         });
@@ -236,7 +281,6 @@ requirejs (
                 helper_.setNotifyInfo(notifyI.puicheckbox('isChecked'));
             }
         });
-
         notifyW.puicheckbox({
             change: function() {
                 helper_.setNotifyWarn(notifyW.puicheckbox('isChecked'));
@@ -291,7 +335,6 @@ requirejs (
             click: function() {
                 try {
                     loader_.reloadMap(options);
-                    loader_.editionMode(options);
                     reload.removeClass('ui-state-focus');
                 } catch (e) {
                     helper_.addMsgToGrowl(e);
@@ -332,7 +375,7 @@ requirejs (
                     helper_.growlMsgs(
                         {
                             severity: 'error',
-                            summary: 'Failed to export map to PNG',
+                            summary: 'Failed to export map to JPG',
                             detail: 'Check the console log to know more...',
                             sticky: true
                         }
@@ -465,7 +508,6 @@ requirejs (
                     loader_.sortRootTree(rootTreeSorting.val());
                     loader_.rebuildMapTreeLayout();
                     loader_.refreshMap(options);
-                    loader_.editionMode(options);
                 } catch (e) {
                     helper_.addMsgToGrowl(e);
                     helper_.growlMsgs(
@@ -488,7 +530,6 @@ requirejs (
                     loader_.sortSubTrees(options.getSubTreesSorting());
                     loader_.rebuildMapTreeLayout();
                     loader_.refreshMap(options);
-                    loader_.editionMode(options);
                 } catch (e) {
                     helper_.addMsgToGrowl(e);
                     helper_.growlMsgs(
@@ -515,27 +556,28 @@ requirejs (
                 notifyE.puicheckbox('check');
 
             options.setLayout(layout.val());
-            options.setMode(mode.val());
+            options.edition = edition[0].checked;
+            options.epreset = epreset[0].checked;
+            options.displayLegend = legend[0].checked;
             options.setURI(homeURI + "/js/taitale.samples/json/sample.taitale.input."+test.val()+".json");
-            if (options.getLayout()===dic.mapLayout.NTWWW) {
-                document.getElementById('networkOptions').style.display = "";
+            if (options.getLayout()===dic.mapLayout.MDW) {
+                document.getElementById('middlewareOptions').style.display = "";
                 document.getElementById('treeOptions').style.display    = "none";
-            } else if (options.getLayout()===dic.mapLayout.TREE || options.getLayout()===dic.mapLayout.BBTREE) {
-                document.getElementById('networkOptions').style.display = "none";
+            } else if (options.getLayout()===dic.mapLayout.BBTREE) {
+                document.getElementById('middlewareOptions').style.display = "none";
                 document.getElementById('treeOptions').style.display    = "";
             } else {
-                document.getElementById('networkOptions').style.display = "none";
+                document.getElementById('middlewareOptions').style.display = "none";
                 document.getElementById('treeOptions').style.display    = "none";
             }
             loader_.loadMap(options);
-            loader_.editionMode(options);
         } catch (e) {
             helper_.addMsgToGrowl(e);
             helper_.growlMsgs(
                 {
                     severity: 'error',
                     summary: 'Failed to load map',
-                    detail: 'Name: '+test.val()+'<br>Layout: '+options.getLayout()+"<br>Mode: "+options.getMode(),
+                    detail: 'Name: '+test.val()+'<br>Layout: '+options.getLayout(),
                     sticky: true
                 });
             console.log(e.stack);

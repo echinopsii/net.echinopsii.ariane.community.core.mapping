@@ -21,14 +21,27 @@ package net.echinopsii.ariane.community.core.mapping.ds.service;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
 import java.util.Set;
 
 public interface GateSce<G extends Gate> {
-	public G    createGate(String url, String name, long containerid, boolean isPrimaryAdmin) throws MappingDSException;
-	public void deleteGate(long nodeID) throws MappingDSException;
-	
-	public G    getGate(long id);
+	String Q_MAPPING_GATE_SERVICE = "ARIANE_MAPPING_GATE_SERVICE_Q";
 
-    public Set<G> getGates(String selector);
+	String OP_CREATE_GATE = "createGate";
+	String OP_DELETE_GATE = "deleteGate";
+	String OP_GET_GATE = "getGate";
+	String OP_GET_GATES = "getGates";
+
+	String PARAM_GATE_NAME = "name";
+	String PARAM_GATE_URL = "URL";
+	String PARAM_GATE_IPADM = "isPrimaryAdmin";
+
+	public G    createGate(String url, String name, String containerid, Boolean isPrimaryAdmin) throws MappingDSException;
+
+	public void deleteGate(String nodeID) throws MappingDSException;
+
+	public G    getGate(String id) throws MappingDSException;
+
+    public Set<G> getGates(String selector) throws MappingDSException;
 }

@@ -1,0 +1,367 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<ui:composition template="/templates/mainLayout.xhtml">
+    <ui:define name="moduleHeader">
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/acss/primeui/primeui-0.9.6-min.css" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/acss/mapping-min.css" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/acss/jstree/style.min.css" />
+        <script src="#{request.contextPath}/ajs/primeui/primeui-0.9.6.js"/>
+        <script src="#{request.contextPath}/ajs/angular/angular.js"></script>
+        <script src="#{request.contextPath}/ajs/angular/angular-resource.min.js"></script>
+        <script src="#{request.contextPath}/ajs/jstree/jstree.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="#{request.contextPath}/ajs/jstree/jsTree.directive.js"></script>
+        <script src="#{request.contextPath}/ajs/request_tree/treeApp.js"></script>
+        <script src="#{request.contextPath}/ajs/request_tree/treeController.js"></script>
+        <script src="#{request.contextPath}/ajs/request_tree/services.js"></script>
+        <script data-main="#{request.contextPath}/ajs/taitale.js" src="#{request.contextPath}/ajs/require/require-min.js" type="text/javascript" charset="utf-8"/>
+
+    </ui:define>
+    <ui:define name="moduleContent">
+        <div id="mappingBg" class="backgroundMapping" ng-app="treeApp" ng-controller="treeController">
+            <p:layout widgetVar="mappingLW">
+                <p:layoutUnit id="mappingLayout" position="center" resizable="false" styleClass="arianeTransparentBg0-div-noi">
+                    <p:layout>
+                        <p:layoutUnit id="mappingTools" position="north" size="210" header="Mapping tools" resizable="false" collapsible="true"
+                                      styleClass="arianeTransparentBg0-div arianeTransparentBg3-uiwc-noi" style="border: 0px">
+                            <p:tabView id="mappingToolsView" activeIndex="2" styleClass="arianeTransparentBg0-div arianeTransparentBg0-uiwc">
+                            <p:tab id="mappingToolsExportTab" title="Export">
+                                <h:form id="mapToolsExport">
+                                    <span class="inputTitle">Export your map to :</span><br/>
+                                    <p:commandButton value="JPG" widgetVar="JPG" icon="icon-file icon-large"/>
+                                    <p:commandButton value="PNG" widgetVar="PNG" icon="icon-file icon-large"/>
+                                    <p:commandButton value="SVG" widgetVar="SVG" icon="icon-file icon-large"/>
+                                </h:form>
+                            </p:tab>
+
+                                <p:tab id="mapToolsDisplayTab" title="Options">
+                                    <h:panelGrid columns="5" cellpadding="5">
+                                        <h:panelGroup>
+                                            <span class="inputTitle">Layout</span><br/>
+                                            <p:selectOneButton id="layoutSelector" widgetVar="layoutSelector" value="#{mappingToolsDisplayController.mappingLayout}">
+                                                <f:selectItem itemLabel="Tree" itemValue="BBTree" />
+                                                <f:selectItem itemLabel="Middleware" itemValue="Middleware" />
+                                            </p:selectOneButton>
+                                        </h:panelGroup>
+                                        <h:panelGroup>
+                                            <span class="inputTitle">Edition helper</span>
+                                            <p:selectOneButton id="modeSelector" widgetVar="modeSelector" value="#{mappingToolsDisplayController.mappingMode}">
+                                                <f:selectItem itemLabel="OFF" itemValue="Navigation"/>
+                                                <f:selectItem itemLabel="ON" itemValue="Edition" />
+                                            </p:selectOneButton>
+                                        </h:panelGroup>
+                                        <h:panelGroup>
+                                            <span class="inputTitle">Endpoint helper</span>
+                                            <p:selectOneButton id="endpointHelper" widgetVar="endpointHelper" value="#{mappingToolsDisplayController.mappingEPH}">
+                                                <f:selectItem itemLabel="OFF" itemValue="OFF"/>
+                                                <f:selectItem itemLabel="ON" itemValue="ON" />
+                                            </p:selectOneButton>
+                                        </h:panelGroup>
+                                        <h:panelGroup>
+                                            <span class="inputTitle">Map Legend</span>
+                                            <p:selectOneButton id="mapLegend" widgetVar="mapLegend" value="#{mappingToolsDisplayController.mappingLegend}">
+                                                <f:selectItem itemLabel="OFF" itemValue="OFF"/>
+                                                <f:selectItem itemLabel="ON" itemValue="ON" />
+                                            </p:selectOneButton>
+                                        </h:panelGroup>
+                                        <h:panelGroup>
+                                            <span class="inputTitle">Notifications options</span>
+                                            <p:selectManyButton id="notificationsOptions" widgetVar="notificationsOptions" value="#{mappingToolsDisplayController.defaultNotifications}">
+                                                <f:selectItem itemLabel="Notify infos" itemValue="notifyInfos" />
+                                                <f:selectItem itemLabel="Notify warnings" itemValue="notifyWarns" />
+                                                <f:selectItem itemLabel="Notify errors" itemValue="notifyErrs" />
+                                            </p:selectManyButton>
+                                        </h:panelGroup>
+                                    </h:panelGrid>
+                                    <div id="middlewareOptions">
+                                        <h:panelGrid columns="2" cellpadding="5">
+                                            <h:panelGroup>
+                                                <span class="inputTitle">Display options</span>
+                                                <p:selectManyButton id="middlewareLayoutDisplayOptions" widgetVar="middlewareLayoutDisplayOptions">
+                                                    <f:selectItem itemLabel="Display datacenters" itemValue="displayDC" />
+                                                    <f:selectItem itemLabel="Display areas" itemValue="displayArea" />
+                                                    <f:selectItem itemLabel="Display subnets" itemValue="displayLan" />
+                                                </p:selectManyButton>
+                                            </h:panelGroup>
+                                        </h:panelGrid>
+                                    </div>
+                                    <div id="treeOptions">
+                                        <h:panelGrid columns="2" cellpadding="5">
+                                            <h:panelGroup>
+                                                <span class="inputTitle">Root tree sorting</span>
+                                                <p:selectOneButton id="rootTreeSorting" widgetVar="rootTreeSorting">
+                                                    <f:selectItem itemLabel="By maximum vertex linked" itemValue="1" />
+                                                    <f:selectItem itemLabel="By minimum vertex linked" itemValue="-1" />
+                                                </p:selectOneButton>
+                                            </h:panelGroup>
+                                            <h:panelGroup>
+                                                <span class="inputTitle">Sub trees sorting</span>
+                                                <p:selectOneButton id="subTreesSorting" widgetVar="subTreesSorting">
+                                                    <f:selectItem itemLabel="By maximum vertex linked" itemValue="1" />
+                                                    <f:selectItem itemLabel="By minimum vertex linked" itemValue="-1" />
+                                                </p:selectOneButton>
+                                            </h:panelGroup>
+                                        </h:panelGrid>
+                                    </div>
+                                </p:tab>
+                                <p:tab id="mapToolsQueryTab" title="Query" >
+                                    <h:form id="mapToolsQueryForm">
+                                        <p:growl id="requestMessages" showDetail="true" widgetVar="growlMsg"/>
+                                        <h:panelGrid id="mapToolsQueryGrid" columns="2" cellpadding="5">
+                                            <!--<p:inputTextarea id="mdslQuery" rows="6" cols="180" autoResize="false" widgetVar="mdslQuery"
+                                                                 completeMethod="#{autoCompleteController.completeArea}" queryDelay="200" minQueryLength="4"/>-->
+                                            <p:inputTextarea id="mdslQuery" rows="6" cols="180" autoResize="false" widgetVar="mdslQuery" var="mdslQuery"
+                                                            value="{{sessionReqest}}"/>
+                                            <h:panelGroup>
+                                                <p:commandButton id="execQuery" widgetVar="execQuery" type="button" value="Execute request" title="Execute"
+                                                                 icon="icon-play-circle icon-large" style="width:150px"/><br/>
+                                                <p:commandButton type="button" value="Load request" title="Load" icon="icon-upload icon-large" style="width:150px"
+                                                                 onclick="requestLoaderDialog2.show()"/><br/>
+                                                <p:commandButton type="button" value="Save request" title="Save" icon="icon-upload icon-large" style="width:150px"
+                                                                 onclick="requestSaveDialog2.show()"/><br/>
+                                                </h:panelGroup>
+                                        </h:panelGrid>
+                                    </h:form>
+                                </p:tab>
+                            </p:tabView>
+                        </p:layoutUnit>
+                        <p:layoutUnit id="mappingCanvas" position="center" resizable="false" styleClass="arianeTransparentBg0-div-noi arianeTransparentBg3-uiwc-noi">
+                            <div id="mappyLoading"  style="display:none; text-align: center;">
+                                <br/><br/><br/>
+                                <h:outputText value="The map is being computed... Please wait ... :)" styleClass="inputTitle"/>
+                                <br/><br/><br/>
+                                <i class = "icon-spinner icon-spin icon-7x"/>
+                            </div>
+                            <div id="mappyCanvas" oncontextmenu="return false;"/>
+                            <div id="mapError" style="display: none;">
+                                <div id="mapErrorImg" style="position: absolute; left: 0; top: 0; width: 40%;">
+                                    <img src="#{request.contextPath}/aimages/error.png" style="width: 320px;"/>
+                                </div>
+                                <div id="mapErrorMsg" style="position: absolute; right: 1px; top: 30px; width: 60%; height: 275px; overflow:auto;">
+                                </div>
+                            </div>
+                        </p:layoutUnit>
+                    </p:layout>
+                </p:layoutUnit>
+            </p:layout>
+
+        <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Create new folder" widgetVar="folderNewDialog"
+                  width="800" height="400" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
+            <h:panelGroup id="createFolder">
+                <h:form>
+                    <ui:insert name="createDirectory" >
+                        <ui:include src="/templates/mdslDirectoryForm2.xhtml" />
+                    </ui:insert>
+                    <div ng-show="isDirectory">
+                    <h:panelGroup>
+                        <p:separator/>
+                        <br/>
+                        <input type="button" value="Create this folder" style="height: 30px" class="ui-confirmdialog-yes"
+                               data-icon="ui-icon-check" ng-click="saveDirectory()"/>
+                    </h:panelGroup>
+                    </div>
+                </h:form>
+            </h:panelGroup>
+        </p:dialog>
+
+        <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Delete folder" widgetVar="folderDeleteDialog2"
+                  width="400" height="110" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
+            <h:panelGroup id="deleteFolderConfirm2">
+                <h:outputText value="Are you sure you want to delete following folder with its contents ?"/><br/><br/>
+                <h:outputText value="Folder name : {{selectedNode.node.text}}"/><br/><br/>
+                <h:form>
+                    <h:panelGrid id="folderDeleteGrid2" columns="2" cellpadding="5"
+                                 styleClass="ui-widget-content-grid" style="border: 0px">
+                        <input type="button" value="Yes" style="height: 27px; width: 40px !important; margin: 1% 27% !important;" class="ui-confirmdialog-yes" data-icon="ui-icon-check" ng-click="deleteDirectory(selectedNode.node.id)"/>
+                        <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-check" oncomplete="folderDeleteDialog2.hide();"/>
+                    </h:panelGrid>
+                </h:form>
+            </h:panelGroup>
+        </p:dialog>
+
+        <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Delete request" widgetVar="requestDeleteDialog2"
+                  width="350" height="110" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
+            <h:panelGroup id="deleteRequestConfirm2">
+                <h:outputText value="Are you sure you want to delete following request ?"/><br/><br/>
+                <h:outputText value="Request name : {{selectedNode.node.text}}"/><br/><br/>
+                <h:form>
+                    <h:panelGrid id="requestDeleteGrid2" columns="2" cellpadding="5"
+                                 styleClass="ui-widget-content-grid" style="border: 0px">
+                        <input type="button" value="Yes" style="height: 27px; width: 40px !important; margin: 1% 27% !important;" class="ui-confirmdialog-yes" data-icon="ui-icon-check" ng-click="deleteRequest(selectedNode.node.id.split('child')[1])"/>
+                        <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-check"
+                                         oncomplete="requestDeleteDialog2.hide();"/>
+                    </h:panelGrid>
+                </h:form>
+            </h:panelGroup>
+        </p:dialog>
+
+        <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Update folder properties" widgetVar="folderUpdateDialog"
+            width="800" height="400" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
+        <h:panelGroup id="updateFolder">
+            <h:form>
+                <ui:insert name="updateDirectory" >
+                    <ui:include src="/templates/mdslDirectoryForm2.xhtml" />
+                </ui:insert>
+                <h:panelGroup>
+                    <p:separator/>
+                    <br/>
+                    <input type="button" value="Update this folder" style="height: 30px"  class="ui-confirmdialog-yes" data-icon="ui-icon-check" ng-click="saveDirectory()"/>
+                </h:panelGroup>
+            </h:form>
+        </h:panelGroup>
+        </p:dialog>
+
+        <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Update request properties" widgetVar="requestModificationDialog"
+                  width="800" height="560" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
+            <h:panelGroup id="updateRequest">
+                <h:form>
+                    <ui:insert name="updateRequest" >
+                        <ui:include src="/templates/mdslRequestForm2.xhtml" />
+                    </ui:insert>
+                    <h:panelGroup>
+                        <p:separator/>
+                        <br/>
+                        <p:messages id="messages_request_update" showDetail="true" autoUpdate="true" closable="true" />
+                        <input type="button" value="Update this Request" style="height: 30px"  class="ui-confirmdialog-yes" data-icon="ui-icon-check" ng-click="saveRequest()"/>
+                    </h:panelGroup>
+                </h:form>
+            </h:panelGroup>
+        </p:dialog>
+
+        <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Save request" widgetVar="requestSaveDialog2"
+                  width="1010" height="600" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
+            <p:layout style="min-width:980px;min-height:600px;">
+                <p:layoutUnit position="west" size="240" header="NAVIGATION" resizable="false" style="border: 0px">
+                    <js-tree id="jstree_div2" tree-data="scope" tree-plugins="sort,contextmenu" tree-contextmenu="contextMenu"
+                             tree-model="treeData" tree-events="select_node:selectNodeReqCB;open_node:openNodeCB;close_node:closeNodeCB"></js-tree>
+                </p:layoutUnit>
+                <p:layoutUnit position="center" resizable="false" header="REQUEST DETAILS" style="border: 0px">
+                    <div ng-show="!reqUsed">
+                        <h:outputText value="Choose a request or template from navigation pane."/>
+                    </div>
+                    <div ng-show="reqUsed">
+                    <h:panelGroup id="saveRequestDetail2">
+                        <br/>
+                        <h:form>
+                            <p:messages id="messages_req_sage2" showDetail="true" autoUpdate="true" closable="true" />
+                            <h:panelGroup>
+                                <ui:insert name="createRequest" >
+                                    <ui:include src="/templates/mdslRequestForm2.xhtml" />
+                                </ui:insert>
+                                <p:separator/>
+                                <input type="button" value="Save" style="height: 30px"  class="ui-confirmdialog-yes" data-icon="ui-icon-check" ng-click="saveRequest()"/>
+                            </h:panelGroup>
+                        </h:form>
+                    </h:panelGroup>
+                    </div>
+                </p:layoutUnit>
+            </p:layout>
+        </p:dialog>
+
+            <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Load request" widgetVar="requestLoaderDialog2"
+                  width="1000" height="600" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
+            <p:layout style="min-width:980px;min-height:590px;">
+                <p:layoutUnit position="west" size="240" header="NAVIGATION" resizable="false" style="border: 0px;">
+                    <js-tree id="jstree_div" tree-data="scope" tree-plugins="sort,contextmenu" tree-contextmenu="contextMenu"
+                     tree-model="treeData" tree-events="select_node:selectNodeCB;open_node:openNodeCB;close_node:closeNodeCB"></js-tree>
+                </p:layoutUnit>
+                <p:layoutUnit position="center" resizable="false" header="SELECTION DETAILS" style="border: 0px">
+                    <h:panelGroup>
+                        <br/>
+                        <h:panelGroup ng-show="initVal">
+                            <h:outputText value="Choose a request or template from navigation pane."/>
+                            <br/>
+                            <p:separator/>
+                            <br/>
+                            <div ng-show="isDirectory">
+                            <p:fieldset legend="Folder description" style="width: 700px; height: 155px">
+                                <p:scrollPanel style="width: 700px; height: 120px; border: 0px; overflow: auto">
+                                    <h:outputText value="{{leftPaneDirDesc}}"/>
+                                </p:scrollPanel>
+                            </p:fieldset>
+                            </div>
+                        </h:panelGroup>
+                        <div ng-show="!isDirectory&amp;&amp;!initVal">
+                        <h:form>
+                            <br/>
+                            <p:fieldset legend="Request" style="width: 700px; height: 155px">
+                                <p:scrollPanel style="width: 700px; height: 120px; border: 0px; overflow: auto">
+                                <pre>
+                                    {{requestDetail.requestReq}}
+                                </pre>
+                                </p:scrollPanel>
+                            </p:fieldset>
+                            <br/>
+                            <p:fieldset legend="Description" style="width: 700px; height: 155px">
+                                <p:scrollPanel style="width: 700px; height: 120px; border: 0px; overflow: auto">
+                                    <h:outputText value="{{requestDetail.requestDesc}}"/>
+                                </p:scrollPanel>
+                            </p:fieldset>
+                            <br/>
+                            <p:separator/>
+                            <br/>
+                            <input type="button" value="Use that one!" style="height: 30px"  class="ui-confirmdialog-yes" data-icon="ui-icon-check" ng-click="loadSelectedRequest(requestDetail.requestReq)"/>
+                        </h:form>
+                        </div>
+                    </h:panelGroup>
+                 </p:layoutUnit>
+            </p:layout>
+        </p:dialog>
+        </div>
+
+        <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Export map" widgetVar="mapExport"
+                  showEffect="fade" hideEffect="fade" height="800" width="1000" closeOnEscape="true">
+            <div id="exportInProgress"  style="display:none; text-align: center;">
+                <br/><br/><br/>
+                <h:outputText value="Export in progress... Please wait ... :)" styleClass="inputTitle"/>
+                <br/><br/><br/>
+                <i class = "icon-spinner icon-spin icon-7x"/>
+            </div>
+            <div id="imgExport"></div>
+        </p:dialog>
+
+        <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Update request permissions" widgetVar="requestPermissionCHDialog"
+                  width="450" heigh="750" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
+            <h:panelGroup id="chRequestPerm">
+                <h:form>
+                    <ui:insert name="changeRequestPerm">
+                        <ui:include src="/templates/mdslRequestPermsForm.xhtml" />
+                    </ui:insert>
+                    <h:panelGroup rendered="#{mdslRegistryController.selectedDirectoryOrRequestNode!=null}">
+                        <p:separator/>
+                        <br/>
+                        <p:commandButton value="Update request permissions" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+                                         oncomplete="requestPermissionCHDialog.hide();" actionListener="#{mdslrRequestController.save}"
+                                         update=":mappingToolsView:mapToolsQueryForm:requestMessages"/>
+                    </h:panelGroup>
+                </h:form>
+            </h:panelGroup>
+
+            <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}"/>
+        </p:dialog>
+
+        <p:dialog styleClass="arianeDialog arianeDialogTitleBar arianeDialogCloseButton" header="Update folder permissions" widgetVar="folderPermissionCHDialog"
+                  width="450" heigh="750" showEffect="fade" hideEffect="explode" resizable="false" closeOnEscape="true">
+            <h:panelGroup id="chFolderPerm">
+                <h:form>
+                    <ui:insert name="changeFolderPerm">
+                        <ui:include src="/templates/mdslDirectoryPermsForm.xhtml" />
+                    </ui:insert>
+                    <h:panelGroup rendered="#{mdslRegistryController.selectedDirectoryOrRequestNode!=null}">
+                        <p:separator/>
+                        <br/>
+                        <p:commandButton value="Update folder permissions" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+                                         oncomplete="folderPermissionCHDialog.hide();" actionListener="#{mdslrDirectoryController.save}"
+                                         update=":mappingToolsView:mapToolsQueryForm:requestMessages"/>
+                    </h:panelGroup>
+                </h:form>
+            </h:panelGroup>
+
+            <p:ajax event="close" listener="#{mdslRegistryController.reloadTree}"/>
+        </p:dialog>
+
+    </ui:define>
+</ui:composition>
+</html>

@@ -25,7 +25,8 @@ define(
     ],
     function (cylinder, helper) {
         function multicastBus(tid, ridx, localisation, multicastAddr_, properties_) {
-            this.ID            = tid*1000+ridx;
+            this.ID            = tid;
+            this.ridx          = ridx;
 
             this.pName         = localisation.getPLocation().pname;
             this.areaName      = localisation.getArea().raname;
@@ -116,7 +117,7 @@ define(
                 this.mbus = new cylinder(this,centerX,centerY,this.diameter,this.longg,title,color);
             };
 
-            this.definedNodesPoz = function() {
+            this.defineChildsPoz = function() {
             };
 
             this.setCylinder = function(centerX,centerY) {

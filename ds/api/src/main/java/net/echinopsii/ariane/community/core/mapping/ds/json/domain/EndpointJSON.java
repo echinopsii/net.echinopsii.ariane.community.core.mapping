@@ -20,12 +20,12 @@
 package net.echinopsii.ariane.community.core.mapping.ds.json.domain;
 
 import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
+import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesException;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
 import org.slf4j.Logger;
@@ -33,85 +33,108 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class EndpointJSON {
 
     private final static Logger log = LoggerFactory.getLogger(EndpointJSON.class);
 
-    public final static String EP_ID_TOKEN = MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE+"ID";
-    public final static String EP_URL_TOKEN = MappingDSGraphPropertyNames.DD_ENDPOINT_URL_KEY;
-    public final static String EP_PNODEID_TOKEN = MappingDSGraphPropertyNames.DD_ENDPOINT_PNODE_KEY+"ID";
-    public final static String EP_TWNEPID_TOKEN = MappingDSGraphPropertyNames.DD_ENDPOINT_EDGE_TWIN_KEY+"ID";
-    public final static String EP_PRP_TOKEN = MappingDSGraphPropertyNames.DD_ENDPOINT_PROPS_KEY;
-
-    private final static void endpointProps2JSON(Endpoint endpoint, JsonGenerator jgenerator)
-            throws JsonGenerationException, IOException {
+    private static void endpointProps2JSON(Endpoint endpoint, JsonGenerator jgenerator)
+            throws IOException {
         HashMap<String, Object> props = endpoint.getEndpointProperties();
         if (props != null && props.size()!=0) {
-            jgenerator.writeObjectFieldStart(EP_PRP_TOKEN);
+            jgenerator.writeObjectFieldStart(Endpoint.TOKEN_EP_PRP);
             PropertiesJSON.propertiesToJSON(props,jgenerator);
             jgenerator.writeEndObject();
         }
     }
 
-    public final static void endpoint2JSON(Endpoint endpoint, JsonGenerator jgenerator)
-            throws JsonGenerationException, IOException {
+    private static void endpointProps2JSONWithTypedProps(Endpoint endpoint, JsonGenerator jgenerator) throws IOException, PropertiesException {
+        HashMap<String, Object> props = endpoint.getEndpointProperties();
+        if (props != null && props.size()!=0) {
+            jgenerator.writeArrayFieldStart(Endpoint.TOKEN_EP_PRP);
+            for (PropertiesJSON.TypedPropertyField field : PropertiesJSON.propertiesToTypedPropertiesList(props))
+                field.toJSON(jgenerator);
+            jgenerator.writeEndArray();
+        }
+    }
+
+    private static void commonEndpoint2JSON(Endpoint endpoint, JsonGenerator jgenerator) throws IOException, MappingDSException {
+        jgenerator.writeStringField(Endpoint.TOKEN_EP_ID, endpoint.getEndpointID());
+        jgenerator.writeStringField(Endpoint.TOKEN_EP_URL, endpoint.getEndpointURL());
+        if (endpoint.getEndpointParentNode()!=null)
+            jgenerator.writeStringField(Endpoint.TOKEN_EP_PNODEID, endpoint.getEndpointParentNode().getNodeID());
+        jgenerator.writeArrayFieldStart(Endpoint.TOKEN_EP_TWNEPID);
+        for (Endpoint tep : endpoint.getTwinEndpoints()) jgenerator.writeString(tep.getEndpointID());
+        jgenerator.writeEndArray();
+    }
+
+    public static void endpoint2JSON(Endpoint endpoint, JsonGenerator jgenerator)
+            throws IOException, MappingDSException {
         jgenerator.writeStartObject();
         log.debug("Ep JSON :endpoint {}", new Object[]{endpoint.getEndpointID()});
-        jgenerator.writeNumberField(EP_ID_TOKEN, endpoint.getEndpointID());
-        jgenerator.writeStringField(EP_URL_TOKEN, endpoint.getEndpointURL());
-        jgenerator.writeNumberField(EP_PNODEID_TOKEN, endpoint.getEndpointParentNode().getNodeID());
-
-        jgenerator.writeArrayFieldStart(EP_TWNEPID_TOKEN);
-        Iterator<? extends Endpoint> iterE = endpoint.getTwinEndpoints().iterator();
-        while (iterE.hasNext()) {
-            Endpoint tep = iterE.next();
-            jgenerator.writeNumber(tep.getEndpointID());
-        }
-        jgenerator.writeEndArray();
-
-        EndpointJSON.endpointProps2JSON(endpoint,jgenerator);
+        commonEndpoint2JSON(endpoint, jgenerator);
+        EndpointJSON.endpointProps2JSON(endpoint, jgenerator);
         jgenerator.writeEndObject();
     }
 
-    public final static void oneEndpoint2JSON(Endpoint endpoint, ByteArrayOutputStream outStream)
-            throws IOException {
+    public static void endpoint2JSONWithTypedProps(Endpoint endpoint, JsonGenerator jgenerator)
+            throws IOException, MappingDSException, PropertiesException {
+        jgenerator.writeStartObject();
+        log.debug("Ep JSON :endpoint {}", new Object[]{endpoint.getEndpointID()});
+        commonEndpoint2JSON(endpoint, jgenerator);
+        EndpointJSON.endpointProps2JSONWithTypedProps(endpoint, jgenerator);
+        jgenerator.writeEndObject();
+    }
+
+    public static void oneEndpoint2JSON(Endpoint endpoint, ByteArrayOutputStream outStream)
+            throws IOException, MappingDSException {
         JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         endpoint2JSON(endpoint, jgenerator);
         jgenerator.close();
     }
 
-    public final static void manyEndpoints2JSON(HashSet<Endpoint> endpoints, ByteArrayOutputStream outStream)
-            throws IOException {
+    public static void oneEndpoint2JSONWithTypedProps(Endpoint endpoint, ByteArrayOutputStream outStream)
+            throws IOException, MappingDSException, PropertiesException {
+        JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
+        endpoint2JSONWithTypedProps(endpoint, jgenerator);
+        jgenerator.close();
+    }
+
+    public static void manyEndpoints2JSON(HashSet<Endpoint> endpoints, ByteArrayOutputStream outStream)
+            throws IOException, MappingDSException {
         JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         jgenerator.writeStartObject();
         jgenerator.writeArrayFieldStart("endpoints");
-        Iterator<Endpoint> iterC = endpoints.iterator();
-        while (iterC.hasNext()) {
-            Endpoint current = iterC.next();
-            EndpointJSON.endpoint2JSON(current, jgenerator);
-        }
+        for (Endpoint current : endpoints) EndpointJSON.endpoint2JSON(current, jgenerator);
+        jgenerator.writeEndArray();
+        jgenerator.writeEndObject();
+        jgenerator.close();
+    }
+
+    public static void manyEndpoints2JSONWithTypedProps(HashSet<Endpoint> endpoints, ByteArrayOutputStream outStream)
+            throws IOException, MappingDSException, PropertiesException {
+        JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
+        jgenerator.writeStartObject();
+        jgenerator.writeArrayFieldStart("endpoints");
+        for (Endpoint current : endpoints) EndpointJSON.endpoint2JSONWithTypedProps(current, jgenerator);
         jgenerator.writeEndArray();
         jgenerator.writeEndObject();
         jgenerator.close();
     }
 
     public static class JSONDeserializedEndpoint {
-        private long endpointID;
+        private String endpointID;
         private String endpointURL;
-        private long endpointParentNodeID;
-        private List<Long> endpointTwinEndpointsID;
-        private List<PropertiesJSON.JSONDeserializedProperty> endpointProperties;
+        private String endpointParentNodeID;
+        private List<String> endpointTwinEndpointsID;
+        private List<PropertiesJSON.TypedPropertyField> endpointProperties;
 
-        public long getEndpointID() {
+        public String getEndpointID() {
             return endpointID;
         }
 
-        public void setEndpointID(long endpointID) {
+        public void setEndpointID(String endpointID) {
             this.endpointID = endpointID;
         }
 
@@ -123,27 +146,27 @@ public class EndpointJSON {
             this.endpointURL = endpointURL;
         }
 
-        public long getEndpointParentNodeID() {
+        public String getEndpointParentNodeID() {
             return endpointParentNodeID;
         }
 
-        public void setEndpointParentNodeID(long endpointParentNodeID) {
+        public void setEndpointParentNodeID(String endpointParentNodeID) {
             this.endpointParentNodeID = endpointParentNodeID;
         }
 
-        public List<Long> getEndpointTwinEndpointsID() {
+        public List<String> getEndpointTwinEndpointsID() {
             return endpointTwinEndpointsID;
         }
 
-        public void setEndpointTwinEndpointsID(List<Long> endpointTwinEndpointsID) {
+        public void setEndpointTwinEndpointsID(List<String> endpointTwinEndpointsID) {
             this.endpointTwinEndpointsID = endpointTwinEndpointsID;
         }
 
-        public List<PropertiesJSON.JSONDeserializedProperty> getEndpointProperties() {
+        public List<PropertiesJSON.TypedPropertyField> getEndpointProperties() {
             return endpointProperties;
         }
 
-        public void setEndpointProperties(List<PropertiesJSON.JSONDeserializedProperty> endpointProperties) {
+        public void setEndpointProperties(List<PropertiesJSON.TypedPropertyField> endpointProperties) {
             this.endpointProperties = endpointProperties;
         }
     }
@@ -152,5 +175,30 @@ public class EndpointJSON {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return mapper.readValue(payload, JSONDeserializedEndpoint.class);
+    }
+
+    public static class JSONDeserializedEndpoints {
+        JSONDeserializedEndpoint[] endpoints;
+
+        public JSONDeserializedEndpoint[] getEndpoints() {
+            return endpoints;
+        }
+
+        public void setEndpoints(JSONDeserializedEndpoint[] endpoints) {
+            this.endpoints = endpoints;
+        }
+
+        public Set<JSONDeserializedEndpoint> toSet() {
+            HashSet<JSONDeserializedEndpoint> ret = new HashSet<>();
+            if (endpoints!=null)
+                Collections.addAll(ret, endpoints);
+            return ret;
+        }
+    }
+
+    public static Set<JSONDeserializedEndpoint> JSON2Endpoints(String payload) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return mapper.readValue(payload, JSONDeserializedEndpoints.class).toSet();
     }
 }

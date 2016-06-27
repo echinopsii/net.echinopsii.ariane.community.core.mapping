@@ -22,13 +22,15 @@ package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.EndpointImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.NodeImpl;
-import net.echinopsii.ariane.community.core.mapping.ds.service.EndpointSce;
+import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxEndpointSceAbs;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 
-public class EndpointSceImpl implements EndpointSce<EndpointImpl> {
+public class EndpointSceImpl extends SProxEndpointSceAbs<EndpointImpl> {
 
     private static final Logger log = LoggerFactory.getLogger(EndpointSceImpl.class);
 
@@ -39,58 +41,95 @@ public class EndpointSceImpl implements EndpointSce<EndpointImpl> {
     }
 
     @Override
-    public EndpointImpl createEndpoint(String url, long parentNodeID) throws MappingDSException {
-        EndpointImpl ret = sce.getGlobalRepo().getEndpointRepo().findEndpointByURL(url);
-        if (ret == null) {
-            NodeImpl parentNode = sce.getGlobalRepo().getNodeRepo().findNodeByID(parentNodeID);
-            if (parentNode != null) {
-                ret = new EndpointImpl();
-                ret.setEndpointURL(url);
-                ret.setEndpointParentNode(parentNode);
-                sce.getGlobalRepo().getEndpointRepo().save(ret);
-                parentNode.addEnpoint(ret);
-            } else {
-                throw new MappingDSException("Endpoint creation failed : provided parent node " + parentNodeID + " doesn't exists.");
+    public EndpointImpl createEndpoint(String url, String parentNodeID) throws MappingDSException {
+        EndpointImpl ret = null;
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = createEndpoint(session, url, parentNodeID);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            ret = sce.getGlobalRepo().getEndpointRepo().findEndpointByURL(url);
+            if (ret == null) {
+                NodeImpl parentNode = sce.getGlobalRepo().getNodeRepo().findNodeByID(parentNodeID);
+                if (parentNode != null) {
+                    ret = new EndpointImpl();
+                    ret.setEndpointURL(url);
+                    sce.getGlobalRepo().getEndpointRepo().save(ret);
+                    ret.setEndpointParentNode(parentNode);
+                } else {
+                    throw new MappingDSException("Endpoint creation failed : provided parent node " + parentNodeID + " doesn't exists.");
+                }
             }
-        } else {
-            log.debug("Endpoint ({}) creation failed : already exists", url);
         }
         return ret;
     }
 
     @Override
-    public void deleteEndpoint(long endpointID) throws MappingDSException {
-        EndpointImpl remove = sce.getGlobalRepo().getEndpointRepo().findEndpointByID(endpointID);
-        if (remove != null) {
-            sce.getGlobalRepo().getEndpointRepo().delete(remove);
+    public void deleteEndpoint(String endpointID) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) deleteEndpoint(session, endpointID);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            throw new MappingDSException("Unable to remove endpoint with id " + endpointID + ": endpoint not found.");
+            EndpointImpl remove = sce.getGlobalRepo().getEndpointRepo().findEndpointByID(endpointID);
+            if (remove != null) {
+                sce.getGlobalRepo().getEndpointRepo().delete(remove);
+            } else {
+                throw new MappingDSException("Unable to remove endpoint with id " + endpointID + ": endpoint not found.");
+            }
         }
     }
 
     @Override
-    public EndpointImpl getEndpoint(long id) {
-        return sce.getGlobalRepo().getEndpointRepo().findEndpointByID(id);
+    public EndpointImpl getEndpoint(String id) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) return getEndpoint(session, id);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else return sce.getGlobalRepo().getEndpointRepo().findEndpointByID(id);
     }
 
     @Override
-    public EndpointImpl getEndpoint(String URL) {
-        return sce.getGlobalRepo().getEndpointRepo().findEndpointByURL(URL);
+    public EndpointImpl getEndpointByURL(String URL) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) return getEndpointByURL(session, URL);//
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else return sce.getGlobalRepo().getEndpointRepo().findEndpointByURL(URL);
     }
 
     @Override
-    public Set<EndpointImpl> getEndpoints(String selector) {
-        Set<EndpointImpl> ret = null;
-        if (selector != null) {
-
+    public Set<EndpointImpl> getEndpoints(String selector) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) return getEndpoints(session, selector);//
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            ret = sce.getGlobalRepo().getEndpointRepo().getAllEndpoints();
+            Set<EndpointImpl> ret = null;
+            if (selector != null) ret = sce.getGlobalRepo().getEndpointRepo().findEndpointsBySelector(selector);
+            else ret = sce.getGlobalRepo().getEndpointRepo().getAllEndpoints();
+            return ret;
         }
-        return ret;
     }
 
     @Override
-    public Set<EndpointImpl> getEndpoints(String key, Object value) {
-        return sce.getGlobalRepo().getEndpointRepo().findEndpointsByProperties(key, value);
+    public Set<EndpointImpl> getEndpoints(String key, Object value) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = sce.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) return getEndpoints(session, key, value);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else return sce.getGlobalRepo().getEndpointRepo().findEndpointsByProperties(key, value);
     }
 }

@@ -116,17 +116,25 @@ define(
                 },
                 getArea: function() {
                     var i, ii, j, jj;
-                    var ret_rarea = null, ret_subnet = null;
+                    var ret_rarea = null;
+                    var hard_rareas = [];
                     for (i = 0, ii = this.rareas.length ; i < ii; i++) {
                         var rarea = this.rareas[i];
                         for (j = 0, jj = rarea.subnets.length; j < jj; j++) {
                             var subnet = rarea.subnets[j];
                             if (subnet.isdefault) {
                                 ret_rarea = rarea;
-                                ret_subnet = subnet;
                                 break;
                             }
                         }
+                        if (ret_rarea == null && (rarea.ratype === "LAN" || rarea.ratype === "MAN" || rarea.ratype === "WAN"))
+                            hard_rareas.push(rarea);
+                    }
+                    if (ret_rarea == null) {
+                        if (this.rareas.length == 1)
+                            ret_rarea = this.rareas[0];
+                        else if (hard_rareas.length>=1)
+                            ret_rarea = hard_rareas[0];
                     }
                     if (ret_rarea!=null) {
                         return {
@@ -163,6 +171,7 @@ define(
                 getLan: function() {
                     var i, ii, j, jj;
                     var ret_rarea = null, ret_subnet = null;
+                    var hard_rareas = [];
                     for (i = 0, ii = this.rareas.length ; i < ii; i++) {
                         var rarea = this.rareas[i];
                         for (j = 0, jj = rarea.subnets.length; j < jj; j++) {
@@ -172,6 +181,19 @@ define(
                                 ret_subnet = subnet;
                                 break;
                             }
+                        }
+                        if (ret_rarea == null && (rarea.ratype === "LAN" || rarea.ratype === "MAN" || rarea.ratype === "WAN"))
+                            hard_rareas.push(rarea);
+                    }
+                    if (ret_rarea == null && ret_subnet == null) {
+                        if (this.rareas.length==1) {
+                            if (this.rareas[0].subnets.length==1) {
+                                ret_rarea = this.rareas[0];
+                                ret_subnet = this.rareas[0].subnets[0];
+                            }
+                        } else if (hard_rareas.length>=1) {
+                            ret_rarea = hard_rareas[0];
+                            ret_subnet = hard_rareas[0].subnets[0];
                         }
                     }
                     if (ret_rarea!=null && ret_subnet!=null) {

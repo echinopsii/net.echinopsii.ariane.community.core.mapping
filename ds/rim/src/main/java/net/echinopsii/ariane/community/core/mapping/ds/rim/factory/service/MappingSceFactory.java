@@ -25,6 +25,7 @@ package net.echinopsii.ariane.community.core.mapping.ds.rim.factory.service;
 import net.echinopsii.ariane.community.core.mapping.ds.rim.cfg.MappingDSCfgLoader;
 import net.echinopsii.ariane.community.core.mapping.ds.rim.registry.MappingDSRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,21 +33,21 @@ public class MappingSceFactory {
 
     private static final Logger log = LoggerFactory.getLogger(MappingSceFactory.class);
 		
-	public static MappingSce make(String bundleName_) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		MappingSce ret = null;
+	public static SProxMappingSce make(String bundleName_) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+		SProxMappingSce ret = null;
 		String mappingClassName = MappingDSRegistry.getEntityFromRegistry(bundleName_).getMappingSceFactoryClassName();
         log.debug("Mapping class name to instanciate according bundle name : ({},{})", new Object[]{bundleName_,mappingClassName});
 		ClassLoader loader = new MappingSceFactory().getClass().getClassLoader();
         log.debug("Class loader {} retrieved...", new Object[]{loader.toString()});
         @SuppressWarnings("unchecked")
-		Class<? extends MappingSce> mappingSceClass = (Class<? extends MappingSce>) loader.loadClass(mappingClassName);
+		Class<? extends SProxMappingSce> mappingSceClass = (Class<? extends SProxMappingSce>) loader.loadClass(mappingClassName);
         log.debug("Class {} from class loader has been retrieved...", new Object[]{mappingClassName});
 		ret = mappingSceClass.newInstance();
         log.debug("New MappingSce instance has been built : ({},{})", new Object[]{mappingClassName, (ret!=null)?ret.toString() : "null"});
 		return ret;
 	}
 	
-	public static MappingSce make() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+	public static SProxMappingSce make() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		return MappingSceFactory.make(MappingDSCfgLoader.getDefaultCfgEntity().getBundleName());
 	}
 }

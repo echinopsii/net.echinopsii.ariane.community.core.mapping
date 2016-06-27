@@ -25,92 +25,88 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
+import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesException;
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
-import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON.JSONDeserializedProperty;
+import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON.TypedPropertyField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 public class NodeJSON {
 
     private final static Logger log = LoggerFactory.getLogger(NodeJSON.class);
 
-    public final static String ND_ID_TOKEN    = MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE+"ID";
-    public final static String ND_NAME_TOKEN  = MappingDSGraphPropertyNames.DD_NODE_NAME_KEY;
-    public final static String ND_DEPTH_TOKEN = MappingDSGraphPropertyNames.DD_NODE_DEPTH_KEY;
-    public final static String ND_CONID_TOKEN = MappingDSGraphPropertyNames.DD_NODE_CONT_KEY+"ID";
-    public final static String ND_PNDID_TOKEN = MappingDSGraphPropertyNames.DD_NODE_PNODE_KEY+"ID";
-    public final static String ND_CNDID_TOKEN = MappingDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY+"ID";
-    public final static String ND_TWNID_TOKEN = MappingDSGraphPropertyNames.DD_NODE_EDGE_TWIN_KEY+"ID";
-    public final static String ND_EPSID_TOKEN = MappingDSGraphPropertyNames.DD_NODE_EDGE_ENDPT_KEY+"ID";
-    public final static String ND_PRP_TOKEN   = MappingDSGraphPropertyNames.DD_NODE_PROPS_KEY;
-
-    private final static void nodeProps2JSON(Node node, JsonGenerator jgenerator) throws JsonGenerationException, IOException {
+    private static void nodeProps2JSON(Node node, JsonGenerator jgenerator) throws JsonGenerationException, IOException {
         if (node.getNodeProperties()!=null && node.getNodeProperties().size()!=0) {
-            jgenerator.writeObjectFieldStart(ND_PRP_TOKEN);
+            jgenerator.writeObjectFieldStart(Node.TOKEN_ND_PRP);
             PropertiesJSON.propertiesToJSON(node.getNodeProperties(), jgenerator);
             jgenerator.writeEndObject();
         }
     }
 
-    public final static void node2MapJSON(Node node, JsonGenerator jgenerator) throws IOException {
-        jgenerator.writeStartObject();
-        jgenerator.writeNumberField(ND_ID_TOKEN, node.getNodeID());
-        jgenerator.writeStringField(ND_NAME_TOKEN, node.getNodeName());
-        jgenerator.writeNumberField(ND_DEPTH_TOKEN, node.getNodeDepth());
-        jgenerator.writeNumberField(ND_CONID_TOKEN, node.getNodeContainer().getContainerID());
-        if (node.getNodeParentNode()!=null)
-            jgenerator.writeNumberField(ND_PNDID_TOKEN, node.getNodeParentNode().getNodeID());
-        if (node.getNodeProperties() != null) {
-            nodeProps2JSON(node, jgenerator);
+    private static void nodeProps2JSONWithTypedProps(Node node, JsonGenerator jgenerator) throws JsonGenerationException, IOException, PropertiesException {
+        if (node.getNodeProperties()!=null && node.getNodeProperties().size()!=0) {
+            jgenerator.writeArrayFieldStart(Node.TOKEN_ND_PRP);
+            for (PropertiesJSON.TypedPropertyField field : PropertiesJSON.propertiesToTypedPropertiesList(node.getNodeProperties()))
+                field.toJSON(jgenerator);
+            jgenerator.writeEndArray();
         }
+    }
+
+    public static void node2MapJSON(Node node, JsonGenerator jgenerator) throws IOException {
+        jgenerator.writeStartObject();
+        jgenerator.writeStringField(Node.TOKEN_ND_ID, node.getNodeID());
+        jgenerator.writeStringField(Node.TOKEN_ND_NAME, node.getNodeName());
+        if (node.getNodeContainer()!=null)
+            jgenerator.writeStringField(Node.TOKEN_ND_CONID, node.getNodeContainer().getContainerID());
+        if (node.getNodeParentNode()!=null)
+            jgenerator.writeStringField(Node.TOKEN_ND_PNDID, node.getNodeParentNode().getNodeID());
+        if (node.getNodeProperties() != null) nodeProps2JSON(node, jgenerator);
         jgenerator.writeEndObject();
     }
 
-    public final static void node2JSON(Node node, JsonGenerator jgenerator) throws IOException {
-        jgenerator.writeNumberField(ND_ID_TOKEN, node.getNodeID());
-        jgenerator.writeStringField(ND_NAME_TOKEN, node.getNodeName());
-        jgenerator.writeNumberField(ND_DEPTH_TOKEN, node.getNodeDepth());
-        jgenerator.writeNumberField(ND_CONID_TOKEN, node.getNodeContainer().getContainerID());
+    public static void commonNode2JSON(Node node, JsonGenerator jgenerator) throws IOException {
+        jgenerator.writeStringField(Node.TOKEN_ND_ID, node.getNodeID());
+        jgenerator.writeStringField(Node.TOKEN_ND_NAME, node.getNodeName());
+        if (node.getNodeContainer()!=null)
+            jgenerator.writeStringField(Node.TOKEN_ND_CONID, node.getNodeContainer().getContainerID());
         if (node.getNodeParentNode()!=null)
-            jgenerator.writeNumberField(ND_PNDID_TOKEN, node.getNodeParentNode().getNodeID());
+            jgenerator.writeStringField(Node.TOKEN_ND_PNDID, node.getNodeParentNode().getNodeID());
 
-        jgenerator.writeArrayFieldStart(ND_CNDID_TOKEN);
+        jgenerator.writeArrayFieldStart(Node.TOKEN_ND_CNDID);
         for (Node child : node.getNodeChildNodes())
-            jgenerator.writeNumber(child.getNodeID());
+            jgenerator.writeString(child.getNodeID());
         jgenerator.writeEndArray();
 
-        jgenerator.writeArrayFieldStart(ND_TWNID_TOKEN);
-        Iterator<? extends Node> iterT = node.getTwinNodes().iterator();
-        while (iterT.hasNext()) {
-            Node twin = iterT.next();
-            jgenerator.writeNumber(twin.getNodeID());
-        }
+        jgenerator.writeArrayFieldStart(Node.TOKEN_ND_TWNID);
+        for (Node twin : node.getTwinNodes()) jgenerator.writeString(twin.getNodeID());
         jgenerator.writeEndArray();
 
-        jgenerator.writeArrayFieldStart(ND_EPSID_TOKEN);
-        Iterator<? extends Endpoint> iterE = node.getNodeEndpoints().iterator();
-        while (iterE.hasNext()) {
-            Endpoint ep = iterE.next();
-            jgenerator.writeNumber(ep.getEndpointID());
-        }
+        jgenerator.writeArrayFieldStart(Node.TOKEN_ND_EPSID);
+        for (Endpoint ep : node.getNodeEndpoints()) jgenerator.writeString(ep.getEndpointID());
         jgenerator.writeEndArray();
-
-        if (node.getNodeProperties() != null) {
-            nodeProps2JSON(node, jgenerator);
-        }
     }
 
-    public final static void oneNode2JSON(Node node, ByteArrayOutputStream outStream) throws IOException {
+    public static void node2JSON(Node node, JsonGenerator jgenerator) throws IOException {
+        commonNode2JSON(node, jgenerator);
+        if (node.getNodeProperties() != null) nodeProps2JSON(node, jgenerator);
+    }
+
+    public static void node2JSONWithTypedProps(Node node, JsonGenerator jgenerator) throws IOException, PropertiesException {
+        commonNode2JSON(node, jgenerator);
+        if (node.getNodeProperties() != null) nodeProps2JSONWithTypedProps(node, jgenerator);
+    }
+
+    public static void oneNode2JSON(Node node, ByteArrayOutputStream outStream) throws IOException {
         JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         jgenerator.writeStartObject();
         node2JSON(node, jgenerator);
@@ -118,13 +114,19 @@ public class NodeJSON {
         jgenerator.close();
     }
 
-    public final static void manyNodes2JSON(HashSet<Node> nodes, ByteArrayOutputStream outStream) throws IOException {
+    public static void oneNode2JSONWithTypedProps(Node node, ByteArrayOutputStream outStream) throws IOException, PropertiesException {
+        JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
+        jgenerator.writeStartObject();
+        node2JSONWithTypedProps(node, jgenerator);
+        jgenerator.writeEndObject();
+        jgenerator.close();
+    }
+
+    public static void manyNodes2JSON(HashSet<Node> nodes, ByteArrayOutputStream outStream) throws IOException {
         JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
         jgenerator.writeStartObject();
         jgenerator.writeArrayFieldStart("nodes");
-        Iterator<Node> iterC = nodes.iterator();
-        while (iterC.hasNext()) {
-            Node current = iterC.next();
+        for (Node current : nodes) {
             jgenerator.writeStartObject();
             NodeJSON.node2JSON(current, jgenerator);
             jgenerator.writeEndObject();
@@ -134,22 +136,35 @@ public class NodeJSON {
         jgenerator.close();
     }
 
-    public static class JSONDeserializedNode {
-        private long nodeID;
-        private String nodeName;
-        private long nodeDepth;
-        private long nodeContainerID;
-        private long nodeParentNodeID;
-        private List<Long> nodeChildNodesID;
-        private List<Long> nodeTwinNodesID;
-        private List<Long> nodeEndpointsID;
-        private List<JSONDeserializedProperty> nodeProperties;
+    public static void manyNodes2JSONWithTypedProps(HashSet<Node> nodes, ByteArrayOutputStream outStream) throws IOException, PropertiesException {
+        JsonGenerator jgenerator = ToolBox.jFactory.createJsonGenerator(outStream, JsonEncoding.UTF8);
+        jgenerator.writeStartObject();
+        jgenerator.writeArrayFieldStart("nodes");
+        for (Node current : nodes) {
+            jgenerator.writeStartObject();
+            NodeJSON.node2JSONWithTypedProps(current, jgenerator);
+            jgenerator.writeEndObject();
+        }
+        jgenerator.writeEndArray();
+        jgenerator.writeEndObject();
+        jgenerator.close();
+    }
 
-        public long getNodeID() {
+    public static class JSONDeserializedNode {
+        private String nodeID;
+        private String nodeName;
+        private String nodeContainerID;
+        private String nodeParentNodeID;
+        private List<String> nodeChildNodesID;
+        private List<String> nodeTwinNodesID;
+        private List<String> nodeEndpointsID;
+        private List<TypedPropertyField> nodeProperties;
+
+        public String getNodeID() {
             return nodeID;
         }
 
-        public void setNodeID(long nodeID) {
+        public void setNodeID(String nodeID) {
             this.nodeID = nodeID;
         }
 
@@ -161,59 +176,51 @@ public class NodeJSON {
             this.nodeName = nodeName;
         }
 
-        public long getNodeDepth() {
-            return nodeDepth;
-        }
-
-        public void setNodeDepth(long nodeDepth) {
-            this.nodeDepth = nodeDepth;
-        }
-
-        public long getNodeContainerID() {
+        public String getNodeContainerID() {
             return nodeContainerID;
         }
 
-        public void setNodeContainerID(long nodeContainerID) {
+        public void setNodeContainerID(String nodeContainerID) {
             this.nodeContainerID = nodeContainerID;
         }
 
-        public long getNodeParentNodeID() {
+        public String getNodeParentNodeID() {
             return nodeParentNodeID;
         }
 
-        public void setNodeParentNodeID(long nodeParentNodeID) {
+        public void setNodeParentNodeID(String nodeParentNodeID) {
             this.nodeParentNodeID = nodeParentNodeID;
         }
 
-        public List<Long> getNodeChildNodesID() {
+        public List<String> getNodeChildNodesID() {
             return nodeChildNodesID;
         }
 
-        public void setNodeChildNodesID(List<Long> nodeChildNodesID) {
+        public void setNodeChildNodesID(List<String> nodeChildNodesID) {
             this.nodeChildNodesID = nodeChildNodesID;
         }
 
-        public List<Long> getNodeTwinNodesID() {
+        public List<String> getNodeTwinNodesID() {
             return nodeTwinNodesID;
         }
 
-        public void setNodeTwinNodesID(List<Long> nodeTwinNodesID) {
+        public void setNodeTwinNodesID(List<String> nodeTwinNodesID) {
             this.nodeTwinNodesID = nodeTwinNodesID;
         }
 
-        public List<Long> getNodeEndpointsID() {
+        public List<String> getNodeEndpointsID() {
             return nodeEndpointsID;
         }
 
-        public void setNodeEndpointsID(List<Long> nodeEndpointsID) {
+        public void setNodeEndpointsID(List<String> nodeEndpointsID) {
             this.nodeEndpointsID = nodeEndpointsID;
         }
 
-        public List<JSONDeserializedProperty> getNodeProperties() {
+        public List<TypedPropertyField> getNodeProperties() {
             return nodeProperties;
         }
 
-        public void setNodeProperties(List<JSONDeserializedProperty> nodeProperties) {
+        public void setNodeProperties(List<TypedPropertyField> nodeProperties) {
             this.nodeProperties = nodeProperties;
         }
     }
@@ -222,5 +229,30 @@ public class NodeJSON {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return mapper.readValue(payload, JSONDeserializedNode.class);
+    }
+
+    public static class JSONDeserializedNodes {
+        JSONDeserializedNode[] nodes;
+
+        public JSONDeserializedNode[] getNodes() {
+            return nodes;
+        }
+
+        public void setNodes(JSONDeserializedNode[] nodes) {
+            this.nodes = nodes;
+        }
+
+        public Set<JSONDeserializedNode> toSet() {
+            HashSet<JSONDeserializedNode> ret = new HashSet<>();
+            if (nodes!=null)
+                Collections.addAll(ret, nodes);
+            return ret;
+        }
+    }
+
+    public static Set<JSONDeserializedNode> JSON2Nodes(String payload) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return mapper.readValue(payload, JSONDeserializedNodes.class).toSet();
     }
 }

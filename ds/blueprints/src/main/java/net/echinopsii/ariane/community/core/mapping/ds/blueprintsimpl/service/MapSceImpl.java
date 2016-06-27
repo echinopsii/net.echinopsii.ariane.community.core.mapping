@@ -19,16 +19,23 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.EndpointImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
+import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.tools.MapImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
+import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
+import net.echinopsii.ariane.community.core.mapping.ds.json.service.MapJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MapSce;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 public class MapSceImpl implements MapSce {
@@ -69,8 +76,7 @@ public class MapSceImpl implements MapSce {
             map.addTransport(link.getLinkTransport());
     }
 
-    @Override
-    public MapImpl getMap(String mapperQuery) {
+    private MapImpl getMap(String mapperQuery) throws MappingDSException {
         MapImpl map = new MapImpl();
         Map<String, String> minimalMap = MappingDSGraphDB.executeQuery(mapperQuery);
 
@@ -78,25 +84,29 @@ public class MapSceImpl implements MapSce {
             String type = minimalMap.get(id);
             switch (type) {
                 case MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE:
-                    Container container = sce.getContainerSce().getContainer(new Long(id.substring(1, id.length())));
-                    addContainerToResultMap(container, map);
+                    Container container = sce.getContainerSce().getContainer(id.substring(1, id.length()));
+                    if (container != null) addContainerToResultMap(container, map);
+                    else log.warn("Container " + id + " not found !");
                     break;
                 case MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE:
-                    Node node = sce.getNodeSce().getNode(new Long(id.substring(1,id.length())));
-                    addNodeToResultMap(node, map);
+                    Node node = sce.getNodeSce().getNode(id.substring(1,id.length()));
+                    if (node != null) addNodeToResultMap(node, map);
+                    else log.warn("Node " + id + " not found !");
                     break;
                 case MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE:
-                    Endpoint endpoint = sce.getEndpointSce().getEndpoint(new Long(id.substring(1,id.length())));
-                    addEndpointToResultMap(endpoint, map);
+                    Endpoint endpoint = sce.getEndpointSce().getEndpoint(id.substring(1,id.length()));
+                    if (endpoint != null) addEndpointToResultMap(endpoint, map);
+                    else log.warn("Endpoint " + id + " not found !");
                     break;
                 case MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE:
-                    Transport transport = sce.getTransportSce().getTransport(new Long(id.substring(1,id.length())));
-                    log.debug("Add transport to result map : " + transport.getTransportName());
-                    map.addTransport(transport);
+                    Transport transport = sce.getTransportSce().getTransport(id.substring(1,id.length()));
+                    if (transport != null) map.addTransport(transport);
+                    else log.warn("Transport " + id + " not found !");
                     break;
                 case MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY:
-                    Link link = sce.getLinkSce().getLink(new Long(id.substring(1,id.length())));
-                    addLinkToResultMap(link, map);
+                    Link link = sce.getLinkSce().getLink(id.substring(1,id.length()));
+                    if (link != null) addLinkToResultMap(link, map);
+                    else log.warn("Link " + id + " not found !");
                     break;
                 default:
                     log.error("Unsupported type {} for object {} in minimal map return !", type, id.substring(1,id.length()));
@@ -137,5 +147,17 @@ public class MapSceImpl implements MapSce {
             }
         }
         return map;
+    }
+
+    @Override
+    public String getMapJSON(String mapperQuery) throws MappingDSException, IOException {
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        net.echinopsii.ariane.community.core.mapping.ds.service.tools.Map map = this.getMap(mapperQuery);
+        MapJSON.allMap2JSON((HashSet<Container>) map.getContainers(),
+                    (HashSet<Node>) map.getNodes(),
+                    (HashSet<Endpoint>) map.getEndpoints(),
+                    (HashSet<Link>) map.getLinks(),
+                    (HashSet<Transport>) map.getTransports(), outStream);
+        return ToolBox.getOuputStreamContent(outStream, "UTF-8");
     }
 }

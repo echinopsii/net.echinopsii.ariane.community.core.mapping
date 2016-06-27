@@ -19,6 +19,7 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSBlueprintsCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.EndpointImpl;
@@ -35,23 +36,23 @@ public class EndpointRepoImpl implements EndpointRepo<EndpointImpl> {
     @Override
     public EndpointImpl save(EndpointImpl endpoint) {
         MappingDSGraphDB.saveVertexEntity(endpoint);
-        log.debug("Added endpoint {} to graph({}).", new Object[]{endpoint.toString(), MappingDSGraphDB.getVertexMaxCursor()});
+        log.debug("Added endpoint {} to graph.", new Object[]{endpoint.toString()});
         return endpoint;
     }
 
     @Override
     public void delete(EndpointImpl endpoint) {
         MappingDSGraphDB.deleteEntity(endpoint);
-        log.debug("Deleted endpoint {} from graph({}).", new Object[]{endpoint.toString(), MappingDSGraphDB.getVertexMaxCursor()});
+        log.debug("Deleted endpoint {} from graph.", new Object[]{endpoint.toString()});
     }
 
     @Override
-    public Set<EndpointImpl> getAllEndpoints() {
+    public Set<EndpointImpl> getAllEndpoints() throws MappingDSException {
         return MappingDSGraphDB.getEndpoints();
     }
 
     @Override
-    public EndpointImpl findEndpointByID(long id) {
+    public EndpointImpl findEndpointByID(String id) throws MappingDSException {
         EndpointImpl ret = null;
         MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity(id);
         if (entity != null) {
@@ -66,12 +67,17 @@ public class EndpointRepoImpl implements EndpointRepo<EndpointImpl> {
     }
 
     @Override
-    public EndpointImpl findEndpointByURL(String url) {
+    public EndpointImpl findEndpointByURL(String url) throws MappingDSException {
         return MappingDSGraphDB.getIndexedEndpoint(url);
     }
 
     @Override
-    public Set<EndpointImpl> findEndpointsByProperties(String key, Object value) {
+    public Set<EndpointImpl> findEndpointsByProperties(String key, Object value) throws MappingDSException {
         return MappingDSGraphDB.getEndpoints(key, value);
+    }
+
+    @Override
+    public Set<EndpointImpl> findEndpointsBySelector(String selector) throws MappingDSException {
+        return MappingDSGraphDB.getEndpoints(selector);
     }
 }

@@ -19,56 +19,73 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.service;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.*;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.SessionRegistry;
 
 import java.util.Dictionary;
 import java.util.Set;
 
 public interface MappingSce {
+    String Q_MAPPING_SCE_SERVICE = "ARIANE_MAPPING_SERVICE_Q";
 
-    public MapSce getMapSce();
+    String GLOBAL_OPERATION_FDN = "OPERATION";
+    String GLOBAL_OPERATION_NOT_DEFINED = "NOT_DEFINED";
 
-    public ClusterSce<? extends Cluster> getClusterSce();
+    String GLOBAL_PARAM_OBJ_ID = "ID";
+    String GLOBAL_PARAM_OBJ_NONE = "NONE";
+    String GLOBAL_PARAM_PAYLOAD = "payload";
+    String GLOBAL_PARAM_SELECTOR = "selector";
+    String GLOBAL_PARAM_PROP_NAME = "propertyName";
+    String GLOBAL_PARAM_PROP_TYPE = "propertyType";
+    String GLOBAL_PARAM_PROP_VALUE = "propertyValue";
+    String GLOBAL_PARAM_PROP_FIELD = "propertyField";
 
-    public ContainerSce<? extends Container> getContainerSce();
+    int MAPPING_SCE_RET_SUCCESS = 0;
+    int MAPPING_SCE_RET_BAD_REQ = 400;
+    int MAPPING_SCE_RET_NOT_FOUND = 404;
+    int MAPPING_SCE_RET_SERVER_ERR = 500;
 
-    public GateSce<? extends Gate> getGateSce();
+    String OP_GET_NODE_BY_NAME = "getNodeByName";
+    String OP_GET_GATE_BY_NAME = "getGateByName";
+    String OP_GET_LINKS_BY_SOURCE_EP = "getLinksBySourceEP";
+    String OP_GET_LINKS_BY_DESTINATION_EP = "getLinksByDestinationEP";
+    String OP_GET_LINK_BY_SOURCE_EP_AND_DESTINATION_EP = "getLinkBySourceEPandDestinationEP";
+    String OP_GET_LINK_BY_SOURCE_EP_AND_TRANSPORT = "getMulticastLinkBySourceEPAndTransport";
 
-    public NodeSce<? extends Node> getNodeSce();
+    MapSce getMapSce();
 
-    public EndpointSce<? extends Endpoint> getEndpointSce();
+    SProxClusterSce<? extends Cluster> getClusterSce();
 
-    public LinkSce<? extends Link> getLinkSce();
+    SProxContainerSce<? extends Container> getContainerSce();
 
-    public TransportSce<? extends Transport> getTransportSce();
+    SProxGateSce<? extends Gate> getGateSce();
 
-    public Node getNodeByName(Container container, String nodeName);
+    SProxNodeSce<? extends Node> getNodeSce();
 
-    public Node getNodeContainingSubnode(Container container, Node node);
+    SProxEndpointSce<? extends Endpoint> getEndpointSce();
 
-    public Set<Node> getNodesInParentNode(Container container, Node node);
+    SProxLinkSce<? extends Link> getLinkSce();
 
-    public Gate getGateByName(Container container, String nodeName);
+    SProxTransportSce<? extends Transport> getTransportSce();
 
-    public Set<Link> getLinksBySourceEP(Endpoint endpoint);
+    Node getNodeByName(Container container, String nodeName) throws MappingDSException;
 
-    public Set<Link> getLinksByDestinationEP(Endpoint endpoint);
+    Gate getGateByName(Container container, String nodeName) throws MappingDSException;
 
-    public Link getLinkBySourceEPandDestinationEP(Endpoint esource, Endpoint edest);
+    Set<Link> getLinksBySourceEP(Endpoint endpoint) throws MappingDSException;
 
-    public boolean init(Dictionary<Object, Object> properties);
+    Set<Link> getLinksByDestinationEP(Endpoint endpoint) throws MappingDSException;
 
-    public boolean start();
+    Link getLinkBySourceEPandDestinationEP(Endpoint esource, Endpoint edest) throws MappingDSException;
 
-    public boolean stop();
+    Link getMulticastLinkBySourceEPAndTransport(Endpoint esource, Transport transport) throws MappingDSException;
 
-    public void unsetAutoCommit();
+    boolean init(Dictionary<Object, Object> properties);
 
-    public void setAutoCommit();
+    boolean start();
 
-    public void commit();
-
-    public void rollback();
-
-    Link getMulticastLinkBySourceEPAndTransport(Endpoint esource, Transport transport);
+    boolean stop();
 }

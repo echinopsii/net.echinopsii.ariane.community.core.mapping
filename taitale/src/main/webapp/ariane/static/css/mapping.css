@@ -41,15 +41,39 @@
 }
 
 .mappingPropsDialog {
-    background-color: rgba(0, 0, 0, 0.7) !important
+    background-color: rgba(0, 0, 0, 0.7) !important;
+}
+
+.mappingPropsDialog.pui-shadow {
+    box-shadow: 0px 0px 1px 0px #333 !important;
+}
+
+.mappingPropsDialog.ui-widget-content {
+    border: 0px !important;
 }
 
 .mappingPropsDialog .ui-widget-content {
     background-color: rgba(0, 0, 0, 0) !important
 }
 
+.mappingPropsDialog .ui-widget-header {
+    background: #333 !important;
+}
+
 .mappingPropsDialog .ui-widget-content a {
     color: #ffffff !important;
+}
+
+.mappingLegendPropsDialog {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+.mappingLegendPropsDialog.pui-shadow {
+    box-shadow: 0px 0px 0px 0px #333 !important;
+}
+
+.mappingLegendPropsDialog.ui-widget-content {
+    border: 0px !important;
 }
 
 .mappingContextMenu .ui-helper-reset{

@@ -1,0 +1,262 @@
+{
+  "containers": [
+    {
+      "containerID":1,
+      "containerName":"cloud",
+      "containerCompany":null,
+      "containerProduct":null,
+      "containerType":null,
+      "containerGateURI":"unknown://cloud"
+    },
+    {
+      "containerID":2,
+      "containerName":"pldeb64-www-rbs",
+      "containerCompany":null,
+      "containerProduct":"Linux - x86_64",
+      "containerType":"Operating System",
+      "containerGateURI":"ssh://pldeb64-www-rbs",
+      "containerProperties":{
+        "dynatrace_A_agentProperties_agentVersion": "6.3.0.1289",
+        "dynatrace_A_agentProperties_osVersion": "2.6.32-5-amd64",
+        "dynatrace_A_agentProperties_operatingSystem": "Linux",
+        "dynatrace_A_agentProperties_osArchitecture": "x86_64",
+        "dynatrace_A_agentProperties_maxmemory": "4161081344",
+        "dynatrace_A_agentProperties_clockFrequency": "2600331298"
+      }
+    },
+    {
+      "containerID":3,
+      "containerName":"pldeb64-app-rbs",
+      "containerCompany":null,
+      "containerProduct":"Linux - x86_64",
+      "containerType":"Operating System",
+      "containerGateURI":"ssh://pldeb64-app-rbs",
+      "containerProperties":{
+        "dynatrace_A_agentProperties_agentVersion": "6.3.0.1289",
+        "dynatrace_A_agentProperties_osVersion": "3.2.0-4-amd64",
+        "dynatrace_A_agentProperties_operatingSystem": "Linux",
+        "dynatrace_A_agentProperties_osArchitecture": "x86_64",
+        "dynatrace_A_agentProperties_maxmemory": "1037959168",
+        "dynatrace_A_agentProperties_clockFrequency": "2600331298"
+      }
+    },
+    {
+      "containerID":4,
+      "containerName":"10.1.3.8",
+      "containerCompany":null,
+      "containerProduct":null,
+      "containerType":null,
+      "containerGateURI":"unknown://10.1.3.8"
+    }
+  ],
+  "nodes": [
+    {
+      "nodeID":1,
+      "nodeName":"rbs.netquality.fr",
+      "nodeDepth":0,
+      "nodeContainerID":1,
+      "nodeProperties":{
+        "dynatrace_TF_adm_group": "Desktop Browser",
+        "dynatrace_TF_adm_technology": "Browser",
+        "dynatrace_TF_adm_response_avg": "2532.8132924264187",
+        "dynatrace_TF_adm_response_min": "241.0",
+        "dynatrace_TF_adm_response_max": "35847.0",
+        "dynatrace_TF_adm_response_sum": "1349989.4848632812",
+        "dynatrace_TF_adm_exec_avg": "2078.746492697195",
+        "dynatrace_TF_adm_exec_min": "241.0",
+        "dynatrace_TF_adm_exec_max": "34964.5212097168",
+        "dynatrace_TF_adm_exec_sum": "1107971.880607605",
+        "dynatrace_TF_adm_exec_cpu_avg": "0.0",
+        "dynatrace_TF_adm_exec_cpu_min": "0.0",
+        "dynatrace_TF_adm_exec_cpu_max": "0.0",
+        "dynatrace_TF_adm_exec_cpu_sum": "0.0"
+      }
+    },
+    {
+      "nodeID":2,
+      "nodeName":"wwwrbs[Apache 2.2]",
+      "nodeDepth":0,
+      "nodeContainerID":2,
+      "nodeProperties":{
+        "dynatrace_A_agentGroup": "RBS-Apache-Rename",
+        "dynatrace_TF_adm_group": "RBS-Apache-Rename",
+        "dynatrace_TF_adm_technology": "Web server",
+        "dynatrace_TF_adm_response_avg": "605.0483095612122",
+        "dynatrace_TF_adm_response_min": "9.955915451049805",
+        "dynatrace_TF_adm_response_max": "87695.3125",
+        "dynatrace_TF_adm_response_sum": "2818315.0259361267",
+        "dynatrace_TF_adm_exec_avg": "365.6136097462455",
+        "dynatrace_TF_adm_exec_min": "9.938812255859375",
+        "dynatrace_TF_adm_exec_max": "66947.345703125",
+        "dynatrace_TF_adm_exec_sum": "1259904.4991855621",
+        "dynatrace_TF_adm_exec_cpu_avg": "1.0686567453575633",
+        "dynatrace_TF_adm_exec_cpu_min": "0.2946000099182129",
+        "dynatrace_TF_adm_exec_cpu_max": "30.264484256505966",
+        "dynatrace_TF_adm_exec_cpu_sum": "3682.591144502163"
+      }
+    },
+    {
+      "nodeID":3,
+      "nodeName":"RBS-Tomcat",
+      "nodeDepth":0,
+      "nodeContainerID":3,
+      "nodeProperties":{
+        "dynatrace_A_agentGroup": "RBS-Tomcat",
+        "dynatrace_A_agentProperties_commandLine": "/opt/jdk/bin/java -Djava.util.logging.config.file=/opt/tomcat/conf/logging.properties -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager -Xms256m -Xmx1024m -agentpath:/opt/dynatrace-6.3/agent/lib64/libdtagent.so=name=RBS-Tomcat,server=192.168.101.174:9998 -javaagent:/opt/appdynamics/appagent/javaagent.jar -Djava.endorsed.dirs=/opt/tomcat/endorsed -classpath /opt/tomcat/bin/bootstrap.jar:/opt/tomcat/bin/tomcat-juli.jar -Dcatalina.base=/opt/tomcat -Dcatalina.home=/opt/tomcat -Djava.io.tmpdir=/opt/tomcat/temp org.apache.catalina.startup.Bootstrap start",
+        "dynatrace_A_agentProperties_workingdirectory": "/opt/tomcat-8.0.15/bin",
+        "dynatrace_TF_adm_group": "RBS-Tomcat",
+        "dynatrace_TF_adm_technology": "Java",
+        "dynatrace_TF_adm_response_avg": "350.0239233885441",
+        "dynatrace_TF_adm_response_min": "0.14226055145263672",
+        "dynatrace_TF_adm_response_max": "62819.5234375",
+        "dynatrace_TF_adm_response_sum": "1743469.1623983383",
+        "dynatrace_TF_adm_exec_avg": "329.86617433380223",
+        "dynatrace_TF_adm_exec_min": "0.10619250684976578",
+        "dynatrace_TF_adm_exec_max": "62145.44875104725",
+        "dynatrace_TF_adm_exec_sum": "1235348.8228800893",
+        "dynatrace_TF_adm_exec_cpu_avg": "11.713373003350103",
+        "dynatrace_TF_adm_exec_cpu_min": "0.15691299736499786",
+        "dynatrace_TF_adm_exec_cpu_max": "280.2912902832031",
+        "dynatrace_TF_adm_exec_cpu_sum": "44147.70284962654"
+      }
+    },
+    {
+      "nodeID":4,
+      "nodeName":"RBS",
+      "nodeDepth":0,
+      "nodeContainerID":4,
+      "nodeProperties":{
+        "dynatrace_TF_adm_group": "MySQL",
+        "dynatrace_TF_adm_technology": "Unknown",
+        "dynatrace_TF_adm_response_avg": "30.699722280842618",
+        "dynatrace_TF_adm_response_min": "0.020238",
+        "dynatrace_TF_adm_response_max": "929.26726",
+        "dynatrace_TF_adm_response_sum": "508632.9987490005",
+        "dynatrace_TF_adm_db_avg": "17.167205756019005",
+        "dynatrace_TF_adm_db_min": "0.020238",
+        "dynatrace_TF_adm_db_max": "929.26726",
+        "dynatrace_TF_adm_db_sum": "234589.86665599968",
+        "dynatrace_TF_adm_acq_avg": "94.3999766079917",
+        "dynatrace_TF_adm_acq_min": "34.735744",
+        "dynatrace_TF_adm_acq_max": "537.942944",
+        "dynatrace_TF_adm_acq_sum": "274043.13209299993"
+      }
+    }
+  ],
+  "endpoints": [
+    {
+      "endpointID":1,
+      "endpointURL":"tcp://rbs.netquality.fr@cloud:XXXX",
+      "endpointParentNodeID":1,
+      "endpointTwinEndpointID":[
+
+      ],
+      "endpointProperties":{
+        "dynatrace_TF_adm_links_remoting_count": "1745"
+      }
+    },
+    {
+      "endpointID":2,
+      "endpointURL":"tcp://wwwrbs[Apache 2.2]@pldeb64-www-rbs:80",
+      "endpointParentNodeID":2,
+      "endpointTwinEndpointID":[
+
+      ],
+      "endpointProperties":{
+        "dynatrace_TF_adm_links_remoting_count": "1745",
+        "dynatrace_PP_names": [
+          "/RetailBankingSimulation/afficher_detail_tache",
+          "/RetailBankingSimulation/",
+          "/RetailBankingSimulation/afficher_detail_tache",
+          "/RetailBankingSimulation/test_nico.jsp",
+          "/RetailBankingSimulation/afficher_bordereau",
+          "/RetailBankingSimulation/afficher_ddp",
+          "/RetailBankingSimulation/afficher_commentaires_dossier",
+          "/RetailBankingSimulation/test_nico.jsp",
+          "/RetailBankingSimulation/lps",
+          "/RetailBankingSimulation/afficher_commentaires_dossier",
+          "/RetailBankingSimulation/resources/js/adrum.js",
+          "/RetailBankingSimulation/resources/images/logoAppli.png",
+          "/RetailBankingSimulation/resources/images/logoNq.png",
+          "..."
+        ]
+      }
+    },
+    {
+      "endpointID":3,
+      "endpointURL":"tcp://wwwrbs[Apache 2.2]@pldeb64-www-rbs:XXXX",
+      "endpointParentNodeID":2,
+      "endpointTwinEndpointID":[
+
+      ],
+      "endpointProperties":{
+        "dynatrace_TF_adm_links_remoting_count": "4658"
+      }
+    },
+    {
+      "endpointID":4,
+      "endpointURL":"tcp://RBS-Tomcat@pldeb64-app-rbs:8080",
+      "endpointParentNodeID":3,
+      "endpointTwinEndpointID":[
+
+      ],
+      "endpointProperties":{
+        "dynatrace_TF_adm_links_remoting_count": "4658",
+        "dynatrace_PP_names": [
+          "/RetailBankingSimulation/creer_commande",
+          "/RetailBankingSimulation/afficher_commentaires_dossier",
+          "/RetailBankingSimulation/afficher_corbeille",
+          "..."
+        ]
+      }
+    },
+    {
+      "endpointID":5,
+      "endpointURL":"tcp://RBS-Tomcat@pldeb64-app-rbs:XXXX",
+      "endpointParentNodeID":3,
+      "endpointTwinEndpointID":[
+
+      ],
+      "endpointProperties":{
+        "dynatrace_TF_adm_links_remoting_count": "8709"
+      }
+    },
+    {
+      "endpointID":6,
+      "endpointURL":"tcp://RBS@10.1.3.8:3306",
+      "endpointParentNodeID":4,
+      "endpointTwinEndpointID":[
+
+      ],
+      "endpointProperties":{
+        "dynatrace_TF_adm_links_remoting_count": "8709"
+      }
+    }
+  ],
+  "links": [
+    {
+      "linkID":1,
+      "linkSEPID":1,
+      "linkTEPID":2,
+      "linkTRPID":1
+    },
+    {
+      "linkID":2,
+      "linkSEPID":3,
+      "linkTEPID":4,
+      "linkTRPID":1
+    },
+    {
+      "linkID":3,
+      "linkSEPID":5,
+      "linkTEPID":6,
+      "linkTRPID":1
+    }
+  ],
+  "transports": [
+    {
+      "transportID":1,
+      "transportName":"tcp://"
+    }
+  ]
+}

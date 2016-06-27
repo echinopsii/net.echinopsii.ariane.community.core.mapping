@@ -344,5 +344,5 @@ body .pui-growl-image-warn::before, body .ui-growl-image-warn::before{content:"\
 body .pui-growl-image-error::before, body .ui-growl-image-error::before{content:"\F057"; font-family: 'FontAwesome';font-size: 2.5em;}
 body .ui-state-highlight .ui-icon::before{content:"\F05C" !important; font-family: 'FontAwesome' !important;font-size: 1.5em; color: #fff !important;}
 
-#header{background: #333;}
+#header{background: #333; box-shadow: 0px -1px 1.5px 1.5px #333;}
 a#arianeLogo{margin: 40px 20px 0 20px !important;}

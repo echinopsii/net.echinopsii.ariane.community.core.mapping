@@ -85,15 +85,31 @@ public class MappingDSGraphDBObjectProps {
         String type    = null;
         String subKey  = null;
 
-        keyName = splittedKey.split(prefixObjKey + "_|\\.")[1].split("_")[0];
-        if (splittedKey.split("_|\\.").length>2) {
+        if (splittedKey.contains("_HashMap") && !splittedKey.contains("_ArrayList"))
+            if (prefixObjKey.equals("HashMap")) keyName = splittedKey.split("_HashMap")[0].split(prefixObjKey + "_|\\.")[1];
+            else keyName = splittedKey.split(prefixObjKey + "_|\\.")[1].split("_HashMap")[0];
+        else if (splittedKey.contains("_ArrayList") && !splittedKey.contains("_HashMap"))
+            if (prefixObjKey.equals("ArrayList")) keyName = splittedKey.split("_ArrayList")[0].split(prefixObjKey + "_|\\.")[1];
+            else keyName = splittedKey.split(prefixObjKey + "_|\\.")[1].split("_ArrayList")[0];
+        else if (splittedKey.contains("_HashMap") && splittedKey.contains("_ArrayList"))
+            if (splittedKey.indexOf("_HashMap") < splittedKey.indexOf("_ArrayList"))
+                if (prefixObjKey.equals("HashMap")) keyName = splittedKey.split("_HashMap")[0].split(prefixObjKey + "_|\\.")[1];
+                else keyName = splittedKey.split(prefixObjKey + "_|\\.")[1].split("_HashMap")[0];
+            else
+                if (prefixObjKey.equals("ArrayList")) keyName = splittedKey.split("_ArrayList")[0].split(prefixObjKey + "_|\\.")[1];
+                else keyName = splittedKey.split(prefixObjKey + "_|\\.")[1].split("_ArrayList")[0];
+        else if (splittedKey.contains("_BigDecimal")) keyName = splittedKey.split(prefixObjKey + "_|\\.")[1].split("_BigDecimal")[0];
+        else keyName = splittedKey.split(prefixObjKey + "_|\\.")[1];
+
+        if ((splittedKey.contains("_HashMap") || splittedKey.contains("_ArrayList") || splittedKey.contains("_BigDecimal")) &&
+             splittedKey.split("_|\\.").length>2) {
             type = splittedKey.split(keyName + "_")[1].split("_|\\.")[0];
             String[] splittedKeyTab = splittedKey.split(keyName + "_");
             if (splittedKeyTab.length == 1)
                 subKey = splittedKey.split(keyName + "_")[1];
             else {
                 subKey = "";
-                for (int idx = 0; idx < splittedKeyTab.length; idx ++) {
+                for (int idx = 0; idx < splittedKeyTab.length; idx++) {
                     if (idx == 1)
                         subKey += splittedKeyTab[idx];
                     else if (idx > 0)

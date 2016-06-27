@@ -19,7 +19,7 @@
 
 package net.echinopsii.ariane.community.core.mapping.wat;
 
-import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.core.portal.base.model.*;
 import net.echinopsii.ariane.community.core.portal.base.plugin.FaceletsResourceResolverService;
 import net.echinopsii.ariane.community.core.portal.base.plugin.FacesMBeanRegistry;
@@ -63,7 +63,7 @@ public class MappingBootstrap implements FaceletsResourceResolverService {
     private UserPreferencesRegistry userPreferencesRegistry = null;
 
     @Requires
-    private MappingSce mappingBSce = null;
+    private SProxMappingSce mappingBSce = null;
 
     @Bind
     public void bindRestResourceRegistry(RestResourceRegistry r) {
@@ -113,10 +113,10 @@ public class MappingBootstrap implements FaceletsResourceResolverService {
         userPreferencesRegistry = null;
     }
 
-    private static MappingSce mappingSce = null;
+    private static SProxMappingSce mappingSce = null;
 
     @Bind
-    public void bindMappingBSce(MappingSce s) {
+    public void bindMappingBSce(SProxMappingSce s) {
         log.debug("Bound to mapping service...");
         mappingBSce = s;
         mappingSce = s;
@@ -132,6 +132,8 @@ public class MappingBootstrap implements FaceletsResourceResolverService {
     public static final String MAPPING_USER_PREF_LAYOUT = "mappingDisplayLayout";
     public static final String MAPPING_USER_PREF_VIEW   = "mappingDisplayView";
     public static final String MAPPING_USER_PREF_MODE   = "mappingDisplayMode";
+    public static final String MAPPING_USER_PREF_EPH    = "mappingDisplayEPH";
+    public static final String MAPPING_USER_PREF_LEGEND = "mappingDisplayLegend";
 
     @Validate
     public void validate() throws Exception {
@@ -145,6 +147,7 @@ public class MappingBootstrap implements FaceletsResourceResolverService {
             entity.getDisplayPermissions().add("mappingDB:read");
             mappingMainMenuEntityList.add(entity);
             mainMenuEntityRegistry.registerMainLeftMenuEntity(entity);
+
             log.debug("{} has registered its main menu items", new Object[]{MAPPING_COMPONENT});
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -157,15 +160,26 @@ public class MappingBootstrap implements FaceletsResourceResolverService {
                                                                                                             UserPreferenceEntityType.TYPE_USR_PREF_ENTITY_ONEBUTTON_SELECT,
                                                                                                             "Define your prefered layout").
                                                                                                             addSelectValue("BBTree").
-                                                                                                            addSelectValue("Tree").
-                                                                                                            addSelectValue("Network")./*addSelectValue("Random").*/
-                                                                                                            setFieldDefault("Tree")).
+                                                                                                            addSelectValue("Middleware")./*addSelectValue("Random").*/
+                                                                                                            setFieldDefault("BBTree")).
                                                                          addEntity(new UserPreferenceEntity(MAPPING_USER_PREF_MODE,
                                                                                                             UserPreferenceEntityType.TYPE_USR_PREF_ENTITY_ONEBUTTON_SELECT,
                                                                                                             "Define your prefered mode").
                                                                                                             addSelectValue("Navigation").
                                                                                                             addSelectValue("Edition").
-                                                                                                            setFieldDefault("Navigation"));
+                                                                                                            setFieldDefault("Navigation")).
+                                                                         addEntity(new UserPreferenceEntity(MAPPING_USER_PREF_EPH,
+                                                                                                            UserPreferenceEntityType.TYPE_USR_PREF_ENTITY_ONEBUTTON_SELECT,
+                                                                                                            "Define endpoint helper status").
+                                                                                                            addSelectValue("ON").addSelectValue("OFF").
+                                                                                                            setFieldDefault("OFF")).
+                                                                        addEntity(new UserPreferenceEntity(MAPPING_USER_PREF_LEGEND,
+                                                                                UserPreferenceEntityType.TYPE_USR_PREF_ENTITY_ONEBUTTON_SELECT,
+                                                                                "Define legend status").
+                                                                                addSelectValue("ON").addSelectValue("OFF").
+                                                                                setFieldDefault("OFF"));
+
+
         /*.
                                                                          addEntity(new UserPreferenceEntity(MAPPING_USER_PREF_VIEW,
                                                                                                             UserPreferenceEntityType.TYPE_USR_PREF_ENTITY_ONEBUTTON_SELECT,
@@ -203,7 +217,7 @@ public class MappingBootstrap implements FaceletsResourceResolverService {
         log.info("{} is stopped", MAPPING_COMPONENT);
     }
 
-    public static MappingSce getMappingSce() {
+    public static SProxMappingSce getMappingSce() {
         return mappingSce;
     }
 

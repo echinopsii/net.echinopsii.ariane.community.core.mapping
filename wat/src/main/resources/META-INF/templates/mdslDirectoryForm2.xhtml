@@ -1,0 +1,29 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+<ui:composition>
+    <h:panelGrid id="directoryNewGrid" columns="2" cellpadding="5"
+                 styleClass="ui-widget-content grid" style="border: 0px">
+        <p:outputLabel value="Root folder : " styleClass="inputTitle"/>
+        <h:panelGroup>
+            <h:outputText id="targetDirectory1" value="{{pathToNode}}"/>
+        </h:panelGroup>
+
+        <p:outputLabel value="Root folder description : " styleClass="inputTitle"/>
+        <h:panelGroup>
+            <h:outputText value="{{directoryDescription}}"/>
+        </h:panelGroup>
+
+        <p:outputLabel value="New folder name : " styleClass="inputTitle"/>
+        <input type="text" id="name" class="ui-inputfield ui-inputtext ui-widget ui-state-default ui-corner-all"
+               size="80" ng-model="folderName"/>
+
+        <p:outputLabel value="New folder description : " styleClass="inputTitle" />
+        <textarea id="description" style="resize: none; border: 1px solid #404040; border-radius: 0px;"
+                  rows="10" cols="80" ng-model="folderDescription"/>
+    </h:panelGrid>
+    <h:inputHidden id="id"/>
+
+</ui:composition>
+</html>

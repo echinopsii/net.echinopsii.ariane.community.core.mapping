@@ -37,6 +37,8 @@ public class MappingToolsDisplayTabController implements Serializable {
     private String mappingLayout = null;
     private String mappingView   = null;
     private String mappingMode   = null;
+    private String mappingEPH    = null;
+    private String mappingLegend = null;
 
     @PostConstruct
     public void init() {
@@ -46,6 +48,8 @@ public class MappingToolsDisplayTabController implements Serializable {
         mappingLayout = (String)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get(MappingBootstrap.MAPPING_USER_PREF_LAYOUT);
         mappingMode = (String)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get(MappingBootstrap.MAPPING_USER_PREF_MODE);
         mappingView = (String)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get(MappingBootstrap.MAPPING_USER_PREF_VIEW);
+        mappingEPH = (String)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get(MappingBootstrap.MAPPING_USER_PREF_EPH);
+        mappingLegend = (String)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get(MappingBootstrap.MAPPING_USER_PREF_LEGEND);
     }
 
     public List<String> getDefaultNotifications() {
@@ -78,5 +82,21 @@ public class MappingToolsDisplayTabController implements Serializable {
 
     public void setMappingMode(String mappingMode) {
         this.mappingMode = mappingMode;
+    }
+
+    public String getMappingEPH() {
+        return mappingEPH;
+    }
+
+    public void setMappingEPH(String mappingEPH) {
+        this.mappingEPH = mappingEPH;
+    }
+
+    public String getMappingLegend() {
+        return mappingLegend;
+    }
+
+    public void setMappingLegend(String mappingLegend) {
+        this.mappingLegend = mappingLegend;
     }
 }

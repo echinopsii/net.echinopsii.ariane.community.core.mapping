@@ -19,12 +19,13 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.repository;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Cluster;
 
 public interface ClusterRepo<CL extends Cluster> {
-	public CL   save(CL cluster);
-	public void delete(CL cluster);
+	CL   save(CL cluster);
+	void delete(CL cluster);
 	
-	public CL findClusterByID(long id);
-	public CL findClusterByName(String name);
+	CL findClusterByID(String id) throws MappingDSException;
+	CL findClusterByName(String name) throws MappingDSException;
 }

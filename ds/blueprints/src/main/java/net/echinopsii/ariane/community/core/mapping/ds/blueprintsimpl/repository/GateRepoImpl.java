@@ -19,6 +19,7 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSBlueprintsCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.EndpointImpl;
@@ -33,7 +34,7 @@ import java.util.Set;
 public class GateRepoImpl extends NodeRepoImpl implements GateRepo<NodeImpl, GateImpl> {
     private final static Logger log = LoggerFactory.getLogger(GateRepoImpl.class);
 
-    public static Set<GateImpl> getGateRepository() {
+    public static Set<GateImpl> getGateRepository() throws MappingDSException {
         return MappingDSGraphDB.getGates();
     }
 
@@ -45,8 +46,8 @@ public class GateRepoImpl extends NodeRepoImpl implements GateRepo<NodeImpl, Gat
     }
 
     @Override
-    public void delete(GateImpl containerGate) {
-        if (containerGate.getNodeID() != 0) {
+    public void delete(GateImpl containerGate) throws MappingDSException {
+        if (containerGate.getNodeID() != null) {
             super.deleteNode(containerGate);
         } else {
             //TODO : throw exception !!!
@@ -54,7 +55,7 @@ public class GateRepoImpl extends NodeRepoImpl implements GateRepo<NodeImpl, Gat
     }
 
     @Override
-    public GateImpl findGateByID(long ID) {
+    public GateImpl findGateByID(String ID) throws MappingDSException {
         GateImpl ret = null;
         MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity(ID);
         if (entity != null) {
@@ -68,7 +69,7 @@ public class GateRepoImpl extends NodeRepoImpl implements GateRepo<NodeImpl, Gat
     }
 
     @Override
-    public GateImpl findGateByEndpointURL(String URL) {
+    public GateImpl findGateByEndpointURL(String URL) throws MappingDSException {
         GateImpl ret = null;
         EndpointImpl ep = MappingDSGraphDB.getIndexedEndpoint(URL);
         if (ep != null) {

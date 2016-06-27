@@ -19,8 +19,10 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.*;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.repository.MappingRepo;
 
 import java.util.HashSet;
@@ -69,10 +71,10 @@ public class MappingRepoImpl implements MappingRepo<ContainerImpl, NodeImpl, Gat
     }
 
     @Override
-    public NodeImpl findNodeByName(ContainerImpl cont, String name) {
+    public NodeImpl findNodeByName(ContainerImpl cont, String name) throws MappingDSException {
         NodeImpl ret = null;
         for (NodeImpl node : MappingDSGraphDB.getIndexedNodes(name)) {
-            if (node.getNodeContainer().equals(cont)) {
+            if (node.getNodeContainer()!=null && node.getNodeContainer().equals(cont)) {
                 ret = node;
                 break;
             }
@@ -81,66 +83,24 @@ public class MappingRepoImpl implements MappingRepo<ContainerImpl, NodeImpl, Gat
     }
 
     @Override
-    public NodeImpl findNodeContainingSubnode(ContainerImpl container,
-                                              NodeImpl node) {
-        NodeImpl ret = null;
-        for (NodeImpl pnode : MappingDSGraphDB.getNodes()) {
-            if (pnode.getNodeContainer().equals(container)) {
-                for (NodeImpl cnode : pnode.getNodeChildNodes()) {
-                    if (cnode.equals(node)) {
-                        ret = pnode;
-                        break;
-                    }
-                }
-            }
-        }
-        return ret;
-    }
-
-    @Override
-    public Set<NodeImpl> findNodesInParentNode(ContainerImpl container,
-                                               NodeImpl node) {
-        Set<NodeImpl> ret = new HashSet<NodeImpl>();
-        for (NodeImpl cnode : MappingDSGraphDB.getNodes()) {
-            if (cnode.getNodeContainer().equals(container) && cnode.getNodeParentNode().equals(node)) {
-                ret.add(cnode);
-            }
-        }
-        return ret;
-    }
-
-    @Override
-    public GateImpl findGateByName(ContainerImpl container, String name) {
+    public GateImpl findGateByName(ContainerImpl container, String name) throws MappingDSException {
         return (GateImpl) findNodeByName(container, name);
     }
 
     @Override
-    public Set<LinkImpl> findLinksBySourceEP(EndpointImpl endpoint) {
-        Set<LinkImpl> ret = new HashSet<LinkImpl>();
-        for (LinkImpl link : MappingDSGraphDB.getLinks()) {
-            if (link.getLinkEndpointSource().equals(endpoint)) {
-                ret.add(link);
-            }
-        }
-        return ret;
+    public Set<LinkImpl> findLinksBySourceEP(EndpointImpl endpoint) throws MappingDSException {
+        return MappingDSGraphDB.getLinks(endpoint, null, null);
     }
 
     @Override
-    public Set<LinkImpl> findLinksByDestinationEP(EndpointImpl endpoint) {
-        Set<LinkImpl> ret = new HashSet<LinkImpl>();
-        for (LinkImpl link : MappingDSGraphDB.getLinks()) {
-            if (link.getLinkEndpointTarget()!=null /*else target is multicast transport*/ &&
-                        link.getLinkEndpointTarget().equals(endpoint)) {
-                ret.add(link);
-            }
-        }
-        return ret;
+    public Set<LinkImpl> findLinksByDestinationEP(EndpointImpl endpoint) throws MappingDSException {
+        return MappingDSGraphDB.getLinks(null, endpoint, null);
     }
 
     @Override
-    public LinkImpl findLinkBySourceEPandDestinationEP(EndpointImpl esource, EndpointImpl edest) {
+    public LinkImpl findLinkBySourceEPandDestinationEP(EndpointImpl esource, EndpointImpl edest) throws MappingDSException {
         LinkImpl ret = null;
-        for (LinkImpl link : MappingDSGraphDB.getLinks()) {
+        for (LinkImpl link : MappingDSGraphDB.getLinks(esource, edest, null)) {
             if (link.getLinkEndpointSource() != null && link.getLinkEndpointTarget() != null &&
                         link.getLinkEndpointSource().equals(esource) && link.getLinkEndpointTarget().equals(edest)) {
                 ret = link;
@@ -151,9 +111,9 @@ public class MappingRepoImpl implements MappingRepo<ContainerImpl, NodeImpl, Gat
     }
 
     @Override
-    public LinkImpl findMulticastLinkBySourceEPandTransport(EndpointImpl esource, TransportImpl transport) {
+    public LinkImpl findMulticastLinkBySourceEPandTransport(EndpointImpl esource, TransportImpl transport) throws MappingDSException {
         LinkImpl ret = null;
-        for (LinkImpl link : MappingDSGraphDB.getLinks()) {
+        for (LinkImpl link : MappingDSGraphDB.getLinks(esource, null, transport)) {
             if (link.getLinkEndpointSource() != null && link.getLinkEndpointTarget() == null && link.getLinkTransport() != null &&
                         link.getLinkEndpointSource().equals(esource) && link.getLinkTransport().equals(transport)) {
                 ret = link;

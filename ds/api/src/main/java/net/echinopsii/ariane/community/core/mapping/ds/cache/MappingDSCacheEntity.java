@@ -22,8 +22,8 @@ package net.echinopsii.ariane.community.core.mapping.ds.cache;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 
 public interface MappingDSCacheEntity {
-	public String getEntityCacheID();
+	String getEntityCacheID();
 	
-	public void   synchronizeToDB() throws MappingDSException;
-	public void   synchronizeFromDB();
+	void   synchronizeToDB() throws MappingDSException;
+	void   synchronizeFromDB() throws MappingDSException;
 }

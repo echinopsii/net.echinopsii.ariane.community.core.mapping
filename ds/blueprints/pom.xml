@@ -5,7 +5,7 @@
     <parent>
         <groupId>net.echinopsii.ariane.community.core.mapping</groupId>
         <artifactId>net.echinopsii.ariane.community.core.mapping.ds</artifactId>
-        <version>0.7.2-SNAPSHOT</version>
+        <version>0.8.1-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
@@ -85,9 +85,17 @@
                             net.echinopsii.ariane.community.core.mapping.ds;version="${project.version}",
                             net.echinopsii.ariane.community.core.mapping.ds.cache;version=${project.version},
                             net.echinopsii.ariane.community.core.mapping.ds.cfg;version=${project.version},
+                            net.echinopsii.ariane.community.core.mapping.ds.cli;version=${project.version},
+                            net.echinopsii.ariane.community.core.mapping.ds.json;version="${project.version}",
+                            net.echinopsii.ariane.community.core.mapping.ds.json.domain;version="${project.version}",
+                            net.echinopsii.ariane.community.core.mapping.ds.json.service;version="${project.version}",
                             net.echinopsii.ariane.community.core.mapping.ds.service;version="${project.version}",
+                            net.echinopsii.ariane.community.core.mapping.ds.service.proxy;version=${project.version},
+                            net.echinopsii.ariane.community.core.mapping.ds.service.tools;version="${project.version}",
                             net.echinopsii.ariane.community.core.mapping.ds.domain;version="${project.version}",
-                            net.echinopsii.ariane.community.core.mapping.ds.dsl;version="${project.version}",
+                            net.echinopsii.ariane.community.core.mapping.ds.domain.proxy;version=${project.version},
+                            net.echinopsii.ariane.community.core.mapping.ds.mdsl;version="${project.version}",
+                            net.echinopsii.ariane.community.core.mapping.ds.sdsl;version="${project.version}",
                             net.echinopsii.ariane.community.core.mapping.ds.repository;version="${project.version}",
                             com.tinkerpop.blueprints.impls.neo4j2;version="[${version.osgimin.com.tinkerpop.blueprints},${version.osgimax.com.tinkerpop.blueprints})";resolution:=optional,
                             com.tinkerpop.blueprints.impls.orient;version="[${version.osgimin.com.tinkerpop.blueprints},${version.osgimax.com.tinkerpop.blueprints})";resolution:=optional,
@@ -107,7 +115,8 @@
                         </Import-Package>
                         <Export-Package>
                             net.echinopsii.ariane.core.mapping.ds.blueprintsimpl.repository;version=${project.version},
-                            net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service;version=${project.version}
+                            net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service;version=${project.version},
+                            net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.tools;version=${project.version}
                         </Export-Package>
                     </instructions>
                 </configuration>

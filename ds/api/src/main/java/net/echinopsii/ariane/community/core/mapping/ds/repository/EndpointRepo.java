@@ -19,6 +19,7 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.repository;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 
 import java.util.Set;
@@ -28,11 +29,13 @@ public interface EndpointRepo<E extends Endpoint> {
 
     public void delete(E endpoint);
 
-    public Set<E> getAllEndpoints();
+    public Set<E> getAllEndpoints() throws MappingDSException;
 
-    public E findEndpointByID(long id);
+    public E findEndpointByID(String id) throws MappingDSException;
 
-    public E findEndpointByURL(String url);
+    public E findEndpointByURL(String url) throws MappingDSException;
 
-    public Set<E> findEndpointsByProperties(String key, Object value);
+    public Set<E> findEndpointsByProperties(String key, Object value) throws MappingDSException;
+
+    public Set<E> findEndpointsBySelector(String selector) throws MappingDSException;
 }

@@ -25,324 +25,344 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNam
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSBlueprintsCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDBObjectProps;
-import net.echinopsii.ariane.community.core.mapping.ds.domain.Cluster;
-import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
-import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
-import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
+import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.tools.SessionRegistryImpl;
+import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxContainer;
 import com.tinkerpop.blueprints.*;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxContainerAbs;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
-public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity {
+public class ContainerImpl extends SProxContainerAbs implements SProxContainer, MappingDSBlueprintsCacheEntity {
 
 	private static final Logger log = LoggerFactory.getLogger(ContainerImpl.class);
-	
-	private long                   containerID               = 0;
-    private String                 containerName             = null;
-	private String                 containerCompany          = null;
-    private String                 containerProduct          = null;
-    private String                 containerType             = null;
-	private GateImpl               containerPrimaryAdminGate = null;
-	
-	private ClusterImpl            containerCluster          = null;
-
-    private ContainerImpl          containerParentContainer  = null;
-    private Set<ContainerImpl>     containerChildContainers  = new HashSet<ContainerImpl>();
-	
-	private HashMap<String,Object> containerProperties       = null;
-	
-	private Set<NodeImpl>          containerNodes            = new HashSet<NodeImpl>();
-	private Set<GateImpl>          containerGates            = new HashSet<GateImpl>();
 	
 	private transient Vertex       containerVertex           = null;
 	private boolean                isBeingSyncFromDB         = false;
 	
-	@Override
-	public long getContainerID() {
-		return this.containerID;
-	}
-
     @Override
-    public String getContainerName() { return this.containerName; }
-
-    @Override
-    public void setContainerName(String name) {
-        if (this.containerName == null || this.containerName.equals(name)) {
-            this.containerName = name;
-            this.synchronizeNameToDB();
-            log.debug("Set container {} name to {}.", new Object[]{((this.containerVertex!=null)?this.containerVertex.getId():0),this.containerName});
+    public void setContainerName(String name) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.setContainerName(session, name);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (super.getContainerName() == null || !super.getContainerName().equals(name)) {
+                super.setContainerName(name);
+                this.synchronizeNameToDB();
+                log.debug("Set container {} name to {}.", new Object[]{((this.containerVertex != null) ? this.containerVertex.getId() : 0), super.getContainerName()});
+            }
         }
     }
 
     @Override
-    public String getContainerCompany() {
-        return containerCompany;
-    }
-
-    @Override
-    public void setContainerCompany(String company) {
-        if (this.containerCompany == null || !this.containerCompany.equals(company)) {
-            this.containerCompany = company;
-            this.synchronizeCompanyToDB();
-            log.debug("Set container {} company to {}.", new Object[]{((this.containerVertex!=null)?this.containerVertex.getId():0),this.containerCompany});
+    public void setContainerCompany(String company) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.setContainerCompany(session, company);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (super.getContainerCompany() == null || !super.getContainerCompany().equals(company)) {
+                super.setContainerCompany(company);
+                this.synchronizeCompanyToDB();
+                log.debug("Set container {} company to {}.", new Object[]{((this.containerVertex != null) ? this.containerVertex.getId() : 0), super.getContainerCompany()});
+            }
         }
     }
 
     @Override
-    public String getContainerProduct() {
-        return this.containerProduct;
-    }
-
-    @Override
-    public void setContainerProduct(String product) {
-        if (this.containerProduct == null || !this.containerProduct.equals(product)) {
-            this.containerProduct = product;
-            this.synchronizeProductToDB();
-            log.debug("Set container {} product to {}.", new Object[]{((this.containerVertex != null) ? this.containerVertex.getId() : 0), this.containerProduct});
+    public void setContainerProduct(String product) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.setContainerProduct(session, product);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (super.getContainerProduct() == null || !super.getContainerProduct().equals(product)) {
+                super.setContainerProduct(product);
+                this.synchronizeProductToDB();
+                log.debug("Set container {} product to {}.", new Object[]{((this.containerVertex != null) ? this.containerVertex.getId() : 0), super.getContainerProduct()});
+            }
         }
     }
 
     @Override
-    public String getContainerType() {
-        return this.containerType;
-    }
-
-    @Override
-    public void setContainerType(String type) {
-        if (this.containerType == null || !this.containerType.equals(type)) {
-            this.containerType = type;
-            this.synchronizeTypeToDB();
-            log.debug("Set container {} type to {}.", new Object[]{((this.containerVertex != null) ? this.containerVertex.getId() : 0), this.containerType});
+    public void setContainerType(String type) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.setContainerType(session, type);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (super.getContainerType() == null || !super.getContainerType().equals(type)) {
+                super.setContainerType(type);
+                this.synchronizeTypeToDB();
+                log.debug("Set container {} type to {}.", new Object[]{((this.containerVertex != null) ? this.containerVertex.getId() : 0), super.getContainerType()});
+            }
         }
     }
 
-	@Override
-	public String getContainerPrimaryAdminGateURL() {
-		String ret = null;
-		if (this.containerPrimaryAdminGate!=null)
-			ret = containerPrimaryAdminGate.getNodePrimaryAdminEndpoint().getEndpointURL();
-		return ret;
-	}
-
-	@Override
-	public GateImpl getContainerPrimaryAdminGate() {
-		return this.containerPrimaryAdminGate;
-	}
-
-	@Override
-	public void setContainerPrimaryAdminGate(Gate gate) {
-		if (this.containerPrimaryAdminGate==null || !this.containerPrimaryAdminGate.equals(gate)) {
-			if (gate instanceof GateImpl) {
-				this.containerPrimaryAdminGate = (GateImpl) gate;
-				synchronizePrimaryAdminGateToDB();
-			}
-			log.debug("Set container {} gate to {}.", new Object[]{this.containerID,this.containerPrimaryAdminGate.toString()});
-		}
+    @Override
+	public void setContainerPrimaryAdminGate(Gate gate) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.setContainerPrimaryAdminGate(session, gate);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (super.getContainerPrimaryAdminGate() == null || !super.getContainerPrimaryAdminGate().equals(gate)) {
+                if (gate instanceof GateImpl) {
+                    super.setContainerPrimaryAdminGate(gate);
+                    synchronizePrimaryAdminGateToDB();
+                }
+                log.debug("Set container {} gate to {}.", new Object[]{super.getContainerID(),
+                        (super.getContainerPrimaryAdminGate()!=null) ? super.getContainerPrimaryAdminGate() : "null"
+                });
+            }
+        }
 	}
 	
-	@Override
-	public ClusterImpl getContainerCluster() {
-		return this.containerCluster;
-	}
-
-	@Override
-	public void setContainerCluster(Cluster cluster) {
-		if (this.containerCluster == null || !this.containerCluster.equals(cluster)) {
-			if (cluster == null || cluster instanceof ClusterImpl) {
-				this.containerCluster = (ClusterImpl) cluster ;
-				synchronizeClusterToDB();
-			}
-		}
-	}
-
-	@Override
-	public HashMap<String, Object> getContainerProperties() {
-		return containerProperties ;
-	}
-	
-	@Override
-	public void addContainerProperty(String propertyKey, Object value){
-        if (containerProperties == null)
-            containerProperties = new HashMap<String, Object>();
-        containerProperties.put(propertyKey,value);
-        synchronizePropertyToDB(propertyKey, value);
-        log.debug("Set container {} property : ({},{})", new Object[]{this.containerID,
-                                                                             propertyKey,
-                                                                             this.containerProperties.get(propertyKey)});
+    @Override
+	public void setContainerCluster(Cluster cluster) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session != null) this.setContainerCluster(session, cluster);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (super.getContainerCluster() == null || !super.getContainerCluster().equals(cluster)) {
+                if (cluster == null || cluster instanceof ClusterImpl) {
+                    if (super.getContainerCluster()!=null) super.getContainerCluster().removeClusterContainer(this);
+                    super.setContainerCluster(cluster);
+                    if (cluster!=null) cluster.addClusterContainer(this);
+                    synchronizeClusterToDB();
+                }
+            }
+        }
 	}
 
     @Override
-    public void removeContainerProperty(String propertyKey) {
-        if (containerProperties!=null) {
-            containerProperties.remove(propertyKey);
+	public void addContainerProperty(String propertyKey, Object value) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session != null) this.addContainerProperty(session, propertyKey, value);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            super.addContainerProperty(propertyKey, value);
+            synchronizePropertyToDB(propertyKey, value);
+            log.debug("Set container {} property : ({},{})", new Object[]{super.getContainerID(),
+                    propertyKey,
+                    super.getContainerProperties().get(propertyKey)});
+        }
+	}
+
+    @Override
+    public void removeContainerProperty(String propertyKey) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session != null) removeContainerProperty(session, propertyKey);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            super.removeContainerProperty(propertyKey);
             removePropertyFromDB(propertyKey);
         }
     }
 
     @Override
-    public Container getContainerParentContainer() {
-        return this.containerParentContainer;
-    }
-
-    @Override
-    public void setContainerParentContainer(Container container) {
-        if (this.containerParentContainer==null || !this.containerParentContainer.equals(container)) {
-            if (container == null || container instanceof ContainerImpl) {
-                this.containerParentContainer = (ContainerImpl) container;
-            }
-        }
-    }
-
-    @Override
-    public Set<ContainerImpl> getContainerChildContainers() {
-        return this.containerChildContainers;
-    }
-
-    @Override
-    public boolean addContainerChildContainer(Container container) {
-        boolean ret = false;
-        if (container instanceof ContainerImpl) {
-            try {
-                ret = this.containerChildContainers.add((ContainerImpl)container);
-                container.setContainerParentContainer(this);
-                if (ret)
-                    synchronizeChildContainersToDB();
-            } catch (MappingDSException E) {
-                E.printStackTrace();
-                log.error("Exception while adding child container {}...", new Object[]{container.getContainerID()});
-                this.containerNodes.remove((ContainerImpl) container);
-                container.setContainerParentContainer(null);
-                MappingDSGraphDB.autorollback();
-            }
-        }
-        return ret;
-    }
-
-    @Override
-    public boolean removeContainerChildContainer(Container container) {
-        boolean ret = false;
-        if (container instanceof ContainerImpl) {
-            ret = containerChildContainers.remove(container);
-            if (ret) {
-                container.setContainerParentContainer(null);
-                removeChildContainerFromDB((ContainerImpl) container);
-            }
-        }
-        return ret;
-    }
-
-    @Override
-	public Set<NodeImpl> getContainerNodes(long depth) {
-		Set<NodeImpl> ret = null;
-		if (depth==1) {
-			ret = this.containerNodes;
-		} else {
-			ret = new HashSet<NodeImpl>();
-			Iterator<NodeImpl> iter = this.containerNodes.iterator();
-			while (iter.hasNext()) {
-				NodeImpl tmp = iter.next();
-				if (tmp.getNodeDepth()==depth)
-					ret.add(tmp);
-			}
-		}
-		return ret;
-	}
-
-	@Override
-	public boolean addContainerNode(Node node) {
-		if (node instanceof NodeImpl) {
-			boolean ret = false; 
-			try {
-				ret = this.containerNodes.add((NodeImpl)node);
-                node.setNodeContainer(this);
-				if (ret)
-					synchronizeNodeToDB((NodeImpl)node);
-			} catch (MappingDSException E) {
-				E.printStackTrace();
-				log.error("Exception while adding node {}...", new Object[]{node.getNodeID()});
-				this.containerNodes.remove((NodeImpl)node);
-                node.setNodeContainer(null);
-				MappingDSGraphDB.autorollback();
-			}
-			return ret;
-		}
-		else
-			return false;
-	}
-	
-	@Override
-	public boolean removeContainerNode(Node node) {
-		if (node instanceof NodeImpl) {
-			boolean ret = this.containerNodes.remove((NodeImpl)node);
-            if (ret) {
-                node.setNodeContainer(null);
-                removeNodeFromDB((NodeImpl) node);
-            }
-			return ret;
-		} else
-			return false;
-	}
-
-	@Override
-	public Set<GateImpl> getContainerGates() {
-		return this.containerGates;
-	}
-
-	@Override
-	public boolean addContainerGate(Gate gate) {
-		// a gate is also a node
-		if (gate instanceof GateImpl) {
-			boolean addToNodes = false;
-			boolean addToGates = false;
-			try {
-                addToNodes = this.containerNodes.add((NodeImpl) gate);
-                addToGates = this.containerGates.add((GateImpl) gate);
-                if (addToNodes && addToGates) {
-                    gate.setNodeContainer(this);
-                    synchronizeNodeToDB((NodeImpl) gate);
-                    synchronizeGateToDB((GateImpl) gate);
-                } else {
-                    gate.setNodeContainer(null);
-					if (addToNodes) this.containerNodes.remove((NodeImpl)gate);
-					if (addToGates) this.containerGates.remove((GateImpl)gate);
-				}
-			} catch (MappingDSException E) {
-				E.printStackTrace();
-				log.error("Exception while adding gate {}...", new Object[]{gate.getNodeID()});				
-				if (addToNodes) this.containerNodes.remove((NodeImpl)gate);
-				if (addToGates) this.containerGates.remove((GateImpl)gate);
-                gate.setNodeContainer(null);
-				MappingDSGraphDB.autorollback();
-			}
-			return addToNodes && addToGates;
-		} else {
-			return false;
-		}			
-	}
-
-    @Override
-    public boolean removeContainerGate(Gate gate) {
-        // a gate is also a node
-        if (gate instanceof GateImpl) {
-            boolean removedFromNodes = this.containerNodes.remove(gate);
-            boolean removedFromGates = this.containerGates.remove(gate);
-            if (removedFromGates && removedFromNodes) {
-                gate.setNodeContainer(null);
-                removeNodeFromDB((NodeImpl)gate);
-                removeGateFromDB((GateImpl)gate);
-            } else {
-                if (removedFromNodes) this.containerNodes.add((NodeImpl)gate);
-                if (removedFromGates) this.containerGates.add((GateImpl)gate);
-            }
-            return removedFromGates && removedFromNodes;
+    public void setContainerParentContainer(Container container) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.setContainerParentContainer(session, container);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            return true;
+            if (super.getContainerParentContainer() == null || !super.getContainerParentContainer().equals(container)) {
+                if (container == null || container instanceof ContainerImpl) {
+                    Container previousContainer = super.getContainerParentContainer();
+                    if (previousContainer!=null) previousContainer.removeContainerChildContainer(this);
+                    super.setContainerParentContainer(container);
+                    if (container!=null) container.addContainerChildContainer(this);
+                    synchronizeParentContainerToDB();
+                }
+            }
         }
+    }
+
+    @Override
+    public boolean addContainerChildContainer(Container container) throws MappingDSException {
+        boolean ret = false;
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = addContainerChildContainer(session, container);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (container instanceof ContainerImpl) {
+                try {
+                    ret = super.addContainerChildContainer(container);
+                    container.setContainerParentContainer(this);
+                    if (ret)
+                        synchronizeChildContainersToDB();
+                } catch (MappingDSException E) {
+                    E.printStackTrace();
+                    log.error("Exception while adding child container {}...", new Object[]{container.getContainerID()});
+                    super.removeContainerChildContainer(container);
+                    MappingDSGraphDB.autorollback();
+                }
+            }
+        }
+        return ret;
+    }
+
+    @Override
+    public boolean removeContainerChildContainer(Container container) throws MappingDSException {
+        boolean ret = false;
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = this.removeContainerChildContainer(session, container);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (container instanceof ContainerImpl) {
+                ret = super.removeContainerChildContainer(container);
+                if (ret) {
+                    container.setContainerParentContainer(null);
+                    removeChildContainerFromDB((ContainerImpl) container);
+                }
+            }
+        }
+        return ret;
+    }
+
+    @Override
+	public boolean addContainerNode(Node node) throws MappingDSException {
+        boolean ret = false;
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = this.addContainerNode(session, node);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (node instanceof NodeImpl) {
+                try {
+                    ret = super.addContainerNode(node);
+                    if (!node.getNodeContainer().equals(this)) node.setNodeContainer(this);
+                    if (ret) synchronizeNodeToDB((NodeImpl) node);
+                } catch (MappingDSException E) {
+                    E.printStackTrace();
+                    log.error("Exception while adding node {}...", new Object[]{node.getNodeID()});
+                    super.removeContainerNode(node);
+                    node.setNodeContainer(null);
+                    MappingDSGraphDB.autorollback();
+                }
+            }
+        }
+        return ret;
+	}
+
+    @Override
+	public boolean removeContainerNode(Node node) throws MappingDSException {
+        boolean ret = false;
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = this.removeContainerNode(session, node);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (node instanceof NodeImpl) {
+                ret = super.removeContainerNode(node);
+                if (ret) {
+                    if (node.getNodeContainer().equals(this)) node.setNodeContainer(null);
+                    removeNodeFromDB((NodeImpl) node);
+                }
+            }
+        }
+        return ret;
+	}
+
+    @Override
+	public boolean addContainerGate(Gate gate) throws MappingDSException {
+		boolean ret = false;
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = addContainerGate(session, gate);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (gate instanceof GateImpl) {
+                boolean addToNodes = false;
+                boolean addToGates = false;
+                try {
+                    addToNodes = (super.getContainerNodes().contains(gate)) || super.addContainerNode(gate);
+                    addToGates = (super.getContainerGates().contains(gate)) || super.addContainerGate(gate);
+                    if (addToNodes && addToGates) {
+                        if (gate.getNodeContainer()==null || !gate.getNodeContainer().equals(this)) gate.setNodeContainer(this);
+                        synchronizeNodeToDB((NodeImpl) gate);
+                        synchronizeGateToDB((GateImpl) gate);
+                    } else {
+                        gate.setNodeContainer(null);
+                        if (addToNodes) super.removeContainerNode(gate);
+                        if (addToGates) super.removeContainerGate(gate);
+                    }
+                } catch (MappingDSException E) {
+                    E.printStackTrace();
+                    log.error("Exception while adding gate {}...", new Object[]{gate.getNodeID()});
+                    if (addToNodes) super.removeContainerNode(gate);
+                    if (addToGates) super.removeContainerGate(gate);
+                    gate.setNodeContainer(null);
+                    MappingDSGraphDB.autorollback();
+                }
+                ret = addToNodes && addToGates;
+            }
+        }
+        return ret;
+	}
+
+    @Override
+    public boolean removeContainerGate(Gate gate) throws MappingDSException {
+        boolean ret = false;
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = this.removeContainerGate(session, gate);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (gate instanceof GateImpl) {
+                boolean removedFromNodes = super.removeContainerNode(gate);
+                boolean removedFromGates = super.removeContainerGate(gate);
+                if (removedFromGates && removedFromNodes) {
+                    gate.setNodeContainer(null);
+                    removeNodeFromDB((NodeImpl) gate);
+                    removeGateFromDB((GateImpl) gate);
+                } else {
+                    if (removedFromNodes) super.removeContainerNode(gate);
+                    if (removedFromGates) super.removeContainerGate(gate);
+                }
+                ret = removedFromGates && removedFromNodes;
+            }
+        }
+        return ret;
     }
 
     public Vertex getElement() {
@@ -354,14 +374,14 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
         if (MappingDSGraphDB.isBlueprintsNeo4j() && this.containerVertex instanceof Neo4j2Vertex)
             ((Neo4j2Vertex) this.containerVertex).addLabel(MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE);
 		this.containerVertex.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY, MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE);
-		this.containerID = this.containerVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+		super.setContainerID((String) this.containerVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
 		log.debug("Container vertex has been initialized ({},{}).", new Object[]{this.containerVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID),
 																				 this.containerVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY)});
 	}
 
     @Override
     public String getEntityCacheID() {
-        return "V" + this.containerID;
+        return "V" + super.getContainerID();
     }
 
     public void synchronizeToDB() throws MappingDSException {
@@ -380,56 +400,54 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
 
     private void synchronizeNameToDB() {
         if (containerVertex!=null) {
-            if (this.containerName!=null) {
-                log.debug("Synchronize container name {}...", new Object[]{this.containerName});
-                containerVertex.setProperty(MappingDSGraphPropertyNames.DD_CONTAINER_NAME_KEY, this.containerName);
+            if (super.getContainerName()!=null) {
+                log.debug("Synchronize container name {}...", new Object[]{super.getContainerName()});
+                containerVertex.setProperty(MappingDSGraphPropertyNames.DD_CONTAINER_NAME_KEY, super.getContainerName());
                 MappingDSGraphDB.autocommit();
-                log.debug("Synchronize container name {} done...", new Object[]{this.containerName});
+                log.debug("Synchronize container name {} done...", new Object[]{super.getContainerName()});
             }
         }
     }
 
     private void synchronizeCompanyToDB() {
         if (containerVertex!=null) {
-            if (this.containerCompany!=null) {
-                log.debug("Synchronize container company {}...", new Object[]{this.containerCompany});
-                containerVertex.setProperty(MappingDSGraphPropertyNames.DD_CONTAINER_COMPANY_KEY, this.containerCompany);
+            if (super.getContainerCompany()!=null) {
+                log.debug("Synchronize container company {}...", new Object[]{super.getContainerCompany()});
+                containerVertex.setProperty(MappingDSGraphPropertyNames.DD_CONTAINER_COMPANY_KEY, super.getContainerCompany());
                 MappingDSGraphDB.autocommit();
-                log.debug("Synchronize container company {} done...", new Object[]{this.containerCompany});
+                log.debug("Synchronize container company {} done...", new Object[]{super.getContainerCompany()});
             }
         }
     }
 
     private void synchronizeProductToDB() {
         if (containerVertex!=null) {
-            if (this.containerProduct!=null) {
-                log.debug("Synchronize container product {}...", new Object[]{this.containerProduct});
-                containerVertex.setProperty(MappingDSGraphPropertyNames.DD_CONTAINER_PRODUCT_KEY, this.containerProduct);
+            if (super.getContainerProduct()!=null) {
+                log.debug("Synchronize container product {}...", new Object[]{super.getContainerProduct()});
+                containerVertex.setProperty(MappingDSGraphPropertyNames.DD_CONTAINER_PRODUCT_KEY, super.getContainerProduct());
                 MappingDSGraphDB.autocommit();
-                log.debug("Synchronize container product {} done...", new Object[]{this.containerProduct});
+                log.debug("Synchronize container product {} done...", new Object[]{super.getContainerProduct()});
             }
         }
     }
 
 	private void synchronizeTypeToDB() {
 		if (containerVertex!=null) {
-			if (this.containerType!=null) {
-				log.debug("Synchronize container type {}...", new Object[]{this.containerType});
-				containerVertex.setProperty(MappingDSGraphPropertyNames.DD_CONTAINER_TYPE_KEY, this.containerType);
+			if (super.getContainerType()!=null) {
+				log.debug("Synchronize container type {}...", new Object[]{super.getContainerType()});
+				containerVertex.setProperty(MappingDSGraphPropertyNames.DD_CONTAINER_TYPE_KEY, super.getContainerType());
                 MappingDSGraphDB.autocommit();
-                log.debug("Synchronize container product {} done...", new Object[]{this.containerProduct});
+                log.debug("Synchronize container product {} done...", new Object[]{super.getContainerType()});
 			}
 		}
 	}
 	
 	private void synchronizePropertiesToDB() {
-		if (containerProperties!=null && containerVertex!=null) {
-			Iterator<String> iterK = this.containerProperties.keySet().iterator(); 
-			while (iterK.hasNext()) {
-				String key = iterK.next();
-				Object value = containerProperties.get(key);				
-				synchronizePropertyToDB(key, value);
-			}
+		if (super.getContainerProperties()!=null && containerVertex!=null) {
+            for (String key : super.getContainerProperties().keySet()) {
+                Object value = super.getContainerProperties().get(key);
+                synchronizePropertyToDB(key, value);
+            }
 		}
 	}
 	
@@ -441,43 +459,46 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
 	}
 	
 	private void synchronizePrimaryAdminGateToDB() {
-		if (containerVertex!=null && containerPrimaryAdminGate!=null && containerPrimaryAdminGate.getElement()!=null) {
-			log.debug("Synchronize container primary admin gate {}...", new Object[]{this.containerPrimaryAdminGate.getNodeID()});
+		if (containerVertex!=null && super.getContainerPrimaryAdminGate()!=null && ((GateImpl)super.getContainerPrimaryAdminGate()).getElement()!=null) {
+			log.debug("Synchronize container primary admin gate {}...", new Object[]{super.getContainerPrimaryAdminGate().getNodeID()});
 			containerVertex.setProperty(MappingDSGraphPropertyNames.DD_CONTAINER_PAGATE_KEY,
-									    this.containerPrimaryAdminGate.getNodeID());
+                    super.getContainerPrimaryAdminGate().getNodeID());
             MappingDSGraphDB.autocommit();
-            log.debug("Synchronize container primary admin gate {} done...", new Object[]{this.containerPrimaryAdminGate.getNodeID()});
+            log.debug("Synchronize container primary admin gate {} done...", new Object[]{super.getContainerPrimaryAdminGate().getNodeID()});
 		}
 	}
 	
 	private void synchronizeClusterToDB() {
-		if (containerVertex!=null && containerCluster!=null && containerCluster.getElement()!=null) {
-			log.debug("Synchronize container cluster {}...", new Object[]{this.containerCluster.getClusterID()});
+		if (containerVertex!=null && super.getContainerCluster()!=null && ((ClusterImpl)super.getContainerCluster()).getElement()!=null) {
+			log.debug("Synchronize container cluster {}...", new Object[]{super.getContainerCluster().getClusterID()});
 			containerVertex.setProperty(MappingDSGraphPropertyNames.DD_CONTAINER_CLUSTER_KEY,
-									    this.containerCluster.getClusterID());
+                    super.getContainerCluster().getClusterID());
             MappingDSGraphDB.autocommit();
-            log.debug("Synchronize container cluster {} done...", new Object[]{this.containerCluster.getClusterID()});
-		}
+            log.debug("Synchronize container cluster {} done...", new Object[]{super.getContainerCluster().getClusterID()});
+		} else if (containerVertex!=null && super.getContainerCluster()==null &&
+                containerVertex.getPropertyKeys().contains(MappingDSGraphPropertyNames.DD_CONTAINER_CLUSTER_KEY)) {
+            containerVertex.removeProperty(MappingDSGraphPropertyNames.DD_CONTAINER_CLUSTER_KEY);
+            MappingDSGraphDB.autocommit();
+        }
 	}
 
     private void synchronizeParentContainerToDB() {
-        if (containerVertex!=null && containerParentContainer!=null && containerParentContainer.getElement()!=null) {
-            log.debug("Synchronize container parent container {}...", new Object[]{this.containerParentContainer.getContainerID()});
+        if (containerVertex!=null && super.getContainerParentContainer()!=null && ((ContainerImpl)super.getContainerParentContainer()).getElement()!=null) {
+            log.debug("Synchronize container parent container {}...", new Object[]{super.getContainerParentContainer().getContainerID()});
             containerVertex.setProperty(MappingDSGraphPropertyNames.DD_CONTAINER_PCONTER_KEY,
-                                               this.containerParentContainer.getContainerID());
+                    super.getContainerParentContainer().getContainerID());
             MappingDSGraphDB.autocommit();
-            log.debug("Synchronize container parent container {} done...", new Object[]{this.containerParentContainer.getContainerID()});
+            log.debug("Synchronize container parent container {} done...", new Object[]{super.getContainerParentContainer().getContainerID()});
+        } else if (containerVertex!=null && super.getContainerParentContainer()==null &&
+                containerVertex.getPropertyKeys().contains(MappingDSGraphPropertyNames.DD_CONTAINER_PCONTER_KEY)) {
+            containerVertex.removeProperty(MappingDSGraphPropertyNames.DD_CONTAINER_PCONTER_KEY);
+            MappingDSGraphDB.autocommit();
         }
     }
 
     private void synchronizeChildContainersToDB() throws MappingDSException {
-        if (containerVertex!=null) {
-            Iterator<ContainerImpl> iterCCC = this.containerChildContainers.iterator();
-            while (iterCCC.hasNext()) {
-                ContainerImpl aContainer = iterCCC.next();
-                synchronizeChildContainerToDB(aContainer);
-            }
-        }
+        if (containerVertex!=null)
+            for (Container aContainer : super.getContainerChildContainers()) synchronizeChildContainerToDB((ContainerImpl) aContainer);
     }
 
     private void synchronizeChildContainerToDB(ContainerImpl container) throws MappingDSException {
@@ -487,7 +508,7 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
             query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
             query.has(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_CHILD_CONTAINER_KEY, true);
             for (Vertex vertex : query.vertices()) {
-                if ((long)vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID)==container.getContainerID())
+                if (vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID).equals(container.getContainerID()))
                     return;
             }
             log.debug("Synchronize container child container {}...", new Object[]{container.getContainerID()});
@@ -498,13 +519,9 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
     }
 
 	private void synchronizeNodesToDB() throws MappingDSException {
-		if (containerVertex!=null) {
-			Iterator<NodeImpl> iterCN = this.containerNodes.iterator();
-			while (iterCN.hasNext()) {
-				NodeImpl aNode = iterCN.next();
-				synchronizeNodeToDB(aNode);
-			}
-		}
+		if (containerVertex!=null)
+            for (Node aNode : super.getContainerNodes())
+                synchronizeNodeToDB((NodeImpl) aNode);
 	}
 	
 	private void synchronizeNodeToDB(NodeImpl node) throws MappingDSException {
@@ -516,7 +533,7 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
 			query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
 			query.has(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_NODE_KEY, true);
 			for (Vertex vertex : query.vertices()) {
-				if ((long)vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID)==node.getNodeID())
+				if (vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID).equals(node.getNodeID()))
 					return;
 			}
 			log.debug("Synchronize container node {}...", new Object[]{node.getNodeID()});
@@ -527,13 +544,9 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
 	}
 	
 	private void synchronizeGatesToDB() throws MappingDSException {
-		if (containerVertex!=null) {
-			Iterator<GateImpl> iterCG = this.containerGates.iterator();
-			while (iterCG.hasNext()) {
-				GateImpl aGate = iterCG.next();
-				synchronizeGateToDB(aGate);
-			}
-		}
+		if (containerVertex!=null)
+            for (Gate aGate : super.getContainerGates())
+                synchronizeGateToDB((GateImpl) aGate);
 	}
 	
 	private void synchronizeGateToDB(GateImpl gate) throws MappingDSException {
@@ -543,7 +556,7 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
 			query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
 			query.has(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_GATE_KEY, true);
 			for (Vertex vertex : query.vertices()) {
-				if ((long)vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID)==gate.getNodeID())
+				if (vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID).equals(gate.getNodeID()))
 					return;
 			}
 			log.debug("Synchronize container gate {}...", new Object[]{gate.getNodeID()});
@@ -553,7 +566,7 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
 		}
 	}
 	
-	public void synchronizeFromDB() {
+	public void synchronizeFromDB() throws MappingDSException {
 		if (!isBeingSyncFromDB) {
 			isBeingSyncFromDB = true;
 			synchronizeIDFromDB();
@@ -574,49 +587,45 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
 
 	private void synchronizeIDFromDB() {
 		if (this.containerVertex!=null)
-			this.containerID = this.containerVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+			super.setContainerID((String) this.containerVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
 	}
 
-    private void synchronizeNameFromDB() {
+    private void synchronizeNameFromDB() throws MappingDSException {
         if (this.containerVertex!=null) {
             Object ret = containerVertex.getProperty(MappingDSGraphPropertyNames.DD_CONTAINER_NAME_KEY);
             if (ret!=null)
-                this.containerName = (String) ret;
+                super.setContainerName((String) ret);
         }
     }
 
-    private void synchronizeCompanyFromDB() {
+    private void synchronizeCompanyFromDB() throws MappingDSException {
         if (containerVertex!=null) {
             Object ret = containerVertex.getProperty(MappingDSGraphPropertyNames.DD_CONTAINER_COMPANY_KEY);
             if (ret!=null)
-                this.containerCompany = (String) ret;
+                super.setContainerCompany((String) ret);
         }
     }
 
-    private void synchronizeProductFromDB() {
+    private void synchronizeProductFromDB() throws MappingDSException {
         if (containerVertex!=null) {
             Object ret = containerVertex.getProperty(MappingDSGraphPropertyNames.DD_CONTAINER_PRODUCT_KEY);
             if (ret!=null)
-                this.containerProduct = (String) ret;
+                super.setContainerProduct((String) ret);
         }
     }
 
-	private void synchronizeTypeFromDB() {
+	private void synchronizeTypeFromDB() throws MappingDSException {
 		if (containerVertex!=null) {
 			Object ret = containerVertex.getProperty(MappingDSGraphPropertyNames.DD_CONTAINER_TYPE_KEY);
 			if (ret!=null)
-				this.containerType = (String) ret;
+				super.setContainerType((String) ret);
 		}
 	}
 		
 	private void synchronizePropertiesFromDB() {
 		if (containerVertex!=null) {
-			if (containerProperties==null) {
-				containerProperties=new HashMap<String,Object>();
-			} else {
-                containerProperties.clear();
-            }
-            MappingDSGraphDBObjectProps.synchronizeObjectPropertyFromDB(containerVertex, containerProperties, MappingDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY);
+			if (super.getContainerProperties()!=null) super.getContainerProperties().clear();
+            MappingDSGraphDBObjectProps.synchronizeObjectPropertyFromDB(containerVertex, super.getContainerProperties(), MappingDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY);
 		}
 	}
 
@@ -628,70 +637,61 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
         }
     }
 
-	private void synchronizePrimaryAdminGateFromDB() {
+	private void synchronizePrimaryAdminGateFromDB() throws MappingDSException {
 		if (containerVertex!=null) {
 			Object paGateID = this.containerVertex.getProperty(MappingDSGraphPropertyNames.DD_CONTAINER_PAGATE_KEY);
 			if (paGateID!=null) {
-                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) paGateID);
+                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((String) paGateID);
 				if (entity!=null) {
-					if (entity instanceof GateImpl)
-						containerPrimaryAdminGate = (GateImpl) entity;
-					else
-						log.error("CONSISTENCY ERROR : entity {} is not a gate.", entity.getElement().getId());
+					if (entity instanceof GateImpl) super.setContainerPrimaryAdminGate((Gate)entity);
+					else log.error("CONSISTENCY ERROR : entity {} is not a gate.", entity.getElement().getId());
 				}
 			}
 		}
 	}
 	
-	private void synchronizeClusterFromDB() {
+	private void synchronizeClusterFromDB() throws MappingDSException {
 		if (containerVertex!=null) {
 			Object clusterID = this.containerVertex.getProperty(MappingDSGraphPropertyNames.DD_CONTAINER_CLUSTER_KEY);
 			if (clusterID!=null) {
-                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) clusterID);
+                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((String) clusterID);
 				if (entity!=null) {
-					if (entity instanceof ClusterImpl)
-						containerCluster = (ClusterImpl) entity;
-					else
-						log.error("CONSISTENCY ERROR : entity {} is not a cluster.", entity.getElement().getId());
+					if (entity instanceof ClusterImpl) super.setContainerCluster((Cluster)entity);
+					else log.error("CONSISTENCY ERROR : entity {} is not a cluster.", entity.getElement().getId());
 				}
 			}
 		}
 	}
 
-    private void synchronizeParentContainerFromDB() {
+    private void synchronizeParentContainerFromDB() throws MappingDSException {
         if (containerVertex!=null) {
             Object containerID = this.containerVertex.getProperty(MappingDSGraphPropertyNames.DD_CONTAINER_PCONTER_KEY);
             if (containerID!=null) {
-                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) containerID);
+                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((String) containerID);
                 if (entity!=null) {
-                    if (entity instanceof ContainerImpl)
-                        containerParentContainer = (ContainerImpl) entity;
-                    else
-                        log.error("CONSISTENCY ERROR : entity {} is not a container.", entity.getElement().getId());
+                    if (entity instanceof ContainerImpl) super.setContainerParentContainer((Container) entity);
+                    else log.error("CONSISTENCY ERROR : entity {} is not a container.", entity.getElement().getId());
                 }
             }
         }
     }
 
-    private void synchronizeChildContainersFromDB() {
+    private void synchronizeChildContainersFromDB() throws MappingDSException {
         if (containerVertex!=null) {
             VertexQuery query = containerVertex.query();
             query.direction(Direction.OUT);
             query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
             query.has(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_CHILD_CONTAINER_KEY, true);
-            this.containerChildContainers.clear();
+            super.getContainerChildContainers().clear();
             for (Vertex vertex : query.vertices()) {
                 ContainerImpl container = null;
-                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
+                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((String) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
                 if (entity!=null) {
-                    if (entity instanceof ContainerImpl) {
-                        container = (ContainerImpl)entity;
-                    } else {
-                        log.error("CONSISTENCY ERROR : entity {} is not a container.", entity.getElement().getId());
-                    }
+                    if (entity instanceof ContainerImpl) container = (ContainerImpl)entity;
+                    else log.error("CONSISTENCY ERROR : entity {} is not a container.", entity.getElement().getId());
                 }
                 if (container!=null)
-                    this.containerChildContainers.add(container);
+                    super.addContainerChildContainer(container);
             }
         }
     }
@@ -703,33 +703,30 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
             query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
             query.has(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_CHILD_CONTAINER_KEY, true);
             for (Edge edge : query.edges()) {
-                if (edge.getVertex(Direction.OUT).equals(container.getElement())) {
-                    MappingDSGraphDB.getDDgraph().removeEdge(edge);
+                if (edge.getVertex(Direction.IN).equals(container.getElement())) {
+                    MappingDSGraphDB.getGraph().removeEdge(edge);
                 }
             }
             MappingDSGraphDB.autocommit();
         }
     }
 	
-	private void synchronizeNodesFromDB() {
+	private void synchronizeNodesFromDB() throws MappingDSException {
 		if (containerVertex!=null) {
 			VertexQuery query = containerVertex.query();
 			query.direction(Direction.OUT);
 			query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
 			query.has(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_NODE_KEY, true);
-            this.containerNodes.clear();
+            super.getContainerNodes().clear();
 			for (Vertex vertex : query.vertices()) {
 				NodeImpl node = null;
-                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
+                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((String) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
 				if (entity!=null) {
-					if (entity instanceof NodeImpl) {
-						node = (NodeImpl)entity;
-					} else {
-						log.error("CONSISTENCY ERROR : entity {} is not a node.", entity.getElement().getId());
-					}
+					if (entity instanceof NodeImpl) node = (NodeImpl)entity;
+					else log.error("CONSISTENCY ERROR : entity {} is not a node.", entity.getElement().getId());
 				}
 				if (node!=null)
-					this.containerNodes.add(node);
+					super.addContainerNode(node);
 			}
 		}
 	}
@@ -741,34 +738,31 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
 			query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
 			query.has(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_NODE_KEY, true);
 			for (Edge edge : query.edges()) {
-				if (edge.getVertex(Direction.OUT).equals(node.getElement())) {
-					MappingDSGraphDB.getDDgraph().removeEdge(edge);
+				if (edge.getVertex(Direction.IN).equals(node.getElement())) {
+					MappingDSGraphDB.getGraph().removeEdge(edge);
 				}						
 			}
             MappingDSGraphDB.autocommit();
 		}
 	}
 
-	private void synchronizeGatesFromDB() {
+	private void synchronizeGatesFromDB() throws MappingDSException {
 		if (containerVertex!=null) {
 			VertexQuery query = containerVertex.query();
 			query.direction(Direction.OUT);
 			query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
 			query.has(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_GATE_KEY, true);
-            this.containerGates.clear();
+            super.getContainerGates().clear();
 			for (Vertex vertex : query.vertices()) {
 				GateImpl gate = null;
-                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((long) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
+                MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity((String) vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
 				if (entity!=null) {
-					if (entity instanceof GateImpl) {
-						gate = (GateImpl)entity;
-					} else {
-						log.error("CONSISTENCY ERROR : entity {} is not a gate.", entity.getElement().getId());
-					}
+					if (entity instanceof GateImpl) gate = (GateImpl)entity;
+					else log.error("CONSISTENCY ERROR : entity {} is not a gate.", entity.getElement().getId());
 				}
 				if (gate!=null) {
-					this.containerNodes.add(gate);
-					this.containerGates.add(gate);
+					super.addContainerNode(gate);
+					super.addContainerGate(gate);
 				}
 			}
 		}
@@ -781,41 +775,11 @@ public class ContainerImpl implements Container, MappingDSBlueprintsCacheEntity 
             query.labels(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_OWNS_LABEL_KEY);
             query.has(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_GATE_KEY, true);
             for (Edge edge : query.edges()) {
-                if (edge.getVertex(Direction.OUT).equals(node.getElement())) {
-                    MappingDSGraphDB.getDDgraph().removeEdge(edge);
+                if (edge.getVertex(Direction.IN).equals(node.getElement())) {
+                    MappingDSGraphDB.getGraph().removeEdge(edge);
                 }
             }
             MappingDSGraphDB.autocommit();
         }
-    }
-	
-	@Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        ContainerImpl tmp = (ContainerImpl) o;
-        if (this.containerID == 0) {
-            return super.equals(o);
-        }
-        return (this.containerID == tmp.getContainerID());
-    }
-
-    @Override
-    public int hashCode() {
-        return this.containerVertex != null ? new Long(this.containerID).hashCode() : super.hashCode();
-    }
-
-    @Override
-    public String toString() {
-        String adminUrl = null;
-        if (this.containerPrimaryAdminGate != null && this.containerPrimaryAdminGate.getNodePrimaryAdminEndpoint() != null) {
-            adminUrl = this.containerPrimaryAdminGate.getNodePrimaryAdminEndpoint().getEndpointURL();
-        }
-        return String.format("Container{ID='%d', Primary Admin URL='%s'}", this.containerID, adminUrl);
     }
 }

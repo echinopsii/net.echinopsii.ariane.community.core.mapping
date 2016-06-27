@@ -18,26 +18,46 @@
  */ 
 package net.echinopsii.ariane.community.core.mapping.ds.domain;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
+
 import java.util.HashMap;
 import java.util.Set;
 
 public interface Endpoint {
-	public long getEndpointID();
+	String TOKEN_EP_ID = MappingDSGraphPropertyNames.DD_TYPE_ENDPOINT_VALUE+"ID";
+	String TOKEN_EP_URL = MappingDSGraphPropertyNames.DD_ENDPOINT_URL_KEY;
+	String TOKEN_EP_PNODEID = MappingDSGraphPropertyNames.DD_ENDPOINT_PNODE_KEY+"ID";
+	String TOKEN_EP_TWNEPID = MappingDSGraphPropertyNames.DD_ENDPOINT_EDGE_TWIN_KEY+"sID";
+	String TOKEN_EP_PRP = MappingDSGraphPropertyNames.DD_ENDPOINT_PROPS_KEY;
+
+	String OP_SET_ENDPOINT_URL = "setEndpointURL";
+	String OP_SET_ENDPOINT_PARENT_NODE = "setEndpointParentNode";
+	String OP_ADD_ENDPOINT_PROPERTY = "addEndpointProperty";
+	String OP_REMOVE_ENDPOINT_PROPERTY = "removeEndpointProperty";
+	String OP_ADD_TWIN_ENDPOINT = "addTwinEndpoint";
+	String OP_REMOVE_TWIN_ENDPOINT = "removeTwinEndpoint";
+
+	String JOIN_PREVIOUS_PNODE = MappingDSGraphPropertyNames.DD_ENDPOINT_PNODE_KEY+"Previous";
+	String JOIN_CURRENT_PNODE = MappingDSGraphPropertyNames.DD_ENDPOINT_PNODE_KEY+"Current";
+
+	String getEndpointID();
+	void   setEndpointID(String ID);
 	
 	/*
 	 * MUST be unique
 	 */
-	public String getEndpointURL();
-	public void   setEndpointURL(String url);
+	String getEndpointURL();
+	void   setEndpointURL(String url) throws MappingDSException;
 	
-	public Node getEndpointParentNode();
-	public void setEndpointParentNode(Node node);
+	Node getEndpointParentNode();
+	void setEndpointParentNode(Node node) throws MappingDSException;
 
-	public Set<? extends Endpoint> getTwinEndpoints();
-	public boolean                 addTwinEndpoint(Endpoint endpoint);
-	public boolean                 removeTwinEndpoint(Endpoint endpoint);
+	Set<? extends Endpoint> getTwinEndpoints();
+	boolean                 addTwinEndpoint(Endpoint endpoint) throws MappingDSException;
+	boolean                 removeTwinEndpoint(Endpoint endpoint) throws MappingDSException;
 	
-	public HashMap<String, Object> getEndpointProperties();
-	public void addEndpointProperty(String propertyKey, Object value);
-    public void removeEndpointProperty(String propertyKey);
+	HashMap<String, Object> getEndpointProperties();
+	void addEndpointProperty(String propertyKey, Object value) throws MappingDSException;
+    void removeEndpointProperty(String propertyKey) throws MappingDSException;
 }

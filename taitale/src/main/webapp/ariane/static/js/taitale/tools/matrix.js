@@ -154,7 +154,7 @@ define(
             var i, ii, j, jj;
             if (index < this.nbColumns){
                 this.zemtx[this.nbColumns] = [];
-                for (i = index, ii=this.nbColumns; i < ii; ii--)  {
+                for (i = index, ii=this.nbColumns; i < ii; ii--) {
                     this.zemtx[ii] = this.zemtx[ii-1];
                     for (j=0, jj=this.nbLines; j<jj; j++) {
                         if (this.zemtx[ii][j]!==this.FREE && this.zemtx[ii][j]!==this.LOCKED && this.zemtx[ii][j]!=null)

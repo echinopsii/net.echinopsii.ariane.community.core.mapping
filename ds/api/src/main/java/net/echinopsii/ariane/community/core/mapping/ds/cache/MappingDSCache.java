@@ -144,20 +144,16 @@ public class MappingDSCache {
 
     public static synchronized MappingDSCacheEntity getCachedEntity(String id) {
         MappingDSCacheEntity ret = null;
-        if (ddL2cache!=null) {
-            ret = (MappingDSCacheEntity) ddL2cache.get(id);
-        }
+        if (ddL2cache!=null)  ret = (MappingDSCacheEntity) ddL2cache.get(id);
         return ret;
     }
 
     public static synchronized void putEntityToCache(MappingDSCacheEntity entity) {
-        if (ddL2cache!=null)
-            ddL2cache.put(entity.getEntityCacheID(), entity);
+        if (ddL2cache!=null) ddL2cache.put(entity.getEntityCacheID(), entity);
     }
 
     public static synchronized void removeEntityFromCache(MappingDSCacheEntity entity) {
-        if (ddL2cache!=null)
-            ddL2cache.remove(entity.getEntityCacheID());
+        if (ddL2cache!=null) ddL2cache.remove(entity.getEntityCacheID());
     }
 
     public static synchronized Cluster getClusterFromCache(String clusterName) {

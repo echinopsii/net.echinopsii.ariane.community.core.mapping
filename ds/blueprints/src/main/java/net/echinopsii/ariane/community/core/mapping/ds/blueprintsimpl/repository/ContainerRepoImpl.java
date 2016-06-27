@@ -19,6 +19,7 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.ContainerImpl;
@@ -33,43 +34,43 @@ public class ContainerRepoImpl implements ContainerRepo<ContainerImpl> {
 
     private final static Logger log = LoggerFactory.getLogger(ContainerRepoImpl.class);
 
-    public static Set<ContainerImpl> getRepository() {
+    public static Set<ContainerImpl> getRepository() throws MappingDSException {
         return MappingDSGraphDB.getContainers();
     }
 
     @Override
     public ContainerImpl save(ContainerImpl container) {
         MappingDSGraphDB.saveVertexEntity(container);
-        log.debug("Added container {} to graph({}).", new Object[]{container.toString(), MappingDSGraphDB.getVertexMaxCursor()});
+        log.debug("Added container {} to graph.", new Object[]{container.toString()});
         return container;
     }
 
     @Override
     public void delete(ContainerImpl container) {
         MappingDSGraphDB.deleteEntity(container);
-        log.debug("Deleted container {} from graph({}).", new Object[]{container.toString(), MappingDSGraphDB.getVertexMaxCursor()});
+        log.debug("Deleted container {} from graph.", new Object[]{container.toString()});
     }
 
     @Override
-    public ContainerImpl findContainerByID(long id) {
+    public ContainerImpl findContainerByID(String id) throws MappingDSException {
         ContainerImpl ret = null;
         MappingDSCacheEntity entity = MappingDSGraphDB.getVertexEntity(id);
         if (entity != null) {
             if (entity instanceof ContainerImpl) {
                 ret = (ContainerImpl) entity;
             } else {
-                log.error("");
+                log.error("CONSISTENCY ERROR : entity " + id + " is not a container.");
             }
         }
         return ret;
     }
 
     @Override
-    public ContainerImpl findContainersByPrimaryAdminURL(String primaryAdminURL) {
+    public ContainerImpl findContainersByPrimaryAdminURL(String primaryAdminURL) throws MappingDSException {
         ContainerImpl ret = null;
         EndpointImpl ep = MappingDSGraphDB.getIndexedEndpoint(primaryAdminURL);
         if (ep != null) {
-            ret = ep.getEndpointParentNode().getNodeContainer();
+            ret = (ContainerImpl) ep.getEndpointParentNode().getNodeContainer();
         }
         return ret;
     }

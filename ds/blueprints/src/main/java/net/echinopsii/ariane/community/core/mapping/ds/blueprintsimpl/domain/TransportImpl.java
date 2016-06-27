@@ -20,66 +20,71 @@
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain;
 
 import com.tinkerpop.blueprints.impls.neo4j2.Neo4j2Vertex;
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSBlueprintsCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDBObjectProps;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNames;
-import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
+import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.tools.SessionRegistryImpl;
+import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxTransport;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxTransportAbs;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Iterator;
-
-public class TransportImpl implements Transport, MappingDSBlueprintsCacheEntity {
+public class TransportImpl extends SProxTransportAbs implements SProxTransport, MappingDSBlueprintsCacheEntity {
 
     private static final Logger log = LoggerFactory.getLogger(TransportImpl.class);
 
-	private long   transportID     = 0;
-	private String transportName   = null;	
-	private transient Vertex transportVertex = null;
+    private transient Vertex transportVertex = null;
 
-    private HashMap<String,Object> transportProperties = null;
-	
-	@Override
-	public long getTransportID() {
-		return this.transportID;
-	}
-
-	public String getTransportName() {
-		return this.transportName;
-	}
-
-	public void setTransportName(String name) {
-		if (this.transportName==null || !this.transportName.equals(name)) {
-			this.transportName = name;
-			synchronizeToDB();
-		}
+    @Override
+    public void setTransportName(String name) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.setTransportName(session, name);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            if (super.getTransportName() == null || !super.getTransportName().equals(name)) {
+                super.setTransportName(name);
+                synchronizeToDB();
+            }
+        }
 	}
 
     @Override
-    public HashMap<String, Object> getTransportProperties() {
-        return transportProperties;
+    public void addTransportProperty(String propertyKey, Object value) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.addTransportProperty(session, propertyKey, value);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            super.addTransportProperty(propertyKey, value);
+            synchronizePropertyToDB(propertyKey, value);
+            log.debug("Set transport {} property : ({},{})", new Object[]{super.getTransportID(),
+                    propertyKey,
+                    super.getTransportProperties().get(propertyKey)});
+        }
+
     }
 
     @Override
-    public void addTransportProperty(String propertyKey, Object value) {
-        if (transportProperties == null)
-            transportProperties = new HashMap<String, Object>();
-        transportProperties.put(propertyKey,value);
-        synchronizePropertyToDB(propertyKey, value);
-        log.debug("Set transport {} property : ({},{})", new Object[]{this.transportID,
-                                                                             propertyKey,
-                                                                             this.transportProperties.get(propertyKey)});
-
-    }
-
-    @Override
-    public void removeTransportProperty(String propertyKey) {
-        if (transportProperties!=null) {
-            transportProperties.remove(propertyKey);
+    public void removeTransportProperty(String propertyKey) throws MappingDSException {
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) this.removeTransportProperty(session, propertyKey);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else {
+            super.removeTransportProperty(propertyKey);
             removePropertyFromDB(propertyKey);
         }
     }
@@ -95,12 +100,12 @@ public class TransportImpl implements Transport, MappingDSBlueprintsCacheEntity 
         if (MappingDSGraphDB.isBlueprintsNeo4j() && this.transportVertex instanceof Neo4j2Vertex)
             ((Neo4j2Vertex) this.transportVertex).addLabel(MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE);
 		this.transportVertex.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY, MappingDSGraphPropertyNames.DD_TYPE_TRANSPORT_VALUE);
-		this.transportID = this.transportVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+		super.setTransportID((String) this.transportVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
 	}
 
     @Override
     public String getEntityCacheID() {
-        return "V" + this.transportID;
+        return "V" + super.getTransportID();
     }
 
     @Override
@@ -111,17 +116,15 @@ public class TransportImpl implements Transport, MappingDSBlueprintsCacheEntity 
 
     private void synchronizeNameToDB() {
         if (this.transportVertex!=null) {
-            this.transportVertex.setProperty(MappingDSGraphPropertyNames.DD_TRANSPORT_NAME_KEY, this.transportName);
+            this.transportVertex.setProperty(MappingDSGraphPropertyNames.DD_TRANSPORT_NAME_KEY, super.getTransportName());
             MappingDSGraphDB.autocommit();
         }
     }
 
     private void synchronizePropertiesToDB() {
-        if (transportProperties!=null && transportVertex!=null) {
-            Iterator<String> iterK = this.transportProperties.keySet().iterator();
-            while (iterK.hasNext()) {
-                String key = iterK.next();
-                Object value = transportProperties.get(key);
+        if (transportVertex!=null) {
+            for (String key : super.getTransportProperties().keySet()) {
+                Object value = super.getTransportProperties().get(key);
                 synchronizePropertyToDB(key, value);
             }
         }
@@ -135,7 +138,7 @@ public class TransportImpl implements Transport, MappingDSBlueprintsCacheEntity 
     }
 
 	@Override
-	public void synchronizeFromDB() {
+	public void synchronizeFromDB() throws MappingDSException {
         synchronizeIDFromDB();
         synchronizeNameFromDB();
         synchronizePropertiesFromDB();
@@ -143,22 +146,18 @@ public class TransportImpl implements Transport, MappingDSBlueprintsCacheEntity 
 
     private void synchronizeIDFromDB() {
         if (this.transportVertex!=null)
-            this.transportID = this.transportVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
+            super.setTransportID((String)this.transportVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
     }
 
-    private void synchronizeNameFromDB() {
+    private void synchronizeNameFromDB() throws MappingDSException {
         if (this.transportVertex!=null)
-            this.transportName = this.transportVertex.getProperty(MappingDSGraphPropertyNames.DD_TRANSPORT_NAME_KEY);
+            super.setTransportName((String) this.transportVertex.getProperty(MappingDSGraphPropertyNames.DD_TRANSPORT_NAME_KEY));
     }
 
     private void synchronizePropertiesFromDB() {
         if (transportVertex!=null) {
-            if (transportProperties==null) {
-                transportProperties=new HashMap<String,Object>();
-            } else {
-                transportProperties.clear();
-            }
-            MappingDSGraphDBObjectProps.synchronizeObjectPropertyFromDB(transportVertex, transportProperties,
+            super.getTransportProperties().clear();
+            MappingDSGraphDBObjectProps.synchronizeObjectPropertyFromDB(transportVertex, super.getTransportProperties(),
                     MappingDSGraphPropertyNames.DD_TRANSPORT_PROPS_KEY);
         }
     }
@@ -177,17 +176,17 @@ public class TransportImpl implements Transport, MappingDSBlueprintsCacheEntity 
         if (o == null || getClass() != o.getClass()) return false;
 
         TransportImpl tmp = (TransportImpl) o;
-        if (this.getTransportID() == 0) return super.equals(o);
-        return (this.getTransportID() == tmp.getTransportID() || this.transportName.equals(tmp.getTransportName()));
+        if (this.getTransportID() == null) return super.equals(o);
+        return (this.getTransportID().equals(tmp.getTransportID()) || super.getTransportName().equals(tmp.getTransportName()));
     }
 	
     @Override
     public int hashCode() {
-        return this.getTransportID() != 0 ? new Long(this.getTransportID()).hashCode() : super.hashCode();
+        return this.getTransportID() != null ? this.getTransportID().hashCode() : super.hashCode();
     }
     
 	@Override
     public String toString() {
-        return String.format("Transport{ID='%d', transport name='%s'}", this.getTransportID(), this.transportName);
+        return String.format("Transport{ID='%s', transport name='%s'}", this.getTransportID(), super.getTransportName());
     }
 }

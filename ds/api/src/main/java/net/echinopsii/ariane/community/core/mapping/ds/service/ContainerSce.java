@@ -21,19 +21,39 @@ package net.echinopsii.ariane.community.core.mapping.ds.service;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
 import java.util.Set;
 
 public interface ContainerSce<C extends Container> {
-    public C createContainer(String primaryAdminURL, String primaryAdminGateName) throws MappingDSException;
+    String Q_MAPPING_CONTAINER_SERVICE = "ARIANE_MAPPING_CONTAINER_SERVICE_Q";
 
-    public C createContainer(String name, String primaryAdminURL, String primaryAdminGateName) throws MappingDSException;
+    String OP_CREATE_CONTAINER = "createContainer";
+    String OP_DELETE_CONTAINER = "deleteContainer";
+    String OP_GET_CONTAINER = "getContainer";
+    String OP_GET_CONTAINER_BY_PRIMARY_ADMIN_URL = "getContainerByPrimaryAdminURL";
+    String OP_GET_CONTAINERS = "getContainers";
 
-    public void deleteContainer(String primaryAdminURL) throws MappingDSException;
+    String PARAM_CONTAINER_NAME = "name";
+    String PARAM_CONTAINER_COMPANY = "company";
+    String PARAM_CONTAINER_PRODUCT = "product";
+    String PARAM_CONTAINER_TYPE = "type";
+    String PARAM_CONTAINER_PAG_URL = "primaryAdminURL";
+    String PARAM_CONTAINER_PAG_NAME = "primaryAdminGateName";
+    String PARAM_CONTAINER_PAG_ID = "paGateID";
+    String PARAM_CONTAINER_PCO_ID = "parentContainerID";
+    String PARAM_CONTAINER_CCO_ID = "childContainerID";
+    String PARAM_CONTAINER_GAT_ID = "gateID";
 
-    public C getContainer(long id);
+    C createContainer(String primaryAdminURL, String primaryAdminGateName) throws MappingDSException;
+    C createContainer(String name, String primaryAdminURL, String primaryAdminGateName) throws MappingDSException;
+    C createContainer(String primaryAdminURL, String primaryAdminGateName, Container parentContainer) throws MappingDSException;
+    C createContainer(String name, String primaryAdminURL, String primaryAdminGateName, Container parentContainer) throws MappingDSException;
 
-    public C getContainer(String primaryAdminURL);
+    void deleteContainer(String primaryAdminURL) throws MappingDSException;
 
-    public Set<C> getContainers(String selector);
+    C getContainer(String id) throws MappingDSException;
+    C getContainerByPrimaryAdminURL(String primaryAdminURL) throws MappingDSException;
+
+    Set<C> getContainers(String selector) throws MappingDSException;
 }

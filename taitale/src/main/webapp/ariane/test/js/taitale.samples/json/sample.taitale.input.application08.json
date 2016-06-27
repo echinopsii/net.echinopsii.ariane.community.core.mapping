@@ -1,0 +1,1400 @@
+{
+  "containers":[
+    {
+      "containerID":"6b1b8acf-cf48-4057-82a2-3ed36a970ee1",
+      "containerName":null,
+      "containerCompany":"Tibco",
+      "containerProduct":"Tibco Rendez Vous",
+      "containerType":"RV Router Daemon",
+      "containerGateURI":"http://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net:7580",
+      "containerProperties":{
+        "RVRD_HOSTNAME":"tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net",
+        "Network":{
+          "sip":"192.168.40.0",
+          "ratype":"LAN",
+          "raname":"Scorpius LAN RA",
+          "smask":"255.255.255.0",
+          "sname":"Scorpius Lan 1",
+          "ramulticast":"NOLIMIT"
+        },
+        "Datacenter":{
+          "gpsLng":2.375285,
+          "address":"72 Rue Jean-Pierre Timbaud",
+          "gpsLat":48.867797,
+          "pname":"Scorpius",
+          "town":"Paris",
+          "country":"France"
+        },
+        "RVRD_PID":"666",
+        "RVRD_NAME":"rvrd",
+        "RVRD_IPADDR":"192.168.43.8",
+        "RVRD_LICENSE_TICKET":"217318",
+        "RVRD_INBOX_PORT":"0",
+        "supportTeam":{
+          "color":"11301f",
+          "name":"MDW BUS"
+        },
+        "Server":{
+          "os":"Fedora 18 - x86_64",
+          "hostname":"tibrvrdl06prd01"
+        },
+        "RVRD_VERSION":"8.4.0"
+      }
+    },
+    {
+      "containerID":"6c3d3c61-18a5-43a2-be80-f5cddaa3ad1f",
+      "containerName":null,
+      "containerCompany":"Tibco",
+      "containerProduct":"Tibco Rendez Vous",
+      "containerType":"RV Router Daemon",
+      "containerGateURI":"http://tibrvrdm02prd01.lab02.dev.dekatonshivr.echinopsii.net:7580",
+      "containerProperties":{
+        "RVRD_HOSTNAME":"tibrvrdm02prd01.lab02.dev.dekatonshivr.echinopsii.net",
+        "Network":{
+          "sip":"192.168.45.0",
+          "ratype":"MAN",
+          "raname":"Scorpius MAN RA",
+          "smask":"255.255.255.0",
+          "sname":"Scorpius MAN",
+          "ramulticast":"FILTERED"
+        },
+        "Datacenter":{
+          "gpsLng":2.375285,
+          "address":"72 Rue Jean-Pierre Timbaud",
+          "gpsLat":48.867797,
+          "pname":"Scorpius",
+          "town":"Paris",
+          "country":"France"
+        },
+        "RVRD_PID":"666",
+        "RVRD_NAME":"rvrd",
+        "RVRD_IPADDR":"192.168.45.8",
+        "RVRD_LICENSE_TICKET":"217318",
+        "RVRD_INBOX_PORT":"0",
+        "supportTeam":{
+          "color":"11301f",
+          "name":"MDW BUS"
+        },
+        "Server":{
+          "os":"Fedora 18 - x86_64",
+          "hostname":"tibrvrdm02prd01"
+        },
+        "RVRD_VERSION":"8.4.0"
+      }
+    },
+    {
+      "containerID":"bc2d2f9b-096a-4cf8-ac6e-a7c1b852bd24",
+      "containerName":null,
+      "containerCompany":"Tibco",
+      "containerProduct":"Tibco Rendez Vous",
+      "containerType":"RV Daemon",
+      "containerGateURI":"http://app6969rvd13.lab01.dev.dekatonshivr.echinopsii.net:7580",
+      "containerProperties":{
+        "Network":{
+          "sip":"192.168.35.0",
+          "ratype":"LAN",
+          "raname":"Sagittarius LAN RA",
+          "smask":"255.255.255.0",
+          "sname":"Sagittarius Lan 3",
+          "ramulticast":"NOLIMIT"
+        },
+        "Datacenter":{
+          "gpsLng":2.251088,
+          "address":"2 rue Baudin",
+          "gpsLat":48.895345,
+          "pname":"Sagittarius",
+          "town":"Courbevoie",
+          "country":"France"
+        },
+        "supportTeam":{
+          "color":"e8a25d",
+          "name":"DEV APP"
+        },
+        "Server":{
+          "os":"Fedora 18 - x86_64",
+          "hostname":"app6969rvd13"
+        }
+      }
+    },
+    {
+      "containerID":"8d6fe334-fe58-437b-aaf8-977e66489f5a",
+      "containerName":null,
+      "containerCompany":"Tibco",
+      "containerProduct":"Tibco Rendez Vous",
+      "containerType":"RV Router Daemon",
+      "containerGateURI":"http://tibrvrdl05prd01.lab01.dev.dekatonshivr.echinopsii.net:7580",
+      "containerProperties":{
+        "RVRD_HOSTNAME":"tibrvrdl05prd01.lab01.dev.dekatonshivr.echinopsii.net",
+        "Network":{
+          "sip":"192.168.33.0",
+          "ratype":"LAN",
+          "raname":"Sagittarius LAN RA",
+          "smask":"255.255.255.0",
+          "sname":"Sagittarius Lan 1",
+          "ramulticast":"NOLIMIT"
+        },
+        "Datacenter":{
+          "gpsLng":2.251088,
+          "address":"2 rue Baudin",
+          "gpsLat":48.895345,
+          "pname":"Sagittarius",
+          "town":"Courbevoie",
+          "country":"France"
+        },
+        "RVRD_PID":"1247",
+        "RVRD_NAME":"rvrd",
+        "RVRD_IPADDR":"192.168.33.8",
+        "RVRD_LICENSE_TICKET":"217318",
+        "RVRD_INBOX_PORT":"0",
+        "supportTeam":{
+          "color":"11301f",
+          "name":"MDW BUS"
+        },
+        "Server":{
+          "os":"Fedora 18 - x86_64",
+          "hostname":"tibrvrdl05prd01"
+        },
+        "RVRD_VERSION":"8.4.0"
+      }
+    },
+    {
+      "containerID":"28a036ce-59aa-4653-ad80-ee68af852d54",
+      "containerName":null,
+      "containerCompany":"Tibco",
+      "containerProduct":"Tibco Rendez Vous",
+      "containerType":"RV Router Daemon",
+      "containerGateURI":"http://tibrvrdmprd01.lab01.dev.dekatonshivr.echinopsii.net:7580",
+      "containerProperties":{
+        "RVRD_HOSTNAME":"tibrvrdmprd01.lab01.dev.dekatonshivr.echinopsii.net",
+        "Network":{
+          "sip":"192.168.37.0",
+          "ratype":"MAN",
+          "raname":"Sagittarius MAN RA",
+          "smask":"255.255.255.0",
+          "sname":"Sagittarius MAN",
+          "ramulticast":"FILTERED"
+        },
+        "Datacenter":{
+          "gpsLng":2.251088,
+          "address":"2 rue Baudin",
+          "gpsLat":48.895345,
+          "pname":"Sagittarius",
+          "town":"Courbevoie",
+          "country":"France"
+        },
+        "RVRD_PID":"1093",
+        "RVRD_NAME":"rvrd",
+        "RVRD_IPADDR":"192.168.33.6",
+        "RVRD_LICENSE_TICKET":"217318",
+        "RVRD_INBOX_PORT":"0",
+        "supportTeam":{
+          "color":"11301f",
+          "name":"MDW BUS"
+        },
+        "Server":{
+          "os":"Fedora 18 - x86_64",
+          "hostname":"tibrvrdmprd01"
+        },
+        "RVRD_VERSION":"8.4.0"
+      }
+    },
+    {
+      "containerID":"a15c40f2-b655-4143-ad60-b4a09fb5a095",
+      "containerName":null,
+      "containerCompany":"Tibco",
+      "containerProduct":"Tibco Rendez Vous",
+      "containerType":"RV Router Daemon",
+      "containerGateURI":"http://tibrvrdw02prd01.lab02.dev.dekatonshivr.echinopsii.net:7580",
+      "containerProperties":{
+        "RVRD_HOSTNAME":"tibrvrdw02prd01.lab02.dev.dekatonshivr.echinopsii.net",
+        "Network":{
+          "sip":"192.168.46.0",
+          "ratype":"WAN",
+          "raname":"Scorpius WAN RA",
+          "smask":"255.255.255.0",
+          "sname":"Scorpius WAN",
+          "ramulticast":"FILTERED"
+        },
+        "Datacenter":{
+          "gpsLng":2.375285,
+          "address":"72 Rue Jean-Pierre Timbaud",
+          "gpsLat":48.867797,
+          "pname":"Scorpius",
+          "town":"Paris",
+          "country":"France"
+        },
+        "RVRD_PID":"666",
+        "RVRD_NAME":"rvrd",
+        "RVRD_IPADDR":"192.168.46.8",
+        "RVRD_LICENSE_TICKET":"217318",
+        "RVRD_INBOX_PORT":"0",
+        "supportTeam":{
+          "color":"11301f",
+          "name":"MDW BUS"
+        },
+        "Server":{
+          "os":"Fedora 18 - x86_64",
+          "hostname":"tibrvrdw02prd01"
+        },
+        "RVRD_VERSION":"8.4.0"
+      }
+    },
+    {
+      "containerID":"6315d0f0-2a56-46db-add0-f813882d11b2",
+      "containerName":null,
+      "containerCompany":"Tibco",
+      "containerProduct":"Tibco Rendez Vous",
+      "containerType":"RV Daemon",
+      "containerGateURI":"http://app6969rvd14.lab01.dev.dekatonshivr.echinopsii.net:7580",
+      "containerProperties":{
+        "Network":{
+          "sip":"192.168.35.0",
+          "ratype":"LAN",
+          "raname":"Sagittarius LAN RA",
+          "smask":"255.255.255.0",
+          "sname":"Sagittarius Lan 3",
+          "ramulticast":"NOLIMIT"
+        },
+        "Datacenter":{
+          "gpsLng":2.251088,
+          "address":"2 rue Baudin",
+          "gpsLat":48.895345,
+          "pname":"Sagittarius",
+          "town":"Courbevoie",
+          "country":"France"
+        },
+        "supportTeam":{
+          "color":"e8a25d",
+          "name":"DEV APP"
+        },
+        "Server":{
+          "os":"Fedora 18 - x86_64",
+          "hostname":"app6969rvd14"
+        }
+      }
+    },
+    {
+      "containerID":"a3c7156e-0161-4657-b8fc-275f78a22071",
+      "containerName":null,
+      "containerCompany":"Tibco",
+      "containerProduct":"Tibco Rendez Vous",
+      "containerType":"RV Daemon",
+      "containerGateURI":"http://app6969rvd11.lab01.dev.dekatonshivr.echinopsii.net:7580",
+      "containerProperties":{
+        "Network":{
+          "sip":"192.168.34.0",
+          "ratype":"LAN",
+          "raname":"Sagittarius LAN RA",
+          "smask":"255.255.255.0",
+          "sname":"Sagittarius Lan 2",
+          "ramulticast":"NOLIMIT"
+        },
+        "Datacenter":{
+          "gpsLng":2.251088,
+          "address":"2 rue Baudin",
+          "gpsLat":48.895345,
+          "pname":"Sagittarius",
+          "town":"Courbevoie",
+          "country":"France"
+        },
+        "supportTeam":{
+          "color":"e8a25d",
+          "name":"DEV APP"
+        },
+        "Server":{
+          "os":"Fedora 18 - x86_64",
+          "hostname":"app6969rvd11"
+        }
+      }
+    },
+    {
+      "containerID":"a50916dc-3440-45a8-9561-f83e25ff2976",
+      "containerName":null,
+      "containerCompany":"Tibco",
+      "containerProduct":"Tibco Rendez Vous",
+      "containerType":"RV Router Daemon",
+      "containerGateURI":"http://tibrvrdwprd01.lab01.dev.dekatonshivr.echinopsii.net:7580",
+      "containerProperties":{
+        "RVRD_HOSTNAME":"tibrvrdwprd01.lab01.dev.dekatonshivr.echinopsii.net",
+        "Network":{
+          "sip":"192.168.38.0",
+          "ratype":"WAN",
+          "raname":"Sagittarius WAN RA",
+          "smask":"255.255.255.0",
+          "sname":"Sagittarius WAN",
+          "ramulticast":"FILTERED"
+        },
+        "Datacenter":{
+          "gpsLng":2.251088,
+          "address":"2 rue Baudin",
+          "gpsLat":48.895345,
+          "pname":"Sagittarius",
+          "town":"Courbevoie",
+          "country":"France"
+        },
+        "RVRD_PID":"1982",
+        "RVRD_NAME":"rvrd",
+        "RVRD_IPADDR":"192.168.33.5",
+        "RVRD_LICENSE_TICKET":"217318",
+        "RVRD_INBOX_PORT":"0",
+        "supportTeam":{
+          "color":"11301f",
+          "name":"MDW BUS"
+        },
+        "Server":{
+          "os":"Fedora 18 - x86_64",
+          "hostname":"tibrvrdwprd01"
+        },
+        "RVRD_VERSION":"8.4.0"
+      }
+    },
+    {
+      "containerID":"8ee6807a-2f10-493a-854b-bd4bc0947ac7",
+      "containerName":null,
+      "containerCompany":"Tibco",
+      "containerProduct":"Tibco Rendez Vous",
+      "containerType":"RV Daemon",
+      "containerGateURI":"http://app6969rvd21.lab02.dev.dekatonshivr.echinopsii.net:7580",
+      "containerProperties":{
+        "Network":{
+          "sip":"192.168.42.0",
+          "ratype":"LAN",
+          "raname":"Scorpius LAN RA",
+          "smask":"255.255.255.0",
+          "sname":"Scorpius Lan 3",
+          "ramulticast":"NOLIMIT"
+        },
+        "Datacenter":{
+          "gpsLng":2.375285,
+          "address":"72 Rue Jean-Pierre Timbaud",
+          "gpsLat":48.867797,
+          "pname":"Scorpius",
+          "town":"Paris",
+          "country":"France"
+        },
+        "supportTeam":{
+          "color":"e8a25d",
+          "name":"DEV APP"
+        },
+        "Server":{
+          "os":"Fedora 18 - x86_64",
+          "hostname":"app6969rvd21"
+        }
+      }
+    },
+    {
+      "containerID":"bd1068cb-194c-423e-9759-ec926016e522",
+      "containerName":null,
+      "containerCompany":"Tibco",
+      "containerProduct":"Tibco Rendez Vous",
+      "containerType":"RV Router Daemon",
+      "containerGateURI":"http://tibrvrdl03prd01.lab01.dev.dekatonshivr.echinopsii.net:7580",
+      "containerProperties":{
+        "RVRD_HOSTNAME":"tibrvrdl03prd01.lab01.dev.dekatonshivr.echinopsii.net",
+        "Network":{
+          "sip":"192.168.33.0",
+          "ratype":"LAN",
+          "raname":"Sagittarius LAN RA",
+          "smask":"255.255.255.0",
+          "sname":"Sagittarius Lan 1",
+          "ramulticast":"NOLIMIT"
+        },
+        "Datacenter":{
+          "gpsLng":2.251088,
+          "address":"2 rue Baudin",
+          "gpsLat":48.895345,
+          "pname":"Sagittarius",
+          "town":"Courbevoie",
+          "country":"France"
+        },
+        "RVRD_PID":"1207",
+        "RVRD_NAME":"rvrd",
+        "RVRD_IPADDR":"192.168.33.7",
+        "RVRD_LICENSE_TICKET":"217318",
+        "RVRD_INBOX_PORT":"0",
+        "supportTeam":{
+          "color":"11301f",
+          "name":"MDW BUS"
+        },
+        "Server":{
+          "os":"Fedora 18 - x86_64",
+          "hostname":"tibrvrdl03prd01"
+        },
+        "RVRD_VERSION":"8.4.0"
+      }
+    },
+    {
+      "containerID":"209593fc-ad83-47d6-b922-529a1a24659c",
+      "containerName":null,
+      "containerCompany":"Tibco",
+      "containerProduct":"Tibco Rendez Vous",
+      "containerType":"RV Daemon",
+      "containerGateURI":"http://app6969rvd23.lab02.dev.dekatonshivr.echinopsii.net:7580",
+      "containerProperties":{
+        "Network":{
+          "sip":"192.168.44.0",
+          "ratype":"LAN",
+          "raname":"Scorpius LAN RA",
+          "smask":"255.255.255.0",
+          "sname":"Scorpius Lan 4",
+          "ramulticast":"NOLIMIT"
+        },
+        "Datacenter":{
+          "gpsLng":2.375285,
+          "address":"72 Rue Jean-Pierre Timbaud",
+          "gpsLat":48.867797,
+          "pname":"Scorpius",
+          "town":"Paris",
+          "country":"France"
+        },
+        "supportTeam":{
+          "color":"e8a25d",
+          "name":"DEV APP"
+        },
+        "Server":{
+          "os":"Fedora 18 - x86_64",
+          "hostname":"app6969rvd23"
+        }
+      }
+    },
+    {
+      "containerID":"91004c94-9df2-4f5c-aff9-e28b6f494448",
+      "containerName":null,
+      "containerCompany":"Tibco",
+      "containerProduct":"Tibco Rendez Vous",
+      "containerType":"RV Daemon",
+      "containerGateURI":"http://app6969rvd22.lab02.dev.dekatonshivr.echinopsii.net:7580",
+      "containerProperties":{
+        "Network":{
+          "sip":"192.168.42.0",
+          "ratype":"LAN",
+          "raname":"Scorpius LAN RA",
+          "smask":"255.255.255.0",
+          "sname":"Scorpius Lan 3",
+          "ramulticast":"NOLIMIT"
+        },
+        "Datacenter":{
+          "gpsLng":2.375285,
+          "address":"72 Rue Jean-Pierre Timbaud",
+          "gpsLat":48.867797,
+          "pname":"Scorpius",
+          "town":"Paris",
+          "country":"France"
+        },
+        "supportTeam":{
+          "color":"e8a25d",
+          "name":"DEV APP"
+        },
+        "Server":{
+          "os":"Fedora 18 - x86_64",
+          "hostname":"app6969rvd22"
+        }
+      }
+    },
+    {
+      "containerID":"8ba2f7ab-2bed-40f1-8f9c-795947ccee42",
+      "containerName":null,
+      "containerCompany":"Tibco",
+      "containerProduct":"Tibco Rendez Vous",
+      "containerType":"RV Daemon",
+      "containerGateURI":"http://app6969rvd24.lab02.dev.dekatonshivr.echinopsii.net:7580",
+      "containerProperties":{
+        "Network":{
+          "sip":"192.168.44.0",
+          "ratype":"LAN",
+          "raname":"Scorpius LAN RA",
+          "smask":"255.255.255.0",
+          "sname":"Scorpius Lan 4",
+          "ramulticast":"NOLIMIT"
+        },
+        "Datacenter":{
+          "gpsLng":2.375285,
+          "address":"72 Rue Jean-Pierre Timbaud",
+          "gpsLat":48.867797,
+          "pname":"Scorpius",
+          "town":"Paris",
+          "country":"France"
+        },
+        "supportTeam":{
+          "color":"e8a25d",
+          "name":"DEV APP"
+        },
+        "Server":{
+          "os":"Fedora 18 - x86_64",
+          "hostname":"app6969rvd24"
+        }
+      }
+    },
+    {
+      "containerID":"a761dd7d-d99e-467c-8f54-d14d5d1bcdce",
+      "containerName":null,
+      "containerCompany":"Tibco",
+      "containerProduct":"Tibco Rendez Vous",
+      "containerType":"RV Daemon",
+      "containerGateURI":"http://app6969rvd12.lab01.dev.dekatonshivr.echinopsii.net:7580",
+      "containerProperties":{
+        "Network":{
+          "sip":"192.168.34.0",
+          "ratype":"LAN",
+          "raname":"Sagittarius LAN RA",
+          "smask":"255.255.255.0",
+          "sname":"Sagittarius Lan 2",
+          "ramulticast":"NOLIMIT"
+        },
+        "Datacenter":{
+          "gpsLng":2.251088,
+          "address":"2 rue Baudin",
+          "gpsLat":48.895345,
+          "pname":"Sagittarius",
+          "town":"Courbevoie",
+          "country":"France"
+        },
+        "supportTeam":{
+          "color":"e8a25d",
+          "name":"DEV APP"
+        },
+        "Server":{
+          "os":"Fedora 18 - x86_64",
+          "hostname":"app6969rvd12"
+        }
+      }
+    },
+    {
+      "containerID":"49dcc69f-c33c-4077-bafb-7f137f6dfb4f",
+      "containerName":null,
+      "containerCompany":"Tibco",
+      "containerProduct":"Tibco Rendez Vous",
+      "containerType":"RV Router Daemon",
+      "containerGateURI":"http://tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net:7580",
+      "containerProperties":{
+        "RVRD_HOSTNAME":"tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net",
+        "Network":{
+          "sip":"192.168.41.0",
+          "ratype":"LAN",
+          "raname":"Scorpius LAN RA",
+          "smask":"255.255.255.0",
+          "sname":"Scorpius Lan 2",
+          "ramulticast":"NOLIMIT"
+        },
+        "Datacenter":{
+          "gpsLng":2.375285,
+          "address":"72 Rue Jean-Pierre Timbaud",
+          "gpsLat":48.867797,
+          "pname":"Scorpius",
+          "town":"Paris",
+          "country":"France"
+        },
+        "RVRD_PID":"696",
+        "RVRD_NAME":"rvrd",
+        "RVRD_IPADDR":"192.168.44.8",
+        "RVRD_LICENSE_TICKET":"217318",
+        "RVRD_INBOX_PORT":"0",
+        "supportTeam":{
+          "color":"11301f",
+          "name":"MDW BUS"
+        },
+        "Server":{
+          "os":"Fedora 18 - x86_64",
+          "hostname":"tibrvrdl07prd01"
+        },
+        "RVRD_VERSION":"8.4.0"
+      }
+    }
+  ],
+  "nodes":[
+    {
+      "nodeID":"cf86ba1a-30c2-47aa-a158-2372070593c7",
+      "nodeName":"APP6969.tibrvrdwprd01",
+      "nodeDepth":0,
+      "nodeContainerID":"a50916dc-3440-45a8-9561-f83e25ff2976",
+      "nodeProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        },
+        "RVRD_ROUTER_MAXBACKLOG":0,
+        "busDescription":"APP fix prices diffusion"
+      }
+    },
+    {
+      "nodeID":"c722d045-6e85-4adf-b60d-ade54dbb6e40",
+      "nodeName":"APP6969.RVD24",
+      "nodeDepth":0,
+      "nodeContainerID":"8ba2f7ab-2bed-40f1-8f9c-795947ccee42",
+      "nodeProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        },
+        "busDescription":"APP FX prices diffusion"
+      }
+    },
+    {
+      "nodeID":"a297d058-e930-45e2-b601-a74413e3e8cc",
+      "nodeName":"APP6969.tibrvrdl06prd01",
+      "nodeDepth":0,
+      "nodeContainerID":"6b1b8acf-cf48-4057-82a2-3ed36a970ee1",
+      "nodeProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        },
+        "busDescription":"APP FX prices diffusion"
+      }
+    },
+    {
+      "nodeID":"7d0a2074-3e14-4789-8b00-9ce2a9717f49",
+      "nodeName":"APP6969.tibrvrdl03prd01",
+      "nodeDepth":0,
+      "nodeContainerID":"bd1068cb-194c-423e-9759-ec926016e522",
+      "nodeProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        },
+        "RVRD_ROUTER_MAXBACKLOG":0,
+        "busDescription":"APP fix prices diffusion"
+      }
+    },
+    {
+      "nodeID":"d76c3f79-170d-4f12-b8e9-3bf54143f0a4",
+      "nodeName":"APP6969.RVD23",
+      "nodeDepth":0,
+      "nodeContainerID":"209593fc-ad83-47d6-b922-529a1a24659c",
+      "nodeProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        },
+        "busDescription":"APP FX prices diffusion"
+      }
+    },
+    {
+      "nodeID":"61245ae0-4348-4719-aa77-82d6b081db2b",
+      "nodeName":"APP6969.tibrvrdlm02prd01",
+      "nodeDepth":0,
+      "nodeContainerID":"6c3d3c61-18a5-43a2-be80-f5cddaa3ad1f",
+      "nodeProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        },
+        "RVRD_ROUTER_MAXBACKLOG":"0",
+        "busDescription":"APP FX prices diffusion"
+      }
+    },
+    {
+      "nodeID":"49aab4c0-fc58-49ae-b6c0-9d963b057400",
+      "nodeName":"APP6969.RVD13",
+      "nodeDepth":0,
+      "nodeContainerID":"bc2d2f9b-096a-4cf8-ac6e-a7c1b852bd24",
+      "nodeProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        },
+        "busDescription":"APP FX prices diffusion"
+      }
+    },
+    {
+      "nodeID":"c88bdcd3-091c-42b9-a601-19b408d72851",
+      "nodeName":"APP6969.tibrvrdmprd01",
+      "nodeDepth":0,
+      "nodeContainerID":"28a036ce-59aa-4653-ad80-ee68af852d54",
+      "nodeProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        },
+        "RVRD_ROUTER_MAXBACKLOG":0,
+        "busDescription":"APP fix prices diffusion"
+      }
+    },
+    {
+      "nodeID":"a4304b09-5775-4aae-bdef-16891620e268",
+      "nodeName":"APP6969.tibrvrdl05prd01",
+      "nodeDepth":0,
+      "nodeContainerID":"8d6fe334-fe58-437b-aaf8-977e66489f5a",
+      "nodeProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        },
+        "busDescription":"APP fix prices diffusion"
+      }
+    },
+    {
+      "nodeID":"dac482f8-d993-4f13-ba99-e3a2c79477ba",
+      "nodeName":"APP6969.RVD11",
+      "nodeDepth":0,
+      "nodeContainerID":"a3c7156e-0161-4657-b8fc-275f78a22071",
+      "nodeProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        },
+        "busDescription":"APP FX prices diffusion"
+      }
+    },
+    {
+      "nodeID":"a0b0ba38-00c8-4862-9a9c-e5a8d25dcf67",
+      "nodeName":"APP6969.tibrvrdl07prd01",
+      "nodeDepth":0,
+      "nodeContainerID":"49dcc69f-c33c-4077-bafb-7f137f6dfb4f",
+      "nodeProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        },
+        "RVRD_ROUTER_MAXBACKLOG":"0",
+        "busDescription":"APP FX prices diffusion"
+      }
+    },
+    {
+      "nodeID":"34ba05e7-8086-4e45-8d33-e077c513b0ba",
+      "nodeName":"APP6969.RVD21",
+      "nodeDepth":0,
+      "nodeContainerID":"8ee6807a-2f10-493a-854b-bd4bc0947ac7",
+      "nodeProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        },
+        "busDescription":"APP FX prices diffusion"
+      }
+    },
+    {
+      "nodeID":"091b99de-c24d-4fc7-b588-8cb57dec6ea7",
+      "nodeName":"APP6969.RVD12",
+      "nodeDepth":0,
+      "nodeContainerID":"a761dd7d-d99e-467c-8f54-d14d5d1bcdce",
+      "nodeProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        },
+        "busDescription":"APP FX prices diffusion"
+      }
+    },
+    {
+      "nodeID":"b84f352c-0114-4655-9172-371410248fe6",
+      "nodeName":"APP6969.RVD14",
+      "nodeDepth":0,
+      "nodeContainerID":"6315d0f0-2a56-46db-add0-f813882d11b2",
+      "nodeProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        },
+        "busDescription":"APP FX prices diffusion"
+      }
+    },
+    {
+      "nodeID":"5a0ac2eb-17f4-4c68-b048-0d190e333f9d",
+      "nodeName":"APP6969.tibrvrdlw02prd01",
+      "nodeDepth":0,
+      "nodeContainerID":"a15c40f2-b655-4143-ad60-b4a09fb5a095",
+      "nodeProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        },
+        "RVRD_ROUTER_MAXBACKLOG":"0",
+        "busDescription":"APP FX prices diffusion"
+      }
+    },
+    {
+      "nodeID":"e927c39d-22ef-4115-94e1-8e48b85b5134",
+      "nodeName":"APP6969.RVD22",
+      "nodeDepth":0,
+      "nodeContainerID":"91004c94-9df2-4f5c-aff9-e28b6f494448",
+      "nodeProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        },
+        "busDescription":"APP FX prices diffusion"
+      }
+    }
+  ],
+  "endpoints":[
+    {
+      "endpointID":"cb704c4a-44d6-425b-ac6c-5de95e555643",
+      "endpointURL":"multicast-udp-tibrv://app6969rvd24.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969",
+      "endpointParentNodeID":"c722d045-6e85-4adf-b60d-ade54dbb6e40",
+      "endpointTwinEndpointID":[
+
+      ],
+      "endpointProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        }
+      }
+    },
+    {
+      "endpointID":"722b9812-857f-46db-8823-02b6a1ed9738",
+      "endpointURL":"multicast-udp-tibrv://tibrvrdl03prd01.lab01.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969",
+      "endpointParentNodeID":"7d0a2074-3e14-4789-8b00-9ce2a9717f49",
+      "endpointTwinEndpointID":[
+        "543f9234-27cf-4ff7-bec9-b250fe65de59"
+      ],
+      "endpointProperties":{
+        "RVRD_LOCALNT_ESUB":[
+          "FR.APP.>"
+        ],
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        },
+        "RVRD_MULTICAST_AREA":"Sagittarius LAN RA",
+        "RVRD_LOCALNT_SERVICE":6969,
+        "RVRD_LOCALNT_ISUB":[
+          "FR.APP.>-weight:10"
+        ],
+        "RVRD_LOCALNT_NETWORK":";239.69.69.69",
+        "RVRD_LOCALNT_NAME":"APP6969.devlab01",
+        "busDescription":"APP fix prices diffusion"
+      }
+    },
+    {
+      "endpointID":"7bbc7756-0239-499f-acb6-442280065a81",
+      "endpointURL":"tcp-tibrvrd://tibrvrdmprd01.lab01.dev.dekatonshivr.echinopsii.net:6969",
+      "endpointParentNodeID":"c88bdcd3-091c-42b9-a601-19b408d72851",
+      "endpointTwinEndpointID":[
+
+      ],
+      "endpointProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        },
+        "RVRD_NEIGHBD_COMP":false,
+        "RVRD_NEIGHBD_COST":1,
+        "RVRD_NEIGHBD_TYPE":0,
+        "RVRD_NEIGHBD_LPORT":6969,
+        "RVRD_NEIGHBD_RPORT":-1,
+        "RVRD_NEIGHBD_ENC":false,
+        "RVRD_NEIGHBD_LHOST":"tibrvrdmprd01.lab01.dev.dekatonshivr.echinopsii.net",
+        "busDescription":"APP fix prices diffusion"
+      }
+    },
+    {
+      "endpointID":"33e0c258-a50e-4bdb-9aec-7f543cc3e5d8",
+      "endpointURL":"multicast-udp-tibrv://app6969rvd22.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969",
+      "endpointParentNodeID":"e927c39d-22ef-4115-94e1-8e48b85b5134",
+      "endpointTwinEndpointID":[
+
+      ],
+      "endpointProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        }
+      }
+    },
+    {
+      "endpointID":"99a57bdc-530b-4d7f-9549-90eb3203cdca",
+      "endpointURL":"multicast-udp-tibrv://app6969rvd12.lab01.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969",
+      "endpointParentNodeID":"091b99de-c24d-4fc7-b588-8cb57dec6ea7",
+      "endpointTwinEndpointID":[
+
+      ],
+      "endpointProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        }
+      }
+    },
+    {
+      "endpointID":"102f816e-f7a7-438d-8665-9172d4f2dcd7",
+      "endpointURL":"multicast-udp-tibrv://tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969",
+      "endpointParentNodeID":"a0b0ba38-00c8-4862-9a9c-e5a8d25dcf67",
+      "endpointTwinEndpointID":[
+        "3236e7ad-690c-4acd-953f-efaaed8d6234"
+      ],
+      "endpointProperties":{
+        "RVRD_LOCALNT_ESUB":[
+          "FR.APP.>",
+          "FR.BPP.>"
+        ],
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        },
+        "RVRD_LOCALNT_SERVICE":6969,
+        "RVRD_LOCALNT_NETWORK":";239.69.69.69",
+        "RVRD_LOCALNT_ISUB":[
+          "FR.APP.>-weight:10",
+          "FR.BPP.>-weight:10"
+        ],
+        "busDescription":"APP FX prices diffusion",
+        "RVRD_LOCALNT_NAME":"APP6969.Scorpius"
+      }
+    },
+    {
+      "endpointID":"c3e34501-e546-449c-90ac-25ee945ae8cf",
+      "endpointURL":"tcp-tibrvrd://tibrvrdl05prd01.lab01.dev.dekatonshivr.echinopsii.net:6969",
+      "endpointParentNodeID":"a4304b09-5775-4aae-bdef-16891620e268",
+      "endpointTwinEndpointID":[
+
+      ],
+      "endpointProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        },
+        "RVRD_NEIGHBD_COMP":false,
+        "RVRD_NEIGHBD_COST":1,
+        "RVRD_NEIGHBD_TYPE":2,
+        "RVRD_NEIGHBD_LPORT":6969,
+        "RVRD_NEIGHBD_RPORT":6969,
+        "RVRD_NEIGHBD_ENC":false,
+        "RVRD_NEIGHBD_RHOST":"tibrvrdmprd01.lab01.dev.dekatonshivr.echinopsii.net",
+        "RVRD_NEIGHBD_NNAME":"APP6969.tibrvrdmprd01",
+        "RVRD_NEIGHBD_LHOST":"tibrvrdl05prd01.lab01.dev.dekatonshivr.echinopsii.net",
+        "busDescription":"APP fix prices diffusion"
+      }
+    },
+    {
+      "endpointID":"67028909-1921-4010-ba2e-ba1bc7bdd426",
+      "endpointURL":"tcp-tibrvrd://tibrvrdm02prd01.lab02.dev.dekatonshivr.echinopsii.net:6969",
+      "endpointParentNodeID":"61245ae0-4348-4719-aa77-82d6b081db2b",
+      "endpointTwinEndpointID":[
+
+      ],
+      "endpointProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        },
+        "RVRD_NEIGHBD_TYPE":0,
+        "RVRD_NEIGHBD_COMP":false,
+        "RVRD_NEIGHBD_COST":1,
+        "RVRD_NEIGHBD_LPORT":6969,
+        "RVRD_NEIGHBD_RPORT":-1,
+        "RVRD_NEIGHBD_ENC":false,
+        "RVRD_NEIGHBD_LHOST":"tibrvrdm02prd01.lab02.dev.dekatonshivr.echinopsii.net",
+        "busDescription":"APP FX prices diffusion"
+      }
+    },
+    {
+      "endpointID":"1c54c317-8bdb-4dce-821e-dc7c44ca1ff6",
+      "endpointURL":"multicast-udp-tibrv://app6969rvd11.lab01.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969",
+      "endpointParentNodeID":"dac482f8-d993-4f13-ba99-e3a2c79477ba",
+      "endpointTwinEndpointID":[
+
+      ],
+      "endpointProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        }
+      }
+    },
+    {
+      "endpointID":"4bb9a782-4ed7-4d2c-a370-2fe83019d167",
+      "endpointURL":"multicast-udp-tibrv://app6969rvd21.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969",
+      "endpointParentNodeID":"34ba05e7-8086-4e45-8d33-e077c513b0ba",
+      "endpointTwinEndpointID":[
+
+      ],
+      "endpointProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        }
+      }
+    },
+    {
+      "endpointID":"72cee539-d1f0-4866-8f58-3b51166b9829",
+      "endpointURL":"tcp-tibrvrd://tibrvrdwprd01.lab01.dev.dekatonshivr.echinopsii.net:6969",
+      "endpointParentNodeID":"cf86ba1a-30c2-47aa-a158-2372070593c7",
+      "endpointTwinEndpointID":[
+
+      ],
+      "endpointProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        },
+        "RVRD_NEIGHBD_COMP":false,
+        "RVRD_NEIGHBD_COST":1,
+        "RVRD_NEIGHBD_TYPE":0,
+        "RVRD_NEIGHBD_LPORT":6969,
+        "RVRD_NEIGHBD_RPORT":-1,
+        "RVRD_NEIGHBD_ENC":false,
+        "RVRD_NEIGHBD_LHOST":"tibrvrdwprd01.lab01.dev.dekatonshivr.echinopsii.net",
+        "busDescription":"APP fix prices diffusion"
+      }
+    },
+    {
+      "endpointID":"99e8a72b-7057-47c0-ba33-86dd9fe03b50",
+      "endpointURL":"tcp-tibrvrd://tibrvrdw02prd01.lab02.dev.dekatonshivr.echinopsii.net:6969",
+      "endpointParentNodeID":"5a0ac2eb-17f4-4c68-b048-0d190e333f9d",
+      "endpointTwinEndpointID":[
+
+      ],
+      "endpointProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        },
+        "RVRD_NEIGHBD_TYPE":2,
+        "RVRD_NEIGHBD_COMP":false,
+        "RVRD_NEIGHBD_COST":1,
+        "RVRD_NEIGHBD_LPORT":6969,
+        "RVRD_NEIGHBD_RPORT":6969,
+        "RVRD_NEIGHBD_ENC":false,
+        "RVRD_NEIGHBD_RHOST":"tibrvrdwprd01.lab01.deb.dekatonshivr.echinopsii.net",
+        "RVRD_NEIGHBD_LHOST":"tibrvrdw02prd01.lab02.dev.dekatonshivr.echinopsii.net",
+        "busDescription":"APP FX prices diffusion"
+      }
+    },
+    {
+      "endpointID":"2e33ccb8-d748-4727-9c0a-028506416404",
+      "endpointURL":"tcp-tibrvrd://tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net:6969",
+      "endpointParentNodeID":"a0b0ba38-00c8-4862-9a9c-e5a8d25dcf67",
+      "endpointTwinEndpointID":[
+
+      ],
+      "endpointProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        },
+        "RVRD_NEIGHBD_TYPE":2,
+        "RVRD_NEIGHBD_COMP":false,
+        "RVRD_NEIGHBD_COST":1,
+        "RVRD_NEIGHBD_LPORT":6969,
+        "RVRD_NEIGHBD_RPORT":6969,
+        "RVRD_NEIGHBD_ENC":false,
+        "RVRD_NEIGHBD_RHOST":"tibrvrdmprd02.lab02.deb.dekatonshivr.echinopsii.net",
+        "RVRD_NEIGHBD_NNAME":"APP6969.tibrvrdmprd02",
+        "RVRD_NEIGHBD_LHOST":"tibrvrdl07prd01.lab02.dev.dekatonshivr.echinopsii.net",
+        "busDescription":"APP FX prices diffusion"
+      }
+    },
+    {
+      "endpointID":"2aa1ea21-97ca-4622-8a95-2334b6bbd662",
+      "endpointURL":"multicast-udp-tibrv://app6969rvd13.lab01.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969",
+      "endpointParentNodeID":"49aab4c0-fc58-49ae-b6c0-9d963b057400",
+      "endpointTwinEndpointID":[
+
+      ],
+      "endpointProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        }
+      }
+    },
+    {
+      "endpointID":"d66b0e55-9e09-4e30-8ca5-e7bc167d9087",
+      "endpointURL":"tcp-tibrvrd://tibrvrdwprd01.lab01.dev.dekatonshivr.echinopsii.net:16969",
+      "endpointParentNodeID":"cf86ba1a-30c2-47aa-a158-2372070593c7",
+      "endpointTwinEndpointID":[
+
+      ],
+      "endpointProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        },
+        "RVRD_NEIGHBD_COMP":false,
+        "RVRD_NEIGHBD_COST":1,
+        "RVRD_NEIGHBD_TYPE":2,
+        "RVRD_NEIGHBD_LPORT":16969,
+        "RVRD_NEIGHBD_RPORT":6969,
+        "RVRD_NEIGHBD_ENC":false,
+        "RVRD_NEIGHBD_RHOST":"tibrvrdmprd01.lab01.dev.dekatonshivr.echinopsii.net",
+        "RVRD_NEIGHBD_NNAME":"APP6969.tibrvrdmprd01",
+        "RVRD_NEIGHBD_LHOST":"tibrvrdwprd01.lab01.dev.dekatonshivr.echinopsii.net",
+        "busDescription":"APP fix prices diffusion"
+      }
+    },
+    {
+      "endpointID":"543f9234-27cf-4ff7-bec9-b250fe65de59",
+      "endpointURL":"multicast-udp-tibrv://tibrvrdl05prd01.lab01.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969",
+      "endpointParentNodeID":"a4304b09-5775-4aae-bdef-16891620e268",
+      "endpointTwinEndpointID":[
+        "722b9812-857f-46db-8823-02b6a1ed9738"
+      ],
+      "endpointProperties":{
+        "RVRD_LOCALNT_ESUB":[
+          "FR.APP.>"
+        ],
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        },
+        "RVRD_MULTICAST_AREA":"Sagittarius LAN RA",
+        "RVRD_LOCALNT_SERVICE":6969,
+        "RVRD_LOCALNT_ISUB":[
+          "FR.APP.>-weight:10"
+        ],
+        "RVRD_LOCALNT_NETWORK":";239.69.69.69",
+        "RVRD_LOCALNT_NAME":"APP6969.devlab01",
+        "busDescription":"APP fix prices diffusion"
+      }
+    },
+    {
+      "endpointID":"38e6f086-440c-43ca-a78f-cfef57c1ffb3",
+      "endpointURL":"multicast-udp-tibrv://app6969rvd14.lab01.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969",
+      "endpointParentNodeID":"b84f352c-0114-4655-9172-371410248fe6",
+      "endpointTwinEndpointID":[
+
+      ],
+      "endpointProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        }
+      }
+    },
+    {
+      "endpointID":"c3dde480-59a0-4b47-bd4e-247c2d7eaa13",
+      "endpointURL":"tcp-tibrvrd://tibrvrdl03prd01.lab01.dev.dekatonshivr.echinopsii.net:6969",
+      "endpointParentNodeID":"7d0a2074-3e14-4789-8b00-9ce2a9717f49",
+      "endpointTwinEndpointID":[
+
+      ],
+      "endpointProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        },
+        "RVRD_NEIGHBD_COMP":false,
+        "RVRD_NEIGHBD_COST":1,
+        "RVRD_NEIGHBD_TYPE":2,
+        "RVRD_NEIGHBD_LPORT":6969,
+        "RVRD_NEIGHBD_RPORT":6969,
+        "RVRD_NEIGHBD_ENC":false,
+        "RVRD_NEIGHBD_RHOST":"tibrvrdmprd01.lab01.dev.dekatonshivr.echinopsii.net",
+        "RVRD_NEIGHBD_NNAME":"APP6969.tibrvrdmprd01",
+        "RVRD_NEIGHBD_LHOST":"tibrvrdl03prd01.lab01.dev.dekatonshivr.echinopsii.net",
+        "busDescription":"APP fix prices diffusion"
+      }
+    },
+    {
+      "endpointID":"de161b3f-7b98-4d54-8bc2-9945df6a8fbe",
+      "endpointURL":"tcp-tibrvrd://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net:6969",
+      "endpointParentNodeID":"a297d058-e930-45e2-b601-a74413e3e8cc",
+      "endpointTwinEndpointID":[
+
+      ],
+      "endpointProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        },
+        "RVRD_NEIGHBD_TYPE":2,
+        "RVRD_NEIGHBD_COMP":false,
+        "RVRD_NEIGHBD_COST":1,
+        "RVRD_NEIGHBD_LPORT":6969,
+        "RVRD_NEIGHBD_RPORT":6969,
+        "RVRD_NEIGHBD_ENC":false,
+        "RVRD_NEIGHBD_RHOST":"tibrvrdmprd02.lab02.deb.dekatonshivr.echinopsii.net",
+        "RVRD_NEIGHBD_NNAME":"APP6969.tibrvrdmprd02",
+        "RVRD_NEIGHBD_LHOST":"tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net",
+        "busDescription":"APP FX prices diffusion"
+      }
+    },
+    {
+      "endpointID":"5ba9cd1e-e612-4b83-ab40-ff9a42f53a0c",
+      "endpointURL":"tcp-tibrvrd://tibrvrdw02prd01.lab02.dev.dekatonshivr.echinopsii.net:16969",
+      "endpointParentNodeID":"5a0ac2eb-17f4-4c68-b048-0d190e333f9d",
+      "endpointTwinEndpointID":[
+
+      ],
+      "endpointProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        },
+        "RVRD_NEIGHBD_TYPE":2,
+        "RVRD_NEIGHBD_COMP":false,
+        "RVRD_NEIGHBD_COST":1,
+        "RVRD_NEIGHBD_LPORT":16969,
+        "RVRD_NEIGHBD_RPORT":6969,
+        "RVRD_NEIGHBD_ENC":false,
+        "RVRD_NEIGHBD_RHOST":"tibrvrdm02prd02.lab02.deb.dekatonshivr.echinopsii.net",
+        "RVRD_NEIGHBD_LHOST":"tibrvrdw02prd01.lab02.dev.dekatonshivr.echinopsii.net",
+        "busDescription":"APP FX prices diffusion"
+      }
+    },
+    {
+      "endpointID":"3236e7ad-690c-4acd-953f-efaaed8d6234",
+      "endpointURL":"multicast-udp-tibrv://tibrvrdl06prd01.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969",
+      "endpointParentNodeID":"a297d058-e930-45e2-b601-a74413e3e8cc",
+      "endpointTwinEndpointID":[
+        "102f816e-f7a7-438d-8665-9172d4f2dcd7"
+      ],
+      "endpointProperties":{
+        "RVRD_LOCALNT_ESUB":[
+          "FR.APP.>",
+          "FR.BPP.>"
+        ],
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        },
+        "RVRD_LOCALNT_SERVICE":6969,
+        "RVRD_LOCALNT_NETWORK":";239.69.69.69",
+        "RVRD_LOCALNT_ISUB":[
+          "FR.APP.>-weight:10",
+          "FR.BPP.>-weight:10"
+        ],
+        "busDescription":"APP FX prices diffusion",
+        "RVRD_LOCALNT_NAME":"APP6969.Scorpius"
+      }
+    },
+    {
+      "endpointID":"574ff7c3-fd2c-47a1-9391-3206c643b723",
+      "endpointURL":"multicast-udp-tibrv://app6969rvd23.lab02.dev.dekatonshivr.echinopsii.net/;239.69.69.69:6969",
+      "endpointParentNodeID":"d76c3f79-170d-4f12-b8e9-3bf54143f0a4",
+      "endpointTwinEndpointID":[
+
+      ],
+      "endpointProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        }
+      }
+    }
+  ],
+  "links":[
+    {
+      "linkID":"4b6b8c44-21f0-4195-bad3-2de51573977c",
+      "linkSEPID":"cb704c4a-44d6-425b-ac6c-5de95e555643",
+      "linkTRPID":"be703b32-3d6f-4d61-9bbd-92dd3c73ad6a"
+    },
+    {
+      "linkID":"87e301b2-9686-47c1-8b68-6e3ed6926a78",
+      "linkSEPID":"5ba9cd1e-e612-4b83-ab40-ff9a42f53a0c",
+      "linkTEPID":"67028909-1921-4010-ba2e-ba1bc7bdd426",
+      "linkTRPID":"03c63603-4199-4c92-b09f-50a0619534c1"
+    },
+    {
+      "linkID":"eb56b144-7c38-4915-95ce-b5a3158c9bb4",
+      "linkSEPID":"38e6f086-440c-43ca-a78f-cfef57c1ffb3",
+      "linkTRPID":"cff834c6-40e7-4412-822e-040a0b8a31ff"
+    },
+    {
+      "linkID":"dee03b66-d8f9-4e22-a955-b9244a5aee58",
+      "linkSEPID":"1c54c317-8bdb-4dce-821e-dc7c44ca1ff6",
+      "linkTRPID":"cff834c6-40e7-4412-822e-040a0b8a31ff"
+    },
+    {
+      "linkID":"ede57ab8-478b-45c3-8049-8089ff562e78",
+      "linkSEPID":"c3e34501-e546-449c-90ac-25ee945ae8cf",
+      "linkTEPID":"7bbc7756-0239-499f-acb6-442280065a81",
+      "linkTRPID":"03c63603-4199-4c92-b09f-50a0619534c1"
+    },
+    {
+      "linkID":"ca975923-8d5a-475d-9c91-37f8fcfcf32d",
+      "linkSEPID":"102f816e-f7a7-438d-8665-9172d4f2dcd7",
+      "linkTRPID":"be703b32-3d6f-4d61-9bbd-92dd3c73ad6a"
+    },
+    {
+      "linkID":"646aaba5-68d5-4128-9f92-0be90ee0f417",
+      "linkSEPID":"722b9812-857f-46db-8823-02b6a1ed9738",
+      "linkTRPID":"cff834c6-40e7-4412-822e-040a0b8a31ff"
+    },
+    {
+      "linkID":"f640d0ae-6314-4437-96d5-c549c33e424b",
+      "linkSEPID":"99a57bdc-530b-4d7f-9549-90eb3203cdca",
+      "linkTRPID":"cff834c6-40e7-4412-822e-040a0b8a31ff"
+    },
+    {
+      "linkID":"14ab18e1-a3bc-4954-8270-d665d8a55dae",
+      "linkSEPID":"574ff7c3-fd2c-47a1-9391-3206c643b723",
+      "linkTRPID":"be703b32-3d6f-4d61-9bbd-92dd3c73ad6a"
+    },
+    {
+      "linkID":"658bf75d-94d3-4912-a71f-3a3446dc3df1",
+      "linkSEPID":"c3dde480-59a0-4b47-bd4e-247c2d7eaa13",
+      "linkTEPID":"7bbc7756-0239-499f-acb6-442280065a81",
+      "linkTRPID":"03c63603-4199-4c92-b09f-50a0619534c1"
+    },
+    {
+      "linkID":"157b3d95-f605-4d32-8095-744f4384fe88",
+      "linkSEPID":"4bb9a782-4ed7-4d2c-a370-2fe83019d167",
+      "linkTRPID":"be703b32-3d6f-4d61-9bbd-92dd3c73ad6a"
+    },
+    {
+      "linkID":"d67af3ec-0ee8-4e67-a567-a3ec50cf0d15",
+      "linkSEPID":"2e33ccb8-d748-4727-9c0a-028506416404",
+      "linkTEPID":"67028909-1921-4010-ba2e-ba1bc7bdd426",
+      "linkTRPID":"03c63603-4199-4c92-b09f-50a0619534c1"
+    },
+    {
+      "linkID":"69be9270-a362-4251-ad24-046703bde1c3",
+      "linkSEPID":"d66b0e55-9e09-4e30-8ca5-e7bc167d9087",
+      "linkTEPID":"7bbc7756-0239-499f-acb6-442280065a81",
+      "linkTRPID":"03c63603-4199-4c92-b09f-50a0619534c1"
+    },
+    {
+      "linkID":"a97a508b-e26c-442b-b374-595e1267a8c4",
+      "linkSEPID":"de161b3f-7b98-4d54-8bc2-9945df6a8fbe",
+      "linkTEPID":"67028909-1921-4010-ba2e-ba1bc7bdd426",
+      "linkTRPID":"03c63603-4199-4c92-b09f-50a0619534c1"
+    },
+    {
+      "linkID":"4fa06ecb-d412-4e4d-91e4-09d1baeb014e",
+      "linkSEPID":"543f9234-27cf-4ff7-bec9-b250fe65de59",
+      "linkTRPID":"cff834c6-40e7-4412-822e-040a0b8a31ff"
+    },
+    {
+      "linkID":"4d252723-8434-4121-b504-a81ac07f85ec",
+      "linkSEPID":"33e0c258-a50e-4bdb-9aec-7f543cc3e5d8",
+      "linkTRPID":"be703b32-3d6f-4d61-9bbd-92dd3c73ad6a"
+    },
+    {
+      "linkID":"92c76f8e-cc00-4557-b0c1-2768214e089f",
+      "linkSEPID":"2aa1ea21-97ca-4622-8a95-2334b6bbd662",
+      "linkTRPID":"cff834c6-40e7-4412-822e-040a0b8a31ff"
+    },
+    {
+      "linkID":"692e5160-6e93-4453-82c6-644eb9559e31",
+      "linkSEPID":"99e8a72b-7057-47c0-ba33-86dd9fe03b50",
+      "linkTEPID":"72cee539-d1f0-4866-8f58-3b51166b9829",
+      "linkTRPID":"03c63603-4199-4c92-b09f-50a0619534c1"
+    },
+    {
+      "linkID":"90ddc434-90e0-43f6-80d4-91a77e6f30ff",
+      "linkSEPID":"3236e7ad-690c-4acd-953f-efaaed8d6234",
+      "linkTRPID":"be703b32-3d6f-4d61-9bbd-92dd3c73ad6a"
+    }
+  ],
+  "transports":[
+    {
+      "transportID":"03c63603-4199-4c92-b09f-50a0619534c1",
+      "transportName":"tcp-tibrvrd://"
+    },
+    {
+      "transportID":"be703b32-3d6f-4d61-9bbd-92dd3c73ad6a",
+      "transportName":"multicast-udp-tibrv://Scorpius LAN RA;239.69.69.69",
+      "transportProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        },
+        "busDescription":"APP FX prices diffusion"
+      }
+    },
+    {
+      "transportID":"cff834c6-40e7-4412-822e-040a0b8a31ff",
+      "transportName":"multicast-udp-tibrv://Sagittarius LAN RA;239.69.69.69",
+      "transportProperties":{
+        "primaryApplication":{
+          "color":"e8a25d",
+          "name":"APP"
+        },
+        "busDescription":"APP fix prices diffusion"
+      }
+    }
+  ]
+}

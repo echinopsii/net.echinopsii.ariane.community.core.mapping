@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    {% block attributes %}
+    <parent>
+        <groupId>{{ groupId }}</groupId>
+        <artifactId>{{ artifactId }}</artifactId>
+        <version>{{ version }}</version>
+        <relativePath>..</relativePath>
+    </parent>
+
+    <groupId>{{ artifactId }}</groupId>
+    <artifactId>{{ artifactId }}.{{ name }}</artifactId>
+    <name>Ariane Community Core Mapping DS API</name>
+    <packaging>bundle</packaging>
+    {% endblock %}
+
+    <build>
+        <plugins>
+            <!-- disable surefire -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.7</version>
+                <configuration>
+                    <skipTests>true</skipTests>
+                </configuration>
+            </plugin>
+            <!-- enable scalatest -->
+            <plugin>
+                <groupId>org.scalatest</groupId>
+                <artifactId>scalatest-maven-plugin</artifactId>
+                <configuration>
+                    <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+                    <junitxml>.</junitxml>
+                    <filereports>WDF TestSuite.txt</filereports>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>test</id>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>scala-compile</id>
+                        <goals>
+                            <goal>add-source</goal>
+                            <goal>compile</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                    </execution>
+                    <execution>
+                        <id>scala-test-compile</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <scalaCompatVersion>2.10</scalaCompatVersion>
+                    <jvmArgs>
+                        <jvmArg>-Xms64m</jvmArg>
+                        <jvmArg>-Xmx1024m</jvmArg>
+                    </jvmArgs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${version.java.source}</source>
+                    <target>${version.java.target}</target>
+                    <showDeprecation>true</showDeprecation>
+                    <showWarnings>true</showWarnings>
+                    <optimize>true</optimize>
+                </configuration>
+            </plugin>
+            <plugin>
+                <!-- This plugin takes care of packaging the artifact as an OSGi Bundle -->
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Export-Package>
+                            net.echinopsii.ariane.community.core.mapping.ds;version=${project.version},
+                            net.echinopsii.ariane.community.core.mapping.ds.cache;version=${project.version},
+                            net.echinopsii.ariane.community.core.mapping.ds.cfg;version=${project.version},
+                            net.echinopsii.ariane.community.core.mapping.ds.cli;version=${project.version},
+                            net.echinopsii.ariane.community.core.mapping.ds.domain;version=${project.version},
+                            net.echinopsii.ariane.community.core.mapping.ds.domain.proxy;version=${project.version},
+                            net.echinopsii.ariane.community.core.mapping.ds.repository;version=${project.version},
+                            net.echinopsii.ariane.community.core.mapping.ds.service;version=${project.version},
+                            net.echinopsii.ariane.community.core.mapping.ds.service.tools;version=${project.version},
+                            net.echinopsii.ariane.community.core.mapping.ds.service.proxy;version=${project.version},
+                            net.echinopsii.ariane.community.core.mapping.ds.json;version=${project.version},
+                            net.echinopsii.ariane.community.core.mapping.ds.json.domain;version=${project.version},
+                            net.echinopsii.ariane.community.core.mapping.ds.json.service;version=${project.version},
+                        </Export-Package>
+                        <Import-Package>
+                            com.fasterxml.jackson.datatype.jsonorg;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.annotation;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.cfg;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.deser;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.deser.impl;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.deser.std;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.exc;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.ext;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.introspect;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.jsonFormatVisitors;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.jsonschema;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.jsontype;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.jsontype.impl;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.module;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.node;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.ser;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.ser.impl;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.ser.std;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.type;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.databind.util;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.annotation;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.core;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.core.base;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.core.format;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.core.io;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.core.json;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.core.sym;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.core.type;version="${version.com.fasterxml.jackson}",
+                            com.fasterxml.jackson.core.util;version="${version.com.fasterxml.jackson}",
+                            org.infinispan;version="${version.org.infinispan}",
+                            org.infinispan.configuration.cache;version="${version.org.infinispan}",
+                            org.infinispan.manager;version="${version.org.infinispan}",
+                            org.slf4j;version="${version.org.slf4j}"
+                        </Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -19,12 +19,13 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository;
 
-import com.tinkerpop.blueprints.Element;
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSBlueprintsCacheEntity;
-import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.EndpointImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.NodeImpl;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.repository.NodeRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,44 +37,45 @@ public class NodeRepoImpl implements NodeRepo<NodeImpl> {
 
     private final static Logger log = LoggerFactory.getLogger(NodeRepoImpl.class);
 
-    public static Set<NodeImpl> getRepository() {
+    public static Set<NodeImpl> getRepository() throws MappingDSException {
         return MappingDSGraphDB.getNodes();
     }
 
     @Override
     public NodeImpl saveNode(NodeImpl node) {
         MappingDSGraphDB.saveVertexEntity(node);
-        log.debug("Added node {} to graph({}).", new Object[]{node.toString(), MappingDSGraphDB.getVertexMaxCursor()});
+        log.debug("Added node {} to graph.", new Object[]{node.toString()});
         return node;
     }
 
     @Override
-    public void deleteNode(NodeImpl node) {
-        Set<NodeImpl> childNodesToRemove = new HashSet<NodeImpl>(node.getNodeChildNodes());
-        for (NodeImpl childNode : childNodesToRemove) this.deleteNode(childNode);
+    public void deleteNode(NodeImpl node) throws MappingDSException {
+        node.setIsBeingDeleted();
+        Set<Node> childNodesToRemove = new HashSet<>(node.getNodeChildNodes());
+        for (Node childNode : childNodesToRemove) this.deleteNode((NodeImpl)childNode);
         childNodesToRemove.clear();
 
-        Set<EndpointImpl> clonedESet = new HashSet<>(node.getNodeEndpoints());
-        for (EndpointImpl endpoint : clonedESet) {
-            log.debug("Deleted endpoint {} from graph({}).", new Object[]{endpoint.getEndpointURL(), MappingDSGraphDB.getVertexMaxCursor()});
+        Set<Endpoint> clonedESet = new HashSet<>(node.getNodeEndpoints());
+        for (Endpoint endpoint : clonedESet) {
+            log.debug("Deleted endpoint {} from graph.", new Object[]{endpoint.getEndpointURL()});
             node.removeEndpoint(endpoint);
         }
         clonedESet.clear();
 
-        Set<NodeImpl> twinNodesToRemove = new HashSet<NodeImpl>(node.getTwinNodes());
-        for (NodeImpl twinNode : twinNodesToRemove) twinNode.removeTwinNode(node);
+        Set<Node> twinNodesToRemove = new HashSet<>(node.getTwinNodes());
+        for (Node twinNode : twinNodesToRemove) twinNode.removeTwinNode(node);
         twinNodesToRemove.clear();
 
         if (node.getNodeParentNode() != null) node.getNodeParentNode().removeNodeChildNode(node);
 
-        if (node.getNodeDepth() == 1) node.getNodeContainer().removeContainerNode(node);
+        if (node.getNodeParentNode()==null) node.getNodeContainer().removeContainerNode(node);
 
         MappingDSGraphDB.deleteEntity(node);
-        log.debug("Deleted node {} and all its linked entities from graph({}).", new Object[]{node.toString(), MappingDSGraphDB.getVertexMaxCursor()});
+        log.debug("Deleted node {} and all its linked entities from graph.", new Object[]{node.toString()});
     }
 
     @Override
-    public NodeImpl findNodeByID(long ID) {
+    public NodeImpl findNodeByID(String ID) throws MappingDSException {
         NodeImpl ret = null;
         MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity(ID);
         if (entity != null) {
@@ -87,17 +89,21 @@ public class NodeRepoImpl implements NodeRepo<NodeImpl> {
     }
 
     @Override
-    public NodeImpl findNodeByEndpointURL(String URL) {
+    public NodeImpl findNodeByEndpointURL(String URL) throws MappingDSException {
         NodeImpl ret = null;
         EndpointImpl ep = MappingDSGraphDB.getIndexedEndpoint(URL);
-        if (ep != null) {
-            ret = ep.getEndpointParentNode();
-        }
+        if (ep != null) ret = (NodeImpl) ep.getEndpointParentNode();
         return ret;
     }
 
     @Override
-    public Set<NodeImpl> findNodesByProperties(String key, Object value) {
+    public Set<NodeImpl> findNodesByProperties(String key, Object value) throws MappingDSException {
         return MappingDSGraphDB.getNodes(key, value);
     }
+
+    @Override
+    public Set<NodeImpl> findNodesBySelector(String selector) throws MappingDSException {
+        return MappingDSGraphDB.getNodes(selector);
+    }
+
 }

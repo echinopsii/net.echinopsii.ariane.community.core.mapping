@@ -21,19 +21,29 @@ package net.echinopsii.ariane.community.core.mapping.ds.service;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
 import java.util.Set;
 
 public interface EndpointSce<E extends Endpoint> {
-    public E createEndpoint(String url, long parentNodeID) throws MappingDSException;
+    String Q_MAPPING_ENDPOINT_SERVICE = "ARIANE_MAPPING_ENDPOINT_SERVICE_Q";
 
-    public void deleteEndpoint(long endpointID) throws MappingDSException;
+    String OP_CREATE_ENDPOINT = "createEndpoint";
+    String OP_DELETE_ENDPOINT = "deleteEndpoint";
+    String OP_GET_ENDPOINT = "getEndpoint";
+    String OP_GET_ENDPOINT_BY_URL = "getEndpointByURL";
+    String OP_GET_ENDPOINTS = "getEndpoints";
 
-    public E getEndpoint(long id);
+    String PARAM_ENDPOINT_URL = "URL";
+    String PARAM_ENDPOINT_TEID = "twinEndpointID";
 
-    public E getEndpoint(String URL);
+    E createEndpoint(String url, String parentNodeID) throws MappingDSException;
 
-    public Set<E> getEndpoints(String selector);
+    void deleteEndpoint(String endpointID) throws MappingDSException;
 
-    public Set<E> getEndpoints(String key, Object value);
+    E getEndpoint(String id) throws MappingDSException;
+    E getEndpointByURL(String URL) throws MappingDSException;
+
+    Set<E> getEndpoints(String selector) throws MappingDSException;
+    Set<E> getEndpoints(String key, Object value) throws MappingDSException;
 }

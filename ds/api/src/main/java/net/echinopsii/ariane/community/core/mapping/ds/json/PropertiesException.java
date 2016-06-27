@@ -1,6 +1,6 @@
 /**
  * Properties Serialization Exception
- * provide a mapping DS Web Service and REST Service
+ *
  * Copyright (C) 2014  Mathilde Ffrench
  *
  * This program is free software: you can redistribute it and/or modify

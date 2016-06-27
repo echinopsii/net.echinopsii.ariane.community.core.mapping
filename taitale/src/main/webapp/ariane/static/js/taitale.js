@@ -62,27 +62,23 @@ require.config({
         'taitale-transport-multicastbus': 'ajs/taitale/core/transport/multicastBus-min',
         'taitale-link': 'ajs/taitale/core/link-min',
 
-        /*taitale tree layout*/
-        'taitale-tree': 'ajs/taitale/layout/tree/tree-min',
-        'taitale-vertex': 'ajs/taitale/layout/tree/vertex-min',
-
         /*taitale bubble tree layout*/
         'taitale-btree': 'ajs/taitale/layout/bubbletree/btree-min',
         'taitale-bvertex': 'ajs/taitale/layout/bubbletree/bvertex-min',
 
-        /*taitale network layout*/
-        'taitale-map-splitter': 'ajs/taitale/layout/network/mapSplitter-min',
-        'taitale-layoutntw-registries' : 'ajs/taitale/layout/network/registries-min',
-        'taitale-datacenter': 'ajs/taitale/layout/network/datacenter/datacenter-min',
-        'taitale-datacenter-splitter': 'ajs/taitale/layout/network/datacenter/dcSplitter-min',
-        'taitale-datacenter-hat': 'ajs/taitale/layout/network/datacenter/hat-min',
-        'taitale-datacenter-matrix': 'ajs/taitale/layout/network/datacenter/matrix-min',
-        'taitale-area': 'ajs/taitale/layout/network/area/area-min',
-        'taitale-area-matrix': 'ajs/taitale/layout/network/area/matrix-min',
-        'taitale-area-hat': 'ajs/taitale/layout/network/area/hat-min',
-        'taitale-lan': 'ajs/taitale/layout/network/lan/lan-min',
-        'taitale-lan-matrix': 'ajs/taitale/layout/network/lan/matrix-min',
-        'taitale-lan-hat': 'ajs/taitale/layout/network/lan/hat-min'
+        /*taitale middleware layout*/
+        'taitale-map-splitter': 'ajs/taitale/layout/middleware/mapSplitter-min',
+        'taitale-layoutntw-registries' : 'ajs/taitale/layout/middleware/registries-min',
+        'taitale-datacenter': 'ajs/taitale/layout/middleware/datacenter/datacenter-min',
+        'taitale-datacenter-splitter': 'ajs/taitale/layout/middleware/datacenter/dcSplitter-min',
+        'taitale-datacenter-hat': 'ajs/taitale/layout/middleware/datacenter/hat-min',
+        'taitale-datacenter-matrix': 'ajs/taitale/layout/middleware/datacenter/matrix-min',
+        'taitale-area': 'ajs/taitale/layout/middleware/area/area-min',
+        'taitale-area-matrix': 'ajs/taitale/layout/middleware/area/matrix-min',
+        'taitale-area-hat': 'ajs/taitale/layout/middleware/area/hat-min',
+        'taitale-lan': 'ajs/taitale/layout/middleware/lan/lan-min',
+        'taitale-lan-matrix': 'ajs/taitale/layout/middleware/lan/matrix-min',
+        'taitale-lan-hat': 'ajs/taitale/layout/middleware/lan/hat-min'
     },
     map: {
         '*': { 'jquery': 'jquery-private' },
@@ -130,26 +126,29 @@ requirejs (
                  * object events related to map
                  */
 
+                helper_.initGrowlMsgs(widget_growl.jqId);
+                helper_.initErrorBox('#mapError', '#mapErrorMsg');
+
                 $(execQuery.jqId).click([loader_, dic], function(){
                     var request = $(mdslQuery.jqId)[0].value
                     var requestURI = homeURI + "/rest/mapping/service/map/query?mdsl="+encodeURI(request)
                     helper_.debug(requestURI.toString());
+                    helper_.hideErrorBox();
                     options.setURI(requestURI);
                     try {
                         loader_.reloadMap(options);
-                        loader_.editionMode(options);
-                        if (options.getLayout()===dic.mapLayout.NTWWW) {
+                        if (options.getLayout()===dic.mapLayout.MDW) {
                             document.getElementById('treeOptions').style.display = "none";
-                            document.getElementById('networkOptions').style.display = "";
-                            for (i = 0, ii = networkLayoutDisplayOptions.inputs.length; i < ii; i++) {
-                                input = networkLayoutDisplayOptions.inputs[i];
+                            document.getElementById('middlewareOptions').style.display = "";
+                            for (i = 0, ii = middlewareLayoutDisplayOptions.inputs.length; i < ii; i++) {
+                                input = middlewareLayoutDisplayOptions.inputs[i];
                                 if (input.value==="displayDC") options.displayDC = input.checked;
                                 else if (input.value==="displayArea") options.displayAREA = input.checked;
                                 else if (input.value==="displayLan") options.displayLAN = input.checked;
                             }
-                        } else if (options.getLayout()===dic.mapLayout.TREE || options.getLayout()===dic.mapLayout.BBTREE) {
+                        } else if (options.getLayout()===dic.mapLayout.BBTREE) {
                             document.getElementById('treeOptions').style.display = "";
-                            document.getElementById('networkOptions').style.display = "none";
+                            document.getElementById('middlewareOptions').style.display = "none";
                         }
                         $("#mappyCanvas").css({"background-color":"whitesmoke"});
                     } catch (e) {
@@ -158,14 +157,23 @@ requirejs (
                             {
                                 severity: 'error',
                                 summary: 'Failed to load map',
-                                detail: 'Layout: '+options.getLayout() +"<br>Mode: "+options.getMode(),
+                                detail: 'Layout: '+options.getLayout(),
                                 sticky: true
                             }
                         );
                         console.log(e.stack);
+                        var msg = "<h3>oO ! We have some problem to load the map here ! <br/> Let's find a way to correct it ... </h3>" +
+                            '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
+                            '<p>2) complete the ticket : <ul>' +
+                            '<li>setup ticket title as "map loading error"</li>' +
+                            '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
+                            '<li>specify the layout (' + options.getLayout() +')</li></ul></p>' +
+                            "<p>3) wait the ticket to be resolved ... </p>";
+                        helper_.showErrorBox(msg);
                     }
                 });
                 $(layoutSelector.jqId).change([loader_, dic], function() {
+                    helper_.hideErrorBox();
                     for (i = 0, ii = layoutSelector.inputs.length; i < ii; i++) {
                         input = layoutSelector.inputs[i];
                         if (input.checked) {
@@ -173,19 +181,18 @@ requirejs (
                             options.setLayout(num);
                             try {
                                 loader_.rebuildMap(options);
-                                loader_.editionMode(options);
-                                if (options.getLayout()===dic.mapLayout.NTWWW) {
+                                if (options.getLayout()===dic.mapLayout.MDW) {
                                     document.getElementById('treeOptions').style.display = "none";
-                                    document.getElementById('networkOptions').style.display = "";
-                                    for (var i = 0, ii = networkLayoutDisplayOptions.inputs.length; i < ii; i++) {
-                                        var input = networkLayoutDisplayOptions.inputs[i];
+                                    document.getElementById('middlewareOptions').style.display = "";
+                                    for (var i = 0, ii = middlewareLayoutDisplayOptions.inputs.length; i < ii; i++) {
+                                        var input = middlewareLayoutDisplayOptions.inputs[i];
                                         if (input.value==="displayDC") options.displayDC = input.checked;
                                         else if (input.value==="displayArea") options.displayAREA = input.checked;
                                         else if (input.value==="displayLan") options.displayLAN = input.checked;
                                     }
-                                } else if (options.getLayout()===dic.mapLayout.TREE || options.getLayout()===dic.mapLayout.BBTREE) {
+                                } else if (options.getLayout()===dic.mapLayout.BBTREE) {
                                     document.getElementById('treeOptions').style.display = "";
-                                    document.getElementById('networkOptions').style.display = "none";
+                                    document.getElementById('middlewareOptions').style.display = "none";
                                 }
                             } catch (e) {
                                 helper_.addMsgToGrowl(e);
@@ -193,42 +200,113 @@ requirejs (
                                     {
                                         severity: 'error',
                                         summary: 'Failed to load map',
-                                        detail: 'Layout: '+options.getLayout() + "<br>Mode: "+options.getMode(),
+                                        detail: 'Layout: '+options.getLayout(),
                                         sticky: true
                                     }
                                 );
                                 console.log(e.stack);
+                                var msg = "<h3>oO ! We have some problem to load the map here ! <br/> Let's find a way to correct it ... </h3>" +
+                                    '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
+                                    '<p>2) complete the ticket : <ul>' +
+                                    '<li>setup ticket title as "map loading error"</li>' +
+                                    '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
+                                    '<li>specify the layout (' + options.getLayout() +')</li></ul></p>' +
+                                    "<p>3) wait the ticket to be resolved ... </p>";
+                                helper_.showErrorBox(msg);
                             }
                             break;
                         }
                     }
                 });
                 $(modeSelector.jqId).change([loader_, dic], function() {
+                    helper_.hideErrorBox();
                     for (i = 0, ii = modeSelector.inputs.length; i < ii; i++) {
                         input = modeSelector.inputs[i];
                         if (input.checked) {
-                            options.setMode(input.value);
+                            options.edition = (input.value === dic.mapMode.EDITION);
                             try {
                                 //loader_.refreshMap(options);
                                 loader_.editionMode(options);
-                                if (options.getLayout()===dic.mapLayout.NTWWW) {
-                                    for (var i = 0, ii = networkLayoutDisplayOptions.inputs.length; i < ii; i++) {
-                                        var input = networkLayoutDisplayOptions.inputs[i];
-                                        if (input.value==="displayDC") options.displayDC = input.checked;
-                                        else if (input.value==="displayArea") options.displayAREA = input.checked;
-                                        else if (input.value==="displayLan") options.displayLAN = input.checked;
-                                    }
-                                }
                             } catch (e) {
                                 helper_.addMsgToGrowl(e);
                                 helper_.growlMsgs(
                                     {
                                         severity: 'error',
-                                        summary: 'Failed to refresh map',
-                                        detail: 'Layout: '+options.getLayout()+"<br>Mode: "+options.getMode(),
+                                        summary: 'Failed to activate edition helper',
+                                        detail: 'Layout: '+options.getLayout(),
                                         sticky: true
                                     });
                                 console.log(e.stack);
+                                var msg = "<h3>oO ! We have some problem to activate edition helper here ! <br/> Let's find a way to correct it ... </h3>" +
+                                    '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
+                                    '<p>2) complete the ticket : <ul>' +
+                                    '<li>setup ticket title as "edition helper activation error"</li>' +
+                                    '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
+                                    '<li>specify the layout (' + options.getLayout() +')</li></ul></p>' +
+                                    "<p>3) wait the ticket to be resolved ... </p>";
+                                helper_.showErrorBox(msg);
+                            }
+                        }
+                    }
+                });
+                $(endpointHelper.jqId).change([loader_, dic], function() {
+                    helper_.hideErrorBox();
+                    for (i = 0, ii = endpointHelper.inputs.length; i < ii; i++) {
+                        input = endpointHelper.inputs[i];
+                        if (input.checked) {
+                            options.epreset = (input.value === dic.mapToolActivation.ON);
+                            try {
+                                //loader_.refreshMap(options);
+                                loader_.endpointReset(options);
+                            } catch (e) {
+                                helper_.addMsgToGrowl(e);
+                                helper_.growlMsgs(
+                                    {
+                                        severity: 'error',
+                                        summary: 'Failed to activate endpoint helper',
+                                        detail: 'Layout: '+options.getLayout(),
+                                        sticky: true
+                                    });
+                                console.log(e.stack);
+                                var msg = "<h3>oO ! We have some problem to activate endpoint helper here ! <br/> Let's find a way to correct it ... </h3>" +
+                                    '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
+                                    '<p>2) complete the ticket : <ul>' +
+                                    '<li>setup ticket title as "endpoint helper activation error"</li>' +
+                                    '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
+                                    '<li>specify the layout (' + options.getLayout() +')</li></ul></p>' +
+                                    "<p>3) wait the ticket to be resolved ... </p>";
+                                helper_.showErrorBox(msg);
+                            }
+                        }
+                    }
+                });
+                $(mapLegend.jqId).change([loader_, dic], function() {
+                    helper_.hideErrorBox();
+                    for (i = 0, ii = mapLegend.inputs.length; i < ii; i++) {
+                        input = mapLegend.inputs[i];
+                        if (input.checked) {
+                            options.displayLegend = (input.value === dic.mapToolActivation.ON);
+                            try {
+                                //loader_.refreshMap(options);
+                                loader_.legend(options);
+                            } catch (e) {
+                                helper_.addMsgToGrowl(e);
+                                helper_.growlMsgs(
+                                    {
+                                        severity: 'error',
+                                        summary: 'Failed to display map legend',
+                                        detail: 'Layout: '+options.getLayout(),
+                                        sticky: true
+                                    });
+                                console.log(e.stack);
+                                var msg = "<h3>oO ! We have some problem to activate endpoint helper here ! <br/> Let's find a way to correct it ... </h3>" +
+                                    '<p>1) open a new JIRA ticket <a href="http://jira.echinopsii.net" target="_blank">here</a></p>' +
+                                    '<p>2) complete the ticket : <ul>' +
+                                    '<li>setup ticket title as "endpoint helper activation error"</li>' +
+                                    '<li>attach <a href="'+ options.getURI() +'" target="_blank">the source of the problem</a></li>'+
+                                    '<li>specify the layout (' + options.getLayout() +')</li></ul></p>' +
+                                    "<p>3) wait the ticket to be resolved ... </p>";
+                                helper_.showErrorBox(msg);
                             }
                         }
                     }
@@ -245,9 +323,9 @@ requirejs (
                         }
                     }
                 });
-                $(networkLayoutDisplayOptions.jqId).change([loader_, dic], function() {
-                    for (i = 0, ii = networkLayoutDisplayOptions.inputs.length; i < ii; i++) {
-                        input = networkLayoutDisplayOptions.inputs[i];
+                $(middlewareLayoutDisplayOptions.jqId).change([loader_, dic], function() {
+                    for (i = 0, ii = middlewareLayoutDisplayOptions.inputs.length; i < ii; i++) {
+                        input = middlewareLayoutDisplayOptions.inputs[i];
                         if (input.value==="displayDC") {
                             options.displayDC = input.checked;
                             loader_.displayDC(options.displayDC);
@@ -300,7 +378,7 @@ requirejs (
                                     {
                                         severity: 'info',
                                         summary: 'Map successfully refreshed ',
-                                        detail: 'Name: '+$('#test').val()+'<br>Layout: '+options.getLayout() +"<br>Mode: "+options.getMode()
+                                        detail: 'Name: '+$('#test').val()+'<br>Layout: '+options.getLayout()
                                     }
                                 );
                             } catch (e) {
@@ -336,7 +414,7 @@ requirejs (
                         helper_.growlMsgs(
                             {
                                 severity: 'error',
-                                summary: 'Failed to export map to PNG',
+                                summary: 'Failed to export map to JPG',
                                 detail: 'Check the console log to know more...',
                                 sticky: true
                             }
@@ -408,9 +486,6 @@ requirejs (
             }
         }, 10);
 
-        helper_.initGrowlMsgs(widget_growl.jqId);
-        helper_.initErrorBox('#mapError', '#mapErrorMsg');
-
         for (i = 0, ii = layoutSelector.inputs.length; i < ii; i++) {
             input = layoutSelector.inputs[i];
             if (input.checked) {
@@ -423,16 +498,27 @@ requirejs (
 
         for (i = 0, ii = modeSelector.inputs.length; i < ii; i++) {
             input = modeSelector.inputs[i];
-            if (input.checked) {
-                options.setMode(input.value);
-            }
+            if (input.checked)
+                options.edition = (input.value === dic.mapMode.EDITION);
         }
 
-        if (options.getLayout()===dic.mapLayout.NTWWW) {
+        for (i = 0, ii = endpointHelper.inputs.length; i < ii; i++) {
+            input = endpointHelper.inputs[i];
+            if (input.checked)
+                options.epreset = (input.value === dic.mapToolActivation.ON);
+        }
+
+        for (i = 0, ii = mapLegend.inputs.length; i < ii; i++) {
+            input = mapLegend.inputs[i];
+            if (input.checked)
+                options.displayLegend = (input.value === dic.mapToolActivation.ON);
+        }
+
+        if (options.getLayout()===dic.mapLayout.MDW) {
             document.getElementById('treeOptions').style.display = "none";
-            document.getElementById('networkOptions').style.display = "";
-            for (i = 0, ii = networkLayoutDisplayOptions.inputs.length; i < ii; i++) {
-                input = networkLayoutDisplayOptions.inputs[i];
+            document.getElementById('middlewareOptions').style.display = "";
+            for (i = 0, ii = middlewareLayoutDisplayOptions.inputs.length; i < ii; i++) {
+                input = middlewareLayoutDisplayOptions.inputs[i];
                 if (input.value==="displayDC") {
                     options.displayDC = input.checked;
                     //loader_.displayDC(options.displayDC);
@@ -444,8 +530,8 @@ requirejs (
                     //loader_.displayLan(options.displayLAN);
                 }
             }
-        } else if (options.getLayout()===dic.mapLayout.TREE  || options.getLayout()===dic.mapLayout.BBTREE) {
+        } else if (options.getLayout()===dic.mapLayout.BBTREE) {
             document.getElementById('treeOptions').style.display = "";
-            document.getElementById('networkOptions').style.display = "none";
+            document.getElementById('middlewareOptions').style.display = "none";
         }
     });

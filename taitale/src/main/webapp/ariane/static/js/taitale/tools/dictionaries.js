@@ -21,11 +21,14 @@
 define(
     function () {
         function dictionaries() {
+            this.mapToolActivation = {
+                ON: "ON",
+                OFF: "OFF"
+            };
             this.mapLayout = {
                 MANUAL: "Random",
-                TREE  : "Tree",
                 BBTREE: "BBTree",
-                NTWWW : "Network"
+                MDW : "Middleware"
             };
             this.mapMode = {
                 NAVIGATION: "Navigation",

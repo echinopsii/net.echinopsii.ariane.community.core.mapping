@@ -19,6 +19,7 @@
 
 package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSBlueprintsCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.ClusterImpl;
@@ -32,25 +33,25 @@ public class ClusterRepoImpl implements ClusterRepo<ClusterImpl> {
 
     private final static Logger log = LoggerFactory.getLogger(ClusterRepoImpl.class);
 
-    public static Set<ClusterImpl> getRepository() {
+    public static Set<ClusterImpl> getRepository() throws MappingDSException {
         return MappingDSGraphDB.getClusters();
     }
 
     @Override
     public ClusterImpl save(ClusterImpl cluster) {
         MappingDSGraphDB.saveVertexEntity(cluster);
-        log.debug("Added cluster {} to graph({}).", new Object[]{cluster.toString(), MappingDSGraphDB.getVertexMaxCursor()});
+        log.debug("Added cluster {} to graph.", new Object[]{cluster.toString()});
         return cluster;
     }
 
     @Override
     public void delete(ClusterImpl cluster) {
         MappingDSGraphDB.deleteEntity(cluster);
-        log.debug("Deleted cluster {} from graph({}).", new Object[]{cluster.toString(), MappingDSGraphDB.getVertexMaxCursor()});
+        log.debug("Deleted cluster {} from graph.", new Object[]{cluster.toString()});
     }
 
     @Override
-    public ClusterImpl findClusterByID(long id) {
+    public ClusterImpl findClusterByID(String id) throws MappingDSException {
         ClusterImpl ret = null;
         MappingDSBlueprintsCacheEntity entity = MappingDSGraphDB.getVertexEntity(id);
         if (entity != null) {
@@ -64,7 +65,7 @@ public class ClusterRepoImpl implements ClusterRepo<ClusterImpl> {
     }
 
     @Override
-    public ClusterImpl findClusterByName(String name) {
+    public ClusterImpl findClusterByName(String name) throws MappingDSException {
         ClusterImpl ret = MappingDSGraphDB.getIndexedCluster(name);
         return ret;
     }

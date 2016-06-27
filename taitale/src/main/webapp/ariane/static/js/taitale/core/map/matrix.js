@@ -37,7 +37,7 @@ define(
                 bottomRightX  = 0,
                 bottomRightY  = 0;
 
-            var ldatacenterSplitter = null, //for NTWWW map type
+            var ldatacenterSplitter = null, //for MDW map type
                 layoutNtwRegistries = null;
 
             var dic  = new dictionaries();
@@ -46,7 +46,7 @@ define(
                 var i, ii, j, jj;
                 for (i = 0, ii = nbColumns; i < ii ; i++) {
                     for (j = 0, jj = nbLines; j < jj ; j++) {
-                        if (rows[j].length != 0)
+                        if (rows[j].length != 0 && rows[j][i] != null)
                             rows[j][i].print(r);
                     }
                 }
@@ -69,7 +69,7 @@ define(
                 var i, ii, j, jj;
                 for (i = 0, ii = nbColumns; i < ii ; i++)
                     for (j = 0, jj = nbLines; j < jj ; j++ )
-                        if (rows[j][i].isElemMoving())
+                        if (rows[j][i] != null && rows[j][i].isElemMoving())
                             return true;
                 return false;
             };
@@ -78,18 +78,19 @@ define(
                 var i, ii, j, jj;
                 for (i = 0, ii = nbColumns; i < ii ; i++)
                     for (j = 0, jj = nbLines; j < jj ; j++ )
-                        rows[j][i].setEditionMode(editionMode);
+                        if (rows[j][i] != null)
+                            rows[j][i].setEditionMode(editionMode);
             };
 
             this.defineMtxZoneMaxSize = function() {
                 var i, ii, j, jj;
                 for (i = 0, ii = nbColumns; i < ii ; i++)
                     for (j = 0, jj = nbLines; j < jj ; j++ )
-                        if (rows[j].length != 0)
+                        if (rows[j].length != 0 && rows[j][i] != null)
                             rows[j][i].defineZoneObjectsMaxSize();
                 for (i = 0, ii = nbColumns; i < ii ; i++)
                     for (j = 0, jj = nbLines; j < jj ; j++ )
-                        if (rows[j].length != 0)
+                        if (rows[j].length != 0 && rows[j][i] != null)
                             rows[j][i].defineZoneMaxSize();
             };
 
@@ -98,11 +99,11 @@ define(
                 ldatacenterSplitter.init();
                 for (i = 0, ii = nbColumns; i < ii ; i++)
                     for (j = 0, jj = nbLines; j < jj ; j++ )
-                        if (rows[j].length != 0)
+                        if (rows[j].length != 0 && rows[j][i] != null)
                             rows[j][i].defineZoneObjectsSize();
                 for (i = 0, ii = nbColumns; i < ii ; i++)
                     for (j = 0, jj = nbLines; j < jj ; j++ )
-                        if (rows[j].length != 0)
+                        if (rows[j].length != 0 && rows[j][i] != null)
                             rows[j][i].defineZoneSize();
             };
 
@@ -113,7 +114,7 @@ define(
                 for (i = 0, ii = nbColumns; i < ii ; i++) {
                     var tmpHeight = 0;
                     for (j = 0, jj = nbLines; j < jj; j++)
-                        if (rows[j].length != 0)
+                        if (rows[j].length != 0 && rows[j][i] != null)
                             tmpHeight = tmpHeight + rows[j][i].getZoneMaxSize().height;
                     if (tmpHeight > contentHeight)
                         contentHeight=tmpHeight;
@@ -122,7 +123,8 @@ define(
                     if (rows[i].length != 0) {
                         var tmpWidth = 0;
                         for (j = 0, jj = nbColumns; j < jj; j++)
-                            tmpWidth = tmpWidth + rows[i][j].getZoneMaxSize().width;
+                            if (rows[i][j] != null)
+                                tmpWidth = tmpWidth + rows[i][j].getZoneMaxSize().width;
                         if (tmpWidth > contentWidth)
                             contentWidth = tmpWidth;
                     }
@@ -130,18 +132,27 @@ define(
             };
 
             this.defineMapContentSize = function() {
-                var i, ii, topLeftX, topLeftY;
-                for (i = 0, ii = nbLines; i < ii; i++) {
+                var i, ii, j, jj;
+                contentWidth = 0;
+                contentHeight = 0;
+                for (i = 0, ii = nbColumns; i < ii ; i++) {
+                    var tmpHeight = 0;
+                    for (j = 0, jj = nbLines; j < jj; j++)
+                        if (rows[j].length != 0 && rows[j][i] != null)
+                            tmpHeight = tmpHeight + rows[j][i].getZoneSize().height;
+                    if (tmpHeight > contentHeight)
+                        contentHeight=tmpHeight;
+                }
+                for (i = 0, ii = nbLines; i < ii ; i++) {
                     if (rows[i].length != 0) {
-                        topLeftX = rows[i][0].topLeftX;
-                        topLeftY = rows[i][0].topLeftY;
+                        var tmpWidth = 0;
+                        for (j = 0, jj = nbColumns; j < jj; j++)
+                            if (rows[i][j] != null)
+                                tmpWidth = tmpWidth + rows[i][j].getZoneSize().width;
+                        if (tmpWidth > contentWidth)
+                            contentWidth = tmpWidth;
                     }
                 }
-
-                bottomRightX = rows[nbLines-1][nbColumns-1].topLeftX + rows[nbLines-1][nbColumns-1].getZoneSize().width;
-                bottomRightY = rows[nbLines-1][nbColumns-1].topLeftY + rows[nbLines-1][nbColumns-1].getZoneSize().height;
-                contentWidth = bottomRightX - topLeftX;
-                contentHeight = bottomRightY - topLeftY;
             };
 
             this.getMapContentSize = function() {
@@ -171,7 +182,7 @@ define(
                 for (i = 0, ii = nbColumns; i < ii; i++) {
                     var cursorHeight = 0;
                     for (j = 0, jj = nbLines; j < jj; j++) {
-                        if (rows[j].length != 0) {
+                        if (rows[j].length != 0 && rows[j][i] != null) {
                             rows[j][i].setTopLeftCoord(borderSpan + zoneSpan * i + cursorWidth, borderSpan + zoneSpan * j + cursorHeight);
                             rows[j][i].defineFirstPoz();
                             cursorHeight = cursorHeight + rows[j][i].getZoneMaxSize().height;
@@ -186,7 +197,7 @@ define(
                 var i, ii, j, jj;
                 for (i = 0, ii = nbColumns; i < ii; i++)
                     for (j = 0, jj = nbLines; j < jj; j++)
-                        if (rows[j].length != 0)
+                        if (rows[j].length != 0 && rows[j][i] != null)
                             rows[j][i].optimizeMtxCoord();
             };
 
@@ -196,7 +207,7 @@ define(
                 for (i = 0, ii = nbColumns; i < ii; i++) {
                     var cursorHeight = 0;
                     for (j = 0, jj = nbLines; j < jj; j++) {
-                        if (rows[j].length != 0) {
+                        if (rows[j].length != 0 && rows[j][i] != null) {
                             rows[j][i].setTopLeftCoord(borderSpan + zoneSpan * i + cursorWidth, borderSpan + zoneSpan * j + cursorHeight);
                             rows[j][i].defineIntermediatePoz();
                             cursorHeight = cursorHeight + rows[j][i].getZoneSize().height;
@@ -213,7 +224,7 @@ define(
                 for (i = 0, ii = nbColumns; i < ii; i++) {
                     var cursorHeight = 0;
                     for (j = 0, jj = nbLines; j < jj; j++) {
-                        if (rows[j].length != 0) {
+                        if (rows[j].length != 0 && rows[j][i] != null) {
                             rows[j][i].setTopLeftCoord(borderSpan + zoneSpan * i + cursorWidth, borderSpan + zoneSpan * j + cursorHeight);
                             rows[j][i].defineFinalPoz();
                             cursorHeight = cursorHeight + rows[j][i].getZoneSize().height;
@@ -228,7 +239,7 @@ define(
                 var layout = options.getLayout();
                 //noinspection FallthroughInSwitchStatementJS
                 switch(layout) {
-                    case dic.mapLayout.NTWWW:
+                    case dic.mapLayout.MDW:
                     default:
                         if (layoutNtwRegistries==null)
                             layoutNtwRegistries = new ntwRegistries();
@@ -294,13 +305,13 @@ define(
                                 if (lanDef.dc==linkedLanDef.dc && lanDef.ratype!=linkedLanDef.ratype) {
                                     switch(lanDef.ratype) {
                                         case dic.networkType.WAN:
-                                            if (linkedLanDef.ratype===dic.networkType.MAN || linkedLanDef.ratype===dic.networkType.LAN) {
+                                            if (linkedLanDef.ratype===dic.networkType.MAN || linkedLanDef.ratype===dic.networkType.LAN) {
                                                 isConnectedToDownArea = true;
                                                 isConnectedToDownLan  = true;
                                             }
                                             break;
                                         case dic.networkType.MAN:
-                                            if (linkedLanDef.ratype===dic.networkType.LAN) {
+                                            if (linkedLanDef.ratype===dic.networkType.LAN) {
                                                 isConnectedToDownArea = true;
                                                 isConnectedToDownLan  = true;
                                             } else if (linkedLanDef.ratype===dic.networkType.WAN) {
@@ -309,7 +320,7 @@ define(
                                             }
                                             break;
                                         case dic.networkType.LAN:
-                                            if (linkedLanDef.ratype===dic.networkType.WAN || linkedLanDef.ratype===dic.networkType.MAN) {
+                                            if (linkedLanDef.ratype===dic.networkType.WAN || linkedLanDef.ratype===dic.networkType.MAN) {
                                                 isConnectedToUpArea = true;
                                                 isConnectedToUpLan  = true;
                                             }
@@ -376,7 +387,7 @@ define(
                 var layout = options.getLayout();
                 //noinspection FallthroughInSwitchStatementJS
                 switch(layout) {
-                    case dic.mapLayout.NTWWW:
+                    case dic.mapLayout.MDW:
                     default:
                         if (nbLines==0) {
                             rows[nbLines] = [];
@@ -450,7 +461,7 @@ define(
 
             this.displayDC = function(display) {
                 var i, ii;
-                if (options.getLayout() === dic.mapLayout.NTWWW) {
+                if (options.getLayout() === dic.mapLayout.MDW) {
                     for (i= 0, ii=nbColumns; i < ii; i++) {
                         if (rows[0].length != 0)
                             rows[0][i].displayDC(display);
@@ -466,7 +477,7 @@ define(
 
             this.displayArea = function(display) {
                 var i, ii;
-                if (options.getLayout() === dic.mapLayout.NTWWW) {
+                if (options.getLayout() === dic.mapLayout.MDW) {
                     for (i= 0, ii=nbColumns; i < ii; i++) {
                         if (rows[0].length != 0)
                             rows[0][i].displayArea(display);
@@ -476,7 +487,7 @@ define(
 
             this.displayLan = function(display) {
                 var i, ii;
-                if (options.getLayout() === dic.mapLayout.NTWWW) {
+                if (options.getLayout() === dic.mapLayout.MDW) {
                     for (i= 0, ii=nbColumns; i < ii; i++) {
                         if (rows[0].length != 0)
                             rows[0][i].displayLan(display);

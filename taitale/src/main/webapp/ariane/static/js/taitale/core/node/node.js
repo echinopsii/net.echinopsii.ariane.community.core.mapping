@@ -57,7 +57,9 @@ define(
 
 
             this.nodeParentNode    = null;
-            this.nodeHeapNodes     = []; // the current nodes heap from this to the last parent node of the chain as a list [this,this.nodeParentNode,this.nodeParentNode.nodeParentNode ...]
+            // the current nodes heap from this to the last parent node of the chain as a list
+            // [this,this.nodeParentNode,this.nodeParentNode.nodeParentNode ...]
+            this.nodeHeapNodes     = [];
             this.nodeChildNodes    = new nodeMatrix();
 
             this.nodeEndpoints   = [];
@@ -89,21 +91,6 @@ define(
 
             this.maxRectWidth  = 0;
             this.maxRectHeight = 0;
-
-            this.menu              = null;
-            this.menuSet           = null;
-            this.menuFillColor     = params.node_menuFillColor;
-            //this.menuStrokeColor   = params.node_menuStrokeColor;
-            this.menuOpacity       = params.node_menuOpacity;
-            this.menuStrokeWidth   = params.node_menuStrokeWidth;
-            //this.menuMainTitleTXT  = params.node_menuMainTitle;
-            //this.menuFieldTXT      = params.node_menuFields;
-            this.menuHided         = true;
-
-            this.menuEditionMode     = null;
-            this.menuEditionModeRect = null;
-            this.menuFieldStartEditTitle  = "Edition mode ON";
-            this.menuFieldStopEditTitle   = "Edition mode OFF";
 
             this.oUnselected = params.node_opacUnselec;
             this.oSelected   = params.node_opacSelec;
@@ -178,14 +165,35 @@ define(
             this.mvx = 0;
             this.mvy = 0;
 
+            this.menu              = null;
+            this.menuSet           = null;
+            this.menuFillColor     = params.node_menuFillColor;
+            //this.menuStrokeColor   = params.node_menuStrokeColor;
+            this.menuOpacity       = params.node_menuOpacity;
+            this.menuStrokeWidth   = params.node_menuStrokeWidth;
+            //this.menuMainTitleTXT  = params.node_menuMainTitle;
+            //this.menuFieldTXT      = params.node_menuFields;
+            this.menuHided         = true;
+
+            this.nodeMainTitleTXT  = params.node_menuMainTitle;
+            this.nodeFieldTXT      = params.node_menuFields;
+            this.nodeFieldTXTOver  = params.node_menuFieldsOver;
+
             this.nodeMenuSet = null;
             this.nodeMenuTitle = null;
             this.nodeMenuProperties = null;
             this.nodeMenuPropertiesRect = null;
 
-            this.nodeMainTitleTXT  = params.node_menuMainTitle;
-            this.nodeFieldTXT      = params.node_menuFields;
-            this.nodeFieldTXTOver  = params.node_menuFieldsOver;
+            this.menuEditionMode     = null;
+            this.menuEditionModeRect = null;
+            this.menuFieldStartEditTitle  = "Edition mode ON";
+            this.menuFieldStopEditTitle   = "Edition mode OFF";
+
+            this.nodeEndpointsResetOnChangeON = false;
+            this.nodeMenuEpResetOnChange = null;
+            this.nodeMenuEpResetOnChangeRect = null;
+            this.menuFieldEpResetON  = "Endpoints reset ON";
+            this.menuFieldEpResetOFF = "Endpoints reset OFF";
 
             var nodeRef = this;
 
@@ -271,10 +279,19 @@ define(
                                     fieldRect = nodeRef.menuSet[i];
                                     fieldRectWidth = fieldRect.attr("width");
                                     fieldRectHeight = fieldRect.attr("height");
-                                    fieldRect.attr({"x": nodeRef.rectTopMiddleX - fieldRectWidth/2, "y": nodeRef.rectTopMiddleY+30 - fieldRectHeight/2});
-                                    nodeRef.menuSet[i+1].attr({"x": nodeRef.rectTopMiddleX, "y": nodeRef.rectTopMiddleY+30});
-                                    if (nodeRef.isEditing) nodeRef.menuSet[i+1].attr({text: nodeRef.menuFieldStopEditTitle});
-                                    else nodeRef.menuSet[i+1].attr({text: nodeRef.menuFieldStartEditTitle});
+                                    fieldRect.attr({"x": nodeRef.rectTopMiddleX - fieldRectWidth / 2, "y": nodeRef.rectTopMiddleY + 30 - fieldRectHeight / 2});
+                                    nodeRef.menuSet[i + 1].attr({"x": nodeRef.rectTopMiddleX, "y": nodeRef.rectTopMiddleY + 30});
+                                    if (nodeRef.isEditing) nodeRef.menuSet[i + 1].attr({text: nodeRef.menuFieldStopEditTitle});
+                                    else nodeRef.menuSet[i + 1].attr({text: nodeRef.menuFieldStartEditTitle});
+                                    i++;
+                                } else if (i==3) {
+                                    fieldRect = nodeRef.menuSet[i];
+                                    fieldRectWidth = fieldRect.attr("width");
+                                    fieldRectHeight = fieldRect.attr("height");
+                                    fieldRect.attr({"x": nodeRef.rectTopMiddleX - fieldRectWidth / 2, "y": nodeRef.rectTopMiddleY + 45 - fieldRectHeight / 2});
+                                    nodeRef.menuSet[i + 1].attr({"x": nodeRef.rectTopMiddleX, "y": nodeRef.rectTopMiddleY + 45});
+                                    if (nodeRef.nodeEndpointsResetOnChangeON) nodeRef.menuSet[i + 1].attr({text: nodeRef.menuFieldEpResetOFF});
+                                    else nodeRef.menuSet[i + 1].attr({text: nodeRef.menuFieldEpResetON});
                                     i++;
                                 } else {
                                     fieldRect = nodeRef.menuSet[i];
@@ -355,6 +372,8 @@ define(
                         nodeRef.moveInit();
                 },
                 nodeMove = function (dx, dy) {
+                    var zoomedMoveCoord = nodeRef.r.getZPDZoomedMoveCoord(dx, dy);
+                    dx = zoomedMoveCoord.dx; dy = zoomedMoveCoord.dy;
                     if (!nodeRef.rightClick) {
                         var rx = nodeRef.extrx,
                             ry = nodeRef.extry;
@@ -473,7 +492,7 @@ define(
                     //helper_.debug("EP : " + nodeRef.nodeEpAvgLinksT[i].toString());
                     teta = nodeRef.nodeEpAvgLinksT[i].getLinkPoz().t;
 
-                    if (teta >= 0 && teta < rectTeta) {
+                    if (teta == null || (teta >= 0 && teta < rectTeta)) {
                         nodeRef.nodeEpAvgLinksT[i].epX = nodeRef.rectTopRightX;
                         nodeRef.nodeEpAvgLinksT[i].epY = nodeRef.rectMiddleY - countY1 * params.endpoint_radSelec * 2;
                         if (nodeRef.nodeEpAvgLinksT[i].epY < nodeRef.rectTopRightY) {
@@ -590,34 +609,34 @@ define(
                         //helper_.debug("12 I'm lost !");
                     }
 
-
-
                     //helper_.debug("["+i+"|"+nodeRef.name+"]"+epX+","+epY+","+avgTeta);
                     nodeRef.nodeEpAvgLinksT[i].setPoz(epX,epY);
                 }
             };
 
             this.redefineLinksAndEPsPoz = function() {
-                var i, ii, nodeEp;
-                var nodeToUp = [], epToUp = [], linkToUp = [];
-                for (i = 0, ii = nodeRef.nodeEndpoints.length-1; i <= ii; ii--) {
-                    nodeEp = this.nodeEndpoints[ii];
-                    resetLinksAndEPs(nodeEp, nodeToUp, epToUp, linkToUp);
+                if (this.nodeEndpointsResetOnChangeON) {
+                    var i, ii, nodeEp;
+                    var nodeToUp = [], epToUp = [], linkToUp = [];
+                    for (i = 0, ii = nodeRef.nodeEndpoints.length - 1; i <= ii; ii--) {
+                        nodeEp = this.nodeEndpoints[ii];
+                        resetLinksAndEPs(nodeEp, nodeToUp, epToUp, linkToUp);
+                    }
+                    for (i = 0, ii = nodeToUp.length; i < ii; i++)
+                        nodeToUp[i].defineEndpointsAvgPoz();
+                    for (i = 0, ii = epToUp.length; i < ii; i++) {
+                        epToUp[i].clear();
+                        epToUp[i].print(this.r);
+                    }
+                    for (i = 0, ii = linkToUp.length; i < ii; i++) {
+                        linkToUp[i].clear();
+                        linkToUp[i].print(this.r);
+                    }
+                    for (i = 0, ii = nodeToUp.length; i < ii; i++)
+                        nodeToUp[i].toFront()
+                    for (i = 0, ii = epToUp.length; i < ii; i++)
+                        epToUp[i].toFront()
                 }
-                for (i = 0, ii=nodeToUp.length; i<ii; i++)
-                    nodeToUp[i].defineEndpointsAvgPoz();
-                for (i = 0, ii=epToUp.length; i<ii; i++) {
-                    epToUp[i].clear();
-                    epToUp[i].print(this.r);
-                }
-                for (i = 0, ii=linkToUp.length; i<ii; i++) {
-                    linkToUp[i].clear();
-                    linkToUp[i].print(this.r);
-                }
-                for (i = 0, ii=nodeToUp.length; i<ii; i++)
-                    nodeToUp[i].toFront()
-                for (i = 0, ii=epToUp.length; i<ii; i++)
-                    epToUp[i].toFront()
             };
 
             this.getRectMiddlePoint = function() {
@@ -730,20 +749,20 @@ define(
                 defineRectPoints(x,y);
             };
 
-            this.definedNodesPoz = function() {
+            this.defineChildsPoz = function() {
                 this.nodeChildNodes.defineMtxObjectLastPoz(this.rectTopLeftX, this.rectTopLeftY + this.titleHeight,
                     this.interSpan, this.interSpan, function(node, mtxSpan, objSpan, columnIdx, lineIdx, widthPointer, heightPointer) {
                         node.setPoz(mtxSpan + objSpan * columnIdx + widthPointer, objSpan * (lineIdx+1) + heightPointer);
-                        node.definedNodesPoz();
+                        node.defineChildsPoz();
                     });
                     //defineMtxObjectPoz(this.rectTopLeftX, this.rectTopLeftY + this.titleHeight, this.interSpan);
             };
 
-            this.defineIntermediateNodesPoz = function() {
+            this.defineIntermediateChildsPoz = function() {
                 this.nodeChildNodes.defineMtxObjectIntermediatePoz(this.rectTopLeftX, this.rectTopLeftY + this.titleHeight,
                     this.interSpan, this.interSpan, function(node, mtxSpan, objSpan, columnIdx, lineIdx, widthPointer, heightPointer) {
                         node.setPoz(mtxSpan + objSpan * columnIdx + widthPointer, objSpan * (lineIdx+1) + heightPointer);
-                        node.defineIntermediateNodesPoz();
+                        node.defineIntermediateChildsPoz();
                     });
                 //defineMtxObjectPoz(this.rectTopLeftX, this.rectTopLeftY + this.titleHeight, this.interSpan);
             };
@@ -773,13 +792,14 @@ define(
                 if (this.nodeParentNode!=null)
                     this.nodeParentNode.pushChildNode(this);
                 else
-                    this.nodeContainer.pushNode(this);
+                    this.nodeContainer.pushChild(this);
             };
 
             this.pushLinkedNode = function(node) {
                 var i, ii, j, jj, isAlreadyPushed = this.isLinkedToNode(node);
                 var isInHeap = [];
                 if (!isAlreadyPushed) {
+                    //Propagate linked node on the heaps
                     for (i = 0, ii = this.nodeHeapNodes.length; i < ii; i++)
                         for (j = 0, jj=node.nodeHeapNodes.length; j <jj ; j++) {
                             var linkedNodeHeapNode = node.nodeHeapNodes[j],
@@ -795,7 +815,10 @@ define(
 
                     if (this.linkedNodes.indexOf(node)==-1)
                         this.linkedNodes.push(node);
-                    this.nodeContainer.pushLinkedContainer(node.nodeContainer);
+                    if (node.nodeContainer.ID!=this.nodeContainer.ID) {
+                        this.nodeContainer.pushLinkedNode(node);
+                        this.nodeContainer.pushLinkedContainer(node.nodeContainer);
+                    }
                 }
             };
 
@@ -917,8 +940,17 @@ define(
                 this.nodeChildNodes.updatePosition();
             };
 
+            this.getPrimaryApplication = function() {
+                if (this.properties != null && this.properties.primaryApplication != null)
+                    return this.properties.primaryApplication;
+                else
+                    return null;
+            };
+
             this.print = function(r_) {
                 this.r        = r_;
+
+                if (this.color == 0) this.color = this.nodeContainer.color;
 
                 this.nodeName = this.r.text(0, 0, this.name).attr(this.txtTitleFont);
                 this.r.FitText(this.nodeName, this.rectWidth-1, 1.5);
@@ -943,23 +975,39 @@ define(
                 this.menuEditionMode.mouseout(menuFieldOut);
                 this.menuEditionMode.mousedown(this.menuFieldEditClick);
 
-                var fieldTitle = "Display all properties";
-                this.nodeMenuPropertiesRect = this.r.rect(0,10,fieldTitle.width(this.nodeFieldTXT),fieldTitle.height(this.nodeFieldTXT));
-                this.nodeMenuPropertiesRect.attr({fill: this.color, stroke: this.color, "fill-opacity": 0, "stroke-width": 0});
-                this.nodeMenuPropertiesRect.mouseover(menuFieldOver);
-                this.nodeMenuPropertiesRect.mouseout(menuFieldOut);
-                this.nodeMenuPropertiesRect.mousedown(menuFieldPropertyClick);
-                this.nodeMenuProperties = this.r.text(0,10,fieldTitle).attr(this.nodeFieldTXT);
-                this.nodeMenuProperties.mouseover(menuFieldOver);
-                this.nodeMenuProperties.mouseout(menuFieldOut);
-                this.nodeMenuProperties.mousedown(menuFieldPropertyClick);
+                this.nodeMenuEpResetOnChangeRect = this.r.rect(0, 10, this.menuFieldEpResetON.width(this.nodeFieldTXT), this.menuFieldEpResetON.height(this.nodeFieldTXT));
+                this.nodeMenuEpResetOnChangeRect.attr({fill: this.color, stroke: this.color, "fill-opacity": 0, "stroke-width": 0});
+                this.nodeMenuEpResetOnChangeRect.mouseover(menuFieldOver);
+                this.nodeMenuEpResetOnChangeRect.mouseout(menuFieldOut);
+                this.nodeMenuEpResetOnChangeRect.mousedown(this.menuFieldEpResetClick);
+                this.nodeMenuEpResetOnChange = this.r.text(0, 10, this.menuFieldEpResetON).attr(this.nodeFieldTXT);
+                this.nodeMenuEpResetOnChange.mouseover(menuFieldOver);
+                this.nodeMenuEpResetOnChange.mouseout(menuFieldOut);
+                this.nodeMenuEpResetOnChange.mousedown(this.menuFieldEpResetClick);
+
+                if (this.properties != null) {
+                    var fieldTitle = "Display all properties";
+                    this.nodeMenuPropertiesRect = this.r.rect(0, 10, fieldTitle.width(this.nodeFieldTXT), fieldTitle.height(this.nodeFieldTXT));
+                    this.nodeMenuPropertiesRect.attr({fill: this.color, stroke: this.color, "fill-opacity": 0, "stroke-width": 0});
+                    this.nodeMenuPropertiesRect.mouseover(menuFieldOver);
+                    this.nodeMenuPropertiesRect.mouseout(menuFieldOut);
+                    this.nodeMenuPropertiesRect.mousedown(menuFieldPropertyClick);
+                    this.nodeMenuProperties = this.r.text(0, 10, fieldTitle).attr(this.nodeFieldTXT);
+                    this.nodeMenuProperties.mouseover(menuFieldOver);
+                    this.nodeMenuProperties.mouseout(menuFieldOut);
+                    this.nodeMenuProperties.mousedown(menuFieldPropertyClick);
+                }
 
                 this.nodeMenuSet = this.r.set();
                 this.nodeMenuSet.push(this.nodeMenuTitle);
                 this.nodeMenuSet.push(this.menuEditionModeRect);
                 this.nodeMenuSet.push(this.menuEditionMode);
-                this.nodeMenuSet.push(this.nodeMenuPropertiesRect);
-                this.nodeMenuSet.push(this.nodeMenuProperties);
+                this.nodeMenuSet.push(this.nodeMenuEpResetOnChangeRect);
+                this.nodeMenuSet.push(this.nodeMenuEpResetOnChange);
+                if (this.properties != null) {
+                    this.nodeMenuSet.push(this.nodeMenuPropertiesRect);
+                    this.nodeMenuSet.push(this.nodeMenuProperties);
+                }
                 this.nodeMenuSet.toBack();
                 this.nodeMenuSet.hide();
 
@@ -1059,6 +1107,19 @@ define(
                 }
             };
 
+            this.propagateEditionMode = function(editionMode) {
+                var i, ii, j, jj;
+                var mtxX        = this.nodeChildNodes.getMtxSize().x,
+                    mtxY        = this.nodeChildNodes.getMtxSize().y;
+
+                this.setEditionMode(editionMode);
+
+                for (i = 0, ii = mtxX; i < ii; i++)
+                    for (j = 0, jj = mtxY; j < jj; j++)
+                        if (this.nodeChildNodes.getObjectFromMtx(i, j)!=null)
+                            this.nodeChildNodes.getObjectFromMtx(i, j).propagateEditionMode(editionMode);
+            };
+
             this.menuFieldEditClick = function() {
                 nodeRef.menu.toBack();
                 nodeRef.menuSet.toBack();
@@ -1073,6 +1134,34 @@ define(
                     nodeRef.r.scaleDone(nodeRef);
                     nodeRef.isEditing = false;
                 }
+            };
+
+            this.menuFieldEpResetClick = function() {
+                var epreset ;
+
+                if (nodeRef.nodeEndpointsResetOnChangeON) epreset = false;
+                else epreset = true;
+
+                nodeRef.propagateEndpointReset(epreset);
+
+                nodeRef.menu.toBack();
+                nodeRef.menuSet.toBack();
+                nodeRef.menu.hide();
+                nodeRef.menuSet.hide();
+                nodeRef.menuHided=true;
+            };
+
+            this.propagateEndpointReset = function(epreset) {
+                var i, ii, j, jj;
+                var mtxX        = this.nodeChildNodes.getMtxSize().x,
+                    mtxY        = this.nodeChildNodes.getMtxSize().y;
+
+                nodeRef.nodeEndpointsResetOnChangeON = epreset;
+
+                for (i = 0, ii = mtxX; i < ii; i++)
+                    for (j = 0, jj = mtxY; j < jj; j++)
+                        if (this.nodeChildNodes.getObjectFromMtx(i, j)!=null)
+                            this.nodeChildNodes.getObjectFromMtx(i, j).propagateEndpointReset(epreset);
             };
 
             this.getBBox = function() {
