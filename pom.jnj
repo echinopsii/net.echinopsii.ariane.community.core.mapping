@@ -140,7 +140,7 @@
         <version.osgimax.org.osgi.service.cm>2</version.osgimax.org.osgi.service.cm>
 
         <version.osgimin.com.tinkerpop.blueprints>2.4.0</version.osgimin.com.tinkerpop.blueprints>
-        <version.osgimax.com.tinkerpop.blueprints>2.6.0</version.osgimax.com.tinkerpop.blueprints>
+        <version.osgimax.com.tinkerpop.blueprints>2.7.0</version.osgimax.com.tinkerpop.blueprints>
 
         <version.osgimin.hibernate>4.2.8</version.osgimin.hibernate>
         <version.osgimax.hibernate>5.0.0</version.osgimax.hibernate>
