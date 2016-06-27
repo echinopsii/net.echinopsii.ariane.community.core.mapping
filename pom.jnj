@@ -72,7 +72,7 @@
         <version.license.plugin>1.5</version.license.plugin>
         <version.war.plugin>2.1.1</version.war.plugin>
         <version.ipojo.plugin>1.11.0</version.ipojo.plugin>
-        <version.com.typesafe.akka>2.3.4</version.com.typesafe.akka>
+        <version.com.typesafe.akka>2.3.14</version.com.typesafe.akka>
 
         {% block dependencies -%}
         <!-- Ariane versions -->
@@ -125,8 +125,8 @@
         <!-- Technical stuff -->
         <version.org.apache.ipojo>1.11.0</version.org.apache.ipojo>
         <version.org.slf4j>1.6.4</version.org.slf4j>
-        <version.scala.logging>1.1.0</version.scala.logging>
-        <version.scala>2.10.3</version.scala>
+        <version.scala.logging>2.1.2<</version.scala.logging>
+        <version.scala>2.11.7</version.scala>
         <version.org.infinispan>6.0.2.Final</version.org.infinispan>
 
         <!-- OSGI Min/Max versions -->

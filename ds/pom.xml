@@ -18,8 +18,6 @@
         <module>api</module>
         <module>dsl</module>
         <module>blueprints</module>
-	<module>msg-cli</module>
-	<module>msg-srv</module>
         <module>rim</module>
         <module>msgsrv</module>
         <module>msgcli</module>

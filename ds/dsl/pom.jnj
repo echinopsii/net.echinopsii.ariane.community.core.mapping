@@ -87,7 +87,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <scalaCompatVersion>2.10</scalaCompatVersion>
+                    <scalaCompatVersion>2.11</scalaCompatVersion>
                     <jvmArgs>
                         <jvmArg>-Xms64m</jvmArg>
                         <jvmArg>-Xmx1024m</jvmArg>

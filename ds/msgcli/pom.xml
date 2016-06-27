@@ -76,13 +76,13 @@
         </dependency>
         <dependency>
             <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-actor_2.10</artifactId>
+            <artifactId>akka-actor_2.11</artifactId>
             <version>${version.com.typesafe.akka}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-osgi_2.10</artifactId>
+            <artifactId>akka-osgi_2.11</artifactId>
             <version>${version.com.typesafe.akka}</version>
             <scope>test</scope>
         </dependency>

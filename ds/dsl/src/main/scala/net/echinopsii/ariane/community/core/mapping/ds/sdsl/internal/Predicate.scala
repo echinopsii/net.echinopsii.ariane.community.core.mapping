@@ -18,7 +18,7 @@
  */
 package net.echinopsii.ariane.community.core.mapping.ds.sdsl.internal
 
-import com.typesafe.scalalogging.slf4j.Logging
+import com.typesafe.scalalogging.slf4j.LazyLogging
 import net.echinopsii.ariane.community.core.mapping.ds.SelectorParserException
 import net.echinopsii.ariane.community.core.mapping.ds.tools.Text
 
@@ -26,7 +26,7 @@ abstract class Predicate extends Expression {
   override var eType: String = "Predicate"
 }
 
-case class And(left: Predicate, right: Predicate) extends Predicate with Logging {
+case class And(left: Predicate, right: Predicate) extends Predicate with LazyLogging {
   override def toString = left.toString + " and " + right.toString
 
   override def query: (Predicate, Predicate, String) =  (left, right, "and")
@@ -36,7 +36,7 @@ case class And(left: Predicate, right: Predicate) extends Predicate with Logging
   override def getValue: AnyRef = toString
 }
 
-case class Ops(left: Expression, right: Expression, ops: String) extends Predicate with Logging {
+case class Ops(left: Expression, right: Expression, ops: String) extends Predicate with LazyLogging {
   override def toString = left.toString + " " + ops + " " + right.toString
 
   override def query: (Expression, Expression, String) =  (left, right, ops)
