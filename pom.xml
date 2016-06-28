@@ -5,7 +5,7 @@
     <!-- General information -->
     <groupId>net.echinopsii.ariane.community.core</groupId>
     <artifactId>net.echinopsii.ariane.community.core.mapping</artifactId>
-    <version>0.8.1-SNAPSHOT</version>
+    <version>0.8.1-MS-SNAPSHOT</version>
     <name>Ariane Community Core Mapping Parent</name>
     <packaging>pom</packaging>
     
