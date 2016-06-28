@@ -38,6 +38,7 @@ public class MappingDSGraphDBNeo4jBootstrapper {
 
     public MappingDSGraphDBNeo4jBootstrapper start(String configFilePath) {
         log.debug("Create neo4j server");
+        System.setProperty("org.neo4j.server.properties", configFilePath);
         if (System.getSecurityManager() == null) {
             System.setSecurityManager(new RMISecurityManager());
         }
