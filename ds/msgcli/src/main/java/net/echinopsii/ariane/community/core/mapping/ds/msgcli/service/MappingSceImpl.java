@@ -71,7 +71,8 @@ public class MappingSceImpl extends SProxMappingSceAbs<SessionImpl, SessionRegis
 
     @Override
     public boolean start() {
-        return MappingMsgcliMomSP.start();
+        String version = this.getClass().getPackage().getImplementationVersion();
+        return MappingMsgcliMomSP.start(version);
     }
 
     @Override
