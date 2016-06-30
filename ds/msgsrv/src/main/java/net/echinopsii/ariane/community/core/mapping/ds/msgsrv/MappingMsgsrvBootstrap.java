@@ -20,7 +20,6 @@
 package net.echinopsii.ariane.community.core.mapping.ds.msgsrv;
 
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.service.*;
-import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.momsp.MappingMsgsrvMomSP;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import org.apache.felix.ipojo.annotations.*;
@@ -57,7 +56,8 @@ public class MappingMsgsrvBootstrap {
     }
 
     private void start() {
-        if (MappingMsgsrvMomSP.start()) {
+        String version = this.getClass().getPackage().getImplementationVersion();
+        if (MappingMsgsrvMomSP.start(version)) {
             SessionEp.start();
             ClusterEp.start();
             ContainerEp.start();
