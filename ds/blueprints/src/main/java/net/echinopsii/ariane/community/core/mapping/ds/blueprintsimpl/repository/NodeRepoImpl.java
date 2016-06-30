@@ -89,6 +89,18 @@ public class NodeRepoImpl implements NodeRepo<NodeImpl> {
     }
 
     @Override
+    public NodeImpl findNodeByName(NodeImpl parentNode, String nodeName) throws MappingDSException {
+        NodeImpl ret = null;
+        for (NodeImpl node : MappingDSGraphDB.getIndexedNodes(nodeName)) {
+            if (node.getNodeParentNode()!=null && node.getNodeParentNode().equals(parentNode)) {
+                ret = node;
+                break;
+            }
+        }
+        return ret;
+    }
+
+    @Override
     public NodeImpl findNodeByEndpointURL(String URL) throws MappingDSException {
         NodeImpl ret = null;
         EndpointImpl ep = MappingDSGraphDB.getIndexedEndpoint(URL);
