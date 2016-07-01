@@ -194,8 +194,50 @@ public class ClusterEp {
     @GET
     @Path("/get")
     public Response getCluster(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID) String id,
+                               @QueryParam(ClusterSce.PARAM_CLUSTER_NAME) String name,
                                @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
-        return _displayCluster(id, sessionId);
+        if (id!=null) return _displayCluster(id, sessionId);
+        else if (name!=null) {
+            Subject subject = SecurityUtils.getSubject();
+            log.debug("[{}-{}] get clusters", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
+            if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
+                    subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
+            {
+                try {
+                    Session mappingSession = null;
+                    if (sessionId != null && !sessionId.equals("")) {
+                        mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                        if (mappingSession == null)
+                            return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                    }
+
+                    Cluster cluster;
+                    if (mappingSession != null)
+                        try {
+                            cluster = MappingBootstrap.getMappingSce().getClusterSce().getClusterByName(mappingSession, name);
+                        } catch (MappingDSException e) {
+                            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+                        }
+                    else cluster = MappingBootstrap.getMappingSce().getClusterSce().getClusterByName(name);
+
+                    if (cluster != null) {
+                        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                        ClusterJSON.oneCluster2JSON(cluster, outStream);
+                        String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                        return Response.status(Status.OK).entity(result).build();
+                    } else {
+                        return Response.status(Status.NOT_FOUND).entity("Cluster with name " + name + " not found.").build();
+                    }
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                    e.printStackTrace();
+                    String result = e.getMessage();
+                    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                }
+            } else {
+                return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
+            }
+        } else return Response.status(Status.BAD_REQUEST).entity("Cluster ID or cluster name must be provided").build();
     }
 
     @GET
