@@ -36,6 +36,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 import net.echinopsii.ariane.community.core.mapping.wat.rest.ds.JSONDeserializationResponse;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
+import org.hibernate.engine.spi.Mapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -305,6 +306,9 @@ public class NodeEp {
     @Path("/get")
     public Response getNode(@QueryParam(Endpoint.TOKEN_EP_URL) String endpointURL,
                             @QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID)String id,
+                            @QueryParam(NodeSce.PARAM_NODE_NAME)String nodeName,
+                            @QueryParam(Container.TOKEN_CT_ID) String cid,
+                            @QueryParam(NodeSce.PARAM_NODE_PNID) String pnid,
                             @QueryParam(MappingSce.GLOBAL_PARAM_SELECTOR) String selector,
                             @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         try {
@@ -355,7 +359,8 @@ public class NodeEp {
                     }
 
                     HashSet<Node> nodes;
-                    if (mappingSession != null) nodes = (HashSet<Node>) MappingBootstrap.getMappingSce().getNodeSce().getNodes(mappingSession, selector);
+                    if (mappingSession != null)
+                        nodes = (HashSet<Node>) MappingBootstrap.getMappingSce().getNodeSce().getNodes(mappingSession, selector);
                     else nodes = (HashSet<Node>) MappingBootstrap.getMappingSce().getNodeSce().getNodes(selector);
 
                     if (nodes != null && nodes.size() > 0) {
@@ -372,6 +377,56 @@ public class NodeEp {
                             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
                         }
                     } else return Response.status(Status.NOT_FOUND).entity("No node matching with selector ('" + selector + "') found.").build();
+                } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
+            } else if (nodeName!=null && (cid!=null || pnid!=null)) {
+                Subject subject = SecurityUtils.getSubject();
+                log.debug("[{}-{}] find node: {}", new Object[]{Thread.currentThread().getId(), subject.getPrincipal(), selector});
+                if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
+                        subject.hasRole("Jedi") || subject.isPermitted("universe:zeone")) {
+                    Session mappingSession = null;
+                    if (sessionId != null && !sessionId.equals("")) {
+                        mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                        if (mappingSession == null)
+                            return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                    }
+
+                    Node node;
+                    if (mappingSession != null) {
+                        if (cid!=null) {
+                            Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, cid);
+                            if (container!=null) node = MappingBootstrap.getMappingSce().getNodeByName(mappingSession, container, nodeName);
+                            else return Response.status(Status.BAD_REQUEST).entity("No container found for ID " + cid).build();
+                        } else {
+                            Node parentNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(mappingSession, pnid);
+                            if (parentNode!=null) node = MappingBootstrap.getMappingSce().getNodeSce().getNodeByName(mappingSession, parentNode, nodeName);
+                            else return Response.status(Status.BAD_REQUEST).entity("No node found for ID " + pnid).build();
+                        }
+                    } else {
+                        if (cid!=null) {
+                            Container container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(cid);
+                            if (container!=null) node = MappingBootstrap.getMappingSce().getNodeByName(container, nodeName);
+                            else return Response.status(Status.BAD_REQUEST).entity("No container found for ID " + cid).build();
+                        } else {
+                            Node parentNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(pnid);
+                            if (parentNode!=null) node = MappingBootstrap.getMappingSce().getNodeSce().getNodeByName(parentNode, nodeName);
+                            else return Response.status(Status.BAD_REQUEST).entity("No node found for ID " + pnid).build();
+                        }
+                    }
+
+                    if (node != null) {
+                        String result;
+                        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                        try {
+                            NodeJSON.oneNode2JSON(node, outStream);
+                            result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                            return Response.status(Status.OK).entity(result).build();
+                        } catch (Exception e) {
+                            log.error(e.getMessage());
+                            e.printStackTrace();
+                            result = e.getMessage();
+                            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                        }
+                    } else return Response.status(Status.NOT_FOUND).entity("No node matching with name ('" + nodeName + "') found.").build();
                 } else return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
             } else return Response.status(Status.INTERNAL_SERVER_ERROR).entity("MappingDSLRegistryRequest error: name and id are not defined. You must define one of these parameters").build();
         } catch (MappingDSException e) { return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build(); }
