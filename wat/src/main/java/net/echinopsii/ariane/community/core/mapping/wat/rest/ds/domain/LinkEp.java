@@ -228,23 +228,38 @@ public class LinkEp {
                         Link toPrint;
                         if (mappingSession!=null)  toPrint = MappingBootstrap.getMappingSce().getLinkBySourceEPandDestinationEP(mappingSession, sourceEndpoint, targetEndpoint);
                         else toPrint = MappingBootstrap.getMappingSce().getLinkBySourceEPandDestinationEP(sourceEndpoint, targetEndpoint);
-                        LinkJSON.oneLink2JSON(toPrint, outStream);
-                        result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                        return Response.status(Status.OK).entity(result).build();
+                        if (toPrint!=null) {
+                            LinkJSON.oneLink2JSON(toPrint, outStream);
+                            result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                            return Response.status(Status.OK).entity(result).build();
+                        } else {
+                            result = "Unable to find Link !";
+                            return Response.status(Status.BAD_REQUEST).entity(result).build();
+                        }
                     } else if (sourceEndpoint != null) {
                         HashSet<Link> toPrint;
                         if (mappingSession!=null) toPrint = (HashSet<Link>)MappingBootstrap.getMappingSce().getLinksBySourceEP(mappingSession, sourceEndpoint);
                         else toPrint = (HashSet<Link>)MappingBootstrap.getMappingSce().getLinksBySourceEP(sourceEndpoint);
-                        LinkJSON.manyLinks2JSON(toPrint, outStream);
-                        result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                        return Response.status(Status.OK).entity(result).build();
+                        if (toPrint!=null) {
+                            LinkJSON.manyLinks2JSON(toPrint, outStream);
+                            result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                            return Response.status(Status.OK).entity(result).build();
+                        } else {
+                            result = "Unable to find Link !";
+                            return Response.status(Status.BAD_REQUEST).entity(result).build();
+                        }
                     } else {
                         HashSet<Link> toPrint;
                         if (mappingSession!=null) toPrint = (HashSet<Link>) MappingBootstrap.getMappingSce().getLinksByDestinationEP(mappingSession, targetEndpoint);
                         else toPrint = (HashSet<Link>) MappingBootstrap.getMappingSce().getLinksByDestinationEP(targetEndpoint);
-                        LinkJSON.manyLinks2JSON(toPrint, outStream);
-                        result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                        return Response.status(Status.OK).entity(result).build();
+                        if (toPrint!=null) {
+                            LinkJSON.manyLinks2JSON(toPrint, outStream);
+                            result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                            return Response.status(Status.OK).entity(result).build();
+                        } else {
+                            result = "Unable to find Link !";
+                            return Response.status(Status.BAD_REQUEST).entity(result).build();
+                        }
                     }
                 } catch (Exception e) {
                     log.error(e.getMessage());
