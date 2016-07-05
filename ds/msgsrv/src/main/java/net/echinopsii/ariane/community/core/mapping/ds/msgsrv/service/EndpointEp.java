@@ -50,6 +50,7 @@ public class EndpointEp {
             String sid;
             String id;
             String url;
+            String payload;
             String pn_id;
             String selector;
             String te_id;
@@ -78,7 +79,13 @@ public class EndpointEp {
                     case EndpointSce.OP_CREATE_ENDPOINT:
                         url = (String) message.get(Endpoint.TOKEN_EP_URL);
                         pn_id = (String) message.get(NodeSce.PARAM_NODE_PNID);
-                        if (url!=null && pn_id!=null) {
+                        payload = (String) message.get(MappingSce.GLOBAL_PARAM_PAYLOAD);
+                        if (payload!=null) {
+                            // TODO
+                            String result = "";
+                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                            message.put(MomMsgTranslator.MSG_BODY, result);
+                        } else if (url!=null && pn_id!=null) {
                             Node pnode = null;
                             if (session!=null) pnode = MappingMsgsrvBootstrap.getMappingSce().getNodeSce().getNode(session, pn_id);
                             else pnode = MappingMsgsrvBootstrap.getMappingSce().getNodeSce().getNode(pn_id);

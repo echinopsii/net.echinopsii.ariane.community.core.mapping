@@ -50,6 +50,7 @@ public class LinkEp {
             String sep_id;
             String tep_id;
             String t_id;
+            String payload;
             Session session = null;
             Endpoint sourceEndpoint = null;
             Endpoint targetEndpoint = null;
@@ -77,7 +78,13 @@ public class LinkEp {
                         sep_id = (String) message.get(LinkSce.PARAM_LINK_SEPID);
                         tep_id = (String) message.get(LinkSce.PARAM_LINK_TEPID);
                         t_id = (String) message.get(Transport.TOKEN_TP_ID);
-                        if (sep_id!=null && t_id!=null) {
+                        payload = (String) message.get(MappingSce.GLOBAL_PARAM_PAYLOAD);
+                        if (payload!=null) {
+                            // TODO
+                            String result = "";
+                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                            message.put(MomMsgTranslator.MSG_BODY, result);
+                        } else if (sep_id!=null && t_id!=null) {
                             if (session!=null) link = MappingMsgsrvBootstrap.getMappingSce().getLinkSce().createLink(session, sep_id, tep_id, t_id);
                             else link = MappingMsgsrvBootstrap.getMappingSce().getLinkSce().createLink(sep_id, tep_id, t_id);
                             ByteArrayOutputStream outStream = new ByteArrayOutputStream();

@@ -49,6 +49,7 @@ public class ClusterEp {
             String cid;
             String ccid;
             String name;
+            String payload;
             Session session = null;
 
             if (oOperation==null)
@@ -70,9 +71,16 @@ public class ClusterEp {
                 switch (operation) {
                     case ClusterSce.OP_CREATE_CLUSTER:
                         name = (String) message.get(ClusterSce.PARAM_CLUSTER_NAME);
-                        if (name != null) {
+                        payload = (String) message.get(MappingSce.GLOBAL_PARAM_PAYLOAD);
+                        if (payload != null) {
+                            // TODO
+                            String result = "";
+                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                            message.put(MomMsgTranslator.MSG_BODY, result);
+                        } else if (name != null){
                             Cluster cluster;
-                            if (session != null) cluster = MappingMsgsrvBootstrap.getMappingSce().getClusterSce().createCluster(session, name);
+                            if (session != null)
+                                cluster = MappingMsgsrvBootstrap.getMappingSce().getClusterSce().createCluster(session, name);
                             else cluster = MappingMsgsrvBootstrap.getMappingSce().getClusterSce().createCluster(name);
 
                             ByteArrayOutputStream outStream = new ByteArrayOutputStream();

@@ -53,6 +53,7 @@ public class NodeEp {
             String name;
             String pc_id;
             String pn_id;
+            String payload;
             String cn_id;
             String tn_id;
             String ep_id;
@@ -84,7 +85,13 @@ public class NodeEp {
                         name = (String) message.get(NodeSce.PARAM_NODE_NAME);
                         pc_id = (String) message.get(Container.TOKEN_CT_ID);
                         pn_id = (String) message.get(NodeSce.PARAM_NODE_PNID);
-                        if (name != null && pc_id != null) {
+                        payload = (String) message.get(MappingSce.GLOBAL_PARAM_PAYLOAD);
+                        if (payload!=null) {
+                            // TODO
+                            String result = "";
+                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                            message.put(MomMsgTranslator.MSG_BODY, result);
+                        } else if (name != null && pc_id != null) {
                             Container pcont = null;
                             if (session != null) pcont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(session, pc_id);
                             else pcont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(pc_id);

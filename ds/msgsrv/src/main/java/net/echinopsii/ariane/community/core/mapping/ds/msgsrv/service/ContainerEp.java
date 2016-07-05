@@ -53,6 +53,7 @@ public class ContainerEp {
             String sid;
             String cid;
             String name;
+            String payload;
             String pag_name;
             String pag_url;
             String pag_id;
@@ -90,8 +91,13 @@ public class ContainerEp {
                         pc_id = (String) message.get(ContainerSce.PARAM_CONTAINER_PCO_ID);
                         pag_url = (String) message.get(ContainerSce.PARAM_CONTAINER_PAG_URL);
                         pag_name = (String) message.get(ContainerSce.PARAM_CONTAINER_PAG_NAME);
-
-                        if (pag_url!=null && pag_name!=null) {
+                        payload = (String) message.get(MappingSce.GLOBAL_PARAM_PAYLOAD);
+                        if (payload!=null) {
+                            // TODO
+                            String result = "";
+                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                            message.put(MomMsgTranslator.MSG_BODY, result);
+                        } else if (pag_url!=null && pag_name!=null) {
                             Container cont;
                             if (name!=null) {
                                 if (pc_id!=null) {

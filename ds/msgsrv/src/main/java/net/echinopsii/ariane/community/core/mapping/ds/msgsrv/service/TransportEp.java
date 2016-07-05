@@ -47,6 +47,7 @@ public class TransportEp {
             String sid;
             String tid;
             String name;
+            String payload;
             String prop_field;
             String prop_name;
             Session session = null;
@@ -71,7 +72,13 @@ public class TransportEp {
                 switch (operation) {
                     case TransportSce.OP_CREATE_TRANSPORT:
                         name = (String) message.get(TransportSce.PARAM_TRANSPORT_NAME);
-                        if (name!=null) {
+                        payload = (String) message.get(MappingSce.GLOBAL_PARAM_PAYLOAD);
+                        if (payload!=null) {
+                            // TODO
+                            String result = "";
+                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                            message.put(MomMsgTranslator.MSG_BODY, result);
+                        } else if (name!=null) {
                             if (session!=null) transport = MappingMsgsrvBootstrap.getMappingSce().getTransportSce().createTransport(session, name);
                             else transport = MappingMsgsrvBootstrap.getMappingSce().getTransportSce().createTransport(name);
                             ByteArrayOutputStream outStream = new ByteArrayOutputStream();

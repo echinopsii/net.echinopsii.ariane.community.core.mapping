@@ -49,6 +49,7 @@ public class GateEp {
             String gid;
             String url;
             String name;
+            String payload;
             String pc_id;
             String ep_id;
             Boolean is_admin;
@@ -76,7 +77,13 @@ public class GateEp {
                         url = (String) message.get(GateSce.PARAM_GATE_URL);
                         pc_id  = (String) message.get(Container.TOKEN_CT_ID);
                         is_admin = (Boolean) message.get(GateSce.PARAM_GATE_IPADM);
-                        if (name!=null && url!=null && pc_id!=null && is_admin!=null) {
+                        payload = (String) message.get(MappingSce.GLOBAL_PARAM_PAYLOAD);
+                        if (payload!=null) {
+                            // TODO
+                            String result = "";
+                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                            message.put(MomMsgTranslator.MSG_BODY, result);
+                        } else if (name!=null && url!=null && pc_id!=null && is_admin!=null) {
                             Container parentContainer;
                             if (session!=null) parentContainer = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(session, pc_id);
                             else parentContainer = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(pc_id);
