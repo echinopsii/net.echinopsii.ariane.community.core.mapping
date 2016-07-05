@@ -20,11 +20,79 @@ package net.echinopsii.ariane.community.core.mapping.ds.service.proxy;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxTransport;
+import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
+import net.echinopsii.ariane.community.core.mapping.ds.json.domain.TransportJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.DeserializedPushResponse;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 public abstract class SProxTransportSceAbs<T extends Transport> implements SProxTransportSce {
+    public static DeserializedPushResponse pushDeserializedTransport(TransportJSON.JSONDeserializedTransport jsonDeserializedTransport,
+                                                                     Session mappingSession,
+                                                                     SProxMappingSce mappingSce) throws MappingDSException {
+        DeserializedPushResponse ret = new DeserializedPushResponse();
+
+        // DETECT POTENTIAL QUERIES ERROR FIRST
+        HashMap<String, Object> reqProperties = new HashMap<>();
+
+        if (jsonDeserializedTransport.getTransportProperties()!=null && jsonDeserializedTransport.getTransportProperties().size() > 0) {
+            for (PropertiesJSON.TypedPropertyField deserializedProperty : jsonDeserializedTransport.getTransportProperties()) {
+                try {
+                    Object oValue = ToolBox.extractPropertyObjectValueFromString(deserializedProperty.getPropertyValue(), deserializedProperty.getPropertyType());
+                    reqProperties.put(deserializedProperty.getPropertyName(), oValue);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    ret.setErrorMessage("Request Error : invalid property " + deserializedProperty.getPropertyName() + ".");
+                    break;
+                }
+            }
+        }
+
+        // LOOK IF TRANSPORT MAYBE UPDATED OR CREATED
+        Transport deserializedTransport = null;
+        if (ret.getErrorMessage() == null && jsonDeserializedTransport.getTransportID()!=null) {
+            if (mappingSession!=null) deserializedTransport = mappingSce.getTransportSce().getTransport(mappingSession, jsonDeserializedTransport.getTransportID());
+            else deserializedTransport = mappingSce.getTransportSce().getTransport(jsonDeserializedTransport.getTransportID());
+            if (deserializedTransport==null) ret.setErrorMessage("Request Error : transport with provided ID " + jsonDeserializedTransport.getTransportID() + " was not found.");
+        }
+
+        // APPLY REQ IF NO ERRORS
+        if (ret.getErrorMessage() == null) {
+            if (deserializedTransport == null)
+                if (mappingSession!=null) deserializedTransport = mappingSce.getTransportSce().createTransport(mappingSession, jsonDeserializedTransport.getTransportName());
+                else deserializedTransport = mappingSce.getTransportSce().createTransport(jsonDeserializedTransport.getTransportName());
+            else {
+                if (jsonDeserializedTransport.getTransportName()!=null)
+                    if (mappingSession!=null) ((SProxTransport)deserializedTransport).setTransportName(mappingSession, jsonDeserializedTransport.getTransportName());
+                    else deserializedTransport.setTransportName(jsonDeserializedTransport.getTransportName());
+            }
+
+            if (jsonDeserializedTransport.getTransportProperties()!=null) {
+                if (deserializedTransport.getTransportProperties()!=null) {
+                    List<String> propertiesToDelete = new ArrayList<>();
+                    for (String propertyKey : deserializedTransport.getTransportProperties().keySet())
+                        if (!reqProperties.containsKey(propertyKey)) propertiesToDelete.add(propertyKey);
+                    for (String propertyToDelete : propertiesToDelete)
+                        if (mappingSession!=null) ((SProxTransport)deserializedTransport).removeTransportProperty(mappingSession, propertyToDelete);
+                        else deserializedTransport.removeTransportProperty(propertyToDelete);
+                }
+
+                for (String propertyKey : reqProperties.keySet())
+                    if (mappingSession!=null) ((SProxTransport)deserializedTransport).addTransportProperty(mappingSession, propertyKey, reqProperties.get(propertyKey));
+                    else deserializedTransport.addTransportProperty(propertyKey, reqProperties.get(propertyKey));
+            }
+
+            ret.setDeserializedObject(deserializedTransport);
+        }
+        return ret;
+    }
+
     @Override
     public T createTransport(Session session, String transportName) throws MappingDSException {
         T ret = null;

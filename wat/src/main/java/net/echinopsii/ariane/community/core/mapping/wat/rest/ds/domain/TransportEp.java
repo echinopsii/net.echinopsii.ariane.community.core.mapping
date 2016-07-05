@@ -22,15 +22,15 @@ package net.echinopsii.ariane.community.core.mapping.wat.rest.ds.domain;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxTransport;
-import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.TransportSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxTransportSceAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.TransportJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
-import net.echinopsii.ariane.community.core.mapping.wat.rest.ds.JSONDeserializationResponse;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.DeserializedPushResponse;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
@@ -41,73 +41,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 
 @Path("/mapping/domain/transports")
 public class TransportEp {
     private static final Logger log = LoggerFactory.getLogger(TransportEp.class);
-
-    public static JSONDeserializationResponse jsonFriendlyToMappingFriendly(TransportJSON.JSONDeserializedTransport jsonDeserializedTransport,
-                                                                            Session mappingSession) throws MappingDSException {
-        JSONDeserializationResponse ret = new JSONDeserializationResponse();
-
-        // DETECT POTENTIAL QUERIES ERROR FIRST
-        HashMap<String, Object> reqProperties = new HashMap<>();
-
-        if (jsonDeserializedTransport.getTransportProperties()!=null && jsonDeserializedTransport.getTransportProperties().size() > 0) {
-            for (PropertiesJSON.TypedPropertyField deserializedProperty : jsonDeserializedTransport.getTransportProperties()) {
-                try {
-                    Object oValue = ToolBox.extractPropertyObjectValueFromString(deserializedProperty.getPropertyValue(), deserializedProperty.getPropertyType());
-                    reqProperties.put(deserializedProperty.getPropertyName(), oValue);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    ret.setErrorMessage("Request Error : invalid property " + deserializedProperty.getPropertyName() + ".");
-                    break;
-                }
-            }
-        }
-
-        // LOOK IF TRANSPORT MAYBE UPDATED OR CREATED
-        Transport deserializedTransport = null;
-        if (ret.getErrorMessage() == null && jsonDeserializedTransport.getTransportID()!=null) {
-            if (mappingSession!=null) deserializedTransport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(mappingSession, jsonDeserializedTransport.getTransportID());
-            else deserializedTransport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(jsonDeserializedTransport.getTransportID());
-            if (deserializedTransport==null) ret.setErrorMessage("Request Error : transport with provided ID " + jsonDeserializedTransport.getTransportID() + " was not found.");
-        }
-
-        // APPLY REQ IF NO ERRORS
-        if (ret.getErrorMessage() == null) {
-            if (deserializedTransport == null)
-                if (mappingSession!=null) deserializedTransport = MappingBootstrap.getMappingSce().getTransportSce().createTransport(mappingSession, jsonDeserializedTransport.getTransportName());
-                else deserializedTransport = MappingBootstrap.getMappingSce().getTransportSce().createTransport(jsonDeserializedTransport.getTransportName());
-            else {
-                if (jsonDeserializedTransport.getTransportName()!=null)
-                    if (mappingSession!=null) ((SProxTransport)deserializedTransport).setTransportName(mappingSession, jsonDeserializedTransport.getTransportName());
-                    else deserializedTransport.setTransportName(jsonDeserializedTransport.getTransportName());
-            }
-
-            if (jsonDeserializedTransport.getTransportProperties()!=null) {
-                if (deserializedTransport.getTransportProperties()!=null) {
-                    List<String> propertiesToDelete = new ArrayList<>();
-                    for (String propertyKey : deserializedTransport.getTransportProperties().keySet())
-                        if (!reqProperties.containsKey(propertyKey)) propertiesToDelete.add(propertyKey);
-                    for (String propertyToDelete : propertiesToDelete)
-                        if (mappingSession!=null) ((SProxTransport)deserializedTransport).removeTransportProperty(mappingSession, propertyToDelete);
-                        else deserializedTransport.removeTransportProperty(propertyToDelete);
-                }
-
-                for (String propertyKey : reqProperties.keySet())
-                    if (mappingSession!=null) ((SProxTransport)deserializedTransport).addTransportProperty(mappingSession, propertyKey, reqProperties.get(propertyKey));
-                    else deserializedTransport.addTransportProperty(propertyKey, reqProperties.get(propertyKey));
-            }
-
-            ret.setDeserializedObject(deserializedTransport);
-        }
-        return ret;
-    }
 
     private Response _displayTransport(String id, String sessionId) {
         Subject subject = SecurityUtils.getSubject();
@@ -239,7 +177,11 @@ public class TransportEp {
                     }
 
                     Response ret;
-                    JSONDeserializationResponse deserializationResponse = jsonFriendlyToMappingFriendly(TransportJSON.JSON2Transport(payload), mappingSession);
+                    DeserializedPushResponse deserializationResponse = SProxTransportSceAbs.pushDeserializedTransport(
+                            TransportJSON.JSON2Transport(payload),
+                            mappingSession,
+                            MappingBootstrap.getMappingSce()
+                    );
                     if (deserializationResponse.getErrorMessage()!=null) {
                         String result = deserializationResponse.getErrorMessage();
                         ret = Response.status(Status.BAD_REQUEST).entity(result).build();

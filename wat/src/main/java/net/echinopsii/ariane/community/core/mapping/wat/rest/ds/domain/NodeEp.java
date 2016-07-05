@@ -24,19 +24,17 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxNode;
-import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.NodeSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxNodeSceAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.NodeJSON;
-import net.echinopsii.ariane.community.core.mapping.ds.json.domain.NodeJSON.JSONDeserializedNode;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
-import net.echinopsii.ariane.community.core.mapping.wat.rest.ds.JSONDeserializationResponse;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.DeserializedPushResponse;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
-import org.hibernate.engine.spi.Mapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,184 +48,6 @@ import java.util.*;
 @Path("/mapping/domain/nodes")
 public class NodeEp {
     private static final Logger log = LoggerFactory.getLogger(NodeEp.class);
-
-    public static JSONDeserializationResponse jsonFriendlyToMappingFriendly(JSONDeserializedNode jsonDeserializedNode, Session mappingSession) throws MappingDSException {
-        JSONDeserializationResponse ret = new JSONDeserializationResponse();
-
-        // DETECT POTENTIAL QUERIES ERROR FIRST
-        Container reqNodeContainer = null;
-        Node reqNodeParentNode = null;
-        List<Node> reqNodeChildNodes = new ArrayList<>();
-        List<Node> reqNodeTwinNodes = new ArrayList<>();
-        List<Endpoint> reqNodeEndpoints = new ArrayList<>();
-        HashMap<String, Object> reqProperties = new HashMap<>();
-
-        if (jsonDeserializedNode.getNodeContainerID()!=null) {
-            if (mappingSession!=null) reqNodeContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, jsonDeserializedNode.getNodeContainerID());
-            else reqNodeContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(jsonDeserializedNode.getNodeContainerID());
-            if (reqNodeContainer == null) ret.setErrorMessage("Request Error : container with provided ID " + jsonDeserializedNode.getNodeContainerID() + " was not found.");
-        }
-        if (ret.getErrorMessage() == null && jsonDeserializedNode.getNodeParentNodeID()!=null) {
-            if (mappingSession!=null) reqNodeParentNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(mappingSession, jsonDeserializedNode.getNodeParentNodeID());
-            else reqNodeParentNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(jsonDeserializedNode.getNodeParentNodeID());
-            if (reqNodeParentNode == null) ret.setErrorMessage("Request Error : parent node with provided ID " + jsonDeserializedNode.getNodeParentNodeID() + " was not found.");
-        }
-        if (ret.getErrorMessage() == null && jsonDeserializedNode.getNodeChildNodesID()!=null && jsonDeserializedNode.getNodeChildNodesID().size() > 0 ) {
-            for (String id : jsonDeserializedNode.getNodeChildNodesID()) {
-                Node childNode ;
-                if (mappingSession!=null) childNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(mappingSession, id);
-                else childNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
-                if (childNode != null) reqNodeChildNodes.add(childNode);
-                else {
-                    ret.setErrorMessage("Request Error : child node with provided ID " + id + " was not found.");
-                    break;
-                }
-            }
-        }
-        if (ret.getErrorMessage() == null && jsonDeserializedNode.getNodeTwinNodesID()!=null && jsonDeserializedNode.getNodeTwinNodesID().size() > 0 ) {
-            for (String id : jsonDeserializedNode.getNodeTwinNodesID()) {
-                Node twinNode ;
-                if (mappingSession!=null) twinNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(mappingSession, id);
-                else twinNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
-                if (twinNode != null) reqNodeTwinNodes.add(twinNode);
-                else {
-                    ret.setErrorMessage("Request Error : twin node with provided ID " + id + " was not found.");
-                    break;
-                }
-            }
-        }
-        if (ret.getErrorMessage() == null && jsonDeserializedNode.getNodeEndpointsID()!=null && jsonDeserializedNode.getNodeEndpointsID().size() > 0) {
-            for (String id : jsonDeserializedNode.getNodeEndpointsID()) {
-                Endpoint endpoint ;
-                if (mappingSession!=null) endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, id);
-                else endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
-                if (endpoint != null) reqNodeEndpoints.add(endpoint);
-                else {
-                    ret.setErrorMessage("Request Error : endpoint with provided ID " + id + " was not found.");
-                    break;
-                }
-            }
-        }
-        if (ret.getErrorMessage() == null && jsonDeserializedNode.getNodeProperties()!=null && jsonDeserializedNode.getNodeProperties().size() > 0) {
-            for (PropertiesJSON.TypedPropertyField deserializedProperty : jsonDeserializedNode.getNodeProperties()) {
-                try {
-                    Object oValue = ToolBox.extractPropertyObjectValueFromString(deserializedProperty.getPropertyValue(), deserializedProperty.getPropertyType());
-                    reqProperties.put(deserializedProperty.getPropertyName(), oValue);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    ret.setErrorMessage("Request Error : invalid property " + deserializedProperty.getPropertyName() + ".");
-                    break;
-                }
-            }
-        }
-
-        // LOOK IF NODE MAYBE UPDATED OR CREATED
-        Node deserializedNode = null;
-        if (ret.getErrorMessage() == null && jsonDeserializedNode.getNodeID() != null) {
-            if (mappingSession!=null) deserializedNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(mappingSession, jsonDeserializedNode.getNodeID());
-            else deserializedNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(jsonDeserializedNode.getNodeID());
-            if (deserializedNode == null)
-                ret.setErrorMessage("Request Error : node with provided ID " + jsonDeserializedNode.getNodeID() + " was not found.");
-        }
-
-        if (ret.getErrorMessage() == null && deserializedNode == null && reqNodeContainer != null && jsonDeserializedNode.getNodeName() != null)
-            if (mappingSession!=null) deserializedNode = MappingBootstrap.getMappingSce().getNodeByName(mappingSession, reqNodeContainer, jsonDeserializedNode.getNodeName());
-            else deserializedNode = MappingBootstrap.getMappingSce().getNodeByName(reqNodeContainer, jsonDeserializedNode.getNodeName());
-
-        // APPLY REQ IF NO ERRORS
-        if (ret.getErrorMessage() == null) {
-            String reqNodeName = jsonDeserializedNode.getNodeName();
-            String reqContainerID = jsonDeserializedNode.getNodeContainerID();
-            String reqParentNodeID = jsonDeserializedNode.getNodeParentNodeID();
-            if (deserializedNode == null)
-                if (mappingSession!=null) deserializedNode = MappingBootstrap.getMappingSce().getNodeSce().createNode(mappingSession, reqNodeName, reqContainerID, reqParentNodeID);
-                else deserializedNode = MappingBootstrap.getMappingSce().getNodeSce().createNode(reqNodeName, reqContainerID, reqParentNodeID);
-            else {
-                if (reqNodeName != null)
-                    if (mappingSession!=null) ((SProxNode)deserializedNode).setNodeName(mappingSession, reqNodeName);
-                    else deserializedNode.setNodeName(reqNodeName);
-                if (reqNodeContainer != null)
-                    if (mappingSession!=null) ((SProxNode)deserializedNode).setNodeContainer(mappingSession, reqNodeContainer);
-                    else deserializedNode.setNodeContainer(reqNodeContainer);
-                if (reqNodeParentNode != null)
-                    if (mappingSession!=null) ((SProxNode)deserializedNode).setNodeParentNode(mappingSession, reqNodeParentNode);
-                    else deserializedNode.setNodeParentNode(reqNodeParentNode);
-            }
-
-            if (jsonDeserializedNode.getNodeChildNodesID()!=null) {
-                List<Node> childNodesToDelete = new ArrayList<>();
-                for (Node existingChildNode : deserializedNode.getNodeChildNodes())
-                    if (!reqNodeChildNodes.contains(existingChildNode))
-                        childNodesToDelete.add(existingChildNode);
-                for (Node childNodeToDelete : childNodesToDelete)
-                    if (mappingSession!=null) ((SProxNode)deserializedNode).removeNodeChildNode(mappingSession, childNodeToDelete);
-                    else deserializedNode.removeNodeChildNode(childNodeToDelete);
-
-                for (Node childNodeReq : reqNodeChildNodes)
-                    if (mappingSession!=null) ((SProxNode)deserializedNode).addNodeChildNode(mappingSession, childNodeReq);
-                    else deserializedNode.addNodeChildNode(childNodeReq);
-            }
-
-            if (jsonDeserializedNode.getNodeTwinNodesID()!=null) {
-                List<Node> twinNodesToDelete = new ArrayList<>();
-                for (Node existingTwinNode : deserializedNode.getTwinNodes())
-                    if (!reqNodeTwinNodes.contains(existingTwinNode))
-                        twinNodesToDelete.add(existingTwinNode);
-                for (Node twinNodeToDelete : twinNodesToDelete) {
-                    if (mappingSession!=null) {
-                        ((SProxNode)deserializedNode).removeTwinNode(mappingSession, twinNodeToDelete);
-                        ((SProxNode)twinNodeToDelete).removeTwinNode(mappingSession, deserializedNode);
-                    } else {
-                        deserializedNode.removeTwinNode(twinNodeToDelete);
-                        twinNodeToDelete.removeTwinNode(deserializedNode);
-                    }
-                }
-
-                for (Node twinNodeReq : reqNodeTwinNodes) {
-                    if (mappingSession!=null) {
-                        ((SProxNode)deserializedNode).addTwinNode(mappingSession, twinNodeReq);
-                        ((SProxNode)twinNodeReq).addTwinNode(mappingSession, deserializedNode);
-                    } else {
-                        deserializedNode.addTwinNode(twinNodeReq);
-                        twinNodeReq.addTwinNode(deserializedNode);
-                    }
-                }
-            }
-
-            if (jsonDeserializedNode.getNodeEndpointsID()!=null) {
-                List<Endpoint> endpointsToDelete = new ArrayList<>();
-                for (Endpoint existingEndpoint : deserializedNode.getNodeEndpoints())
-                    if (!reqNodeEndpoints.contains(existingEndpoint))
-                        endpointsToDelete.add(existingEndpoint);
-                for (Endpoint endpointToDelete : endpointsToDelete)
-                    if (mappingSession!=null) ((SProxNode)deserializedNode).removeEndpoint(mappingSession, endpointToDelete);
-                    else deserializedNode.removeEndpoint(endpointToDelete);
-
-                for (Endpoint endpointReq : reqNodeEndpoints)
-                    if (mappingSession!=null) ((SProxNode)deserializedNode).addEndpoint(mappingSession, endpointReq);
-                    else deserializedNode.addEndpoint(endpointReq);
-            }
-
-            if (jsonDeserializedNode.getNodeProperties()!=null) {
-                if (deserializedNode.getNodeProperties()!=null) {
-                    List<String> propertiesToDelete = new ArrayList<>();
-                    for (String propertyKey : deserializedNode.getNodeProperties().keySet())
-                        if (!reqProperties.containsKey(propertyKey))
-                            propertiesToDelete.add(propertyKey);
-                    for (String propertyToDelete : propertiesToDelete)
-                        if (mappingSession!=null) ((SProxNode)deserializedNode).removeNodeProperty(mappingSession, propertyToDelete);
-                        else deserializedNode.removeNodeProperty(propertyToDelete);
-                }
-
-                for (String propertyKey : reqProperties.keySet())
-                    if (mappingSession!=null) ((SProxNode)deserializedNode).addNodeProperty(mappingSession, propertyKey, reqProperties.get(propertyKey));
-                    else deserializedNode.addNodeProperty(propertyKey, reqProperties.get(propertyKey));
-            }
-            ret.setDeserializedObject(deserializedNode);
-        }
-
-        return ret;
-    }
 
     private Response _displayNode(String id, String sessionId) {
         Subject subject = SecurityUtils.getSubject();
@@ -495,7 +315,11 @@ public class NodeEp {
                     }
 
                     Response ret;
-                    JSONDeserializationResponse deserializationResponse = jsonFriendlyToMappingFriendly(NodeJSON.JSON2Node(payload), mappingSession);
+                    DeserializedPushResponse deserializationResponse = SProxNodeSceAbs.pushDeserializedNode(
+                            NodeJSON.JSON2Node(payload),
+                            mappingSession,
+                            MappingBootstrap.getMappingSce()
+                    );
                     if (deserializationResponse.getErrorMessage()!=null) {
                         String result = deserializationResponse.getErrorMessage();
                         ret = Response.status(Status.BAD_REQUEST).entity(result).build();

@@ -20,11 +20,141 @@ package net.echinopsii.ariane.community.core.mapping.ds.service.proxy;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxEndpoint;
+import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
+import net.echinopsii.ariane.community.core.mapping.ds.json.domain.EndpointJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.DeserializedPushResponse;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 public abstract class SProxEndpointSceAbs<E extends Endpoint> implements SProxEndpointSce {
+
+    public static DeserializedPushResponse pushDeserializedEndpoint(EndpointJSON.JSONDeserializedEndpoint jsonDeserializedEndpoint,
+                                                                    Session mappingSession,
+                                                                    SProxMappingSce mappingSce) throws MappingDSException {
+        DeserializedPushResponse ret = new DeserializedPushResponse();
+
+        // DETECT POTENTIAL QUERIES ERROR FIRST
+        Node reqEndpointParentNode = null;
+        List<Endpoint> reqEndpointTwinEndpoints = new ArrayList<>();
+        HashMap<String, Object> reqEndpointProperties = new HashMap<>();
+
+        if (jsonDeserializedEndpoint.getEndpointParentNodeID() != null) {
+            if (mappingSession!=null) reqEndpointParentNode =  mappingSce.getNodeSce().getNode(mappingSession, jsonDeserializedEndpoint.getEndpointParentNodeID());
+            else reqEndpointParentNode =  mappingSce.getNodeSce().getNode(jsonDeserializedEndpoint.getEndpointParentNodeID());
+            if (reqEndpointParentNode==null) ret.setErrorMessage("Request Error : node with provided ID " + jsonDeserializedEndpoint.getEndpointParentNodeID() + " was not found.");
+        } else ret.setErrorMessage("Request Error : no parent node ID provided...");
+
+        if (ret.getErrorMessage()==null && jsonDeserializedEndpoint.getEndpointTwinEndpointsID()!=null && jsonDeserializedEndpoint.getEndpointTwinEndpointsID().size() > 0) {
+            for (String id : jsonDeserializedEndpoint.getEndpointTwinEndpointsID()) {
+                Endpoint twinEndpoint ;
+                if (mappingSession!=null) twinEndpoint = mappingSce.getEndpointSce().getEndpoint(mappingSession, id);
+                else twinEndpoint = mappingSce.getEndpointSce().getEndpoint(id);
+                if (twinEndpoint != null)
+                    reqEndpointTwinEndpoints.add(twinEndpoint);
+                else {
+                    ret.setErrorMessage("Request Error : twin endpoint with provided ID " + id + " was not found.");
+                    break;
+                }
+            }
+        }
+
+        if (ret.getErrorMessage()==null && jsonDeserializedEndpoint.getEndpointProperties()!=null && jsonDeserializedEndpoint.getEndpointProperties().size() > 0) {
+            for (PropertiesJSON.TypedPropertyField deserializedProperty : jsonDeserializedEndpoint.getEndpointProperties()) {
+                try {
+                    Object oValue = ToolBox.extractPropertyObjectValueFromString(deserializedProperty.getPropertyValue(), deserializedProperty.getPropertyType());
+                    reqEndpointProperties.put(deserializedProperty.getPropertyName(), oValue);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    ret.setErrorMessage("Request Error : invalid property " + deserializedProperty.getPropertyName() + ".");
+                    break;
+                }
+            }
+        }
+
+        // LOOK IF NODE MAYBE UPDATED OR CREATED
+        Endpoint deserializedEndpoint = null;
+        if (ret.getErrorMessage() == null && jsonDeserializedEndpoint.getEndpointID()!=null) {
+            if (mappingSession!=null) deserializedEndpoint = mappingSce.getEndpointSce().getEndpoint(mappingSession, jsonDeserializedEndpoint.getEndpointID());
+            else deserializedEndpoint = mappingSce.getEndpointSce().getEndpoint(jsonDeserializedEndpoint.getEndpointID());
+            if (deserializedEndpoint==null)
+                ret.setErrorMessage("Request Error : endpoint with provided ID " + jsonDeserializedEndpoint.getEndpointID() + " was not found.");
+        }
+
+        if (ret.getErrorMessage() == null && deserializedEndpoint==null && jsonDeserializedEndpoint.getEndpointURL() != null)
+            if (mappingSession!=null) deserializedEndpoint = mappingSce.getEndpointSce().getEndpoint(mappingSession, jsonDeserializedEndpoint.getEndpointID());
+            else deserializedEndpoint = mappingSce.getEndpointSce().getEndpoint(jsonDeserializedEndpoint.getEndpointID());
+
+        // APPLY REQ IF NO ERRORS
+        if (ret.getErrorMessage() == null) {
+            String reqEndpointURL = jsonDeserializedEndpoint.getEndpointURL();
+            String reqEndpointParentNodeID = jsonDeserializedEndpoint.getEndpointParentNodeID();
+            if (deserializedEndpoint == null)
+                if (mappingSession!=null) deserializedEndpoint = mappingSce.getEndpointSce().createEndpoint(mappingSession, reqEndpointURL, reqEndpointParentNodeID);
+                else deserializedEndpoint = mappingSce.getEndpointSce().createEndpoint(reqEndpointURL, reqEndpointParentNodeID);
+            else {
+                if (reqEndpointURL!=null)
+                    if (mappingSession!=null) ((SProxEndpoint)deserializedEndpoint).setEndpointURL(mappingSession, reqEndpointURL);
+                    else deserializedEndpoint.setEndpointURL(reqEndpointURL);
+                if (reqEndpointParentNode!=null)
+                    if (mappingSession!=null) ((SProxEndpoint)deserializedEndpoint).setEndpointParentNode(mappingSession, reqEndpointParentNode);
+                    else deserializedEndpoint.setEndpointParentNode(reqEndpointParentNode);
+            }
+
+            if (jsonDeserializedEndpoint.getEndpointTwinEndpointsID()!=null) {
+                List<Endpoint> twinEndpointsToDelete = new ArrayList<>();
+                for (Endpoint existingTwinEndpoint : deserializedEndpoint.getTwinEndpoints())
+                    if (!reqEndpointTwinEndpoints.contains(existingTwinEndpoint))
+                        twinEndpointsToDelete.add(existingTwinEndpoint);
+                for (Endpoint twinEndpointToDelete : twinEndpointsToDelete) {
+                    if (mappingSession!=null) {
+                        ((SProxEndpoint)deserializedEndpoint).removeTwinEndpoint(mappingSession, twinEndpointToDelete);
+                        ((SProxEndpoint)twinEndpointToDelete).removeTwinEndpoint(mappingSession, deserializedEndpoint);
+                    } else {
+                        deserializedEndpoint.removeTwinEndpoint(twinEndpointToDelete);
+                        twinEndpointToDelete.removeTwinEndpoint(deserializedEndpoint);
+                    }
+                }
+
+                for (Endpoint twinEndpointToAdd : reqEndpointTwinEndpoints) {
+                    if (mappingSession!=null) {
+                        ((SProxEndpoint)deserializedEndpoint).addTwinEndpoint(mappingSession, twinEndpointToAdd);
+                        ((SProxEndpoint)twinEndpointToAdd).addTwinEndpoint(mappingSession, deserializedEndpoint);
+                    } else {
+                        deserializedEndpoint.addTwinEndpoint(twinEndpointToAdd);
+                        twinEndpointToAdd.addTwinEndpoint(deserializedEndpoint);
+                    }
+                }
+            }
+
+            if (jsonDeserializedEndpoint.getEndpointProperties()!=null) {
+                if (deserializedEndpoint.getEndpointProperties()!=null) {
+                    List<String> propertiesToDelete = new ArrayList<>();
+                    for (String propertyKey : deserializedEndpoint.getEndpointProperties().keySet())
+                        if (!reqEndpointProperties.containsKey(propertyKey))
+                            propertiesToDelete.add(propertyKey);
+                    for (String propertyKeyToDelete : propertiesToDelete)
+                        if (mappingSession!=null) ((SProxEndpoint)deserializedEndpoint).removeEndpointProperty(mappingSession, propertyKeyToDelete);
+                        else deserializedEndpoint.removeEndpointProperty(propertyKeyToDelete);
+                }
+
+                for (String propertyKey : reqEndpointProperties.keySet())
+                    if (mappingSession!=null) ((SProxEndpoint)deserializedEndpoint).addEndpointProperty(mappingSession, propertyKey, reqEndpointProperties.get(propertyKey));
+                    else deserializedEndpoint.addEndpointProperty(propertyKey, reqEndpointProperties.get(propertyKey));
+            }
+
+            ret.setDeserializedObject(deserializedEndpoint);
+        }
+
+        return ret;
+    }
+
     @Override
     public E createEndpoint(Session session, String url, String parentNodeID) throws MappingDSException {
         E ret = null;

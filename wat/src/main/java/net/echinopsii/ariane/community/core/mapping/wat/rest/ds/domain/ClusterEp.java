@@ -25,12 +25,13 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxCluster;
 import net.echinopsii.ariane.community.core.mapping.ds.service.ClusterSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxClusterSceAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ClusterJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
-import net.echinopsii.ariane.community.core.mapping.wat.rest.ds.JSONDeserializationResponse;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.DeserializedPushResponse;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
@@ -41,72 +42,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 
 @Path("/mapping/domain/clusters")
 public class ClusterEp {
     private static final Logger log = LoggerFactory.getLogger(ContainerEp.class);
-
-    public static JSONDeserializationResponse jsonFriendlyToMappingFriendly(ClusterJSON.JSONDeserializedCluster jsonDeserializedCluster,
-                                                                            Session mappingSession) throws MappingDSException {
-        JSONDeserializationResponse ret = new JSONDeserializationResponse();
-
-        // DETECT POTENTIAL QUERIES ERROR FIRST
-        List<Container> reqContainers = new ArrayList<>();
-        if (jsonDeserializedCluster.getClusterContainersID()!=null && jsonDeserializedCluster.getClusterContainersID().size()>0) {
-            for (String id : jsonDeserializedCluster.getClusterContainersID()) {
-                Container container;
-
-                if (mappingSession!=null)
-                    container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, id);
-                else container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
-
-                if (container != null) reqContainers.add(container);
-                else {
-                    ret.setErrorMessage("Request Error : container with provided ID " + id + " was not found.");
-                    break;
-                }
-            }
-        }
-
-        // LOOK IF CLUSTER MAYBE UPDATED OR CREATED
-        Cluster deserializedCluster = null;
-        if (ret.getErrorMessage()==null && jsonDeserializedCluster.getClusterID()!=null) {
-            if (mappingSession!=null)
-                deserializedCluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(mappingSession, jsonDeserializedCluster.getClusterID());
-            else deserializedCluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(jsonDeserializedCluster.getClusterID());
-            if (deserializedCluster == null) ret.setErrorMessage("Request Error : cluster with provided ID " + jsonDeserializedCluster.getClusterID() + " was not found.");
-        }
-
-        // APPLY REQ IF NO ERRORS
-        if (ret.getErrorMessage()==null) {
-            if (deserializedCluster==null)
-                if (mappingSession!=null) deserializedCluster = MappingBootstrap.getMappingSce().getClusterSce().createCluster(mappingSession, jsonDeserializedCluster.getClusterName());
-                else deserializedCluster = MappingBootstrap.getMappingSce().getClusterSce().createCluster(jsonDeserializedCluster.getClusterName());
-            else if (jsonDeserializedCluster.getClusterName()!=null)
-                if (mappingSession!=null) ((SProxCluster)deserializedCluster).setClusterName(mappingSession, jsonDeserializedCluster.getClusterName());
-                else deserializedCluster.setClusterName(jsonDeserializedCluster.getClusterName());
-
-            if (jsonDeserializedCluster.getClusterContainersID() != null) {
-                List<Container> containersToDelete = new ArrayList<>();
-                for (Container containerToDel : deserializedCluster.getClusterContainers())
-                    if (!reqContainers.contains(containerToDel))
-                        containersToDelete.add(containerToDel);
-                for (Container containerToDel : containersToDelete)
-                    if (mappingSession!=null) ((SProxCluster)deserializedCluster).removeClusterContainer(mappingSession, containerToDel);
-                    else deserializedCluster.removeClusterContainer(containerToDel);
-                for (Container containerToAdd : reqContainers)
-                    if (mappingSession!=null) ((SProxCluster)deserializedCluster).addClusterContainer(mappingSession, containerToAdd);
-                    else deserializedCluster.addClusterContainer(containerToAdd);
-            }
-
-            ret.setDeserializedObject(deserializedCluster);
-        }
-
-        return ret;
-    }
 
     private Response _displayCluster(String id, String sessionId) {
         Subject subject = SecurityUtils.getSubject();
@@ -297,7 +237,11 @@ public class ClusterEp {
                             return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
                     }
 
-                    JSONDeserializationResponse deserializationResponse = jsonFriendlyToMappingFriendly(ClusterJSON.JSON2Cluster(payload), mappingSession);
+                    DeserializedPushResponse deserializationResponse = SProxClusterSceAbs.pushDeserializedCluster(
+                            ClusterJSON.JSON2Cluster(payload),
+                            mappingSession,
+                            MappingBootstrap.getMappingSce()
+                    );
                     if (deserializationResponse.getErrorMessage()!=null) {
                         String result = deserializationResponse.getErrorMessage();
                         ret = Response.status(Status.BAD_REQUEST).entity(result).build();

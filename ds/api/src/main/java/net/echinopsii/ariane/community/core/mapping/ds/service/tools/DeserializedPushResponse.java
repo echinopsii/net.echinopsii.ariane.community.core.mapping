@@ -16,10 +16,10 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.echinopsii.ariane.community.core.mapping.wat.rest.ds;
+package net.echinopsii.ariane.community.core.mapping.ds.service.tools;
 
 
-public class JSONDeserializationResponse {
+public class DeserializedPushResponse {
     Object deserializedObject;
     String errorMessage;
 
