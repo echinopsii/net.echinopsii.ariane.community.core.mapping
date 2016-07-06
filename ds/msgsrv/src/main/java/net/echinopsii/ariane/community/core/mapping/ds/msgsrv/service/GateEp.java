@@ -30,6 +30,8 @@ import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.momsp.MappingMsgsr
 import net.echinopsii.ariane.community.core.mapping.ds.service.GateSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxNodeSceAbs;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.DeserializedPushResponse;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
@@ -79,10 +81,26 @@ public class GateEp {
                         is_admin = (Boolean) message.get(GateSce.PARAM_GATE_IPADM);
                         payload = (String) message.get(MappingSce.GLOBAL_PARAM_PAYLOAD);
                         if (payload!=null) {
-                            // TODO
-                            String result = "";
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
-                            message.put(MomMsgTranslator.MSG_BODY, result);
+                            DeserializedPushResponse deserializationResponse = SProxNodeSceAbs.pushDeserializedGate(
+                                    GateJSON.JSON2Gate(payload),
+                                    session,
+                                    MappingMsgsrvBootstrap.getMappingSce()
+                            );
+                            if (deserializationResponse.getErrorMessage()!=null) {
+                                String result = deserializationResponse.getErrorMessage();
+                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                message.put(MomMsgTranslator.MSG_BODY, result);
+                            } else if (deserializationResponse.getDeserializedObject()!=null) {
+                                ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                                GateJSON.oneGate2JSON((Gate) deserializationResponse.getDeserializedObject(), outStream);
+                                String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                                message.put(MomMsgTranslator.MSG_BODY, result);
+                            } else {
+                                String result = "ERROR while deserializing !";
+                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SERVER_ERR);
+                                message.put(MomMsgTranslator.MSG_BODY, result);
+                            }
                         } else if (name!=null && url!=null && pc_id!=null && is_admin!=null) {
                             Container parentContainer;
                             if (session!=null) parentContainer = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(session, pc_id);

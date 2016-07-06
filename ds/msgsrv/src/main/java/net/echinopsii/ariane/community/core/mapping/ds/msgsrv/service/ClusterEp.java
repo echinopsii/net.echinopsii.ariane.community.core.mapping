@@ -29,7 +29,9 @@ import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.MappingMsgsrvBoots
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.momsp.MappingMsgsrvMomSP;
 import net.echinopsii.ariane.community.core.mapping.ds.service.ClusterSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxClusterSceAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.DeserializedPushResponse;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
@@ -73,10 +75,26 @@ public class ClusterEp {
                         name = (String) message.get(ClusterSce.PARAM_CLUSTER_NAME);
                         payload = (String) message.get(MappingSce.GLOBAL_PARAM_PAYLOAD);
                         if (payload != null) {
-                            // TODO
-                            String result = "";
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
-                            message.put(MomMsgTranslator.MSG_BODY, result);
+                            DeserializedPushResponse deserializationResponse = SProxClusterSceAbs.pushDeserializedCluster(
+                                    ClusterJSON.JSON2Cluster(payload),
+                                    session,
+                                    MappingMsgsrvBootstrap.getMappingSce()
+                            );
+                            if (deserializationResponse.getErrorMessage()!=null) {
+                                String result = deserializationResponse.getErrorMessage();
+                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                message.put(MomMsgTranslator.MSG_BODY, result);
+                            } else if (deserializationResponse.getDeserializedObject()!=null) {
+                                ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                                ClusterJSON.oneCluster2JSON((Cluster) deserializationResponse.getDeserializedObject(), outStream);
+                                String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                                message.put(MomMsgTranslator.MSG_BODY, result);
+                            } else {
+                                String result = "ERROR while deserializing !";
+                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SERVER_ERR);
+                                message.put(MomMsgTranslator.MSG_BODY, result);
+                            }
                         } else if (name != null){
                             Cluster cluster;
                             if (session != null)

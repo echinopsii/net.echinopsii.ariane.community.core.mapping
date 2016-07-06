@@ -30,7 +30,9 @@ import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.MappingMsgsrvBoots
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.momsp.MappingMsgsrvMomSP;
 import net.echinopsii.ariane.community.core.mapping.ds.service.LinkSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxLinkSceAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.DeserializedPushResponse;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
@@ -80,10 +82,26 @@ public class LinkEp {
                         t_id = (String) message.get(Transport.TOKEN_TP_ID);
                         payload = (String) message.get(MappingSce.GLOBAL_PARAM_PAYLOAD);
                         if (payload!=null) {
-                            // TODO
-                            String result = "";
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
-                            message.put(MomMsgTranslator.MSG_BODY, result);
+                            DeserializedPushResponse deserializationResponse = SProxLinkSceAbs.pushDeserializedLink(
+                                    LinkJSON.JSON2Link(payload),
+                                    session,
+                                    MappingMsgsrvBootstrap.getMappingSce()
+                            );
+                            if (deserializationResponse.getErrorMessage()!=null) {
+                                String result = deserializationResponse.getErrorMessage();
+                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                message.put(MomMsgTranslator.MSG_BODY, result);
+                            } else if (deserializationResponse.getDeserializedObject()!=null) {
+                                ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                                LinkJSON.oneLink2JSON((Link)deserializationResponse.getDeserializedObject(), outStream);
+                                String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                                message.put(MomMsgTranslator.MSG_BODY, result);
+                            } else {
+                                String result = "ERROR while deserializing !";
+                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SERVER_ERR);
+                                message.put(MomMsgTranslator.MSG_BODY, result);
+                            }
                         } else if (sep_id!=null && t_id!=null) {
                             if (session!=null) link = MappingMsgsrvBootstrap.getMappingSce().getLinkSce().createLink(session, sep_id, tep_id, t_id);
                             else link = MappingMsgsrvBootstrap.getMappingSce().getLinkSce().createLink(sep_id, tep_id, t_id);

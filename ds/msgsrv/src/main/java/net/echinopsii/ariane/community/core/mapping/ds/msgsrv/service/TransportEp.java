@@ -28,6 +28,8 @@ import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.momsp.MappingMsgsr
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.TransportSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxTransportSceAbs;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.DeserializedPushResponse;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
@@ -74,10 +76,26 @@ public class TransportEp {
                         name = (String) message.get(TransportSce.PARAM_TRANSPORT_NAME);
                         payload = (String) message.get(MappingSce.GLOBAL_PARAM_PAYLOAD);
                         if (payload!=null) {
-                            // TODO
-                            String result = "";
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
-                            message.put(MomMsgTranslator.MSG_BODY, result);
+                            DeserializedPushResponse deserializationResponse = SProxTransportSceAbs.pushDeserializedTransport(
+                                    TransportJSON.JSON2Transport(payload),
+                                    session,
+                                    MappingMsgsrvBootstrap.getMappingSce()
+                            );
+                            if (deserializationResponse.getErrorMessage()!=null) {
+                                String result = deserializationResponse.getErrorMessage();
+                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                message.put(MomMsgTranslator.MSG_BODY, result);
+                            } else if (deserializationResponse.getDeserializedObject()!=null) {
+                                ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                                TransportJSON.oneTransport2JSON((Transport)deserializationResponse.getDeserializedObject(), outStream);
+                                String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                                message.put(MomMsgTranslator.MSG_BODY, result);
+                            } else {
+                                String result = "ERROR while deserializing !";
+                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SERVER_ERR);
+                                message.put(MomMsgTranslator.MSG_BODY, result);
+                            }
                         } else if (name!=null) {
                             if (session!=null) transport = MappingMsgsrvBootstrap.getMappingSce().getTransportSce().createTransport(session, name);
                             else transport = MappingMsgsrvBootstrap.getMappingSce().getTransportSce().createTransport(name);
