@@ -83,7 +83,6 @@ public class EndpointEp {
                         pn_id = (String) message.get(NodeSce.PARAM_NODE_PNID);
                         payload = (String) message.get(MappingSce.GLOBAL_PARAM_PAYLOAD);
                         if (payload!=null) {
-                            // TODO
                             DeserializedPushResponse deserializationResponse = SProxEndpointSceAbs.pushDeserializedEndpoint(
                                     EndpointJSON.JSON2Endpoint(payload),
                                     session,
