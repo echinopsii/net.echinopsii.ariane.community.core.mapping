@@ -49,7 +49,7 @@ public class LinkSceImpl extends SProxLinkSceAbs<LinkImpl>{
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.GLOBAL_OPERATION_FDN, LinkSce.OP_CREATE_LINK);
+        message.put(MomMsgTranslator.OPERATION_FDN, LinkSce.OP_CREATE_LINK);
         message.put(LinkSce.PARAM_LINK_SEPID, sourceEndpointID);
         message.put(LinkSce.PARAM_LINK_TEPID, (targetEndpointID!=null) ? targetEndpointID : MappingSce.GLOBAL_PARAM_OBJ_NONE);
         message.put(Transport.TOKEN_TP_ID, transportID);
@@ -71,7 +71,7 @@ public class LinkSceImpl extends SProxLinkSceAbs<LinkImpl>{
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.GLOBAL_OPERATION_FDN, LinkSce.OP_DELETE_LINK);
+        message.put(MomMsgTranslator.OPERATION_FDN, LinkSce.OP_DELETE_LINK);
         message.put(MappingSce.GLOBAL_PARAM_OBJ_ID, linkID);
 
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -88,7 +88,7 @@ public class LinkSceImpl extends SProxLinkSceAbs<LinkImpl>{
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.GLOBAL_OPERATION_FDN, LinkSce.OP_GET_LINK);
+        message.put(MomMsgTranslator.OPERATION_FDN, LinkSce.OP_GET_LINK);
         message.put(MappingSce.GLOBAL_PARAM_OBJ_ID, id);
 
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -97,7 +97,7 @@ public class LinkSceImpl extends SProxLinkSceAbs<LinkImpl>{
         int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
 
         if (rc != 0) {
-            if (rc == MappingSce.MAPPING_SCE_RET_NOT_FOUND) link = null;
+            if (rc == MomMsgTranslator.MSG_RET_NOT_FOUND) link = null;
             else throw new MappingDSException("Ariane server raised an error... Check your logs !");
         }
 
@@ -145,7 +145,7 @@ public class LinkSceImpl extends SProxLinkSceAbs<LinkImpl>{
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.GLOBAL_OPERATION_FDN, LinkSce.OP_GET_LINKS);
+        message.put(MomMsgTranslator.OPERATION_FDN, LinkSce.OP_GET_LINKS);
         message.put(MappingSce.GLOBAL_PARAM_SELECTOR, (selector!=null) ? selector : MappingSce.GLOBAL_PARAM_OBJ_NONE);
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
 

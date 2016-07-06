@@ -50,7 +50,7 @@ public class ContainerEp {
     static class ContainerWorker implements AppMsgWorker {
         @Override
         public Map<String, Object> apply(Map<String, Object> message) {
-            Object oOperation = message.get(MappingSce.GLOBAL_OPERATION_FDN);
+            Object oOperation = message.get(MomMsgTranslator.OPERATION_FDN);
             String operation;
             String sid;
             String cid;
@@ -72,7 +72,7 @@ public class ContainerEp {
             Session session = null;
 
             if (oOperation==null)
-                operation = MappingSce.GLOBAL_OPERATION_NOT_DEFINED;
+                operation = MomMsgTranslator.OPERATION_NOT_DEFINED;
             else
                 operation = oOperation.toString();
 
@@ -80,7 +80,7 @@ public class ContainerEp {
             if (sid!=null) {
                 session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sid);
                 if (session == null) {
-                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                    message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                     message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : session with provided id not found");
                     return message;
                 }
@@ -102,17 +102,17 @@ public class ContainerEp {
                             );
                             if (deserializationResponse.getErrorMessage()!=null) {
                                 String result = deserializationResponse.getErrorMessage();
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                 message.put(MomMsgTranslator.MSG_BODY, result);
                             } else if (deserializationResponse.getDeserializedObject()!=null) {
                                 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
                                 ContainerJSON.oneContainer2JSON((Container) deserializationResponse.getDeserializedObject(), outStream);
                                 String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                                 message.put(MomMsgTranslator.MSG_BODY, result);
                             } else {
                                 String result = "ERROR while deserializing !";
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SERVER_ERR);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SERVER_ERR);
                                 message.put(MomMsgTranslator.MSG_BODY, result);
                             }
                         } else if (pag_url!=null && pag_name!=null) {
@@ -126,7 +126,7 @@ public class ContainerEp {
                                         if (session != null) cont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().createContainer(session, name, pag_url, pag_name, pcont);
                                         else cont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().createContainer(name, pag_url, pag_name, pcont);
                                     } else {
-                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                        message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : parent container with provided id not found");
                                         return message;
                                     }
@@ -143,7 +143,7 @@ public class ContainerEp {
                                         if (session != null) cont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().createContainer(session, pag_url, pag_name, pcont);
                                         else cont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().createContainer(pag_url, pag_name, pcont);
                                     } else {
-                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                        message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : parent container with provided id not found");
                                         return message;
                                     }
@@ -157,10 +157,10 @@ public class ContainerEp {
                             ContainerJSON.oneContainer2JSONWithTypedProps(cont, outStream);
                             String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
 
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                             message.put(MomMsgTranslator.MSG_BODY, result);
                         } else {
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                             message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : primary admin gate name and/or url not provided.");
                         }
                         break;
@@ -170,9 +170,9 @@ public class ContainerEp {
                             if (session != null) MappingMsgsrvBootstrap.getMappingSce().getContainerSce().deleteContainer(session, pag_url);
                             else MappingMsgsrvBootstrap.getMappingSce().getContainerSce().deleteContainer(pag_url);
 
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                         } else {
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                             message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : primary admin gate url not provided.");
                         }
                         break;
@@ -195,15 +195,15 @@ public class ContainerEp {
                                 ContainerJSON.oneContainer2JSONWithTypedProps(cont, outStream);
                                 String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
 
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                                 message.put(MomMsgTranslator.MSG_BODY, result);
                             } else {
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_NOT_FOUND);
                                 if (operation.equals(ContainerSce.OP_GET_CONTAINER)) message.put(MomMsgTranslator.MSG_ERR, "Not Found (" + operation + ") : container with provided id not found");
                                 else if (operation.equals(ContainerSce.OP_GET_CONTAINER)) message.put(MomMsgTranslator.MSG_ERR, "Not Found (" + operation + ") : container with provided primary admin gate url not found");
                             }
                         } else {
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                             if (operation.equals(ContainerSce.OP_GET_CONTAINER)) message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : container id are not provided.");
                             else message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : primary admin gate url are not provided.");
                         }
@@ -218,10 +218,10 @@ public class ContainerEp {
                             ContainerJSON.manyContainers2JSONWithTypedProps(containers, outStream);
                             String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
 
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                             message.put(MomMsgTranslator.MSG_BODY, result);
                         } else {
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_NOT_FOUND);
                             message.put(MomMsgTranslator.MSG_ERR, "Containers not found.");
                         }
                         break;
@@ -284,7 +284,7 @@ public class ContainerEp {
 
                                         message.put(MappingDSGraphPropertyNames.DD_CONTAINER_PAGATE_KEY, resultGate);
                                     } else {
-                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                        message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : gate with provided id not found");
                                         return message;
                                     }
@@ -313,7 +313,7 @@ public class ContainerEp {
                                             message.put(Container.JOIN_CURRENT_PCONTAINER, resultPcont);
                                         }
                                     } else {
-                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                        message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : parent container with provided id not found");
                                         return message;
                                     }
@@ -342,7 +342,7 @@ public class ContainerEp {
                                             message.put(Container.JOIN_CURRENT_CLUSTER, resultClu);
                                         }
                                     } else {
-                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                        message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : cluster with provided id not found");
                                         return message;
                                     }
@@ -365,7 +365,7 @@ public class ContainerEp {
 
                                         message.put(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_CHILD_CONTAINER_KEY, resultCCo);
                                     } else {
-                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                        message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : child container with provided id not found");
                                         return message;
                                     }
@@ -388,7 +388,7 @@ public class ContainerEp {
 
                                         message.put(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_GATE_KEY, resultGate);
                                     } else {
-                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                        message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : gate with provided id not found");
                                         return message;
                                     }
@@ -411,12 +411,12 @@ public class ContainerEp {
 
                                         message.put(MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_NODE_KEY, resultNode);
                                     } else {
-                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                        message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : node with provided id not found");
                                         return message;
                                     }
                                 } else {
-                                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                    message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                     message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : parameter inconsistent with operation");
                                     return message;
                                 }
@@ -425,14 +425,14 @@ public class ContainerEp {
                                 ContainerJSON.oneContainer2JSONWithTypedProps(cont, outStream);
                                 String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
 
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                                 message.put(MomMsgTranslator.MSG_BODY, result);
                             } else {
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_NOT_FOUND);
                                 message.put(MomMsgTranslator.MSG_ERR, "Not Found (" + operation + ") : container with provided id not found");
                             }
                         } else {
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                             switch (operation) {
                                 case Container.OP_SET_CONTAINER_NAME:
                                     message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : id or name not provided.");
@@ -487,7 +487,7 @@ public class ContainerEp {
                                         if (session != null) cont.addContainerProperty(session, typedPropertyField.getPropertyName(), value);
                                         else cont.addContainerProperty(typedPropertyField.getPropertyName(), value);
                                     } else {
-                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                        message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : property field not provided.");
                                         return message;
                                     }
@@ -497,7 +497,7 @@ public class ContainerEp {
                                         if (session != null) cont.removeContainerProperty(session, prop_name);
                                         else cont.removeContainerProperty(prop_name);
                                     } else {
-                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                        message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : property name not provided.");
                                         return message;
                                     }
@@ -507,18 +507,18 @@ public class ContainerEp {
                                 ContainerJSON.oneContainer2JSONWithTypedProps(cont, outStream);
                                 String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
 
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                                 message.put(MomMsgTranslator.MSG_BODY, result);
                             } else {
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                 message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : container with provided id not found");
                             }
                         } else {
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                             message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : id not provided.");
                         }
                         break;
-                    case MappingSce.GLOBAL_OPERATION_NOT_DEFINED:
+                    case MomMsgTranslator.OPERATION_NOT_DEFINED:
                         message.put(MomMsgTranslator.MSG_RC, 1);
                         message.put(MomMsgTranslator.MSG_ERR, "Operation not defined ! ");
                         break;
@@ -529,7 +529,7 @@ public class ContainerEp {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SERVER_ERR);
+                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SERVER_ERR);
                 message.put(MomMsgTranslator.MSG_ERR, "Internal server error (" + operation + ") : " + e.getMessage());
             }
             return message;

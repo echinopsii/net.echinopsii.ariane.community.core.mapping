@@ -22,7 +22,6 @@ import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 import net.echinopsii.ariane.community.core.mapping.ds.json.service.SessionJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.MappingMsgsrvBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.momsp.MappingMsgsrvMomSP;
-import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
@@ -36,13 +35,13 @@ public class SessionEp {
     static class SessionWorker implements AppMsgWorker {
         @Override
         public Map<String, Object> apply(Map<String, Object> message) {
-            Object oOperation = message.get(MappingSce.GLOBAL_OPERATION_FDN);
+            Object oOperation = message.get(MomMsgTranslator.OPERATION_FDN);
             String operation;
             String clientID;
             String sessionID;
 
             if (oOperation==null)
-                operation = MappingSce.GLOBAL_OPERATION_NOT_DEFINED;
+                operation = MomMsgTranslator.OPERATION_NOT_DEFINED;
             else
                 operation = oOperation.toString();
 
@@ -137,7 +136,7 @@ public class SessionEp {
                         message.put(MomMsgTranslator.MSG_ERR, "Internal server error : " + e.getMessage());
                     }
                     break;
-                case MappingSce.GLOBAL_OPERATION_NOT_DEFINED:
+                case MomMsgTranslator.OPERATION_NOT_DEFINED:
                     message.put(MomMsgTranslator.MSG_RC, 1);
                     message.put(MomMsgTranslator.MSG_ERR, "Operation not defined ! ");
                     break;

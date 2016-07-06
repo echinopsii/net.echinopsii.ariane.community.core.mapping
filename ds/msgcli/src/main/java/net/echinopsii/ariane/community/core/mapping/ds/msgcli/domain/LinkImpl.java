@@ -74,7 +74,7 @@ public class LinkImpl extends SProxLinkAbs implements SProxLink {
                     }
                 } else {
                     switch (rc) {
-                        case MappingSce.MAPPING_SCE_RET_NOT_FOUND:
+                        case MomMsgTranslator.MSG_RET_NOT_FOUND:
                             LinkImpl.log.debug("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
                             break;
                         default:
@@ -157,7 +157,7 @@ public class LinkImpl extends SProxLinkAbs implements SProxLink {
                     String clientThreadName = Thread.currentThread().getName();
                     String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
                     Map<String, Object> message = new HashMap<>();
-                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_SET_LINK_TRANSPORT);
+                    message.put(MomMsgTranslator.OPERATION_FDN, OP_SET_LINK_TRANSPORT);
                     message.put(MappingSce.GLOBAL_PARAM_OBJ_ID, super.getLinkID());
                     message.put(Transport.TOKEN_TP_ID, transport.getTransportID());
                     if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -222,7 +222,7 @@ public class LinkImpl extends SProxLinkAbs implements SProxLink {
                     String clientThreadName = Thread.currentThread().getName();
                     String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
                     Map<String, Object> message = new HashMap<>();
-                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_SET_LINK_ENDPOINT_SOURCE);
+                    message.put(MomMsgTranslator.OPERATION_FDN, OP_SET_LINK_ENDPOINT_SOURCE);
                     message.put(MappingSce.GLOBAL_PARAM_OBJ_ID, super.getLinkID());
                     message.put(LinkSce.PARAM_LINK_SEPID, source.getEndpointID());
                     if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -287,7 +287,7 @@ public class LinkImpl extends SProxLinkAbs implements SProxLink {
                     String clientThreadName = Thread.currentThread().getName();
                     String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
                     Map<String, Object> message = new HashMap<>();
-                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_SET_LINK_ENDPOINT_TARGET);
+                    message.put(MomMsgTranslator.OPERATION_FDN, OP_SET_LINK_ENDPOINT_TARGET);
                     message.put(MappingSce.GLOBAL_PARAM_OBJ_ID, super.getLinkID());
                     message.put(LinkSce.PARAM_LINK_TEPID, target.getEndpointID());
                     if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);

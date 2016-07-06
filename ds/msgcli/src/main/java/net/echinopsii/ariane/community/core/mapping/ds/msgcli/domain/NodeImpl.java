@@ -77,7 +77,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                     }
                 } else {
                     switch (rc) {
-                        case MappingSce.MAPPING_SCE_RET_NOT_FOUND:
+                        case MomMsgTranslator.MSG_RET_NOT_FOUND:
                             NodeImpl.log.debug("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
                             break;
                         default:
@@ -171,7 +171,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                 String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
                 Map<String, Object> message = new HashMap<>();
-                message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_SET_NODE_NAME);
+                message.put(MomMsgTranslator.OPERATION_FDN, OP_SET_NODE_NAME);
                 message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
                 message.put(SProxNodeSce.PARAM_NODE_NAME, name);
                 if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -216,7 +216,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                     String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
                     Map<String, Object> message = new HashMap<>();
-                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_SET_NODE_CONTAINER);
+                    message.put(MomMsgTranslator.OPERATION_FDN, OP_SET_NODE_CONTAINER);
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
                     message.put(Container.TOKEN_CT_ID, (container != null) ? container.getContainerID() : MappingSce.GLOBAL_PARAM_OBJ_NONE);
                     if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -262,7 +262,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
             String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
             Map<String, Object> message = new HashMap<>();
-            message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_ADD_NODE_PROPERTY);
+            message.put(MomMsgTranslator.OPERATION_FDN, OP_ADD_NODE_PROPERTY);
             message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
             try {
                 message.put(MappingSce.GLOBAL_PARAM_PROP_FIELD, PropertiesJSON.propertyFieldToTypedPropertyField(propertyKey, value).toJSONString());
@@ -284,7 +284,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
             String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
             Map<String, Object> message = new HashMap<>();
-            message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_REMOVE_NODE_PROPERTY);
+            message.put(MomMsgTranslator.OPERATION_FDN, OP_REMOVE_NODE_PROPERTY);
             message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
             message.put(MappingSce.GLOBAL_PARAM_PROP_NAME, propertyKey);
             if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -328,7 +328,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                     String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
                     Map<String, Object> message = new HashMap<>();
-                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_SET_NODE_PARENT_NODE);
+                    message.put(MomMsgTranslator.OPERATION_FDN, OP_SET_NODE_PARENT_NODE);
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
                     message.put(NodeSce.PARAM_NODE_PNID, (node != null) ? node.getNodeID() : MappingSce.GLOBAL_PARAM_OBJ_NONE);
                     if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -402,7 +402,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                     String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
                     Map<String, Object> message = new HashMap<>();
-                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_ADD_NODE_CHILD_NODE);
+                    message.put(MomMsgTranslator.OPERATION_FDN, OP_ADD_NODE_CHILD_NODE);
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
                     message.put(NodeSce.PARAM_NODE_CNID, node.getNodeID());
                     if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -438,7 +438,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                     String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
                     Map<String, Object> message = new HashMap<>();
-                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_REMOVE_NODE_CHILD_NODE);
+                    message.put(MomMsgTranslator.OPERATION_FDN, OP_REMOVE_NODE_CHILD_NODE);
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
                     message.put(NodeSce.PARAM_NODE_CNID, node.getNodeID());
                     if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -499,7 +499,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                     String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
                     Map<String, Object> message = new HashMap<>();
-                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_ADD_TWIN_NODE);
+                    message.put(MomMsgTranslator.OPERATION_FDN, OP_ADD_TWIN_NODE);
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
                     message.put(NodeSce.PARAM_NODE_TNID, node.getNodeID());
                     if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -535,7 +535,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                     String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
                     Map<String, Object> message = new HashMap<>();
-                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_REMOVE_TWIN_NODE);
+                    message.put(MomMsgTranslator.OPERATION_FDN, OP_REMOVE_TWIN_NODE);
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
                     message.put(NodeSce.PARAM_NODE_TNID, node.getNodeID());
                     if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -596,7 +596,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                     String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
                     Map<String, Object> message = new HashMap<>();
-                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_ADD_ENDPOINT);
+                    message.put(MomMsgTranslator.OPERATION_FDN, OP_ADD_ENDPOINT);
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
                     message.put(Endpoint.TOKEN_EP_ID, endpoint.getEndpointID());
                     if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -632,7 +632,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                     String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
                     Map<String, Object> message = new HashMap<>();
-                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_REMOVE_ENDPOINT);
+                    message.put(MomMsgTranslator.OPERATION_FDN, OP_REMOVE_ENDPOINT);
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
                     message.put(Endpoint.TOKEN_EP_ID, endpoint.getEndpointID());
                     if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);

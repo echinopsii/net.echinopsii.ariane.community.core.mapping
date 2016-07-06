@@ -72,7 +72,7 @@ public class GateImpl extends NodeImpl implements SProxGate {
                     }
                 } else {
                     switch (rc) {
-                        case MappingSce.MAPPING_SCE_RET_NOT_FOUND:
+                        case MomMsgTranslator.MSG_RET_NOT_FOUND:
                             GateImpl.log.debug("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
                             break;
                         default:
@@ -151,7 +151,7 @@ public class GateImpl extends NodeImpl implements SProxGate {
                     String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
                     Map<String, Object> message = new HashMap<>();
-                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_SET_NODE_PRIMARY_ADMIN_ENDPOINT);
+                    message.put(MomMsgTranslator.OPERATION_FDN, OP_SET_NODE_PRIMARY_ADMIN_ENDPOINT);
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
                     message.put(Endpoint.TOKEN_EP_ID, (endpoint != null) ? endpoint.getEndpointID() : MappingSce.GLOBAL_PARAM_OBJ_NONE);
                     if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);

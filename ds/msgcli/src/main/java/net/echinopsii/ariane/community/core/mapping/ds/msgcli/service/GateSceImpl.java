@@ -79,7 +79,7 @@ public class GateSceImpl implements SProxGateSce<GateImpl> {
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxGateSce.OP_CREATE_GATE);
+        message.put(MomMsgTranslator.OPERATION_FDN, SProxGateSce.OP_CREATE_GATE);
         message.put(GateSce.PARAM_GATE_URL, url);
         message.put(GateSce.PARAM_GATE_NAME, name);
         message.put(Container.TOKEN_CT_ID, containerid);
@@ -99,7 +99,7 @@ public class GateSceImpl implements SProxGateSce<GateImpl> {
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxGateSce.OP_DELETE_GATE);
+        message.put(MomMsgTranslator.OPERATION_FDN, SProxGateSce.OP_DELETE_GATE);
         message.put(MappingSce.GLOBAL_PARAM_OBJ_ID, nodeID);
 
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -116,14 +116,14 @@ public class GateSceImpl implements SProxGateSce<GateImpl> {
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxGateSce.OP_GET_GATE);
+        message.put(MomMsgTranslator.OPERATION_FDN, SProxGateSce.OP_GET_GATE);
         message.put(MappingSce.GLOBAL_PARAM_OBJ_ID, id);
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
         Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, GateSce.Q_MAPPING_GATE_SERVICE, gate.getGateReplyWorker());
 
         int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
         if (rc != 0) {
-            if (rc == MappingSce.MAPPING_SCE_RET_NOT_FOUND) gate = null;
+            if (rc == MomMsgTranslator.MSG_RET_NOT_FOUND) gate = null;
             else throw new MappingDSException("Ariane server raised an error... Check your logs !");
         }
 
@@ -171,7 +171,7 @@ public class GateSceImpl implements SProxGateSce<GateImpl> {
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxGateSce.OP_GET_GATES);
+        message.put(MomMsgTranslator.OPERATION_FDN, SProxGateSce.OP_GET_GATES);
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
 
         Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, GateSce.Q_MAPPING_GATE_SERVICE, new getGatesWorker());

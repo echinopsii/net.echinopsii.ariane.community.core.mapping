@@ -49,7 +49,7 @@ public class ClusterSceImpl extends SProxClusterSceAbs<ClusterImpl> {
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxClusterSce.OP_CREATE_CLUSTER);
+        message.put(MomMsgTranslator.OPERATION_FDN, SProxClusterSce.OP_CREATE_CLUSTER);
         message.put(ClusterSce.PARAM_CLUSTER_NAME, clusterName);
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
         Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ClusterSce.Q_MAPPING_CLUSTER_SERVICE, cluster.getClusterReplyWorker());
@@ -67,7 +67,7 @@ public class ClusterSceImpl extends SProxClusterSceAbs<ClusterImpl> {
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxClusterSce.OP_DELETE_CLUSTER);
+        message.put(MomMsgTranslator.OPERATION_FDN, SProxClusterSce.OP_DELETE_CLUSTER);
         message.put(ClusterSce.PARAM_CLUSTER_NAME, clusterName);
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
 
@@ -83,13 +83,13 @@ public class ClusterSceImpl extends SProxClusterSceAbs<ClusterImpl> {
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxClusterSce.OP_GET_CLUSTER);
+        message.put(MomMsgTranslator.OPERATION_FDN, SProxClusterSce.OP_GET_CLUSTER);
         message.put(MappingSce.GLOBAL_PARAM_OBJ_ID, clusterID);
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
         Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ClusterSce.Q_MAPPING_CLUSTER_SERVICE, cluster.getClusterReplyWorker());
         int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
         if (rc != 0) {
-            if (rc == MappingSce.MAPPING_SCE_RET_NOT_FOUND) cluster = null;
+            if (rc == MomMsgTranslator.MSG_RET_NOT_FOUND) cluster = null;
             else throw new MappingDSException("Ariane server raised an error... Check your logs !");
         }
 
@@ -109,13 +109,13 @@ public class ClusterSceImpl extends SProxClusterSceAbs<ClusterImpl> {
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxClusterSce.OP_GET_CLUSTER_BY_NAME);
+        message.put(MomMsgTranslator.OPERATION_FDN, SProxClusterSce.OP_GET_CLUSTER_BY_NAME);
         message.put(ClusterSce.PARAM_CLUSTER_NAME, clusterName);
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
         Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ClusterSce.Q_MAPPING_CLUSTER_SERVICE, cluster.getClusterReplyWorker());
         int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
         if (rc != 0) {
-            if (rc == MappingSce.MAPPING_SCE_RET_NOT_FOUND) cluster = null;
+            if (rc == MomMsgTranslator.MSG_RET_NOT_FOUND) cluster = null;
             else throw new MappingDSException("Ariane server raised an error... Check your logs !");
         }
 
@@ -158,7 +158,7 @@ public class ClusterSceImpl extends SProxClusterSceAbs<ClusterImpl> {
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxClusterSce.OP_GET_CLUSTERS);
+        message.put(MomMsgTranslator.OPERATION_FDN, SProxClusterSce.OP_GET_CLUSTERS);
         //message.put(MappingSce.GLOBAL_PARAM_SELECTOR, selector);
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
 

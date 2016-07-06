@@ -33,7 +33,6 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Deserialize
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
-import org.hibernate.engine.spi.Mapping;
 
 import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
@@ -44,7 +43,7 @@ public class TransportEp {
 
         @Override
         public Map<String, Object> apply(Map<String, Object> message) {
-            Object oOperation = message.get(MappingSce.GLOBAL_OPERATION_FDN);
+            Object oOperation = message.get(MomMsgTranslator.OPERATION_FDN);
             String operation;
             String sid;
             String tid;
@@ -56,7 +55,7 @@ public class TransportEp {
             Transport transport = null;
 
             if (oOperation==null)
-                operation = MappingSce.GLOBAL_OPERATION_NOT_DEFINED;
+                operation = MomMsgTranslator.OPERATION_NOT_DEFINED;
             else
                 operation = oOperation.toString();
 
@@ -64,7 +63,7 @@ public class TransportEp {
             if (sid != null) {
                 session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sid);
                 if (session == null) {
-                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                    message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                     message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : session with provided id not found");
                     return message;
                 }
@@ -83,17 +82,17 @@ public class TransportEp {
                             );
                             if (deserializationResponse.getErrorMessage()!=null) {
                                 String result = deserializationResponse.getErrorMessage();
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                 message.put(MomMsgTranslator.MSG_BODY, result);
                             } else if (deserializationResponse.getDeserializedObject()!=null) {
                                 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
                                 TransportJSON.oneTransport2JSON((Transport)deserializationResponse.getDeserializedObject(), outStream);
                                 String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                                 message.put(MomMsgTranslator.MSG_BODY, result);
                             } else {
                                 String result = "ERROR while deserializing !";
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SERVER_ERR);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SERVER_ERR);
                                 message.put(MomMsgTranslator.MSG_BODY, result);
                             }
                         } else if (name!=null) {
@@ -103,9 +102,9 @@ public class TransportEp {
                             TransportJSON.oneTransport2JSONWithTypedProps(transport, outStream);
                             String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
                             message.put(MomMsgTranslator.MSG_BODY, result);
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                         } else {
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                             message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : transport name not provided.");
                         }
                         break;
@@ -114,9 +113,9 @@ public class TransportEp {
                         if (tid!=null) {
                             if (session!=null) MappingMsgsrvBootstrap.getMappingSce().getTransportSce().deleteTransport(session, tid);
                             else MappingMsgsrvBootstrap.getMappingSce().getTransportSce().deleteTransport(tid);
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                         } else {
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                             message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : transport id not provided.");
                         }
                         break;
@@ -130,13 +129,13 @@ public class TransportEp {
                                 TransportJSON.oneTransport2JSONWithTypedProps(transport, outStream);
                                 String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
                                 message.put(MomMsgTranslator.MSG_BODY, result);
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                             } else {
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_NOT_FOUND);
                                 message.put(MomMsgTranslator.MSG_ERR, "Not found (" + operation + ") : transport not found with provided id.");
                             }
                         } else {
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                             message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : transport id not provided.");
                         }
                         break;
@@ -149,9 +148,9 @@ public class TransportEp {
                             TransportJSON.manyTransports2JSONWithTypedProps(transports, outStream);
                             String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
                             message.put(MomMsgTranslator.MSG_BODY, result);
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                         } else {
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_NOT_FOUND);
                             message.put(MomMsgTranslator.MSG_ERR, "Transports not found.");
                         }
                         break;
@@ -168,13 +167,13 @@ public class TransportEp {
                                 TransportJSON.oneTransport2JSONWithTypedProps(transport, outStream);
                                 String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
                                 message.put(MomMsgTranslator.MSG_BODY, result);
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                             } else {
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                 message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : transport not found with provided ID.");
                             }
                         } else {
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                             message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : transport id and or name not provided.");
                         }
                         break;
@@ -193,7 +192,7 @@ public class TransportEp {
                                         if (session != null) ((SProxTransport)transport).addTransportProperty(session, typedPropertyField.getPropertyName(), value);
                                         else transport.addTransportProperty(typedPropertyField.getPropertyName(), value);
                                     } else {
-                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                        message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : property field not provided.");
                                         return message;
                                     }
@@ -203,7 +202,7 @@ public class TransportEp {
                                         if (session!=null) ((SProxTransport)transport).removeTransportProperty(session, prop_name);
                                         else transport.removeTransportProperty(prop_name);
                                     } else {
-                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                        message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : property name not provided.");
                                         return message;
                                     }
@@ -212,17 +211,17 @@ public class TransportEp {
                                 TransportJSON.oneTransport2JSONWithTypedProps(transport, outStream);
                                 String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
                                 message.put(MomMsgTranslator.MSG_BODY, result);
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                             } else {
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                 message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : transport not found with provided ID.");
                             }
                         } else {
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                             message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : transport id not provided.");
                         }
                         break;
-                    case MappingSce.GLOBAL_OPERATION_NOT_DEFINED:
+                    case MomMsgTranslator.OPERATION_NOT_DEFINED:
                         message.put(MomMsgTranslator.MSG_RC, 1);
                         message.put(MomMsgTranslator.MSG_ERR, "Operation not defined ! ");
                         break;
@@ -233,7 +232,7 @@ public class TransportEp {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SERVER_ERR);
+                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SERVER_ERR);
                 message.put(MomMsgTranslator.MSG_ERR, "Internal server error (" + operation + ") : " + e.getMessage());
             }
             return message;

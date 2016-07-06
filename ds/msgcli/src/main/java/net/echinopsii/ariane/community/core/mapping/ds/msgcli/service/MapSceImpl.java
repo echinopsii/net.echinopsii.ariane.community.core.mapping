@@ -24,8 +24,6 @@ import net.echinopsii.ariane.community.core.mapping.ds.MapperParserException;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.momsp.MappingMsgcliMomSP;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MapSce;
-import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
-import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Map;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
 import org.slf4j.Logger;
@@ -41,7 +39,7 @@ public class MapSceImpl implements MapSce {
     public String getMapJSON(String mapperQuery) throws MappingDSException {
         String jsonMap = null;
         java.util.Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_GET_MAP);
+        message.put(MomMsgTranslator.OPERATION_FDN, OP_GET_MAP);
         message.put(MapSce.PARAM_MAPPER_QUERY, mapperQuery);
         java.util.Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, MapSce.Q_MAPPING_MAP_SERVICE, new AppMsgWorker() {
             @Override
@@ -53,9 +51,9 @@ public class MapSceImpl implements MapSce {
         if (rc != 0) {
             String msg_err = (String) retMsg.get(MomMsgTranslator.MSG_ERR);
             switch (rc) {
-                case  MappingSce.MAPPING_SCE_RET_BAD_REQ:
+                case  MomMsgTranslator.MSG_RET_BAD_REQ:
                     throw new MapperParserException(msg_err);
-                case MappingSce.MAPPING_SCE_RET_NOT_FOUND:
+                case MomMsgTranslator.MSG_RET_NOT_FOUND:
                     throw new MapperEmptyResultException(msg_err);
                 default:
                     throw new MappingDSException(msg_err);

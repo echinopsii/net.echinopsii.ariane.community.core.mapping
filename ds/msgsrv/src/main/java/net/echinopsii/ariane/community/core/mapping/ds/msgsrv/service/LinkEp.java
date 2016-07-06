@@ -45,7 +45,7 @@ public class LinkEp {
     static class LinkWorker implements AppMsgWorker {
         @Override
         public Map<String, Object> apply(Map<String, Object> message) {
-            Object oOperation = message.get(MappingSce.GLOBAL_OPERATION_FDN);
+            Object oOperation = message.get(MomMsgTranslator.OPERATION_FDN);
             String operation;
             String sid;
             String lid;
@@ -60,7 +60,7 @@ public class LinkEp {
             Link link = null;
 
             if (oOperation==null)
-                operation = MappingSce.GLOBAL_OPERATION_NOT_DEFINED;
+                operation = MomMsgTranslator.OPERATION_NOT_DEFINED;
             else
                 operation = oOperation.toString();
 
@@ -68,7 +68,7 @@ public class LinkEp {
             if (sid != null) {
                 session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sid);
                 if (session == null) {
-                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                    message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                     message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : session with provided id not found");
                     return message;
                 }
@@ -89,17 +89,17 @@ public class LinkEp {
                             );
                             if (deserializationResponse.getErrorMessage()!=null) {
                                 String result = deserializationResponse.getErrorMessage();
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                 message.put(MomMsgTranslator.MSG_BODY, result);
                             } else if (deserializationResponse.getDeserializedObject()!=null) {
                                 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
                                 LinkJSON.oneLink2JSON((Link)deserializationResponse.getDeserializedObject(), outStream);
                                 String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                                 message.put(MomMsgTranslator.MSG_BODY, result);
                             } else {
                                 String result = "ERROR while deserializing !";
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SERVER_ERR);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SERVER_ERR);
                                 message.put(MomMsgTranslator.MSG_BODY, result);
                             }
                         } else if (sep_id!=null && t_id!=null) {
@@ -109,9 +109,9 @@ public class LinkEp {
                             LinkJSON.oneLink2JSON(link, outStream);
                             String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
                             message.put(MomMsgTranslator.MSG_BODY, result);
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                         } else {
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                             message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : source endpoint and/or transport ID not provided.");
                         }
                         break;
@@ -120,9 +120,9 @@ public class LinkEp {
                         if (lid!=null) {
                             if (session != null) MappingMsgsrvBootstrap.getMappingSce().getLinkSce().deleteLink(session, lid);
                             else MappingMsgsrvBootstrap.getMappingSce().getLinkSce().deleteLink(lid);
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                         } else {
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                             message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : link ID not provided.");
                         }
                         break;
@@ -136,13 +136,13 @@ public class LinkEp {
                                 LinkJSON.oneLink2JSON(link, outStream);
                                 String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
                                 message.put(MomMsgTranslator.MSG_BODY, result);
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                             } else {
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_NOT_FOUND);
                                 message.put(MomMsgTranslator.MSG_ERR, "Not found (" + operation + ") : link not found with provided ID.");
                             }
                         } else {
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                             message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : link ID not provided.");
                         }
                         break;
@@ -155,9 +155,9 @@ public class LinkEp {
                             LinkJSON.manyLinks2JSON(links, outStream);
                             String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
                             message.put(MomMsgTranslator.MSG_BODY, result);
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                         } else {
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_NOT_FOUND);
                             message.put(MomMsgTranslator.MSG_ERR, "Not found (" + operation + ") : links not found.");
                         }
                         break;
@@ -190,7 +190,7 @@ public class LinkEp {
                                         String resultCep = ToolBox.getOuputStreamContent(outStream, "UTF-8");
                                         message.put(Link.JOIN_CURRENT_SEP, resultCep);
                                     } else {
-                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                        message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : source endpoint not found with provided ID.");
                                         return message;
                                     }
@@ -212,7 +212,7 @@ public class LinkEp {
                                         String resultCep = ToolBox.getOuputStreamContent(outStream, "UTF-8");
                                         message.put(Link.JOIN_CURRENT_TEP, resultCep);
                                     } else {
-                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                        message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : target endpoint not found with provided ID.");
                                         return message;
                                     }
@@ -235,12 +235,12 @@ public class LinkEp {
                                         message.put(Link.JOIN_CURRENT_TEP, resultPnode);
 
                                     } else {
-                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                        message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : transport not found with provided ID.");
                                         return message;
                                     }
                                 } else {
-                                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                    message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                     switch (operation) {
                                         case Link.OP_SET_LINK_ENDPOINT_SOURCE:
                                             message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : source endpoint ID not provided.");
@@ -259,17 +259,17 @@ public class LinkEp {
                                 LinkJSON.oneLink2JSON(link, outStream);
                                 String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
                                 message.put(MomMsgTranslator.MSG_BODY, result);
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                             } else {
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                 message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : link not found with provided ID.");
                             }
                         } else {
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                             message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : link ID not provided.");
                         }
                         break;
-                    case MappingSce.GLOBAL_OPERATION_NOT_DEFINED:
+                    case MomMsgTranslator.OPERATION_NOT_DEFINED:
                         message.put(MomMsgTranslator.MSG_RC, 1);
                         message.put(MomMsgTranslator.MSG_ERR, "Operation not defined ! ");
                         break;
@@ -280,7 +280,7 @@ public class LinkEp {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SERVER_ERR);
+                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SERVER_ERR);
                 message.put(MomMsgTranslator.MSG_ERR, "Internal server error (" + operation + ") : " + e.getMessage());
             }
             return message;

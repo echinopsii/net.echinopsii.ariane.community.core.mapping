@@ -20,23 +20,14 @@ package net.echinopsii.ariane.community.core.mapping.ds.msgsrv.service;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MapperEmptyResultException;
 import net.echinopsii.ariane.community.core.mapping.ds.MapperParserException;
-import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
-import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
-import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
-import net.echinopsii.ariane.community.core.mapping.ds.json.service.MapJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.MappingMsgsrvBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.momsp.MappingMsgsrvMomSP;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MapSce;
-import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.core.Response;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.HashSet;
 import java.util.Map;
 
 public class MapEp {
@@ -44,12 +35,12 @@ public class MapEp {
 
         @Override
         public Map<String, Object> apply(Map<String, Object> message) {
-            Object oOperation = message.get(MappingSce.GLOBAL_OPERATION_FDN);
+            Object oOperation = message.get(MomMsgTranslator.OPERATION_FDN);
             String operation;
             String query;
 
             if (oOperation==null)
-                operation = MappingSce.GLOBAL_OPERATION_NOT_DEFINED;
+                operation = MomMsgTranslator.OPERATION_NOT_DEFINED;
             else
                 operation = oOperation.toString();
 
@@ -59,25 +50,25 @@ public class MapEp {
                     try {
                         String map = MappingMsgsrvBootstrap.getMappingSce().getMapSce().getMapJSON(query);
                         message.put(MomMsgTranslator.MSG_BODY, map);
-                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                        message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                     } catch (MapperParserException e) {
                         String result = e.getMessage();
-                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                        message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                         message.put(MomMsgTranslator.MSG_ERR, result);
                     } catch (MapperEmptyResultException e) {
                         String result = e.getMessage();
-                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
+                        message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_NOT_FOUND);
                         message.put(MomMsgTranslator.MSG_ERR, result);
                     } catch (Exception e) {
                         log.error("Original query is : " + query);
                         log.error(e.getMessage());
                         e.printStackTrace();
                         String result = e.getMessage();
-                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SERVER_ERR);
+                        message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SERVER_ERR);
                         message.put(MomMsgTranslator.MSG_ERR, result);
                     }
                     break;
-                case MappingSce.GLOBAL_OPERATION_NOT_DEFINED:
+                case MomMsgTranslator.OPERATION_NOT_DEFINED:
                     message.put(MomMsgTranslator.MSG_RC, 1);
                     message.put(MomMsgTranslator.MSG_ERR, "Operation not defined ! ");
                     break;

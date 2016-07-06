@@ -29,7 +29,6 @@ import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ContainerJSON
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.momsp.MappingMsgcliMomSP;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.ContainerSceImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.service.ClusterSce;
-import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxClusterSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
@@ -70,7 +69,7 @@ public class ClusterImpl extends SProxClusterAbs {
                     }
                 } else {
                     switch (rc) {
-                        case MappingSce.MAPPING_SCE_RET_NOT_FOUND:
+                        case MomMsgTranslator.MSG_RET_NOT_FOUND:
                             ClusterImpl.log.debug("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
                             break;
                         default:
@@ -113,7 +112,7 @@ public class ClusterImpl extends SProxClusterAbs {
                 String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
                 Map<String, Object> message = new HashMap<>();
-                message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_SET_CLUSTER_NAME);
+                message.put(MomMsgTranslator.OPERATION_FDN, OP_SET_CLUSTER_NAME);
                 message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getClusterID());
                 message.put(SProxClusterSce.PARAM_CLUSTER_NAME, name);
                 if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -133,7 +132,7 @@ public class ClusterImpl extends SProxClusterAbs {
                     String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
                     Map<String, Object> message = new HashMap<>();
-                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_ADD_CLUSTER_CONTAINER);
+                    message.put(MomMsgTranslator.OPERATION_FDN, OP_ADD_CLUSTER_CONTAINER);
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getClusterID());
                     message.put(Container.TOKEN_CT_ID, container.getContainerID());
                     if (clientThreadSessionID != null)
@@ -166,7 +165,7 @@ public class ClusterImpl extends SProxClusterAbs {
                     String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
                     Map<String, Object> message = new HashMap<>();
-                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_REMOVE_CLUSTER_CONTAINER);
+                    message.put(MomMsgTranslator.OPERATION_FDN, OP_REMOVE_CLUSTER_CONTAINER);
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getClusterID());
                     message.put(Container.TOKEN_CT_ID, container.getContainerID());
                     if (clientThreadSessionID != null)
