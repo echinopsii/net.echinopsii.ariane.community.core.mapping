@@ -220,7 +220,7 @@ public class MappingEp {
                                 }
                             }
 
-                            if (links!=null) {
+                            if (links!=null && links.size()>0) {
                                 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
                                 LinkJSON.manyLinks2JSON(links, outStream);
                                 String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
