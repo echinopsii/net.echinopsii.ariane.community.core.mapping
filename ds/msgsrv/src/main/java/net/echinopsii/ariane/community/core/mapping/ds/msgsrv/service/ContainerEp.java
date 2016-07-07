@@ -200,7 +200,7 @@ public class ContainerEp {
                             } else {
                                 message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_NOT_FOUND);
                                 if (operation.equals(ContainerSce.OP_GET_CONTAINER)) message.put(MomMsgTranslator.MSG_ERR, "Not Found (" + operation + ") : container with provided id not found");
-                                else if (operation.equals(ContainerSce.OP_GET_CONTAINER)) message.put(MomMsgTranslator.MSG_ERR, "Not Found (" + operation + ") : container with provided primary admin gate url not found");
+                                else if (operation.equals(ContainerSce.OP_GET_CONTAINER_BY_PRIMARY_ADMIN_URL)) message.put(MomMsgTranslator.MSG_ERR, "Not Found (" + operation + ") : container with provided primary admin gate url not found");
                             }
                         } else {
                             message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);

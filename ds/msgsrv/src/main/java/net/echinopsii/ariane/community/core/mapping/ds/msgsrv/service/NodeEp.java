@@ -226,7 +226,7 @@ public class NodeEp {
                         }
                         break;
                     case NodeSce.OP_GET_NODES:
-                        selector = (message.get(MappingSce.GLOBAL_PARAM_SELECTOR)==null || ((String) message.get(MappingSce.GLOBAL_PARAM_SELECTOR)).equals(MappingSce.GLOBAL_PARAM_OBJ_NONE)) ? null : (String) message.get(MappingSce.GLOBAL_PARAM_SELECTOR);
+                        selector = (message.get(MappingSce.GLOBAL_PARAM_SELECTOR)==null || (message.get(MappingSce.GLOBAL_PARAM_SELECTOR)).equals(MappingSce.GLOBAL_PARAM_OBJ_NONE)) ? null : (String) message.get(MappingSce.GLOBAL_PARAM_SELECTOR);
                         prop_field = (message.containsKey(MappingSce.GLOBAL_PARAM_PROP_FIELD)) ? message.get(MappingSce.GLOBAL_PARAM_PROP_FIELD).toString() : null;
 
                         HashSet<Node> nodes;
@@ -240,7 +240,7 @@ public class NodeEp {
                             else nodes = (HashSet<Node>) MappingMsgsrvBootstrap.getMappingSce().getNodeSce().getNodes(selector);
                         }
 
-                        if (nodes!=null) {
+                        if (nodes!=null && nodes.size() > 0) {
                             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
                             NodeJSON.manyNodes2JSONWithTypedProps(nodes, outStream);
                             String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
