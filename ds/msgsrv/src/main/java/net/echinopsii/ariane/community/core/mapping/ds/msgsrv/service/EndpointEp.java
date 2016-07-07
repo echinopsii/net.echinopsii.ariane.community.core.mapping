@@ -129,7 +129,7 @@ public class EndpointEp {
                         id = (String) message.get(MappingSce.GLOBAL_PARAM_OBJ_ID);
                         if (id!=null) {
                             if (session!=null) MappingMsgsrvBootstrap.getMappingSce().getEndpointSce().deleteEndpoint(session, id);
-                            else MappingMsgsrvBootstrap.getMappingSce().getEndpointSce().getEndpoint(id);
+                            else MappingMsgsrvBootstrap.getMappingSce().getEndpointSce().deleteEndpoint(id);
                             message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                         } else {
                             message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
@@ -185,7 +185,7 @@ public class EndpointEp {
                             else endpoints = (HashSet<Endpoint>) MappingMsgsrvBootstrap.getMappingSce().getEndpointSce().getEndpoints(selector);
                         }
 
-                        if (endpoints!=null){
+                        if (endpoints!=null && endpoints.size()>0){
                             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
                             EndpointJSON.manyEndpoints2JSONWithTypedProps(endpoints, outStream);
                             String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
