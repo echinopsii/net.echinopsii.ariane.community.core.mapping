@@ -18,7 +18,6 @@
  */
 package net.echinopsii.ariane.community.core.mapping.ds.msgsrv.momsp;
 
-import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.MappingMsgsrvBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.cfg.MappingMsgsrvCfgLoader;
 import net.echinopsii.ariane.community.messaging.api.MomClient;
 import net.echinopsii.ariane.community.messaging.common.MomClientFactory;
@@ -56,16 +55,20 @@ public class MappingMsgsrvMomSP {
             if (properties.get(MomClient.ARIANE_APP_KEY)==null) properties.put(MomClient.ARIANE_APP_KEY, "Ariane");
             if (properties.get(MomClient.ARIANE_OTM_KEY)==null) properties.put(MomClient.ARIANE_OTM_KEY, MomClient.ARIANE_OTM_NOT_DEFINED);
             if (properties.get(MomClient.ARIANE_CMP_KEY)==null) properties.put(MomClient.ARIANE_CMP_KEY, "echinopsii");
+            String pid = java.lang.management.ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
+            properties.put(MomClient.ARIANE_PID_KEY, pid);
+
 
             if (properties.get(MomClient.MOM_CLI).equals("net.echinopsii.ariane.community.messaging.rabbitmq.Client")) {
                 if (properties.get(MomClient.RBQ_PRODUCT_KEY) == null || properties.get(MomClient.RBQ_PRODUCT_KEY).equals("")) properties.put(MomClient.RBQ_PRODUCT_KEY, "Ariane");
                 if (properties.get(MomClient.RBQ_INFORMATION_KEY) == null || properties.get(MomClient.RBQ_INFORMATION_KEY).equals("")) properties.put(MomClient.RBQ_INFORMATION_KEY, "Ariane Remote Mapping Messaging Client");
                 if ((properties.get(MomClient.RBQ_VERSION_KEY) == null || properties.get(MomClient.RBQ_VERSION_KEY).equals(""))&& version != null) properties.put(MomClient.RBQ_VERSION_KEY, version);
                 if (properties.get(MomClient.RBQ_COPYRIGHT_KEY)==null || properties.get(MomClient.RBQ_COPYRIGHT_KEY).equals("")) properties.put(MomClient.RBQ_COPYRIGHT_KEY, "AGPLv3 / Free2Biz");
+            } else if (properties.get(MomClient.MOM_CLI).equals("net.echinopsii.ariane.community.messaging.nats.Client")) {
+                if (properties.get(MomClient.NATS_CONNECTION_NAME)==null || properties.get(MomClient.NATS_CONNECTION_NAME).equals("")) {
+                    properties.put(MomClient.NATS_CONNECTION_NAME, "Ariane Mapping Service");
+                }
             }
-
-            String pid = java.lang.management.ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
-            properties.put(MomClient.ARIANE_PID_KEY, pid);
 
             sharedMoMConnection.init(properties);
         } catch (Exception e) {
@@ -75,8 +78,6 @@ public class MappingMsgsrvMomSP {
             sharedMoMConnection = null;
             ret = false;
         }
-
-
 
         return ret;
     }
