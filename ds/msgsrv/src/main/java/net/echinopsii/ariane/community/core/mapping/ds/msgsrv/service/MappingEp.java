@@ -25,20 +25,21 @@ import net.echinopsii.ariane.community.core.mapping.ds.json.domain.LinkJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.NodeJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.MappingMsgsrvBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.momsp.MappingMsgsrvMomSP;
-import net.echinopsii.ariane.community.core.mapping.ds.service.GateSce;
-import net.echinopsii.ariane.community.core.mapping.ds.service.LinkSce;
-import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
-import net.echinopsii.ariane.community.core.mapping.ds.service.NodeSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.*;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
 import java.util.Map;
 
 public class MappingEp {
+    private static final Logger log = LoggerFactory.getLogger(MappingEp.class);
+
     static class MappingWorker implements AppMsgWorker {
         @Override
         public Map<String, Object> apply(Map<String, Object> message) {
@@ -254,9 +255,11 @@ public class MappingEp {
     }
 
     public static void start() {
-        if (MappingMsgsrvMomSP.getSharedMoMConnection() != null && MappingMsgsrvMomSP.getSharedMoMConnection().isConnected())
+        if (MappingMsgsrvMomSP.getSharedMoMConnection() != null && MappingMsgsrvMomSP.getSharedMoMConnection().isConnected()) {
             MappingMsgsrvMomSP.getSharedMoMConnection().getServiceFactory().msgGroupRequestService(
                     MappingSce.Q_MAPPING_SCE_SERVICE, new MappingWorker()
             );
+            log.info("Ariane Mapping Messaging Service is waiting message on  " + MappingSce.Q_MAPPING_SCE_SERVICE + "...");
+        }
     }
 }

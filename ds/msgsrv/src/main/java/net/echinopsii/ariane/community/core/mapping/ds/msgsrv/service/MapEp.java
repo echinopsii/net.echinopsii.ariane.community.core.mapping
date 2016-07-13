@@ -31,6 +31,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 
 public class MapEp {
+    private static final Logger log = LoggerFactory.getLogger(MapEp.class);
+
     static class MapWorker implements AppMsgWorker {
 
         @Override
@@ -81,12 +83,12 @@ public class MapEp {
         }
     }
 
-    private static final Logger log = LoggerFactory.getLogger(MapEp.class);
-
     public static void start() {
-        if (MappingMsgsrvMomSP.getSharedMoMConnection() != null && MappingMsgsrvMomSP.getSharedMoMConnection().isConnected())
+        if (MappingMsgsrvMomSP.getSharedMoMConnection() != null && MappingMsgsrvMomSP.getSharedMoMConnection().isConnected()) {
             MappingMsgsrvMomSP.getSharedMoMConnection().getServiceFactory().msgGroupRequestService(
                     MapSce.Q_MAPPING_MAP_SERVICE, new MapWorker()
             );
+            log.info("Ariane Mapping Messaging Service is waiting message on  " + MapSce.Q_MAPPING_MAP_SERVICE + "...");
+        }
     }
 }

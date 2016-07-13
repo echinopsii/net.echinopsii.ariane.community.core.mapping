@@ -40,12 +40,16 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Deserialize
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
 import java.util.Map;
 
 public class ContainerEp {
+
+    private static final Logger log = LoggerFactory.getLogger(ContainerEp.class);
 
     static class ContainerWorker implements AppMsgWorker {
         @Override
@@ -537,9 +541,11 @@ public class ContainerEp {
     }
 
     public static void start() {
-        if (MappingMsgsrvMomSP.getSharedMoMConnection() != null && MappingMsgsrvMomSP.getSharedMoMConnection().isConnected())
+        if (MappingMsgsrvMomSP.getSharedMoMConnection() != null && MappingMsgsrvMomSP.getSharedMoMConnection().isConnected()) {
             MappingMsgsrvMomSP.getSharedMoMConnection().getServiceFactory().msgGroupRequestService(
                     ContainerSce.Q_MAPPING_CONTAINER_SERVICE, new ContainerWorker()
             );
+            log.info("Ariane Mapping Messaging Service is waiting message on  " + ContainerSce.Q_MAPPING_CONTAINER_SERVICE + "...");
+        }
     }
 }

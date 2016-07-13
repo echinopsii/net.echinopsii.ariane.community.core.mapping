@@ -22,15 +22,19 @@ import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 import net.echinopsii.ariane.community.core.mapping.ds.json.service.SessionJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.MappingMsgsrvBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.momsp.MappingMsgsrvMomSP;
+import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Map;
 
 public class SessionEp {
+    private static final Logger log = LoggerFactory.getLogger(SessionEp.class);
 
     static class SessionWorker implements AppMsgWorker {
         @Override
@@ -151,9 +155,11 @@ public class SessionEp {
     }
 
     public static void start() {
-        if (MappingMsgsrvMomSP.getSharedMoMConnection() != null && MappingMsgsrvMomSP.getSharedMoMConnection().isConnected())
+        if (MappingMsgsrvMomSP.getSharedMoMConnection() != null && MappingMsgsrvMomSP.getSharedMoMConnection().isConnected()) {
             MappingMsgsrvMomSP.getSharedMoMConnection().getServiceFactory().msgGroupRequestService(
                     Session.MAPPING_SESSION_SERVICE_Q, new SessionWorker()
             );
+            log.info("Ariane Mapping Messaging Service is waiting message on  " + Session.MAPPING_SESSION_SERVICE_Q + "...");
+        }
     }
 }
