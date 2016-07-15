@@ -27,7 +27,6 @@ import net.echinopsii.ariane.community.core.mapping.ds.msgcli.domain.ContainerIm
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.momsp.MappingMsgcliMomSP;
 import net.echinopsii.ariane.community.core.mapping.ds.service.ContainerSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
-import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxClusterSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxContainerSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxContainerSceAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
@@ -50,7 +49,7 @@ public class ContainerSceImpl extends SProxContainerSceAbs<ContainerImpl> {
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxContainerSce.OP_CREATE_CONTAINER);
+        message.put(MomMsgTranslator.OPERATION_FDN, SProxContainerSce.OP_CREATE_CONTAINER);
         message.put(ContainerSce.PARAM_CONTAINER_PAG_URL, primaryAdminURL);
         message.put(ContainerSce.PARAM_CONTAINER_PAG_NAME, primaryAdminGateName);
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -70,7 +69,7 @@ public class ContainerSceImpl extends SProxContainerSceAbs<ContainerImpl> {
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxContainerSce.OP_CREATE_CONTAINER);
+        message.put(MomMsgTranslator.OPERATION_FDN, SProxContainerSce.OP_CREATE_CONTAINER);
         message.put(ContainerSce.PARAM_CONTAINER_NAME, name);
         message.put(ContainerSce.PARAM_CONTAINER_PAG_URL, primaryAdminURL);
         message.put(ContainerSce.PARAM_CONTAINER_PAG_NAME, primaryAdminGateName);
@@ -91,7 +90,7 @@ public class ContainerSceImpl extends SProxContainerSceAbs<ContainerImpl> {
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxContainerSce.OP_CREATE_CONTAINER);
+        message.put(MomMsgTranslator.OPERATION_FDN, SProxContainerSce.OP_CREATE_CONTAINER);
         message.put(ContainerSce.PARAM_CONTAINER_PAG_URL, primaryAdminURL);
         message.put(ContainerSce.PARAM_CONTAINER_PAG_NAME, primaryAdminGateName);
         message.put(ContainerSce.PARAM_CONTAINER_PCO_ID, parentContainer.getContainerID());
@@ -112,7 +111,7 @@ public class ContainerSceImpl extends SProxContainerSceAbs<ContainerImpl> {
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxContainerSce.OP_CREATE_CONTAINER);
+        message.put(MomMsgTranslator.OPERATION_FDN, SProxContainerSce.OP_CREATE_CONTAINER);
         message.put(ContainerSce.PARAM_CONTAINER_NAME, name);
         message.put(ContainerSce.PARAM_CONTAINER_PAG_URL, primaryAdminURL);
         message.put(ContainerSce.PARAM_CONTAINER_PAG_NAME, primaryAdminGateName);
@@ -134,7 +133,7 @@ public class ContainerSceImpl extends SProxContainerSceAbs<ContainerImpl> {
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxContainerSce.OP_DELETE_CONTAINER);
+        message.put(MomMsgTranslator.OPERATION_FDN, SProxContainerSce.OP_DELETE_CONTAINER);
         message.put(ContainerSce.PARAM_CONTAINER_PAG_URL, primaryAdminURL);
 
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -151,7 +150,7 @@ public class ContainerSceImpl extends SProxContainerSceAbs<ContainerImpl> {
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxContainerSce.OP_GET_CONTAINER);
+        message.put(MomMsgTranslator.OPERATION_FDN, SProxContainerSce.OP_GET_CONTAINER);
         message.put(MappingSce.GLOBAL_PARAM_OBJ_ID, id);
 
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -159,7 +158,7 @@ public class ContainerSceImpl extends SProxContainerSceAbs<ContainerImpl> {
 
         int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
         if (rc != 0) {
-            if (rc == MappingSce.MAPPING_SCE_RET_NOT_FOUND) container = null;
+            if (rc == MomMsgTranslator.MSG_RET_NOT_FOUND) container = null;
             else throw new MappingDSException("Ariane server raised an error... Check your logs !");
         }
 
@@ -179,7 +178,7 @@ public class ContainerSceImpl extends SProxContainerSceAbs<ContainerImpl> {
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxContainerSce.OP_GET_CONTAINER_BY_PRIMARY_ADMIN_URL);
+        message.put(MomMsgTranslator.OPERATION_FDN, SProxContainerSce.OP_GET_CONTAINER_BY_PRIMARY_ADMIN_URL);
         message.put(ContainerSce.PARAM_CONTAINER_PAG_URL, primaryAdminURL);
 
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -187,7 +186,7 @@ public class ContainerSceImpl extends SProxContainerSceAbs<ContainerImpl> {
 
         int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
         if (rc != 0) {
-            if (rc == MappingSce.MAPPING_SCE_RET_NOT_FOUND) container = null;
+            if (rc == MomMsgTranslator.MSG_RET_NOT_FOUND) container = null;
             else throw new MappingDSException("Ariane server raised an error... Check your logs !");
         }
 
@@ -230,7 +229,7 @@ public class ContainerSceImpl extends SProxContainerSceAbs<ContainerImpl> {
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxContainerSce.OP_GET_CONTAINERS);
+        message.put(MomMsgTranslator.OPERATION_FDN, SProxContainerSce.OP_GET_CONTAINERS);
         //message.put(MappingSce.GLOBAL_PARAM_SELECTOR, selector);
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
 

@@ -25,24 +25,25 @@ import net.echinopsii.ariane.community.core.mapping.ds.json.domain.LinkJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.NodeJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.MappingMsgsrvBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.momsp.MappingMsgsrvMomSP;
-import net.echinopsii.ariane.community.core.mapping.ds.service.GateSce;
-import net.echinopsii.ariane.community.core.mapping.ds.service.LinkSce;
-import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
-import net.echinopsii.ariane.community.core.mapping.ds.service.NodeSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.*;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
 import java.util.Map;
 
 public class MappingEp {
+    private static final Logger log = LoggerFactory.getLogger(MappingEp.class);
+
     static class MappingWorker implements AppMsgWorker {
         @Override
         public Map<String, Object> apply(Map<String, Object> message) {
-            Object oOperation = message.get(MappingSce.GLOBAL_OPERATION_FDN);
+            Object oOperation = message.get(MomMsgTranslator.OPERATION_FDN);
             String operation;
             String sid;
             String name;
@@ -57,7 +58,7 @@ public class MappingEp {
             Transport transport;
 
             if (oOperation==null)
-                operation = MappingSce.GLOBAL_OPERATION_NOT_DEFINED;
+                operation = MomMsgTranslator.OPERATION_NOT_DEFINED;
             else
                 operation = oOperation.toString();
 
@@ -65,7 +66,7 @@ public class MappingEp {
             if (sid!=null) {
                 session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sid);
                 if (session == null) {
-                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                    message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                     message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : session with provided id not found");
                     return message;
                 }
@@ -88,17 +89,17 @@ public class MappingEp {
                                     NodeJSON.oneNode2JSONWithTypedProps(node, outStream);
                                     String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
                                     message.put(MomMsgTranslator.MSG_BODY, result);
-                                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                                    message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                                 } else {
-                                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
+                                    message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_NOT_FOUND);
                                     message.put(MomMsgTranslator.MSG_ERR, "Not found (" + operation + ") : node not found.");
                                 }
                             } else {
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                 message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : container not found with provided ID.");
                             }
                         } else {
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                             message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : container id and/or node name not provided.");
                         }
                         break;
@@ -117,17 +118,17 @@ public class MappingEp {
                                     GateJSON.oneGate2JSONWithTypedProps(gate, outStream);
                                     String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
                                     message.put(MomMsgTranslator.MSG_BODY, result);
-                                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                                    message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                                 } else {
-                                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
+                                    message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_NOT_FOUND);
                                     message.put(MomMsgTranslator.MSG_ERR, "Not found (" + operation + ") : gate not found.");
                                 }
                             } else {
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                 message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : container not found with provided ID.");
                             }
                         } else {
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                             message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : container id and/or gate name not provided.");
                         }
                         break;
@@ -149,7 +150,7 @@ public class MappingEp {
                                         if (session != null) link = MappingMsgsrvBootstrap.getMappingSce().getLinkBySourceEPandDestinationEP(session, source_ep, destin_ep);
                                         else link = MappingMsgsrvBootstrap.getMappingSce().getLinkBySourceEPandDestinationEP(source_ep, destin_ep);
                                     } else {
-                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                        message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : destination endpoint not found with provided ID.");
                                         return message;
                                     }
@@ -160,13 +161,13 @@ public class MappingEp {
                                         if (session != null) link = MappingMsgsrvBootstrap.getMappingSce().getMulticastLinkBySourceEPAndTransport(session, source_ep, transport);
                                         else link = MappingMsgsrvBootstrap.getMappingSce().getMulticastLinkBySourceEPAndTransport(source_ep, transport);
                                     } else {
-                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                        message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : transport not found with provided ID.");
                                         return message;
                                     }
                                 }
                             } else {
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                 message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : source endpoint not found with provided ID.");
                                 return message;
                             }
@@ -176,13 +177,13 @@ public class MappingEp {
                                 LinkJSON.oneLink2JSON(link, outStream);
                                 String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
                                 message.put(MomMsgTranslator.MSG_BODY, result);
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                             } else {
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_NOT_FOUND);
                                 message.put(MomMsgTranslator.MSG_ERR, "Not found (" + operation + ") : link not found.");
                             }
                         } else {
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                             if (operation.equals(MappingSce.OP_GET_LINK_BY_SOURCE_EP_AND_DESTINATION_EP))
                                 message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : source and/or destination endpoint id not provided.");
                             else if (operation.equals(MappingSce.OP_GET_LINK_BY_SOURCE_EP_AND_TRANSPORT))
@@ -203,7 +204,7 @@ public class MappingEp {
                                     if (session!=null) links = (HashSet<Link>) MappingMsgsrvBootstrap.getMappingSce().getLinksBySourceEP(session, source_ep);
                                     else links = (HashSet<Link>) MappingMsgsrvBootstrap.getMappingSce().getLinksBySourceEP(source_ep);
                                 } else {
-                                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                    message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                     message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : source endpoint not found with provided ID.");
                                     return message;
                                 }
@@ -214,28 +215,28 @@ public class MappingEp {
                                     if (session!=null) links = (HashSet<Link>) MappingMsgsrvBootstrap.getMappingSce().getLinksByDestinationEP(session, destin_ep);
                                     else links = (HashSet<Link>) MappingMsgsrvBootstrap.getMappingSce().getLinksByDestinationEP(destin_ep);
                                 } else {
-                                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                    message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                     message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : destination endpoint not found with provided ID.");
                                     return message;
                                 }
                             }
 
-                            if (links!=null) {
+                            if (links!=null && links.size()>0) {
                                 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
                                 LinkJSON.manyLinks2JSON(links, outStream);
                                 String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
                                 message.put(MomMsgTranslator.MSG_BODY, result);
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                             } else {
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_NOT_FOUND);
                                 message.put(MomMsgTranslator.MSG_ERR, "Not found (" + operation + ") : links not found.");
                             }
                         } else {
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                             message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : source endpoint id not provided.");
                         }
                         break;
-                    case MappingSce.GLOBAL_OPERATION_NOT_DEFINED:
+                    case MomMsgTranslator.OPERATION_NOT_DEFINED:
                         message.put(MomMsgTranslator.MSG_RC, 1);
                         message.put(MomMsgTranslator.MSG_ERR, "Operation not defined ! ");
                         break;
@@ -246,7 +247,7 @@ public class MappingEp {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SERVER_ERR);
+                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SERVER_ERR);
                 message.put(MomMsgTranslator.MSG_ERR, "Internal server error (" + operation + ") : " + e.getMessage());
             }
             return message;
@@ -254,9 +255,11 @@ public class MappingEp {
     }
 
     public static void start() {
-        if (MappingMsgsrvMomSP.getSharedMoMConnection() != null && MappingMsgsrvMomSP.getSharedMoMConnection().isConnected())
+        if (MappingMsgsrvMomSP.getSharedMoMConnection() != null && MappingMsgsrvMomSP.getSharedMoMConnection().isConnected()) {
             MappingMsgsrvMomSP.getSharedMoMConnection().getServiceFactory().msgGroupRequestService(
                     MappingSce.Q_MAPPING_SCE_SERVICE, new MappingWorker()
             );
+            log.info("Ariane Mapping Messaging Service is waiting message on  " + MappingSce.Q_MAPPING_SCE_SERVICE + "...");
+        }
     }
 }

@@ -52,27 +52,27 @@ public class NodeSceImpl extends SProxNodeSceAbs<NodeImpl> {
             if (session!=null) ret = createNode(session, nodeName, containerID, parentNodeID);
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            ContainerImpl container = sce.getGlobalRepo().getContainerRepo().findContainerByID(containerID);
-            ret = sce.getGlobalRepo().findNodeByName(container, nodeName);
+            ContainerImpl container = sce.getGlobalRepo().getContainerRepo().findContainerByID(containerID);;
+            NodeImpl parentNode = null;
+            if (parentNodeID!=null) {
+                parentNode = sce.getGlobalRepo().getNodeRepo().findNodeByID(parentNodeID);
+                if (parentNode!=null) ret = sce.getGlobalRepo().getNodeRepo().findNodeByName(parentNode, nodeName);
+                else throw new MappingDSException("Node creation failed : provided parend node " + parentNodeID + " doesn't exists.");
+            } else ret = sce.getGlobalRepo().findNodeByName(container, nodeName);
+
             if (ret == null) {
                 if (container != null) {
                     ret = new NodeImpl();
                     sce.getGlobalRepo().getNodeRepo().saveNode(ret);
                     ret.setNodeName(nodeName);
-                    if (parentNodeID != null) {
-                        NodeImpl parent = sce.getGlobalRepo().getNodeRepo().findNodeByID(parentNodeID);
-                        if (parent != null) ret.setNodeParentNode(parent);
-                        else throw new MappingDSException("Node creation failed : provided parend node " + parentNodeID + " doesn't exists.");
-                    }
+                    if (parentNode != null) ret.setNodeParentNode(parentNode);
                     ret.setNodeContainer(container);
 
                     if (ret.getNodeParentNode() != null)
                         ret.getNodeParentNode().addNodeChildNode(ret);
                     else
                         container.addContainerNode(ret);
-                } else {
-                    throw new MappingDSException("Node creation failed : provided container " + containerID + " doesn't exists.");
-                }
+                } else throw new MappingDSException("Node creation failed : provided container " + containerID + " doesn't exists.");
             }
         }
         return ret;

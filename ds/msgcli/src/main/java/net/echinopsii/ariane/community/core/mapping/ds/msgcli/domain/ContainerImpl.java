@@ -28,7 +28,6 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxContainer;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxContainerAbs;
-import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesException;
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ClusterJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ContainerJSON;
@@ -47,7 +46,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.*;
 
 public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
@@ -80,7 +78,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                     }
                 } else {
                     switch (rc) {
-                        case MappingSce.MAPPING_SCE_RET_NOT_FOUND:
+                        case MomMsgTranslator.MSG_RET_NOT_FOUND:
                             ContainerImpl.log.debug("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
                             break;
                         default:
@@ -187,7 +185,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                 String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
                 Map<String, Object> message = new HashMap<>();
-                message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_SET_CONTAINER_NAME);
+                message.put(MomMsgTranslator.OPERATION_FDN, OP_SET_CONTAINER_NAME);
                 message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getContainerID());
                 message.put(SProxContainerSce.PARAM_CONTAINER_NAME, name);
                 if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -207,7 +205,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                 String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
                 Map<String, Object> message = new HashMap<>();
-                message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_SET_CONTAINER_COMPANY);
+                message.put(MomMsgTranslator.OPERATION_FDN, OP_SET_CONTAINER_COMPANY);
                 message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getContainerID());
                 message.put(SProxContainerSce.PARAM_CONTAINER_COMPANY, company);
                 if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -227,7 +225,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                 String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
                 Map<String, Object> message = new HashMap<>();
-                message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_SET_CONTAINER_PRODUCT);
+                message.put(MomMsgTranslator.OPERATION_FDN, OP_SET_CONTAINER_PRODUCT);
                 message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getContainerID());
                 message.put(SProxContainerSce.PARAM_CONTAINER_PRODUCT, product);
                 if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -247,7 +245,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                 String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
                 Map<String, Object> message = new HashMap<>();
-                message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_SET_CONTAINER_TYPE);
+                message.put(MomMsgTranslator.OPERATION_FDN, OP_SET_CONTAINER_TYPE);
                 message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getContainerID());
                 message.put(SProxContainerSce.PARAM_CONTAINER_TYPE, type);
                 if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -305,7 +303,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                     String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
                     Map<String, Object> message = new HashMap<>();
-                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_SET_CONTAINER_PRIMARY_ADMIN_GATE);
+                    message.put(MomMsgTranslator.OPERATION_FDN, OP_SET_CONTAINER_PRIMARY_ADMIN_GATE);
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getContainerID());
                     message.put(SProxContainerSce.PARAM_CONTAINER_PAG_ID, gate.getNodeID());
                     if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -355,7 +353,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                     String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
                     Map<String, Object> message = new HashMap<>();
-                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_SET_CONTAINER_CLUSTER);
+                    message.put(MomMsgTranslator.OPERATION_FDN, OP_SET_CONTAINER_CLUSTER);
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getContainerID());
                     message.put(Cluster.TOKEN_CL_ID, (cluster != null) ? cluster.getClusterID() : MappingSce.GLOBAL_PARAM_OBJ_NONE);
                     if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -401,7 +399,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
             String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
             Map<String, Object> message = new HashMap<>();
-            message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_ADD_CONTAINER_PROPERTY);
+            message.put(MomMsgTranslator.OPERATION_FDN, OP_ADD_CONTAINER_PROPERTY);
             message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getContainerID());
             try {
                 message.put(MappingSce.GLOBAL_PARAM_PROP_FIELD, PropertiesJSON.propertyFieldToTypedPropertyField(propertyKey, value).toJSONString());
@@ -423,7 +421,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
             String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
             Map<String, Object> message = new HashMap<>();
-            message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_REMOVE_CONTAINER_PROPERTY);
+            message.put(MomMsgTranslator.OPERATION_FDN, OP_REMOVE_CONTAINER_PROPERTY);
             message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getContainerID());
             message.put(MappingSce.GLOBAL_PARAM_PROP_NAME, propertyKey);
             if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -467,7 +465,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                     String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
                     Map<String, Object> message = new HashMap<>();
-                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_SET_CONTAINER_PARENT_CONTAINER);
+                    message.put(MomMsgTranslator.OPERATION_FDN, OP_SET_CONTAINER_PARENT_CONTAINER);
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getContainerID());
                     message.put(SProxContainerSce.PARAM_CONTAINER_PCO_ID, (container != null) ? container.getContainerID() : MappingSce.GLOBAL_PARAM_OBJ_NONE);
                     if (clientThreadSessionID != null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -541,7 +539,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                     String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
                     Map<String, Object> message = new HashMap<>();
-                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_ADD_CONTAINER_CHILD_CONTAINER);
+                    message.put(MomMsgTranslator.OPERATION_FDN, OP_ADD_CONTAINER_CHILD_CONTAINER);
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getContainerID());
                     message.put(SProxContainerSce.PARAM_CONTAINER_CCO_ID, container.getContainerID());
                     if (clientThreadSessionID != null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -576,7 +574,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                     String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
                     Map<String, Object> message = new HashMap<>();
-                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_REMOVE_CONTAINER_CHILD_CONTAINER);
+                    message.put(MomMsgTranslator.OPERATION_FDN, OP_REMOVE_CONTAINER_CHILD_CONTAINER);
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getContainerID());
                     message.put(SProxContainerSce.PARAM_CONTAINER_CCO_ID, container.getContainerID());
                     if (clientThreadSessionID != null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -635,7 +633,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                     String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
                     Map<String, Object> message = new HashMap<>();
-                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_ADD_CONTAINER_NODE);
+                    message.put(MomMsgTranslator.OPERATION_FDN, OP_ADD_CONTAINER_NODE);
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getContainerID());
                     message.put(Node.TOKEN_ND_ID, node.getNodeID());
                     if (clientThreadSessionID != null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -660,7 +658,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                     String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
                     Map<String, Object> message = new HashMap<>();
-                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_REMOVE_CONTAINER_NODE);
+                    message.put(MomMsgTranslator.OPERATION_FDN, OP_REMOVE_CONTAINER_NODE);
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getContainerID());
                     message.put(Node.TOKEN_ND_ID, node.getNodeID());
                     if (clientThreadSessionID != null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -712,7 +710,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                     String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
                     Map<String, Object> message = new HashMap<>();
-                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_ADD_CONTAINER_GATE);
+                    message.put(MomMsgTranslator.OPERATION_FDN, OP_ADD_CONTAINER_GATE);
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getContainerID());
                     message.put(Node.TOKEN_ND_ID, gate.getNodeID());
                     if (clientThreadSessionID != null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -738,7 +736,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                     String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
                     Map<String, Object> message = new HashMap<>();
-                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_REMOVE_CONTAINER_GATE);
+                    message.put(MomMsgTranslator.OPERATION_FDN, OP_REMOVE_CONTAINER_GATE);
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getContainerID());
                     message.put(Node.TOKEN_ND_ID, gate.getNodeID());
                     if (clientThreadSessionID != null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);

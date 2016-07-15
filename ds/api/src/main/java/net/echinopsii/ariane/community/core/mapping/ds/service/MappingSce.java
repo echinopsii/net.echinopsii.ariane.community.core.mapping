@@ -31,9 +31,6 @@ import java.util.Set;
 public interface MappingSce {
     String Q_MAPPING_SCE_SERVICE = "ARIANE_MAPPING_SERVICE_Q";
 
-    String GLOBAL_OPERATION_FDN = "OPERATION";
-    String GLOBAL_OPERATION_NOT_DEFINED = "NOT_DEFINED";
-
     String GLOBAL_PARAM_OBJ_ID = "ID";
     String GLOBAL_PARAM_OBJ_NONE = "NONE";
     String GLOBAL_PARAM_PAYLOAD = "payload";
@@ -42,11 +39,6 @@ public interface MappingSce {
     String GLOBAL_PARAM_PROP_TYPE = "propertyType";
     String GLOBAL_PARAM_PROP_VALUE = "propertyValue";
     String GLOBAL_PARAM_PROP_FIELD = "propertyField";
-
-    int MAPPING_SCE_RET_SUCCESS = 0;
-    int MAPPING_SCE_RET_BAD_REQ = 400;
-    int MAPPING_SCE_RET_NOT_FOUND = 404;
-    int MAPPING_SCE_RET_SERVER_ERR = 500;
 
     String OP_GET_NODE_BY_NAME = "getNodeByName";
     String OP_GET_GATE_BY_NAME = "getGateByName";

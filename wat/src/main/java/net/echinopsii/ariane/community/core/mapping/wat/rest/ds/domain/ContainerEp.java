@@ -25,15 +25,15 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxContainer;
-import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.service.ContainerSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxContainerSceAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ContainerJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
-import net.echinopsii.ariane.community.core.mapping.wat.rest.ds.JSONDeserializationResponse;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.DeserializedPushResponse;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
@@ -44,222 +44,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 
 @Path("/mapping/domain/containers")
 public class ContainerEp {
     private static final Logger log = LoggerFactory.getLogger(ContainerEp.class);
-
-    public static JSONDeserializationResponse jsonFriendlyToMappingFriendly(ContainerJSON.JSONDeserializedContainer jsonDeserializedContainer,
-                                                                            Session mappingSession) throws MappingDSException {
-        JSONDeserializationResponse ret = new JSONDeserializationResponse();
-
-        // DETECT POTENTIAL QUERIES ERROR FIRST
-        Gate reqPrimaryAdminGate = null;
-        Cluster reqContainerCluster = null;
-        Container reqContainerParent = null;
-        List<Container> reqContainerChildContainers = new ArrayList<>();
-        List<Node> reqContainerChildNodes = new ArrayList<>();
-        List<Gate> reqContainerChildGates = new ArrayList<>();
-        HashMap<String, Object> reqProperties = new HashMap<>();
-
-        if (jsonDeserializedContainer.getContainerPrimaryAdminGateID()!=null) {
-            if (mappingSession!=null) reqPrimaryAdminGate = MappingBootstrap.getMappingSce().getGateSce().getGate(mappingSession, jsonDeserializedContainer.getContainerPrimaryAdminGateID());
-            else reqPrimaryAdminGate = MappingBootstrap.getMappingSce().getGateSce().getGate(jsonDeserializedContainer.getContainerPrimaryAdminGateID());
-            if (reqPrimaryAdminGate == null) ret.setErrorMessage("Request Error : gate with provided ID " + jsonDeserializedContainer.getContainerPrimaryAdminGateID() + " was not found.");
-        }
-        if (ret.getErrorMessage() == null && jsonDeserializedContainer.getContainerClusterID()!=null) {
-            if (mappingSession!=null) reqContainerCluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(mappingSession, jsonDeserializedContainer.getContainerClusterID());
-            else reqContainerCluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(jsonDeserializedContainer.getContainerClusterID());
-            if (reqContainerCluster == null) ret.setErrorMessage("Request Error: cluster with provided ID " + jsonDeserializedContainer.getContainerClusterID() + " was not found.");
-        }
-        if (ret.getErrorMessage() == null && jsonDeserializedContainer.getContainerParentContainerID()!=null) {
-            if (mappingSession!=null) reqContainerParent = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, jsonDeserializedContainer.getContainerParentContainerID());
-            else reqContainerParent = MappingBootstrap.getMappingSce().getContainerSce().getContainer(jsonDeserializedContainer.getContainerParentContainerID());
-            if (reqContainerParent == null) ret.setErrorMessage("Request Error: parent container with provided ID " + jsonDeserializedContainer.getContainerParentContainerID() + " was not found.");
-        }
-        if (ret.getErrorMessage() == null && jsonDeserializedContainer.getContainerChildContainersID()!=null && jsonDeserializedContainer.getContainerChildContainersID().size() > 0) {
-            for (String id : jsonDeserializedContainer.getContainerChildContainersID()) {
-                Container childContainer;
-                if (mappingSession!=null) childContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, id);
-                else childContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
-                if (childContainer!=null) reqContainerChildContainers.add(childContainer);
-                else {
-                    ret.setErrorMessage("Request Error : child container with provided ID " + id + " was not found.");
-                    break;
-                }
-            }
-        }
-        if (ret.getErrorMessage() == null && jsonDeserializedContainer.getContainerNodesID()!=null && jsonDeserializedContainer.getContainerNodesID().size()>0) {
-            for (String id : jsonDeserializedContainer.getContainerNodesID()) {
-                Node childNode;
-                if (mappingSession!=null) childNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(mappingSession, id);
-                else childNode = MappingBootstrap.getMappingSce().getNodeSce().getNode(id);
-                if (childNode != null) reqContainerChildNodes.add(childNode);
-                else {
-                    ret.setErrorMessage("Request Error : child node with provided ID " + id + " was not found.");
-                    break;
-                }
-            }
-        }
-        if (ret.getErrorMessage() == null && jsonDeserializedContainer.getContainerGatesID()!=null && jsonDeserializedContainer.getContainerGatesID().size()>0) {
-            for (String id : jsonDeserializedContainer.getContainerGatesID()) {
-                Gate childGate;
-                if (mappingSession!=null) childGate = MappingBootstrap.getMappingSce().getGateSce().getGate(mappingSession, id);
-                else childGate = MappingBootstrap.getMappingSce().getGateSce().getGate(id);
-                if (childGate != null) reqContainerChildGates.add(childGate);
-                else {
-                    ret.setErrorMessage("Request Error : child gate with provided ID " + id + " was not found.");
-                    break;
-                }
-            }
-        }
-        if (ret.getErrorMessage() == null && jsonDeserializedContainer.getContainerProperties()!=null && jsonDeserializedContainer.getContainerProperties().size() > 0) {
-            for (PropertiesJSON.TypedPropertyField deserializedProperty : jsonDeserializedContainer.getContainerProperties()) {
-                try {
-                    Object oValue = ToolBox.extractPropertyObjectValueFromString(deserializedProperty.getPropertyValue(), deserializedProperty.getPropertyType());
-                    reqProperties.put(deserializedProperty.getPropertyName(), oValue);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    ret.setErrorMessage("Request Error : invalid property " + deserializedProperty.getPropertyName() + ".");
-                    break;
-                }
-            }
-        }
-        // LOOK IF CONTAINER MAYBE UPDATED OR CREATED
-        Container deserializedContainer = null;
-        if (ret.getErrorMessage() == null && jsonDeserializedContainer.getContainerID()!=null) {
-            if (mappingSession!=null) deserializedContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, jsonDeserializedContainer.getContainerID());
-            else deserializedContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainer(jsonDeserializedContainer.getContainerID());
-            if (deserializedContainer==null)
-                ret.setErrorMessage("Request Error : container with provided ID " + jsonDeserializedContainer.getContainerID() + " was not found.");
-        }
-
-        if (ret.getErrorMessage() == null && deserializedContainer == null && jsonDeserializedContainer.getContainerGateURI() != null)
-            if (mappingSession!=null) deserializedContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainerByPrimaryAdminURL(mappingSession, jsonDeserializedContainer.getContainerGateURI());
-            else deserializedContainer = MappingBootstrap.getMappingSce().getContainerSce().getContainerByPrimaryAdminURL(jsonDeserializedContainer.getContainerGateURI());
-
-        /*
-        if (ret.getErrorMessage() == null && deserializedContainer!=null) {
-            if (!deserializedContainer.getContainerPrimaryAdminGateURL().equals(jsonDeserializedContainer.getContainerGateURI()) ||
-                !deserializedContainer.getContainerPrimaryAdminGate().getNodeName().equals(jsonDeserializedContainer.getContainerGateName())
-                    ) {
-                ret.setErrorMessage("Request Error : gate definition doesn't match with container " + jsonDeserializedContainer.getContainerID() + " !");
-            }
-        }
-        */
-
-        // APPLY REQ IF NO ERRORS
-        if (ret.getErrorMessage() == null) {
-            String reqContainerName = jsonDeserializedContainer.getContainerName();
-            String reqContainerCompany = jsonDeserializedContainer.getContainerCompany();
-            String reqContainerProduct = jsonDeserializedContainer.getContainerProduct();
-            String reqContainerType = jsonDeserializedContainer.getContainerType();
-
-            if (deserializedContainer == null) {
-                String reqContainerGURI = jsonDeserializedContainer.getContainerGateURI();
-                String reqContainerGName = jsonDeserializedContainer.getContainerGateName();
-                if (reqContainerName == null)
-                    if (reqContainerParent != null)
-                        if (mappingSession!=null) deserializedContainer = MappingBootstrap.getMappingSce().getContainerSce().createContainer(mappingSession, reqContainerGURI, reqContainerGName, reqContainerParent);
-                        else deserializedContainer = MappingBootstrap.getMappingSce().getContainerSce().createContainer(reqContainerGURI, reqContainerGName, reqContainerParent);
-                    else
-                        if (mappingSession!=null) deserializedContainer = MappingBootstrap.getMappingSce().getContainerSce().createContainer(mappingSession, reqContainerGURI, reqContainerGName);
-                        else deserializedContainer = MappingBootstrap.getMappingSce().getContainerSce().createContainer(reqContainerGURI, reqContainerGName);
-                else
-                    if (reqContainerParent != null)
-                        if (mappingSession!=null) deserializedContainer = MappingBootstrap.getMappingSce().getContainerSce().createContainer(mappingSession, reqContainerName, reqContainerGURI, reqContainerGName, reqContainerParent);
-                        else deserializedContainer = MappingBootstrap.getMappingSce().getContainerSce().createContainer(reqContainerName, reqContainerGURI, reqContainerGName, reqContainerParent);
-                    else
-                        if (mappingSession!=null) deserializedContainer = MappingBootstrap.getMappingSce().getContainerSce().createContainer(mappingSession, reqContainerName, reqContainerGURI, reqContainerGName);
-                        else deserializedContainer = MappingBootstrap.getMappingSce().getContainerSce().createContainer(reqContainerName, reqContainerGURI, reqContainerGName);
-            } else {
-                if (reqContainerName != null)
-                    if (mappingSession!=null) ((SProxContainer)deserializedContainer).setContainerName(mappingSession, reqContainerName);
-                    else deserializedContainer.setContainerName(reqContainerName);
-                if (reqPrimaryAdminGate != null)
-                    if (mappingSession!=null) ((SProxContainer)deserializedContainer).setContainerPrimaryAdminGate(mappingSession, reqPrimaryAdminGate);
-                    else deserializedContainer.setContainerPrimaryAdminGate(reqPrimaryAdminGate);
-            }
-
-            reqContainerChildNodes.add(deserializedContainer.getContainerPrimaryAdminGate());
-            reqContainerChildGates.add(deserializedContainer.getContainerPrimaryAdminGate());
-
-            if (reqContainerCluster != null)
-                if (mappingSession!=null) ((SProxContainer)deserializedContainer).setContainerCluster(mappingSession, reqContainerCluster);
-                else deserializedContainer.setContainerCluster(reqContainerCluster);
-            if (reqContainerCompany != null)
-                if (mappingSession!=null) ((SProxContainer)deserializedContainer).setContainerCompany(mappingSession, reqContainerCompany);
-                else deserializedContainer.setContainerCompany(reqContainerCompany);
-            if (reqContainerProduct != null)
-                if (mappingSession!=null) ((SProxContainer)deserializedContainer).setContainerProduct(mappingSession, reqContainerProduct);
-                else deserializedContainer.setContainerProduct(reqContainerProduct);
-            if (reqContainerType != null)
-                if (mappingSession!=null) ((SProxContainer)deserializedContainer).setContainerType(mappingSession, reqContainerType);
-                else deserializedContainer.setContainerType(reqContainerType);
-
-            if (jsonDeserializedContainer.getContainerChildContainersID() != null) {
-                List<Container> childContainersToDelete = new ArrayList<>();
-                for (Container containerToDel : deserializedContainer.getContainerChildContainers())
-                    if (!reqContainerChildContainers.contains(containerToDel))
-                        childContainersToDelete.add(containerToDel);
-                for (Container containerToDel : childContainersToDelete)
-                    if (mappingSession!=null) ((SProxContainer)deserializedContainer).removeContainerChildContainer(mappingSession, containerToDel);
-                    else deserializedContainer.removeContainerChildContainer(containerToDel);
-                for (Container containerToAdd : reqContainerChildContainers)
-                    if (mappingSession!=null) ((SProxContainer)deserializedContainer).addContainerChildContainer(mappingSession, containerToAdd);
-                    else deserializedContainer.addContainerChildContainer(containerToAdd);
-            }
-
-            if (jsonDeserializedContainer.getContainerNodesID() != null) {
-                List<Node> nodesToDelete = new ArrayList<>();
-                for (Node nodeToDel : deserializedContainer.getContainerNodes())
-                    if (!reqContainerChildNodes.contains(nodeToDel))
-                        nodesToDelete.add(nodeToDel);
-                for (Node nodeToDel : nodesToDelete)
-                    if (mappingSession!=null) ((SProxContainer)deserializedContainer).removeContainerNode(mappingSession, nodeToDel);
-                    else deserializedContainer.removeContainerNode(nodeToDel);
-                for (Node nodeToAdd : reqContainerChildNodes)
-                    if (mappingSession!=null) ((SProxContainer)deserializedContainer).addContainerNode(mappingSession, nodeToAdd);
-                    else deserializedContainer.addContainerNode(nodeToAdd);
-            }
-
-            if (jsonDeserializedContainer.getContainerGatesID() != null) {
-                List<Gate> gatesToDelete = new ArrayList<>();
-                for (Gate gateToDel : deserializedContainer.getContainerGates())
-                    if (!reqContainerChildGates.contains(gateToDel))
-                        gatesToDelete.add(gateToDel);
-                for (Gate gateToDel : gatesToDelete)
-                    if (mappingSession!=null) ((SProxContainer)deserializedContainer).removeContainerGate(mappingSession, gateToDel);
-                    else deserializedContainer.removeContainerGate(gateToDel);
-                for (Gate gateToAdd : reqContainerChildGates)
-                    if (mappingSession!=null) ((SProxContainer)deserializedContainer).addContainerGate(mappingSession, gateToAdd);
-                    else deserializedContainer.addContainerGate(gateToAdd);
-            }
-
-            if (jsonDeserializedContainer.getContainerProperties()!=null) {
-                if (deserializedContainer.getContainerProperties()!=null) {
-                    List<String> propertiesToDelete = new ArrayList<>();
-                    for (String propertyKey : deserializedContainer.getContainerProperties().keySet())
-                        if (!reqProperties.containsKey(propertyKey))
-                            propertiesToDelete.add(propertyKey);
-                    for (String propertyToDelete : propertiesToDelete)
-                        if (mappingSession!=null) ((SProxContainer)deserializedContainer).removeContainerProperty(mappingSession, propertyToDelete);
-                        else deserializedContainer.removeContainerProperty(propertyToDelete);
-                }
-
-                for (String propertyKey : reqProperties.keySet())
-                    if (mappingSession!=null) ((SProxContainer)deserializedContainer).addContainerProperty(mappingSession, propertyKey, reqProperties.get(propertyKey));
-                    else deserializedContainer.addContainerProperty(propertyKey, reqProperties.get(propertyKey));
-            }
-
-            ret.setDeserializedObject(deserializedContainer);
-        }
-        return ret;
-    }
 
     private Response _displayContainer(String id, String sessionId) {
         Subject subject = SecurityUtils.getSubject();
@@ -455,7 +244,11 @@ public class ContainerEp {
                     }
 
                     Response ret;
-                    JSONDeserializationResponse deserializationResponse = jsonFriendlyToMappingFriendly(ContainerJSON.JSON2Container(payload), mappingSession);
+                    DeserializedPushResponse deserializationResponse = SProxContainerSceAbs.pushDeserializedContainer(
+                            ContainerJSON.JSON2Container(payload),
+                            mappingSession,
+                            MappingBootstrap.getMappingSce()
+                    );
                     if (deserializationResponse.getErrorMessage()!=null) {
                         String result = deserializationResponse.getErrorMessage();
                         ret = Response.status(Status.BAD_REQUEST).entity(result).build();

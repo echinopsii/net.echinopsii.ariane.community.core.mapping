@@ -67,7 +67,7 @@ public class TransportImpl extends SProxTransportAbs implements SProxTransport {
                     }
                 } else {
                     switch (rc) {
-                        case MappingSce.MAPPING_SCE_RET_NOT_FOUND:
+                        case MomMsgTranslator.MSG_RET_NOT_FOUND:
                             TransportImpl.log.debug("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
                             break;
                         default:
@@ -110,7 +110,7 @@ public class TransportImpl extends SProxTransportAbs implements SProxTransport {
                     String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
                     Map<String, Object> message = new HashMap<>();
-                    message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_SET_TRANSPORT_NAME);
+                    message.put(MomMsgTranslator.OPERATION_FDN, OP_SET_TRANSPORT_NAME);
                     message.put(MappingSce.GLOBAL_PARAM_OBJ_ID, super.getTransportID());
                     message.put(TransportSce.PARAM_TRANSPORT_NAME, name);
                     if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -129,7 +129,7 @@ public class TransportImpl extends SProxTransportAbs implements SProxTransport {
             String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
             Map<String, Object> message = new HashMap<>();
-            message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_ADD_TRANSPORT_PROPERTY);
+            message.put(MomMsgTranslator.OPERATION_FDN, OP_ADD_TRANSPORT_PROPERTY);
             message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getTransportID());
             try {
                 message.put(MappingSce.GLOBAL_PARAM_PROP_FIELD, PropertiesJSON.propertyFieldToTypedPropertyField(propertyKey, value).toJSONString());
@@ -151,7 +151,7 @@ public class TransportImpl extends SProxTransportAbs implements SProxTransport {
             String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
             Map<String, Object> message = new HashMap<>();
-            message.put(MappingSce.GLOBAL_OPERATION_FDN, OP_REMOVE_TRANSPORT_PROPERTY);
+            message.put(MomMsgTranslator.OPERATION_FDN, OP_REMOVE_TRANSPORT_PROPERTY);
             message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getTransportID());
             message.put(MappingSce.GLOBAL_PARAM_PROP_NAME, propertyKey);
             if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);

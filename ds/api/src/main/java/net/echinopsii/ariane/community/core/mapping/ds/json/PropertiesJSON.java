@@ -20,6 +20,7 @@
 package net.echinopsii.ariane.community.core.mapping.ds.json;
 
 import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -470,7 +471,12 @@ public class PropertiesJSON {
 
     public static TypedPropertyField typedPropertyFieldFromJSON(String payload) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(payload, TypedPropertyField.class);
+        try {
+            return mapper.readValue(payload, TypedPropertyField.class);
+        } catch (JsonMappingException exception) {
+            log.error("Deserialization error with payload : " + payload);
+            throw exception;
+        }
     }
 
     public static Object getValueFromTypedPropertyField(TypedPropertyField typedPropertyField) throws IOException, PropertiesException {

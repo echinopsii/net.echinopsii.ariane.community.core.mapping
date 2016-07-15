@@ -25,12 +25,13 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxCluster;
 import net.echinopsii.ariane.community.core.mapping.ds.service.ClusterSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxClusterSceAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ClusterJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
-import net.echinopsii.ariane.community.core.mapping.wat.rest.ds.JSONDeserializationResponse;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.DeserializedPushResponse;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
@@ -41,72 +42,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 
 @Path("/mapping/domain/clusters")
 public class ClusterEp {
     private static final Logger log = LoggerFactory.getLogger(ContainerEp.class);
-
-    public static JSONDeserializationResponse jsonFriendlyToMappingFriendly(ClusterJSON.JSONDeserializedCluster jsonDeserializedCluster,
-                                                                            Session mappingSession) throws MappingDSException {
-        JSONDeserializationResponse ret = new JSONDeserializationResponse();
-
-        // DETECT POTENTIAL QUERIES ERROR FIRST
-        List<Container> reqContainers = new ArrayList<>();
-        if (jsonDeserializedCluster.getClusterContainersID()!=null && jsonDeserializedCluster.getClusterContainersID().size()>0) {
-            for (String id : jsonDeserializedCluster.getClusterContainersID()) {
-                Container container;
-
-                if (mappingSession!=null)
-                    container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, id);
-                else container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(id);
-
-                if (container != null) reqContainers.add(container);
-                else {
-                    ret.setErrorMessage("Request Error : container with provided ID " + id + " was not found.");
-                    break;
-                }
-            }
-        }
-
-        // LOOK IF CLUSTER MAYBE UPDATED OR CREATED
-        Cluster deserializedCluster = null;
-        if (ret.getErrorMessage()==null && jsonDeserializedCluster.getClusterID()!=null) {
-            if (mappingSession!=null)
-                deserializedCluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(mappingSession, jsonDeserializedCluster.getClusterID());
-            else deserializedCluster = MappingBootstrap.getMappingSce().getClusterSce().getCluster(jsonDeserializedCluster.getClusterID());
-            if (deserializedCluster == null) ret.setErrorMessage("Request Error : cluster with provided ID " + jsonDeserializedCluster.getClusterID() + " was not found.");
-        }
-
-        // APPLY REQ IF NO ERRORS
-        if (ret.getErrorMessage()==null) {
-            if (deserializedCluster==null)
-                if (mappingSession!=null) deserializedCluster = MappingBootstrap.getMappingSce().getClusterSce().createCluster(mappingSession, jsonDeserializedCluster.getClusterName());
-                else deserializedCluster = MappingBootstrap.getMappingSce().getClusterSce().createCluster(jsonDeserializedCluster.getClusterName());
-            else if (jsonDeserializedCluster.getClusterName()!=null)
-                if (mappingSession!=null) ((SProxCluster)deserializedCluster).setClusterName(mappingSession, jsonDeserializedCluster.getClusterName());
-                else deserializedCluster.setClusterName(jsonDeserializedCluster.getClusterName());
-
-            if (jsonDeserializedCluster.getClusterContainersID() != null) {
-                List<Container> containersToDelete = new ArrayList<>();
-                for (Container containerToDel : deserializedCluster.getClusterContainers())
-                    if (!reqContainers.contains(containerToDel))
-                        containersToDelete.add(containerToDel);
-                for (Container containerToDel : containersToDelete)
-                    if (mappingSession!=null) ((SProxCluster)deserializedCluster).removeClusterContainer(mappingSession, containerToDel);
-                    else deserializedCluster.removeClusterContainer(containerToDel);
-                for (Container containerToAdd : reqContainers)
-                    if (mappingSession!=null) ((SProxCluster)deserializedCluster).addClusterContainer(mappingSession, containerToAdd);
-                    else deserializedCluster.addClusterContainer(containerToAdd);
-            }
-
-            ret.setDeserializedObject(deserializedCluster);
-        }
-
-        return ret;
-    }
 
     private Response _displayCluster(String id, String sessionId) {
         Subject subject = SecurityUtils.getSubject();
@@ -194,8 +134,50 @@ public class ClusterEp {
     @GET
     @Path("/get")
     public Response getCluster(@QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID) String id,
+                               @QueryParam(ClusterSce.PARAM_CLUSTER_NAME) String name,
                                @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
-        return _displayCluster(id, sessionId);
+        if (id!=null) return _displayCluster(id, sessionId);
+        else if (name!=null) {
+            Subject subject = SecurityUtils.getSubject();
+            log.debug("[{}-{}] get clusters", new Object[]{Thread.currentThread().getId(), subject.getPrincipal()});
+            if (subject.hasRole("mappingreader") || subject.hasRole("mappinginjector") || subject.isPermitted("mappingDB:read") ||
+                    subject.hasRole("Jedi") || subject.isPermitted("universe:zeone"))
+            {
+                try {
+                    Session mappingSession = null;
+                    if (sessionId != null && !sessionId.equals("")) {
+                        mappingSession = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionId);
+                        if (mappingSession == null)
+                            return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
+                    }
+
+                    Cluster cluster;
+                    if (mappingSession != null)
+                        try {
+                            cluster = MappingBootstrap.getMappingSce().getClusterSce().getClusterByName(mappingSession, name);
+                        } catch (MappingDSException e) {
+                            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+                        }
+                    else cluster = MappingBootstrap.getMappingSce().getClusterSce().getClusterByName(name);
+
+                    if (cluster != null) {
+                        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                        ClusterJSON.oneCluster2JSON(cluster, outStream);
+                        String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                        return Response.status(Status.OK).entity(result).build();
+                    } else {
+                        return Response.status(Status.NOT_FOUND).entity("Cluster with name " + name + " not found.").build();
+                    }
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                    e.printStackTrace();
+                    String result = e.getMessage();
+                    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                }
+            } else {
+                return Response.status(Status.UNAUTHORIZED).entity("You're not authorized to read mapping db. Contact your administrator.").build();
+            }
+        } else return Response.status(Status.BAD_REQUEST).entity("Cluster ID or cluster name must be provided").build();
     }
 
     @GET
@@ -255,7 +237,11 @@ public class ClusterEp {
                             return Response.status(Status.BAD_REQUEST).entity("No session found for ID " + sessionId).build();
                     }
 
-                    JSONDeserializationResponse deserializationResponse = jsonFriendlyToMappingFriendly(ClusterJSON.JSON2Cluster(payload), mappingSession);
+                    DeserializedPushResponse deserializationResponse = SProxClusterSceAbs.pushDeserializedCluster(
+                            ClusterJSON.JSON2Cluster(payload),
+                            mappingSession,
+                            MappingBootstrap.getMappingSce()
+                    );
                     if (deserializationResponse.getErrorMessage()!=null) {
                         String result = deserializationResponse.getErrorMessage();
                         ret = Response.status(Status.BAD_REQUEST).entity(result).build();

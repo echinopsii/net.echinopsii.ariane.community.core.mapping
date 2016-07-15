@@ -48,7 +48,7 @@ public class TransportSceImpl extends SProxTransportSceAbs<TransportImpl> {
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.GLOBAL_OPERATION_FDN, TransportSce.OP_CREATE_TRANSPORT);
+        message.put(MomMsgTranslator.OPERATION_FDN, TransportSce.OP_CREATE_TRANSPORT);
         message.put(TransportSce.PARAM_TRANSPORT_NAME, transportName);
 
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
@@ -68,7 +68,7 @@ public class TransportSceImpl extends SProxTransportSceAbs<TransportImpl> {
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.GLOBAL_OPERATION_FDN, TransportSce.OP_DELETE_TRANSPORT);
+        message.put(MomMsgTranslator.OPERATION_FDN, TransportSce.OP_DELETE_TRANSPORT);
         message.put(MappingSce.GLOBAL_PARAM_OBJ_ID, transportID);
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
         Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, TransportSce.Q_MAPPING_TRANSPORT_SERVICE, transport.getTransportReplyWorker());
@@ -84,7 +84,7 @@ public class TransportSceImpl extends SProxTransportSceAbs<TransportImpl> {
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.GLOBAL_OPERATION_FDN, TransportSce.OP_GET_TRANSPORT);
+        message.put(MomMsgTranslator.OPERATION_FDN, TransportSce.OP_GET_TRANSPORT);
         message.put(MappingSce.GLOBAL_PARAM_OBJ_ID, transportID);
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
         Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, TransportSce.Q_MAPPING_TRANSPORT_SERVICE, transport.getTransportReplyWorker());
@@ -136,7 +136,7 @@ public class TransportSceImpl extends SProxTransportSceAbs<TransportImpl> {
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.GLOBAL_OPERATION_FDN, TransportSce.OP_GET_TRANSPORTS);
+        message.put(MomMsgTranslator.OPERATION_FDN, TransportSce.OP_GET_TRANSPORTS);
         message.put(MappingSce.GLOBAL_PARAM_SELECTOR, (selector!=null) ? selector : MappingSce.GLOBAL_PARAM_OBJ_NONE);
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
 

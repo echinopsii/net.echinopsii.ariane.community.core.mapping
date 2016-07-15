@@ -53,7 +53,7 @@ public class NodeSceImpl extends SProxNodeSceAbs<NodeImpl> {
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxNodeSce.OP_CREATE_NODE);
+        message.put(MomMsgTranslator.OPERATION_FDN, SProxNodeSce.OP_CREATE_NODE);
         message.put(NodeSce.PARAM_NODE_NAME, nodeName);
         message.put(Container.TOKEN_CT_ID, containerID);
         message.put(NodeSce.PARAM_NODE_PNID, (parentNodeID!=null) ? parentNodeID : MappingSce.GLOBAL_PARAM_OBJ_NONE);
@@ -74,7 +74,7 @@ public class NodeSceImpl extends SProxNodeSceAbs<NodeImpl> {
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxNodeSce.OP_DELETE_NODE);
+        message.put(MomMsgTranslator.OPERATION_FDN, SProxNodeSce.OP_DELETE_NODE);
         message.put(MappingSce.GLOBAL_PARAM_OBJ_ID, nodeID);
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
         Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, node.getNodeReplyWorker());
@@ -90,14 +90,14 @@ public class NodeSceImpl extends SProxNodeSceAbs<NodeImpl> {
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxNodeSce.OP_GET_NODE);
+        message.put(MomMsgTranslator.OPERATION_FDN, SProxNodeSce.OP_GET_NODE);
         message.put(MappingSce.GLOBAL_PARAM_OBJ_ID, id);
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
         Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, node.getNodeReplyWorker());
 
         int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
         if (rc != 0) {
-            if (rc == MappingSce.MAPPING_SCE_RET_NOT_FOUND) node = null;
+            if (rc == MomMsgTranslator.MSG_RET_NOT_FOUND) node = null;
             else throw new MappingDSException("Ariane server raised an error... Check your logs !");
         }
 
@@ -117,14 +117,14 @@ public class NodeSceImpl extends SProxNodeSceAbs<NodeImpl> {
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxNodeSce.OP_GET_NODE_BY_EPURL);
+        message.put(MomMsgTranslator.OPERATION_FDN, SProxNodeSce.OP_GET_NODE_BY_EPURL);
         message.put(Endpoint.TOKEN_EP_URL, endpointURL);
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
         Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, node.getNodeReplyWorker());
 
         int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
         if (rc != 0) {
-            if (rc == MappingSce.MAPPING_SCE_RET_NOT_FOUND) node = null;
+            if (rc == MomMsgTranslator.MSG_RET_NOT_FOUND) node = null;
             else throw new MappingDSException("Ariane server raised an error... Check your logs !");
         }
 
@@ -140,7 +140,7 @@ public class NodeSceImpl extends SProxNodeSceAbs<NodeImpl> {
             String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
             Map<String, Object> message = new HashMap<>();
-            message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxNodeSce.OP_GET_NODE_BY_NAME);
+            message.put(MomMsgTranslator.OPERATION_FDN, SProxNodeSce.OP_GET_NODE_BY_NAME);
             message.put(NodeSce.PARAM_NODE_PNID, parentNode.getNodeID());
             message.put(NodeSce.PARAM_NODE_NAME, nodeName);
             if (clientThreadSessionID != null)
@@ -149,7 +149,7 @@ public class NodeSceImpl extends SProxNodeSceAbs<NodeImpl> {
 
             int rc = (int) retMsg.get(MomMsgTranslator.MSG_RC);
             if (rc != 0) {
-                if (rc == MappingSce.MAPPING_SCE_RET_NOT_FOUND) node = null;
+                if (rc == MomMsgTranslator.MSG_RET_NOT_FOUND) node = null;
                 else throw new MappingDSException("Ariane server raised an error... Check your logs !");
             }
             return node;
@@ -192,7 +192,7 @@ public class NodeSceImpl extends SProxNodeSceAbs<NodeImpl> {
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxNodeSce.OP_GET_NODES);
+        message.put(MomMsgTranslator.OPERATION_FDN, SProxNodeSce.OP_GET_NODES);
         message.put(MappingSce.GLOBAL_PARAM_SELECTOR, (selector!=null) ? selector : MappingSce.GLOBAL_PARAM_OBJ_NONE);
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
 
@@ -212,7 +212,7 @@ public class NodeSceImpl extends SProxNodeSceAbs<NodeImpl> {
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
 
         Map<String, Object> message = new HashMap<>();
-        message.put(MappingSce.GLOBAL_OPERATION_FDN, SProxNodeSce.OP_GET_NODES);
+        message.put(MomMsgTranslator.OPERATION_FDN, SProxNodeSce.OP_GET_NODES);
         try {
             message.put(MappingSce.GLOBAL_PARAM_PROP_FIELD, PropertiesJSON.propertyFieldToTypedPropertyField(key, value).toJSONString());
         } catch (Exception e) {

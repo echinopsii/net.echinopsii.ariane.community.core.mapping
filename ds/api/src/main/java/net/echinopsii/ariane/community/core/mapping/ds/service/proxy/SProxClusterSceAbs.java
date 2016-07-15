@@ -20,12 +20,79 @@ package net.echinopsii.ariane.community.core.mapping.ds.service.proxy;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Cluster;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxCluster;
+import net.echinopsii.ariane.community.core.mapping.ds.json.domain.ClusterJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.service.ClusterSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.DeserializedPushResponse;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public abstract class SProxClusterSceAbs<CL extends Cluster> implements SProxClusterSce {
+
+    public static DeserializedPushResponse pushDeserializedCluster(ClusterJSON.JSONDeserializedCluster jsonDeserializedCluster,
+                                                                   Session mappingSession,
+                                                                   SProxMappingSce mappingSce) throws MappingDSException {
+        DeserializedPushResponse ret = new DeserializedPushResponse();
+
+        // DETECT POTENTIAL QUERIES ERROR FIRST
+        List<Container> reqContainers = new ArrayList<>();
+        if (jsonDeserializedCluster.getClusterContainersID()!=null && jsonDeserializedCluster.getClusterContainersID().size()>0) {
+            for (String id : jsonDeserializedCluster.getClusterContainersID()) {
+                Container container;
+
+                if (mappingSession!=null)
+                    container = mappingSce.getContainerSce().getContainer(mappingSession, id);
+                else container = mappingSce.getContainerSce().getContainer(id);
+
+                if (container != null) reqContainers.add(container);
+                else {
+                    ret.setErrorMessage("Request Error : container with provided ID " + id + " was not found.");
+                    break;
+                }
+            }
+        }
+
+        // LOOK IF CLUSTER MAYBE UPDATED OR CREATED
+        Cluster deserializedCluster = null;
+        if (ret.getErrorMessage()==null && jsonDeserializedCluster.getClusterID()!=null) {
+            if (mappingSession!=null)
+                deserializedCluster = mappingSce.getClusterSce().getCluster(mappingSession, jsonDeserializedCluster.getClusterID());
+            else deserializedCluster = mappingSce.getClusterSce().getCluster(jsonDeserializedCluster.getClusterID());
+            if (deserializedCluster == null) ret.setErrorMessage("Request Error : cluster with provided ID " + jsonDeserializedCluster.getClusterID() + " was not found.");
+        }
+
+        // APPLY REQ IF NO ERRORS
+        if (ret.getErrorMessage()==null) {
+            if (deserializedCluster==null)
+                if (mappingSession!=null) deserializedCluster = mappingSce.getClusterSce().createCluster(mappingSession, jsonDeserializedCluster.getClusterName());
+                else deserializedCluster = mappingSce.getClusterSce().createCluster(jsonDeserializedCluster.getClusterName());
+            else if (jsonDeserializedCluster.getClusterName()!=null)
+                if (mappingSession!=null) ((SProxCluster)deserializedCluster).setClusterName(mappingSession, jsonDeserializedCluster.getClusterName());
+                else deserializedCluster.setClusterName(jsonDeserializedCluster.getClusterName());
+
+            if (jsonDeserializedCluster.getClusterContainersID() != null) {
+                List<Container> containersToDelete = new ArrayList<>();
+                for (Container containerToDel : deserializedCluster.getClusterContainers())
+                    if (!reqContainers.contains(containerToDel))
+                        containersToDelete.add(containerToDel);
+                for (Container containerToDel : containersToDelete)
+                    if (mappingSession!=null) ((SProxCluster)deserializedCluster).removeClusterContainer(mappingSession, containerToDel);
+                    else deserializedCluster.removeClusterContainer(containerToDel);
+                for (Container containerToAdd : reqContainers)
+                    if (mappingSession!=null) ((SProxCluster)deserializedCluster).addClusterContainer(mappingSession, containerToAdd);
+                    else deserializedCluster.addClusterContainer(containerToAdd);
+            }
+
+            ret.setDeserializedObject(deserializedCluster);
+        }
+
+        return ret;
+    }
+
     @Override
     public CL createCluster(Session session, String clusterName) throws MappingDSException {
         CL ret = null;

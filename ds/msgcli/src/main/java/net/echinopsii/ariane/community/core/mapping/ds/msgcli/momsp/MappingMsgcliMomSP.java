@@ -39,7 +39,7 @@ public class MappingMsgcliMomSP {
         return properties != null && MappingMsgcliCfgLoader.load(properties);
     }
 
-    public static boolean start() {
+    public static boolean start(String version) {
         boolean ret = true;
 
         try {
@@ -51,7 +51,24 @@ public class MappingMsgcliMomSP {
         }
 
         try {
-            sharedMoMConnection.init(MappingMsgcliCfgLoader.getDefaultCfgEntity().getMomCliConf());
+            Dictionary properties = MappingMsgcliCfgLoader.getDefaultCfgEntity().getMomCliConf();
+            String hostname =  java.net.InetAddress.getLocalHost().getHostName();
+            if (properties.get(MomClient.ARIANE_PGURL_KEY)==null) properties.put(MomClient.ARIANE_PGURL_KEY, "http://"+hostname+":6969/ariane");
+            if (properties.get(MomClient.ARIANE_OSI_KEY)==null) properties.put(MomClient.ARIANE_OSI_KEY, hostname);
+            if (properties.get(MomClient.ARIANE_APP_KEY)==null) properties.put(MomClient.ARIANE_APP_KEY, "Ariane");
+            if (properties.get(MomClient.ARIANE_OTM_KEY)==null) properties.put(MomClient.ARIANE_OTM_KEY, MomClient.ARIANE_OTM_NOT_DEFINED);
+            if (properties.get(MomClient.ARIANE_CMP_KEY)==null) properties.put(MomClient.ARIANE_CMP_KEY, "echinopsii");
+
+            if (properties.get(MomClient.MOM_CLI).equals("net.echinopsii.ariane.community.messaging.rabbitmq.Client")) {
+                if (properties.get(MomClient.RBQ_PRODUCT_KEY) == null || properties.get(MomClient.RBQ_PRODUCT_KEY).equals("")) properties.put(MomClient.RBQ_PRODUCT_KEY, "Ariane");
+                if (properties.get(MomClient.RBQ_INFORMATION_KEY) == null || properties.get(MomClient.RBQ_INFORMATION_KEY).equals("")) properties.put(MomClient.RBQ_INFORMATION_KEY, "Ariane Remote Mapping Messaging Client");
+                if ((properties.get(MomClient.RBQ_VERSION_KEY) == null || properties.get(MomClient.RBQ_VERSION_KEY).equals(""))&& version != null) properties.put(MomClient.RBQ_VERSION_KEY, version);
+                if (properties.get(MomClient.RBQ_COPYRIGHT_KEY)==null || properties.get(MomClient.RBQ_COPYRIGHT_KEY).equals("")) properties.put(MomClient.RBQ_COPYRIGHT_KEY, "AGPLv3 / Free2Biz");
+            }
+
+            String pid = java.lang.management.ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
+            properties.put(MomClient.ARIANE_PID_KEY, pid);
+            sharedMoMConnection.init(properties);
         } catch (Exception e) {
             System.err.println("Error while initializing MoM client : " + e.getMessage());
             System.err.println("Provided MoM host : " + MappingMsgcliCfgLoader.getDefaultCfgEntity().getMomCliConf().get(MomClient.MOM_HOST));

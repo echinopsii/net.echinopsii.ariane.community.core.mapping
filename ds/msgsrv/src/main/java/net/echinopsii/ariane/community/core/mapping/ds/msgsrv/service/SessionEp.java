@@ -27,22 +27,25 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappin
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Map;
 
 public class SessionEp {
+    private static final Logger log = LoggerFactory.getLogger(SessionEp.class);
 
     static class SessionWorker implements AppMsgWorker {
         @Override
         public Map<String, Object> apply(Map<String, Object> message) {
-            Object oOperation = message.get(MappingSce.GLOBAL_OPERATION_FDN);
+            Object oOperation = message.get(MomMsgTranslator.OPERATION_FDN);
             String operation;
             String clientID;
             String sessionID;
 
             if (oOperation==null)
-                operation = MappingSce.GLOBAL_OPERATION_NOT_DEFINED;
+                operation = MomMsgTranslator.OPERATION_NOT_DEFINED;
             else
                 operation = oOperation.toString();
 
@@ -137,7 +140,7 @@ public class SessionEp {
                         message.put(MomMsgTranslator.MSG_ERR, "Internal server error : " + e.getMessage());
                     }
                     break;
-                case MappingSce.GLOBAL_OPERATION_NOT_DEFINED:
+                case MomMsgTranslator.OPERATION_NOT_DEFINED:
                     message.put(MomMsgTranslator.MSG_RC, 1);
                     message.put(MomMsgTranslator.MSG_ERR, "Operation not defined ! ");
                     break;
@@ -152,9 +155,11 @@ public class SessionEp {
     }
 
     public static void start() {
-        if (MappingMsgsrvMomSP.getSharedMoMConnection() != null && MappingMsgsrvMomSP.getSharedMoMConnection().isConnected())
+        if (MappingMsgsrvMomSP.getSharedMoMConnection() != null && MappingMsgsrvMomSP.getSharedMoMConnection().isConnected()) {
             MappingMsgsrvMomSP.getSharedMoMConnection().getServiceFactory().msgGroupRequestService(
                     Session.MAPPING_SESSION_SERVICE_Q, new SessionWorker()
             );
+            log.info("Ariane Mapping Messaging Service is waiting message on  " + Session.MAPPING_SESSION_SERVICE_Q + "...");
+        }
     }
 }

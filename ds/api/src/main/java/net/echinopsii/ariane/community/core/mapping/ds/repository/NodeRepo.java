@@ -25,15 +25,17 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import java.util.Set;
 
 public interface NodeRepo<N extends Node> {
-    public N saveNode(N node);
+    N saveNode(N node);
 
-    public void deleteNode(N node) throws MappingDSException;
+    void deleteNode(N node) throws MappingDSException;
 
-    public N findNodeByID(String ID) throws MappingDSException;
+    N findNodeByID(String ID) throws MappingDSException;
 
-    public N findNodeByEndpointURL(String URL) throws MappingDSException;
+    N findNodeByName(N parentNode, String nodeName) throws MappingDSException;
 
-    public Set<N> findNodesByProperties(String key, Object value) throws MappingDSException;
+    N findNodeByEndpointURL(String URL) throws MappingDSException;
 
-    public Set<N> findNodesBySelector(String selector) throws MappingDSException;
+    Set<N> findNodesByProperties(String key, Object value) throws MappingDSException;
+
+    Set<N> findNodesBySelector(String selector) throws MappingDSException;
 }

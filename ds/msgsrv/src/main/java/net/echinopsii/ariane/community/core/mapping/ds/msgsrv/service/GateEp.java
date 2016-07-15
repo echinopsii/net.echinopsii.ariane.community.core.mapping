@@ -30,32 +30,39 @@ import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.momsp.MappingMsgsr
 import net.echinopsii.ariane.community.core.mapping.ds.service.GateSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxNodeSceAbs;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.DeserializedPushResponse;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
 import java.util.Map;
 
 public class GateEp {
+    private static final Logger log = LoggerFactory.getLogger(GateEp.class);
+
     static class GateWorker implements AppMsgWorker {
 
         @Override
         public Map<String, Object> apply(Map<String, Object> message) {
-            Object oOperation = message.get(MappingSce.GLOBAL_OPERATION_FDN);
+            Object oOperation = message.get(MomMsgTranslator.OPERATION_FDN);
             String operation;
             String sid;
             String gid;
             String url;
             String name;
+            String payload;
             String pc_id;
             String ep_id;
             Boolean is_admin;
             Session session=null;
 
             if (oOperation==null)
-                operation = MappingSce.GLOBAL_OPERATION_NOT_DEFINED;
+                operation = MomMsgTranslator.OPERATION_NOT_DEFINED;
             else
                 operation = oOperation.toString();
 
@@ -63,7 +70,7 @@ public class GateEp {
             if (sid != null) {
                 session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sid);
                 if (session == null) {
-                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                    message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                     message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : session with provided id not found");
                     return message;
                 }
@@ -76,7 +83,29 @@ public class GateEp {
                         url = (String) message.get(GateSce.PARAM_GATE_URL);
                         pc_id  = (String) message.get(Container.TOKEN_CT_ID);
                         is_admin = (Boolean) message.get(GateSce.PARAM_GATE_IPADM);
-                        if (name!=null && url!=null && pc_id!=null && is_admin!=null) {
+                        payload = (String) message.get(MappingSce.GLOBAL_PARAM_PAYLOAD);
+                        if (payload!=null) {
+                            DeserializedPushResponse deserializationResponse = SProxNodeSceAbs.pushDeserializedGate(
+                                    GateJSON.JSON2Gate(payload),
+                                    session,
+                                    MappingMsgsrvBootstrap.getMappingSce()
+                            );
+                            if (deserializationResponse.getErrorMessage()!=null) {
+                                String result = deserializationResponse.getErrorMessage();
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
+                                message.put(MomMsgTranslator.MSG_BODY, result);
+                            } else if (deserializationResponse.getDeserializedObject()!=null) {
+                                ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                                GateJSON.oneGate2JSON((Gate) deserializationResponse.getDeserializedObject(), outStream);
+                                String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
+                                message.put(MomMsgTranslator.MSG_BODY, result);
+                            } else {
+                                String result = "ERROR while deserializing !";
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SERVER_ERR);
+                                message.put(MomMsgTranslator.MSG_BODY, result);
+                            }
+                        } else if (name!=null && url!=null && pc_id!=null && is_admin!=null) {
                             Container parentContainer;
                             if (session!=null) parentContainer = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(session, pc_id);
                             else parentContainer = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(pc_id);
@@ -90,14 +119,14 @@ public class GateEp {
                                 GateJSON.oneGate2JSONWithTypedProps(gate, outStream);
                                 String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
 
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                                 message.put(MomMsgTranslator.MSG_BODY, result);
                             } else {
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                 message.put(MomMsgTranslator.MSG_ERR, "Parent container not found with provided ID.");
                             }
                         } else {
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                             message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : gate name and/or parent container ID " +
                                     "and/or url and/or is admin not provided.");
                         }
@@ -108,9 +137,9 @@ public class GateEp {
                             if (session!=null) MappingMsgsrvBootstrap.getMappingSce().getGateSce().deleteGate(session, gid);
                             else MappingMsgsrvBootstrap.getMappingSce().getGateSce().deleteGate(gid);
 
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                         } else {
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                             message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : gate ID not provided.");
                         }
                         break;
@@ -126,15 +155,15 @@ public class GateEp {
                                 GateJSON.oneGate2JSONWithTypedProps(gate, outStream);
                                 String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
 
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                                 message.put(MomMsgTranslator.MSG_BODY, result);
                             } else {
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_NOT_FOUND);
                                 message.put(MomMsgTranslator.MSG_ERR, "Gate not found.");
                                 return message;
                             }
                         } else {
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                             message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : gate ID not provided.");
                         }
                         break;
@@ -148,10 +177,10 @@ public class GateEp {
                             GateJSON.manyGates2JSONWithTypedProps(gates, outStream);
                             String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
 
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                             message.put(MomMsgTranslator.MSG_BODY, result);
                         } else {
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_NOT_FOUND);
                             message.put(MomMsgTranslator.MSG_ERR, "Gates not found.");
                         }
                         break;
@@ -192,24 +221,24 @@ public class GateEp {
                                     ByteArrayOutputStream outStream = new ByteArrayOutputStream();
                                     GateJSON.oneGate2JSONWithTypedProps(gate, outStream);
                                     String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                                    message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                                     message.put(MomMsgTranslator.MSG_BODY, result);
                                 } else {
-                                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                    message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                     message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : endpoint not found with provided ID.");
                                     return message;
                                 }
                             } else {
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                 message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : Gate not found with provided ID.");
                                 return message;
                             }
                         } else {
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                             message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : gate ID and/or endpoint ID not provided.");
                         }
                         break;
-                    case MappingSce.GLOBAL_OPERATION_NOT_DEFINED:
+                    case MomMsgTranslator.OPERATION_NOT_DEFINED:
                         message.put(MomMsgTranslator.MSG_RC, 1);
                         message.put(MomMsgTranslator.MSG_ERR, "Operation not defined ! ");
                         break;
@@ -220,7 +249,7 @@ public class GateEp {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SERVER_ERR);
+                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SERVER_ERR);
                 message.put(MomMsgTranslator.MSG_ERR, "Internal server error (" + operation + ") : " + e.getMessage());
             }
             return message;
@@ -228,9 +257,11 @@ public class GateEp {
     }
 
     public static void start() {
-        if (MappingMsgsrvMomSP.getSharedMoMConnection() != null && MappingMsgsrvMomSP.getSharedMoMConnection().isConnected())
+        if (MappingMsgsrvMomSP.getSharedMoMConnection() != null && MappingMsgsrvMomSP.getSharedMoMConnection().isConnected()) {
             MappingMsgsrvMomSP.getSharedMoMConnection().getServiceFactory().msgGroupRequestService(
                     GateSce.Q_MAPPING_GATE_SERVICE, new GateWorker()
             );
+            log.info("Ariane Mapping Messaging Service is waiting message on  " + GateSce.Q_MAPPING_GATE_SERVICE + "...");
+        }
     }
 }

@@ -26,12 +26,13 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxLink;
 import net.echinopsii.ariane.community.core.mapping.ds.service.LinkSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxLinkSceAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.wat.MappingBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.LinkJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
-import net.echinopsii.ariane.community.core.mapping.wat.rest.ds.JSONDeserializationResponse;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.DeserializedPushResponse;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
@@ -47,67 +48,6 @@ import java.util.HashSet;
 @Path("/mapping/domain/links")
 public class LinkEp {
     private static final Logger log = LoggerFactory.getLogger(LinkEp.class);
-
-    public static JSONDeserializationResponse jsonFriendlyToMappingFriendly(LinkJSON.JSONDeserializedLink jsonDeserializedLink,
-                                                                            Session mappingSession) throws MappingDSException {
-        JSONDeserializationResponse ret = new JSONDeserializationResponse();
-
-        // DETECT POTENTIAL QUERIES ERROR FIRST
-        Endpoint reqSourceEndpoint=null;
-        Endpoint reqTargetEndpoint=null;
-        Transport reqTransport=null;
-
-        if (jsonDeserializedLink.getLinkSEPID()!=null) {
-            if (mappingSession!=null) reqSourceEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, jsonDeserializedLink.getLinkSEPID());
-            else reqSourceEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(jsonDeserializedLink.getLinkSEPID());
-            if (reqSourceEndpoint==null) ret.setErrorMessage("Request Error : source endpoint with provided ID " + jsonDeserializedLink.getLinkSEPID() + " was not found.");
-        }
-        if (ret.getErrorMessage() == null && jsonDeserializedLink.getLinkTEPID()!=null) {
-            if (mappingSession!=null) reqTargetEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, jsonDeserializedLink.getLinkTEPID());
-            else reqTargetEndpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(jsonDeserializedLink.getLinkTEPID());
-            if (reqTargetEndpoint==null) ret.setErrorMessage("Request Error : target endpoint with provided ID " + jsonDeserializedLink.getLinkTEPID() + " was not found.");
-        }
-        if (ret.getErrorMessage() == null && jsonDeserializedLink.getLinkTRPID()!=null) {
-            if (mappingSession!=null) reqTransport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(mappingSession, jsonDeserializedLink.getLinkTRPID());
-            else reqTransport = MappingBootstrap.getMappingSce().getTransportSce().getTransport(jsonDeserializedLink.getLinkTRPID());
-            if (reqTransport == null) ret.setErrorMessage("Request Error : transport with provided ID " + jsonDeserializedLink.getLinkTRPID() + " was not found.");
-        }
-
-        // LOOK IF LINK MAYBE UPDATED OR CREATED
-        Link deserializedLink = null;
-        if (ret.getErrorMessage() == null && jsonDeserializedLink.getLinkID()!=null) {
-            if (mappingSession!=null) deserializedLink = MappingBootstrap.getMappingSce().getLinkSce().getLink(mappingSession, jsonDeserializedLink.getLinkID());
-            else deserializedLink = MappingBootstrap.getMappingSce().getLinkSce().getLink(jsonDeserializedLink.getLinkID());
-            if (deserializedLink==null) ret.setErrorMessage("Request Error : link with provided ID " + jsonDeserializedLink.getLinkID() + " was not found.");
-        }
-
-        // APPLY REQ IF NO ERRORS
-        if (ret.getErrorMessage() == null) {
-            if (deserializedLink==null) {
-                if (mappingSession!=null) deserializedLink = MappingBootstrap.getMappingSce().getLinkSce().createLink(
-                        mappingSession,
-                        jsonDeserializedLink.getLinkSEPID(),
-                        jsonDeserializedLink.getLinkTEPID(),
-                        jsonDeserializedLink.getLinkTRPID());
-                else deserializedLink = MappingBootstrap.getMappingSce().getLinkSce().createLink(
-                        jsonDeserializedLink.getLinkSEPID(),
-                        jsonDeserializedLink.getLinkTEPID(),
-                        jsonDeserializedLink.getLinkTRPID());
-            } else {
-                if (reqSourceEndpoint!=null)
-                    if (mappingSession!=null) ((SProxLink) deserializedLink).setLinkEndpointSource(mappingSession, reqSourceEndpoint);
-                    else deserializedLink.setLinkEndpointSource(reqSourceEndpoint);
-                if (mappingSession!=null) ((SProxLink)deserializedLink).setLinkEndpointTarget(mappingSession, reqTargetEndpoint);
-                else deserializedLink.setLinkEndpointTarget(reqTargetEndpoint);
-                if (reqTransport!=null)
-                    if (mappingSession!=null) ((SProxLink)deserializedLink).setLinkTransport(mappingSession, reqTransport);
-                    else deserializedLink.setLinkTransport(reqTransport);
-            }
-            ret.setDeserializedObject(deserializedLink);
-        }
-
-        return ret;
-    }
 
     private Response _displayLink(String id, String sessionId) {
         Subject subject = SecurityUtils.getSubject();
@@ -228,23 +168,38 @@ public class LinkEp {
                         Link toPrint;
                         if (mappingSession!=null)  toPrint = MappingBootstrap.getMappingSce().getLinkBySourceEPandDestinationEP(mappingSession, sourceEndpoint, targetEndpoint);
                         else toPrint = MappingBootstrap.getMappingSce().getLinkBySourceEPandDestinationEP(sourceEndpoint, targetEndpoint);
-                        LinkJSON.oneLink2JSON(toPrint, outStream);
-                        result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                        return Response.status(Status.OK).entity(result).build();
+                        if (toPrint!=null) {
+                            LinkJSON.oneLink2JSON(toPrint, outStream);
+                            result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                            return Response.status(Status.OK).entity(result).build();
+                        } else {
+                            result = "Unable to find Link !";
+                            return Response.status(Status.BAD_REQUEST).entity(result).build();
+                        }
                     } else if (sourceEndpoint != null) {
                         HashSet<Link> toPrint;
                         if (mappingSession!=null) toPrint = (HashSet<Link>)MappingBootstrap.getMappingSce().getLinksBySourceEP(mappingSession, sourceEndpoint);
                         else toPrint = (HashSet<Link>)MappingBootstrap.getMappingSce().getLinksBySourceEP(sourceEndpoint);
-                        LinkJSON.manyLinks2JSON(toPrint, outStream);
-                        result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                        return Response.status(Status.OK).entity(result).build();
+                        if (toPrint!=null) {
+                            LinkJSON.manyLinks2JSON(toPrint, outStream);
+                            result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                            return Response.status(Status.OK).entity(result).build();
+                        } else {
+                            result = "Unable to find Link !";
+                            return Response.status(Status.BAD_REQUEST).entity(result).build();
+                        }
                     } else {
                         HashSet<Link> toPrint;
                         if (mappingSession!=null) toPrint = (HashSet<Link>) MappingBootstrap.getMappingSce().getLinksByDestinationEP(mappingSession, targetEndpoint);
                         else toPrint = (HashSet<Link>) MappingBootstrap.getMappingSce().getLinksByDestinationEP(targetEndpoint);
-                        LinkJSON.manyLinks2JSON(toPrint, outStream);
-                        result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                        return Response.status(Status.OK).entity(result).build();
+                        if (toPrint!=null) {
+                            LinkJSON.manyLinks2JSON(toPrint, outStream);
+                            result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                            return Response.status(Status.OK).entity(result).build();
+                        } else {
+                            result = "Unable to find Link !";
+                            return Response.status(Status.BAD_REQUEST).entity(result).build();
+                        }
                     }
                 } catch (Exception e) {
                     log.error(e.getMessage());
@@ -316,7 +271,11 @@ public class LinkEp {
                     }
 
                     Response ret;
-                    JSONDeserializationResponse deserializationResponse = jsonFriendlyToMappingFriendly(LinkJSON.JSON2Link(payload), mappingSession);
+                    DeserializedPushResponse deserializationResponse = SProxLinkSceAbs.pushDeserializedLink(
+                            LinkJSON.JSON2Link(payload),
+                            mappingSession,
+                            MappingBootstrap.getMappingSce()
+                    );
                     if (deserializationResponse.getErrorMessage()!=null) {
                         String result = deserializationResponse.getErrorMessage();
                         ret = Response.status(Status.BAD_REQUEST).entity(result).build();

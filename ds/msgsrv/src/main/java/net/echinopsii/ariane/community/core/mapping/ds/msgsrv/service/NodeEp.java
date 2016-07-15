@@ -33,26 +33,32 @@ import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.momsp.MappingMsgsr
 import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.NodeSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxNodeSceAbs;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.DeserializedPushResponse;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
 import java.util.Map;
 
 public class NodeEp {
+    private static final Logger log = LoggerFactory.getLogger(NodeEp.class);
 
     static class NodeWorker implements AppMsgWorker {
         @Override
         public Map<String, Object> apply(Map<String, Object> message) {
-            Object oOperation = message.get(MappingSce.GLOBAL_OPERATION_FDN);
+            Object oOperation = message.get(MomMsgTranslator.OPERATION_FDN);
             String operation;
             String sid;
             String nid;
             String name;
             String pc_id;
             String pn_id;
+            String payload;
             String cn_id;
             String tn_id;
             String ep_id;
@@ -64,7 +70,7 @@ public class NodeEp {
 
 
             if (oOperation==null)
-                operation = MappingSce.GLOBAL_OPERATION_NOT_DEFINED;
+                operation = MomMsgTranslator.OPERATION_NOT_DEFINED;
             else
                 operation = oOperation.toString();
 
@@ -72,7 +78,7 @@ public class NodeEp {
             if (sid != null) {
                 session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sid);
                 if (session == null) {
-                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                    message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                     message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : session with provided id not found");
                     return message;
                 }
@@ -84,7 +90,29 @@ public class NodeEp {
                         name = (String) message.get(NodeSce.PARAM_NODE_NAME);
                         pc_id = (String) message.get(Container.TOKEN_CT_ID);
                         pn_id = (String) message.get(NodeSce.PARAM_NODE_PNID);
-                        if (name != null && pc_id != null) {
+                        payload = (String) message.get(MappingSce.GLOBAL_PARAM_PAYLOAD);
+                        if (payload!=null) {
+                            DeserializedPushResponse deserializationResponse = SProxNodeSceAbs.pushDeserializedNode(
+                                    NodeJSON.JSON2Node(payload),
+                                    session,
+                                    MappingMsgsrvBootstrap.getMappingSce()
+                            );
+                            if (deserializationResponse.getErrorMessage()!=null) {
+                                String result = deserializationResponse.getErrorMessage();
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
+                                message.put(MomMsgTranslator.MSG_BODY, result);
+                            } else if (deserializationResponse.getDeserializedObject()!=null) {
+                                ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                                NodeJSON.oneNode2JSON((Node)deserializationResponse.getDeserializedObject(), outStream);
+                                String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
+                                message.put(MomMsgTranslator.MSG_BODY, result);
+                            } else {
+                                String result = "ERROR while deserializing !";
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SERVER_ERR);
+                                message.put(MomMsgTranslator.MSG_BODY, result);
+                            }
+                        } else if (name != null && pc_id != null) {
                             Container pcont = null;
                             if (session != null) pcont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(session, pc_id);
                             else pcont = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(pc_id);
@@ -96,7 +124,7 @@ public class NodeEp {
                                 else pnode = MappingMsgsrvBootstrap.getMappingSce().getNodeSce().getNode(pn_id);
 
                                 if (pnode==null && !pn_id.equals(MappingSce.GLOBAL_PARAM_OBJ_NONE)) {
-                                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
+                                    message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_NOT_FOUND);
                                     message.put(MomMsgTranslator.MSG_ERR, "Parent node not found with provided ID.");
                                     return message;
                                 }
@@ -108,13 +136,13 @@ public class NodeEp {
                                 NodeJSON.oneNode2JSONWithTypedProps(node, outStream);
                                 String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
                                 message.put(MomMsgTranslator.MSG_BODY, result);
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                             } else {
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                 message.put(MomMsgTranslator.MSG_ERR, "Parent container not found with provided ID.");
                             }
                         } else {
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                             message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : node name and/or parent container ID not provided.");
                         }
                         break;
@@ -124,9 +152,9 @@ public class NodeEp {
                             if (session!=null) MappingMsgsrvBootstrap.getMappingSce().getNodeSce().deleteNode(session, nid);
                             else MappingMsgsrvBootstrap.getMappingSce().getNodeSce().deleteNode(nid);
 
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                         } else {
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                             message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : node ID not provided.");
                         }
                         break;
@@ -153,12 +181,12 @@ public class NodeEp {
                                     if (session != null) node = MappingMsgsrvBootstrap.getMappingSce().getNodeSce().getNodeByName(session, parentNode, name);
                                     else node = MappingMsgsrvBootstrap.getMappingSce().getNodeSce().getNodeByName(parentNode, name);
                                 } else {
-                                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                    message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                     message.put(MomMsgTranslator.MSG_ERR, "Parent node not found with provided ID.");
                                     return message;
                                 }
                             } else {
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                 switch (operation) {
                                     case NodeSce.OP_GET_NODE:
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : node ID not provided.");
@@ -178,15 +206,15 @@ public class NodeEp {
                                 NodeJSON.oneNode2JSONWithTypedProps(node, outStream);
                                 String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
 
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                                 message.put(MomMsgTranslator.MSG_BODY, result);
                             } else {
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_NOT_FOUND);
                                 message.put(MomMsgTranslator.MSG_ERR, "Node not found.");
                                 return message;
                             }
                         } else {
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                             switch (operation) {
                                 case NodeSce.OP_GET_NODE:
                                     message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : node ID not provided.");
@@ -201,7 +229,7 @@ public class NodeEp {
                         }
                         break;
                     case NodeSce.OP_GET_NODES:
-                        selector = (message.get(MappingSce.GLOBAL_PARAM_SELECTOR)==null || ((String) message.get(MappingSce.GLOBAL_PARAM_SELECTOR)).equals(MappingSce.GLOBAL_PARAM_OBJ_NONE)) ? null : (String) message.get(MappingSce.GLOBAL_PARAM_SELECTOR);
+                        selector = (message.get(MappingSce.GLOBAL_PARAM_SELECTOR)==null || (message.get(MappingSce.GLOBAL_PARAM_SELECTOR)).equals(MappingSce.GLOBAL_PARAM_OBJ_NONE)) ? null : (String) message.get(MappingSce.GLOBAL_PARAM_SELECTOR);
                         prop_field = (message.containsKey(MappingSce.GLOBAL_PARAM_PROP_FIELD)) ? message.get(MappingSce.GLOBAL_PARAM_PROP_FIELD).toString() : null;
 
                         HashSet<Node> nodes;
@@ -215,15 +243,15 @@ public class NodeEp {
                             else nodes = (HashSet<Node>) MappingMsgsrvBootstrap.getMappingSce().getNodeSce().getNodes(selector);
                         }
 
-                        if (nodes!=null) {
+                        if (nodes!=null && nodes.size() > 0) {
                             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
                             NodeJSON.manyNodes2JSONWithTypedProps(nodes, outStream);
                             String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
 
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                             message.put(MomMsgTranslator.MSG_BODY, result);
                         } else {
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_NOT_FOUND);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_NOT_FOUND);
                             message.put(MomMsgTranslator.MSG_ERR, "Nodes not found.");
                         }
                         break;
@@ -244,7 +272,7 @@ public class NodeEp {
                                         if (session != null) ((SProxNode)node).addNodeProperty(session, typedPropertyField.getPropertyName(), value);
                                         else node.addNodeProperty(typedPropertyField.getPropertyName(), value);
                                     } else {
-                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                        message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : property field not provided.");
                                         return message;
                                     }
@@ -254,7 +282,7 @@ public class NodeEp {
                                         if (session!=null) ((SProxNode)node).removeNodeProperty(session, prop_name);
                                         else node.removeNodeProperty(prop_name);
                                     } else {
-                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                        message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : property name not provided.");
                                         return message;
                                     }
@@ -264,14 +292,14 @@ public class NodeEp {
                                 NodeJSON.oneNode2JSONWithTypedProps(node, outStream);
                                 String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
 
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                                 message.put(MomMsgTranslator.MSG_BODY, result);
                             } else {
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                 message.put(MomMsgTranslator.MSG_ERR, "Node not found.");
                             }
                         } else {
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                             message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : node ID not provided.");
                         }
                         break;
@@ -330,7 +358,7 @@ public class NodeEp {
                                             }
                                         }
                                     } else {
-                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                        message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : parent container with provided id not found");
                                         return message;
                                     }
@@ -358,7 +386,7 @@ public class NodeEp {
                                             message.put(Node.JOIN_CURRENT_PNODE, resultPnode);
                                         }
                                     } else {
-                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                        message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : parent node with provided id not found");
                                         return message;
                                     }
@@ -381,7 +409,7 @@ public class NodeEp {
                                         String resultEp = ToolBox.getOuputStreamContent(outStream, "UTF-8");
                                         message.put(MappingDSGraphPropertyNames.DD_NODE_EDGE_ENDPT_KEY, resultEp);
                                     } else {
-                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                        message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : endpoint with provided id not found");
                                         return message;
                                     }
@@ -404,7 +432,7 @@ public class NodeEp {
                                         String resultCn = ToolBox.getOuputStreamContent(outStream, "UTF-8");
                                         message.put(MappingDSGraphPropertyNames.DD_NODE_EDGE_CHILD_KEY, resultCn);
                                     } else {
-                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                        message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : child node with provided id not found");
                                         return message;
                                     }
@@ -427,12 +455,12 @@ public class NodeEp {
                                         String resultTn = ToolBox.getOuputStreamContent(outStream, "UTF-8");
                                         message.put(MappingDSGraphPropertyNames.DD_NODE_EDGE_TWIN_KEY, resultTn);
                                     } else {
-                                        message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                        message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : twin node with provided id not found");
                                         return message;
                                     }
                                 } else {
-                                    message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                    message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                     message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : parameter inconsistent with operation");
                                     return message;
                                 }
@@ -440,14 +468,14 @@ public class NodeEp {
                                 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
                                 NodeJSON.oneNode2JSONWithTypedProps(node, outStream);
                                 String resultNode = ToolBox.getOuputStreamContent(outStream, "UTF-8");
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SUCCESS);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
                                 message.put(MomMsgTranslator.MSG_BODY, resultNode);
                             } else {
-                                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                 message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : node with provided id not found");
                             }
                         } else {
-                            message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_BAD_REQ);
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                             switch (operation) {
                                 case Node.OP_SET_NODE_NAME:
                                     message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : id or name not provided.");
@@ -473,7 +501,7 @@ public class NodeEp {
                             }
                         }
                         break;
-                    case MappingSce.GLOBAL_OPERATION_NOT_DEFINED:
+                    case MomMsgTranslator.OPERATION_NOT_DEFINED:
                         message.put(MomMsgTranslator.MSG_RC, 1);
                         message.put(MomMsgTranslator.MSG_ERR, "Operation not defined ! ");
                         break;
@@ -484,7 +512,7 @@ public class NodeEp {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                message.put(MomMsgTranslator.MSG_RC, MappingSce.MAPPING_SCE_RET_SERVER_ERR);
+                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SERVER_ERR);
                 message.put(MomMsgTranslator.MSG_ERR, "Internal server error (" + operation + ") : " + e.getMessage());
             }
 
@@ -493,9 +521,11 @@ public class NodeEp {
     }
 
     public static void start() {
-        if (MappingMsgsrvMomSP.getSharedMoMConnection() != null && MappingMsgsrvMomSP.getSharedMoMConnection().isConnected())
+        if (MappingMsgsrvMomSP.getSharedMoMConnection() != null && MappingMsgsrvMomSP.getSharedMoMConnection().isConnected()) {
             MappingMsgsrvMomSP.getSharedMoMConnection().getServiceFactory().msgGroupRequestService(
                     NodeSce.Q_MAPPING_NODE_SERVICE, new NodeWorker()
             );
+            log.info("Ariane Mapping Messaging Service is waiting message on  " + NodeSce.Q_MAPPING_NODE_SERVICE + "...");
+        }
     }
 }
