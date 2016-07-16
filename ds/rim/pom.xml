@@ -86,6 +86,8 @@
                             net.echinopsii.ariane.community.core.mapping.ds.service.proxy;version=${project.version},
                             net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service;version="${project.version}";resolution:=optional,
                             net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.tools;version=${project.version};resolution:=optional,
+                            net.echinopsii.ariane.community.core.mapping.ds.msgcli.service;version="${project.version}";resolution:=optional,
+                            net.echinopsii.ariane.community.core.mapping.ds.msgcli.service.tools;version=${project.version};resolution:=optional,
                             org.osgi.framework;version="[${version.osgimin.org.osgi.framework},${version.osgimax.org.osgi.framework})",
                             org.slf4j;version="${version.org.slf4j}"
                         </Import-Package>

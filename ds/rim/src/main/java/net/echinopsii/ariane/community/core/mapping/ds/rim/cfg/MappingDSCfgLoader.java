@@ -40,6 +40,9 @@ public class MappingDSCfgLoader {
     private static final String MAPPING_DS_CFG_LOADER_BLUEPRINTS_BDL_NAME = "net.echinopsii.ariane.community.core.mapping.ds.blueprints";
     private static final String MAPPING_DS_CFG_LOADER_BLUEPRINTS_CFG_FILE = "mapping.ds.rim.blueprints.json";
 
+    private static final String MAPPING_DS_CFG_LOADER_MSGCLI_BDL_NAME = "net.echinopsii.ariane.community.core.mapping.ds.msgcli";
+    private static final String MAPPING_DS_CFG_LOADER_MSGCLI_CFG_FILE = "mapping.ds.rim.msgcli.json";
+
     private static final Logger log = LoggerFactory.getLogger(MappingDSCfgLoader.class);
 
     private final static ObjectMapper jsonMapper = new ObjectMapper();
@@ -72,6 +75,11 @@ public class MappingDSCfgLoader {
                 defaultCfgEntity = new MappingDSCfgEntity();
                 defaultCfgEntity.setBundleName(bundleName);
                 defaultCfgEntity.setBundleCfgFile(MAPPING_DS_CFG_LOADER_BLUEPRINTS_CFG_FILE);
+                break;
+            case MAPPING_DS_CFG_LOADER_MSGCLI_BDL_NAME:
+                defaultCfgEntity = new MappingDSCfgEntity();
+                defaultCfgEntity.setBundleName(bundleName);
+                defaultCfgEntity.setBundleCfgFile(MAPPING_DS_CFG_LOADER_MSGCLI_CFG_FILE);
                 break;
             default:
                 log.error("This target MappingDS bundle name {} is not managed by MappingDS RIM !", new Object[]{bundleName});

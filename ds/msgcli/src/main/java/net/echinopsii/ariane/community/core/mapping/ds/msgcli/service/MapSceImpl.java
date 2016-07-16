@@ -58,7 +58,15 @@ public class MapSceImpl implements MapSce {
                 default:
                     throw new MappingDSException(msg_err);
             }
-        } else jsonMap = (String) retMsg.get(MomMsgTranslator.MSG_BODY);
+        } else {
+            Object retmap = retMsg.get(MomMsgTranslator.MSG_BODY);
+            if (retmap instanceof String)
+                jsonMap = (String) retMsg.get(MomMsgTranslator.MSG_BODY);
+            else if (retmap instanceof byte[]) {
+                jsonMap = new String((byte[])retmap);
+            }
+
+        }
         return jsonMap;
     }
 }

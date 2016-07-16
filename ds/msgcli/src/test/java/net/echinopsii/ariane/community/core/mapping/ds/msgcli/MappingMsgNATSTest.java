@@ -546,8 +546,24 @@ public class MappingMsgNATSTest {
             bis = messagingMappingSce.getContainerSce().getContainer(container.getContainerID());
             assertFalse(bis.getContainerProperties().containsKey("listProp"));
             HashMap<String, Object> mapProp = new HashMap<>();
-            mapProp.put("boolVal", true);
-            mapProp.put("stringVal", "test");
+            // {"avg_egress_rate":["decimal",0.20078929842011994],"avg_ingress_rate":["decimal",0.20078929842011994],"avg_ack_egress_rate":["decimal",0.20078929842011994],
+            // "pending_acks":["int",0],"q2":["int",0],"q1":["int",0],"q4":["int",0],"delta":["array",["string",["delta","undefined",0,"undefined"]]],
+            // "q3":["int",0],"ram_ack_count":["int",0],"len":["int",0],"next_seq_id":["int",8418],"avg_ack_ingress_rate":["decimal",0.20078929842011994],
+            // "persistent_count":["int",0],"target_ram_count":["int",0],"ram_msg_count":["int",0]}
+            mapProp.put("avg_egress_rate", 0.20078929842011994);
+            mapProp.put("avg_ingress_rate", 0.20078929842011994);
+            mapProp.put("avg_ack_egress_rate", 0.20078929842011994);
+            mapProp.put("pending_acks", 0);
+            mapProp.put("q1", 0);
+            mapProp.put("q2", 0);
+            mapProp.put("q3", 0);
+            mapProp.put("q4", 0);
+            ArrayList<Object> delta = new ArrayList<>();
+            delta.add("delta");
+            delta.add("undefined");
+            delta.add(0);
+            delta.add("undefined");
+            mapProp.put("delta", delta);
             container.addContainerProperty("mapProp", mapProp);
             assertTrue(container.getContainerProperties().containsKey("mapProp"));
             assertTrue(container.getContainerProperties().get("mapProp").equals(mapProp));
