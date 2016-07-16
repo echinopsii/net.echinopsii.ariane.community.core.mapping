@@ -21,6 +21,7 @@ package net.echinopsii.ariane.community.core.mapping.ds.json;
 import com.fasterxml.jackson.core.JsonFactory;
 
 import java.io.*;
+import java.math.BigDecimal;
 
 public class ToolBox {
 
@@ -54,6 +55,9 @@ public class ToolBox {
             case "boolean":
                 ovalue = new Boolean(value);
                 break;
+            case "decimal":
+                ovalue = new BigDecimal(value);
+                break;
             case "array":
             case "map":
                 ovalue = PropertiesJSON.JSONStringToPropertyObject(type, value);
@@ -62,7 +66,8 @@ public class ToolBox {
                 ovalue = value;
                 break;
             default:
-                throw new PropertiesException("Invalid property type ("+type.toLowerCase()+"). Supported property types are : array, boolean, double, int, long, map and String");
+                throw new PropertiesException("Invalid property type ("+type.toLowerCase()+"). Supported property types are : " +
+                        "array, boolean, decimal, double, int, long, map and String");
         }
         return ovalue;
     }
