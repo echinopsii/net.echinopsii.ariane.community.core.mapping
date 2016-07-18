@@ -26,11 +26,14 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.echinopsii.ariane.community.core.mapping.ds.rim.registry.MappingDSRegistryService;
+import net.echinopsii.ariane.community.messaging.api.MomClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Dictionary;
 
 public class MappingDSCfgLoader {
@@ -51,7 +54,18 @@ public class MappingDSCfgLoader {
 
     public static boolean isValid(final Dictionary properties) {
         if (properties.get(MAPPING_DS_RIM_CFG_BUNDLE_NAME_KEY)==null) return false;
-        else return true;
+        else {
+            if (properties.get(MAPPING_DS_RIM_CFG_BUNDLE_NAME_KEY).equals(MAPPING_DS_CFG_LOADER_MSGCLI_BDL_NAME)) {
+                if (properties.get(MomClient.NATS_CONNECTION_NAME)==null || properties.get(MomClient.NATS_CONNECTION_NAME).equals(""))
+                    try {
+                        properties.put(MomClient.NATS_CONNECTION_NAME, "Ariane Mapping Proxy @ " + InetAddress.getLocalHost().getHostName());
+                    } catch (UnknownHostException e) {
+                        log.warn("Problem while getting hostname : " + e.getCause());
+                        properties.put(MomClient.NATS_CONNECTION_NAME, "Ariane Mapping Proxy");
+                    }
+            }
+            return true;
+        }
     }
 
     public static boolean load(InputStream is) throws JsonParseException, JsonMappingException, IOException {

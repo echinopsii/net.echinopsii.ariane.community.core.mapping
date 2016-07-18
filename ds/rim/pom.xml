@@ -22,7 +22,12 @@
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>net.echinopsii.ariane.community.messaging</groupId>
+            <artifactId>net.echinopsii.ariane.community.messaging.api</artifactId>
+            <version>${version.net.echinopsii.ariane.community.messaging}</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- Tests -->
         <dependency>
             <groupId>net.echinopsii.ariane.community.core.mapping.ds</groupId>
@@ -82,6 +87,7 @@
                             com.fasterxml.jackson.databind.ser.std;version="${version.com.fasterxml.jackson}",
                             com.fasterxml.jackson.databind.type;version="${version.com.fasterxml.jackson}",
                             com.fasterxml.jackson.databind.util;version="${version.com.fasterxml.jackson}",
+                            net.echinopsii.ariane.community.messaging.api;version=${version.net.echinopsii.ariane.community.messaging},
                             net.echinopsii.ariane.community.core.mapping.ds.service;version=${project.version},
                             net.echinopsii.ariane.community.core.mapping.ds.service.proxy;version=${project.version},
                             net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service;version="${project.version}";resolution:=optional,
