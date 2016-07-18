@@ -25,6 +25,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Dictionary;
 
 public class MappingMsgsrvMomSP {
@@ -58,14 +60,16 @@ public class MappingMsgsrvMomSP {
             String pid = java.lang.management.ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
             properties.put(MomClient.ARIANE_PID_KEY, pid);
 
-
             if (properties.get(MomClient.MOM_CLI).equals("net.echinopsii.ariane.community.messaging.rabbitmq.Client")) {
                 if (properties.get(MomClient.RBQ_PRODUCT_KEY) == null || properties.get(MomClient.RBQ_PRODUCT_KEY).equals("")) properties.put(MomClient.RBQ_PRODUCT_KEY, "Ariane");
                 if (properties.get(MomClient.RBQ_INFORMATION_KEY) == null || properties.get(MomClient.RBQ_INFORMATION_KEY).equals("")) properties.put(MomClient.RBQ_INFORMATION_KEY, "Ariane Remote Mapping Messaging Client");
                 if ((properties.get(MomClient.RBQ_VERSION_KEY) == null || properties.get(MomClient.RBQ_VERSION_KEY).equals(""))&& version != null) properties.put(MomClient.RBQ_VERSION_KEY, version);
                 if (properties.get(MomClient.RBQ_COPYRIGHT_KEY)==null || properties.get(MomClient.RBQ_COPYRIGHT_KEY).equals("")) properties.put(MomClient.RBQ_COPYRIGHT_KEY, "AGPLv3 / Free2Biz");
             } else if (properties.get(MomClient.MOM_CLI).equals("net.echinopsii.ariane.community.messaging.nats.Client")) {
-                if (properties.get(MomClient.NATS_CONNECTION_NAME)==null || properties.get(MomClient.NATS_CONNECTION_NAME).equals("")) {
+                try {
+                    properties.put(MomClient.NATS_CONNECTION_NAME, "Ariane Mapping Service @ " + InetAddress.getLocalHost().getHostName());
+                } catch (UnknownHostException e) {
+                    log.warn("Problem while getting hostname : " + e.getCause());
                     properties.put(MomClient.NATS_CONNECTION_NAME, "Ariane Mapping Service");
                 }
             }
