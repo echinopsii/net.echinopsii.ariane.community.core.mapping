@@ -52,17 +52,36 @@ public class MappingDSCfgLoader {
 
     private static MappingDSCfgEntity defaultCfgEntity = null;
 
-    public static boolean isValid(final Dictionary properties) {
+    public static boolean isValid(final Dictionary properties, String version) {
         if (properties.get(MAPPING_DS_RIM_CFG_BUNDLE_NAME_KEY)==null) return false;
         else {
             if (properties.get(MAPPING_DS_RIM_CFG_BUNDLE_NAME_KEY).equals(MAPPING_DS_CFG_LOADER_MSGCLI_BDL_NAME)) {
-                if (properties.get(MomClient.NATS_CONNECTION_NAME)==null || properties.get(MomClient.NATS_CONNECTION_NAME).equals(""))
-                    try {
-                        properties.put(MomClient.NATS_CONNECTION_NAME, "Ariane Mapping Proxy @ " + InetAddress.getLocalHost().getHostName());
-                    } catch (UnknownHostException e) {
-                        log.warn("Problem while getting hostname : " + e.getCause());
-                        properties.put(MomClient.NATS_CONNECTION_NAME, "Ariane Mapping Proxy");
-                    }
+                String hostname = null;
+                String connectionName ;
+                try {
+                    hostname = InetAddress.getLocalHost().getHostName();
+                    connectionName = "Ariane Mapping Proxy @ " + hostname;
+                } catch (UnknownHostException e) {
+                    log.warn("Problem while getting hostname : " + e.getCause());
+                    hostname = "";
+                    connectionName = "Ariane Mapping Proxy";
+                }
+                if (properties.get(MomClient.ARIANE_PGURL_KEY)==null) properties.put(MomClient.ARIANE_PGURL_KEY, "http://"+hostname+":6969/ariane");
+                if (properties.get(MomClient.ARIANE_OSI_KEY)==null) properties.put(MomClient.ARIANE_OSI_KEY, hostname);
+                if (properties.get(MomClient.ARIANE_APP_KEY)==null) properties.put(MomClient.ARIANE_APP_KEY, "Ariane");
+                if (properties.get(MomClient.ARIANE_OTM_KEY)==null) properties.put(MomClient.ARIANE_OTM_KEY, MomClient.ARIANE_OTM_NOT_DEFINED);
+                if (properties.get(MomClient.ARIANE_CMP_KEY)==null) properties.put(MomClient.ARIANE_CMP_KEY, "echinopsii");
+                String pid = java.lang.management.ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
+                properties.put(MomClient.ARIANE_PID_KEY, pid);
+
+                if (properties.get(MomClient.MOM_CLI).equals("net.echinopsii.ariane.community.messaging.nats.Client")) {
+                    if (properties.get(MomClient.NATS_CONNECTION_NAME) == null || properties.get(MomClient.NATS_CONNECTION_NAME).equals("")) properties.put(MomClient.NATS_CONNECTION_NAME,connectionName);
+                } else if (properties.get(MomClient.MOM_CLI).equals("net.echinopsii.ariane.community.messaging.rabbitmq.Client")) {
+                    if (properties.get(MomClient.RBQ_PRODUCT_KEY) == null || properties.get(MomClient.RBQ_PRODUCT_KEY).equals("")) properties.put(MomClient.RBQ_PRODUCT_KEY, "Ariane");
+                    if (properties.get(MomClient.RBQ_INFORMATION_KEY) == null || properties.get(MomClient.RBQ_INFORMATION_KEY).equals("")) properties.put(MomClient.RBQ_INFORMATION_KEY, connectionName);
+                    if ((properties.get(MomClient.RBQ_VERSION_KEY) == null || properties.get(MomClient.RBQ_VERSION_KEY).equals(""))&& version != null) properties.put(MomClient.RBQ_VERSION_KEY, version);
+                    if (properties.get(MomClient.RBQ_COPYRIGHT_KEY)==null || properties.get(MomClient.RBQ_COPYRIGHT_KEY).equals("")) properties.put(MomClient.RBQ_COPYRIGHT_KEY, "AGPLv3 / Free2Biz");
+                }
             }
             return true;
         }
