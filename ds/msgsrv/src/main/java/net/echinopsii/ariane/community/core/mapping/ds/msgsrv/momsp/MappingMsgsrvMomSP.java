@@ -52,6 +52,7 @@ public class MappingMsgsrvMomSP {
         try {
             Dictionary properties = MappingMsgsrvCfgLoader.getDefaultCfgEntity().getMomCliConf();
             String hostname =  java.net.InetAddress.getLocalHost().getHostName();
+            String connectionName = "Ariane Mapping Service @ " + hostname;;
             if (properties.get(MomClient.ARIANE_PGURL_KEY)==null) properties.put(MomClient.ARIANE_PGURL_KEY, "http://"+hostname+":6969/ariane");
             if (properties.get(MomClient.ARIANE_OSI_KEY)==null) properties.put(MomClient.ARIANE_OSI_KEY, hostname);
             if (properties.get(MomClient.ARIANE_APP_KEY)==null) properties.put(MomClient.ARIANE_APP_KEY, "Ariane");
@@ -62,17 +63,11 @@ public class MappingMsgsrvMomSP {
 
             if (properties.get(MomClient.MOM_CLI).equals("net.echinopsii.ariane.community.messaging.rabbitmq.Client")) {
                 if (properties.get(MomClient.RBQ_PRODUCT_KEY) == null || properties.get(MomClient.RBQ_PRODUCT_KEY).equals("")) properties.put(MomClient.RBQ_PRODUCT_KEY, "Ariane");
-                if (properties.get(MomClient.RBQ_INFORMATION_KEY) == null || properties.get(MomClient.RBQ_INFORMATION_KEY).equals("")) properties.put(MomClient.RBQ_INFORMATION_KEY, "Ariane Remote Mapping Messaging Client");
+                if (properties.get(MomClient.RBQ_INFORMATION_KEY) == null || properties.get(MomClient.RBQ_INFORMATION_KEY).equals("")) properties.put(MomClient.RBQ_INFORMATION_KEY, connectionName);
                 if ((properties.get(MomClient.RBQ_VERSION_KEY) == null || properties.get(MomClient.RBQ_VERSION_KEY).equals(""))&& version != null) properties.put(MomClient.RBQ_VERSION_KEY, version);
                 if (properties.get(MomClient.RBQ_COPYRIGHT_KEY)==null || properties.get(MomClient.RBQ_COPYRIGHT_KEY).equals("")) properties.put(MomClient.RBQ_COPYRIGHT_KEY, "AGPLv3 / Free2Biz");
-            } else if (properties.get(MomClient.MOM_CLI).equals("net.echinopsii.ariane.community.messaging.nats.Client")) {
-                try {
-                    properties.put(MomClient.NATS_CONNECTION_NAME, "Ariane Mapping Service @ " + InetAddress.getLocalHost().getHostName());
-                } catch (UnknownHostException e) {
-                    log.warn("Problem while getting hostname : " + e.getCause());
-                    properties.put(MomClient.NATS_CONNECTION_NAME, "Ariane Mapping Service");
-                }
-            }
+            } else if (properties.get(MomClient.MOM_CLI).equals("net.echinopsii.ariane.community.messaging.nats.Client"))
+                if (properties.get(MomClient.NATS_CONNECTION_NAME) == null || properties.get(MomClient.NATS_CONNECTION_NAME).equals("")) properties.put(MomClient.NATS_CONNECTION_NAME, connectionName);
 
             sharedMoMConnection.init(properties);
         } catch (Exception e) {

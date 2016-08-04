@@ -103,7 +103,8 @@ public class MappingRimManagedService {
     @Updated
     public void updated(final Dictionary properties) {
         log.debug("{} is being updated by {}", new Object[]{MAPPING_DS_SERVICE_NAME, Thread.currentThread().toString()});
-        if (MappingDSCfgLoader.isValid(properties)) {
+        String version = this.getClass().getPackage().getImplementationVersion();
+        if (MappingDSCfgLoader.isValid(properties, version)) {
             config = properties;
             if (isStarted) {
                 final Runnable applyConfigUpdate = new Runnable() {
