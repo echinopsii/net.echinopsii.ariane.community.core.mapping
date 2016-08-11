@@ -99,27 +99,31 @@ define(
                 var rareas = [];
                 for (i = 0, ii = tmpNetwork.length ; i < ii; i++) {
                     var rarea = tmpNetwork[i];
-                    var subnets = [];
-                    if (rarea.subnets != null) {
-                        for (j = 0, jj = rarea.subnets.length; j < jj; j++) {
-                            var subnet = rarea.subnets[j];
-                            subnets.push(prototypes_.create(prototypes_.subnet, {
-                                sname: subnet.sname,
-                                sip: subnet.sip,
-                                smask: subnet.smask,
-                                isdefault: subnet.isdefault
+                    if (rarea!=null) {
+                        var subnets = [];
+                        if (rarea.subnets != null) {
+                            for (j = 0, jj = rarea.subnets.length; j < jj; j++) {
+                                var subnet = rarea.subnets[j];
+                                subnets.push(prototypes_.create(prototypes_.subnet, {
+                                    sname: subnet.sname,
+                                    sip: subnet.sip,
+                                    smask: subnet.smask,
+                                    isdefault: subnet.isdefault
+                                }))
+                            }
+                            rareas.push(prototypes_.create(prototypes_.routingArea, {
+                                raname: rarea.raname,
+                                ratype: rarea.ratype,
+                                ramulticast: rarea.ramulticast,
+                                subnets: subnets
                             }))
+                        } else {
+                            helper_.debug('Routing area ' + rarea.raname + ' subnets are missing for container ' + this.name + ' !');
+                            rareas = [];
+                            break;
                         }
-                        rareas.push(prototypes_.create(prototypes_.routingArea, {
-                            raname: rarea.raname,
-                            ratype: rarea.ratype,
-                            ramulticast: rarea.ramulticast,
-                            subnets: subnets
-                        }))
                     } else {
-                        helper_.debug('Routing area ' + rarea.raname + ' subnets are missing for container ' + this.name + ' !');
-                        rareas = [];
-                        break;
+                        helper_.debug('Container ' + this.name  + ' owns a null RoutingArea !');
                     }
                 }
                 if (rareas.length == 0) {
@@ -550,13 +554,15 @@ define(
                                "<br/> <b>subnet mask</b> : " + this.properties.Network.smask + "</li>"
                     } else {
                         for (i = 0, ii = this.properties.Network.length; i < ii; i++) {
-                            ret += "<li> <b>routing area</b> : " + containerRef.properties.Network[i].raname +
-                                   "<br/> <b>type</b> : " + containerRef.properties.Network[i].ratype + "<ul>";
-                            for (j = 0, jj = this.properties.Network[i].subnets.length; j < jj; j++)
-                                ret += "<li><b>subnet ID</b> : " + containerRef.properties.Network[i].subnets[j].sname +
-                                       "<br/> <b>subnet IP</b> : " + containerRef.properties.Network[i].subnets[j].sip +
-                                       "<br/> <b>subnet mask</b> : " + containerRef.properties.Network[i].subnets[j].smask + "</li>"
-                            ret += "</ul></li>"
+                            if (containerRef.properties.Network[i] != null) {
+                                ret += "<li> <b>routing area</b> : " + containerRef.properties.Network[i].raname +
+                                    "<br/> <b>type</b> : " + containerRef.properties.Network[i].ratype + "<ul>";
+                                for (j = 0, jj = this.properties.Network[i].subnets.length; j < jj; j++)
+                                    ret += "<li><b>subnet ID</b> : " + containerRef.properties.Network[i].subnets[j].sname +
+                                        "<br/> <b>subnet IP</b> : " + containerRef.properties.Network[i].subnets[j].sip +
+                                        "<br/> <b>subnet mask</b> : " + containerRef.properties.Network[i].subnets[j].smask + "</li>"
+                                ret += "</ul></li>"
+                            }
                         }
                     }
                     ret += "</ul>";
