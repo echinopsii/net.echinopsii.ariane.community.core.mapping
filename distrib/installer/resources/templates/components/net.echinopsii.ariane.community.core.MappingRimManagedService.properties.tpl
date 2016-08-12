@@ -11,6 +11,7 @@ mapping.ds.blueprints.neo4j.configfile = ##mappingNeo4JConfigFile
 # mapping.ds.blueprints.password
 
 ## MESSAGING BUNDLE CONF
+# COMMON MESSAGING PROVIDER CONFIGURATION
 mom_cli.impl      = ##MCLI_IMPL
 mom_host.fqdn     = ##MHOST_FQDN
 mom_host.port     = ##MHOST_PORT
