@@ -28,19 +28,26 @@ class CPMappingDirectory(AConfParamNotNone):
     hide = False
 
     def __init__(self):
+        self.dist_dep_type = None
         self.value = None
 
+    def set_dist_dep_type(self, dist_dep_type):
+        self.dist_dep_type = dist_dep_type
+
     def is_valid(self):
-        if not super().is_valid:
-            return False
-        else:
-            if os.path.exists(self.value) and os.path.isdir(self.value) and \
-                    os.access(self.value, os.W_OK) and os.access(self.value, os.W_OK):
-                return True
-            else:
-                print(self.description + " (" + str(self.value) +
-                      ") is not valid. Check if it exists and it has good rights.")
+        if self.dist_dep_type != "frt":
+            if not super().is_valid:
                 return False
+            else:
+                if os.path.exists(self.value) and os.path.isdir(self.value) and \
+                        os.access(self.value, os.W_OK) and os.access(self.value, os.W_OK):
+                    return True
+                else:
+                    print(self.description + " (" + str(self.value) +
+                          ") is not valid. Check if it exists and it has good rights.")
+                    return False
+        else:
+            return True
 
 
 class CPMappingNeo4JConfigFile(AConfParamNotNone):
@@ -50,23 +57,42 @@ class CPMappingNeo4JConfigFile(AConfParamNotNone):
     hide = False
 
     def __init__(self):
+        self.dist_dep_type = None
+        self.value = None
+
+    def set_dist_dep_type(self, dist_dep_type):
+        self.dist_dep_type = dist_dep_type
+
+    def is_valid(self):
+        if self.dist_dep_type != "frt":
+            if not super().is_valid:
+                return False
+            else:
+                if os.path.exists(self.value) and os.path.isfile(self.value):
+                    return True
+                else:
+                    print(self.description + " (" + str(self.value) +
+                          ") is not valid. Check if it exists and it has good rights.")
+                    return False
+        else:
+            return True
+
+
+class CPMappingBundleName(AConfParamNotNone):
+    name = "##mappingBundleName"
+    description = "Mapping Implementation Bundle Name"
+    hide = False
+
+    def __init__(self):
         self.value = None
 
     def is_valid(self):
-        if not super().is_valid:
-            return False
-        else:
-            if os.path.exists(self.value) and os.path.isfile(self.value):
-                return True
-            else:
-                print(self.description + " (" + str(self.value) +
-                      ") is not valid. Check if it exists and it has good rights.")
-                return False
+        return super().is_valid
 
 
 class CUMappingRimManagedServiceProcessor(AConfUnit):
 
-    def __init__(self, target_conf_dir):
+    def __init__(self, target_conf_dir, dist_dep_type):
         self.confUnitName = "Mapping RIM managed service"
         self.confTemplatePath = os.path.abspath(
             "resources/templates/components/"
@@ -74,9 +100,14 @@ class CUMappingRimManagedServiceProcessor(AConfUnit):
         )
         self.confFinalPath = target_conf_dir + \
             "net.echinopsii.ariane.community.core.MappingRimManagedService.properties"
+        map_bundle_name = CPMappingBundleName()
         map_dir = CPMappingDirectory()
+        map_dir.set_dist_dep_type(dist_dep_type)
         map_neo4_j_conf_file = CPMappingNeo4JConfigFile()
+        map_neo4_j_conf_file.set_dist_dep_type(dist_dep_type)
+
         self.paramsDictionary = {
+            map_bundle_name.name: map_bundle_name,
             map_dir.name: map_dir,
             map_neo4_j_conf_file.name: map_neo4_j_conf_file
         }
