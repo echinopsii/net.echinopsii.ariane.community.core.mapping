@@ -20,7 +20,7 @@ from components.mapping.CUMappingNeo4JServerPropertiesProcessor import CUMapping
     CPMappingNeo4JDirectory, CPMappingNeo4JRRDB, CPMappingNeo4JTuningPropsFile, CPMappingNeo4JLogConfigFile
 from components.mapping.CUMappingNeo4JTuningPropertiesProcessor import CUMappingNeo4JTuningPropertiesProcessor
 from components.mapping.CUMappingRimManagedServiceProcessor import CPMappingDirectory, \
-    CUMappingRimManagedServiceProcessor, CPMappingNeo4JConfigFile
+    CUMappingRimManagedServiceProcessor, CPMappingNeo4JConfigFile, CPMappingBundleName
 from components.mapping.DBIDMMySQLPopulator import DBIDMMySQLPopulator
 from components.mapping.DBIDMMySQLInitiator import DBIDMMySQLInitiator
 
@@ -29,11 +29,12 @@ __author__ = 'mffrench'
 
 
 class MappingProcessor:
-    def __init__(self, home_dir_path, directory_db_conf, idm_db_conf, bus_processor, silent):
+    def __init__(self, home_dir_path, dist_dep_type, directory_db_conf, idm_db_conf, bus_processor, silent):
         print("\n%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--%--"
               "%--%--%--%--%--%--%--%--%--\n")
         print("%-- Mapping configuration : \n")
         self.homeDirPath = home_dir_path
+        self.dist_dep_type = dist_dep_type
         self.idmDBConfig = idm_db_conf
         self.directoryDBConfig = directory_db_conf
         self.busProcessor = bus_processor
@@ -42,57 +43,85 @@ class MappingProcessor:
         neo4j_conf_dir_path = self.homeDirPath + "/ariane/neo4j/conf"
         if not os.path.exists(neo4j_conf_dir_path):
             os.makedirs(neo4j_conf_dir_path, 0o755)
-        self.kernel_repository_dir_path = self.homeDirPath + "/repository/ariane-core/"
-        if not os.path.exists(self.kernel_repository_dir_path):
-            os.makedirs(self.kernel_repository_dir_path, 0o755)
+        if self.dist_dep_type == "mno" or self.dist_dep_type == "frt":
+            self.conf_dir_path = self.homeDirPath + "/repository/ariane-core/"
+            if not os.path.exists(self.conf_dir_path):
+                os.makedirs(self.conf_dir_path, 0o755)
+        else:
+            self.conf_dir_path = self.homeDirPath + "/etc/"
+            if not os.path.exists(self.conf_dir_path):
+                os.makedirs(self.conf_dir_path, 0o755)
 
-        self.mappingRimManagedServiceCUProcessor = CUMappingRimManagedServiceProcessor(self.kernel_repository_dir_path)
-        self.mappingIDMSQLInitiator = DBIDMMySQLInitiator(idm_db_conf)
-        self.mappingIDMSQLPopulator = DBIDMMySQLPopulator(idm_db_conf)
-        self.mappingNeo4JLogginXMLCUProcessor = CUMappingNeo4JLoggingXMLProcessor(neo4j_conf_dir_path)
-        self.mappingNeo4JTunningPropertiesCUProcessor = CUMappingNeo4JTuningPropertiesProcessor(neo4j_conf_dir_path)
-        self.mappingNeo4JServerPropertiesCUProcessor = CUMappingNeo4JServerPropertiesProcessor(neo4j_conf_dir_path)
+        self.mappingRimManagedServiceCUProcessor = CUMappingRimManagedServiceProcessor(self.conf_dir_path,
+                                                                                       self.dist_dep_type)
+        if self.dist_dep_type == "mno" or self.dist_dep_type == "frt":
+            self.mappingIDMSQLInitiator = DBIDMMySQLInitiator(idm_db_conf)
+            self.mappingIDMSQLPopulator = DBIDMMySQLPopulator(idm_db_conf)
+        if self.dist_dep_type != "frt":
+            self.mappingNeo4JLogginXMLCUProcessor = CUMappingNeo4JLoggingXMLProcessor(neo4j_conf_dir_path)
+            self.mappingNeo4JTunningPropertiesCUProcessor = CUMappingNeo4JTuningPropertiesProcessor(neo4j_conf_dir_path)
+            self.mappingNeo4JServerPropertiesCUProcessor = CUMappingNeo4JServerPropertiesProcessor(neo4j_conf_dir_path)
 
     def process(self):
-        self.busProcessor.process(
-            "resources/templates/components/"
-            "net.echinopsii.ariane.community.core.MappingMsgsrvManagedService.properties.tpl",
-            self.kernel_repository_dir_path +
-            "net.echinopsii.ariane.community.core.MappingMsgsrvManagedService.properties"
-        )
+        if self.dist_dep_type != "frt":
+            self.busProcessor.process(
+                "resources/templates/components/"
+                "net.echinopsii.ariane.community.core.MappingMsgsrvManagedService.properties.tpl",
+                self.conf_dir_path +
+                "net.echinopsii.ariane.community.core.MappingMsgsrvManagedService.properties"
+            )
+            self.mappingNeo4JLogginXMLCUProcessor.process()
+            self.mappingNeo4JTunningPropertiesCUProcessor.process()
+            for key in self.mappingNeo4JServerPropertiesCUProcessor.get_params_keys_list():
+                if key == CPMappingNeo4JDirectory.name:
+                    map_neo4j_dir_path = self.homeDirPath + "/ariane/neo4j/graph"
+                    if not os.path.exists(map_neo4j_dir_path):
+                        os.makedirs(map_neo4j_dir_path, 0o755)
+                    self.mappingNeo4JServerPropertiesCUProcessor.set_key_param_value(key, map_neo4j_dir_path)
+                elif key == CPMappingNeo4JRRDB.name:
+                    map_neo4j_rrdb_dir_path = self.homeDirPath + "/ariane/neo4j/data"
+                    if not os.path.exists(map_neo4j_rrdb_dir_path):
+                        os.makedirs(map_neo4j_rrdb_dir_path, 0o755)
+                    self.mappingNeo4JServerPropertiesCUProcessor.set_key_param_value(key,
+                                                                                     map_neo4j_rrdb_dir_path+"/rrd")
+                elif key == CPMappingNeo4JTuningPropsFile.name:
+                    self.mappingNeo4JServerPropertiesCUProcessor.set_key_param_value(key, self.homeDirPath +
+                                                                                     "/ariane/neo4j/conf/"
+                                                                                     "neo4j.properties")
+                elif key == CPMappingNeo4JLogConfigFile.name:
+                    self.mappingNeo4JServerPropertiesCUProcessor.\
+                        set_key_param_value(key, self.homeDirPath + "/ariane/neo4j/conf/neo4j-http-logging.xml")
+            self.mappingNeo4JServerPropertiesCUProcessor.process()
 
-        self.mappingNeo4JLogginXMLCUProcessor.process()
-        self.mappingNeo4JTunningPropertiesCUProcessor.process()
-        self.mappingIDMSQLInitiator.process()
-        self.mappingIDMSQLPopulator.process()
-
-        for key in self.mappingNeo4JServerPropertiesCUProcessor.get_params_keys_list():
-            if key == CPMappingNeo4JDirectory.name:
-                map_neo4j_dir_path = self.homeDirPath + "/ariane/neo4j/graph"
-                if not os.path.exists(map_neo4j_dir_path):
-                    os.makedirs(map_neo4j_dir_path, 0o755)
-                self.mappingNeo4JServerPropertiesCUProcessor.set_key_param_value(key, map_neo4j_dir_path)
-            elif key == CPMappingNeo4JRRDB.name:
-                map_neo4j_rrdb_dir_path = self.homeDirPath + "/ariane/neo4j/data"
-                if not os.path.exists(map_neo4j_rrdb_dir_path):
-                    os.makedirs(map_neo4j_rrdb_dir_path, 0o755)
-                self.mappingNeo4JServerPropertiesCUProcessor.set_key_param_value(key, map_neo4j_rrdb_dir_path+"/rrd")
-            elif key == CPMappingNeo4JTuningPropsFile.name:
-                self.mappingNeo4JServerPropertiesCUProcessor.set_key_param_value(key, self.homeDirPath +
-                                                                                 "/ariane/neo4j/conf/neo4j.properties")
-            elif key == CPMappingNeo4JLogConfigFile.name:
-                self.mappingNeo4JServerPropertiesCUProcessor.\
-                    set_key_param_value(key, self.homeDirPath + "/ariane/neo4j/conf/neo4j-http-logging.xml")
-        self.mappingNeo4JServerPropertiesCUProcessor.process()
+        if self.dist_dep_type == "mno" or self.dist_dep_type == "frt":
+            self.mappingIDMSQLInitiator.process()
+            self.mappingIDMSQLPopulator.process()
 
         for key in self.mappingRimManagedServiceCUProcessor.get_params_keys_list():
             if key == CPMappingDirectory.name:
-                map_dir_path = self.homeDirPath + "/ariane/neo4j/graph"
-                if not os.path.exists(map_dir_path):
-                    os.makedirs(map_dir_path, 0o755)
-                self.mappingRimManagedServiceCUProcessor.set_key_param_value(key, map_dir_path)
+                if self.dist_dep_type != "frt":
+                    map_dir_path = self.homeDirPath + "/ariane/neo4j/graph"
+                    if not os.path.exists(map_dir_path):
+                        os.makedirs(map_dir_path, 0o755)
+                    self.mappingRimManagedServiceCUProcessor.set_key_param_value(key, map_dir_path)
             elif key == CPMappingNeo4JConfigFile.name:
+                if self.dist_dep_type != "frt":
+                    self.mappingRimManagedServiceCUProcessor.\
+                        set_key_param_value(key, self.homeDirPath + "/ariane/neo4j/conf/neo4j-server.properties")
+            elif key == CPMappingBundleName.name:
+                if self.dist_dep_type == "frt":
+                    map_bundle_name = "net.echinopsii.ariane.community.core.mapping.ds.msgcli"
+                else:
+                    map_bundle_name = "net.echinopsii.ariane.community.core.mapping.ds.blueprints"
                 self.mappingRimManagedServiceCUProcessor.\
-                    set_key_param_value(key, self.homeDirPath + "/ariane/neo4j/conf/neo4j-server.properties")
+                    set_key_param_value(key, map_bundle_name)
         self.mappingRimManagedServiceCUProcessor.process()
+        if self.dist_dep_type == "frt":
+            self.busProcessor.process(
+                self.conf_dir_path +
+                "net.echinopsii.ariane.community.core.MappingRimManagedService.properties",
+                self.conf_dir_path +
+                "net.echinopsii.ariane.community.core.MappingRimManagedService.properties"
+            )
+
         return self

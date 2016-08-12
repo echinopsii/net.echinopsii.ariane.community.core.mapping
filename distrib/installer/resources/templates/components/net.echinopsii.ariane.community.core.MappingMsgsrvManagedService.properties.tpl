@@ -12,5 +12,5 @@ mom_host.rbq_vhost=##MHOST_RBQ_VHOST
 ariane.pgurl=http://##ARIANE_FQDN:6969/ariane
 ariane.osi=##ARIANE_HOST
 ariane.otm=##ARIANE_OPS_TEAM
-ariane.app=Ariane
+ariane.app=Ariane Messaging Server
 ariane.cmp=echinopsii
