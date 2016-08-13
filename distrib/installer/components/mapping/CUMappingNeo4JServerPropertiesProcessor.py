@@ -102,9 +102,15 @@ class CPMappingNeo4JLogConfigFile(AConfParamNotNone):
 
 class CUMappingNeo4JServerPropertiesProcessor(AConfUnit):
 
-    def __init__(self, target_conf_dir):
+    def __init__(self, target_conf_dir, dist_dep_type):
+        self.dist_dep_type = dist_dep_type
         self.confUnitName = "Mapping Neo4J server properties configuration file"
-        self.confTemplatePath = os.path.abspath("resources/templates/components/neo4j-server.properties.tpl")
+        if self.dist_dep_type != "mms":
+            self.confTemplatePath = os.path.abspath("resources/templates/components/neo4j-212/"
+                                                    "neo4j-server.properties.tpl")
+        else:
+            self.confTemplatePath = os.path.abspath("resources/templates/components/neo4j-231/"
+                                                    "neo4j-server.properties.tpl")
         self.confFinalPath = target_conf_dir + "/neo4j-server.properties"
 
         log_config_file_path = CPMappingNeo4JLogConfigFile()

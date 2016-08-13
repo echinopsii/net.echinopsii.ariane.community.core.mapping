@@ -19,6 +19,7 @@ from components.mapping.CUMappingNeo4JLoggingXMLProcessor import CUMappingNeo4JL
 from components.mapping.CUMappingNeo4JServerPropertiesProcessor import CUMappingNeo4JServerPropertiesProcessor, \
     CPMappingNeo4JDirectory, CPMappingNeo4JRRDB, CPMappingNeo4JTuningPropsFile, CPMappingNeo4JLogConfigFile
 from components.mapping.CUMappingNeo4JTuningPropertiesProcessor import CUMappingNeo4JTuningPropertiesProcessor
+from components.mapping.CUMappingNeo4JWrapperConfProcessor import CUMappingNeo4JWrapperConfProcessor
 from components.mapping.CUMappingRimManagedServiceProcessor import CPMappingDirectory, \
     CUMappingRimManagedServiceProcessor, CPMappingNeo4JConfigFile, CPMappingBundleName
 from components.mapping.DBIDMMySQLPopulator import DBIDMMySQLPopulator
@@ -48,7 +49,7 @@ class MappingProcessor:
             if not os.path.exists(self.conf_dir_path):
                 os.makedirs(self.conf_dir_path, 0o755)
         else:
-            self.conf_dir_path = self.homeDirPath + "/etc/"
+            self.conf_dir_path = self.homeDirPath + "/ariane/config/"
             if not os.path.exists(self.conf_dir_path):
                 os.makedirs(self.conf_dir_path, 0o755)
 
@@ -58,18 +59,33 @@ class MappingProcessor:
             self.mappingIDMSQLInitiator = DBIDMMySQLInitiator(idm_db_conf)
             self.mappingIDMSQLPopulator = DBIDMMySQLPopulator(idm_db_conf)
         if self.dist_dep_type != "frt":
-            self.mappingNeo4JLogginXMLCUProcessor = CUMappingNeo4JLoggingXMLProcessor(neo4j_conf_dir_path)
-            self.mappingNeo4JTunningPropertiesCUProcessor = CUMappingNeo4JTuningPropertiesProcessor(neo4j_conf_dir_path)
-            self.mappingNeo4JServerPropertiesCUProcessor = CUMappingNeo4JServerPropertiesProcessor(neo4j_conf_dir_path)
+            self.mappingNeo4JLogginXMLCUProcessor = CUMappingNeo4JLoggingXMLProcessor(neo4j_conf_dir_path,
+                                                                                      self.dist_dep_type)
+            self.mappingNeo4JTunningPropertiesCUProcessor = CUMappingNeo4JTuningPropertiesProcessor(neo4j_conf_dir_path,
+                                                                                                    self.dist_dep_type)
+            self.mappingNeo4JServerPropertiesCUProcessor = CUMappingNeo4JServerPropertiesProcessor(neo4j_conf_dir_path,
+                                                                                                   self.dist_dep_type)
+            if self.dist_dep_type == "mms":
+                self.mappintNeo4jWrapperConf = CUMappingNeo4JWrapperConfProcessor(neo4j_conf_dir_path,
+                                                                                  self.dist_dep_type)
 
     def process(self):
         if self.dist_dep_type != "frt":
-            self.busProcessor.process(
-                "resources/templates/components/"
-                "net.echinopsii.ariane.community.core.MappingMsgsrvManagedService.properties.tpl",
-                self.conf_dir_path +
-                "net.echinopsii.ariane.community.core.MappingMsgsrvManagedService.properties"
-            )
+            if self.dist_dep_type == "mno":
+                self.busProcessor.process(
+                    "resources/templates/components/"
+                    "net.echinopsii.ariane.community.core.MappingMsgsrvManagedService.properties.tpl",
+                    self.conf_dir_path +
+                    "net.echinopsii.ariane.community.core.MappingMsgsrvManagedService.properties"
+                )
+            elif self.dist_dep_type == "mms":
+                self.busProcessor.process(
+                    "resources/templates/components/"
+                    "net.echinopsii.ariane.community.core.MappingMsgsrvManagedService.properties.tpl",
+                    self.conf_dir_path +
+                    "net.echinopsii.ariane.community.core.MappingMsgsrvManagedService.cfg"
+                )
+
             self.mappingNeo4JLogginXMLCUProcessor.process()
             self.mappingNeo4JTunningPropertiesCUProcessor.process()
             for key in self.mappingNeo4JServerPropertiesCUProcessor.get_params_keys_list():
@@ -92,6 +108,8 @@ class MappingProcessor:
                     self.mappingNeo4JServerPropertiesCUProcessor.\
                         set_key_param_value(key, self.homeDirPath + "/ariane/neo4j/conf/neo4j-http-logging.xml")
             self.mappingNeo4JServerPropertiesCUProcessor.process()
+            if self.dist_dep_type == "mms":
+                self.mappintNeo4jWrapperConf.process()
 
         if self.dist_dep_type == "mno" or self.dist_dep_type == "frt":
             self.mappingIDMSQLInitiator.process()
