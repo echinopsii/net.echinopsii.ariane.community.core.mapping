@@ -98,8 +98,12 @@ class CUMappingRimManagedServiceProcessor(AConfUnit):
             "resources/templates/components/"
             "net.echinopsii.ariane.community.core.MappingRimManagedService.properties.tpl"
         )
-        self.confFinalPath = target_conf_dir + \
-            "net.echinopsii.ariane.community.core.MappingRimManagedService.properties"
+        if dist_dep_type != "mms":
+            self.confFinalPath = target_conf_dir + \
+                "net.echinopsii.ariane.community.core.MappingRimManagedService.properties"
+        else:
+            self.confFinalPath = target_conf_dir + \
+                "net.echinopsii.ariane.community.core.MappingRimManagedService.cfg"
         map_bundle_name = CPMappingBundleName()
         map_dir = CPMappingDirectory()
         map_dir.set_dist_dep_type(dist_dep_type)

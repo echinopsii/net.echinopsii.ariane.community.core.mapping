@@ -20,28 +20,23 @@ from tools.AConfUnit import AConfUnit
 __author__ = 'mffrench'
 
 
-class CUMappingNeo4JLoggingXMLProcessor(AConfUnit):
+class CUMappingNeo4JWrapperConfProcessor(AConfUnit):
 
     def __init__(self, target_conf_dir, dist_dep_type):
         self.dist_dep_type = dist_dep_type
-        self.confUnitName = "Mapping Neo4J logging configuration file"
-        if self.dist_dep_type != "mms":
-            self.confTemplatePath = os.path.abspath("resources/templates/components/neo4j-212/"
-                                                    "neo4j-http-logging.xml.tpl")
-        else:
-            self.confTemplatePath = os.path.abspath("resources/templates/components/neo4j-231/"
-                                                    "neo4j-http-logging.xml.tpl")
-        self.confFinalPath = target_conf_dir + "/neo4j-http-logging.xml"
+        self.confUnitName = "Mapping Neo4J wrapper configuration file"
+        self.confTemplatePath = os.path.abspath("resources/templates/components/neo4j-231/neo4j-wrapper.conf.tpl")
+        self.confFinalPath = target_conf_dir + "/neo4j-wrapper.conf"
         self.paramsDictionary = {}
 
     def set_key_param_value(self, key, value):
-        return super(CUMappingNeo4JLoggingXMLProcessor, self).set_key_param_value(key, value)
+        return super(CUMappingNeo4JWrapperConfProcessor, self).set_key_param_value(key, value)
 
     def get_params_keys_list(self):
-        return super(CUMappingNeo4JLoggingXMLProcessor, self).get_params_keys_list()
+        return super(CUMappingNeo4JWrapperConfProcessor, self).get_params_keys_list()
 
     def process(self):
-        return super(CUMappingNeo4JLoggingXMLProcessor, self).process()
+        return super(CUMappingNeo4JWrapperConfProcessor, self).process()
 
     def get_param_from_key(self, key):
-        return super(CUMappingNeo4JLoggingXMLProcessor, self).get_param_from_key(key)
+        return super(CUMappingNeo4JWrapperConfProcessor, self).get_param_from_key(key)
