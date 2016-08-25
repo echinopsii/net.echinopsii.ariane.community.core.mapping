@@ -167,18 +167,23 @@
             <properties>
                 <com.tinkerpop.blueprints.version>2.4.0</com.tinkerpop.blueprints.version>
                 <version.osgi.com.neo4j>1.9.5</version.osgi.com.neo4j>
-                <com.tinkerpop.blueprints.blueprints-neo4j-graph.groupid>com.tinkerpop.blueprints.osgi</com.tinkerpop.blueprints.blueprints-neo4j-graph.groupid>
             </properties>
         </profile>
         <profile>
             <id>blueprints-25</id>
+            <properties>
+                <com.tinkerpop.blueprints.version>2.5.1</com.tinkerpop.blueprints.version>
+                <version.osgi.com.neo4j>2.1.2</version.osgi.com.neo4j>
+            </properties>
+        </profile>
+        <profile>
+            <id>blueprints-26</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <com.tinkerpop.blueprints.version>2.5.1</com.tinkerpop.blueprints.version>
-                <version.osgi.com.neo4j>2.1.2</version.osgi.com.neo4j>
-                <com.tinkerpop.blueprints.blueprints-neo4j-graph.groupid>com.tinkerpop.blueprints.osgi</com.tinkerpop.blueprints.blueprints-neo4j-graph.groupid>
+                <com.tinkerpop.blueprints.version>2.6.231</com.tinkerpop.blueprints.version>
+                <version.osgi.com.neo4j>2.3.1</version.osgi.com.neo4j>
             </properties>
         </profile>
     </profiles>

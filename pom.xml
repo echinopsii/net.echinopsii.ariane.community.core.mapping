@@ -11,11 +11,7 @@
     
     <modules>
         <module>ds</module>
-        <module>reqregistry</module>
-        <module>wat</module>
-        <module>taitale</module>
-        <module>wresources</module>
-        </modules>
+    </modules>
     
     <repositories>
         <repository>
@@ -75,18 +71,10 @@
         <version.com.typesafe.akka>2.3.14</version.com.typesafe.akka>
 
         <!-- Ariane versions -->
-        
-        <version.net.echinopsii.ariane.community.core.idm>0.4.5-SNAPSHOT</version.net.echinopsii.ariane.community.core.idm>
-        <version.net.echinopsii.ariane.community.core.idm.min>0.4.0</version.net.echinopsii.ariane.community.core.idm.min>
-        <version.net.echinopsii.ariane.community.core.idm.max>0.5.0</version.net.echinopsii.ariane.community.core.idm.max>
         <version.net.echinopsii.ariane.community.messaging>0.2.1-SNAPSHOT</version.net.echinopsii.ariane.community.messaging>
         <version.net.echinopsii.ariane.community.messaging.min>0.2.0</version.net.echinopsii.ariane.community.messaging.min>
         <version.net.echinopsii.ariane.community.messaging.max>0.3.0</version.net.echinopsii.ariane.community.messaging.max>
-        
-        <version.net.echinopsii.ariane.community.core.portal>0.7.6-SNAPSHOT</version.net.echinopsii.ariane.community.core.portal>
-        <version.net.echinopsii.ariane.community.core.portal.min>0.7.0</version.net.echinopsii.ariane.community.core.portal.min>
-        <version.net.echinopsii.ariane.community.core.portal.max>0.8.0</version.net.echinopsii.ariane.community.core.portal.max>
-        
+
         <!-- Commons (webapp, shiro, rest ...) -->
         <version.com.fasterxml.jackson>2.1.2</version.com.fasterxml.jackson>
         <version.commons.fileupload>1.3</version.commons.fileupload>

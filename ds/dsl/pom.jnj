@@ -17,18 +17,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>net.echinopsii.ariane.community.core.idm</groupId>
-            <artifactId>net.echinopsii.ariane.community.core.idm.base</artifactId>
-            <version>${version.net.echinopsii.ariane.community.core.idm}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.echinopsii.ariane.community.core.portal</groupId>
-            <artifactId>net.echinopsii.ariane.community.core.portal.idmwat</artifactId>
-            <version>${version.net.echinopsii.ariane.community.core.portal}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>net.echinopsii.ariane.community.core.mapping.ds</groupId>
             <artifactId>net.echinopsii.ariane.community.core.mapping.ds.api</artifactId>
             <version>${project.version}</version>
