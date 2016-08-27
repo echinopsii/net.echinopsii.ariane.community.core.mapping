@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<features name="net.echinopsii.ariane.community.core.mapping-back" xmlns="http://karaf.apache.org/xmlns/features/v1.3.0">
+
+    <feature name="ariane.community.core.mapping-back" description="Provide Ariane Mapping Back Microservice" version="{{version}}">
+		<configfile finalname="${karaf.etc}/net.echinopsii.ariane.community.core.MappingRimManagedService.cfg" override="true">file:ariane/config/net.echinopsii.ariane.community.core.MappingRimManagedService.cfg</configfile>
+        <configfile finalname="${karaf.etc}/net.echinopsii.ariane.community.core.MappingMsgsrvManagedService.cfg" override="true">file:ariane/config/net.echinopsii.ariane.community.core.MappingMsgsrvManagedService.cfg</configfile>
+		{% for s in submodules -%}
+		<bundle start-level="60">mvn:{{s.groupId}}/{{s.artifactId}}/{{version}}</bundle>
+		{% endfor -%}
+    </feature>
+</features>
