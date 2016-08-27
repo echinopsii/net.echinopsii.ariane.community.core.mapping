@@ -125,7 +125,7 @@
         <!-- Technical stuff -->
         <version.org.apache.ipojo>1.11.0</version.org.apache.ipojo>
         <version.org.slf4j>1.6.4</version.org.slf4j>
-        <version.scala.logging>2.1.2<</version.scala.logging>
+        <version.scala.logging>2.1.2</version.scala.logging>
         <version.scala>2.11.7</version.scala>
         <version.org.infinispan>6.0.2.Final</version.org.infinispan>
 
@@ -388,7 +388,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.tinkerpop.blueprints</groupId>
+            <groupId>com.tinkerpop</groupId>
             <artifactId>net.echinopsii.3rdparty.com.tinkerpop.blueprints.blueprints-core</artifactId>
             <version>${com.tinkerpop.blueprints.version}</version>
             <scope>provided</scope>
@@ -402,7 +402,7 @@
         </dependency>
         -->
         <dependency>
-            <groupId>com.tinkerpop.blueprints</groupId>
+            <groupId>com.tinkerpop</groupId>
             <artifactId>net.echinopsii.3rdparty.com.tinkerpop.blueprints.blueprints-neo4j2-graph</artifactId>
             <version>${com.tinkerpop.blueprints.version}</version>
         </dependency>
