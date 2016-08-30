@@ -5,7 +5,7 @@
     <parent>
         <groupId>net.echinopsii.ariane.community.core.mapping</groupId>
         <artifactId>net.echinopsii.ariane.community.core.mapping.ds</artifactId>
-        <version>0.8.1-MS-SNAPSHOT</version>
+        <version>0.8.1-MS</version>
         <relativePath>..</relativePath>
     </parent>
 
@@ -75,11 +75,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <recompileMode>incremental</recompileMode>
                     <scalaCompatVersion>2.11</scalaCompatVersion>
-                    <args>
-                        <arg>-deprecation</arg>
-                    </args>
                     <jvmArgs>
                         <jvmArg>-Xms64m</jvmArg>
                         <jvmArg>-Xmx1024m</jvmArg>
@@ -117,6 +113,9 @@
                     <instructions>
                         <Export-Package>
                             net.echinopsii.ariane.community.core.mapping.ds.mdsl;version=${project.version},
+                            net.echinopsii.ariane.community.core.mapping.ds.mdsl.registry;version=${project.version},
+                            net.echinopsii.ariane.community.core.mapping.ds.mdsl.registry.model;version=${project.version},
+                            net.echinopsii.ariane.community.core.mapping.ds.mdsl.registry.json;version=${project.version},
                             net.echinopsii.ariane.community.core.mapping.ds.sdsl;version=${project.version}
                         </Export-Package>
                         <Import-Package>

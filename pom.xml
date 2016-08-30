@@ -5,13 +5,13 @@
     <!-- General information -->
     <groupId>net.echinopsii.ariane.community.core</groupId>
     <artifactId>net.echinopsii.ariane.community.core.mapping</artifactId>
-    <version>0.8.1-MS-SNAPSHOT</version>
+    <version>0.8.1-MS</version>
     <name>Ariane Community Core Mapping Parent</name>
     <packaging>pom</packaging>
     
     <modules>
         <module>ds</module>
-    </modules>
+        </modules>
     
     <repositories>
         <repository>
@@ -71,10 +71,10 @@
         <version.com.typesafe.akka>2.3.14</version.com.typesafe.akka>
 
         <!-- Ariane versions -->
-        <version.net.echinopsii.ariane.community.messaging>0.2.1-SNAPSHOT</version.net.echinopsii.ariane.community.messaging>
+        <version.net.echinopsii.ariane.community.messaging>0.2.1</version.net.echinopsii.ariane.community.messaging>
         <version.net.echinopsii.ariane.community.messaging.min>0.2.0</version.net.echinopsii.ariane.community.messaging.min>
         <version.net.echinopsii.ariane.community.messaging.max>0.3.0</version.net.echinopsii.ariane.community.messaging.max>
-
+        
         <!-- Commons (webapp, shiro, rest ...) -->
         <version.com.fasterxml.jackson>2.1.2</version.com.fasterxml.jackson>
         <version.commons.fileupload>1.3</version.commons.fileupload>
