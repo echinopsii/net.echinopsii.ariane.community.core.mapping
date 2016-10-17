@@ -133,16 +133,18 @@ define(
 
             this.defineMapContentSize = function() {
                 var i, ii, j, jj;
+                var tmpHeight = 0;
                 contentWidth = 0;
                 contentHeight = 0;
                 for (i = 0, ii = nbColumns; i < ii ; i++) {
-                    var tmpHeight = 0;
-                    for (j = 0, jj = nbLines; j < jj; j++)
-                        if (rows[j].length != 0 && rows[j][i] != null)
-                            tmpHeight = tmpHeight + rows[j][i].getZoneSize().height;
-                    if (tmpHeight > contentHeight)
-                        contentHeight=tmpHeight;
+                    if (rows[0].length != 0 && rows[0][i] != null)
+                        if (contentHeight < rows[0][i].getZoneSize().height)
+                            contentHeight = rows[0][i].getZoneSize().height;
                 }
+                if (nbLines == 2 && rows[1].length != 0)
+                    for (i = 0, ii = nbColumns; i < ii; i++)
+                        if (rows[1][i] != null) contentHeight += rows[1][i].getZoneSize().height;
+
                 for (i = 0, ii = nbLines; i < ii ; i++) {
                     if (rows[i].length != 0) {
                         var tmpWidth = 0;
@@ -177,15 +179,23 @@ define(
             };
 
             this.defineMtxZoneFirstPoz = function(borderSpan, zoneSpan) {
-                var cursorWidth  = 0;
                 var i, ii, j, jj;
+                var maxHeight = 0;
+                var cursorWidth  = 0;
                 for (i = 0, ii = nbColumns; i < ii; i++) {
-                    var cursorHeight = 0;
                     for (j = 0, jj = nbLines; j < jj; j++) {
                         if (rows[j].length != 0 && rows[j][i] != null) {
-                            rows[j][i].setTopLeftCoord(borderSpan + zoneSpan * i + cursorWidth, borderSpan + zoneSpan * j + cursorHeight);
-                            rows[j][i].defineFirstPoz();
-                            cursorHeight = cursorHeight + rows[j][i].getZoneMaxSize().height;
+                            if (j == 0) {
+                                rows[j][i].setTopLeftCoord(borderSpan + zoneSpan * i + cursorWidth, borderSpan);
+                                rows[j][i].defineIntermediatePoz();
+                                if (maxHeight < rows[j][i].getZoneSize().height)
+                                    maxHeight = rows[j][i].getZoneSize().height;
+                            } else {
+                                var toplx = (cursorWidth == 0) ? 0 : (borderSpan + zoneSpan * nbColumns + cursorWidth - rows[j][i].getZoneSize().width)/2;
+                                var toply = (maxHeight == 0) ? 0 : (borderSpan + zoneSpan * j + maxHeight);
+                                rows[j][i].setTopLeftCoord(toplx, toply);
+                                rows[j][i].defineFinalPoz();
+                            }
                         }
                     }
                     if (rows[0].length != 0 && rows[0][i] != null)
@@ -202,15 +212,23 @@ define(
             };
 
             this.defineMtxZoneIntermediatePoz = function(borderSpan, zoneSpan) {
-                var cursorWidth  = 0;
                 var i, ii, j, jj;
+                var maxHeight = 0;
+                var cursorWidth  = 0;
                 for (i = 0, ii = nbColumns; i < ii; i++) {
-                    var cursorHeight = 0;
                     for (j = 0, jj = nbLines; j < jj; j++) {
                         if (rows[j].length != 0 && rows[j][i] != null) {
-                            rows[j][i].setTopLeftCoord(borderSpan + zoneSpan * i + cursorWidth, borderSpan + zoneSpan * j + cursorHeight);
-                            rows[j][i].defineIntermediatePoz();
-                            cursorHeight = cursorHeight + rows[j][i].getZoneSize().height;
+                            if (j == 0) {
+                                rows[j][i].setTopLeftCoord(borderSpan + zoneSpan * i + cursorWidth, borderSpan);
+                                rows[j][i].defineIntermediatePoz();
+                                if (maxHeight < rows[j][i].getZoneSize().height)
+                                    maxHeight = rows[j][i].getZoneSize().height;
+                            } else {
+                                var toplx = (cursorWidth == 0) ? 0 : (borderSpan + zoneSpan * nbColumns + cursorWidth - rows[j][i].getZoneSize().width)/2;
+                                var toply = (maxHeight == 0) ? 0 : (borderSpan + zoneSpan * j + maxHeight);
+                                rows[j][i].setTopLeftCoord(toplx, toply);
+                                rows[j][i].defineFinalPoz();
+                            }
                         }
                     }
                     if (rows[0].length != 0 && rows[0][i] != null)
@@ -219,15 +237,33 @@ define(
             };
 
             this.defineMtxZoneFinalPoz = function(borderSpan, zoneSpan) {
-                var cursorWidth  = 0;
                 var i, ii, j, jj;
+                var maxHeight = 0;
+                var cursorWidth  = 0;
                 for (i = 0, ii = nbColumns; i < ii; i++) {
-                    var cursorHeight = 0;
                     for (j = 0, jj = nbLines; j < jj; j++) {
                         if (rows[j].length != 0 && rows[j][i] != null) {
-                            rows[j][i].setTopLeftCoord(borderSpan + zoneSpan * i + cursorWidth, borderSpan + zoneSpan * j + cursorHeight);
-                            rows[j][i].defineFinalPoz();
-                            cursorHeight = cursorHeight + rows[j][i].getZoneSize().height;
+                            if (j == 0) {
+                                rows[j][i].setTopLeftCoord(borderSpan + zoneSpan * i + cursorWidth, borderSpan);
+                                rows[j][i].defineFinalPoz();
+                                if (maxHeight < rows[j][i].getZoneSize().height) maxHeight = rows[j][i].getZoneSize().height;
+                                if (topLeftX > borderSpan + zoneSpan * i + cursorWidth) topLeftX = borderSpan + zoneSpan * i + cursorWidth;
+                                if (topLeftY > borderSpan) topLeftY = borderSpan;
+                                if (bottomRightX < borderSpan + zoneSpan * i + cursorWidth + rows[j][i].getZoneSize().width)
+                                    bottomRightX = borderSpan + zoneSpan * i + cursorWidth + rows[j][i].getZoneSize().width;
+                                if (bottomRightY < borderSpan + rows[j][i].getZoneSize().height)
+                                    bottomRightY = borderSpan + rows[j][i].getZoneSize().height;
+                            } else {
+                                var toplx = (cursorWidth == 0) ? 0 : (borderSpan + zoneSpan * nbColumns + cursorWidth - rows[j][i].getZoneSize().width)/2;
+                                var toply = (maxHeight == 0) ? 0 : (borderSpan + zoneSpan * j + maxHeight);
+                                rows[j][i].setTopLeftCoord(toplx, toply);
+                                rows[j][i].defineFinalPoz();
+                                var width = rows[j][i].getZoneSize().width, height = rows[j][i].getZoneSize().height;
+                                if (topLeftX > toplx) topLeftX = toplx;
+                                if (topLeftY > toply) topLeftY = toply;
+                                if (bottomRightX < toplx + width) bottomRightX = toplx + width;
+                                if (bottomRightY < toply + height) bottomRightY = toply + height;
+                            }
                         }
                     }
                     if (rows[0].length != 0 && rows[0][i] != null)
