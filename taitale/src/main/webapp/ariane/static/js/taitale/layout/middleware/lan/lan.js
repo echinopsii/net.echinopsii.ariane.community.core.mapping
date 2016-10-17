@@ -45,6 +45,7 @@ define(
             this.dispLan    = false;
             this.dispLanOD  = false;
             this.layoutData = null;
+            this.onMoOver   = true;
 
             this.lanR    = null;
             this.rect    = null;
@@ -239,16 +240,16 @@ define(
                 this.lanmatrix.defineLanContentMaxSize();
 
                 var contentLanSize = this.lanmatrix.getLanContentMaxSize();
-                this.lanwidth  = this.lbrdSpan*2 + (this.lanmatrix.getMtxSize().x-1)*this.contSpan + contentLanSize.width;
-                this.lanheight = this.lbrdSpan*2 + (this.lanmatrix.getMtxSize().y-1)*this.contSpan + contentLanSize.height;
+                this.lanwidth  = this.lbrdSpan*2 + (this.lanmatrix.getMtxSize().y)*this.contSpan + contentLanSize.width;
+                this.lanheight = this.lbrdSpan*2 + (this.lanmatrix.getMtxSize().x)*this.contSpan + contentLanSize.height;
             };
 
             this.defineSize = function() {
                 this.lanmatrix.defineLanContentSize();
 
                 var contentLanSize = this.lanmatrix.getLanContentSize();
-                this.lanwidth  = this.lbrdSpan*2 + (this.lanmatrix.getMtxSize().x-1)*this.contSpan + contentLanSize.width;
-                this.lanheight = this.lbrdSpan*2 + (this.lanmatrix.getMtxSize().y-1)*this.contSpan + contentLanSize.height;
+                this.lanwidth  = this.lbrdSpan*2 + (this.lanmatrix.getMtxSize().y)*this.contSpan + contentLanSize.width;
+                this.lanheight = this.lbrdSpan*2 + (this.lanmatrix.getMtxSize().x)*this.contSpan + contentLanSize.height;
             };
 
             this.defineFirstPoz = function() {
@@ -345,10 +346,12 @@ define(
                 this.lanHat.hide();
 
                 this.rect.attr({fill: this.color, stroke: this.color, "stroke-dasharray": this.sDasharray, "fill-opacity": this.oUnselected, "stroke-width": 0});
-                this.rect.mousedown(mouseDown);
-                this.rect.drag(lanMove, lanDragg, lanUP);
-                this.rect.mouseover(lanOver);
-                this.rect.mouseout(lanOut);
+                if (this.onMoOver) {
+                    this.rect.mousedown(mouseDown);
+                    this.rect.drag(lanMove, lanDragg, lanUP);
+                    this.rect.mouseover(lanOver);
+                    this.rect.mouseout(lanOut);
+                }
 
                 this.menuTitle = this.r.text(0,10,"Lan menu").attr(this.menuMainTitleTXT);
 

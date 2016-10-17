@@ -107,8 +107,8 @@ define(
 
                 var mappyWidth    = mappy.getMapSize().width,
                     mappyHeight   = mappy.getMapSize().height,
-                    mappyTopLeftX = mappy.getTopLeftCoords().topLeftX,
-                    mappyTopLeftY = mappy.getTopLeftCoords().topLeftY,
+                    mappyTopLeftX = mappy.getTopLeftCoords().topLeftX - params.map_mbrdSpan,
+                    mappyTopLeftY = mappy.getTopLeftCoords().topLeftY - params.map_mbrdSpan,
                     mappyCenterX  = (mappyTopLeftX + mappyWidth)/2,
                     mappyCenterY  = (mappyTopLeftY + mappyHeight)/2;
 
@@ -116,8 +116,9 @@ define(
                 r.ZPDNormalSize(mapCanvasCenterX, mapCanvasCenterY);
 
                 //helper_.debug("=>pan");
-                var transX = mapCanvasCenterX-mappyCenterX,
-                    transY = mapCanvasCenterY-mappyCenterY;
+                var transX = mapCanvasCenterX - mappyCenterX, transY = mapCanvasCenterY - mappyCenterY;
+                if (mappyTopLeftX < 0) transX -= mappyTopLeftX/2;
+                if (mappyTopLeftY < 0) transY -= mappyTopLeftY/2;
                 r.ZPDPanTo(transX,transY);
             };
 

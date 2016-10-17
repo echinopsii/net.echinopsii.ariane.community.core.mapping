@@ -311,7 +311,12 @@ define(
                         this.lanLineTopY = this.manLineTopY + this.manLineHeight;
                         this.lanLineBdrY = this.lanLineTopY + this.lanLineHeight;
                     } else {
-                        this.lanLineTopY = this.datacenter.getZoneCoord().y + this.datacenter.dbrdSpan;
+                        if (this.datacenter.pName === "THE GLOBAL INTERNET") {
+                            this.wanLineTopY = this.datacenter.getZoneCoord().y + this.datacenter.dbrdSpan;
+                            this.lanLineTopY = this.datacenter.getZoneCoord().y;
+                        } else {
+                            this.lanLineTopY = this.datacenter.getZoneCoord().y + this.datacenter.dbrdSpan;
+                        }
                         this.lanLineBdrY = this.lanLineTopY + this.lanLineHeight;
                     }
                 }
@@ -331,10 +336,17 @@ define(
                         ["L",this.datacenter.getZoneCoord().x+this.datacenter.getZoneSize().width, this.manLineTopY]
                     ];
                 } else if (this.datacenter.dcmatrix.getLanMtxSize()!=0) {
-                    dcWanPath =                         [
-                        ["M",this.datacenter.getZoneCoord().x, this.lanLineTopY],
-                        ["L",this.datacenter.getZoneCoord().x+this.datacenter.getZoneSize().width, this.lanLineTopY]
-                    ];
+                    if (this.datacenter.pName === "THE GLOBAL INTERNET") {
+                        dcWanPath =                         [
+                            ["M",this.datacenter.getZoneCoord().x, this.wanLineTopY],
+                            ["L",this.datacenter.getZoneCoord().x+this.datacenter.getZoneSize().width, this.wanLineTopY]
+                        ];
+                    } else {
+                        dcWanPath =                         [
+                            ["M",this.datacenter.getZoneCoord().x, this.lanLineTopY],
+                            ["L",this.datacenter.getZoneCoord().x+this.datacenter.getZoneSize().width, this.lanLineTopY]
+                        ];
+                    }
                 }
                 var wanManPath =
                         [
@@ -379,7 +391,7 @@ define(
                     lanDcPath =
                         [
                             ["M",this.datacenter.getZoneCoord().x, this.lanLineBdrY],
-                            ["L",this.datacenter.getZoneCoord().x+this.datacenter.getZoneSize().width, this.lanLineBdrY]
+                            ["L",this.datacenter.getZoneCoord().x + this.datacenter.getZoneSize().width, this.lanLineBdrY]
                         ];
 
                 //noinspection JSUnusedGlobalSymbols
@@ -508,10 +520,17 @@ define(
                         ["L",this.datacenter.getZoneCoord().x+this.datacenter.getZoneSize().width, this.manLineTopY]
                     ];
                 } else if (this.datacenter.dcmatrix.getLanMtxSize()!=0) {
-                    dcWanPath =                         [
-                        ["M",this.datacenter.getZoneCoord().x, this.lanLineTopY],
-                        ["L",this.datacenter.getZoneCoord().x+this.datacenter.getZoneSize().width, this.lanLineTopY]
-                    ];
+                    if (this.datacenter.pName === "THE GLOBAL INTERNET") {
+                        dcWanPath =                         [
+                            ["M",this.datacenter.getZoneCoord().x, this.wanLineTopY],
+                            ["L",this.datacenter.getZoneCoord().x+this.datacenter.getZoneSize().width, this.wanLineTopY]
+                        ];
+                    } else {
+                        dcWanPath =                         [
+                            ["M",this.datacenter.getZoneCoord().x, this.lanLineTopY],
+                            ["L",this.datacenter.getZoneCoord().x+this.datacenter.getZoneSize().width, this.lanLineTopY]
+                        ];
+                    }
                 }
 
                 var wanManPath =

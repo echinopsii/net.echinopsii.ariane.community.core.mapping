@@ -590,6 +590,7 @@ define(
             var i, ii;
             if (moveSet!=null) {
                 moveSet.transform("");
+                moveSet.clear();
                 moveSet = null;
             }
             if (dcsOnMove!=null) {

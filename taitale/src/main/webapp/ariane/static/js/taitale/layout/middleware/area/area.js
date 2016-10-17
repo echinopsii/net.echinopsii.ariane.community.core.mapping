@@ -46,6 +46,7 @@ define(
             this.isInserted  = false;
             this.dispArea    = false;
             this.dispAreaOD  = false;
+            this.onMoOver   = true;
 
             this.areaR    = null;
             this.rect     = null;
@@ -257,8 +258,8 @@ define(
                 this.armatrix.defineAreaContentMaxSize();
 
                 var contentAreaSize = this.armatrix.getAreaContentMaxSize();
-                this.areawidth  = this.abrdSpan*2 + (this.armatrix.getMtxSize().x-1)*this.lanSpan + contentAreaSize.width;
-                this.areaheight = this.abrdSpan*2 + (this.armatrix.getMtxSize().y-1)*this.lanSpan + contentAreaSize.height;
+                this.areawidth  = this.abrdSpan*2 + (this.armatrix.getMtxSize().x)*this.lanSpan + contentAreaSize.width;
+                this.areaheight = this.abrdSpan*2 + (this.armatrix.getMtxSize().y)*this.lanSpan + contentAreaSize.height;
             };
 
             this.defineSize = function() {
@@ -266,8 +267,8 @@ define(
                 this.armatrix.defineAreaContentSize();
 
                 var contentAreaSize = this.armatrix.getAreaContentSize();
-                this.areawidth  = this.abrdSpan*2 + (this.armatrix.getMtxSize().x-1)*this.lanSpan + contentAreaSize.width;
-                this.areaheight = this.abrdSpan*2 + (this.armatrix.getMtxSize().y-1)*this.lanSpan + contentAreaSize.height;
+                this.areawidth  = this.abrdSpan*2 + (this.armatrix.getMtxSize().x)*this.lanSpan + contentAreaSize.width;
+                this.areaheight = this.abrdSpan*2 + (this.armatrix.getMtxSize().y)*this.lanSpan + contentAreaSize.height;
             };
 
             this.defineFirstPoz = function() {
@@ -355,10 +356,12 @@ define(
                 this.areaHat.toBack();
 
                 this.rect.attr({fill: params.area_color, stroke: params.area_color, "stroke-dasharray": this.sDasharray, "fill-opacity": this.oUnselected, "stroke-width": 0});
-                this.rect.mousedown(mouseDown);
-                this.rect.drag(areaMove, areaDragg, areaUP);
-                this.rect.mouseover(areaOver);
-                this.rect.mouseout(areaOut);
+                if (this.onMoOver) {
+                    this.rect.mousedown(mouseDown);
+                    this.rect.drag(areaMove, areaDragg, areaUP);
+                    this.rect.mouseover(areaOver);
+                    this.rect.mouseout(areaOut);
+                }
 
                 this.areaR.hide();
                 this.areaHat.hide();
