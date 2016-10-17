@@ -11,7 +11,7 @@
     
     <modules>
         <module>ds</module>
-        </modules>
+    </modules>
     
     <repositories>
         <repository>
