@@ -353,6 +353,11 @@ define(
                         var area = layoutNtwRegistries.pushAreaIntoRegistry(areaDef, options);
                         var lan  = layoutNtwRegistries.pushLanIntoRegistry(lanDef, options);
 
+                        if (dc.pName === "THE GLOBAL INTERNET") {
+                            area.onMoOver = false;
+                            lan.onMoOver = false;
+                        }
+
                         container.layoutData =
                             {
                                 dc: dc, area: area, lan: lan,

@@ -46,6 +46,7 @@ define(
             this.isInserted  = false;
             this.dispArea    = false;
             this.dispAreaOD  = false;
+            this.onMoOver   = true;
 
             this.areaR    = null;
             this.rect     = null;
@@ -355,10 +356,12 @@ define(
                 this.areaHat.toBack();
 
                 this.rect.attr({fill: params.area_color, stroke: params.area_color, "stroke-dasharray": this.sDasharray, "fill-opacity": this.oUnselected, "stroke-width": 0});
-                this.rect.mousedown(mouseDown);
-                this.rect.drag(areaMove, areaDragg, areaUP);
-                this.rect.mouseover(areaOver);
-                this.rect.mouseout(areaOut);
+                if (this.onMoOver) {
+                    this.rect.mousedown(mouseDown);
+                    this.rect.drag(areaMove, areaDragg, areaUP);
+                    this.rect.mouseover(areaOver);
+                    this.rect.mouseout(areaOut);
+                }
 
                 this.areaR.hide();
                 this.areaHat.hide();
