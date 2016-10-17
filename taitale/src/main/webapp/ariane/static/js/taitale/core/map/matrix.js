@@ -188,7 +188,7 @@ define(
                             cursorHeight = cursorHeight + rows[j][i].getZoneMaxSize().height;
                         }
                     }
-                    if (rows[0].length != 0)
+                    if (rows[0].length != 0 && rows[0][i] != null)
                         cursorWidth = cursorWidth + rows[0][i].getZoneMaxSize().width;
                 }
             };
@@ -213,7 +213,7 @@ define(
                             cursorHeight = cursorHeight + rows[j][i].getZoneSize().height;
                         }
                     }
-                    if (rows[0].length != 0)
+                    if (rows[0].length != 0 && rows[0][i] != null)
                         cursorWidth = cursorWidth + rows[0][i].getZoneSize().width;
                 }
             };
@@ -230,7 +230,7 @@ define(
                             cursorHeight = cursorHeight + rows[j][i].getZoneSize().height;
                         }
                     }
-                    if (rows[0].length != 0)
+                    if (rows[0].length != 0 && rows[0][i] != null)
                         cursorWidth = cursorWidth + rows[0][i].getZoneSize().width;
                 }
             };
@@ -427,7 +427,7 @@ define(
                                 nbColumns++;
                                 for (i = 0, ii = nbColumns; i < ii; i++) {
                                     var tmpDC = rows[0][i];
-                                    if (tmpDC != null) {
+                                    if (tmpDC != null && tmpDC.pName !== container.layoutData.dc.pName) {
                                         var tmpLng = parseFloat(tmpDC.getGeoDCLoc().gpsLng),
                                             pvtLng = parseFloat(pivotDC.getGeoDCLoc().gpsLng);
                                         if (tmpLng > pvtLng) {
@@ -439,7 +439,7 @@ define(
                                         if (tmpLng > pvtLng) {
                                             ;
                                         }
-                                    } else {
+                                    } else if (tmpDC == null && !pivotDC.isInserted) {
                                         rows[0][i] = pivotDC;
                                         pivotDC.isInserted = true;
                                     }
@@ -463,7 +463,7 @@ define(
                 var i, ii;
                 if (options.getLayout() === dic.mapLayout.MDW) {
                     for (i= 0, ii=nbColumns; i < ii; i++) {
-                        if (rows[0].length != 0)
+                        if (rows[0].length != 0 && rows[0][i] != null)
                             rows[0][i].displayDC(display);
                     }
                     if (rows[1]!=null) {
@@ -479,7 +479,7 @@ define(
                 var i, ii;
                 if (options.getLayout() === dic.mapLayout.MDW) {
                     for (i= 0, ii=nbColumns; i < ii; i++) {
-                        if (rows[0].length != 0)
+                        if (rows[0].length != 0 && rows[0][i] != null)
                             rows[0][i].displayArea(display);
                     }
                 }
@@ -489,7 +489,7 @@ define(
                 var i, ii;
                 if (options.getLayout() === dic.mapLayout.MDW) {
                     for (i= 0, ii=nbColumns; i < ii; i++) {
-                        if (rows[0].length != 0)
+                        if (rows[0].length != 0 && rows[0][i] != null)
                             rows[0][i].displayLan(display);
                     }
                 }
