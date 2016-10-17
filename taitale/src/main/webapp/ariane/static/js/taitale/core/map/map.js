@@ -478,14 +478,9 @@ define(
                                 }
                             }
                         }
-                        if (mapTopLeftX<0)
-                            mapWidth = mapBottomRightX - mapTopLeftX + 2*mbrdSpan;
-                        else
-                            mapWidth = mapBottomRightX + 2*mbrdSpan;
-                        if (mapTopLeftY<0)
-                            mapHeight = mapBottomRightY - mapTopLeftY + 2*mbrdSpan;
-                        else
-                            mapHeight = mapBottomRightY + 2*mbrdSpan;
+
+                        mapWidth = Math.abs(mapBottomRightX - mapTopLeftX) + 2*mbrdSpan;
+                        mapHeight = Math.abs(mapBottomRightY - mapTopLeftY) + 2*mbrdSpan;
                         break;
                 }
             };

@@ -233,16 +233,20 @@ define(
                 this.dcmatrix.defineDCContentMaxSize();
 
                 var contentDCSize = this.dcmatrix.getDCContentMaxSize();
-                this.dcwidth  = this.dbrdSpan*2 + (this.dcmatrix.getMtxSize().x-1)*this.areaSpan + contentDCSize.width;
-                this.dcheight = this.dbrdSpan*2 + (this.dcmatrix.getMtxSize().y-1)*this.areaSpan + contentDCSize.height;
+                this.dcwidth  = this.dbrdSpan*2 + (this.dcmatrix.getMtxSize().x)*this.areaSpan + contentDCSize.width;
+                this.dcheight = this.dbrdSpan*2 + (this.dcmatrix.getMtxSize().y)*this.areaSpan + contentDCSize.height;
             };
 
             this.defineZoneSize = function() {
                 this.dcmatrix.defineDCContentSize();
 
                 var contentDCSize = this.dcmatrix.getDCContentSize();
-                this.dcwidth  = this.dbrdSpan*2 + (this.dcmatrix.getMtxSize().x-1)*this.areaSpan + contentDCSize.width;
-                this.dcheight = this.dbrdSpan*2 + (this.dcmatrix.getMtxSize().y-1)*this.areaSpan + contentDCSize.height;
+                this.dcwidth  = this.dbrdSpan*2 + (this.dcmatrix.getMtxSize().x)*this.areaSpan + contentDCSize.width;
+                if (this.pName === "THE GLOBAL INTERNET") {
+                    this.dcheight = this.dbrdSpan + (this.dcmatrix.getMtxSize().y)*this.areaSpan + contentDCSize.height;
+                } else {
+                    this.dcheight = this.dbrdSpan*2 + (this.dcmatrix.getMtxSize().y)*this.areaSpan + contentDCSize.height;
+                }
             };
 
             this.defineZoneObjectsMaxSize = function() {
@@ -313,7 +317,7 @@ define(
                 this.dcHat.print(this.r, this.topLeftX + (this.dcwidth/2), this.topLeftY + this.dbrdSpan/5);
                 //noinspection JSUnresolvedVariable
                 this.dcTown = this.r.text(this.topLeftX + (this.dcwidth/2), this.topLeftY + this.dcheight - this.dbrdSpan/2, this.geoDCLoc.town);
-                this.rect   = this.r.rect(this.topLeftX, this.topLeftY, this.dcwidth, this.dcheight, 0);
+                this.rect   = this.r.rect(this.topLeftX, this.topLeftY, this.dcwidth, this.dcheight, 20);
 
                 this.dcHat.mousedown(mouseDown);
                 this.dcHat.drag(dcMove, dcDragg, dcUP);
@@ -415,10 +419,19 @@ define(
                 } else if (this.dcmatrix.getManMtxSize()!=0) {
                     this.dcsplitter.manLineTopY = this.topLeftY + this.dbrdSpan;
                     this.dcsplitter.lanLineTopY = this.dcsplitter.manLineTopY+this.dcsplitter.manLineHeight;
-                } else
-                    this.dcsplitter.lanLineTopY = this.topLeftY + this.dbrdSpan;
-                this.dcsplitter.lanLineBdrY = this.topLeftY+this.dcheight-this.dbrdSpan;
+                } else {
+                    if (this.pName === "THE GLOBAL INTERNET") {
+                        this.dcsplitter.lanLineTopY = this.topLeftY;
+                    } else {
+                        this.dcsplitter.lanLineTopY = this.topLeftY + this.dbrdSpan;
+                    }
+                }
 
+                if (this.pName === "THE GLOBAL INTERNET") {
+                    this.dcsplitter.wanLineTopY = this.topLeftY + this.dbrdSpan;
+                }
+
+                this.dcsplitter.lanLineBdrY = this.topLeftY + this.dcheight - this.dbrdSpan;
 
                 this.dcsplitter.move(this.r);
 
@@ -475,8 +488,8 @@ define(
                     this.changeInit();
 
                     this.isMoving = true;
-                    dcRef.rect.animate({"fill-opacity": dcRef.oUnselected, "stroke-width": dcRef.sWidth}, 1);
-                    dcRef.dcR.show();
+                    this.rect.animate({"fill-opacity": this.oUnselected, "stroke-width": this.sWidth}, 1);
+                    this.dcR.show();
                     this.dcsplitter.hide();
                     this.rect.animate({"fill-opacity": this.oSelected}, 500);
                 }
@@ -498,7 +511,6 @@ define(
 
                     this.rect.attr(attrect);
                     this.dcTown.attr(attrtxt1);
-
                     this.changeUp();
 
                     this.dcsplitter.show();
@@ -705,7 +717,7 @@ define(
 
                 //noinspection JSUnresolvedVariable
                 this.dcTown = this.r.text(this.extrx + (this.extwidth/2), this.extry + this.extheight - this.dbrdSpan/2, this.geoDCLoc.town);
-                this.rect   = this.r.rect(this.extrx, this.extry, this.extwidth, this.extheight, 0);
+                this.rect   = this.r.rect(this.extrx, this.extry, this.extwidth, this.extheight, 20);
 
                 this.dcTown.attr(params.dc_txtTitle).attr({'fill':this.color});
                 this.dcTown.mousedown(mouseDown);
