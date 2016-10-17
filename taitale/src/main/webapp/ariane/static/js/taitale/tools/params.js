@@ -39,12 +39,12 @@ define({
     dc_menuFields      : {'font-size': '12px', 'font-family': 'Arial', 'font-weight': 'normal', 'cursor': 'default', fill: "#fff"},
     dc_menuFieldsOver  : {'font-size': '12px', 'font-family': 'Arial', 'font-weight': 'bold', 'cursor': 'default', fill: "#fff"},
     dc_areaSpan          : 0,  /*space between 2 area*/
-    dc_dbrdSpan          : 85, /*space between 1 area and DC border*/
+    dc_dbrdSpan          : 110, /*space between 1 area and DC border*/
     dc_dbrdResz          : 10, /*resizing border*/
-    dc_txtTitle          : {font: '24px Helvetica, Arial', 'font-weight': 'bold', fill: "#000"},
+    dc_txtTitle          : {font: '40px Helvetica, Arial', 'font-weight': 'bold', fill: "#000"},
     dc_opacSelec         : 0.2,
     dc_opacUnselec       : 0,
-    dc_strokeWidthShow   : 3,
+    dc_strokeWidthShow   : 10,
     dc_color             : "#333",
     dc_strokeDasharray   : "",
     dc_split_lineColor   : "#333",
@@ -54,7 +54,7 @@ define({
     dc_split_moverCRad   : 5,
     dc_split_moverOSel   : 0.2,
     dc_split_moverOUnsel : 0,
-    dc_split_title       : {font: '24px Helvetica, Arial', 'font-weight': 'bold', fill: "#000"},
+    dc_split_title       : {font: '40px Helvetica, Arial', 'font-weight': 'bold', fill: "#000"},
 
     area_menuFillColor   : "#000",
     area_menuOpacity     : 0.7,
@@ -65,7 +65,7 @@ define({
     area_lanSpan         : 0,  /*space between 2 lan*/
     area_abrdSpan        : 60, /*space between 1 lan and area border*/
     area_abrdResz        : 10,
-    area_txtTitle        : {font: '22px Helvetica, Arial', 'font-weight': 'bold', fill: "#000"},
+    area_txtTitle        : {font: '28px Helvetica, Arial', 'font-weight': 'bold', fill: "#000"},
     area_opacSelec       : 0.2,
     area_opacUnselec     : 0,
     area_strokeDasharray : "- .",
@@ -78,8 +78,8 @@ define({
     lan_menuMainTitle   : {'font-size': '14px', 'font-family': 'Arial', 'font-weight': 'bold', 'cursor': 'default', fill: "#fff"},
     lan_menuFields      : {'font-size': '12px', 'font-family': 'Arial', 'font-weight': 'normal', 'cursor': 'default', fill: "#fff"},
     lan_menuFieldsOver  : {'font-size': '12px', 'font-family': 'Arial', 'font-weight': 'bold', 'cursor': 'default', fill: "#fff"},
-    lan_contSpan        : 5,  /*space between 2 container*/
-    lan_lbrdSpan        : 50, /*space between 1 container and lan border*/
+    lan_contSpan        : 40,  /*space between 2 container*/
+    lan_lbrdSpan        : 50,  /*space between 1 container and lan border*/
     lan_lbrdResz        : 10,
     lan_txtTitle        : {font: '20px Helvetica, Arial', 'font-weight': 'bold', fill: "#000"},
     lan_opacSelec       : 0.2,
@@ -94,14 +94,14 @@ define({
     container_menuMainTitle   : {'font-size': '14px', 'font-family': 'Arial', 'font-weight': 'bold', 'cursor': 'default', fill: "#fff"},
     container_menuFields      : {'font-size': '12px', 'font-family': 'Arial', 'font-weight': 'normal', 'cursor': 'default', fill: "#fff"},
     container_menuFieldsOver  : {'font-size': '12px', 'font-family': 'Arial', 'font-weight': 'bold', 'cursor': 'default', fill: "#fff"},
-    container_fitTextPadding  : 50,
-    container_fitTxtTitleMinFont : 13,
+    container_fitTextPadding  : 5,
+    container_fitTxtTitleMinFont : 32,
     container_cornerRad       : 15,
     container_interSpan       : 20,
-    container_opacSelec       : 0.2,
+    container_opacSelec       : 0.4,
     container_opacUnselec     : 0.1,
     container_strokeWidth     : 4,
-    container_txtTitle        : {'font-size': '18px', 'font-family': 'Arial', 'font-weight': 'bold'},
+    container_txtTitle        : {'font-size': '32px', 'font-family': 'Arial', 'font-weight': 'bold'},
     containerHat_txtFont      : {'font-size': '16px', 'font-family': 'Arial', 'font-weight': 'bold'},
 
     node_menuFillColor   : "#000",
@@ -114,7 +114,7 @@ define({
     node_interSpan   : 20,
     node_minWidth    : 180,
     node_minHeight   : 40,
-    node_opacSelec   : 0.3,
+    node_opacSelec   : 0.5,
     node_opacUnselec : 0.2,
     node_strokeWidth : 2,
     node_titleHeight : 34,
@@ -133,7 +133,7 @@ define({
     endpoint_radUnselec     : 7,
     endpoint_radSelec       : 9,
     endpoint_opacUnselec    : 0.5,
-    endpoint_opacSelec      : 0.8,
+    endpoint_opacSelec      : 1,
     endpoint_strokeWidth    : 1,
     endpoint_txtBxURLTitle  : {'font-size': '14px', 'font-family': 'Arial', 'font-weight': 'bold', 'cursor': 'default', fill: "#fff"},
     endpoint_txtBxURLDef    : {'font-size': '12px', 'font-family': 'Arial', 'cursor': 'default', fill: "#fff"}

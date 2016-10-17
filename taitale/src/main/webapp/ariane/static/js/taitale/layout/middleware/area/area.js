@@ -257,8 +257,8 @@ define(
                 this.armatrix.defineAreaContentMaxSize();
 
                 var contentAreaSize = this.armatrix.getAreaContentMaxSize();
-                this.areawidth  = this.abrdSpan*2 + (this.armatrix.getMtxSize().x-1)*this.lanSpan + contentAreaSize.width;
-                this.areaheight = this.abrdSpan*2 + (this.armatrix.getMtxSize().y-1)*this.lanSpan + contentAreaSize.height;
+                this.areawidth  = this.abrdSpan*2 + (this.armatrix.getMtxSize().x)*this.lanSpan + contentAreaSize.width;
+                this.areaheight = this.abrdSpan*2 + (this.armatrix.getMtxSize().y)*this.lanSpan + contentAreaSize.height;
             };
 
             this.defineSize = function() {
@@ -266,8 +266,8 @@ define(
                 this.armatrix.defineAreaContentSize();
 
                 var contentAreaSize = this.armatrix.getAreaContentSize();
-                this.areawidth  = this.abrdSpan*2 + (this.armatrix.getMtxSize().x-1)*this.lanSpan + contentAreaSize.width;
-                this.areaheight = this.abrdSpan*2 + (this.armatrix.getMtxSize().y-1)*this.lanSpan + contentAreaSize.height;
+                this.areawidth  = this.abrdSpan*2 + (this.armatrix.getMtxSize().x)*this.lanSpan + contentAreaSize.width;
+                this.areaheight = this.abrdSpan*2 + (this.armatrix.getMtxSize().y)*this.lanSpan + contentAreaSize.height;
             };
 
             this.defineFirstPoz = function() {

@@ -239,16 +239,16 @@ define(
                 this.lanmatrix.defineLanContentMaxSize();
 
                 var contentLanSize = this.lanmatrix.getLanContentMaxSize();
-                this.lanwidth  = this.lbrdSpan*2 + (this.lanmatrix.getMtxSize().x-1)*this.contSpan + contentLanSize.width;
-                this.lanheight = this.lbrdSpan*2 + (this.lanmatrix.getMtxSize().y-1)*this.contSpan + contentLanSize.height;
+                this.lanwidth  = this.lbrdSpan*2 + (this.lanmatrix.getMtxSize().y)*this.contSpan + contentLanSize.width;
+                this.lanheight = this.lbrdSpan*2 + (this.lanmatrix.getMtxSize().x)*this.contSpan + contentLanSize.height;
             };
 
             this.defineSize = function() {
                 this.lanmatrix.defineLanContentSize();
 
                 var contentLanSize = this.lanmatrix.getLanContentSize();
-                this.lanwidth  = this.lbrdSpan*2 + (this.lanmatrix.getMtxSize().x-1)*this.contSpan + contentLanSize.width;
-                this.lanheight = this.lbrdSpan*2 + (this.lanmatrix.getMtxSize().y-1)*this.contSpan + contentLanSize.height;
+                this.lanwidth  = this.lbrdSpan*2 + (this.lanmatrix.getMtxSize().y)*this.contSpan + contentLanSize.width;
+                this.lanheight = this.lbrdSpan*2 + (this.lanmatrix.getMtxSize().x)*this.contSpan + contentLanSize.height;
             };
 
             this.defineFirstPoz = function() {

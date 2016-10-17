@@ -338,8 +338,10 @@ define(
                 containerRef.titleWidth  = containerRef.name.width(containerRef.txtFont);
                 containerRef.titleHeight = containerRef.name.height(containerRef.txtFont);
 
-                hatWidth = Math.max(containerRef.containerHat_.width + containerRef.fitTextPadding + containerRef.containerHat_.width*2/5,
-                    containerRef.titleWidth + containerRef.fitTextPadding + containerRef.titleWidth*2/5);
+                hatWidth = Math.max(
+                    containerRef.containerHat_.width*11/5 + containerRef.fitTextPadding,
+                    containerRef.titleWidth*11/5 + containerRef.fitTextPadding + containerRef.titleWidth
+                );
 
                 return {
                     centerMatrix: hatWidth > firstWidth,
