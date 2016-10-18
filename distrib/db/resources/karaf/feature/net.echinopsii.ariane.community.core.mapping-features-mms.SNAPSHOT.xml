@@ -9,5 +9,5 @@
 		<bundle start-level="60">mvn:net.echinopsii.ariane.community.core.mapping.ds/net.echinopsii.ariane.community.core.mapping.ds.blueprints/0.8.2-MS-SNAPSHOT</bundle>
 		<bundle start-level="60">mvn:net.echinopsii.ariane.community.core.mapping.ds/net.echinopsii.ariane.community.core.mapping.ds.rim/0.8.2-MS-SNAPSHOT</bundle>
 		<bundle start-level="60">mvn:net.echinopsii.ariane.community.core.mapping.ds/net.echinopsii.ariane.community.core.mapping.ds.msgsrv/0.8.2-MS-SNAPSHOT</bundle>
-		</feature>
+    </feature>
 </features>
