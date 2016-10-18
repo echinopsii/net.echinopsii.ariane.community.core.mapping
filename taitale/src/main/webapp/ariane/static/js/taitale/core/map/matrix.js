@@ -475,6 +475,7 @@ define(
                                             rows[0][i] = pivotDC;
                                             pivotDC.isInserted = true;
                                             pivotDC = tmpDC;
+                                            pivotDC.isInserted = false;
                                         }
                                         //DONT'T ASK : SOLVE A STRANGE BEHAVIOR ON FIREFOX
                                         if (tmpLng > pvtLng) {
