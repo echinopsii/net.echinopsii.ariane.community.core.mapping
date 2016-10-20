@@ -643,6 +643,14 @@ define(
                 if (this.scaleDir[0] == 0) dx = 0;
                 if (this.scaleDir[1] == 0) dy = 0;
 
+                var zoomedMoveCoord = this.object.r.getZPDZoomedMoveCoord(dx, dy);
+                dx = zoomedMoveCoord.dx; dy = zoomedMoveCoord.dy;
+
+                if (this.object.sWidth > 5)
+                    edit_elem_size = this.object.sWidth*2;
+                else
+                    edit_elem_size = 10;
+
                 if (dx != 0 || dy != 0) {
                     var i, ii;
 
@@ -888,7 +896,7 @@ define(
                     for (i = 0, ii = this.ibbxCorners.length; i < ii; i++) {
                         if (this.idx != i) {
                             handle = this.object.scaleHandles[i];
-                            handle.element = this.object.r.rect(this.ibbxCorners[i].x-5, this.ibbxCorners[i].y-5, 10, 10).attr({fill: "#000",cursor: "crosshair"});
+                            handle.element = this.object.r.rect(this.ibbxCorners[i].x-(edit_elem_size/2), this.ibbxCorners[i].y-(edit_elem_size/2), edit_elem_size, edit_elem_size).attr({fill: "#000",cursor: "crosshair"});
                             handle.element.drag(
                                 onmove,
                                 onmovestart,
@@ -905,7 +913,7 @@ define(
                     for (i = 0, ii = this.imdlPoints.length; i < ii; i++) {
                         if (this.idx != i+4) {
                             handle = this.object.scaleHandles[i+4];
-                            handle.element = this.object.r.rect(this.imdlPoints[i].x-5, this.imdlPoints[i].y-5, 10, 10).attr({fill: "#000",cursor: "crosshair"});
+                            handle.element = this.object.r.rect(this.imdlPoints[i].x-(edit_elem_size/2), this.imdlPoints[i].y-(edit_elem_size/2), edit_elem_size, edit_elem_size).attr({fill: "#000",cursor: "crosshair"});
                             handle.element.drag(
                                 onmove,
                                 onmovestart,
