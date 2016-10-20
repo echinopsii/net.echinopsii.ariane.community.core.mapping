@@ -24,7 +24,7 @@ define(
         'taitale-helper'
     ],
     function (Raphael,helper) {
-        function cylinder(parent,centerX,centerY,d,h,title,color_) {
+        function cylinder(parent,centerX,centerY,d,h,title,color_,title_font,stroke_width) {
             this.r         = null;
             this.ctrX      = centerX;
             this.ctrY      = centerY;
@@ -51,7 +51,7 @@ define(
             this.translateForm="";
             this.helper_ = new helper();
 
-            this.sWidth = '2';
+            this.sWidth = stroke_width;
             this.cylinder   = null;
             this.titleTxt   = null;
             this.cylinderR  = null;
@@ -267,6 +267,7 @@ define(
                     this.r = r_;
                     var fillColor   = "#" + this.color,
                         strokeColor = "#" + delHexColor("fff000", this.color);
+
                     this.cylinder  = this.r.path(this.vcpath).attr(
                         {
                             fill: fillColor,"fill-opacity": '0.7',"fill-rule": 'evenodd',stroke:strokeColor,"stroke-width": this.sWidth,"stroke-linecap": 'butt',
@@ -274,7 +275,7 @@ define(
                         });
                     this.cylinder.transform(this.translateForm);
                     this.titleTxt   = this.r.text(this.ctrX, this.ctrY-this.diameter, this.title_).
-                        attr({'font-size': '14px', 'font-weight': 'bold', 'font-family': 'Arial', fill: strokeColor, 'cursor': 'default'});
+                        attr(title_font).attr({fill: strokeColor, 'cursor': 'default'});
                     this.titleTxt.transform(this.translateForm);
                     this.bindingPt1 = this.r.circle(this.bindingPt1X, this.bindingPt1Y, 0);
                     this.bindingPt2 = this.r.circle(this.bindingPt2X, this.bindingPt2Y, 0);
