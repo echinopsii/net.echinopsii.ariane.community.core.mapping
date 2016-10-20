@@ -121,6 +121,8 @@ define(
                         cylinderRef.moveInit();
                 },
                 cyMove = function(dx,dy) {
+                    var zoomedMoveCoord = cylinderRef.r.getZPDZoomedMoveCoord(dx, dy);
+                    dx = zoomedMoveCoord.dx; dy = zoomedMoveCoord.dy;
                     mover(cylinderRef, dx, dy);
                 },
                 cyUP = function() {
