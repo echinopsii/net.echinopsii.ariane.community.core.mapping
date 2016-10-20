@@ -51,6 +51,7 @@ define(
             this.translateForm="";
             this.helper_ = new helper();
 
+            this.sWidth = '2';
             this.cylinder   = null;
             this.titleTxt   = null;
             this.cylinderR  = null;
@@ -268,7 +269,7 @@ define(
                         strokeColor = "#" + delHexColor("fff000", this.color);
                     this.cylinder  = this.r.path(this.vcpath).attr(
                         {
-                            fill: fillColor,"fill-opacity": '0.7',"fill-rule": 'evenodd',stroke:strokeColor,"stroke-width": '2',"stroke-linecap": 'butt',
+                            fill: fillColor,"fill-opacity": '0.7',"fill-rule": 'evenodd',stroke:strokeColor,"stroke-width": this.sWidth,"stroke-linecap": 'butt',
                             "stroke-linejoin": 'round',"stroke-miterlimit": '4',"stroke-dashoffset": '0',"stroke-opacity": '1'
                         });
                     this.cylinder.transform(this.translateForm);

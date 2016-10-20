@@ -1017,11 +1017,18 @@ define(
                 });
 
             object.scaleHandles = [];
-            var handle;
+            var handle, edit_elem_size;
+
+            if (object.sWidth > 5)
+                edit_elem_size = object.sWidth*2;
+            else
+                edit_elem_size = 10;
+
             for (i = 0, ii = bbxCorners.length; i < ii; i++) {
                 handle = {};
                 handle.scaleDir = scaleDir[i];
-                handle.element = this.rect(bbxCorners[i].x-5, bbxCorners[i].y-5, 10, 10).attr({fill: "#000", cursor: "crosshair"});
+                handle.element = this.rect(bbxCorners[i].x-(edit_elem_size/2), bbxCorners[i].y-(edit_elem_size/2),
+                    edit_elem_size, edit_elem_size).attr({fill: "#000", cursor: "crosshair"});
                 handle.element.drag(
                     onmove,
                     onmovestart,
@@ -1038,7 +1045,8 @@ define(
             for (i = 0, ii = mdlPoints.length; i < ii; i++) {
                 handle = {};
                 handle.scaleDir = scaleDir[i+4];
-                handle.element = this.rect(mdlPoints[i].x-5, mdlPoints[i].y-5, 10, 10).attr({fill: "#000", cursor: "crosshair"});
+                handle.element = this.rect(mdlPoints[i].x-(edit_elem_size/2), mdlPoints[i].y-(edit_elem_size/2),
+                    edit_elem_size, edit_elem_size).attr({fill: "#000", cursor: "crosshair"});
                 handle.element.drag(
                     onmove,
                     onmovestart,

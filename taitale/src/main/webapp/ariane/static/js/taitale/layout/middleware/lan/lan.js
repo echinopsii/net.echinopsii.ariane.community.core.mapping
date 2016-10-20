@@ -64,6 +64,7 @@ define(
             this.oSelected   = params.lan_opacSelec;
             this.sDasharray  = params.lan_strokeDasharray;
             this.color       = params.lan_color;
+            this.sWidth      = params.lan_strokeWidthShow;
 
             this.lanName        = this.lanDef.sname;
             this.lanNameHat     = "Lan " + this.lanDef.sname + " - " + this.lanDef.sip + "/" + this.lanDef.smask;
@@ -100,7 +101,7 @@ define(
             var mouseDown = function(e) {
                     if (e.which == 3) {
                         if (lanRef.menuHided) {
-                            lanRef.rect.animate({"fill-opacity": lanRef.oUnselected, "stroke-width": params.lan_strokeWidthShow}, 1);
+                            lanRef.rect.animate({"fill-opacity": lanRef.oUnselected, "stroke-width": lanRef.sWidth}, 1);
                             lanRef.lanR.show();
                             lanRef.lanHat.show();
                             lanRef.dispLan = true;
@@ -219,7 +220,7 @@ define(
                 },
                 lanOver = function () {
                     if (!lanRef.dispLan  && !lanRef.isMoving && !lanRef.isEditing) {
-                        lanRef.rect.animate({"fill-opacity": lanRef.oUnselected, "stroke-width": params.lan_strokeWidthShow}, 1);
+                        lanRef.rect.animate({"fill-opacity": lanRef.oUnselected, "stroke-width": lanRef.sWidth}, 1);
                         lanRef.lanR.show();
                         lanRef.lanHat.show();
                     }
@@ -395,7 +396,7 @@ define(
                 this.dispLan=display;
                 this.dispLanOD=display;
                 if (this.dispLan) {
-                    this.rect.animate({"fill-opacity": this.oUnselected, "stroke-width": params.lan_strokeWidthShow}, 1);
+                    this.rect.animate({"fill-opacity": this.oUnselected, "stroke-width": this.sWidth}, 1);
                     this.lanR.show();
                     this.lanHat.show();
                 } else {
@@ -646,7 +647,7 @@ define(
 
                 this.rect    = this.r.rect(this.extrx, this.extry, this.extwidth, this.extheight, 0);
                 this.rect.attr({fill: this.color, stroke: this.color, "stroke-dasharray": this.sDasharray,
-                    "fill-opacity": this.oUnselected, "stroke-width": params.lan_strokeWidthShow});
+                    "fill-opacity": this.oUnselected, "stroke-width": this.sWidth});
                 this.rect.mousedown(mouseDown);
                 this.rect.drag(lanMove, lanDragg, lanUP);
                 this.rect.mouseover(lanOver);
