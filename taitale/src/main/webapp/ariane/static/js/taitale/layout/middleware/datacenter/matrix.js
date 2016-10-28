@@ -144,19 +144,27 @@ define(
             };
 
             this.defineMtxAreaSize = function() {
-                var i, ii;
+                var i, ii, maxWanLineHeight=0, maxManLineHeight=0, maxLanLineHeight=0;
                 for (i = 0, ii = rows[3][0]; i < ii ; i++ ) {
                     rows[0][i].defineSize();
-                    splitter.setWanLineHeight(rows[0][i].getAreaSize().height);
+                    if (maxWanLineHeight < rows[0][i].getAreaSize().height)
+                        maxWanLineHeight = rows[0][i].getAreaSize().height;
                 }
+                splitter.setWanLineHeight(maxWanLineHeight);
+
                 for (i = 0, ii = rows[3][1]; i < ii ; i++ ) {
                     rows[1][i].defineSize();
-                    splitter.setManLineHeight(rows[1][i].getAreaSize().height);
+                    if (maxManLineHeight < rows[1][i].getAreaSize().height)
+                        maxManLineHeight = rows[1][i].getAreaSize().height;
                 }
+                splitter.setManLineHeight(maxManLineHeight);
+
                 for (i = 0, ii = rows[3][2]; i < ii ; i++ ) {
                     rows[2][i].defineSize();
-                    splitter.setLanLineHeight(rows[2][i].getAreaSize().height);
+                    if (maxLanLineHeight < rows[2][i].getAreaSize().height)
+                        maxLanLineHeight = rows[2][i].getAreaSize().height;
                 }
+                splitter.setLanLineHeight(maxLanLineHeight);
             };
 
             this.defineDCContentMaxSize = function() {

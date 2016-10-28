@@ -242,11 +242,7 @@ define(
 
                 var contentDCSize = this.dcmatrix.getDCContentSize();
                 this.dcwidth  = this.dbrdSpan*2 + (this.dcmatrix.getMtxSize().x)*this.areaSpan + contentDCSize.width;
-                if (this.pName === "THE GLOBAL INTERNET") {
-                    this.dcheight = this.dbrdSpan + (this.dcmatrix.getMtxSize().y)*this.areaSpan + contentDCSize.height;
-                } else {
-                    this.dcheight = this.dbrdSpan*2 + (this.dcmatrix.getMtxSize().y)*this.areaSpan + contentDCSize.height;
-                }
+                this.dcheight = this.dbrdSpan*2 + (this.dcmatrix.getMtxSize().y)*this.areaSpan + contentDCSize.height;
             };
 
             this.defineZoneObjectsMaxSize = function() {
@@ -420,11 +416,7 @@ define(
                     this.dcsplitter.manLineTopY = this.topLeftY + this.dbrdSpan;
                     this.dcsplitter.lanLineTopY = this.dcsplitter.manLineTopY+this.dcsplitter.manLineHeight;
                 } else {
-                    if (this.pName === "THE GLOBAL INTERNET") {
-                        this.dcsplitter.lanLineTopY = this.topLeftY;
-                    } else {
-                        this.dcsplitter.lanLineTopY = this.topLeftY + this.dbrdSpan;
-                    }
+                    this.dcsplitter.lanLineTopY = this.topLeftY + this.dbrdSpan;
                 }
 
                 if (this.pName === "THE GLOBAL INTERNET") {

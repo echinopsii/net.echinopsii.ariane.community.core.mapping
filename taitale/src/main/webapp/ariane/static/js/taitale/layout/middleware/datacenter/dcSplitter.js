@@ -311,12 +311,8 @@ define(
                         this.lanLineTopY = this.manLineTopY + this.manLineHeight;
                         this.lanLineBdrY = this.lanLineTopY + this.lanLineHeight;
                     } else {
-                        if (this.datacenter.pName === "THE GLOBAL INTERNET") {
-                            this.wanLineTopY = this.datacenter.getZoneCoord().y + this.datacenter.dbrdSpan;
-                            this.lanLineTopY = this.datacenter.getZoneCoord().y;
-                        } else {
-                            this.lanLineTopY = this.datacenter.getZoneCoord().y + this.datacenter.dbrdSpan;
-                        }
+                        if (this.datacenter.pName === "THE GLOBAL INTERNET") this.wanLineTopY = this.datacenter.getZoneCoord().y + this.datacenter.dbrdSpan;
+                        this.lanLineTopY = this.datacenter.getZoneCoord().y + this.datacenter.dbrdSpan;
                         this.lanLineBdrY = this.lanLineTopY + this.lanLineHeight;
                     }
                 }
@@ -620,6 +616,7 @@ define(
                     this.man_lan_moverl3.attr({stroke: splitterRef.moverStrokeColor,"stroke-width": this.datacenter.sWidth});
                     if (!this.datacenter.isEditionMode()) this.man_lan_moverl3.hide();
                 }
+
                 this.lan_title.rotate(90).attr({x:this.datacenter.getZoneCoord().x+this.datacenter.dbrdSpan/2,y:this.lanLineTopY+this.lanLineHeight/2}).rotate(-90);
                 this.lan_dc_border.remove();
                 this.lan_dc_border = this.r.path(lanDcPath).attr({stroke: splitterRef.splitterLineColor, "stroke-dasharray": this.datacenter.sDasharray, "stroke-width": this.datacenter.sWidth});
