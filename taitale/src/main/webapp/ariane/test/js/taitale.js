@@ -559,6 +559,9 @@ requirejs (
             options.edition = edition[0].checked;
             options.epreset = epreset[0].checked;
             options.displayLegend = legend[0].checked;
+            options.displayDC = displayDC[0].checked;
+            options.displayAREA = displayArea[0].checked;
+            options.displayLAN = displayLan[0].checked;
             options.setURI(homeURI + "/js/taitale.samples/json/sample.taitale.input."+test.val()+".json");
             if (options.getLayout()===dic.mapLayout.MDW) {
                 document.getElementById('middlewareOptions').style.display = "";
