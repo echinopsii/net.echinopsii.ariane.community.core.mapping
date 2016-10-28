@@ -38,6 +38,7 @@ define(
                 bottomRightY  = 0;
 
             var ldatacenterSplitter = null, //for MDW map type
+                glintSplitter       = null, //for MDW map type
                 layoutNtwRegistries = null;
 
             var dic  = new dictionaries();
@@ -97,6 +98,7 @@ define(
             this.defineMtxZoneSize = function() {
                 var i, ii, j, jj;
                 ldatacenterSplitter.init();
+                glintSplitter.init();
                 for (i = 0, ii = nbColumns; i < ii ; i++)
                     for (j = 0, jj = nbLines; j < jj ; j++ )
                         if (rows[j].length != 0 && rows[j][i] != null)
@@ -282,6 +284,8 @@ define(
 
                         if (ldatacenterSplitter==null)
                             ldatacenterSplitter = new mapSplitter();
+                        if (glintSplitter==null)
+                            glintSplitter = new mapSplitter();
 
                         var location = container.localisation;
                         if (!location) {
@@ -385,13 +389,16 @@ define(
                             }
                         }
 
-                        var dc   = layoutNtwRegistries.pushDatacenterIntoRegistry(datacenterDef, ldatacenterSplitter, options);
+                        var dc ;
                         var area = layoutNtwRegistries.pushAreaIntoRegistry(areaDef, options);
                         var lan  = layoutNtwRegistries.pushLanIntoRegistry(lanDef, options);
 
-                        if (dc.pName === "THE GLOBAL INTERNET") {
+                        if (datacenterDef.pname === "THE GLOBAL INTERNET") {
+                            dc = layoutNtwRegistries.pushDatacenterIntoRegistry(datacenterDef, glintSplitter, options);
                             area.onMoOver = false;
                             lan.onMoOver = false;
+                        } else {
+                            dc = layoutNtwRegistries.pushDatacenterIntoRegistry(datacenterDef, ldatacenterSplitter, options);
                         }
 
                         container.layoutData =
@@ -524,6 +531,14 @@ define(
                         if (rows[0].length != 0 && rows[0][i] != null)
                             rows[0][i].displayArea(display);
                     }
+                    /*
+                    if (rows[1]!=null) {
+                        for (i= 0, ii=nbColumns; i < ii; i++) {
+                            if (rows[1][i]!=null)
+                                rows[1][i].displayArea(display);
+                        }
+                    }
+                    */
                 }
             };
 

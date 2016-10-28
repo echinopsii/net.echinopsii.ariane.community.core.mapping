@@ -42,6 +42,7 @@ define(
             };
 
             this.setManLineHeight = function(areaHeight) {
+                manLineHeight = areaHeight;
                 if (areaHeight > manLineHeight)
                     manLineHeight = areaHeight;
             };
