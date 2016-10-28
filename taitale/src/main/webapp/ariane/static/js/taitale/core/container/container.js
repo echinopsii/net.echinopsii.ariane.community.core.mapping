@@ -217,7 +217,7 @@ define(
             this.fitTitleMinFont   = params.container_fitTxtTitleMinFont;
             this.fitTextPadding    = params.container_fitTextPadding;
             this.cornerRad         = params.container_cornerRad;
-            this.strokeWidth       = params.container_strokeWidth;
+            this.sWidth       = params.container_strokeWidth;
             this.centerMtx         = false;
 
             this.rectWidth         = 0;
@@ -961,7 +961,7 @@ define(
                 this.containerName.drag(containerMove, containerDragger, containerUP);
 
                 this.rect = this.r.rect(this.rectTopLeftX, this.rectTopLeftY, this.rectWidth, this.rectHeight, this.cornerRad);
-                this.rect.attr({fill: this.color, stroke: this.color, "fill-opacity": containerRef.oUnselected, "stroke-width": this.strokeWidth});
+                this.rect.attr({fill: this.color, stroke: this.color, "fill-opacity": containerRef.oUnselected, "stroke-width": this.sWidth});
                 this.rect.mousedown(mouseDown);
                 this.rect.drag(containerMove, containerDragger, containerUP);
 
@@ -1279,7 +1279,7 @@ define(
                 this.containerName.drag(containerMove, containerDragger, containerUP);
 
                 this.rect = this.r.rect(this.extrx, this.extry, this.extwidth, this.extheight, this.cornerRad);
-                this.rect.attr({fill: this.color, stroke: this.color, "fill-opacity": containerRef.oUnselected, "stroke-width": this.strokeWidth});
+                this.rect.attr({fill: this.color, stroke: this.color, "fill-opacity": containerRef.oUnselected, "stroke-width": this.sWidth});
                 this.rect.mousedown(mouseDown);
                 this.rect.drag(containerMove, containerDragger, containerUP);
                 this.toFront();

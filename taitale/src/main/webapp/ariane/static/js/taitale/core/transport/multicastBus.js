@@ -21,9 +21,10 @@
 define(
     [
         'taitale-cylinder',
+        'taitale-params',
         'taitale-helper'
     ],
-    function (cylinder, helper) {
+    function (cylinder, params, helper) {
         function multicastBus(tid, ridx, localisation, multicastAddr_, properties_) {
             this.ID            = tid;
             this.ridx          = ridx;
@@ -111,10 +112,19 @@ define(
             };
 
             this.setTopLeftCoord = function(x,y) {
+                var title = (this.properties != null && this.properties.busDescription != null) ? this.properties.busDescription + " " + this.multicastAddr : this.multicastAddr,
+                    titleWidth  = title.width(params.container_txtTitle),
+                    titleHeight = title.height(params.container_txtTitle);
+
+                if (this.diameter < titleHeight + titleHeight*11/5 + params.container_fitTextPadding)
+                    this.diameter = titleHeight + titleHeight*11/5 + params.container_fitTextPadding;
+                if (this.longg < titleWidth + titleWidth*11/5 + params.container_fitTextPadding)
+                    this.longg = titleWidth + titleWidth*11/5 + params.container_fitTextPadding;
+
                 var centerX = x + this.longg/ 2, centerY = y + this.diameter/2,
-                    title = (this.properties != null && this.properties.busDescription != null) ? this.properties.busDescription + " " + this.multicastAddr : this.multicastAddr,
                     color = (this.properties != null && this.properties.primaryApplication != null) ? this.properties.primaryApplication.color : "000000";
-                this.mbus = new cylinder(this,centerX,centerY,this.diameter,this.longg,title,color);
+
+                this.mbus = new cylinder(this,centerX,centerY,this.diameter,this.longg,title,color,params.container_txtTitle,params.container_strokeWidth);
             };
 
             this.defineChildsPoz = function() {
@@ -122,8 +132,17 @@ define(
 
             this.setCylinder = function(centerX,centerY) {
                 var title = (this.properties != null && this.properties.busDescription     != null) ? this.properties.busDescription + " " + this.multicastAddr : this.multicastAddr,
-                    color = (this.properties != null && this.properties.primaryApplication != null) ? this.properties.primaryApplication.color : "000000";
-                this.mbus = new cylinder(this,centerX,centerY,this.diameter,this.longg,title,color);
+                    titleWidth  = title.width(params.container_txtTitle),
+                    titleHeight = title.height(params.container_txtTitle);
+
+                if (this.diameter < titleHeight + titleHeight*11/5 + params.container_fitTextPadding)
+                    this.diameter = titleHeight + titleHeight*11/5 + params.container_fitTextPadding;
+                if (this.longg < titleWidth + titleWidth*11/5 + params.container_fitTextPadding)
+                    this.longg = titleWidth + titleWidth*11/5 + params.container_fitTextPadding;
+
+                var color = (this.properties != null && this.properties.primaryApplication != null) ? this.properties.primaryApplication.color : "000000";
+
+                this.mbus = new cylinder(this,centerX,centerY,this.diameter,this.longg,title,color,params.container_txtTitle,params.container_strokeWidth);
             };
 
             this.setMoveJail = function(minX, minY, maxX, maxY){

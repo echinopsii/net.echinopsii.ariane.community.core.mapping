@@ -95,7 +95,7 @@ define(
             this.oUnselected = params.node_opacUnselec;
             this.oSelected   = params.node_opacSelec;
             this.cornerRad   = params.node_cornerRad;
-            this.strokeWidth = params.node_strokeWidth;
+            this.sWidth = params.node_strokeWidth;
             this.interSpan   = params.node_interSpan;
 
             // coord top left point
@@ -959,7 +959,7 @@ define(
                 this.nodeName.drag(nodeMove, nodeDragger, nodeUP);
 
                 this.rect = this.r.rect(this.rectTopLeftX, this.rectTopLeftY, this.rectWidth, this.rectHeight, this.cornerRad);
-                this.rect.attr({fill: this.color, stroke: this.color, "fill-opacity": this.oUnselected, "stroke-width": this.strokeWidth});
+                this.rect.attr({fill: this.color, stroke: this.color, "fill-opacity": this.oUnselected, "stroke-width": this.sWidth});
                 this.rect.mousedown(mouseDown);
                 this.rect.drag(nodeMove, nodeDragger, nodeUP);
                 defineRectPoints(this.rectTopLeftX, this.rectTopLeftY);
@@ -1284,7 +1284,7 @@ define(
                 this.nodeName.drag(nodeMove, nodeDragger, nodeUP);
 
                 this.rect = this.r.rect(this.extrx, this.extry, this.extwidth, this.extheight, this.cornerRad);
-                this.rect.attr({fill: this.color, stroke: this.color, "fill-opacity": nodeRef.oUnselected, "stroke-width": this.strokeWidth});
+                this.rect.attr({fill: this.color, stroke: this.color, "fill-opacity": nodeRef.oUnselected, "stroke-width": this.sWidth});
                 this.rect.mousedown(mouseDown);
                 this.rect.drag(nodeMove, nodeDragger, nodeUP);
                 this.toFront();
