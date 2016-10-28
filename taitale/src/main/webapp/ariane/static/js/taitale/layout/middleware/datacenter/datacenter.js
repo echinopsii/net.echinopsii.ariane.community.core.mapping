@@ -570,6 +570,9 @@ define(
                         dcRef.dcsplitter.hide();
                         dcRef.dcHat.hide();
                         dcRef.dispDC = false;
+                        dcRef.isMoving = false;
+                    } else {
+                        dcRef.rect.animate({"fill-opacity": dcRef.oUnselected}, 0);
                     }
                 }
             };
