@@ -1600,7 +1600,7 @@
 			this.render = function(ctx, point, angle) {
 				ctx.translate(point.x, point.y);
 				if (this.attribute('orient').valueOrDefault('auto') == 'auto') ctx.rotate(angle);
-				if (this.attribute('markerUnits').valueOrDefault('strokeWidth') == 'strokeWidth') ctx.scale(ctx.lineWidth, ctx.lineWidth);
+				if (this.attribute('markerUnits').valueOrDefault('sWidth') == 'sWidth') ctx.scale(ctx.lineWidth, ctx.lineWidth);
 				ctx.save();
 							
 				// render me using a temporary svg element
@@ -1616,7 +1616,7 @@
 				tempSvg.render(ctx);
 				
 				ctx.restore();
-				if (this.attribute('markerUnits').valueOrDefault('strokeWidth') == 'strokeWidth') ctx.scale(1/ctx.lineWidth, 1/ctx.lineWidth);
+				if (this.attribute('markerUnits').valueOrDefault('sWidth') == 'sWidth') ctx.scale(1/ctx.lineWidth, 1/ctx.lineWidth);
 				if (this.attribute('orient').valueOrDefault('auto') == 'auto') ctx.rotate(-angle);
 				ctx.translate(-point.x, -point.y);
 			}

@@ -65,7 +65,7 @@ define(
             this.rSelected      = params.endpoint_radSelec;
             this.oUnselected    = params.endpoint_opacUnselec;
             this.oSelected      = params.endpoint_opacSelec;
-            this.strokeWidth    = params.endpoint_strokeWidth;
+            this.sWidth    = params.endpoint_strokeWidth;
 
             this.menu              = null;
             this.menuSet           = null;
@@ -526,7 +526,7 @@ define(
                 if (this.color == 0) this.color = this.epNode.color;
 
                 this.circle = this.r.circle(this.x,this.y);
-                this.circle.attr({fill: this.color, stroke: this.color, "fill-opacity": this.oUnselected, "r": this.rUnselected,"stroke-width": this.strokeWidth, cursor: "crosshair"});
+                this.circle.attr({fill: this.color, stroke: this.color, "fill-opacity": this.oUnselected, "r": this.rUnselected,"stroke-width": this.sWidth, cursor: "crosshair"});
                 this.circle.attr({guide: this.epNode.rectPath});
                 this.circle.mousedown(mouseDown);
                 this.circle.drag(epMove, epDragger, epUP);
@@ -539,7 +539,7 @@ define(
                 this.label.hide();
 
                 this.frame = this.r.popup(this.circle.x, this.circle.y, this.label, "right").
-                    attr({fill: this.frmFillColor, stroke: this.frmStrokeColor, "stroke-width": this.strokeWidth, "fill-opacity": this.frmOpacity});
+                    attr({fill: this.frmFillColor, stroke: this.frmStrokeColor, "stroke-width": this.sWidth, "fill-opacity": this.frmOpacity});
                 this.frame.toBack();
                 this.frame.hide();
 

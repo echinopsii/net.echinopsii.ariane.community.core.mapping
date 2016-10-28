@@ -64,6 +64,7 @@ define(
             this.oUnselected = params.area_opacUnselec;
             this.oSelected   = params.area_opacSelec;
             this.sDasharray  = params.area_strokeDasharray;
+            this.sWidth      = params.area_strokeWidthShow;
 
             this.menu              = null;
             this.menuSet           = null;
@@ -95,7 +96,7 @@ define(
             var mouseDown = function(e) {
                     if (e.which == 3) {
                         if (areaRef.menuHided) {
-                            areaRef.rect.animate({"stroke-width": params.area_strokeWidthShow}, 1);
+                            areaRef.rect.animate({"stroke-width": areaRef.sWidth}, 1);
                             areaRef.areaR.show();
                             areaRef.dispArea = true;
                             areaRef.rectTopMiddleX = areaRef.topLeftX + areaRef.areawidth/2;
@@ -218,7 +219,7 @@ define(
                 },
                 areaOver = function () {
                     if (!areaRef.dispArea && !areaRef.isMoving && !areaRef.isEditing) {
-                        this.animate({"stroke-width": params.area_strokeWidthShow}, 1);
+                        this.animate({"stroke-width": areaRef.sWidth}, 1);
                         areaRef.areaR.show();
                         areaRef.areaHat.show();
                     }
@@ -392,7 +393,7 @@ define(
                 this.dispArea=display;
                 this.dispAreaOD=display;
                 if (display) {
-                    this.rect.animate({"stroke-width": params.area_strokeWidthShow}, 1);
+                    this.rect.animate({"stroke-width": this.sWidth}, 1);
                     this.areaR.show();
                     this.areaHat.show();
                 } else {
