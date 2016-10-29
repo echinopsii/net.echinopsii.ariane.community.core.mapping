@@ -43,6 +43,10 @@ define(
                 VIRT: "VIRT",
                 GLI: "GLOBAL INTERNET"
             };
+            this.areaObjType = {
+                LAN: "LAN",
+                BUS: "BUS"
+            }
         }
         return dictionaries;
     });

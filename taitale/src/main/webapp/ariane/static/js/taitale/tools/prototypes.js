@@ -21,13 +21,14 @@
 
 define(
     [
+        'taitale-dictionaries',
         'taitale-helper'
     ],
-    function(helper) {
+    function(dictionary,helper) {
 
         function prototypes () {
             var helper_ = new helper();
-
+            var dic     = new dictionary();
             this.physicalLocation = {
                 equal: function(that) {
                     return(this.pname===that.pname);
@@ -127,7 +128,7 @@ define(
                                 break;
                             }
                         }
-                        if (ret_rarea == null && (rarea.ratype === "LAN" || rarea.ratype === "MAN" || rarea.ratype === "WAN"))
+                        if (ret_rarea == null && (rarea.ratype === dic.networkType.LAN || rarea.ratype === dic.networkType.MAN || rarea.ratype === dic.networkType.WAN))
                             hard_rareas.push(rarea);
                     }
                     if (ret_rarea == null) {
@@ -182,7 +183,7 @@ define(
                                 break;
                             }
                         }
-                        if (ret_rarea == null && (rarea.ratype === "LAN" || rarea.ratype === "MAN" || rarea.ratype === "WAN"))
+                        if (ret_rarea == null && (rarea.ratype === dic.networkType.LAN || rarea.ratype === dic.networkType.MAN || rarea.ratype === dic.networkType.WAN))
                             hard_rareas.push(rarea);
                     }
                     if (ret_rarea == null && ret_subnet == null) {

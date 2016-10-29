@@ -460,10 +460,10 @@ define(
                         for (j = 0, jj =  mtxY; j < jj; j++) {
                             var areaObj = this.armatrix.getObjFromMtx(i,j);
                             var areaObjType = this.armatrix.getObjTypeFromMtx(i,j);
-                            if (areaObjType==="LAN") {
+                            if (areaObjType===this.dic.areaObjType.LAN) {
                                 areaObj.rightClick = false;
                                 areaObj.moveInit();
-                            } else if (areaObjType==="BUS") {
+                            } else if (areaObjType===this.dic.areaObjType.BUS) {
                                 areaObj.rightClick = false;
                                 areaObj.mbus.moveInit();
                             }
@@ -528,9 +528,9 @@ define(
                     for (j = 0, jj =  mtxY; j < jj; j++) {
                         var areaObj = this.armatrix.getObjFromMtx(i,j);
                         var areaObjType = this.armatrix.getObjTypeFromMtx(i,j);
-                        if (areaObjType==="LAN")
+                        if (areaObjType===this.dic.areaObjType.LAN)
                             areaObj.setEditionMode(editionMode);
-                        else if (areaObjType==="BUS")
+                        else if (areaObjType===this.dic.areaObjType.BUS)
                             areaObj.mbus.setEditionMode(editionMode);
                     }
             };
@@ -573,7 +573,7 @@ define(
                     for (j = 0, jj =  mtxY; j < jj; j++) {
                         var areaObj = this.armatrix.getObjFromMtx(i,j);
                         var areaObjType = this.armatrix.getObjTypeFromMtx(i,j);
-                        if (areaObjType==="LAN")
+                        if (areaObjType===this.dic.areaObjType.LAN)
                             areaObjSet.push(areaObj.rect);
                     }
 
@@ -617,7 +617,7 @@ define(
                         for (j = 0, jj =  mtxY; j < jj; j++) {
                             var areaObj = this.armatrix.getObjFromMtx(i,j);
                             var areaObjType = this.armatrix.getObjTypeFromMtx(i,j);
-                            if (areaObjType==="LAN") areaObj.editInit();
+                            if (areaObjType===this.dic.areaObjType.LAN) areaObj.editInit();
                         }
 
                 }
@@ -700,9 +700,9 @@ define(
                     for (j = 0, jj =  mtxY; j < jj; j++) {
                         areaObj = this.armatrix.getObjFromMtx(i,j);
                         areaObjType = this.armatrix.getObjTypeFromMtx(i,j);
-                        if (areaObjType==="LAN")
+                        if (areaObjType===this.dic.areaObjType.LAN)
                             areaObj.toFront();
-                        else if (areaObjType==="BUS")
+                        else if (areaObjType===this.dic.areaObjType.BUS)
                             areaObj.mbus.toFront();
                     }
 
@@ -713,7 +713,7 @@ define(
                         for (j = 0, jj =  mtxY; j < jj; j++) {
                             areaObj = this.armatrix.getObjFromMtx(i,j);
                             areaObjType = this.armatrix.getObjTypeFromMtx(i,j);
-                            if (areaObjType==="LAN") areaObj.editAction(elem,dx,dy);
+                            if (areaObjType===this.dic.areaObjType.LAN) areaObj.editAction(elem,dx,dy);
                         }
                 }
             };
@@ -731,7 +731,7 @@ define(
                         for (j = 0, jj =  mtxY; j < jj; j++) {
                             var areaObj = this.armatrix.getObjFromMtx(i,j);
                             var areaObjType = this.armatrix.getObjTypeFromMtx(i,j);
-                            if (areaObjType==="LAN") areaObj.editUp();
+                            if (areaObjType===this.dic.areaObjType.LAN) areaObj.editUp();
                         }
 
                 }
