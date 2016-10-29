@@ -419,7 +419,7 @@ define(
                     this.dcsplitter.lanLineTopY = this.topLeftY + this.dbrdSpan;
                 }
 
-                if (this.pName === "THE GLOBAL INTERNET") {
+                if (this.pName.indexOf(this.dic.networkType.GLI) !== -1) {
                     this.dcsplitter.wanLineTopY = this.topLeftY + this.dbrdSpan;
                 }
 
@@ -618,6 +618,12 @@ define(
                 this.dcsplitter.hide();
                 this.dcHat.hide();
                 this.changeInit();
+
+                if (this.pName.indexOf(this.dic.networkType.GLI) !== -1) {
+                    var mtxS = this.dcmatrix.getLanMtxSize(), i, ii;
+                    for (i = 0, ii =  mtxS; i < ii; i++) this.dcmatrix.getAreaFromLanMtx(i).editInit();
+                }
+
                 this.isMoving = true;
             };
 
@@ -729,9 +735,18 @@ define(
                 this.rect.mouseout(dcOut);
                 this.rect.mousedown(mouseDown);
                 this.rect.toBack();
+
+                if (this.pName.indexOf(this.dic.networkType.GLI) !== -1) {
+                    var mtxS = this.dcmatrix.getLanMtxSize(), i, ii;
+                    for (i = 0, ii =  mtxS; i < ii; i++) this.dcmatrix.getAreaFromLanMtx(i).editAction(elem, dx, dy);
+                }
             };
 
             this.editUp = function() {
+                if (this.pName.indexOf(this.dic.networkType.GLI) !== -1) {
+                    var mtxS = this.dcmatrix.getLanMtxSize(), i, ii;
+                    for (i = 0, ii =  mtxS; i < ii; i++) this.dcmatrix.getAreaFromLanMtx(i).editUp();
+                }
                 this.dcwidth = this.extwidth;
                 this.dcheight = this.extheight;
                 this.dcsplitter.wanLineHeight = this.dcsplitter.extwanLineHeight;
