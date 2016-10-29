@@ -20,15 +20,17 @@
 // └──────────────────────────────────────────────────────────────────────────────────────┘ \\
 define(
     [
+        'taitale-dictionaries',
         'taitale-helper'
     ],
-    function (helper) {
+    function (dictionary, helper) {
 
+        var dic    = new dictionary();
         var FREE   = "FREE",
             LOCKED = "LOCKED";
 
-        var LAN    = "LAN",
-            BUS    = "BUS";
+        var LAN    = dic.areaObjType.LAN,
+            BUS    = dic.areaObjType.BUS;
 
         function areaMatrix() {
             var helper_ = new helper();
