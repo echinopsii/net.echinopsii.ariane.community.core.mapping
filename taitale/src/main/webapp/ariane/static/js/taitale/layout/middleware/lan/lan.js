@@ -45,7 +45,6 @@ define(
             this.dispLan    = false;
             this.dispLanOD  = false;
             this.layoutData = null;
-            this.onMoOver   = true;
 
             this.lanR    = null;
             this.rect    = null;
@@ -347,7 +346,7 @@ define(
                 this.lanHat.hide();
 
                 this.rect.attr({fill: this.color, stroke: this.color, "stroke-dasharray": this.sDasharray, "fill-opacity": this.oUnselected, "stroke-width": 0});
-                if (this.onMoOver) {
+                if (this.lanDef.dcname.indexOf(this.dic.networkType.GLI) === -1) {
                     this.rect.mousedown(mouseDown);
                     this.rect.drag(lanMove, lanDragg, lanUP);
                     this.rect.mouseover(lanOver);
@@ -652,6 +651,13 @@ define(
                 this.rect.drag(lanMove, lanDragg, lanUP);
                 this.rect.mouseover(lanOver);
                 this.rect.mouseout(lanOut);
+                if (this.lanDef.dcname.indexOf(this.dic.networkType.GLI) !== -1) this.rect.hide();
+                else {
+                    this.rect.mousedown(mouseDown);
+                    this.rect.drag(lanMove, lanDragg, lanUP);
+                    this.rect.mouseover(lanOver);
+                    this.rect.mouseout(lanOut);
+                }
 
                 this.lanHat.move(this.r, this.extrx + (this.extwidth/2), this.extry + this.lbrdSpan/5);
 

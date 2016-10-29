@@ -22,10 +22,13 @@
 define(
     [
         'taitale-params',
+        'taitale-dictionaries',
         'taitale-ext-string'
     ],
-    function (params) {
+    function (params,dictionary) {
         function hat(name_, nameFont, color_) {
+
+            this.dic = new dictionary();
 
             function datacenterLogo() {
                 this.width  = 50;
@@ -137,7 +140,7 @@ define(
                 if (this.name != null) {
                     var nameTxt;
 
-                    if (this.name === "THE GLOBAL INTERNET") {
+                    if (this.name.indexOf(this.dic.networkType.GLI) !== -1) {
                         gliLogo.print(r,x-this.width/3,y,this.color,this.hatSet);
                         nameTxt = r.text(x,
                             y+gliLogo.height+5, this.name).attr(this.txtFont);

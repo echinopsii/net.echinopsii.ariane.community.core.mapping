@@ -22,6 +22,7 @@
 define(
     [
         'raphael',
+        'taitale-dictionaries',
         'taitale-helper',
         'taitale-params',
         'taitale-prototypes',
@@ -29,10 +30,11 @@ define(
         'taitale-container-hat',
         'taitale-ext-string'
     ],
-    function(Raphael,helper,params,prototypes,containerMatrix,containerHat) {
+    function(Raphael,dictionaries,helper,params,prototypes,containerMatrix,containerHat) {
         function container(JSONContainerDesc, x_, y_) {
             var helper_      = new helper(),
-                prototypes_  = new prototypes();
+                prototypes_  = new prototypes(),
+                dic          = new dictionaries();
 
             //noinspection JSUnresolvedVariable
             this.ID       	  = JSONContainerDesc.containerID;
@@ -46,6 +48,7 @@ define(
             this.gateURI      = JSONContainerDesc.containerGateURI;
             //noinspection JSUnresolvedVariable
             this.name         = JSONContainerDesc.containerName;
+
             if (this.name == null) {
                 this.name  = this.gateURI.split("://")[1].split(":")[0];
                 if (!helper_.isValidIPAddress(this.name)) {
@@ -63,7 +66,7 @@ define(
                 tmpNetwork    = (this.properties!=null) ? this.properties.Network : null;
             if (tmpDatacenter==null)
                 tmpDatacenter = {
-                    pname: "THE GLOBAL INTERNET",
+                    pname: "THE " + dic.networkType.GLI,
                     address: "probably somewhere on earth",
                     town: "probably somewhere on earth",
                     country: "probably somewhere on earth",
@@ -72,8 +75,8 @@ define(
                 };
             if (tmpNetwork==null)
                 tmpNetwork = {
-                    ratype: "GLOBAL INTERNET",
-                    raname: "GLOBAL INTERNET",
+                    ratype: dic.networkType.GLI,
+                    raname: dic.networkType.GLI,
                     ramulticast: "FILTERED",
                     sname: "NOT MY CONCERN",
                     sip: "NOT MY CONCERN",
@@ -129,7 +132,7 @@ define(
                 if (rareas.length == 0) {
                     helper_.debug('Location definition of container ' + this.name + ' is not consistent !');
                     tmpDatacenter = {
-                        pname: "THE GLOBAL INTERNET",
+                        pname: "THE " + dic.networkType.GLI,
                         address: "probably somewhere on earth",
                         town: "probably somewhere on earth",
                         country: "probably somewhere on earth",
@@ -137,8 +140,8 @@ define(
                         gpsLng: "0"
                     };
                     tmpNetwork = {
-                        ratype: "GLOBAL INTERNET",
-                        raname: "GLOBAL INTERNET",
+                        ratype: dic.networkType.GLI,
+                        raname: dic.networkType.GLI,
                         ramulticast: "FILTERED",
                         sname: "NOT MY CONCERN",
                         sip: "NOT MY CONCERN",

@@ -46,7 +46,6 @@ define(
             this.isInserted  = false;
             this.dispArea    = false;
             this.dispAreaOD  = false;
-            this.onMoOver   = true;
 
             this.areaR    = null;
             this.rect     = null;
@@ -357,7 +356,7 @@ define(
                 this.areaHat.toBack();
 
                 this.rect.attr({fill: params.area_color, stroke: params.area_color, "stroke-dasharray": this.sDasharray, "fill-opacity": this.oUnselected, "stroke-width": 0});
-                if (this.onMoOver) {
+                if (this.areaDef.dcname.indexOf(this.dic.networkType.GLI) === -1) {
                     this.rect.mousedown(mouseDown);
                     this.rect.drag(areaMove, areaDragg, areaUP);
                     this.rect.mouseover(areaOver);
@@ -610,6 +609,18 @@ define(
                 this.extheight = this.areaheight;
                 this.changeInit();
                 this.isMoving = true;
+                if (this.areaDef.dcname.indexOf(this.dic.networkType.GLI) !== -1) {
+                    var mtxX, mtxY, i, ii, j, jj;
+                    mtxX = this.armatrix.getMtxSize().x;
+                    mtxY = this.armatrix.getMtxSize().y;
+                    for (i = 0, ii =  mtxX; i < ii; i++)
+                        for (j = 0, jj =  mtxY; j < jj; j++) {
+                            var areaObj = this.armatrix.getObjFromMtx(i,j);
+                            var areaObjType = this.armatrix.getObjTypeFromMtx(i,j);
+                            if (areaObjType==="LAN") areaObj.editInit();
+                        }
+
+                }
             };
 
             this.editAction = function(elem, dx, dy) {
@@ -667,10 +678,13 @@ define(
 
 
                 this.rect.attr({fill: params.area_color, stroke: params.area_color, "stroke-dasharray": this.sDasharray, "fill-opacity": this.oUnselected, "stroke-width": 1});
-                this.rect.drag(areaMove, areaDragg, areaUP);
-                this.rect.mouseover(areaOver);
-                this.rect.mouseout(areaOut);
-                this.rect.mousedown(mouseDown);
+                if (this.areaDef.dcname.indexOf(this.dic.networkType.GLI) !== -1) this.rect.hide();
+                else {
+                    this.rect.drag(areaMove, areaDragg, areaUP);
+                    this.rect.mouseover(areaOver);
+                    this.rect.mouseout(areaOut);
+                    this.rect.mousedown(mouseDown);
+                }
 
                 this.areaHat.move(this.r, this.extrx + (this.extwidth/2), this.extry + this.abrdSpan/5);
                 this.areaHat.mousedown(mouseDown);
@@ -679,18 +693,29 @@ define(
                 if (!this.dispArea)
                     this.areaHat.hide();
 
-                var mtxX, mtxY, i, ii, j, jj;
+                var mtxX, mtxY, i, ii, j, jj, areaObj, areaObjType;
                 mtxX = this.armatrix.getMtxSize().x;
                 mtxY = this.armatrix.getMtxSize().y;
                 for (i = 0, ii =  mtxX; i < ii; i++)
                     for (j = 0, jj =  mtxY; j < jj; j++) {
-                        var areaObj = this.armatrix.getObjFromMtx(i,j);
-                        var areaObjType = this.armatrix.getObjTypeFromMtx(i,j);
+                        areaObj = this.armatrix.getObjFromMtx(i,j);
+                        areaObjType = this.armatrix.getObjTypeFromMtx(i,j);
                         if (areaObjType==="LAN")
                             areaObj.toFront();
                         else if (areaObjType==="BUS")
                             areaObj.mbus.toFront();
                     }
+
+                if (this.areaDef.dcname.indexOf(this.dic.networkType.GLI) !== -1) {
+                    mtxX = this.armatrix.getMtxSize().x;
+                    mtxY = this.armatrix.getMtxSize().y;
+                    for (i = 0, ii =  mtxX; i < ii; i++)
+                        for (j = 0, jj =  mtxY; j < jj; j++) {
+                            areaObj = this.armatrix.getObjFromMtx(i,j);
+                            areaObjType = this.armatrix.getObjTypeFromMtx(i,j);
+                            if (areaObjType==="LAN") areaObj.editAction(elem,dx,dy);
+                        }
+                }
             };
 
             this.editUp = function() {
@@ -698,6 +723,18 @@ define(
                 this.areaheight = this.extheight;
                 this.isMoving = false;
                 this.changeUp();
+                if (this.areaDef.dcname.indexOf(this.dic.networkType.GLI) !== -1) {
+                    var mtxX, mtxY, i, ii, j, jj;
+                    mtxX = this.armatrix.getMtxSize().x;
+                    mtxY = this.armatrix.getMtxSize().y;
+                    for (i = 0, ii =  mtxX; i < ii; i++)
+                        for (j = 0, jj =  mtxY; j < jj; j++) {
+                            var areaObj = this.armatrix.getObjFromMtx(i,j);
+                            var areaObjType = this.armatrix.getObjTypeFromMtx(i,j);
+                            if (areaObjType==="LAN") areaObj.editUp();
+                        }
+
+                }
             };
 
         }
