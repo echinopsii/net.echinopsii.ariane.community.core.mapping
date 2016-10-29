@@ -22,13 +22,15 @@
 define(
     [
         'taitale-params',
+        'taitale-dictionaries',
         'taitale-helper'
     ],
-    function (params, helper) {
+    function (params, dictionary, helper) {
         function dcSplitter(dc) {
             //noinspection JSUnusedLocalSymbols
             var helper_    = new helper();
 
+            this.dic         = new dictionary();
             this.datacenter = dc;
             this.r          = null;
 
@@ -311,7 +313,7 @@ define(
                         this.lanLineTopY = this.manLineTopY + this.manLineHeight;
                         this.lanLineBdrY = this.lanLineTopY + this.lanLineHeight;
                     } else {
-                        if (this.datacenter.pName === "THE GLOBAL INTERNET") this.wanLineTopY = this.datacenter.getZoneCoord().y + this.datacenter.dbrdSpan;
+                        if (this.datacenter.pName.indexOf(this.dic.networkType.GLI) !== -1) this.wanLineTopY = this.datacenter.getZoneCoord().y + this.datacenter.dbrdSpan;
                         this.lanLineTopY = this.datacenter.getZoneCoord().y + this.datacenter.dbrdSpan;
                         this.lanLineBdrY = this.lanLineTopY + this.lanLineHeight;
                     }
@@ -332,7 +334,7 @@ define(
                         ["L",this.datacenter.getZoneCoord().x+this.datacenter.getZoneSize().width, this.manLineTopY]
                     ];
                 } else if (this.datacenter.dcmatrix.getLanMtxSize()!=0) {
-                    if (this.datacenter.pName === "THE GLOBAL INTERNET") {
+                    if (this.datacenter.pName.indexOf(this.dic.networkType.GLI) !== -1) {
                         dcWanPath =                         [
                             ["M",this.datacenter.getZoneCoord().x, this.wanLineTopY],
                             ["L",this.datacenter.getZoneCoord().x+this.datacenter.getZoneSize().width, this.wanLineTopY]
@@ -415,7 +417,7 @@ define(
                     this.wan_man_mover.hide();
                     this.wan_man_mover.drag(wmbMove, wmbDragg, wmbUP);
                     this.wan_man_mover.mousemove(wmbMouseMove);
-                    this.wan_title = splitterRef.r.text(this.datacenter.getZoneCoord().x+this.datacenter.dbrdSpan/2,this.wanLineTopY+this.wanLineHeight/2,"WAN").rotate(-90);
+                    this.wan_title = splitterRef.r.text(this.datacenter.getZoneCoord().x+this.datacenter.dbrdSpan/2,this.wanLineTopY+this.wanLineHeight/2,this.dic.networkType.WAN).rotate(-90);
                     this.wan_title.attr(splitterRef.splitterTitleAttr);
                     this.wan_title.hide();
                 }
@@ -438,14 +440,14 @@ define(
                     this.man_lan_mover.hide();
                     this.man_lan_mover.drag(mlbMove, mlbDragg, mlbUP);
                     this.man_lan_mover.mousemove(mlbMouseMove);
-                    this.man_title = splitterRef.r.text(this.datacenter.getZoneCoord().x+this.datacenter.dbrdSpan/2,this.manLineTopY+this.manLineHeight/2,"MAN").rotate(-90);
+                    this.man_title = splitterRef.r.text(this.datacenter.getZoneCoord().x+this.datacenter.dbrdSpan/2,this.manLineTopY+this.manLineHeight/2,this.dic.networkType.MAN).rotate(-90);
                     this.man_title.attr(splitterRef.splitterTitleAttr);
                     this.man_title.hide();
                 }
-                if (this.datacenter.pName === "THE GLOBAL INTERNET") {
-                    this.lan_title = splitterRef.r.text(this.datacenter.getZoneCoord().x+this.datacenter.dbrdSpan/2,this.lanLineTopY+this.lanLineHeight/2,"GLOBAL INTERNET").rotate(-90);
+                if (this.datacenter.pName.indexOf(this.dic.networkType.GLI) !== -1) {
+                    this.lan_title = splitterRef.r.text(this.datacenter.getZoneCoord().x+this.datacenter.dbrdSpan/2,this.lanLineTopY+this.lanLineHeight/2,this.dic.networkType.GLI).rotate(-90);
                 } else {
-                    this.lan_title = splitterRef.r.text(this.datacenter.getZoneCoord().x+this.datacenter.dbrdSpan/2,this.lanLineTopY+this.lanLineHeight/2,"LAN").rotate(-90);
+                    this.lan_title = splitterRef.r.text(this.datacenter.getZoneCoord().x+this.datacenter.dbrdSpan/2,this.lanLineTopY+this.lanLineHeight/2,this.dic.networkType.LAN).rotate(-90);
                 }
                 this.lan_title.attr(splitterRef.splitterTitleAttr);
                 this.lan_title.hide();
@@ -516,7 +518,7 @@ define(
                         ["L",this.datacenter.getZoneCoord().x+this.datacenter.getZoneSize().width, this.manLineTopY]
                     ];
                 } else if (this.datacenter.dcmatrix.getLanMtxSize()!=0) {
-                    if (this.datacenter.pName === "THE GLOBAL INTERNET") {
+                    if (this.datacenter.pName.indexOf(this.dic.networkType.GLI) !== -1) {
                         dcWanPath =                         [
                             ["M",this.datacenter.getZoneCoord().x, this.wanLineTopY],
                             ["L",this.datacenter.getZoneCoord().x+this.datacenter.getZoneSize().width, this.wanLineTopY]

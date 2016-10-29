@@ -300,6 +300,8 @@ define(
                         var datacenterDef = location.getPLocation(),
                             areaDef       = location.getArea(),
                             lanDef        = location.getLan();
+                        areaDef.dcname = datacenterDef.pname;
+                        lanDef.dcname = datacenterDef.pname;
 
                         var isConnectedToUpDC      = false,
                             isConnectedToUpArea    = false,
@@ -369,8 +371,8 @@ define(
                                             break;
                                     }
                                 } else if (lanDef.dc!=linkedLanDef.dc) {
-                                    if (lanDef.dc === "THE GLOBAL INTERNET" || linkedLanDef.dc.pName === "THE GLOBAL INTERNET") {
-                                        if (lanDef.dc === "THE GLOBAL INTERNET") isConnectedToUpDC = true;
+                                    if (lanDef.dc.pName.indexOf(dic.networkType.GLI) !== -1 || linkedLanDef.dc.pName.indexOf(dic.networkType.GLI) !== -1) {
+                                        if (lanDef.dc.pName.indexOf(dic.networkType.GLI) !== -1) isConnectedToUpDC = true;
                                         else isConnectedToDownDC = true;
                                     } else {
                                         var linkedLng = parseFloat(linkedPLocationDef.gpsLng),
@@ -392,14 +394,9 @@ define(
                         var dc ;
                         var area = layoutNtwRegistries.pushAreaIntoRegistry(areaDef, options);
                         var lan  = layoutNtwRegistries.pushLanIntoRegistry(lanDef, options);
-
-                        if (datacenterDef.pname === "THE GLOBAL INTERNET") {
-                            dc = layoutNtwRegistries.pushDatacenterIntoRegistry(datacenterDef, glintSplitter, options);
-                            area.onMoOver = false;
-                            lan.onMoOver = false;
-                        } else {
-                            dc = layoutNtwRegistries.pushDatacenterIntoRegistry(datacenterDef, ldatacenterSplitter, options);
-                        }
+                        //
+                        if (datacenterDef.pname.indexOf(dic.networkType.GLI) !== -1) dc = layoutNtwRegistries.pushDatacenterIntoRegistry(datacenterDef, glintSplitter, options);
+                        else dc = layoutNtwRegistries.pushDatacenterIntoRegistry(datacenterDef, ldatacenterSplitter, options);
 
                         container.layoutData =
                             {
@@ -442,7 +439,7 @@ define(
                             nbLines++;
                         }
 
-                        if (container.layoutData.dc.pName === "THE GLOBAL INTERNET" && nbLines==1) {
+                        if (container.layoutData.dc.pName.indexOf(dic.networkType.GLI) !== -1 && nbLines==1) {
                             rows[nbLines] = [];
                             nbLines++;
                         }
@@ -452,7 +449,7 @@ define(
 
                         // if DC not inserted insert in the mtx
                         var i, ii;
-                        if (pivotDC.pName === "THE GLOBAL INTERNET") {
+                        if (pivotDC.pName.indexOf(dic.networkType.GLI) !== -1) {
                             // Global internet zone is placed on bottom of NTW view
                             if (alreadyInserted) {
                                 for (i = 0, ii = nbColumns; i < ii; i++) {
@@ -531,14 +528,6 @@ define(
                         if (rows[0].length != 0 && rows[0][i] != null)
                             rows[0][i].displayArea(display);
                     }
-                    /*
-                    if (rows[1]!=null) {
-                        for (i= 0, ii=nbColumns; i < ii; i++) {
-                            if (rows[1][i]!=null)
-                                rows[1][i].displayArea(display);
-                        }
-                    }
-                    */
                 }
             };
 
