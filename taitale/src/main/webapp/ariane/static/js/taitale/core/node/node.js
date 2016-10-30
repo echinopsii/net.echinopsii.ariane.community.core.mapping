@@ -274,13 +274,13 @@ define(
                             var fieldRect, fieldRectWidth, fieldRectHeight;
                             for (var i = 0, ii = nodeRef.menuSet.length ; i < ii ; i++) {
                                 if (i==0)
-                                    nodeRef.menuSet[i].attr({"x": nodeRef.rectTopMiddleX, "y": nodeRef.rectTopMiddleY +10, fill: "#fff"});
+                                    nodeRef.menuSet[i].attr({"x": nodeRef.rectTopMiddleX, "y": nodeRef.rectTopMiddleY + 13, fill: "#fff"});
                                 else if (i==1) {
                                     fieldRect = nodeRef.menuSet[i];
                                     fieldRectWidth = fieldRect.attr("width");
                                     fieldRectHeight = fieldRect.attr("height");
-                                    fieldRect.attr({"x": nodeRef.rectTopMiddleX - fieldRectWidth / 2, "y": nodeRef.rectTopMiddleY + 30 - fieldRectHeight / 2});
-                                    nodeRef.menuSet[i + 1].attr({"x": nodeRef.rectTopMiddleX, "y": nodeRef.rectTopMiddleY + 30});
+                                    fieldRect.attr({"x": nodeRef.rectTopMiddleX - fieldRectWidth / 2, "y": nodeRef.rectTopMiddleY + 33 - fieldRectHeight / 2});
+                                    nodeRef.menuSet[i + 1].attr({"x": nodeRef.rectTopMiddleX, "y": nodeRef.rectTopMiddleY + 33});
                                     if (nodeRef.isEditing) nodeRef.menuSet[i + 1].attr({text: nodeRef.menuFieldStopEditTitle});
                                     else nodeRef.menuSet[i + 1].attr({text: nodeRef.menuFieldStartEditTitle});
                                     i++;
@@ -288,8 +288,8 @@ define(
                                     fieldRect = nodeRef.menuSet[i];
                                     fieldRectWidth = fieldRect.attr("width");
                                     fieldRectHeight = fieldRect.attr("height");
-                                    fieldRect.attr({"x": nodeRef.rectTopMiddleX - fieldRectWidth / 2, "y": nodeRef.rectTopMiddleY + 45 - fieldRectHeight / 2});
-                                    nodeRef.menuSet[i + 1].attr({"x": nodeRef.rectTopMiddleX, "y": nodeRef.rectTopMiddleY + 45});
+                                    fieldRect.attr({"x": nodeRef.rectTopMiddleX - fieldRectWidth / 2, "y": nodeRef.rectTopMiddleY + 58 - fieldRectHeight / 2});
+                                    nodeRef.menuSet[i + 1].attr({"x": nodeRef.rectTopMiddleX, "y": nodeRef.rectTopMiddleY + 58});
                                     if (nodeRef.nodeEndpointsResetOnChangeON) nodeRef.menuSet[i + 1].attr({text: nodeRef.menuFieldEpResetOFF});
                                     else nodeRef.menuSet[i + 1].attr({text: nodeRef.menuFieldEpResetON});
                                     i++;
@@ -297,12 +297,12 @@ define(
                                     fieldRect = nodeRef.menuSet[i];
                                     fieldRectWidth = fieldRect.attr("width");
                                     fieldRectHeight = fieldRect.attr("height");
-                                    fieldRect.attr({"x": nodeRef.rectTopMiddleX - fieldRectWidth/2, "y": nodeRef.rectTopMiddleY+30+(i-2)*15 - fieldRectHeight/2});
-                                    nodeRef.menuSet[i+1].attr({"x": nodeRef.rectTopMiddleX, "y": nodeRef.rectTopMiddleY+30+(i-2)*15});
+                                    fieldRect.attr({"x": nodeRef.rectTopMiddleX - fieldRectWidth/2, "y": nodeRef.rectTopMiddleY+33+(i-2)*15 - fieldRectHeight/2});
+                                    nodeRef.menuSet[i+1].attr({"x": nodeRef.rectTopMiddleX, "y": nodeRef.rectTopMiddleY+33+(i-2)*15});
                                     i++;
                                 }
                             }
-                            nodeRef.menu = nodeRef.r.menu(nodeRef.rectTopMiddleX,nodeRef.rectTopMiddleY+10,nodeRef.menuSet).
+                            nodeRef.menu = nodeRef.r.menu(nodeRef.menuSet).
                                 attr({fill: nodeRef.menuFillColor, stroke: nodeRef.color, "stroke-width": nodeRef.menuStrokeWidth, "fill-opacity": nodeRef.menuOpacity});
                             nodeRef.menu.mousedown(menuMouseDown);
                             nodeRef.menu.toFront();

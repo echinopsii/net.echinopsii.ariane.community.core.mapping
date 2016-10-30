@@ -104,13 +104,13 @@ define(
                             var fieldRect, fieldRectWidth, fieldRectHeight;
                             for (var i = 0, ii = areaRef.menuSet.length ; i < ii ; i++) {
                                 if (i==0)
-                                    areaRef.menuSet[i].attr({"x": areaRef.rectTopMiddleX, "y": areaRef.rectTopMiddleY +10, fill: "#fff"});
+                                    areaRef.menuSet[i].attr({"x": areaRef.rectTopMiddleX, "y": areaRef.rectTopMiddleY +25, fill: "#fff"});
                                 else if (i==1) {
                                     fieldRect = areaRef.menuSet[i];
                                     fieldRectWidth = fieldRect.attr("width");
                                     fieldRectHeight = fieldRect.attr("height");
-                                    fieldRect.attr({"x": areaRef.rectTopMiddleX - fieldRectWidth/2, "y": areaRef.rectTopMiddleY+30 - fieldRectHeight/2});
-                                    areaRef.menuSet[i+1].attr({"x": areaRef.rectTopMiddleX, "y": areaRef.rectTopMiddleY+30});
+                                    fieldRect.attr({"x": areaRef.rectTopMiddleX - fieldRectWidth/2, "y": areaRef.rectTopMiddleY+65 - fieldRectHeight/2});
+                                    areaRef.menuSet[i+1].attr({"x": areaRef.rectTopMiddleX, "y": areaRef.rectTopMiddleY+65});
                                     if (areaRef.isEditing) areaRef.menuSet[i+1].attr({text: areaRef.menuFieldStopEditTitle});
                                     else areaRef.menuSet[i+1].attr({text: areaRef.menuFieldStartEditTitle});
                                     i++;
@@ -118,14 +118,14 @@ define(
                                     fieldRect = areaRef.menuSet[i];
                                     fieldRectWidth = fieldRect.attr("width");
                                     fieldRectHeight = fieldRect.attr("height");
-                                    fieldRect.attr({"x": areaRef.rectTopMiddleX - fieldRectWidth/2, "y": areaRef.rectTopMiddleY+30+(i-2)*15 - fieldRectHeight/2});
-                                    areaRef.menuSet[i+1].attr({"x": areaRef.rectTopMiddleX, "y": areaRef.rectTopMiddleY+30+(i-2)*15});
+                                    fieldRect.attr({"x": areaRef.rectTopMiddleX - fieldRectWidth/2, "y": areaRef.rectTopMiddleY+65+(i-2)*15 - fieldRectHeight/2});
+                                    areaRef.menuSet[i+1].attr({"x": areaRef.rectTopMiddleX, "y": areaRef.rectTopMiddleY+65+(i-2)*15});
                                     i++;
                                 }
                             }
                             if (areaRef.menu != null)
                                 areaRef.menu.remove();
-                            areaRef.menu = areaRef.r.menu(areaRef.rectTopMiddleX,areaRef.rectTopMiddleY+10,areaRef.menuSet).
+                            areaRef.menu = areaRef.r.menu(areaRef.menuSet).
                                 attr({fill: areaRef.menuFillColor, stroke: areaRef.color, "stroke-width": areaRef.menuStrokeWidth,
                                     "fill-opacity": areaRef.menuOpacity});
                             areaRef.menu.mousedown(menuMouseDown);
