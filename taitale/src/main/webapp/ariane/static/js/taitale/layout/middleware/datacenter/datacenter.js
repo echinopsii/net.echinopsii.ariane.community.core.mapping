@@ -103,13 +103,13 @@ define(
                             var fieldRect, fieldRectWidth, fieldRectHeight;
                             for (var i = 0, ii = dcRef.menuSet.length ; i < ii ; i++) {
                                 if (i==0)
-                                    dcRef.menuSet[i].attr({"x": dcRef.rectTopMiddleX, "y": dcRef.rectTopMiddleY +10, fill: "#fff"});
+                                    dcRef.menuSet[i].attr({"x": dcRef.rectTopMiddleX, "y": dcRef.rectTopMiddleY + 23, fill: "#fff"});
                                 else if (i==1) {
                                     fieldRect = dcRef.menuSet[i];
                                     fieldRectWidth = fieldRect.attr("width");
                                     fieldRectHeight = fieldRect.attr("height");
-                                    fieldRect.attr({"x": dcRef.rectTopMiddleX - fieldRectWidth/2, "y": dcRef.rectTopMiddleY+30 - fieldRectHeight/2});
-                                    dcRef.menuSet[i+1].attr({"x": dcRef.rectTopMiddleX, "y": dcRef.rectTopMiddleY+30});
+                                    fieldRect.attr({"x": dcRef.rectTopMiddleX - fieldRectWidth/2, "y": dcRef.rectTopMiddleY+83 - fieldRectHeight/2});
+                                    dcRef.menuSet[i+1].attr({"x": dcRef.rectTopMiddleX, "y": dcRef.rectTopMiddleY+83});
                                     if (dcRef.isEditing) dcRef.menuSet[i+1].attr({text: dcRef.menuFieldStopEditTitle});
                                     else dcRef.menuSet[i+1].attr({text: dcRef.menuFieldStartEditTitle});
                                     i++;
@@ -117,14 +117,14 @@ define(
                                     fieldRect = dcRef.menuSet[i];
                                     fieldRectWidth = fieldRect.attr("width");
                                     fieldRectHeight = fieldRect.attr("height");
-                                    fieldRect.attr({"x": dcRef.rectTopMiddleX - fieldRectWidth/2, "y": dcRef.rectTopMiddleY+30+(i-2)*15 - fieldRectHeight/2});
-                                    dcRef.menuSet[i+1].attr({"x": dcRef.rectTopMiddleX, "y": dcRef.rectTopMiddleY+30+(i-2)*15});
+                                    fieldRect.attr({"x": dcRef.rectTopMiddleX - fieldRectWidth/2, "y": dcRef.rectTopMiddleY+83+(i-2)*15 - fieldRectHeight/2});
+                                    dcRef.menuSet[i+1].attr({"x": dcRef.rectTopMiddleX, "y": dcRef.rectTopMiddleY+83+(i-2)*15});
                                     i++;
                                 }
                             }
                             if (dcRef.menu != null)
                                 dcRef.menu.remove();
-                            dcRef.menu = dcRef.r.menu(dcRef.rectTopMiddleX,dcRef.rectTopMiddleY+10,dcRef.menuSet).
+                            dcRef.menu = dcRef.r.menu(dcRef.menuSet).
                                 attr({fill: dcRef.menuFillColor, stroke: dcRef.color, "stroke-width": dcRef.menuStrokeWidth,
                                     "fill-opacity": dcRef.menuOpacity});
                             dcRef.menu.mousedown(menuMouseDown);

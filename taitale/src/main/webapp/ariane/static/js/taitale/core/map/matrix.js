@@ -541,9 +541,9 @@ define(
 
             this.translate = function(mvx, mvy) {
                 var i, ii;
-                for (i=0, ii=nbColumns; i<ii; i++) if (rows[LDC_LINE][i]!=null) rows[GLI_LINE][i].moveInit();
-                for (i=0, ii=nbColumns; i<ii; i++) if (rows[LDC_LINE][i]!=null) rows[GLI_LINE][i].move(mvx, mvy);
-                for (i=0, ii=nbColumns; i<ii; i++) if (rows[LDC_LINE][i]!=null) rows[GLI_LINE][i].up();
+                for (i=0, ii=nbColumns; i<ii; i++) if (rows[GLI_LINE][i]!=null) rows[GLI_LINE][i].moveInit();
+                for (i=0, ii=nbColumns; i<ii; i++) if (rows[GLI_LINE][i]!=null) rows[GLI_LINE][i].move(mvx, mvy);
+                for (i=0, ii=nbColumns; i<ii; i++) if (rows[GLI_LINE][i]!=null) rows[GLI_LINE][i].up();
                 for (i=0, ii=nbColumns; i<ii; i++) if (rows[LDC_LINE][i]!=null) rows[LDC_LINE][i].moveInit();
                 for (i=0, ii=nbColumns; i<ii; i++) if (rows[LDC_LINE][i]!=null) rows[LDC_LINE][i].move(mvx, mvy);
                 for (i=0, ii=nbColumns; i<ii; i++) if (rows[LDC_LINE][i]!=null) rows[LDC_LINE][i].up();

@@ -169,7 +169,7 @@ define(
                             }
                             if (cylinderRef.root.menu != null)
                                 cylinderRef.root.menu.remove();
-                            cylinderRef.root.menu = cylinderRef.root.r.menu(cylinderRef.bindingPt6X,cylinderRef.bindingPt6Y+10,cylinderRef.root.menuSet).
+                            cylinderRef.root.menu = cylinderRef.root.r.menu(cylinderRef.root.menuSet).
                                 attr(
                                     {
                                         fill: cylinderRef.root.menuFillColor,

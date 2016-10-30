@@ -359,13 +359,13 @@ define(
                             var fieldRect, fieldRectWidth, fieldRectHeight;
                             for (var i = 0, ii = containerRef.menuSet.length ; i < ii ; i++) {
                                 if (i==0)
-                                    containerRef.menuSet[i].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY +10, fill: "#fff"});
+                                    containerRef.menuSet[i].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY + 22, fill: "#fff"});
                                 else if (i==1) {
                                     fieldRect = containerRef.menuSet[i];
                                     fieldRectWidth = fieldRect.attr("width");
                                     fieldRectHeight = fieldRect.attr("height");
-                                    fieldRect.attr({"x": containerRef.rectTopMiddleX - fieldRectWidth / 2, "y": containerRef.rectTopMiddleY + 30 - fieldRectHeight / 2});
-                                    containerRef.menuSet[i + 1].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY + 30});
+                                    fieldRect.attr({"x": containerRef.rectTopMiddleX - fieldRectWidth / 2, "y": containerRef.rectTopMiddleY + 67 - fieldRectHeight / 2});
+                                    containerRef.menuSet[i + 1].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY + 67});
                                     if (containerRef.isEditing) containerRef.menuSet[i + 1].attr({text: containerRef.menuFieldStopEditTitle});
                                     else containerRef.menuSet[i + 1].attr({text: containerRef.menuFieldStartEditTitle});
                                     i++;
@@ -373,8 +373,8 @@ define(
                                     fieldRect = containerRef.menuSet[i];
                                     fieldRectWidth = fieldRect.attr("width");
                                     fieldRectHeight = fieldRect.attr("height");
-                                    fieldRect.attr({"x": containerRef.rectTopMiddleX - fieldRectWidth / 2, "y": containerRef.rectTopMiddleY + 45 - fieldRectHeight / 2});
-                                    containerRef.menuSet[i + 1].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY + 45});
+                                    fieldRect.attr({"x": containerRef.rectTopMiddleX - fieldRectWidth / 2, "y": containerRef.rectTopMiddleY + 102 - fieldRectHeight / 2});
+                                    containerRef.menuSet[i + 1].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY + 102});
                                     if (containerRef.endpointsResetOnChangeON) containerRef.menuSet[i + 1].attr({text: containerRef.menuFieldEpResetOFF});
                                     else containerRef.menuSet[i + 1].attr({text: containerRef.menuFieldEpResetON});
                                     i++;
@@ -382,14 +382,14 @@ define(
                                     fieldRect = containerRef.menuSet[i];
                                     fieldRectWidth = fieldRect.attr("width");
                                     fieldRectHeight = fieldRect.attr("height");
-                                    fieldRect.attr({"x": containerRef.rectTopMiddleX - fieldRectWidth/2, "y": containerRef.rectTopMiddleY+30+(i-2)*15 - fieldRectHeight/2});
-                                    containerRef.menuSet[i+1].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY+30+(i-2)*15});
+                                    fieldRect.attr({"x": containerRef.rectTopMiddleX - fieldRectWidth/2, "y": containerRef.rectTopMiddleY+67+(i-2)*35 - fieldRectHeight/2});
+                                    containerRef.menuSet[i+1].attr({"x": containerRef.rectTopMiddleX, "y": containerRef.rectTopMiddleY+67+(i-2)*35});
                                     i++;
                                 }
                             }
                             if (containerRef.menu != null)
                                 containerRef.menu.remove();
-                            containerRef.menu = containerRef.r.menu(containerRef.rectTopMiddleX,containerRef.rectTopMiddleY+10,containerRef.menuSet).
+                            containerRef.menu = containerRef.r.menu(containerRef.menuSet).
                                 attr({fill: containerRef.menuFillColor, stroke: containerRef.color, "stroke-width": containerRef.menuStrokeWidth,
                                     "fill-opacity": containerRef.menuOpacity});
                             containerRef.menu.mousedown(menuMouseDown);

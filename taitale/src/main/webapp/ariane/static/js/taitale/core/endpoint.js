@@ -148,7 +148,7 @@ define(
                                     i++;
                                 }
                             }
-                            epRef.menu = epRef.r.menu(epRef.circle.attr("cx"),epRef.circle.attr("cy")+10,epRef.menuSet).
+                            epRef.menu = epRef.r.menu(epRef.menuSet).
                                 attr({fill:epRef.menuFillColor, stroke: epRef.color, "stroke-width": epRef.menuStrokeWidth, "fill-opacity": epRef.menuOpacity});
                             epRef.menu.mousedown(menuMouseDown);
                             epRef.menu.toFront();
