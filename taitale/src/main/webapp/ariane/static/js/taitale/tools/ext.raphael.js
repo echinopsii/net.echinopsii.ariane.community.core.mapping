@@ -149,7 +149,7 @@ define(
             return out;
         };
 
-        Raphael.fn.menu = function (X, Y, sett) {
+        Raphael.fn.menu = function (sett) {
             var r = 5,
                 bb = sett.getBBox(),
                 w = bb.width,

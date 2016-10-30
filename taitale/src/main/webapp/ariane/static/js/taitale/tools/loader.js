@@ -79,7 +79,7 @@ define(
                                 menuSet[i].attr({"x": posx, "y": posy+30+(i-1)*15});
                         }
                         if (menuHided) {
-                            menu = r.menu(posx,posy,menuSet).attr({fill: menuFillColor, stroke: menuStrokeColor, "stroke-width": menuStrokeWidth, "fill-opacity": menuOpacity});
+                            menu = r.menu(menuSet).attr({fill: menuFillColor, stroke: menuStrokeColor, "stroke-width": menuStrokeWidth, "fill-opacity": menuOpacity});
                             menu.toFront();
                             menu.show();
                             menuSet.toFront();
