@@ -356,7 +356,7 @@ define(
                 this.areaHat.toBack();
 
                 this.rect.attr({fill: params.area_color, stroke: params.area_color, "stroke-dasharray": this.sDasharray, "fill-opacity": this.oUnselected, "stroke-width": 0});
-                if (this.areaDef.dcname.indexOf(this.dic.networkType.GLI) === -1) {
+                if (this.areaDef.dcname!=null && this.areaDef.dcname.indexOf(this.dic.networkType.GLI) === -1) {
                     this.rect.mousedown(mouseDown);
                     this.rect.drag(areaMove, areaDragg, areaUP);
                     this.rect.mouseover(areaOver);
@@ -609,7 +609,7 @@ define(
                 this.extheight = this.areaheight;
                 this.changeInit();
                 this.isMoving = true;
-                if (this.areaDef.dcname.indexOf(this.dic.networkType.GLI) !== -1) {
+                if (this.areaDef.dcname!=null && this.areaDef.dcname.indexOf(this.dic.networkType.GLI) !== -1) {
                     var mtxX, mtxY, i, ii, j, jj;
                     mtxX = this.armatrix.getMtxSize().x;
                     mtxY = this.armatrix.getMtxSize().y;
