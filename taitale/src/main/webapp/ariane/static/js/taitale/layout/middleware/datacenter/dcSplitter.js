@@ -111,6 +111,9 @@ define(
                     //block line move on x
                     //dx = 0;
                     //helper_.debug("wan man line move - Y borders: {".concat(this.minY).concat(",").concat(this.maxY).concat("}"));
+                    var zoomedMoveCoord = splitterRef.r.getZPDZoomedMoveCoord(dx, dy);
+                    dx = zoomedMoveCoord.dx; dy = zoomedMoveCoord.dy;
+
                     if (this.cy+dy>this.minY && this.cy+dy<this.maxY) {
                         var wanManPath =
                                 [
@@ -223,6 +226,9 @@ define(
                     //block line move on x
                     //dx = 0;
                     //helper_.debug("man lan line move - Y borders: {".concat(this.minY).concat(",").concat(this.maxY).concat("}"));
+                    var zoomedMoveCoord = splitterRef.r.getZPDZoomedMoveCoord(dx, dy);
+                    dx = zoomedMoveCoord.dx; dy = zoomedMoveCoord.dy;
+
                     if (this.cy+dy>this.minY && this.cy+dy<this.maxY) {
                         var manLanPath =
                                 [
@@ -479,30 +485,60 @@ define(
                 if (this.lan_dc_border) this.lan_dc_border.hide();
             };
 
+            this.hideMover = function() {
+                if (this.datacenter.dcmatrix.getWanMtxSize()!=0) {
+                    if (this.wan_man_mover) this.wan_man_mover.hide().toBack();
+                    if (this.wan_man_moverl1) this.wan_man_moverl1.hide().toBack();
+                    if (this.wan_man_moverl2) this.wan_man_moverl2.hide().toBack();
+                    if (this.wan_man_moverl3) this.wan_man_moverl3.hide().toBack();
+                }
+                if (this.datacenter.dcmatrix.getManMtxSize()!=0) {
+                    if (this.man_lan_mover) this.man_lan_mover.hide().toBack();
+                    if (this.man_lan_moverl1) this.man_lan_moverl1.hide().toBack();
+                    if (this.man_lan_moverl2) this.man_lan_moverl2.hide().toBack();
+                    if (this.man_lan_moverl3) this.man_lan_moverl3.hide().toBack();
+                }
+            };
+
             this.show = function() {
                 if (this.dc_wan_border) this.dc_wan_border.show();
                 if (this.datacenter.dcmatrix.getWanMtxSize()!=0) {
                     if (this.wan_man_border) this.wan_man_border.show().toFront();
                     if (this.datacenter.isEditionMode()){
-                        if (this.wan_man_mover) this.wan_man_mover.show().toFront();
                         if (this.wan_man_moverl1) this.wan_man_moverl1.show().toFront();
                         if (this.wan_man_moverl2) this.wan_man_moverl2.show().toFront();
                         if (this.wan_man_moverl3) this.wan_man_moverl3.show().toFront();
+                        if (this.wan_man_mover) this.wan_man_mover.show().toFront();
                     }
                     if (this.wan_title) this.wan_title.show().toFront();
                 }
                 if (this.datacenter.dcmatrix.getManMtxSize()!=0) {
                     if (this.man_lan_border) this.man_lan_border.show().toFront();
                     if (this.datacenter.isEditionMode()) {
-                        if (this.man_lan_mover) this.man_lan_mover.show().toFront();
                         if (this.man_lan_moverl1) this.man_lan_moverl1.show().toFront();
                         if (this.man_lan_moverl2) this.man_lan_moverl2.show().toFront();
                         if (this.man_lan_moverl3) this.man_lan_moverl3.show().toFront();
+                        if (this.man_lan_mover) this.man_lan_mover.show().toFront();
                     }
                     if (this.man_title) this.man_title.show().toFront();
                 }
                 if (this.lan_title) this.lan_title.show().toFront();
                 if (this.lan_dc_border) this.lan_dc_border.show();
+            };
+
+            this.showMover = function() {
+                if (this.datacenter.dcmatrix.getWanMtxSize()!=0) {
+                    if (this.wan_man_moverl1) this.wan_man_moverl1.show().toFront();
+                    if (this.wan_man_moverl2) this.wan_man_moverl2.show().toFront();
+                    if (this.wan_man_moverl3) this.wan_man_moverl3.show().toFront();
+                    if (this.wan_man_mover) this.wan_man_mover.show().toFront();
+                }
+                if (this.datacenter.dcmatrix.getManMtxSize()!=0) {
+                    if (this.man_lan_moverl1) this.man_lan_moverl1.show().toFront();
+                    if (this.man_lan_moverl2) this.man_lan_moverl2.show().toFront();
+                    if (this.man_lan_moverl3) this.man_lan_moverl3.show().toFront();
+                    if (this.man_lan_mover) this.man_lan_mover.show().toFront();
+                }
             };
 
             this.move = function(r) {
