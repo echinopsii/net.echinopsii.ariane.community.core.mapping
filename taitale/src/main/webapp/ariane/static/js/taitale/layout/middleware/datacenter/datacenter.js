@@ -521,10 +521,20 @@ define(
                     if (this.isEditing)
                         this.r.scaleDone(this);
                     this.r.scaleInit(this);
+                    if (!this.dispDCOD) this.show();
+                    this.dcsplitter.showMover();
                     this.isEditing = true;
                 } else if (!editionMode) {
-                    if (this.isEditing)
+                    if (this.isEditing) {
                         this.r.scaleDone(this);
+                        if (!this.dispDCOD) {
+                            this.rect.animate({"fill-opacity": dcRef.oUnselected, "stroke-width": 0}, 0);
+                            this.dcR.hide();
+                            this.dcsplitter.hide();
+                            this.dcHat.hide();
+                        }
+                        this.dcsplitter.hideMover();
+                    }
                     this.isEditing = false;
                 }
 
@@ -564,6 +574,7 @@ define(
                         dcRef.dispDC = false;
                         dcRef.isMoving = false;
                     } else {
+                        dcRef.dcsplitter.hideMover();
                         dcRef.rect.animate({"fill-opacity": dcRef.oUnselected}, 0);
                     }
                 }

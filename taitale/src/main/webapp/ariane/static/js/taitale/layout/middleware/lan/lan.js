@@ -509,11 +509,21 @@ define(
                 if (editionMode) {
                     if (this.isEditing)
                         this.r.scaleDone(this);
+                    if (!this.dispLanOD) {
+                        this.rect.animate({"fill-opacity": this.oUnselected, "stroke-width": this.sWidth}, 1);
+                        this.lanR.show();
+                        this.lanHat.show();
+                    }
                     this.r.scaleInit(this);
                     this.isEditing = true;
                 } else if (!editionMode) {
                     if (this.isEditing)
                         this.r.scaleDone(this);
+                    if (!this.dispLanOD) {
+                        this.rect.animate({"fill-opacity": this.oUnselected, "stroke-width": 0}, 1);
+                        this.lanR.hide();
+                        this.lanHat.hide();
+                    }
                     this.isEditing = false;
                 }
             };

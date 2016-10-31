@@ -514,10 +514,20 @@ define(
                     if (this.isEditing)
                         this.r.scaleDone(this);
                     this.r.scaleInit(this);
+                    if (!this.dispAreaOD) {
+                        this.rect.animate({"stroke-width": this.sWidth}, 1);
+                        this.areaR.show();
+                        this.areaHat.show();
+                    }
                     this.isEditing = true;
                 } else if (!editionMode) {
                     if (this.isEditing)
                         this.r.scaleDone(this);
+                    if (!this.dispAreaOD) {
+                        this.rect.animate({"fill-opacity": areaRef.oUnselected, "stroke-width": 0}, 0);
+                        this.areaR.hide();
+                        this.areaHat.hide();
+                    }
                     this.isEditing = false;
                 }
 
