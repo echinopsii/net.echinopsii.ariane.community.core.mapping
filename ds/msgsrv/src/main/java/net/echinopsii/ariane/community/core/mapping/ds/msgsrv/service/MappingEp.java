@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
@@ -56,6 +57,13 @@ public class MappingEp {
             Endpoint source_ep;
             Endpoint destin_ep;
             Transport transport;
+            boolean debug = message.containsKey(MomMsgTranslator.MSG_DEBUG);
+            Map<String, Object> debug_message = null;
+            if (debug) {
+                debug_message = new HashMap<>(message);
+                debug_message.remove(MappingSce.GLOBAL_PARAM_PAYLOAD);
+                log.warn("[ON MSG DEBUG] received msg " + debug_message.toString());
+            }
 
             if (oOperation==null)
                 operation = MomMsgTranslator.OPERATION_NOT_DEFINED;
@@ -68,6 +76,7 @@ public class MappingEp {
                 if (session == null) {
                     message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                     message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : session with provided id not found");
+                    if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
                     return message;
                 }
             }
@@ -152,6 +161,7 @@ public class MappingEp {
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : destination endpoint not found with provided ID.");
+                                        if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
                                         return message;
                                     }
                                 } else {
@@ -163,12 +173,14 @@ public class MappingEp {
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : transport not found with provided ID.");
+                                        if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
                                         return message;
                                     }
                                 }
                             } else {
                                 message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                 message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : source endpoint not found with provided ID.");
+                                if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
                                 return message;
                             }
 
@@ -206,6 +218,7 @@ public class MappingEp {
                                 } else {
                                     message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                     message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : source endpoint not found with provided ID.");
+                                    if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
                                     return message;
                                 }
                             } else {
@@ -217,6 +230,7 @@ public class MappingEp {
                                 } else {
                                     message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                     message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : destination endpoint not found with provided ID.");
+                                    if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
                                     return message;
                                 }
                             }
@@ -250,6 +264,7 @@ public class MappingEp {
                 message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SERVER_ERR);
                 message.put(MomMsgTranslator.MSG_ERR, "Internal server error (" + operation + ") : " + e.getMessage());
             }
+            if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
             return message;
         }
     }

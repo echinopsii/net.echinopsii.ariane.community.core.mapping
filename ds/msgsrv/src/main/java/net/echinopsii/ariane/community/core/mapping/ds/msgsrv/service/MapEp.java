@@ -23,11 +23,13 @@ import net.echinopsii.ariane.community.core.mapping.ds.MapperParserException;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.MappingMsgsrvBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.momsp.MappingMsgsrvMomSP;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MapSce;
+import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class MapEp {
@@ -40,6 +42,13 @@ public class MapEp {
             Object oOperation = message.get(MomMsgTranslator.OPERATION_FDN);
             String operation;
             String query;
+            boolean debug = message.containsKey(MomMsgTranslator.MSG_DEBUG);
+            Map<String, Object> debug_message = null;
+            if (debug) {
+                debug_message = new HashMap<>(message);
+                debug_message.remove(MappingSce.GLOBAL_PARAM_PAYLOAD);
+                log.warn("[ON MSG DEBUG] received msg " + debug_message.toString());
+            }
 
             if (oOperation==null)
                 operation = MomMsgTranslator.OPERATION_NOT_DEFINED;
@@ -79,6 +88,7 @@ public class MapEp {
                     message.put(MomMsgTranslator.MSG_ERR, "Unknown operation (" + operation + ") ! ");
                     break;
             }
+            if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
             return message;
         }
     }
