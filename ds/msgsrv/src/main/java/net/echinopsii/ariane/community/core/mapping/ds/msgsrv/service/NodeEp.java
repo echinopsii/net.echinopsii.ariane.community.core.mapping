@@ -37,17 +37,17 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxNodeSc
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.DeserializedPushResponse;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
+import net.echinopsii.ariane.community.messaging.api.MomLogger;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
+import net.echinopsii.ariane.community.messaging.common.MomLoggerFactory;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
 public class NodeEp {
-    private static final Logger log = LoggerFactory.getLogger(NodeEp.class);
+    private static final Logger log = MomLoggerFactory.getLogger(NodeEp.class);
 
     static class NodeWorker implements AppMsgWorker {
         @Override
@@ -68,13 +68,8 @@ public class NodeEp {
             String prop_field;
             String prop_name;
             Session session = null;
-            boolean debug = message.containsKey(MomMsgTranslator.MSG_DEBUG);
-            Map<String, Object> debug_message = null;
-            if (debug) {
-                debug_message = new HashMap<>(message);
-                debug_message.remove(MappingSce.GLOBAL_PARAM_PAYLOAD);
-                log.warn("[ON MSG DEBUG] received msg " + debug_message.toString());
-            }
+            if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(true);
+            ((MomLogger)log).traceMessage("NodeWorker.apply - in", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
 
             if (oOperation==null)
                 operation = MomMsgTranslator.OPERATION_NOT_DEFINED;
@@ -87,7 +82,8 @@ public class NodeEp {
                 if (session == null) {
                     message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                     message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : session with provided id not found");
-                    if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
+                    ((MomLogger)log).traceMessage("NodeWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+                    if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                     return message;
                 }
             }
@@ -134,7 +130,8 @@ public class NodeEp {
                                 if (pnode==null && !pn_id.equals(MappingSce.GLOBAL_PARAM_OBJ_NONE)) {
                                     message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_NOT_FOUND);
                                     message.put(MomMsgTranslator.MSG_ERR, "Parent node not found with provided ID.");
-                                    if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
+                                    ((MomLogger)log).traceMessage("NodeWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+                                    if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                                     return message;
                                 }
 
@@ -192,7 +189,8 @@ public class NodeEp {
                                 } else {
                                     message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                     message.put(MomMsgTranslator.MSG_ERR, "Parent node not found with provided ID.");
-                                    if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
+                                    ((MomLogger)log).traceMessage("NodeWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+                                    if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                                     return message;
                                 }
                             } else {
@@ -208,7 +206,8 @@ public class NodeEp {
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : node name not provided.");
                                         break;
                                 }
-                                if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
+                                ((MomLogger)log).traceMessage("NodeWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+                                if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                                 return message;
                             }
 
@@ -222,7 +221,8 @@ public class NodeEp {
                             } else {
                                 message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_NOT_FOUND);
                                 message.put(MomMsgTranslator.MSG_ERR, "Node not found.");
-                                if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
+                                ((MomLogger)log).traceMessage("NodeWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+                                if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                                 return message;
                             }
                         } else {
@@ -286,7 +286,8 @@ public class NodeEp {
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : property field not provided.");
-                                        if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
+                                        ((MomLogger)log).traceMessage("NodeWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                                         return message;
                                     }
                                 } else {
@@ -297,7 +298,8 @@ public class NodeEp {
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : property name not provided.");
-                                        if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
+                                        ((MomLogger)log).traceMessage("NodeWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                                         return message;
                                     }
                                 }
@@ -374,7 +376,8 @@ public class NodeEp {
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : parent container with provided id not found");
-                                        if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
+                                        ((MomLogger)log).traceMessage("NodeWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                                         return message;
                                     }
                                 } else if (operation.equals(Node.OP_SET_NODE_PARENT_NODE) && pn_id != null) {
@@ -403,7 +406,8 @@ public class NodeEp {
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : parent node with provided id not found");
-                                        if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
+                                        ((MomLogger)log).traceMessage("NodeWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                                         return message;
                                     }
                                 } else if ((operation.equals(Node.OP_ADD_ENDPOINT) || operation.equals(Node.OP_REMOVE_ENDPOINT)) && ep_id != null) {
@@ -427,7 +431,8 @@ public class NodeEp {
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : endpoint with provided id not found");
-                                        if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
+                                        ((MomLogger)log).traceMessage("NodeWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                                         return message;
                                     }
                                 } else if ((operation.equals(Node.OP_ADD_NODE_CHILD_NODE) || operation.equals(Node.OP_REMOVE_NODE_CHILD_NODE)) && cn_id != null) {
@@ -451,7 +456,8 @@ public class NodeEp {
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : child node with provided id not found");
-                                        if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
+                                        ((MomLogger)log).traceMessage("NodeWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                                         return message;
                                     }
                                 } else if ((operation.equals(Node.OP_ADD_TWIN_NODE) || operation.equals(Node.OP_REMOVE_TWIN_NODE)) && tn_id != null) {
@@ -475,13 +481,15 @@ public class NodeEp {
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : twin node with provided id not found");
-                                        if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
+                                        ((MomLogger)log).traceMessage("NodeWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                                         return message;
                                     }
                                 } else {
                                     message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                     message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : parameter inconsistent with operation");
-                                    if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
+                                    ((MomLogger)log).traceMessage("NodeWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+                                    if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                                     return message;
                                 }
 
@@ -535,7 +543,8 @@ public class NodeEp {
                 message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SERVER_ERR);
                 message.put(MomMsgTranslator.MSG_ERR, "Internal server error (" + operation + ") : " + e.getMessage());
             }
-            if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
+            ((MomLogger)log).traceMessage("NodeWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+            if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
             return message;
         }
     }
