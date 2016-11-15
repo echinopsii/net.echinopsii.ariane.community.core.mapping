@@ -32,12 +32,12 @@ import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxLinkAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
+import net.echinopsii.ariane.community.messaging.common.MomLoggerFactory;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class LinkImpl extends SProxLinkAbs implements SProxLink, MappingDSBlueprintsCacheEntity {
 
-    private static final Logger log = LoggerFactory.getLogger(NodeImpl.class);
+    private static final Logger log = MomLoggerFactory.getLogger(NodeImpl.class);
 
     private transient Edge linkEdge = null;
 

@@ -27,16 +27,15 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNam
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.tools.SessionRegistryImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
-import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxCluster;
 import com.tinkerpop.blueprints.*;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxClusterAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
+import net.echinopsii.ariane.community.messaging.common.MomLoggerFactory;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ClusterImpl extends SProxClusterAbs implements MappingDSBlueprintsCacheEntity {
 
-    private static final Logger log = LoggerFactory.getLogger(ContainerImpl.class);
+    private static final Logger log = MomLoggerFactory.getLogger(ContainerImpl.class);
 
     private transient Vertex clusterVertex = null;
     private boolean isBeingSyncFromDB = false;

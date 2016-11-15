@@ -35,12 +35,12 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxNode;
 import com.tinkerpop.blueprints.*;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxNodeAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
+import net.echinopsii.ariane.community.messaging.common.MomLoggerFactory;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class NodeImpl extends SProxNodeAbs implements SProxNode, MappingDSBlueprintsCacheEntity {
 
-    private static final Logger log = LoggerFactory.getLogger(NodeImpl.class);
+    private static final Logger log = MomLoggerFactory.getLogger(NodeImpl.class);
 
     private transient Vertex nodeVertex = null;
     private boolean isBeingDeleted = false;
