@@ -32,12 +32,12 @@ import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxTransportAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
+import net.echinopsii.ariane.community.messaging.common.MomLoggerFactory;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class TransportImpl extends SProxTransportAbs implements SProxTransport, MappingDSBlueprintsCacheEntity {
 
-    private static final Logger log = LoggerFactory.getLogger(TransportImpl.class);
+    private static final Logger log = MomLoggerFactory.getLogger(TransportImpl.class);
 
     private transient Vertex transportVertex = null;
 
