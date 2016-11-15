@@ -39,18 +39,18 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappin
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.DeserializedPushResponse;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
+import net.echinopsii.ariane.community.messaging.api.MomLogger;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
+import net.echinopsii.ariane.community.messaging.common.MomLoggerFactory;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
 public class ContainerEp {
 
-    private static final Logger log = LoggerFactory.getLogger(ContainerEp.class);
+    private static final Logger log = MomLoggerFactory.getLogger(ContainerEp.class);
 
     static class ContainerWorker implements AppMsgWorker {
         @Override
@@ -75,13 +75,8 @@ public class ContainerEp {
             String prop_name;
             String prop_field;
             Session session = null;
-            boolean debug = message.containsKey(MomMsgTranslator.MSG_DEBUG);
-            Map<String, Object> debug_message = null;
-            if (debug) {
-                debug_message = new HashMap<>(message);
-                debug_message.remove(MappingSce.GLOBAL_PARAM_PAYLOAD);
-                log.warn("[ON MSG DEBUG] received msg " + debug_message.toString());
-            }
+            if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(true);
+            ((MomLogger)log).traceMessage("ContainerWorker.apply - in", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
 
             if (oOperation==null)
                 operation = MomMsgTranslator.OPERATION_NOT_DEFINED;
@@ -94,7 +89,8 @@ public class ContainerEp {
                 if (session == null) {
                     message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                     message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : session with provided id not found");
-                    if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
+                    ((MomLogger)log).traceMessage("ContainerWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+                    if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                     return message;
                 }
             }
@@ -141,7 +137,8 @@ public class ContainerEp {
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : parent container with provided id not found");
-                                        if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
+                                        ((MomLogger)log).traceMessage("ContainerWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                                         return message;
                                     }
                                 } else {
@@ -159,7 +156,8 @@ public class ContainerEp {
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : parent container with provided id not found");
-                                        if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
+                                        ((MomLogger)log).traceMessage("ContainerWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                                         return message;
                                     }
                                 } else {
@@ -301,7 +299,8 @@ public class ContainerEp {
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : gate with provided id not found");
-                                        if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
+                                        ((MomLogger)log).traceMessage("ContainerWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                                         return message;
                                     }
                                 } else if (operation.equals(Container.OP_SET_CONTAINER_PARENT_CONTAINER) && pc_id!=null) {
@@ -331,7 +330,8 @@ public class ContainerEp {
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : parent container with provided id not found");
-                                        if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
+                                        ((MomLogger)log).traceMessage("ContainerWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                                         return message;
                                     }
                                 } else if (operation.equals(Container.OP_SET_CONTAINER_CLUSTER) && cl_id!=null) {
@@ -361,7 +361,8 @@ public class ContainerEp {
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : cluster with provided id not found");
-                                        if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
+                                        ((MomLogger)log).traceMessage("ContainerWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                                         return message;
                                     }
                                 } else if ((operation.equals(Container.OP_ADD_CONTAINER_CHILD_CONTAINER) || operation.equals(Container.OP_REMOVE_CONTAINER_CHILD_CONTAINER))
@@ -385,7 +386,8 @@ public class ContainerEp {
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : child container with provided id not found");
-                                        if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
+                                        ((MomLogger)log).traceMessage("ContainerWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                                         return message;
                                     }
                                 } else if ((operation.equals(Container.OP_ADD_CONTAINER_GATE) || operation.equals(Container.OP_REMOVE_CONTAINER_GATE))
@@ -409,7 +411,8 @@ public class ContainerEp {
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : gate with provided id not found");
-                                        if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
+                                        ((MomLogger)log).traceMessage("ContainerWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                                         return message;
                                     }
                                 } else if ((operation.equals(Container.OP_ADD_CONTAINER_NODE) || operation.equals(Container.OP_REMOVE_CONTAINER_NODE))
@@ -433,13 +436,15 @@ public class ContainerEp {
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : node with provided id not found");
-                                        if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
+                                        ((MomLogger)log).traceMessage("ContainerWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                                         return message;
                                     }
                                 } else {
                                     message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                     message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : parameter inconsistent with operation");
-                                    if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
+                                    ((MomLogger)log).traceMessage("ContainerWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+                                    if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                                     return message;
                                 }
 
@@ -511,7 +516,8 @@ public class ContainerEp {
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : property field not provided.");
-                                        if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
+                                        ((MomLogger)log).traceMessage("ContainerWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                                         return message;
                                     }
                                 } else {
@@ -522,7 +528,8 @@ public class ContainerEp {
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : property name not provided.");
-                                        if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
+                                        ((MomLogger)log).traceMessage("ContainerWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                                         return message;
                                     }
                                 }
@@ -556,7 +563,8 @@ public class ContainerEp {
                 message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SERVER_ERR);
                 message.put(MomMsgTranslator.MSG_ERR, "Internal server error (" + operation + ") : " + e.getMessage());
             }
-            if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
+            ((MomLogger)log).traceMessage("ContainerWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+            if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
             return message;
         }
     }

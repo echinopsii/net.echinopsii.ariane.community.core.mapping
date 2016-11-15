@@ -29,17 +29,17 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.*;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
+import net.echinopsii.ariane.community.messaging.api.MomLogger;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
+import net.echinopsii.ariane.community.messaging.common.MomLoggerFactory;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
 public class MappingEp {
-    private static final Logger log = LoggerFactory.getLogger(MappingEp.class);
+    private static final Logger log = MomLoggerFactory.getLogger(MappingEp.class);
 
     static class MappingWorker implements AppMsgWorker {
         @Override
@@ -57,13 +57,8 @@ public class MappingEp {
             Endpoint source_ep;
             Endpoint destin_ep;
             Transport transport;
-            boolean debug = message.containsKey(MomMsgTranslator.MSG_DEBUG);
-            Map<String, Object> debug_message = null;
-            if (debug) {
-                debug_message = new HashMap<>(message);
-                debug_message.remove(MappingSce.GLOBAL_PARAM_PAYLOAD);
-                log.warn("[ON MSG DEBUG] received msg " + debug_message.toString());
-            }
+            if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(true);
+            ((MomLogger)log).traceMessage("MappingWorker.apply - in", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
 
             if (oOperation==null)
                 operation = MomMsgTranslator.OPERATION_NOT_DEFINED;
@@ -76,7 +71,8 @@ public class MappingEp {
                 if (session == null) {
                     message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                     message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : session with provided id not found");
-                    if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
+                    ((MomLogger)log).traceMessage("MappingWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+                    if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                     return message;
                 }
             }
@@ -146,7 +142,7 @@ public class MappingEp {
                         sep_id = (String) message.get(LinkSce.PARAM_LINK_SEPID);
                         dep_id = (String) message.get(LinkSce.PARAM_LINK_TEPID);
                         t_id = (String) message.get(Transport.TOKEN_TP_ID);
-                        Link link=null;
+                        Link link;
                         if ((sep_id != null && dep_id != null && operation.equals(MappingSce.OP_GET_LINK_BY_SOURCE_EP_AND_DESTINATION_EP)) ||
                             (sep_id != null && t_id != null && operation.equals(MappingSce.OP_GET_LINK_BY_SOURCE_EP_AND_TRANSPORT))) {
                             if (session!=null) source_ep = MappingMsgsrvBootstrap.getMappingSce().getEndpointSce().getEndpoint(session, sep_id);
@@ -161,7 +157,8 @@ public class MappingEp {
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : destination endpoint not found with provided ID.");
-                                        if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
+                                        ((MomLogger)log).traceMessage("MappingWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                                         return message;
                                     }
                                 } else {
@@ -173,14 +170,16 @@ public class MappingEp {
                                     } else {
                                         message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : transport not found with provided ID.");
-                                        if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
+                                        ((MomLogger)log).traceMessage("MappingWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                                         return message;
                                     }
                                 }
                             } else {
                                 message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                 message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : source endpoint not found with provided ID.");
-                                if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
+                                ((MomLogger)log).traceMessage("MappingWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+                                if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                                 return message;
                             }
 
@@ -218,7 +217,8 @@ public class MappingEp {
                                 } else {
                                     message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                     message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : source endpoint not found with provided ID.");
-                                    if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
+                                    ((MomLogger)log).traceMessage("MappingWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+                                    if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                                     return message;
                                 }
                             } else {
@@ -230,7 +230,8 @@ public class MappingEp {
                                 } else {
                                     message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                     message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : destination endpoint not found with provided ID.");
-                                    if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
+                                    ((MomLogger)log).traceMessage("MappingWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+                                    if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                                     return message;
                                 }
                             }
@@ -264,7 +265,8 @@ public class MappingEp {
                 message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SERVER_ERR);
                 message.put(MomMsgTranslator.MSG_ERR, "Internal server error (" + operation + ") : " + e.getMessage());
             }
-            if (debug) log.warn("[ON MSG DEBUG] return response " + debug_message.toString());
+            ((MomLogger)log).traceMessage("MappingWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+            if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
             return message;
         }
     }
