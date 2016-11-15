@@ -31,12 +31,12 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxGate;
 import com.tinkerpop.blueprints.Element;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
+import net.echinopsii.ariane.community.messaging.common.MomLoggerFactory;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class GateImpl extends NodeImpl implements SProxGate {
 
-    private final static Logger log = LoggerFactory.getLogger(GateImpl.class);
+    private final static Logger log = MomLoggerFactory.getLogger(GateImpl.class);
 
     private EndpointImpl gatePrimaryAdminEndpoint = null;
 

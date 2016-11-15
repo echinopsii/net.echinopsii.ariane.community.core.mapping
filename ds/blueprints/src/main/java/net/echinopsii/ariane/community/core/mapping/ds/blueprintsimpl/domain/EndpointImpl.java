@@ -34,12 +34,12 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxEndpoin
 import com.tinkerpop.blueprints.*;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxEndpointAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
+import net.echinopsii.ariane.community.messaging.common.MomLoggerFactory;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class EndpointImpl extends SProxEndpointAbs implements SProxEndpoint, MappingDSBlueprintsCacheEntity {
 
-    private static final Logger log = LoggerFactory.getLogger(EndpointImpl.class);
+    private static final Logger log = MomLoggerFactory.getLogger(EndpointImpl.class);
 
     private transient Vertex endpointVertex = null;
     private boolean isBeingSyncFromDB = false;

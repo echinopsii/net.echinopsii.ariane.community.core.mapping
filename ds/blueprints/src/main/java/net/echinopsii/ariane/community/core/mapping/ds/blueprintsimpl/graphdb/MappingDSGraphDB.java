@@ -31,10 +31,10 @@ import com.tinkerpop.blueprints.*;
 import com.tinkerpop.blueprints.impls.neo4j2.Neo4j2Graph;
 import net.echinopsii.ariane.community.core.mapping.ds.sdsl.SelectorExecutor;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
+import net.echinopsii.ariane.community.messaging.common.MomLoggerFactory;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
@@ -43,7 +43,7 @@ public class MappingDSGraphDB {
 
     private final static String BLUEPRINTS_IMPL_N4J = "Neo4j";
 
-    private final static Logger log = LoggerFactory.getLogger(MappingDSGraphDB.class);
+    private final static Logger log = MomLoggerFactory.getLogger(MappingDSGraphDB.class);
 
     private static String blpImpl                                    = null;
     private static MappingDSGraphDBNeo4jBootstrapper neoBootstrapper = null;
