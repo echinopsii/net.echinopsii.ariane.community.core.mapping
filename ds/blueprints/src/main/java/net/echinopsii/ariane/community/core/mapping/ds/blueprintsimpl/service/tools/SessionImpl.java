@@ -23,8 +23,9 @@ import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.Ma
 import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCache;
 import net.echinopsii.ariane.community.core.mapping.ds.cache.MappingDSCacheEntity;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
+import net.echinopsii.ariane.community.messaging.api.MomLogger;
+import net.echinopsii.ariane.community.messaging.common.MomLoggerFactory;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -36,7 +37,7 @@ import static net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.ser
 
 public class SessionImpl implements Session {
 
-    private final static Logger log = LoggerFactory.getLogger(SessionImpl.class);
+    private final static Logger log = MomLoggerFactory.getLogger(SessionImpl.class);
 
     class SessionWorkerRequest {
         String action;
@@ -105,6 +106,7 @@ public class SessionImpl implements Session {
         public final static String STOP = "STOP";
         public final static String COMMIT = "COMMIT";
         public final static String ROLLBACK = "ROLLBACK";
+        public final static String TRACE = "TRACE";
 
         private LinkedBlockingQueue<SessionWorkerRequest> fifoInputQ = new LinkedBlockingQueue<>();
         private boolean running = true;
@@ -161,6 +163,9 @@ public class SessionImpl implements Session {
                             e.printStackTrace();
                             this.returnToQueue(msg, new SessionWorkerReply(true, null, e.getMessage()));
                         }
+                    } else if (msg.getAction().equals(TRACE)) {
+                        boolean isTraceEnabled = (boolean) msg.getArgs()[0];
+                        ((MomLogger)log).setTraceLevel(isTraceEnabled);
                     }
                 }
             }
@@ -302,7 +307,7 @@ public class SessionImpl implements Session {
         log.debug("["+ sessionId +".execute] wait reply ...");
 
         SessionWorkerReply reply = getReply(repQ);
-        log.debug("["+ sessionId +".execute] reply error : " + reply.isError());
+        log.debug("[" + sessionId + ".execute] reply error : " + reply.isError());
         if (! reply.isError()) return reply.getRet();
         else throw new MappingDSException(reply.getError_msg());
     }
@@ -328,6 +333,17 @@ public class SessionImpl implements Session {
             e.printStackTrace();
         }
         getReply(repQ);
+        return this;
+    }
+
+    @Override
+    public Session traceSession(boolean isTraceEnabled) {
+        try {
+            Object[] args = new Object[]{isTraceEnabled};
+            this.sessionWorker.getFifoInputQ().put(new SessionWorkerRequest(TRACE, null, null, args, null));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return this;
     }
 
