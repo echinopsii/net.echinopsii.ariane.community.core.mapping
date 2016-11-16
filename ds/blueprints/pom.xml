@@ -103,6 +103,7 @@
                             net.echinopsii.ariane.community.core.mapping.ds.mdsl;version="${project.version}",
                             net.echinopsii.ariane.community.core.mapping.ds.sdsl;version="${project.version}",
                             net.echinopsii.ariane.community.core.mapping.ds.repository;version="${project.version}",
+                            net.echinopsii.ariane.community.messaging.api;version="${version.net.echinopsii.ariane.community.messaging}",
                             net.echinopsii.ariane.community.messaging.common;version="${version.net.echinopsii.ariane.community.messaging}",
                             com.tinkerpop.blueprints.impls.neo4j2;version="[${version.osgimin.com.tinkerpop.blueprints},${version.osgimax.com.tinkerpop.blueprints})";resolution:=optional,
                             com.tinkerpop.blueprints.impls.orient;version="[${version.osgimin.com.tinkerpop.blueprints},${version.osgimax.com.tinkerpop.blueprints})";resolution:=optional,
