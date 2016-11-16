@@ -28,14 +28,14 @@ import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository
 import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxGateSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
+import net.echinopsii.ariane.community.messaging.common.MomLoggerFactory;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 
 public class GateSceImpl implements SProxGateSce<GateImpl> {
 
-	private static final Logger log = LoggerFactory.getLogger(GateSceImpl.class);
+	private static final Logger log = MomLoggerFactory.getLogger(GateSceImpl.class);
 
 	private MappingSceImpl sce = null;
 	
