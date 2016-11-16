@@ -75,7 +75,7 @@ public class ClusterEp {
                     ((MomLogger)log).traceMessage("ClusterWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
                     if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                     return message;
-                }
+                } else if (message.containsKey(MomMsgTranslator.MSG_TRACE)) session.traceSession(true);
             }
 
             try {
@@ -275,7 +275,10 @@ public class ClusterEp {
             }
 
             ((MomLogger)log).traceMessage("ClusterWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
-            if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
+            if (message.containsKey(MomMsgTranslator.MSG_TRACE)) {
+                if (session!=null) session.traceSession(false);
+                ((MomLogger)log).setTraceLevel(false);
+            }
             return message;
         }
     }

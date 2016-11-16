@@ -153,4 +153,9 @@ public class SessionImpl implements Session {
             throw new MappingDSException("Error returned by Ariane Mapping Service ! " + reply.get(MomMsgTranslator.MSG_ERR));
         return this;
     }
+
+    @Override
+    public Session traceSession(boolean isTraceEnabled) {
+        return null;
+    }
 }

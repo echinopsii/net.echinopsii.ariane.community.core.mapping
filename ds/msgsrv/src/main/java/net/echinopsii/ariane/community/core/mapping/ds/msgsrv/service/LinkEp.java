@@ -80,7 +80,7 @@ public class LinkEp {
                     ((MomLogger)log).traceMessage("LinkWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
                     if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                     return message;
-                }
+                } else if (message.containsKey(MomMsgTranslator.MSG_TRACE)) session.traceSession(true);
             }
 
             try {
@@ -202,7 +202,10 @@ public class LinkEp {
                                         message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : source endpoint not found with provided ID.");
                                         ((MomLogger)log).traceMessage("LinkWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
-                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
+                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) {
+                                            if (session!=null) session.traceSession(false);
+                                            ((MomLogger)log).setTraceLevel(false);
+                                        }
                                         return message;
                                     }
                                 } else if (operation.equals(Link.OP_SET_LINK_ENDPOINT_TARGET) && tep_id!=null) {
@@ -226,7 +229,10 @@ public class LinkEp {
                                         message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : target endpoint not found with provided ID.");
                                         ((MomLogger)log).traceMessage("LinkWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
-                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
+                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) {
+                                            if (session!=null) session.traceSession(false);
+                                            ((MomLogger)log).setTraceLevel(false);
+                                        }
                                         return message;
                                     }
                                 } else if (operation.equals(Link.OP_SET_LINK_TRANSPORT) && t_id!=null) {
@@ -251,7 +257,10 @@ public class LinkEp {
                                         message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : transport not found with provided ID.");
                                         ((MomLogger)log).traceMessage("LinkWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
-                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
+                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) {
+                                            if (session!=null) session.traceSession(false);
+                                            ((MomLogger)log).setTraceLevel(false);
+                                        }
                                         return message;
                                     }
                                 } else {
@@ -268,7 +277,10 @@ public class LinkEp {
                                             break;
                                     }
                                     ((MomLogger)log).traceMessage("LinkWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
-                                    if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
+                                    if (message.containsKey(MomMsgTranslator.MSG_TRACE)) {
+                                        if (session!=null) session.traceSession(false);
+                                        ((MomLogger)log).setTraceLevel(false);
+                                    }
                                     return message;
 
                                 }
@@ -301,7 +313,10 @@ public class LinkEp {
                 message.put(MomMsgTranslator.MSG_ERR, "Internal server error (" + operation + ") : " + e.getMessage());
             }
             ((MomLogger)log).traceMessage("LinkWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
-            if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
+            if (message.containsKey(MomMsgTranslator.MSG_TRACE)) {
+                if (session!=null) session.traceSession(false);
+                ((MomLogger)log).setTraceLevel(false);
+            }
             return message;
         }
     }

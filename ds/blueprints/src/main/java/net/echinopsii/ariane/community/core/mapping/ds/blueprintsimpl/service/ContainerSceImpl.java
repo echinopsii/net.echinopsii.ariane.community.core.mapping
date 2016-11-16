@@ -27,14 +27,14 @@ import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRe
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxContainerSceAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
+import net.echinopsii.ariane.community.messaging.common.MomLoggerFactory;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 
 public class ContainerSceImpl extends SProxContainerSceAbs<ContainerImpl> {
 
-    private static final Logger log = LoggerFactory.getLogger(ContainerSceImpl.class);
+    private static final Logger log = MomLoggerFactory.getLogger(ContainerSceImpl.class);
 
     private MappingSceImpl sce = null;
 

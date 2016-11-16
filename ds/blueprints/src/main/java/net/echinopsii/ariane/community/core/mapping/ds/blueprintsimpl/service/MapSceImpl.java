@@ -28,8 +28,8 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 import net.echinopsii.ariane.community.core.mapping.ds.json.service.MapJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MapSce;
+import net.echinopsii.ariane.community.messaging.common.MomLoggerFactory;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -40,7 +40,7 @@ import java.util.Map;
 
 public class MapSceImpl implements MapSce {
 
-    private static final Logger log = LoggerFactory.getLogger(MapSceImpl.class);
+    private static final Logger log = MomLoggerFactory.getLogger(MapSceImpl.class);
     private MappingSceImpl sce = null;
 
     public MapSceImpl(MappingSceImpl sce_) {
