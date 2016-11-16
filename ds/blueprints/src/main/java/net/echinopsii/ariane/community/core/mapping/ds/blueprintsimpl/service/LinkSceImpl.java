@@ -27,14 +27,14 @@ import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.Tra
 import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxLinkSceAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
+import net.echinopsii.ariane.community.messaging.common.MomLoggerFactory;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 
 public class LinkSceImpl extends SProxLinkSceAbs<LinkImpl> {
 
-    private static final Logger log = LoggerFactory.getLogger(LinkSceImpl.class);
+    private static final Logger log = MomLoggerFactory.getLogger(LinkSceImpl.class);
 
     private MappingSceImpl sce = null;
 

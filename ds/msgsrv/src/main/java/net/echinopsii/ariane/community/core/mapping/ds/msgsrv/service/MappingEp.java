@@ -74,7 +74,7 @@ public class MappingEp {
                     ((MomLogger)log).traceMessage("MappingWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
                     if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                     return message;
-                }
+                } else if (message.containsKey(MomMsgTranslator.MSG_TRACE)) session.traceSession(true);
             }
 
             try {
@@ -158,7 +158,10 @@ public class MappingEp {
                                         message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : destination endpoint not found with provided ID.");
                                         ((MomLogger)log).traceMessage("MappingWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
-                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
+                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) {
+                                            if (session!=null) session.traceSession(false);
+                                            ((MomLogger)log).setTraceLevel(false);
+                                        }
                                         return message;
                                     }
                                 } else {
@@ -171,7 +174,10 @@ public class MappingEp {
                                         message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : transport not found with provided ID.");
                                         ((MomLogger)log).traceMessage("MappingWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
-                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
+                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) {
+                                            if (session!=null) session.traceSession(false);
+                                            ((MomLogger)log).setTraceLevel(false);
+                                        }
                                         return message;
                                     }
                                 }
@@ -179,7 +185,10 @@ public class MappingEp {
                                 message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                 message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : source endpoint not found with provided ID.");
                                 ((MomLogger)log).traceMessage("MappingWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
-                                if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
+                                if (message.containsKey(MomMsgTranslator.MSG_TRACE)) {
+                                    if (session!=null) session.traceSession(false);
+                                    ((MomLogger)log).setTraceLevel(false);
+                                }
                                 return message;
                             }
 
@@ -218,7 +227,10 @@ public class MappingEp {
                                     message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                     message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : source endpoint not found with provided ID.");
                                     ((MomLogger)log).traceMessage("MappingWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
-                                    if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
+                                    if (message.containsKey(MomMsgTranslator.MSG_TRACE)) {
+                                        if (session!=null) session.traceSession(false);
+                                        ((MomLogger)log).setTraceLevel(false);
+                                    }
                                     return message;
                                 }
                             } else {
@@ -231,7 +243,10 @@ public class MappingEp {
                                     message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                     message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : destination endpoint not found with provided ID.");
                                     ((MomLogger)log).traceMessage("MappingWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
-                                    if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
+                                    if (message.containsKey(MomMsgTranslator.MSG_TRACE)) {
+                                        if (session!=null) session.traceSession(false);
+                                        ((MomLogger)log).setTraceLevel(false);
+                                    }
                                     return message;
                                 }
                             }
@@ -266,7 +281,10 @@ public class MappingEp {
                 message.put(MomMsgTranslator.MSG_ERR, "Internal server error (" + operation + ") : " + e.getMessage());
             }
             ((MomLogger)log).traceMessage("MappingWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
-            if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
+            if (message.containsKey(MomMsgTranslator.MSG_TRACE)) {
+                if (session!=null) session.traceSession(false);
+                ((MomLogger)log).setTraceLevel(false);
+            }
             return message;
         }
     }

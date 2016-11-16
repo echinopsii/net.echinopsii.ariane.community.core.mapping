@@ -34,4 +34,5 @@ public interface Session {
     Object execute(Object o, String methodName, Object[] args) throws MappingDSException;
     Session commit() throws MappingDSException;
     Session rollback() throws MappingDSException;
+    Session traceSession(boolean isTraceEnabled);
 }

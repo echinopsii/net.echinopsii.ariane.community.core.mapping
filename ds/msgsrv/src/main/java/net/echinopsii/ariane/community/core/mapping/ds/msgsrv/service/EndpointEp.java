@@ -82,7 +82,7 @@ public class EndpointEp {
                     ((MomLogger)log).traceMessage("EndpointWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
                     if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
                     return message;
-                }
+                } else if (message.containsKey(MomMsgTranslator.MSG_TRACE)) session.traceSession(true);
             }
 
             try {
@@ -167,7 +167,10 @@ public class EndpointEp {
                                     break;
                             }
                             ((MomLogger)log).traceMessage("EndpointWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
-                            if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
+                            if (message.containsKey(MomMsgTranslator.MSG_TRACE)) {
+                                if (session!=null) session.traceSession(false);
+                                ((MomLogger) log).setTraceLevel(false);
+                            }
                             return message;
                         }
                         if (endpoint!=null) {
@@ -227,7 +230,10 @@ public class EndpointEp {
                                         message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : property field not provided.");
                                         ((MomLogger)log).traceMessage("EndpointWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
-                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
+                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) {
+                                            if (session!=null) session.traceSession(false);
+                                            ((MomLogger)log).setTraceLevel(false);
+                                        }
                                         return message;
                                     }
                                 } else {
@@ -239,7 +245,10 @@ public class EndpointEp {
                                         message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : property name not provided.");
                                         ((MomLogger)log).traceMessage("EndpointWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
-                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
+                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) {
+                                            if (session!=null) session.traceSession(false);
+                                            ((MomLogger)log).setTraceLevel(false);
+                                        }
                                         return message;
                                     }
                                 }
@@ -294,7 +303,10 @@ public class EndpointEp {
                                         message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : Parent node not found.");
                                         ((MomLogger)log).traceMessage("EndpointWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
-                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
+                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) {
+                                            if (session!=null) session.traceSession(false);
+                                            ((MomLogger)log).setTraceLevel(false);
+                                        }
                                         return message;
                                     }
                                 } else if ((operation.equals(Endpoint.OP_ADD_TWIN_ENDPOINT) || operation.equals(Endpoint.OP_REMOVE_TWIN_ENDPOINT)) && te_id!=null) {
@@ -317,7 +329,10 @@ public class EndpointEp {
                                         message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                                         message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : twin endpoint not found.");
                                         ((MomLogger)log).traceMessage("EndpointWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
-                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
+                                        if (message.containsKey(MomMsgTranslator.MSG_TRACE)) {
+                                            if (session!=null) session.traceSession(false);
+                                            ((MomLogger)log).setTraceLevel(false);
+                                        }
                                         return message;
                                     }
                                 } else {
@@ -335,7 +350,10 @@ public class EndpointEp {
                                             break;
                                     }
                                     ((MomLogger)log).traceMessage("EndpointWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
-                                    if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
+                                    if (message.containsKey(MomMsgTranslator.MSG_TRACE)) {
+                                        if (session!=null) session.traceSession(false);
+                                        ((MomLogger)log).setTraceLevel(false);
+                                    }
                                     return message;
                                 }
                                 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -364,7 +382,10 @@ public class EndpointEp {
                 message.put(MomMsgTranslator.MSG_ERR, "Internal server error (" + operation + ") : " + e.getMessage());
             }
             ((MomLogger)log).traceMessage("EndpointWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
-            if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
+            if (message.containsKey(MomMsgTranslator.MSG_TRACE)) {
+                if (session!=null) session.traceSession(false);
+                ((MomLogger)log).setTraceLevel(false);
+            }
             return message;
         }
 
