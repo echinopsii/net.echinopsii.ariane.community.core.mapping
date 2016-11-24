@@ -28,6 +28,7 @@ import net.echinopsii.ariane.community.messaging.common.MomLoggerFactory;
 import org.slf4j.Logger;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -138,8 +139,11 @@ public class SessionImpl implements Session {
                     e.printStackTrace();
                 }
                 if (msg != null) {
-                    if (msg.getAction().equals(STOP)) running = false;
-                    else if (msg.getAction().equals(COMMIT)) {
+                    if (msg.getAction().equals(STOP)) {
+                        log.debug("[" + Thread.currentThread().getId() + ".worker.stop]");
+                        running = false;
+                    } else if (msg.getAction().equals(COMMIT)) {
+                        log.debug("[" + Thread.currentThread().getId() + ".worker.commit]");
                         MappingDSGraphDB.commit();
                         for (MappingDSCacheEntity entity: ((SessionImpl)this.attachedSession).sessionExistingObjectCache.values())
                             MappingDSCache.putEntityToCache(entity);
@@ -149,12 +153,15 @@ public class SessionImpl implements Session {
                         ((SessionImpl)this.attachedSession).sessionRemovedObjectCache.clear();
                         this.returnToQueue(msg, new SessionWorkerReply(false, Void.TYPE, null));
                     } else if (msg.getAction().equals(ROLLBACK)) {
+                        log.debug("[" + Thread.currentThread().getId() + ".worker.rollback]");
                         MappingDSGraphDB.rollback();
                         ((SessionImpl)this.attachedSession).sessionExistingObjectCache.clear();
                         ((SessionImpl)this.attachedSession).sessionRemovedObjectCache.clear();
                         this.returnToQueue(msg, new SessionWorkerReply(false, Void.TYPE, null));
                     } else if (msg.getAction().equals(EXECUTE)) {
                         try {
+                            log.debug("[" + Thread.currentThread().getId() + ".worker.execute] " +
+                                    msg.getInstance().toString() + "." + msg.getMethod().toString() + "(" + Arrays.toString(msg.getArgs()) + ")");
                             Object ret = msg.getMethod().invoke(msg.getInstance(), msg.getArgs());
                             if (msg.getMethod().getReturnType().equals(Void.TYPE))
                                 ret = Void.TYPE;
@@ -165,6 +172,7 @@ public class SessionImpl implements Session {
                         }
                     } else if (msg.getAction().equals(TRACE)) {
                         boolean isTraceEnabled = (boolean) msg.getArgs()[0];
+                        log.debug("[" + Thread.currentThread().getId() + ".worker.trace] " + this.attachedSession.getSessionID() + " : " + isTraceEnabled);
                         ((MomLogger)log).setTraceLevel(isTraceEnabled);
                     }
                 }
