@@ -880,12 +880,9 @@ public class MappingDSGraphDB {
             for (Edge edge : targetEpVertex.getEdges(Direction.IN, MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY))
                 ret.add(getLinkFromEdge(edge));
         } else {
-            //noinspection SynchronizeOnNonFinalField
-            synchronized (ccgraph) {
-                for (Edge edge : ccgraph.getEdges())
-                    if (edge.getLabel().equals(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY))
-                        ret.add(getLinkFromEdge(edge));
-            }
+            for (Edge edge : ccgraph.getEdges())
+                if (edge.getLabel().equals(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY))
+                    ret.add(getLinkFromEdge(edge));
         }
         autocommit();
         return ret;
