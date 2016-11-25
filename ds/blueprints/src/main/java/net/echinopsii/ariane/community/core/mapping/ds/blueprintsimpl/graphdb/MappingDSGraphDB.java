@@ -38,6 +38,7 @@ import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MappingDSGraphDB {
 
@@ -51,7 +52,7 @@ public class MappingDSGraphDB {
     private static MapperExecutor mexecutor                          = null;
     private static SelectorExecutor sexecutor                        = null;
 
-    private static HashMap<Long, Session> threadSessionRegistry = new HashMap<>();
+    private static ConcurrentHashMap<Long, Session> threadSessionRegistry = new ConcurrentHashMap<>();
 
     public static boolean isBlueprintsNeo4j() {
         return (blpImpl.equals(BLUEPRINTS_IMPL_N4J));
@@ -166,12 +167,12 @@ public class MappingDSGraphDB {
         }
     }
 
-    public static synchronized void putThreadedSession(Session session) {
+    public static void putThreadedSession(Session session) {
         Long threadID = Thread.currentThread().getId();
         MappingDSGraphDB.threadSessionRegistry.put(threadID, session);
     }
 
-    public static synchronized void removeThreadedSession() {
+    public static void removeThreadedSession() {
         Long threadID = Thread.currentThread().getId();
         MappingDSGraphDB.threadSessionRegistry.remove(threadID);
     }
