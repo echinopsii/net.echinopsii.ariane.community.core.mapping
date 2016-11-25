@@ -21,11 +21,11 @@ package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.service.t
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.SessionRegistry;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SessionRegistryImpl implements SessionRegistry{
 
-    private static HashMap<String, Session> sessionRegistry = new HashMap<>();
+    private static ConcurrentHashMap<String, Session> sessionRegistry = new ConcurrentHashMap<>();
 
     @Override
     public Session get(String sessionID) {
@@ -42,7 +42,7 @@ public class SessionRegistryImpl implements SessionRegistry{
         return sessionRegistry.remove(session.getSessionID());
     }
 
-    public static HashMap<String, Session> getSessionRegistry() {
+    public static ConcurrentHashMap<String, Session> getSessionRegistry() {
         return  sessionRegistry;
     }
 }
