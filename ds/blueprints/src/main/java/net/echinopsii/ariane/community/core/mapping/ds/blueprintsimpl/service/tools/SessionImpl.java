@@ -123,7 +123,8 @@ public class SessionImpl implements Session {
                 try {
                     req.getReplyQ().put(ret);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    if (!((SessionImpl)this.attachedSession).isInterruptAnswerWait()) e.printStackTrace();
+                    else log.debug("Was putting reply on return queue when interrupted");
                 }
             }
         }
@@ -134,9 +135,10 @@ public class SessionImpl implements Session {
             while (running) {
                 SessionWorkerRequest msg = null;
                 try {
-                    msg = fifoInputQ.poll(2, TimeUnit.SECONDS);
+                    msg = fifoInputQ.poll(100, TimeUnit.MILLISECONDS);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    if (!((SessionImpl)this.attachedSession).isInterruptAnswerWait()) e.printStackTrace();
+                    else log.debug("Was polling request when interrupted");
                 }
                 if (msg != null) {
                     if (msg.getAction().equals(STOP)) {
@@ -197,6 +199,9 @@ public class SessionImpl implements Session {
     private HashMap<String, MappingDSCacheEntity> sessionExistingObjectCache = new HashMap<>();
     private HashMap<String, MappingDSCacheEntity> sessionRemovedObjectCache = new HashMap<>();
 
+    private boolean waitingAnswer = false;
+    private boolean interruptAnswerWait = false;
+
     public SessionImpl(String clientId) {
         clientId = clientId.replace(" ", "_");
         this.sessionId = clientId + '-' + UUID.randomUUID();
@@ -206,6 +211,10 @@ public class SessionImpl implements Session {
     @Override
     public String getSessionID() {
         return sessionId;
+    }
+
+    public boolean isInterruptAnswerWait() {
+        return interruptAnswerWait;
     }
 
     @Override
@@ -243,17 +252,38 @@ public class SessionImpl implements Session {
 
     private SessionWorkerReply getReply(LinkedBlockingQueue<SessionWorkerReply> repQ) throws MappingDSException {
         SessionWorkerReply reply = null;
-        while (reply==null)
+        while (reply==null && !interruptAnswerWait)
             try {
-                reply = repQ.poll(2, TimeUnit.SECONDS);
+                reply = repQ.poll(100, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
                 throw new MappingDSException(e.getMessage());
             }
+        if (reply == null && interruptAnswerWait) {
+            reply = new SessionWorkerReply(true, null, "Mapping Execution Timeout !");
+            this.sessionThread.interrupt();
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            this.interruptAnswerWait = false;
+        }
         return reply;
     }
 
     @Override
     public Object execute(Object o, String methodName, Object[] args) throws MappingDSException {
+        if (this.waitingAnswer) {
+            log.debug("["+ sessionId +".execute] current session is waiting answer from last call. Interrupt.");
+            this.interruptAnswerWait = true;
+            while (this.interruptAnswerWait)
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            this.waitingAnswer = false;
+        }
         log.debug("["+ sessionId +".execute] {"+o.getClass().getName()+","+methodName+"}");
         LinkedBlockingQueue<SessionWorkerReply> repQ = new LinkedBlockingQueue<>();
         try {
@@ -312,11 +342,13 @@ public class SessionImpl implements Session {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        log.debug("["+ sessionId +".execute] wait reply ...");
 
+        log.debug("["+ sessionId +".execute] wait reply ...");
+        this.waitingAnswer = true;
         SessionWorkerReply reply = getReply(repQ);
+        this.waitingAnswer = false;
         log.debug("[" + sessionId + ".execute] reply error : " + reply.isError());
-        if (! reply.isError()) return reply.getRet();
+        if (!reply.isError()) return reply.getRet();
         else throw new MappingDSException(reply.getError_msg());
     }
 
