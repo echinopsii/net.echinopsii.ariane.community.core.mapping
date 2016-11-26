@@ -254,9 +254,12 @@ public class MappingDSGraphDB {
         return ccgraph;
     }
 
-    public static synchronized MappingDSBlueprintsCacheEntity saveVertexEntity(MappingDSBlueprintsCacheEntity entity) {
+    public static MappingDSBlueprintsCacheEntity saveVertexEntity(MappingDSBlueprintsCacheEntity entity) {
         Vertex entityV;
-        String id = UUID.randomUUID().toString();
+        String id = null;
+        synchronized (UUID.class) {
+            id = UUID.randomUUID().toString();
+        }
         try {
             entityV = ccgraph.addVertex(null);
             entityV.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID, id);
@@ -281,9 +284,12 @@ public class MappingDSGraphDB {
         return entity;
     }
 
-    public static synchronized Edge createEdge(Vertex source, Vertex destination, String label) throws MappingDSException {
+    public static Edge createEdge(Vertex source, Vertex destination, String label) throws MappingDSException {
         Edge edge;
-        String id = UUID.randomUUID().toString();
+        String id = null;
+        synchronized (UUID.class) {
+            id = UUID.randomUUID().toString();
+        }
         try {
             if (log.isTraceEnabled()) {
                 for (String propKey : source.getPropertyKeys()) {
@@ -899,7 +905,7 @@ public class MappingDSGraphDB {
         autocommit();
     }
 
-    public static synchronized void deleteEntity(MappingDSBlueprintsCacheEntity entity) {
+    public static void deleteEntity(MappingDSBlueprintsCacheEntity entity) {
         Element elem = entity.getElement();
         try {
             if (elem != null) {
@@ -929,19 +935,15 @@ public class MappingDSGraphDB {
 
                     for (Edge edge : vertex.getEdges(Direction.BOTH, MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY))
                         deleteEntity(getEdgeEntity(edge));
-                    synchronized (ccgraph) {
-                        Long threadID = Thread.currentThread().getId();
-                        if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).removeEntityFromCache(entity);
-                        else MappingDSCache.removeEntityFromCache(entity);
-                        removeVertex(vertex);
-                    }
+                    Long threadID = Thread.currentThread().getId();
+                    if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).removeEntityFromCache(entity);
+                    else MappingDSCache.removeEntityFromCache(entity);
+                    removeVertex(vertex);
                 } else if (elem instanceof Edge) {
-                    synchronized (ccgraph) {
-                        Long threadID = Thread.currentThread().getId();
-                        if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).removeEntityFromCache(entity);
-                        else MappingDSCache.removeEntityFromCache(entity);
-                        removeEdge((Edge) elem);
-                    }
+                    Long threadID = Thread.currentThread().getId();
+                    if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).removeEntityFromCache(entity);
+                    else MappingDSCache.removeEntityFromCache(entity);
+                    removeEdge((Edge) elem);
                 }
             }
             autocommit();
@@ -952,7 +954,7 @@ public class MappingDSGraphDB {
         }
     }
 
-    public static synchronized void clear() {
+    public static void clear() {
         try {
             for (Edge edge : ccgraph.getEdges()) ccgraph.removeEdge(edge);
             for (Vertex vertex : ccgraph.getVertices()) ccgraph.removeVertex(vertex);
