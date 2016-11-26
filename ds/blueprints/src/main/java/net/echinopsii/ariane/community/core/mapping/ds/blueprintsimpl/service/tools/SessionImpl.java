@@ -135,7 +135,7 @@ public class SessionImpl implements Session {
             while (running) {
                 SessionWorkerRequest msg = null;
                 try {
-                    msg = fifoInputQ.poll(100, TimeUnit.MILLISECONDS);
+                    msg = fifoInputQ.poll(50, TimeUnit.MILLISECONDS);
                 } catch (InterruptedException e) {
                     if (!((SessionImpl)this.attachedSession).isInterruptAnswerWait()) e.printStackTrace();
                     else log.debug("Was polling request when interrupted");
@@ -219,6 +219,7 @@ public class SessionImpl implements Session {
 
     @Override
     public Session stop() {
+        this.unlockIfWaitingAnswer();
         try {
             //Rollback any operation not commited yet
             this.rollback();
@@ -254,7 +255,7 @@ public class SessionImpl implements Session {
         SessionWorkerReply reply = null;
         while (reply==null && !interruptAnswerWait)
             try {
-                reply = repQ.poll(100, TimeUnit.MILLISECONDS);
+                reply = repQ.poll(50, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
                 throw new MappingDSException(e.getMessage());
             }
@@ -262,28 +263,40 @@ public class SessionImpl implements Session {
             reply = new SessionWorkerReply(true, null, "Mapping Execution Timeout !");
             this.sessionThread.interrupt();
             try {
-                Thread.sleep(50);
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            log.debug("["+ sessionId +".getReply] current session thread has been interrupted. New state : " + this.sessionThread.getState().toString());
+            int threadStackTraceLength = this.sessionThread.getStackTrace().length;
+            if (threadStackTraceLength>1) log.debug("["+ sessionId +".getReply] current session thread has been interrupted. StackTrace[0] : " + this.sessionThread.getStackTrace()[0]);
+            if (threadStackTraceLength>2) log.debug("["+ sessionId +".getReply] current session thread has been interrupted. StackTrace[1] : " + this.sessionThread.getStackTrace()[1]);
+            if (threadStackTraceLength>3) log.debug("["+ sessionId +".getReply] current session thread has been interrupted. StackTrace[2] : " + this.sessionThread.getStackTrace()[2]);
+            if (threadStackTraceLength>4) log.debug("["+ sessionId +".getReply] current session thread has been interrupted. StackTrace[3] : " + this.sessionThread.getStackTrace()[3]);
+            if (threadStackTraceLength>5) log.debug("["+ sessionId +".getReply] current session thread has been interrupted. StackTrace[4] : " + this.sessionThread.getStackTrace()[4]);
+            if (threadStackTraceLength>6) log.debug("["+ sessionId +".getReply] current session thread has been interrupted. StackTrace[5] : " + this.sessionThread.getStackTrace()[5]);
             this.interruptAnswerWait = false;
         }
         return reply;
     }
 
-    @Override
-    public Object execute(Object o, String methodName, Object[] args) throws MappingDSException {
+    private void unlockIfWaitingAnswer() {
         if (this.waitingAnswer) {
             log.debug("["+ sessionId +".execute] current session is waiting answer from last call. Interrupt.");
             this.interruptAnswerWait = true;
             while (this.interruptAnswerWait)
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             this.waitingAnswer = false;
         }
+    }
+
+    @Override
+    public Object execute(Object o, String methodName, Object[] args) throws MappingDSException {
+        this.unlockIfWaitingAnswer();
         log.debug("["+ sessionId +".execute] {"+o.getClass().getName()+","+methodName+"}");
         LinkedBlockingQueue<SessionWorkerReply> repQ = new LinkedBlockingQueue<>();
         try {
@@ -354,6 +367,7 @@ public class SessionImpl implements Session {
 
     @Override
     public Session commit() throws MappingDSException {
+        this.unlockIfWaitingAnswer();
         LinkedBlockingQueue<SessionWorkerReply> repQ = new LinkedBlockingQueue<>();
         try {
             this.sessionWorker.getFifoInputQ().put(new SessionWorkerRequest(COMMIT, null, null, null, repQ));
@@ -366,6 +380,7 @@ public class SessionImpl implements Session {
 
     @Override
     public Session rollback() throws MappingDSException {
+        this.unlockIfWaitingAnswer();
         LinkedBlockingQueue<SessionWorkerReply> repQ = new LinkedBlockingQueue<>();
         try {
             this.sessionWorker.getFifoInputQ().put(new SessionWorkerRequest(ROLLBACK, null, null, null, repQ));
