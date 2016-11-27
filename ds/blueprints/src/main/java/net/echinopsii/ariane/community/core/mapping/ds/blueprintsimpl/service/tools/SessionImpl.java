@@ -123,8 +123,8 @@ public class SessionImpl implements Session {
                 try {
                     req.getReplyQ().put(ret);
                 } catch (InterruptedException e) {
-                    if (!((SessionImpl)this.attachedSession).isInterruptAnswerWait()) e.printStackTrace();
-                    else log.debug("Was putting reply on return queue when interrupted");
+                    log.warn("Interrupted while putting worker reply...");
+                    if (log.isDebugEnabled()) e.printStackTrace();
                 }
             }
         }
@@ -137,8 +137,8 @@ public class SessionImpl implements Session {
                 try {
                     msg = fifoInputQ.poll(50, TimeUnit.MILLISECONDS);
                 } catch (InterruptedException e) {
-                    if (!((SessionImpl)this.attachedSession).isInterruptAnswerWait()) e.printStackTrace();
-                    else log.debug("Was polling request when interrupted");
+                    log.warn("Interrupted while polling worker request queue...");
+                    if (log.isDebugEnabled()) e.printStackTrace();
                 }
                 if (msg != null) {
                     if (msg.getAction().equals(STOP)) {
@@ -169,7 +169,8 @@ public class SessionImpl implements Session {
                                 ret = Void.TYPE;
                             this.returnToQueue(msg, new SessionWorkerReply(false, ret, null));
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            log.warn("Interrupted while executing request...");
+                            if (log.isDebugEnabled()) e.printStackTrace();
                             this.returnToQueue(msg, new SessionWorkerReply(true, null, e.getMessage()));
                         }
                     } else if (msg.getAction().equals(TRACE)) {
@@ -213,10 +214,6 @@ public class SessionImpl implements Session {
         return sessionId;
     }
 
-    public boolean isInterruptAnswerWait() {
-        return interruptAnswerWait;
-    }
-
     @Override
     public Session stop() {
         this.unlockIfWaitingAnswer();
@@ -224,18 +221,21 @@ public class SessionImpl implements Session {
             //Rollback any operation not commited yet
             this.rollback();
         } catch (MappingDSException e) {
-            e.printStackTrace();
+            log.warn("MappingDSException raised while rollbacking session... " + e.getMessage());
+            if (log.isDebugEnabled()) e.printStackTrace();
         }
         try {
             this.sessionWorker.getFifoInputQ().put(new SessionWorkerRequest(STOP, null, null, null, null));
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            log.warn("Interrupted while stopping session... " + e.getMessage());
+            if (log.isDebugEnabled()) e.printStackTrace();
         }
         while(sessionWorker.isRunning())
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                log.warn("Interrupted while waiting session to be stopped... " + e.getMessage());
+                if (log.isDebugEnabled()) e.printStackTrace();
             }
         return this;
     }
@@ -265,7 +265,8 @@ public class SessionImpl implements Session {
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                log.warn("Interrupted while waiting session thread to be interrupt... " + e.getMessage());
+                if (log.isDebugEnabled()) e.printStackTrace();
             }
             log.debug("["+ sessionId +".getReply] current session thread has been interrupted. New state : " + this.sessionThread.getState().toString());
             int threadStackTraceLength = this.sessionThread.getStackTrace().length;
@@ -288,7 +289,8 @@ public class SessionImpl implements Session {
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    log.warn("Interrupted while waiting session thread unlocking... " + e.getMessage());
+                    if (log.isDebugEnabled()) e.printStackTrace();
                 }
             this.waitingAnswer = false;
         }
@@ -353,7 +355,8 @@ public class SessionImpl implements Session {
             }
             this.sessionWorker.getFifoInputQ().put(new SessionWorkerRequest(EXECUTE, o, m, args, repQ));
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            log.warn("Interrupted while executing request... " + e.getMessage());
+            if (log.isDebugEnabled()) e.printStackTrace();
         }
 
         log.debug("["+ sessionId +".execute] wait reply ...");
@@ -372,7 +375,8 @@ public class SessionImpl implements Session {
         try {
             this.sessionWorker.getFifoInputQ().put(new SessionWorkerRequest(COMMIT, null, null, null, repQ));
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            log.warn("Interrupted while commiting session ... " + e.getMessage());
+            if (log.isDebugEnabled()) e.printStackTrace();
         }
         getReply(repQ);
         return this;
@@ -385,7 +389,8 @@ public class SessionImpl implements Session {
         try {
             this.sessionWorker.getFifoInputQ().put(new SessionWorkerRequest(ROLLBACK, null, null, null, repQ));
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            log.warn("Interrupted while rollbacking session ... " + e.getMessage());
+            if (log.isDebugEnabled()) e.printStackTrace();
         }
         getReply(repQ);
         return this;
@@ -397,7 +402,8 @@ public class SessionImpl implements Session {
             Object[] args = new Object[]{isTraceEnabled};
             this.sessionWorker.getFifoInputQ().put(new SessionWorkerRequest(TRACE, null, null, args, null));
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            log.warn("Interrupted while tracing session ... " + e.getMessage());
+            if (log.isDebugEnabled()) e.printStackTrace();
         }
         return this;
     }
