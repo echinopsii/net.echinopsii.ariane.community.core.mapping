@@ -371,12 +371,14 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer, 
 
 	public void setElement(Element containerVertex) {
 		this.containerVertex = (Vertex)containerVertex;
-        if (MappingDSGraphDB.isBlueprintsNeo4j() && this.containerVertex instanceof Neo4j2Vertex)
-            ((Neo4j2Vertex) this.containerVertex).addLabel(MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE);
-		this.containerVertex.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY, MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE);
-		super.setContainerID((String) this.containerVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
-		log.debug("Container vertex has been initialized ({},{}).", new Object[]{this.containerVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID),
-																				 this.containerVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY)});
+        super.setContainerID((String) this.containerVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
+        if (this.containerVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY)==null) {
+            if (MappingDSGraphDB.isBlueprintsNeo4j() && this.containerVertex instanceof Neo4j2Vertex)
+                ((Neo4j2Vertex) this.containerVertex).addLabel(MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE);
+            this.containerVertex.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY, MappingDSGraphPropertyNames.DD_TYPE_CONTAINER_VALUE);
+            log.debug("Container vertex has been initialized ({},{}).", new Object[]{this.containerVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID),
+                    this.containerVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY)});
+        }
 	}
 
     @Override

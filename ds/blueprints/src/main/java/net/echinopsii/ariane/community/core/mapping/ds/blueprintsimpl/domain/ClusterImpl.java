@@ -114,12 +114,14 @@ public class ClusterImpl extends SProxClusterAbs implements MappingDSBlueprintsC
     @Override
     public void setElement(Element vertex) {
         this.clusterVertex = (Vertex) vertex;
-        if (MappingDSGraphDB.isBlueprintsNeo4j() && this.clusterVertex instanceof Neo4j2Vertex)
-            ((Neo4j2Vertex) this.clusterVertex).addLabel(MappingDSGraphPropertyNames.DD_TYPE_CLUSTER_VALUE);
-        this.clusterVertex.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY, MappingDSGraphPropertyNames.DD_TYPE_CLUSTER_VALUE);
         super.setClusterID((String) this.clusterVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
-        log.debug("Cluster vertex has been initialized ({},{}).", new Object[]{this.clusterVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID),
-                                                                               this.clusterVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY)});
+        if (this.clusterVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY)==null) {
+            this.clusterVertex.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY, MappingDSGraphPropertyNames.DD_TYPE_CLUSTER_VALUE);
+            if (MappingDSGraphDB.isBlueprintsNeo4j() && this.clusterVertex instanceof Neo4j2Vertex)
+                ((Neo4j2Vertex) this.clusterVertex).addLabel(MappingDSGraphPropertyNames.DD_TYPE_CLUSTER_VALUE);
+            log.debug("Cluster vertex has been initialized ({},{}).", new Object[]{this.clusterVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID),
+                    this.clusterVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY)});
+        }
     }
 
     @Override

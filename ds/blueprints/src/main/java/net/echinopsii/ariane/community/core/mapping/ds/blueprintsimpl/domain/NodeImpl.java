@@ -318,12 +318,14 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode, MappingDSBluepr
 
     public void setElement(Element nodeVertex) {
         this.nodeVertex = (Vertex) nodeVertex;
-        if (MappingDSGraphDB.isBlueprintsNeo4j() && this.nodeVertex instanceof Neo4j2Vertex)
-            ((Neo4j2Vertex) this.nodeVertex).addLabel(MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE);
-        this.nodeVertex.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY, MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE);
         super.setNodeID((String) this.nodeVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID));
-        log.debug("Node vertex has been initialized ({},{}).", new Object[]{this.nodeVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID),
-                                                                                   this.nodeVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY)});
+        if (this.nodeVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY)==null) {
+            if (MappingDSGraphDB.isBlueprintsNeo4j() && this.nodeVertex instanceof Neo4j2Vertex)
+                ((Neo4j2Vertex) this.nodeVertex).addLabel(MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE);
+            this.nodeVertex.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY, MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE);
+            log.debug("Node vertex has been initialized ({},{}).", new Object[]{this.nodeVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID),
+                    this.nodeVertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY)});
+        }
     }
 
     @Override
