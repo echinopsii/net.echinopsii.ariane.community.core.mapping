@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.concurrent.TimeoutException;
 
 public class MapSceImpl implements MapSce {
 
@@ -41,12 +42,17 @@ public class MapSceImpl implements MapSce {
         java.util.Map<String, Object> message = new HashMap<>();
         message.put(MomMsgTranslator.OPERATION_FDN, OP_GET_MAP);
         message.put(MapSce.PARAM_MAPPER_QUERY, mapperQuery);
-        java.util.Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, MapSce.Q_MAPPING_MAP_SERVICE, new AppMsgWorker() {
-            @Override
-            public java.util.Map<String, Object> apply(java.util.Map<String, Object> message) {
-                return message;
-            }
-        });
+        java.util.Map<String, Object> retMsg = null;
+        try {
+            retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, MapSce.Q_MAPPING_MAP_SERVICE, new AppMsgWorker() {
+                @Override
+                public java.util.Map<String, Object> apply(java.util.Map<String, Object> message) {
+                    return message;
+                }
+            });
+        } catch (TimeoutException e) {
+            throw new MappingDSException(e.getMessage());
+        }
         int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
         if (rc != 0) {
             String msg_err = (String) retMsg.get(MomMsgTranslator.MSG_ERR);

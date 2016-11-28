@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 
 public class TransportImpl extends SProxTransportAbs implements SProxTransport {
 
@@ -114,7 +115,12 @@ public class TransportImpl extends SProxTransportAbs implements SProxTransport {
                     message.put(MappingSce.GLOBAL_PARAM_OBJ_ID, super.getTransportID());
                     message.put(TransportSce.PARAM_TRANSPORT_NAME, name);
                     if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
-                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, TransportSce.Q_MAPPING_TRANSPORT_SERVICE, transportReplyWorker);
+                    Map<String, Object> retMsg = null;
+                    try {
+                        retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, TransportSce.Q_MAPPING_TRANSPORT_SERVICE, transportReplyWorker);
+                    } catch (TimeoutException e) {
+                        throw new MappingDSException(e.getMessage());
+                    }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.setTransportName(name);
                     else throw new MappingDSException("Ariane server raised an error... Check your logs !");
                 }
@@ -138,7 +144,12 @@ public class TransportImpl extends SProxTransportAbs implements SProxTransport {
                 throw new MappingDSException(e.getMessage());
             }
             if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
-            Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, TransportSce.Q_MAPPING_TRANSPORT_SERVICE, transportReplyWorker);
+            Map<String, Object> retMsg = null;
+            try {
+                retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, TransportSce.Q_MAPPING_TRANSPORT_SERVICE, transportReplyWorker);
+            } catch (TimeoutException e) {
+                throw new MappingDSException(e.getMessage());
+            }
             if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.addTransportProperty(propertyKey, value);
             else throw new MappingDSException("Ariane server raised an error... Check your logs !");
         } else throw new MappingDSException("This transport is not initialized !");
@@ -155,7 +166,12 @@ public class TransportImpl extends SProxTransportAbs implements SProxTransport {
             message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getTransportID());
             message.put(MappingSce.GLOBAL_PARAM_PROP_NAME, propertyKey);
             if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
-            Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, TransportSce.Q_MAPPING_TRANSPORT_SERVICE, transportReplyWorker);
+            Map<String, Object> retMsg = null;
+            try {
+                retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, TransportSce.Q_MAPPING_TRANSPORT_SERVICE, transportReplyWorker);
+            } catch (TimeoutException e) {
+                throw new MappingDSException(e.getMessage());
+            }
             if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.removeTransportProperty(propertyKey);
         } else throw new MappingDSException("This transport is not initialized !");
     }

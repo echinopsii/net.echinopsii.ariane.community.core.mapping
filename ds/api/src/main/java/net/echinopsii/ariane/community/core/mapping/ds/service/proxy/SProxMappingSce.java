@@ -36,13 +36,13 @@ public interface SProxMappingSce<S extends Session, SR extends SessionRegistry> 
 
     SR getSessionRegistry();
 
-    S openSession(String clientID);
+    S openSession(String clientID) throws MappingDSException;
 
-    S openSession(String clientID, boolean proxy);
+    S openSession(String clientID, boolean proxy) throws MappingDSException;
 
-    S closeSession(S toClose);
+    S closeSession(S toClose) throws MappingDSException;
 
-    S closeSession();
+    S closeSession() throws MappingDSException;
 
     Node getNodeByName(Session session, Container container, String nodeName) throws MappingDSException;
 
