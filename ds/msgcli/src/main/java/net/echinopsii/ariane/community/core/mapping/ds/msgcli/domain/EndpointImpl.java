@@ -39,11 +39,13 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.NodeSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
+import org.hibernate.engine.spi.Mapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeoutException;
 
 public class EndpointImpl extends SProxEndpointAbs implements SProxEndpoint {
 
@@ -140,7 +142,12 @@ public class EndpointImpl extends SProxEndpointAbs implements SProxEndpoint {
                 message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getEndpointID());
                 message.put(Endpoint.TOKEN_EP_URL, url);
                 if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
-                Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, EndpointSce.Q_MAPPING_ENDPOINT_SERVICE, endpointReplyWorker);
+                Map<String, Object> retMsg = null;
+                try {
+                    retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, EndpointSce.Q_MAPPING_ENDPOINT_SERVICE, endpointReplyWorker);
+                } catch (TimeoutException e) {
+                    throw new MappingDSException(e.getMessage());
+                }
                 if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.setEndpointURL(url);
                 else throw new MappingDSException("Ariane server raised an error... Check your logs !");
             }
@@ -185,7 +192,12 @@ public class EndpointImpl extends SProxEndpointAbs implements SProxEndpoint {
                     message.put(NodeSce.PARAM_NODE_PNID, node.getNodeID());
                     if (clientThreadSessionID != null)
                         message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
-                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, EndpointSce.Q_MAPPING_ENDPOINT_SERVICE, endpointReplyWorker);
+                    Map<String, Object> retMsg = null;
+                    try {
+                        retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, EndpointSce.Q_MAPPING_ENDPOINT_SERVICE, endpointReplyWorker);
+                    } catch (TimeoutException e) {
+                        throw new MappingDSException(e.getMessage());
+                    }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
                         Node previousParentNode = super.getEndpointParentNode();
                         if (previousParentNode != null) {
@@ -234,7 +246,12 @@ public class EndpointImpl extends SProxEndpointAbs implements SProxEndpoint {
                 throw new MappingDSException(e.getMessage());
             }
             if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
-            Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, EndpointSce.Q_MAPPING_ENDPOINT_SERVICE, endpointReplyWorker);
+            Map<String, Object> retMsg = null;
+            try {
+                retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, EndpointSce.Q_MAPPING_ENDPOINT_SERVICE, endpointReplyWorker);
+            } catch (TimeoutException e) {
+                throw new MappingDSException(e.getMessage());
+            }
             if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
                 super.addEndpointProperty(propertyKey, value);
             }
@@ -252,7 +269,12 @@ public class EndpointImpl extends SProxEndpointAbs implements SProxEndpoint {
             message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getEndpointID());
             message.put(MappingSce.GLOBAL_PARAM_PROP_NAME, propertyKey);
             if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
-            Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, EndpointSce.Q_MAPPING_ENDPOINT_SERVICE, endpointReplyWorker);
+            Map<String, Object> retMsg = null;
+            try {
+                retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, EndpointSce.Q_MAPPING_ENDPOINT_SERVICE, endpointReplyWorker);
+            } catch (TimeoutException e) {
+                throw new MappingDSException(e.getMessage());
+            }
             if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.removeEndpointProperty(propertyKey);
         } else throw new MappingDSException("This endpoint is not initialized !");
     }
@@ -296,7 +318,12 @@ public class EndpointImpl extends SProxEndpointAbs implements SProxEndpoint {
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getEndpointID());
                     message.put(EndpointSce.PARAM_ENDPOINT_TEID, endpoint.getEndpointID());
                     if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
-                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, EndpointSce.Q_MAPPING_ENDPOINT_SERVICE, endpointReplyWorker);
+                    Map<String, Object> retMsg = null;
+                    try {
+                        retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, EndpointSce.Q_MAPPING_ENDPOINT_SERVICE, endpointReplyWorker);
+                    } catch (TimeoutException e) {
+                        throw new MappingDSException(e.getMessage());
+                    }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
                         super.addTwinEndpoint(endpoint);
                         if (twinEndpointsID==null) twinEndpointsID = new ArrayList<>();
@@ -333,7 +360,12 @@ public class EndpointImpl extends SProxEndpointAbs implements SProxEndpoint {
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getEndpointID());
                     message.put(EndpointSce.PARAM_ENDPOINT_TEID, endpoint.getEndpointID());
                     if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
-                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, EndpointSce.Q_MAPPING_ENDPOINT_SERVICE, endpointReplyWorker);
+                    Map<String, Object> retMsg = null;
+                    try {
+                        retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, EndpointSce.Q_MAPPING_ENDPOINT_SERVICE, endpointReplyWorker);
+                    } catch (TimeoutException e) {
+                        throw new MappingDSException(e.getMessage());
+                    }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
                         super.removeTwinEndpoint(endpoint);
                         twinEndpointsID.remove(endpoint.getEndpointID());

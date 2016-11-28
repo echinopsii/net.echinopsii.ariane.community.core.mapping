@@ -53,7 +53,12 @@ public class SessionEp {
         {
             Response ret = null;
             if (clientID!=null && !clientID.equals("")) {
-                Session session = MappingBootstrap.getMappingSce().openSession(clientID, true);
+                Session session = null;
+                try {
+                    session = MappingBootstrap.getMappingSce().openSession(clientID, true);
+                } catch (MappingDSException e) {
+                    ret = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+                }
                 if (session != null) {
                     try {
                         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -63,7 +68,7 @@ public class SessionEp {
                     } catch (IOException e) {
                         ret = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
                     }
-                } else ret = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Failure when creating new session. Check server logs.").build();
+                } else if (ret==null) ret = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Failure when creating new session. Check server logs.").build();
             } else  ret = Response.status(Response.Status.BAD_REQUEST).entity("ClientID can not be null or empty").build();
             return ret ;
         } else return Response.status(Response.Status.UNAUTHORIZED).entity("You're not authorized to write on mapping db. Contact your administrator.").build();
@@ -81,8 +86,12 @@ public class SessionEp {
             if (sessionID!=null && !sessionID.equals("")) {
                 Session session = MappingBootstrap.getMappingSce().getSessionRegistry().get(sessionID);
                 if (session!=null) {
-                    MappingBootstrap.getMappingSce().closeSession(session);
-                    ret = Response.status(Response.Status.OK).entity("Session with ID " + sessionID + " has been closed.").build();
+                    try {
+                        MappingBootstrap.getMappingSce().closeSession(session);
+                        ret = Response.status(Response.Status.OK).entity("Session with ID " + sessionID + " has been closed.").build();
+                    } catch (MappingDSException e) {
+                        ret = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+                    }
                 } else ret = Response.status(Response.Status.NOT_FOUND).entity("Session with ID " + sessionID + " not found !").build();
             } else ret = Response.status(Response.Status.BAD_REQUEST).entity("SessionID can not be null or empty").build();
             return ret ;

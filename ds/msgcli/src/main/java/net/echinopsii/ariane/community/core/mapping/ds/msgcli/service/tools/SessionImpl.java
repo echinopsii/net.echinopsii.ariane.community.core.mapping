@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 
 public class SessionImpl implements Session {
 
@@ -135,7 +136,12 @@ public class SessionImpl implements Session {
         Map<String, Object> message = new HashMap<>();
         message.put(MomMsgTranslator.OPERATION_FDN, SESSION_OP_COMMIT);
         message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, this.sessionID);
-        Map<String, Object> reply = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, Session.MAPPING_SESSION_SERVICE_Q, this.getSessionReplyWorker());
+        Map<String, Object> reply = null;
+        try {
+            reply = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, Session.MAPPING_SESSION_SERVICE_Q, this.getSessionReplyWorker());
+        } catch (TimeoutException e) {
+            throw new MappingDSException(e.getMessage());
+        }
         int rc = (int)reply.get(MomMsgTranslator.MSG_RC);
         if (rc!=0)
             throw new MappingDSException("Error returned by Ariane Mapping Service ! " + reply.get(MomMsgTranslator.MSG_ERR));
@@ -147,7 +153,12 @@ public class SessionImpl implements Session {
         Map<String, Object> message = new HashMap<>();
         message.put(MomMsgTranslator.OPERATION_FDN, SESSION_OP_ROLLBACK);
         message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, this.sessionID);
-        Map<String, Object> reply = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, Session.MAPPING_SESSION_SERVICE_Q, this.getSessionReplyWorker());
+        Map<String, Object> reply = null;
+        try {
+            reply = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, Session.MAPPING_SESSION_SERVICE_Q, this.getSessionReplyWorker());
+        } catch (TimeoutException e) {
+            throw new MappingDSException(e.getMessage());
+        }
         int rc = (int)reply.get(MomMsgTranslator.MSG_RC);
         if (rc!=0)
             throw new MappingDSException("Error returned by Ariane Mapping Service ! " + reply.get(MomMsgTranslator.MSG_ERR));

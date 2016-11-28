@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 
 public class LinkImpl extends SProxLinkAbs implements SProxLink {
     class LinkReplyWorker implements AppMsgWorker {
@@ -161,7 +162,12 @@ public class LinkImpl extends SProxLinkAbs implements SProxLink {
                     message.put(MappingSce.GLOBAL_PARAM_OBJ_ID, super.getLinkID());
                     message.put(Transport.TOKEN_TP_ID, transport.getTransportID());
                     if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
-                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, LinkSce.Q_MAPPING_LINK_SERVICE, linkReplyWorker);
+                    Map<String, Object> retMsg = null;
+                    try {
+                        retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, LinkSce.Q_MAPPING_LINK_SERVICE, linkReplyWorker);
+                    } catch (TimeoutException e) {
+                        throw new MappingDSException(e.getMessage());
+                    }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
                         Transport previousTransport = this.getLinkTransport();
                         super.setLinkTransport(transport);
@@ -226,7 +232,12 @@ public class LinkImpl extends SProxLinkAbs implements SProxLink {
                     message.put(MappingSce.GLOBAL_PARAM_OBJ_ID, super.getLinkID());
                     message.put(LinkSce.PARAM_LINK_SEPID, source.getEndpointID());
                     if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
-                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, LinkSce.Q_MAPPING_LINK_SERVICE, linkReplyWorker);
+                    Map<String, Object> retMsg = null;
+                    try {
+                        retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, LinkSce.Q_MAPPING_LINK_SERVICE, linkReplyWorker);
+                    } catch (TimeoutException e) {
+                        throw new MappingDSException(e.getMessage());
+                    }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
                         Endpoint previousSource = super.getLinkEndpointSource();
                         super.setLinkEndpointSource(source);
@@ -291,7 +302,12 @@ public class LinkImpl extends SProxLinkAbs implements SProxLink {
                     message.put(MappingSce.GLOBAL_PARAM_OBJ_ID, super.getLinkID());
                     message.put(LinkSce.PARAM_LINK_TEPID, target.getEndpointID());
                     if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
-                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, LinkSce.Q_MAPPING_LINK_SERVICE, linkReplyWorker);
+                    Map<String, Object> retMsg = null;
+                    try {
+                        retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, LinkSce.Q_MAPPING_LINK_SERVICE, linkReplyWorker);
+                    } catch (TimeoutException e) {
+                        throw new MappingDSException(e.getMessage());
+                    }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
                         Endpoint previousTarget = super.getLinkEndpointTarget();
                         super.setLinkEndpointTarget(target);
