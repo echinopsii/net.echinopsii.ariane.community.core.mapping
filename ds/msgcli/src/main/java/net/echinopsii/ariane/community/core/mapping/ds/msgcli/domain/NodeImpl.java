@@ -46,6 +46,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeoutException;
 
 public class NodeImpl extends SProxNodeAbs implements SProxNode {
 
@@ -175,7 +176,12 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                 message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
                 message.put(SProxNodeSce.PARAM_NODE_NAME, name);
                 if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
-                Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
+                Map<String, Object> retMsg = null;
+                try {
+                    retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
+                } catch (TimeoutException e) {
+                    throw new MappingDSException(e.getMessage());
+                }
                 if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.setNodeName(name);
                 else throw new MappingDSException("Ariane server raised an error... Check your logs !");
             }
@@ -220,7 +226,12 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
                     message.put(Container.TOKEN_CT_ID, (container != null) ? container.getContainerID() : MappingSce.GLOBAL_PARAM_OBJ_NONE);
                     if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
-                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
+                    Map<String, Object> retMsg = null;
+                    try {
+                        retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
+                    } catch (TimeoutException e) {
+                        throw new MappingDSException(e.getMessage());
+                    }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
                         Container previousPContainer = super.getNodeContainer();
                         if (previousPContainer!=null) {
@@ -271,7 +282,12 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                 throw new MappingDSException(e.getMessage());
             }
             if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
-            Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
+            Map<String, Object> retMsg = null;
+            try {
+                retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
+            } catch (TimeoutException e) {
+                throw new MappingDSException(e.getMessage());
+            }
             if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.addNodeProperty(propertyKey, value);
             else throw new MappingDSException("Ariane server raised an error... Check your logs !");
         } else throw new MappingDSException("This node is not initialized !");
@@ -288,7 +304,12 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
             message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
             message.put(MappingSce.GLOBAL_PARAM_PROP_NAME, propertyKey);
             if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
-            Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
+            Map<String, Object> retMsg = null;
+            try {
+                retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
+            } catch (TimeoutException e) {
+                throw new MappingDSException(e.getMessage());
+            }
             if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.removeNodeProperty(propertyKey);
         } else throw new MappingDSException("This node is not initialized !");
     }
@@ -332,7 +353,12 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
                     message.put(NodeSce.PARAM_NODE_PNID, (node != null) ? node.getNodeID() : MappingSce.GLOBAL_PARAM_OBJ_NONE);
                     if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
-                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
+                    Map<String, Object> retMsg = null;
+                    try {
+                        retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
+                    } catch (TimeoutException e) {
+                        throw new MappingDSException(e.getMessage());
+                    }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
                         Node previousPNode = super.getNodeParentNode();
                         if (previousPNode!=null) {
@@ -406,7 +432,12 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
                     message.put(NodeSce.PARAM_NODE_CNID, node.getNodeID());
                     if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
-                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
+                    Map<String, Object> retMsg = null;
+                    try {
+                        retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
+                    } catch (TimeoutException e) {
+                        throw new MappingDSException(e.getMessage());
+                    }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
                         super.addNodeChildNode(node);
                         childNodesID.add(node.getNodeID());
@@ -442,7 +473,12 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
                     message.put(NodeSce.PARAM_NODE_CNID, node.getNodeID());
                     if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
-                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
+                    Map<String, Object> retMsg = null;
+                    try {
+                        retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
+                    } catch (TimeoutException e) {
+                        throw new MappingDSException(e.getMessage());
+                    }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
                         super.removeNodeChildNode(node);
                         childNodesID.remove(node.getNodeID());
@@ -503,7 +539,12 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
                     message.put(NodeSce.PARAM_NODE_TNID, node.getNodeID());
                     if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
-                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
+                    Map<String, Object> retMsg = null;
+                    try {
+                        retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
+                    } catch (TimeoutException e) {
+                        throw new MappingDSException(e.getMessage());
+                    }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
                         super.addTwinNode(node);
                         twinNodesID.add(node.getNodeID());
@@ -539,7 +580,12 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
                     message.put(NodeSce.PARAM_NODE_TNID, node.getNodeID());
                     if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
-                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
+                    Map<String, Object> retMsg = null;
+                    try {
+                        retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
+                    } catch (TimeoutException e) {
+                        throw new MappingDSException(e.getMessage());
+                    }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
                         super.removeTwinNode(node);
                         twinNodesID.remove(node.getNodeID());
@@ -600,7 +646,12 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
                     message.put(Endpoint.TOKEN_EP_ID, endpoint.getEndpointID());
                     if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
-                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
+                    Map<String, Object> retMsg = null;
+                    try {
+                        retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
+                    } catch (TimeoutException e) {
+                        throw new MappingDSException(e.getMessage());
+                    }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
                         super.addEndpoint(endpoint);
                         endpointsID.add(endpoint.getEndpointID());
@@ -636,7 +687,12 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
                     message.put(Endpoint.TOKEN_EP_ID, endpoint.getEndpointID());
                     if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
-                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
+                    Map<String, Object> retMsg = null;
+                    try {
+                        retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
+                    } catch (TimeoutException e) {
+                        throw new MappingDSException(e.getMessage());
+                    }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
                         super.removeEndpoint(endpoint);
                         endpointsID.remove(endpoint.getEndpointID());

@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.TimeoutException;
 
 public class TransportSceImpl extends SProxTransportSceAbs<TransportImpl> {
 
@@ -52,7 +53,12 @@ public class TransportSceImpl extends SProxTransportSceAbs<TransportImpl> {
         message.put(TransportSce.PARAM_TRANSPORT_NAME, transportName);
 
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
-        Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, TransportSce.Q_MAPPING_TRANSPORT_SERVICE, transport.getTransportReplyWorker());
+        Map<String, Object> retMsg = null;
+        try {
+            retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, TransportSce.Q_MAPPING_TRANSPORT_SERVICE, transport.getTransportReplyWorker());
+        } catch (TimeoutException e) {
+            throw new MappingDSException(e.getMessage());
+        }
 
         int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
         if (rc != 0) throw new MappingDSException("Ariane server raised an error... Check your logs !");
@@ -71,7 +77,12 @@ public class TransportSceImpl extends SProxTransportSceAbs<TransportImpl> {
         message.put(MomMsgTranslator.OPERATION_FDN, TransportSce.OP_DELETE_TRANSPORT);
         message.put(MappingSce.GLOBAL_PARAM_OBJ_ID, transportID);
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
-        Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, TransportSce.Q_MAPPING_TRANSPORT_SERVICE, transport.getTransportReplyWorker());
+        Map<String, Object> retMsg = null;
+        try {
+            retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, TransportSce.Q_MAPPING_TRANSPORT_SERVICE, transport.getTransportReplyWorker());
+        } catch (TimeoutException e) {
+            throw new MappingDSException(e.getMessage());
+        }
 
         int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
         if (rc != 0) throw new MappingDSException("Ariane server raised an error... Check your logs !");
@@ -87,7 +98,12 @@ public class TransportSceImpl extends SProxTransportSceAbs<TransportImpl> {
         message.put(MomMsgTranslator.OPERATION_FDN, TransportSce.OP_GET_TRANSPORT);
         message.put(MappingSce.GLOBAL_PARAM_OBJ_ID, transportID);
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
-        Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, TransportSce.Q_MAPPING_TRANSPORT_SERVICE, transport.getTransportReplyWorker());
+        Map<String, Object> retMsg = null;
+        try {
+            retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, TransportSce.Q_MAPPING_TRANSPORT_SERVICE, transport.getTransportReplyWorker());
+        } catch (TimeoutException e) {
+            throw new MappingDSException(e.getMessage());
+        }
 
         int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
         if (rc != 0) throw new MappingDSException("Ariane server raised an error... Check your logs !");
@@ -140,7 +156,12 @@ public class TransportSceImpl extends SProxTransportSceAbs<TransportImpl> {
         message.put(MappingSce.GLOBAL_PARAM_SELECTOR, (selector!=null) ? selector : MappingSce.GLOBAL_PARAM_OBJ_NONE);
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
 
-        Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, TransportSce.Q_MAPPING_TRANSPORT_SERVICE, new getTransportsWorker());
+        Map<String, Object> retMsg = null;
+        try {
+            retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, TransportSce.Q_MAPPING_TRANSPORT_SERVICE, new getTransportsWorker());
+        } catch (TimeoutException e) {
+            throw new MappingDSException(e.getMessage());
+        }
         int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
         if (rc != 0) throw new MappingDSException("Ariane server raised an error... Check your logs !");
         ret.addAll((Collection<? extends Transport>) retMsg.get("RET"));

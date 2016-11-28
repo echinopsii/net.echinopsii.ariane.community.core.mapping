@@ -35,10 +35,12 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxNodeSc
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxNodeSceAbs;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
+import org.hibernate.engine.spi.Mapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.TimeoutException;
 
 public class NodeSceImpl extends SProxNodeSceAbs<NodeImpl> {
 
@@ -58,7 +60,12 @@ public class NodeSceImpl extends SProxNodeSceAbs<NodeImpl> {
         message.put(Container.TOKEN_CT_ID, containerID);
         message.put(NodeSce.PARAM_NODE_PNID, (parentNodeID!=null) ? parentNodeID : MappingSce.GLOBAL_PARAM_OBJ_NONE);
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
-        Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, node.getNodeReplyWorker());
+        Map<String, Object> retMsg = null;
+        try {
+            retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, node.getNodeReplyWorker());
+        } catch (TimeoutException e) {
+            throw new MappingDSException(e.getMessage());
+        }
 
         int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
         if (rc != 0) throw new MappingDSException("Ariane server raised an error... Check your logs !");
@@ -77,7 +84,12 @@ public class NodeSceImpl extends SProxNodeSceAbs<NodeImpl> {
         message.put(MomMsgTranslator.OPERATION_FDN, SProxNodeSce.OP_DELETE_NODE);
         message.put(MappingSce.GLOBAL_PARAM_OBJ_ID, nodeID);
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
-        Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, node.getNodeReplyWorker());
+        Map<String, Object> retMsg = null;
+        try {
+            retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, node.getNodeReplyWorker());
+        } catch (TimeoutException e) {
+            throw new MappingDSException(e.getMessage());
+        }
 
         int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
         if (rc != 0) throw new MappingDSException("Ariane server raised an error... Check your logs !");
@@ -93,7 +105,12 @@ public class NodeSceImpl extends SProxNodeSceAbs<NodeImpl> {
         message.put(MomMsgTranslator.OPERATION_FDN, SProxNodeSce.OP_GET_NODE);
         message.put(MappingSce.GLOBAL_PARAM_OBJ_ID, id);
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
-        Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, node.getNodeReplyWorker());
+        Map<String, Object> retMsg = null;
+        try {
+            retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, node.getNodeReplyWorker());
+        } catch (TimeoutException e) {
+            throw new MappingDSException(e.getMessage());
+        }
 
         int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
         if (rc != 0) {
@@ -120,7 +137,12 @@ public class NodeSceImpl extends SProxNodeSceAbs<NodeImpl> {
         message.put(MomMsgTranslator.OPERATION_FDN, SProxNodeSce.OP_GET_NODE_BY_EPURL);
         message.put(Endpoint.TOKEN_EP_URL, endpointURL);
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
-        Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, node.getNodeReplyWorker());
+        Map<String, Object> retMsg = null;
+        try {
+            retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, node.getNodeReplyWorker());
+        } catch (TimeoutException e) {
+            throw new MappingDSException(e.getMessage());
+        }
 
         int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
         if (rc != 0) {
@@ -145,7 +167,12 @@ public class NodeSceImpl extends SProxNodeSceAbs<NodeImpl> {
             message.put(NodeSce.PARAM_NODE_NAME, nodeName);
             if (clientThreadSessionID != null)
                 message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
-            Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, node.getNodeReplyWorker());
+            Map<String, Object> retMsg = null;
+            try {
+                retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, node.getNodeReplyWorker());
+            } catch (TimeoutException e) {
+                throw new MappingDSException(e.getMessage());
+            }
 
             int rc = (int) retMsg.get(MomMsgTranslator.MSG_RC);
             if (rc != 0) {
@@ -196,7 +223,12 @@ public class NodeSceImpl extends SProxNodeSceAbs<NodeImpl> {
         message.put(MappingSce.GLOBAL_PARAM_SELECTOR, (selector!=null) ? selector : MappingSce.GLOBAL_PARAM_OBJ_NONE);
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
 
-        Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, new getNodesWorker());
+        Map<String, Object> retMsg = null;
+        try {
+            retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, new getNodesWorker());
+        } catch (TimeoutException e) {
+            throw new MappingDSException(e.getMessage());
+        }
         int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
         if (rc != 0) throw new MappingDSException("Ariane server raised an error... Check your logs !");
         ret.addAll((Collection<? extends Node>) retMsg.get("RET"));
@@ -221,7 +253,12 @@ public class NodeSceImpl extends SProxNodeSceAbs<NodeImpl> {
         }
         if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
 
-        Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, new getNodesWorker());
+        Map<String, Object> retMsg = null;
+        try {
+            retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, new getNodesWorker());
+        } catch (TimeoutException e) {
+            throw new MappingDSException(e.getMessage());
+        }
         int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
         if (rc != 0) throw new MappingDSException("Ariane server raised an error... Check your logs !");
         ret.addAll((Collection<? extends Node>) retMsg.get("RET"));

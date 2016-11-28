@@ -136,7 +136,7 @@ public class MappingMsgNATSTest {
     }
 
     @Test
-    public void testOpenCloseSession() {
+    public void testOpenCloseSession() throws MappingDSException {
         if (momTest!=null) {
             Session session = messagingMappingSce.openSession("this is a test");
             assertTrue(session.isRunning());

@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 
 public class GateImpl extends NodeImpl implements SProxGate {
 
@@ -155,7 +156,12 @@ public class GateImpl extends NodeImpl implements SProxGate {
                     message.put(SProxMappingSce.GLOBAL_PARAM_OBJ_ID, super.getNodeID());
                     message.put(Endpoint.TOKEN_EP_ID, (endpoint != null) ? endpoint.getEndpointID() : MappingSce.GLOBAL_PARAM_OBJ_NONE);
                     if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
-                    Map<String, Object> retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, GateSce.Q_MAPPING_GATE_SERVICE, gateReplyWorker);
+                    Map<String, Object> retMsg = null;
+                    try {
+                        retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, GateSce.Q_MAPPING_GATE_SERVICE, gateReplyWorker);
+                    } catch (TimeoutException e) {
+                        throw new MappingDSException(e.getMessage());
+                    }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
                         Endpoint previousPEndpoint = this.getNodePrimaryAdminEndpoint();
                         if (previousPEndpoint!=null) {
