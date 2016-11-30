@@ -205,7 +205,9 @@ public class SessionImpl implements Session {
 
     public SessionImpl(String clientId) {
         clientId = clientId.replace(" ", "_");
-        this.sessionId = clientId + '-' + UUID.randomUUID();
+        synchronized (UUID.class) {
+            this.sessionId = clientId + '-' + UUID.randomUUID();
+        }
         this.sessionThread.setName(sessionId);
     }
 
