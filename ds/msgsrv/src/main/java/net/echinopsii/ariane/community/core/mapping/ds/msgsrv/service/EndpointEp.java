@@ -65,7 +65,7 @@ public class EndpointEp {
             String prop_name;
             Session session = null;
             Endpoint endpoint = null;
-            if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(true);
+            if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setMsgTraceLevel(true);
             ((MomLogger)log).traceMessage("EndpointWorker.apply - in", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
 
             if (oOperation==null)
@@ -80,7 +80,7 @@ public class EndpointEp {
                     message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                     message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : session with provided id not found");
                     ((MomLogger)log).traceMessage("EndpointWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
-                    if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
+                    if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setMsgTraceLevel(false);
                     return message;
                 } else if (message.containsKey(MomMsgTranslator.MSG_TRACE)) session.traceSession(true);
             }
@@ -169,7 +169,7 @@ public class EndpointEp {
                             ((MomLogger)log).traceMessage("EndpointWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
                             if (message.containsKey(MomMsgTranslator.MSG_TRACE)) {
                                 if (session!=null) session.traceSession(false);
-                                ((MomLogger) log).setTraceLevel(false);
+                                ((MomLogger) log).setMsgTraceLevel(false);
                             }
                             return message;
                         }
@@ -232,7 +232,7 @@ public class EndpointEp {
                                         ((MomLogger)log).traceMessage("EndpointWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
                                         if (message.containsKey(MomMsgTranslator.MSG_TRACE)) {
                                             if (session!=null) session.traceSession(false);
-                                            ((MomLogger)log).setTraceLevel(false);
+                                            ((MomLogger)log).setMsgTraceLevel(false);
                                         }
                                         return message;
                                     }
@@ -247,7 +247,7 @@ public class EndpointEp {
                                         ((MomLogger)log).traceMessage("EndpointWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
                                         if (message.containsKey(MomMsgTranslator.MSG_TRACE)) {
                                             if (session!=null) session.traceSession(false);
-                                            ((MomLogger)log).setTraceLevel(false);
+                                            ((MomLogger)log).setMsgTraceLevel(false);
                                         }
                                         return message;
                                     }
@@ -305,7 +305,7 @@ public class EndpointEp {
                                         ((MomLogger)log).traceMessage("EndpointWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
                                         if (message.containsKey(MomMsgTranslator.MSG_TRACE)) {
                                             if (session!=null) session.traceSession(false);
-                                            ((MomLogger)log).setTraceLevel(false);
+                                            ((MomLogger)log).setMsgTraceLevel(false);
                                         }
                                         return message;
                                     }
@@ -331,7 +331,7 @@ public class EndpointEp {
                                         ((MomLogger)log).traceMessage("EndpointWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
                                         if (message.containsKey(MomMsgTranslator.MSG_TRACE)) {
                                             if (session!=null) session.traceSession(false);
-                                            ((MomLogger)log).setTraceLevel(false);
+                                            ((MomLogger)log).setMsgTraceLevel(false);
                                         }
                                         return message;
                                     }
@@ -352,7 +352,7 @@ public class EndpointEp {
                                     ((MomLogger)log).traceMessage("EndpointWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
                                     if (message.containsKey(MomMsgTranslator.MSG_TRACE)) {
                                         if (session!=null) session.traceSession(false);
-                                        ((MomLogger)log).setTraceLevel(false);
+                                        ((MomLogger)log).setMsgTraceLevel(false);
                                     }
                                     return message;
                                 }
@@ -384,7 +384,7 @@ public class EndpointEp {
             ((MomLogger)log).traceMessage("EndpointWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
             if (message.containsKey(MomMsgTranslator.MSG_TRACE)) {
                 if (session!=null) session.traceSession(false);
-                ((MomLogger)log).setTraceLevel(false);
+                ((MomLogger)log).setMsgTraceLevel(false);
             }
             return message;
         }

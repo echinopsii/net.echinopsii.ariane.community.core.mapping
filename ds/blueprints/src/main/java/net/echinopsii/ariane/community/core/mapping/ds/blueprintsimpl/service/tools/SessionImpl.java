@@ -176,7 +176,7 @@ public class SessionImpl implements Session {
                     } else if (msg.getAction().equals(TRACE)) {
                         boolean isTraceEnabled = (boolean) msg.getArgs()[0];
                         log.debug("[" + Thread.currentThread().getId() + ".worker.trace] " + this.attachedSession.getSessionID() + " : " + isTraceEnabled);
-                        ((MomLogger)log).setTraceLevel(isTraceEnabled);
+                        ((MomLogger)log).setMsgTraceLevel(isTraceEnabled);
                     }
                 }
             }
