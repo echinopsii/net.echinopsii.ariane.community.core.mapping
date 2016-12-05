@@ -42,7 +42,7 @@ public class MapEp {
             Object oOperation = message.get(MomMsgTranslator.OPERATION_FDN);
             String operation;
             String query;
-            if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(true);
+            if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setMsgTraceLevel(true);
             ((MomLogger)log).traceMessage("MapWorker.apply - in", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
 
             if (oOperation==null)
@@ -84,7 +84,7 @@ public class MapEp {
                     break;
             }
             ((MomLogger)log).traceMessage("MapWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
-            if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setTraceLevel(false);
+            if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setMsgTraceLevel(false);
             return message;
         }
     }
