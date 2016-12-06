@@ -83,7 +83,8 @@ public class GateSceImpl implements SProxGateSce<GateImpl> {
 					ret.addEndpoint(ep);
 					ep.setEndpointParentNode(ret);
 					container.addContainerGate(ret);
-
+					if (isPrimaryAdmin)
+						container.setContainerPrimaryAdminGate(ret);
 				} else {
 					throw new MappingDSException("Gate creation failed : provided container " + containerid + " doesn't exists.");
 				}

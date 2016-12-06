@@ -314,17 +314,26 @@ public abstract class SProxNodeSceAbs<N extends Node> implements SProxNodeSce {
                 if (reqNodeContainer != null)
                     if (mappingSession!=null) ((SProxGate)deserializedGate).setNodeContainer(mappingSession, reqNodeContainer);
                     else deserializedGate.setNodeContainer(reqNodeContainer);
-                if (reqGateIsPrimaryAdmin && deserializedGate.getNodePrimaryAdminEndpoint()==null && reqGateURL!=null) {
-                    Endpoint primaryAdminEp ;
-                    if (mappingSession!=null) primaryAdminEp = mappingSce.getEndpointSce().getEndpointByURL(mappingSession, reqGateURL);
-                    else primaryAdminEp = mappingSce.getEndpointSce().getEndpointByURL(reqGateURL);
 
-                    if (primaryAdminEp == null)
-                        if (mappingSession!=null) primaryAdminEp = mappingSce.getEndpointSce().createEndpoint(mappingSession, reqGateURL, deserializedGate.getNodeID());
-                        else primaryAdminEp = mappingSce.getEndpointSce().createEndpoint(reqGateURL, deserializedGate.getNodeID());
+                if (reqGateIsPrimaryAdmin) {
+                    Endpoint primaryAdminEp = deserializedGate.getNodePrimaryAdminEndpoint();
+                    if ((primaryAdminEp == null && reqGateURL != null) ||
+                            (primaryAdminEp != null && !primaryAdminEp.getEndpointURL().equals(reqGateURL))) {
+                        if (mappingSession != null)
+                            primaryAdminEp = mappingSce.getEndpointSce().getEndpointByURL(mappingSession, reqGateURL);
+                        else primaryAdminEp = mappingSce.getEndpointSce().getEndpointByURL(reqGateURL);
 
-                    if (mappingSession!=null) ((SProxGate)deserializedGate).setNodePrimaryAdminEnpoint(mappingSession, primaryAdminEp);
-                    else deserializedGate.setNodePrimaryAdminEnpoint(primaryAdminEp);
+                        if (primaryAdminEp == null)
+                            if (mappingSession != null)
+                                primaryAdminEp = mappingSce.getEndpointSce().createEndpoint(mappingSession, reqGateURL, deserializedGate.getNodeID());
+                            else
+                                primaryAdminEp = mappingSce.getEndpointSce().createEndpoint(reqGateURL, deserializedGate.getNodeID());
+
+                        if (mappingSession != null)
+                            ((SProxGate) deserializedGate).setNodePrimaryAdminEnpoint(mappingSession, primaryAdminEp);
+                        else deserializedGate.setNodePrimaryAdminEnpoint(primaryAdminEp);
+                        deserializedGate.getNodeContainer().setContainerPrimaryAdminGate(deserializedGate);
+                    }
                 }
             }
 
