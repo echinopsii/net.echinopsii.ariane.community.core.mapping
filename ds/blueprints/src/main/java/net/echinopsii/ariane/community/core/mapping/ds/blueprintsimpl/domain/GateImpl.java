@@ -106,6 +106,9 @@ public class GateImpl extends NodeImpl implements SProxGate {
             log.debug("Synchronize gate primary endpoint to db...", new Object[]{this.gatePrimaryAdminEndpoint.getEndpointID()});
             super.getElement().setProperty(MappingDSGraphPropertyNames.DD_GATE_PAEP_KEY, this.gatePrimaryAdminEndpoint.getEndpointID());
             MappingDSGraphDB.autocommit();
+        } else if (super.getElement().getProperty(MappingDSGraphPropertyNames.DD_GATE_PAEP_KEY) != null) {
+            super.getElement().removeProperty(MappingDSGraphPropertyNames.DD_GATE_PAEP_KEY);
+            MappingDSGraphDB.autocommit();
         }
     }
 
