@@ -26,6 +26,8 @@ import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.Gat
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.NodeImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository.GateRepoImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
+import net.echinopsii.ariane.community.core.mapping.ds.service.GateSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxGateSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.messaging.common.MomLoggerFactory;
@@ -47,7 +49,7 @@ public class GateSceImpl implements SProxGateSce<GateImpl> {
 	public GateImpl createGate(Session session, String url, String name, String containerid, Boolean isPrimaryAdmin) throws MappingDSException {
 		GateImpl ret = null;
 		if (session!=null && session.isRunning())
-			ret= (GateImpl) session.execute(this, CREATE_GATE, new Object[]{url, name, containerid, isPrimaryAdmin});
+			ret= (GateImpl) session.execute(this, GateSce.OP_CREATE_GATE, new Object[]{url, name, containerid, isPrimaryAdmin});
 		return ret;
 	}
 
@@ -94,9 +96,22 @@ public class GateSceImpl implements SProxGateSce<GateImpl> {
 	}
 
 	@Override
+	public GateImpl saveGate(Session session, String url, String name, String containerid, Boolean isPrimaryAdmin) throws MappingDSException {
+		GateImpl ret = null;
+		if (session!=null && session.isRunning())
+			ret= (GateImpl) session.execute(this, GateSce.OP_SAVE_GATE, new Object[]{url, name, containerid, isPrimaryAdmin});
+		return ret;
+	}
+
+	@Override
+	public Gate saveGate(String url, String name, String containerid, Boolean isPrimaryAdmin) throws MappingDSException {
+		return null;
+	}
+
+	@Override
 	public void deleteGate(Session session, String nodeID) throws MappingDSException {
 		if (session!=null && session.isRunning())
-			session.execute(this, DELETE_GATE, new Object[]{nodeID});
+			session.execute(this, GateSce.OP_DELETE_GATE, new Object[]{nodeID});
 	}
 
 	@Override
@@ -121,7 +136,7 @@ public class GateSceImpl implements SProxGateSce<GateImpl> {
 	public GateImpl getGate(Session session, String id) throws MappingDSException {
 		GateImpl ret = null;
 		if (session!=null && session.isRunning())
-			ret = (GateImpl)session.execute(this, GET_GATE, new Object[]{id});
+			ret = (GateImpl)session.execute(this, GateSce.OP_GET_GATE, new Object[]{id});
 		return ret;
 	}
 
@@ -140,7 +155,7 @@ public class GateSceImpl implements SProxGateSce<GateImpl> {
 	public Set<GateImpl> getGates(Session session, String selector) throws MappingDSException {
 		Set<GateImpl> ret = null;
 		if (session!=null && session.isRunning())
-			ret = (Set<GateImpl>) session.execute(this, GET_GATES, new Object[]{selector});
+			ret = (Set<GateImpl>) session.execute(this, GateSce.OP_GET_GATES, new Object[]{selector});
 		return ret;
 	}
 

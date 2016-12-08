@@ -24,6 +24,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Link;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxLink;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.LinkJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.service.LinkSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.DeserializedPushResponse;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
@@ -97,21 +98,21 @@ public abstract class SProxLinkSceAbs<L extends Link> implements SProxLinkSce {
     public L createLink(Session session, String sourceEndpointID, String targetEndpointID, String transportID) throws MappingDSException {
         L ret = null;
         if (session!=null && session.isRunning())
-            ret = (L) session.execute(this, CREATE_LINK, new Object[]{sourceEndpointID, targetEndpointID, transportID});
+            ret = (L) session.execute(this, LinkSce.OP_CREATE_LINK, new Object[]{sourceEndpointID, targetEndpointID, transportID});
         return ret;
     }
 
     @Override
     public void deleteLink(Session session, String linkID) throws MappingDSException {
         if (session!=null && session.isRunning())
-            session.execute(this, DELETE_LINK, new Object[]{linkID});
+            session.execute(this, LinkSce.OP_DELETE_LINK, new Object[]{linkID});
     }
 
     @Override
     public L getLink(Session session, String id) throws MappingDSException {
         L ret = null;
         if (session!=null && session.isRunning())
-            ret = (L) session.execute(this, GET_LINK, new Object[]{id});
+            ret = (L) session.execute(this, LinkSce.OP_GET_LINK, new Object[]{id});
         return ret;
     }
 
@@ -119,7 +120,7 @@ public abstract class SProxLinkSceAbs<L extends Link> implements SProxLinkSce {
     public Set<L> getLinks(Session session, String selector) throws MappingDSException {
         Set<L> ret = null;
         if (session!=null && session.isRunning())
-            ret = (Set<L>) session.execute(this, GET_LINKS, new Object[]{selector});
+            ret = (Set<L>) session.execute(this, LinkSce.OP_GET_LINKS, new Object[]{selector});
         return ret;
     }
 }

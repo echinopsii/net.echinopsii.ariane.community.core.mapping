@@ -60,6 +60,8 @@ public class ContainerRepoImpl implements ContainerRepo<ContainerImpl> {
                 ret = (ContainerImpl) entity;
             } else {
                 log.error("CONSISTENCY ERROR : entity " + id + " is not a container.");
+                log.error(entity.getClass().toString());
+                throw new MappingDSException("CONSISTENCY ERROR : entity " + id + " is not a container.");
             }
         }
         return ret;

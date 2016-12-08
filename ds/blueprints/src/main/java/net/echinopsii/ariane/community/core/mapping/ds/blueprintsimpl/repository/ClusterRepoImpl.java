@@ -24,6 +24,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.Ma
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.ClusterImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.repository.ClusterRepo;
+import org.hibernate.engine.spi.Mapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +60,8 @@ public class ClusterRepoImpl implements ClusterRepo<ClusterImpl> {
                 ret = (ClusterImpl) entity;
             } else {
                 log.error("CONSISTENCY ERROR : entity {} is not a cluster.", entity.getElement().getId());
+                log.error(entity.getClass().toString());
+                throw new MappingDSException("CONSISTENCY ERROR : entity " + entity.getElement().getId() + " is not a cluster.");
             }
         }
         return ret;

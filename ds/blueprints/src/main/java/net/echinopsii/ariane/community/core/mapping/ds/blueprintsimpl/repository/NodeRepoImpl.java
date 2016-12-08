@@ -27,6 +27,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.Nod
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.repository.NodeRepo;
+import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,6 +84,8 @@ public class NodeRepoImpl implements NodeRepo<NodeImpl> {
                 ret = (NodeImpl) entity;
             } else {
                 log.error("CONSISTENCY ERROR : entity {} is not a node.", entity.getElement().getId());
+                log.error(entity.getClass().toString());
+                throw new MappingDSException("CONSISTENCY ERROR : entity " + entity.getElement().getId() + " is not a node.");
             }
         }
         return ret;

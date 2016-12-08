@@ -65,6 +65,8 @@ public class LinkRepoImpl implements LinkRepo<LinkImpl> {
                 ret = (LinkImpl) entity;
             } else {
                 log.error("CONSISTENCY ERROR : entity {} is not a link.", entity.getElement().getId());
+                log.error(entity.getClass().toString());
+                throw new MappingDSException("CONSISTENCY ERROR : entity " + entity.getElement().getId() + " is not a link.");
             }
         }
         return ret;

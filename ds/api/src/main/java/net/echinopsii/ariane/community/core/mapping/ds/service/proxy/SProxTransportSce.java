@@ -27,11 +27,6 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import java.util.Set;
 
 public interface SProxTransportSce<T extends Transport> extends TransportSce {
-    String CREATE_TRANSPORT = "createTransport";
-    String DELETE_TRANSPORT = "deleteTransport";
-    String GET_TRANSPORT = "getTransport";
-    String GET_TRANSPORTS = "getTransports";
-
     T    createTransport(Session session, String transportName) throws MappingDSException;
 
     void deleteTransport(Session session, String transportID) throws MappingDSException;
