@@ -24,6 +24,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxTranspo
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.TransportJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.service.TransportSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.DeserializedPushResponse;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
@@ -97,21 +98,21 @@ public abstract class SProxTransportSceAbs<T extends Transport> implements SProx
     public T createTransport(Session session, String transportName) throws MappingDSException {
         T ret = null;
         if (session!=null && session.isRunning())
-            ret = (T)session.execute(this, CREATE_TRANSPORT, new Object[]{transportName});
+            ret = (T)session.execute(this, TransportSce.OP_CREATE_TRANSPORT, new Object[]{transportName});
         return ret;
     }
 
     @Override
     public void deleteTransport(Session session, String transportID) throws MappingDSException {
         if (session!=null && session.isRunning())
-            session.execute(this, DELETE_TRANSPORT, new Object[]{transportID});
+            session.execute(this, TransportSce.OP_DELETE_TRANSPORT, new Object[]{transportID});
     }
 
     @Override
     public T getTransport(Session session, String transportID) throws MappingDSException {
         T ret = null;
         if (session!=null && session.isRunning())
-            ret = (T) session.execute(this, GET_TRANSPORT, new Object[]{transportID});
+            ret = (T) session.execute(this, TransportSce.OP_GET_TRANSPORT, new Object[]{transportID});
         return ret;
     }
 
@@ -119,7 +120,7 @@ public abstract class SProxTransportSceAbs<T extends Transport> implements SProx
     public Set<T> getTransports(Session session, String selector) throws MappingDSException {
         Set<T> ret = null;
         if (session!=null && session.isRunning())
-            ret = (Set<T>) session.execute(this, GET_TRANSPORTS, new Object[]{selector});
+            ret = (Set<T>) session.execute(this, TransportSce.OP_GET_TRANSPORTS, new Object[]{selector});
         return ret;
     }
 }

@@ -27,8 +27,6 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import java.util.Set;
 
 public interface SProxClusterSce<CL extends Cluster> extends ClusterSce {
-    String MAPPING_CLUSTER_SERVICE_Q = "ARIANE_MAPPING_CLUSTER_SERVICE_Q";
-
     CL   createCluster(Session session, String clusterName) throws MappingDSException;
 
     void deleteCluster(Session session, String clusterName) throws MappingDSException;
