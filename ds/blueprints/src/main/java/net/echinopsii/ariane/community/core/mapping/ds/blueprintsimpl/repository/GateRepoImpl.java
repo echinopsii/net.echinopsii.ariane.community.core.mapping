@@ -48,10 +48,9 @@ public class GateRepoImpl extends NodeRepoImpl implements GateRepo<NodeImpl, Gat
     @Override
     public void delete(GateImpl containerGate) throws MappingDSException {
         if (containerGate.getNodeID() != null) {
-            super.deleteNode(containerGate);
-        } else {
-            //TODO : throw exception !!!
-        }
+            if (!containerGate.isAdminPrimary()) super.deleteNode(containerGate);
+            else throw new MappingDSException("You can't remove a primary admin gate without its container !");
+        } else throw new MappingDSException("Gate ID is null ! ");
     }
 
     @Override
@@ -63,6 +62,8 @@ public class GateRepoImpl extends NodeRepoImpl implements GateRepo<NodeImpl, Gat
                 ret = (GateImpl) entity;
             } else {
                 log.error("CONSISTENCY ERROR : entity {} is not a gate.", entity.getElement().getId());
+                log.error(entity.getClass().toString());
+                throw new MappingDSException("CONSISTENCY ERROR : entity " + entity.getElement().getId() + " is not a gate.");
             }
         }
         return ret;

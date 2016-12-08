@@ -27,11 +27,6 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import java.util.Set;
 
 public interface SProxLinkSce<L extends Link> extends LinkSce {
-    String CREATE_LINK = "createLink";
-    String DELETE_LINK = "deleteLink";
-    String GET_LINK = "getLink";
-    String GET_LINKS = "getLinks";
-
     L createLink(Session session, String sourceEndpointID, String targetEndpointID, String transportID) throws MappingDSException;
 
     void deleteLink(Session session, String linkID) throws MappingDSException;

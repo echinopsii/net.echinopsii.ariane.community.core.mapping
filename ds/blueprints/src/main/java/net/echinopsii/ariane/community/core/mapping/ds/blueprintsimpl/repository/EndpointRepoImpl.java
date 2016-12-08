@@ -61,6 +61,7 @@ public class EndpointRepoImpl implements EndpointRepo<EndpointImpl> {
             } else {
                 log.error("CONSISTENCY ERROR : entity {} is not an endpoint.", entity.getElement().getId());
                 log.error(entity.getClass().toString());
+                throw new MappingDSException("CONSISTENCY ERROR : entity " + entity.getElement().getId() + " is not an endpoint.");
             }
         }
         return ret;

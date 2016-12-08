@@ -59,6 +59,8 @@ public class TransportRepoImpl implements TransportRepo<TransportImpl> {
                 ret = (TransportImpl) entity;
             } else {
                 log.error("CONSISTENCY ERROR : entity {} is not a transport.", entity.getElement().getId());
+                log.error(entity.getClass().toString());
+                throw new MappingDSException("CONSISTENCY ERROR : entity " + entity.getElement().getId() + " is not a transport.");
             }
         }
         log.debug("return {}", new Object[]{(ret!=null?ret.toString():"null")});

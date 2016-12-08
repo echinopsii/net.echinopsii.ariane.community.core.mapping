@@ -25,6 +25,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxEndpoin
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.EndpointJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.service.EndpointSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.DeserializedPushResponse;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
@@ -159,21 +160,21 @@ public abstract class SProxEndpointSceAbs<E extends Endpoint> implements SProxEn
     public E createEndpoint(Session session, String url, String parentNodeID) throws MappingDSException {
         E ret = null;
         if (session!=null && session.isRunning())
-            ret = (E) session.execute(this, CREATE_ENDPOINT, new Object[]{url, parentNodeID});
+            ret = (E) session.execute(this, EndpointSce.OP_CREATE_ENDPOINT, new Object[]{url, parentNodeID});
         return ret;
     }
 
     @Override
     public void deleteEndpoint(Session session, String endpointID) throws MappingDSException {
         if (session!=null && session.isRunning())
-            session.execute(this, DELETE_ENDPOINT, new Object[]{endpointID});
+            session.execute(this, EndpointSce.OP_DELETE_ENDPOINT, new Object[]{endpointID});
     }
 
     @Override
     public E getEndpoint(Session session, String id) throws MappingDSException {
         E ret = null;
         if (session!=null && session.isRunning())
-            ret = (E) session.execute(this, GET_ENDPOINT, new Object[]{id});
+            ret = (E) session.execute(this, EndpointSce.OP_GET_ENDPOINT, new Object[]{id});
         return ret;
     }
 
@@ -181,7 +182,7 @@ public abstract class SProxEndpointSceAbs<E extends Endpoint> implements SProxEn
     public E getEndpointByURL(Session session, String URL) throws MappingDSException {
         E ret = null;
         if (session!=null && session.isRunning())
-            ret = (E) session.execute(this, GET_ENDPOINT_BY_URL, new Object[]{URL});
+            ret = (E) session.execute(this, EndpointSce.OP_GET_ENDPOINT_BY_URL, new Object[]{URL});
         return ret;
     }
 
@@ -189,7 +190,7 @@ public abstract class SProxEndpointSceAbs<E extends Endpoint> implements SProxEn
     public Set<E> getEndpoints(Session session, String selector) throws MappingDSException {
         Set<E> ret = null;
         if (session!=null && session.isRunning())
-            ret = (Set<E>) session.execute(this, GET_ENDPOINTS, new Object[]{selector});
+            ret = (Set<E>) session.execute(this, EndpointSce.OP_GET_ENDPOINTS, new Object[]{selector});
         return ret;
     }
 
@@ -197,7 +198,7 @@ public abstract class SProxEndpointSceAbs<E extends Endpoint> implements SProxEn
     public Set<E> getEndpoints(Session session, String key, Object value) throws MappingDSException {
         Set<E> ret = null;
         if (session!=null && session.isRunning())
-            ret = (Set<E>) session.execute(this, GET_ENDPOINTS, new Object[]{key, value});
+            ret = (Set<E>) session.execute(this, EndpointSce.OP_GET_ENDPOINTS, new Object[]{key, value});
         return ret;
     }
 }

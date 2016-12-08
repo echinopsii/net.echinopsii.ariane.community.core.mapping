@@ -27,12 +27,9 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import java.util.Set;
 
 public interface SProxGateSce<G extends Gate> extends GateSce {
-	String CREATE_GATE = "createGate";
-	String DELETE_GATE = "deleteGate";
-	String GET_GATE = "getGate";
-	String GET_GATES = "getGates";
-
 	G    createGate(Session session, String url, String name, String containerid, Boolean isPrimaryAdmin) throws MappingDSException;
+
+	G    saveGate(Session session, String url, String name, String containerid, Boolean isPrimaryAdmin) throws MappingDSException;
 
 	void deleteGate(Session session, String nodeID) throws MappingDSException;
 

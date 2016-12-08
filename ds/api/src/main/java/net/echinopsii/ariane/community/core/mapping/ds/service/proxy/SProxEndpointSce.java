@@ -27,12 +27,6 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import java.util.Set;
 
 public interface SProxEndpointSce<E extends Endpoint> extends EndpointSce {
-    String CREATE_ENDPOINT = "createEndpoint";
-    String DELETE_ENDPOINT = "deleteEndpoint";
-    String GET_ENDPOINT = "getEndpoint";
-    String GET_ENDPOINT_BY_URL = "getEndpointByURL";
-    String GET_ENDPOINTS = "getEndpoints";
-
     E createEndpoint(Session session, String url, String parentNodeID) throws MappingDSException;
 
     void deleteEndpoint(Session session, String endpointID) throws MappingDSException;
