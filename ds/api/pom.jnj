@@ -15,6 +15,15 @@
     <packaging>bundle</packaging>
     {% endblock %}
 
+    <dependencies>
+        <dependency>
+            <groupId>net.echinopsii.ariane.community.messaging</groupId>
+            <artifactId>net.echinopsii.ariane.community.messaging.api</artifactId>
+            <version>${version.net.echinopsii.ariane.community.messaging}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <!-- disable surefire -->
