@@ -13,7 +13,15 @@
     <artifactId>net.echinopsii.ariane.community.core.mapping.ds.api</artifactId>
     <name>Ariane Community Core Mapping DS API</name>
     <packaging>bundle</packaging>
-    
+
+    <dependencies>
+        <dependency>
+            <groupId>net.echinopsii.ariane.community.messaging</groupId>
+            <artifactId>net.echinopsii.ariane.community.messaging.api</artifactId>
+            <version>${version.net.echinopsii.ariane.community.messaging}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
