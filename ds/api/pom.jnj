@@ -145,6 +145,8 @@
                             com.fasterxml.jackson.core.sym;version="${version.com.fasterxml.jackson}",
                             com.fasterxml.jackson.core.type;version="${version.com.fasterxml.jackson}",
                             com.fasterxml.jackson.core.util;version="${version.com.fasterxml.jackson}",
+                            net.echinopsii.ariane.community.messaging.api;version="${version.net.echinopsii.ariane.community.messaging}",
+                            net.echinopsii.ariane.community.messaging.common;version="${version.net.echinopsii.ariane.community.messaging}",
                             org.infinispan;version="${version.org.infinispan}",
                             org.infinispan.configuration.cache;version="${version.org.infinispan}",
                             org.infinispan.manager;version="${version.org.infinispan}",
