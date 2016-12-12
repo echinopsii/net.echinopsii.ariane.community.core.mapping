@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.Properties;
 import java.util.Set;
@@ -142,21 +143,25 @@ public class MappingDSCache {
         }
     }
 
-    public static synchronized MappingDSCacheEntity getCachedEntity(String id) {
+    public static MappingDSCacheEntity getCachedEntity(String id) {
         MappingDSCacheEntity ret = null;
         if (ddL2cache!=null)  ret = (MappingDSCacheEntity) ddL2cache.get(id);
         return ret;
     }
 
-    public static synchronized void putEntityToCache(MappingDSCacheEntity entity) {
-        if (ddL2cache!=null) ddL2cache.put(entity.getEntityCacheID(), entity);
+    public static synchronized MappingDSCacheEntity putEntityToCacheIfNotExists(MappingDSCacheEntity entity) {
+        if (ddL2cache!=null && !ddL2cache.containsKey(entity.getEntityCacheID())) {
+            ddL2cache.put(entity.getEntityCacheID(), entity);
+            return entity;
+        } else if (ddL2cache!=null) return (MappingDSCacheEntity) ddL2cache.get(entity.getEntityCacheID());
+        else return entity;
     }
 
     public static synchronized void removeEntityFromCache(MappingDSCacheEntity entity) {
         if (ddL2cache!=null) ddL2cache.remove(entity.getEntityCacheID());
     }
 
-    public static synchronized Cluster getClusterFromCache(String clusterName) {
+    public static Cluster getClusterFromCache(String clusterName) {
         Cluster ret = null;
         for (String key : (Set<String>)ddL2cache.keySet()) {
             MappingDSCacheEntity entity = (MappingDSCacheEntity)ddL2cache.get(key);
@@ -170,7 +175,7 @@ public class MappingDSCache {
         return ret;
     }
 
-    public static synchronized Endpoint getEndpointFromCache(String url) {
+    public static Endpoint getEndpointFromCache(String url) {
         Endpoint ret = null;
         for (String key : (Set<String>)ddL2cache.keySet()) {
             MappingDSCacheEntity entity = (MappingDSCacheEntity) ddL2cache.get(key);
@@ -184,7 +189,7 @@ public class MappingDSCache {
         return ret;
     }
 
-    public static synchronized Transport getTransportFromCache(String transportName) {
+    public static Transport getTransportFromCache(String transportName) {
         Transport ret = null;
         for (String key : (Set<String>)ddL2cache.keySet()) {
             MappingDSCacheEntity entity = (MappingDSCacheEntity) ddL2cache.get(key);
