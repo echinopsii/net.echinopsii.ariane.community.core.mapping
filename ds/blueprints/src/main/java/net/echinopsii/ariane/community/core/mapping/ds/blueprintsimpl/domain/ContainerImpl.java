@@ -120,7 +120,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer, 
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
             if (super.getContainerPrimaryAdminGate() == null || !super.getContainerPrimaryAdminGate().equals(gate)) {
-                if (super.getContainerPrimaryAdminGate()!=null) super.getContainerPrimaryAdminGate().setNodePrimaryAdminEnpoint(null);
+                if (super.getContainerPrimaryAdminGate()!=null) super.getContainerPrimaryAdminGate().setNodePrimaryAdminEndpoint(null);
                 if (gate instanceof GateImpl) {
                     super.setContainerPrimaryAdminGate(gate);
                     synchronizePrimaryAdminGateToDB();

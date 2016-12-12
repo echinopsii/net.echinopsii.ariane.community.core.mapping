@@ -25,5 +25,5 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
 public interface SProxGate extends SProxNode, Gate {
-	void     setNodePrimaryAdminEnpoint(Session session, Endpoint endpoint) throws MappingDSException;
+	void setNodePrimaryAdminEndpoint(Session session, Endpoint endpoint) throws MappingDSException;
 }

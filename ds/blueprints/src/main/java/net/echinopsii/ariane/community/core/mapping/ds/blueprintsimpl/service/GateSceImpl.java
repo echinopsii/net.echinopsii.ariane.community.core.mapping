@@ -26,8 +26,6 @@ import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.Gat
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.NodeImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository.GateRepoImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
-import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
-import net.echinopsii.ariane.community.core.mapping.ds.json.domain.GateJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.service.GateSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxGateSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
@@ -82,7 +80,7 @@ public class GateSceImpl implements SProxGateSce<GateImpl> {
 					ret.setNodeName(name);
 					ret.setNodeContainer(container);
 					if (isPrimaryAdmin)
-						ret.setNodePrimaryAdminEnpoint(ep);
+						ret.setNodePrimaryAdminEndpoint(ep);
 					ret.addEndpoint(ep);
 					ep.setEndpointParentNode(ret);
 					container.addContainerGate(ret);

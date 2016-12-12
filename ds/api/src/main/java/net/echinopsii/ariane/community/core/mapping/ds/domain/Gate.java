@@ -38,5 +38,5 @@ public interface Gate extends Node {
 	
 	Endpoint getNodePrimaryAdminEndpoint();
 
-	void     setNodePrimaryAdminEnpoint(Endpoint endpoint) throws MappingDSException;
+	void setNodePrimaryAdminEndpoint(Endpoint endpoint) throws MappingDSException;
 }
