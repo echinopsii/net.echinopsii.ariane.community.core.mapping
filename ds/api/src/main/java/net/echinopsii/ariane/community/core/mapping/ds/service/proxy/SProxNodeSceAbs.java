@@ -355,12 +355,12 @@ public abstract class SProxNodeSceAbs<N extends Node> implements SProxNodeSce {
                 if (reqGateURLEP!=null && reqGateIsPrimaryAdmin) {
                     if (deserializedGate.isAdminPrimary() && !deserializedGate.getNodePrimaryAdminEndpoint().equals(reqGateURLEP)) {
                         if (mappingSession != null)
-                            ((SProxGate) deserializedGate).setNodePrimaryAdminEnpoint(mappingSession, reqGateURLEP);
-                        else deserializedGate.setNodePrimaryAdminEnpoint(reqGateURLEP);
+                            ((SProxGate) deserializedGate).setNodePrimaryAdminEndpoint(mappingSession, reqGateURLEP);
+                        else deserializedGate.setNodePrimaryAdminEndpoint(reqGateURLEP);
                     } else if (!deserializedGate.isAdminPrimary()) {
                         if (mappingSession != null)
-                            ((SProxGate) deserializedGate).setNodePrimaryAdminEnpoint(mappingSession, reqGateURLEP);
-                        else deserializedGate.setNodePrimaryAdminEnpoint(reqGateURLEP);
+                            ((SProxGate) deserializedGate).setNodePrimaryAdminEndpoint(mappingSession, reqGateURLEP);
+                        else deserializedGate.setNodePrimaryAdminEndpoint(reqGateURLEP);
                         deserializedGate.getNodeContainer().setContainerPrimaryAdminGate(deserializedGate);
                     }
                 }

@@ -53,18 +53,18 @@ public class GateImpl extends NodeImpl implements SProxGate {
     }
 
     @Override
-    public void setNodePrimaryAdminEnpoint(Session session, Endpoint endpoint) throws MappingDSException {
+    public void setNodePrimaryAdminEndpoint(Session session, Endpoint endpoint) throws MappingDSException {
         if (session!=null && session.isRunning())
             session.execute(this, OP_SET_NODE_PRIMARY_ADMIN_ENDPOINT, new Object[]{endpoint});
     }
 
     @Override
-    public void setNodePrimaryAdminEnpoint(Endpoint endpoint) throws MappingDSException {
+    public void setNodePrimaryAdminEndpoint(Endpoint endpoint) throws MappingDSException {
         String clientThreadName = Thread.currentThread().getName();
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
         if (clientThreadSessionID!=null) {
             Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
-            if (session!=null) this.setNodePrimaryAdminEnpoint(session, endpoint);
+            if (session!=null) this.setNodePrimaryAdminEndpoint(session, endpoint);
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
             if (this.gatePrimaryAdminEndpoint == null || !this.gatePrimaryAdminEndpoint.equals(endpoint)) {

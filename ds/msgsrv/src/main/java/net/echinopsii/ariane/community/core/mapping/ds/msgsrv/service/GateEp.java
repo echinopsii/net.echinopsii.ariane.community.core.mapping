@@ -40,7 +40,6 @@ import net.echinopsii.ariane.community.messaging.common.MomLoggerFactory;
 import org.slf4j.Logger;
 
 import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 
@@ -212,8 +211,8 @@ public class GateEp {
 
                                 if (endpoint!=null || ep_id.equals(MappingSce.GLOBAL_PARAM_OBJ_NONE)) {
                                     Endpoint previousAGEP = gate.getNodePrimaryAdminEndpoint();
-                                    if (session!=null) ((SProxGate)gate).setNodePrimaryAdminEnpoint(session, endpoint);
-                                    else gate.setNodePrimaryAdminEnpoint(endpoint);
+                                    if (session!=null) ((SProxGate)gate).setNodePrimaryAdminEndpoint(session, endpoint);
+                                    else gate.setNodePrimaryAdminEndpoint(endpoint);
 
                                     if (previousAGEP!=null) {
                                         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
