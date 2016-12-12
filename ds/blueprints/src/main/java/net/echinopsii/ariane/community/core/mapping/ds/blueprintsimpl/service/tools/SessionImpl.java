@@ -147,8 +147,10 @@ public class SessionImpl implements Session {
                     } else if (msg.getAction().equals(COMMIT)) {
                         log.debug("[" + Thread.currentThread().getId() + ".worker.commit]");
                         MappingDSGraphDB.commit();
-                        for (MappingDSCacheEntity entity: ((SessionImpl)this.attachedSession).sessionExistingObjectCache.values())
-                            MappingDSCache.putEntityToCache(entity);
+                        for (MappingDSCacheEntity entity: ((SessionImpl)this.attachedSession).sessionExistingObjectCache.values()) {
+                            MappingDSCache.removeEntityFromCache(entity); // added because of infinispan strange behavior
+                            MappingDSCache.putEntityToCacheIfNotExists(entity); // see comments on putEntityToCacheIfNotExists...
+                        }
                         for (MappingDSCacheEntity entity: ((SessionImpl)this.attachedSession).sessionRemovedObjectCache.values())
                             MappingDSCache.removeEntityFromCache(entity);
                         ((SessionImpl)this.attachedSession).sessionExistingObjectCache.clear();
@@ -414,8 +416,12 @@ public class SessionImpl implements Session {
         return sessionExistingObjectCache.get(id);
     }
 
-    public void putEntityToCache(MappingDSCacheEntity entity) {
-        sessionExistingObjectCache.put(entity.getEntityCacheID(), entity);
+    public MappingDSCacheEntity putEntityToCacheIfNotExists(MappingDSCacheEntity entity) {
+        if (sessionExistingObjectCache!=null && !sessionExistingObjectCache.containsKey(entity.getEntityCacheID())) {
+            sessionExistingObjectCache.put(entity.getEntityCacheID(), entity);
+            return entity;
+        } else if (sessionExistingObjectCache!=null) return (MappingDSCacheEntity) sessionExistingObjectCache.get(entity.getEntityCacheID());
+        else return entity;
     }
 
     public void removeEntityFromCache(MappingDSCacheEntity entity) {
