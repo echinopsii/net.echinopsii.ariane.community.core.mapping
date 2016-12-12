@@ -148,8 +148,8 @@ public class SessionImpl implements Session {
                         log.debug("[" + Thread.currentThread().getId() + ".worker.commit]");
                         MappingDSGraphDB.commit();
                         for (MappingDSCacheEntity entity: ((SessionImpl)this.attachedSession).sessionExistingObjectCache.values()) {
-                            MappingDSCache.removeEntityFromCache(entity); // added because of infinispan strange behavior
-                            MappingDSCache.putEntityToCacheIfNotExists(entity); // see comments on putEntityToCacheIfNotExists...
+                            MappingDSCache.removeEntityFromCache(entity);
+                            MappingDSCache.putEntityToCacheIfNotExists(entity);
                         }
                         for (MappingDSCacheEntity entity: ((SessionImpl)this.attachedSession).sessionRemovedObjectCache.values())
                             MappingDSCache.removeEntityFromCache(entity);
