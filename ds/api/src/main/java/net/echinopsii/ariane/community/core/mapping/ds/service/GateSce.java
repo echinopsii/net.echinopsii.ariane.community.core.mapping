@@ -21,6 +21,7 @@ package net.echinopsii.ariane.community.core.mapping.ds.service;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
+import net.echinopsii.ariane.community.core.mapping.ds.json.domain.GateJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
 import java.util.Set;
@@ -39,8 +40,6 @@ public interface GateSce<G extends Gate> {
 	String PARAM_GATE_IPADM = "isPrimaryAdmin";
 
 	public G    createGate(String url, String name, String containerid, Boolean isPrimaryAdmin) throws MappingDSException;
-
-	public G    saveGate(String url, String name, String containerid, Boolean isPrimaryAdmin) throws MappingDSException;
 
 	public void deleteGate(String nodeID) throws MappingDSException;
 

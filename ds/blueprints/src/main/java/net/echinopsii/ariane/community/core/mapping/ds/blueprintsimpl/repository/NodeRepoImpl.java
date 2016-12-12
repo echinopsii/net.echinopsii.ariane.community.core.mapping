@@ -52,25 +52,6 @@ public class NodeRepoImpl implements NodeRepo<NodeImpl> {
     @Override
     public void deleteNode(NodeImpl node) throws MappingDSException {
         node.setIsBeingDeleted();
-        Set<Node> childNodesToRemove = new HashSet<>(node.getNodeChildNodes());
-        for (Node childNode : childNodesToRemove) this.deleteNode((NodeImpl)childNode);
-        childNodesToRemove.clear();
-
-        Set<Endpoint> clonedESet = new HashSet<>(node.getNodeEndpoints());
-        for (Endpoint endpoint : clonedESet) {
-            log.debug("Deleted endpoint {} from graph.", new Object[]{endpoint.getEndpointURL()});
-            node.removeEndpoint(endpoint);
-        }
-        clonedESet.clear();
-
-        Set<Node> twinNodesToRemove = new HashSet<>(node.getTwinNodes());
-        for (Node twinNode : twinNodesToRemove) twinNode.removeTwinNode(node);
-        twinNodesToRemove.clear();
-
-        if (node.getNodeParentNode() != null) node.getNodeParentNode().removeNodeChildNode(node);
-
-        if (node.getNodeParentNode()==null) node.getNodeContainer().removeContainerNode(node);
-
         MappingDSGraphDB.deleteEntity(node);
         log.debug("Deleted node {} and all its linked entities from graph.", new Object[]{node.toString()});
     }

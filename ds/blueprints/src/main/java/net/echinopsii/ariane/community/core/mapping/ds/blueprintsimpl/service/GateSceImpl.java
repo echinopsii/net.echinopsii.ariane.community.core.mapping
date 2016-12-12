@@ -27,6 +27,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.Nod
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository.GateRepoImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
+import net.echinopsii.ariane.community.core.mapping.ds.json.domain.GateJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.service.GateSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxGateSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
@@ -93,19 +94,6 @@ public class GateSceImpl implements SProxGateSce<GateImpl> {
 			}
 		}
 		return ret;
-	}
-
-	@Override
-	public GateImpl saveGate(Session session, String url, String name, String containerid, Boolean isPrimaryAdmin) throws MappingDSException {
-		GateImpl ret = null;
-		if (session!=null && session.isRunning())
-			ret= (GateImpl) session.execute(this, GateSce.OP_SAVE_GATE, new Object[]{url, name, containerid, isPrimaryAdmin});
-		return ret;
-	}
-
-	@Override
-	public Gate saveGate(String url, String name, String containerid, Boolean isPrimaryAdmin) throws MappingDSException {
-		return null;
 	}
 
 	@Override

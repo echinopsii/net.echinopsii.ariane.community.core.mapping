@@ -31,13 +31,13 @@ import net.echinopsii.ariane.community.core.mapping.ds.json.domain.GateJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.NodeJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.DeserializedPushResponse;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
+// import net.echinopsii.ariane.community.messaging.common.MomLoggerFactory;
+// import org.slf4j.Logger;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public abstract class SProxNodeSceAbs<N extends Node> implements SProxNodeSce {
+    // private static final Logger log = MomLoggerFactory.getLogger(SProxNodeSceAbs.class);
 
     public static DeserializedPushResponse pushDeserializedNode(NodeJSON.JSONDeserializedNode jsonDeserializedNode,
                                                                 Session mappingSession,
@@ -229,6 +229,7 @@ public abstract class SProxNodeSceAbs<N extends Node> implements SProxNodeSce {
         List<Node> reqNodeChildNodes = new ArrayList<>();
         List<Node> reqNodeTwinNodes = new ArrayList<>();
         List<Endpoint> reqNodeEndpoints = new ArrayList<>();
+        Endpoint reqGatePrimaryEndpoint = null;
         HashMap<String, Object> reqProperties = new HashMap<>();
 
         if (jsonDeserializedGate.getNode().getNodeContainerID()!=null) {
@@ -248,20 +249,27 @@ public abstract class SProxNodeSceAbs<N extends Node> implements SProxNodeSce {
                 }
             }
         }
+        // log.error("twin nodes id: " + Arrays.toString(jsonDeserializedGate.getNode().getNodeTwinNodesID().toArray()));
         if (ret.getErrorMessage() == null && jsonDeserializedGate.getNode().getNodeTwinNodesID()!=null && jsonDeserializedGate.getNode().getNodeTwinNodesID().size() > 0 ) {
             for (String id : jsonDeserializedGate.getNode().getNodeTwinNodesID()) {
-                Node twinNode ;
-                if (mappingSession!=null) twinNode = mappingSce.getNodeSce().getNode(mappingSession, id);
-                else twinNode = mappingSce.getNodeSce().getNode(id);
-                if (twinNode != null) reqNodeTwinNodes.add(twinNode);
+                Gate twinGate ;
+                if (mappingSession!=null) twinGate = mappingSce.getGateSce().getGate(mappingSession, id);
+                else twinGate = mappingSce.getGateSce().getGate(id);
+                if (twinGate != null) reqNodeTwinNodes.add(twinGate);
                 else {
                     ret.setErrorMessage("Request Error : twin node with provided ID " + id + " was not found.");
                     break;
                 }
             }
         }
+        if (ret.getErrorMessage() == null && jsonDeserializedGate.getGatePrimaryAdminEndpointID()!=null) {
+            if (mappingSession!=null) reqGatePrimaryEndpoint = mappingSce.getEndpointSce().getEndpoint(mappingSession, jsonDeserializedGate.getGatePrimaryAdminEndpointID());
+            else reqGatePrimaryEndpoint = mappingSce.getEndpointSce().getEndpoint(jsonDeserializedGate.getGatePrimaryAdminEndpointID());
+            if (reqGatePrimaryEndpoint==null) ret.setErrorMessage("Request Error : primary admin endpoint with provided ID " + jsonDeserializedGate.getGatePrimaryAdminEndpointID() + " was not found.");
+            else if (!(reqGatePrimaryEndpoint.getEndpointParentNode() instanceof Gate)) ret.setErrorMessage("Request Error : primary endpoint id is not owned by a gate !");
+        }
         if (ret.getErrorMessage() == null && jsonDeserializedGate.getNode().getNodeEndpointsID()!=null && jsonDeserializedGate.getNode().getNodeEndpointsID().size() > 0) {
-            for (String id : jsonDeserializedGate.getNode().getNodeTwinNodesID()) {
+            for (String id : jsonDeserializedGate.getNode().getNodeEndpointsID()) {
                 Endpoint endpoint ;
                 if (mappingSession!=null) endpoint = mappingSce.getEndpointSce().getEndpoint(mappingSession, id);
                 else endpoint = mappingSce.getEndpointSce().getEndpoint(id);
@@ -298,10 +306,17 @@ public abstract class SProxNodeSceAbs<N extends Node> implements SProxNodeSce {
             if (mappingSession!=null) deserializedGate = mappingSce.getGateByName(mappingSession, reqNodeContainer, jsonDeserializedGate.getNode().getNodeName());
             else deserializedGate = mappingSce.getGateByName(reqNodeContainer, jsonDeserializedGate.getNode().getNodeName());
 
+        if (ret.getErrorMessage() == null && deserializedGate == null && reqGatePrimaryEndpoint != null)
+            deserializedGate = (Gate) reqGatePrimaryEndpoint.getEndpointParentNode();
+
+        if (ret.getErrorMessage() == null && deserializedGate!=null && reqGatePrimaryEndpoint!=null && !deserializedGate.getNodePrimaryAdminEndpoint().equals(reqGatePrimaryEndpoint))
+            ret.setErrorMessage("Request Error : request primary admin endpoint id differs from stored gate. " +
+                    "To change gate primary admin endpoint setup the new Gate URL with isPrimaryEndpoint = true");
+
         // APPLY REQ IF NO ERRORS
         if (ret.getErrorMessage() == null) {
             String reqNodeName = jsonDeserializedGate.getNode().getNodeName();
-            String reqGateURL = jsonDeserializedGate.getGateURL();
+            String reqGateURL = jsonDeserializedGate.getGatePrimaryAdminEndpointURL();
             boolean reqGateIsPrimaryAdmin = jsonDeserializedGate.isGateIsPrimaryAdmin();
             String reqContainerID = jsonDeserializedGate.getNode().getNodeContainerID();
             if (deserializedGate == null)
@@ -315,23 +330,37 @@ public abstract class SProxNodeSceAbs<N extends Node> implements SProxNodeSce {
                     if (mappingSession!=null) ((SProxGate)deserializedGate).setNodeContainer(mappingSession, reqNodeContainer);
                     else deserializedGate.setNodeContainer(reqNodeContainer);
 
-                if (reqGateIsPrimaryAdmin) {
-                    Endpoint primaryAdminEp = deserializedGate.getNodePrimaryAdminEndpoint();
-                    if ((primaryAdminEp == null && reqGateURL != null) ||
-                            (primaryAdminEp != null && !primaryAdminEp.getEndpointURL().equals(reqGateURL))) {
+                Endpoint reqGateURLEP = null;
+                if (reqGateURL!=null && !reqGateURL.equals("")) {
+                    if (deserializedGate.getNodePrimaryAdminEndpoint() != null && deserializedGate.getNodePrimaryAdminEndpoint().getEndpointURL().equals(reqGateURL))
+                        reqGateURLEP = deserializedGate.getNodePrimaryAdminEndpoint();
+                    if (reqGateURLEP == null && reqGatePrimaryEndpoint != null && reqGatePrimaryEndpoint.getEndpointURL().equals(reqGateURL))
+                        reqGateURLEP = reqGatePrimaryEndpoint;
+                    if (reqGateURLEP == null) {
+                        reqGateURLEP = mappingSce.getEndpointSce().getEndpointByURL(reqGateURL);
+                        if (reqGateURLEP != null && !reqGateURLEP.getEndpointParentNode().getNodeID().equals(deserializedGate.getNodeID())) {
+                            reqGateURLEP.setEndpointParentNode(deserializedGate);
+                            reqNodeEndpoints.add(reqGateURLEP);
+                        }
+                    }
+                    if (reqGateURLEP == null) {
                         if (mappingSession != null)
-                            primaryAdminEp = mappingSce.getEndpointSce().getEndpointByURL(mappingSession, reqGateURL);
-                        else primaryAdminEp = mappingSce.getEndpointSce().getEndpointByURL(reqGateURL);
+                            reqGateURLEP = mappingSce.getEndpointSce().createEndpoint(mappingSession, reqGateURL, deserializedGate.getNodeID());
+                        else
+                            reqGateURLEP = mappingSce.getEndpointSce().createEndpoint(reqGateURL, deserializedGate.getNodeID());
+                        reqNodeEndpoints.add(reqGateURLEP);
+                    }
+                }
 
-                        if (primaryAdminEp == null)
-                            if (mappingSession != null)
-                                primaryAdminEp = mappingSce.getEndpointSce().createEndpoint(mappingSession, reqGateURL, deserializedGate.getNodeID());
-                            else
-                                primaryAdminEp = mappingSce.getEndpointSce().createEndpoint(reqGateURL, deserializedGate.getNodeID());
-
+                if (reqGateURLEP!=null && reqGateIsPrimaryAdmin) {
+                    if (deserializedGate.isAdminPrimary() && !deserializedGate.getNodePrimaryAdminEndpoint().equals(reqGateURLEP)) {
                         if (mappingSession != null)
-                            ((SProxGate) deserializedGate).setNodePrimaryAdminEnpoint(mappingSession, primaryAdminEp);
-                        else deserializedGate.setNodePrimaryAdminEnpoint(primaryAdminEp);
+                            ((SProxGate) deserializedGate).setNodePrimaryAdminEnpoint(mappingSession, reqGateURLEP);
+                        else deserializedGate.setNodePrimaryAdminEnpoint(reqGateURLEP);
+                    } else if (!deserializedGate.isAdminPrimary()) {
+                        if (mappingSession != null)
+                            ((SProxGate) deserializedGate).setNodePrimaryAdminEnpoint(mappingSession, reqGateURLEP);
+                        else deserializedGate.setNodePrimaryAdminEnpoint(reqGateURLEP);
                         deserializedGate.getNodeContainer().setContainerPrimaryAdminGate(deserializedGate);
                     }
                 }
@@ -340,8 +369,8 @@ public abstract class SProxNodeSceAbs<N extends Node> implements SProxNodeSce {
             if (jsonDeserializedGate.getNode().getNodeChildNodesID()!=null) {
                 List<Node> childNodesToDelete = new ArrayList<>();
                 for (Node existingChildNode : deserializedGate.getNodeChildNodes())
-                    if (!reqNodeChildNodes.contains(existingChildNode))
-                        childNodesToDelete.add(existingChildNode);
+                    if (!reqNodeChildNodes.contains(existingChildNode)) childNodesToDelete.add(existingChildNode);
+                    else reqNodeChildNodes.remove(existingChildNode);
                 for (Node childNodeToDelete : childNodesToDelete)
                     if (mappingSession!=null) ((SProxGate)deserializedGate).removeNodeChildNode(mappingSession, childNodeToDelete);
                     else deserializedGate.removeNodeChildNode(childNodeToDelete);
@@ -354,8 +383,9 @@ public abstract class SProxNodeSceAbs<N extends Node> implements SProxNodeSce {
             if (jsonDeserializedGate.getNode().getNodeTwinNodesID()!=null) {
                 List<Node> twinNodesToDelete = new ArrayList<>();
                 for (Node existingTwinNode : deserializedGate.getTwinNodes())
-                    if (!reqNodeTwinNodes.contains(existingTwinNode))
-                        twinNodesToDelete.add(existingTwinNode);
+                    if (!reqNodeTwinNodes.contains(existingTwinNode)) twinNodesToDelete.add(existingTwinNode);
+                    else reqNodeTwinNodes.remove(existingTwinNode);
+                // log.error("twin node to delete : " + Arrays.toString(twinNodesToDelete.toArray()));
                 for (Node twinNodeToDelete : twinNodesToDelete) {
                     if (mappingSession!=null) {
                         ((SProxGate)deserializedGate).removeTwinNode(mappingSession, twinNodeToDelete);
@@ -365,14 +395,18 @@ public abstract class SProxNodeSceAbs<N extends Node> implements SProxNodeSce {
                         twinNodeToDelete.removeTwinNode(deserializedGate);
                     }
                 }
-
+                // log.error("twin node to add : " + Arrays.toString(reqNodeTwinNodes.toArray()));
                 for (Node twinNodeReq : reqNodeTwinNodes) {
                     if (mappingSession!=null) {
                         ((SProxGate)deserializedGate).addTwinNode(mappingSession, twinNodeReq);
+                        // log.error("deserializedGate(" + System.identityHashCode(deserializedGate) + "-" + deserializedGate.getNodeID() + ").twinNodes: " + Arrays.toString(deserializedGate.getTwinNodes().toArray()));
                         ((SProxGate)twinNodeReq).addTwinNode(mappingSession, deserializedGate);
+                        // log.error("twinNodeReq(" + System.identityHashCode(twinNodeReq) + "-" + twinNodeReq.getNodeID() + ").twinNodes: " + Arrays.toString(twinNodeReq.getTwinNodes().toArray()));
                     } else {
                         deserializedGate.addTwinNode(twinNodeReq);
+                        // log.error("deserializedGate(" + System.identityHashCode(deserializedGate) + "-" + deserializedGate.getNodeID() + ").twinNodes: " + Arrays.toString(deserializedGate.getTwinNodes().toArray()));
                         twinNodeReq.addTwinNode(deserializedGate);
+                        // log.error("twinNodeReq(" + System.identityHashCode(twinNodeReq) + "-" + twinNodeReq.getNodeID() + ").twinNodes: " + Arrays.toString(twinNodeReq.getTwinNodes().toArray()));
                     }
                 }
             }
@@ -380,12 +414,13 @@ public abstract class SProxNodeSceAbs<N extends Node> implements SProxNodeSce {
             if (jsonDeserializedGate.getNode().getNodeEndpointsID()!=null) {
                 List<Endpoint> endpointsToDelete = new ArrayList<>();
                 for (Endpoint existingEndpoint : deserializedGate.getNodeEndpoints())
-                    if (!reqNodeEndpoints.contains(existingEndpoint))
-                        endpointsToDelete.add(existingEndpoint);
+                    if (!reqNodeEndpoints.contains(existingEndpoint)) endpointsToDelete.add(existingEndpoint);
+                    else reqNodeEndpoints.remove(existingEndpoint);
+                // log.error("endpoints to delete : " + Arrays.toString(endpointsToDelete.toArray()));
                 for (Endpoint endpointToDelete : endpointsToDelete)
                     if (mappingSession!=null) ((SProxGate)deserializedGate).removeEndpoint(mappingSession, endpointToDelete);
                     else deserializedGate.removeEndpoint(endpointToDelete);
-
+                // log.error("endpoints to add : " + Arrays.toString(reqNodeEndpoints.toArray()));
                 for (Endpoint endpointReq : reqNodeEndpoints)
                     if (mappingSession!=null) ((SProxGate)deserializedGate).addEndpoint(mappingSession, endpointReq);
                     else deserializedGate.addEndpoint(endpointReq);
