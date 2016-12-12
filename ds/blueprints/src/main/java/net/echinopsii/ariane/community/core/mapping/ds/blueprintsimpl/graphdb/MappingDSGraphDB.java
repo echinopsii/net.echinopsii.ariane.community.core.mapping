@@ -265,8 +265,8 @@ public class MappingDSGraphDB {
             entityV.setProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID, id);
             entity.setElement(entityV);
             Long threadID = Thread.currentThread().getId();
-            if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(entity);
-            else MappingDSCache.putEntityToCache(entity);
+            if (threadSessionRegistry.containsKey(threadID)) entity = (MappingDSBlueprintsCacheEntity) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCacheIfNotExists(entity);
+            else entity = (MappingDSBlueprintsCacheEntity) MappingDSCache.putEntityToCacheIfNotExists(entity);
             entity.synchronizeToDB();
             autocommit();
             log.debug("Vertex {} ({}:{}) has been saved on graph {}", new Object[]{entityV.toString(), MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID, id,
@@ -330,8 +330,8 @@ public class MappingDSGraphDB {
             Edge entityE = createEdge(source, destination, label);
             entity.setElement(entityE);
             Long threadID = Thread.currentThread().getId();
-            if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(entity);
-            else MappingDSCache.putEntityToCache(entity);
+            if (threadSessionRegistry.containsKey(threadID)) entity = (MappingDSBlueprintsCacheEntity) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCacheIfNotExists(entity);
+            else entity = (MappingDSBlueprintsCacheEntity) MappingDSCache.putEntityToCacheIfNotExists(entity);
             entity.synchronizeToDB();
             autocommit();
         } catch (Exception E) {
@@ -354,8 +354,8 @@ public class MappingDSGraphDB {
             if (edge.getLabel().equals(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY)) {
                 ret = new LinkImpl();
                 ret.setElement(edge);
-                if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(ret);
-                else MappingDSCache.putEntityToCache(ret);
+                if (threadSessionRegistry.containsKey(threadID)) ret = (MappingDSBlueprintsCacheEntity) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCacheIfNotExists(ret);
+                else ret = (MappingDSBlueprintsCacheEntity) MappingDSCache.putEntityToCacheIfNotExists(ret);
                 ret.synchronizeFromDB();
             }
         }
@@ -379,8 +379,8 @@ public class MappingDSGraphDB {
             if (edge!=null && edge.getLabel().equals(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY)) {
                 ret = new LinkImpl();
                 ret.setElement(edge);
-                if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(ret);
-                else MappingDSCache.putEntityToCache(ret);
+                if (threadSessionRegistry.containsKey(threadID)) ret = (MappingDSBlueprintsCacheEntity) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCacheIfNotExists(ret);
+                else ret = (MappingDSBlueprintsCacheEntity) MappingDSCache.putEntityToCacheIfNotExists(ret);
                 ret.synchronizeFromDB();
             }
         }
@@ -423,8 +423,8 @@ public class MappingDSGraphDB {
             }
             if (ret != null) {
                 ret.setElement(vertex);
-                if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(ret);
-                else MappingDSCache.putEntityToCache(ret);
+                if (threadSessionRegistry.containsKey(threadID)) ret = (MappingDSBlueprintsCacheEntity) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCacheIfNotExists(ret);
+                else ret = (MappingDSBlueprintsCacheEntity) MappingDSCache.putEntityToCacheIfNotExists(ret);
                 ret.synchronizeFromDB();
             }
         }
@@ -481,8 +481,8 @@ public class MappingDSGraphDB {
                 }
                 if (ret != null) {
                     ret.setElement(vertex);
-                    if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(ret);
-                    else MappingDSCache.putEntityToCache(ret);
+                    if (threadSessionRegistry.containsKey(threadID)) ret = (MappingDSBlueprintsCacheEntity) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCacheIfNotExists(ret);
+                    else ret = (MappingDSBlueprintsCacheEntity) MappingDSCache.putEntityToCacheIfNotExists(ret);
                     ret.synchronizeFromDB();
                 }
             }
@@ -504,8 +504,8 @@ public class MappingDSGraphDB {
                 tmp = new ClusterImpl();
                 tmp.setElement(vertex);
                 Long threadID = Thread.currentThread().getId();
-                if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(tmp);
-                else MappingDSCache.putEntityToCache(tmp);
+                if (threadSessionRegistry.containsKey(threadID)) tmp = (ClusterImpl) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCacheIfNotExists(tmp);
+                else tmp = (ClusterImpl) MappingDSCache.putEntityToCacheIfNotExists(tmp);
                 tmp.synchronizeFromDB();
             }
             log.debug("Add cluster {} to Set...", new Object[]{id});
@@ -525,10 +525,10 @@ public class MappingDSGraphDB {
             if (tmp == null) {
                 tmp = new ContainerImpl();
                 tmp.setElement(vertex);
-                tmp.synchronizeFromDB();
                 Long threadID = Thread.currentThread().getId();
-                if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(tmp);
-                else MappingDSCache.putEntityToCache(tmp);
+                if (threadSessionRegistry.containsKey(threadID)) tmp = (ContainerImpl) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCacheIfNotExists(tmp);
+                else tmp = (ContainerImpl) MappingDSCache.putEntityToCacheIfNotExists(tmp);
+                tmp.synchronizeFromDB();
             }
             log.debug("Add container {} to Set...", new Object[]{id});
             ret.add(tmp);
@@ -543,10 +543,10 @@ public class MappingDSGraphDB {
         if (tmp == null) {
             tmp = new NodeImpl();
             tmp.setElement(vertex);
-            tmp.synchronizeFromDB();
             Long threadID = Thread.currentThread().getId();
-            if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(tmp);
-            else MappingDSCache.putEntityToCache(tmp);
+            if (threadSessionRegistry.containsKey(threadID)) tmp = (NodeImpl) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCacheIfNotExists(tmp);
+            else tmp = (NodeImpl) MappingDSCache.putEntityToCacheIfNotExists(tmp);
+            tmp.synchronizeFromDB();
         }
         return tmp;
     }
@@ -557,10 +557,10 @@ public class MappingDSGraphDB {
         if (tmp == null) {
             tmp = new GateImpl();
             tmp.setElement(vertex);
-            tmp.synchronizeFromDB();
             Long threadID = Thread.currentThread().getId();
-            if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(tmp);
-            else MappingDSCache.putEntityToCache(tmp);
+            if (threadSessionRegistry.containsKey(threadID)) tmp = (GateImpl) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCacheIfNotExists(tmp);
+            else tmp = (GateImpl) MappingDSCache.putEntityToCacheIfNotExists(tmp);
+            tmp.synchronizeFromDB();
         }
         return tmp;
     }
@@ -643,10 +643,10 @@ public class MappingDSGraphDB {
         if (tmp == null) {
             tmp = new EndpointImpl();
             tmp.setElement(vertex);
-            tmp.synchronizeFromDB();
             Long threadID = Thread.currentThread().getId();
-            if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(tmp);
-            else MappingDSCache.putEntityToCache(tmp);
+            if (threadSessionRegistry.containsKey(threadID)) tmp = (EndpointImpl) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCacheIfNotExists(tmp);
+            else tmp = (EndpointImpl) MappingDSCache.putEntityToCacheIfNotExists(tmp);
+            tmp.synchronizeFromDB();
         }
         return tmp;
     }
@@ -681,10 +681,10 @@ public class MappingDSGraphDB {
             if (tmp == null) {
                 tmp = new EndpointImpl();
                 tmp.setElement(vertex);
-                tmp.synchronizeFromDB();
                 Long threadID = Thread.currentThread().getId();
-                if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(tmp);
-                else MappingDSCache.putEntityToCache(tmp);
+                if (threadSessionRegistry.containsKey(threadID)) tmp = (EndpointImpl) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCacheIfNotExists(tmp);
+                else tmp = (EndpointImpl) MappingDSCache.putEntityToCacheIfNotExists(tmp);
+                tmp.synchronizeFromDB();
             }
             Object tmpValue = (tmp.getEndpointProperties() != null) ? tmp.getEndpointProperties().get(key) : null;
             if (tmpValue != null && tmpValue.equals(value)) {
@@ -706,10 +706,10 @@ public class MappingDSGraphDB {
             if (tmp == null) {
                 tmp = new TransportImpl();
                 tmp.setElement(vertex);
-                tmp.synchronizeFromDB();
                 Long threadID = Thread.currentThread().getId();
-                if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(tmp);
-                else MappingDSCache.putEntityToCache(tmp);
+                if (threadSessionRegistry.containsKey(threadID)) tmp = (TransportImpl) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCacheIfNotExists(tmp);
+                else tmp = (TransportImpl) MappingDSCache.putEntityToCacheIfNotExists(tmp);
+                tmp.synchronizeFromDB();
             }
             log.debug("Add transport {} to Set...", new Object[]{id});
             ret.add(tmp);
@@ -734,10 +734,10 @@ public class MappingDSGraphDB {
                 }
                 if (ret != null) {
                     ret.setElement(vertex);
-                    ret.synchronizeFromDB();
                     Long threadID = Thread.currentThread().getId();
-                    if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(ret);
-                    else MappingDSCache.putEntityToCache(ret);
+                    if (threadSessionRegistry.containsKey(threadID)) ret = (MappingDSBlueprintsCacheEntity) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCacheIfNotExists(ret);
+                    else ret = (MappingDSBlueprintsCacheEntity) MappingDSCache.putEntityToCacheIfNotExists(ret);
+                    ret.synchronizeFromDB();
                 }
             }
             autocommit();
@@ -748,8 +748,10 @@ public class MappingDSGraphDB {
     public static Set<NodeImpl> getIndexedNodes(String name) throws MappingDSException {
         Set<NodeImpl> ret = new HashSet<>();
         for (Vertex vertex : ccgraph.getVertices(MappingDSGraphPropertyNames.DD_NODE_NAME_KEY, name)) {
-            String vertexType = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY);
+            String id = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_ID);
             NodeImpl tmp = null;
+            Long threadID = Thread.currentThread().getId();
+            String vertexType = vertex.getProperty(MappingDSGraphPropertyNames.DD_GRAPH_VERTEX_TYPE_KEY);
             switch (vertexType) {
                 case MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE:
                     tmp = new NodeImpl();
@@ -762,10 +764,10 @@ public class MappingDSGraphDB {
             }
             if (tmp != null) {
                 tmp.setElement(vertex);
+                if (threadSessionRegistry.containsKey(threadID))
+                    tmp = (NodeImpl) ((SessionImpl) threadSessionRegistry.get(threadID)).putEntityToCacheIfNotExists(tmp);
+                else tmp = (NodeImpl) MappingDSCache.putEntityToCacheIfNotExists(tmp);
                 tmp.synchronizeFromDB();
-                Long threadID = Thread.currentThread().getId();
-                if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(tmp);
-                else MappingDSCache.putEntityToCache(tmp);
                 ret.add(tmp);
             }
         }
@@ -788,10 +790,10 @@ public class MappingDSGraphDB {
                 }
                 if (ret != null) {
                     ret.setElement(vertex);
-                    ret.synchronizeFromDB();
                     Long threadID = Thread.currentThread().getId();
-                    if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(ret);
-                    else MappingDSCache.putEntityToCache(ret);
+                    if (threadSessionRegistry.containsKey(threadID)) ret = (MappingDSBlueprintsCacheEntity) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCacheIfNotExists(ret);
+                    else ret = (MappingDSBlueprintsCacheEntity) MappingDSCache.putEntityToCacheIfNotExists(ret);
+                    ret.synchronizeFromDB();
                 }
             }
             autocommit();
@@ -814,10 +816,10 @@ public class MappingDSGraphDB {
                 }
                 if (ret != null) {
                     ret.setElement(vertex);
-                    ret.synchronizeFromDB();
                     Long threadID = Thread.currentThread().getId();
-                    if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(ret);
-                    else MappingDSCache.putEntityToCache(ret);
+                    if (threadSessionRegistry.containsKey(threadID)) ret = (MappingDSBlueprintsCacheEntity) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCacheIfNotExists(ret);
+                    else ret = (MappingDSBlueprintsCacheEntity) MappingDSCache.putEntityToCacheIfNotExists(ret);
+                    ret.synchronizeFromDB();
                 }
             }
             autocommit();
@@ -843,9 +845,9 @@ public class MappingDSGraphDB {
             if (edge != null && edge.getLabel().equals(MappingDSGraphPropertyNames.DD_GRAPH_EDGE_LINK_LABEL_KEY)) {
                 ret = new LinkImpl();
                 ret.setElement(edge);
+                if (threadSessionRegistry.containsKey(threadID)) ret = (MappingDSBlueprintsCacheEntity) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCacheIfNotExists(ret);
+                else ret = (MappingDSBlueprintsCacheEntity) MappingDSCache.putEntityToCacheIfNotExists(ret);
                 ret.synchronizeFromDB();
-                if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(ret);
-                else MappingDSCache.putEntityToCache(ret);
             }
             autocommit();
         }
@@ -858,10 +860,10 @@ public class MappingDSGraphDB {
         if (tmp == null) {
             tmp = new LinkImpl();
             tmp.setElement(edge);
-            tmp.synchronizeFromDB();
             Long threadID = Thread.currentThread().getId();
-            if (threadSessionRegistry.containsKey(threadID)) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCache(tmp);
-            else MappingDSCache.putEntityToCache(tmp);
+            if (threadSessionRegistry.containsKey(threadID)) tmp = (LinkImpl) ((SessionImpl)threadSessionRegistry.get(threadID)).putEntityToCacheIfNotExists(tmp);
+            else tmp = (LinkImpl) MappingDSCache.putEntityToCacheIfNotExists(tmp);
+            tmp.synchronizeFromDB();
         }
         return  tmp;
     }
