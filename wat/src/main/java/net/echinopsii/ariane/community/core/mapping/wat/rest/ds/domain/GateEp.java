@@ -288,7 +288,7 @@ public class GateEp {
                     if (mappingSession!=null) endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(mappingSession, endpointID);
                     else endpoint = MappingBootstrap.getMappingSce().getEndpointSce().getEndpoint(endpointID);
                     if (endpoint != null) {
-                        gate.setNodePrimaryAdminEnpoint(endpoint);
+                        gate.setNodePrimaryAdminEndpoint(endpoint);
                         return Response.status(Status.OK).entity("Gate (" + id + ") primary endpoint successfully updated to " + endpointID + ".").build();
                     } else return Response.status(Status.NOT_FOUND).entity("Error while updating gate (" + id + ") primary endpoint " + endpointID + " : gate " + id + " not found.").build();
                 } else return Response.status(Status.NOT_FOUND).entity("Error while updating gate (" + id + ") primary endpoint " + endpointID + " : gate " + id + " not found.").build();

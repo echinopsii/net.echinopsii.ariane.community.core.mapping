@@ -110,7 +110,7 @@ public class GateImpl extends NodeImpl implements SProxGate {
     }
 
     @Override
-    public void setNodePrimaryAdminEnpoint(Session session, Endpoint endpoint) throws MappingDSException {
+    public void setNodePrimaryAdminEndpoint(Session session, Endpoint endpoint) throws MappingDSException {
         if (session!=null && session.isRunning())
             session.execute(this, OP_SET_NODE_PRIMARY_ADMIN_ENDPOINT, new Object[]{endpoint});
     }
@@ -142,7 +142,7 @@ public class GateImpl extends NodeImpl implements SProxGate {
     }
 
     @Override
-    public void setNodePrimaryAdminEnpoint(Endpoint endpoint) throws MappingDSException {
+    public void setNodePrimaryAdminEndpoint(Endpoint endpoint) throws MappingDSException {
         if (super.getNodeID()!=null) {
             if (endpoint == null || endpoint.getEndpointID()!=null) {
                 if ((gatePrimaryAdminEndpoint!=null && endpoint!=null && !gatePrimaryAdminEndpoint.getEndpointID().equals(endpoint.getEndpointID())) ||
