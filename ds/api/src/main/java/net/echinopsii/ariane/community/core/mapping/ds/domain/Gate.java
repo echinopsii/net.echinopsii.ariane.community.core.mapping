@@ -24,6 +24,8 @@ import net.echinopsii.ariane.community.core.mapping.ds.MappingDSGraphPropertyNam
 
 public interface Gate extends Node {
 	String TOKEN_GT_ADMPEP = MappingDSGraphPropertyNames.DD_GATE_PAEP_KEY+"ID";
+	String TOKEN_GT_ISADMPRIM = MappingDSGraphPropertyNames.DD_TYPE_GATE_VALUE+"IsAdminPrimary";
+	String TOKEN_GT_URL = MappingDSGraphPropertyNames.DD_TYPE_GATE_VALUE+"URL";
 	String TOKEN_GT_NODE = MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE;
 
 	String OP_GET_NODE_PRIMARY_ADMIN_ENDPOINT = "getNodePrimaryAdminEndpoint";

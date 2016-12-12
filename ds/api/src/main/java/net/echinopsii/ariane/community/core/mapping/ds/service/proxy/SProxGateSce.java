@@ -21,6 +21,7 @@ package net.echinopsii.ariane.community.core.mapping.ds.service.proxy;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Gate;
+import net.echinopsii.ariane.community.core.mapping.ds.json.domain.GateJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.service.GateSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
@@ -28,8 +29,6 @@ import java.util.Set;
 
 public interface SProxGateSce<G extends Gate> extends GateSce {
 	G    createGate(Session session, String url, String name, String containerid, Boolean isPrimaryAdmin) throws MappingDSException;
-
-	G    saveGate(Session session, String url, String name, String containerid, Boolean isPrimaryAdmin) throws MappingDSException;
 
 	void deleteGate(Session session, String nodeID) throws MappingDSException;
 

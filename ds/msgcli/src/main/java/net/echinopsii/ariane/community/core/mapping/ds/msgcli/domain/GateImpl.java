@@ -106,7 +106,7 @@ public class GateImpl extends NodeImpl implements SProxGate {
 
     public void synchronizeFromJSON(GateJSON.JSONDeserializedGate jsonDeserializedGate) throws MappingDSException {
         super.synchronizeFromJSON(jsonDeserializedGate.getNode());
-        this.setGatePrimaryAdminEndpointID(jsonDeserializedGate.getContainerGatePrimaryAdminEndpointID());
+        this.setGatePrimaryAdminEndpointID(jsonDeserializedGate.getGatePrimaryAdminEndpointID());
     }
 
     @Override
