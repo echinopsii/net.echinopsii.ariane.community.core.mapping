@@ -202,7 +202,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode, MappingDSBluepr
             if (session!=null) ret = this.removeNodeChildNode(session, node);
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            if (node instanceof NodeImpl) {
+            if (!isBeingDeleted && node instanceof NodeImpl) {
                 ret = super.removeNodeChildNode(node);
                 if (ret) {
                     node.setNodeParentNode(null);
@@ -251,7 +251,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode, MappingDSBluepr
             if (session!=null) ret = this.removeTwinNode(session, node);
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            if (node instanceof NodeImpl) {
+            if (!isBeingDeleted && node instanceof NodeImpl) {
                 ret = super.removeTwinNode(node);
                 if (ret) {
                     node.removeTwinNode(this);
@@ -301,7 +301,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode, MappingDSBluepr
             if (session!=null) ret = this.removeEndpoint(session, endpoint) ;
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
-            if (endpoint instanceof EndpointImpl) {
+            if (!isBeingDeleted && endpoint instanceof EndpointImpl) {
                 ret = super.removeEndpoint(endpoint);
                 if (ret) {
                     if (endpoint.getEndpointParentNode().equals(this)) endpoint.setEndpointParentNode(null);

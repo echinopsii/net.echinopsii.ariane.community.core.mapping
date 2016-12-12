@@ -61,7 +61,7 @@ public final class MappingDSGraphPropertyNames {
     public static final String DD_NODE_EDGE_ENDPT_KEY = "nodeEndpoint";
 
     public static final String DD_TYPE_GATE_VALUE = "gate";
-    public static final String DD_GATE_PAEP_KEY = "containerGatePrimaryAdminEndpoint";
+    public static final String DD_GATE_PAEP_KEY = "gatePrimaryAdminEndpoint";
 
     public static final String DD_TYPE_ENDPOINT_VALUE = "endpoint";
     public static final String DD_ENDPOINT_URL_KEY = "endpointURL";

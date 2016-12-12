@@ -41,7 +41,11 @@ public class GateJSON {
         jgenerator.writeObjectFieldStart(Gate.TOKEN_GT_NODE);
         NodeJSON.node2JSON(gate, jgenerator);
         jgenerator.writeEndObject();
-        jgenerator.writeStringField(Gate.TOKEN_GT_ADMPEP, (gate.getNodePrimaryAdminEndpoint() != null) ? gate.getNodePrimaryAdminEndpoint().getEndpointID() : "");
+        jgenerator.writeBooleanField(Gate.TOKEN_GT_ISADMPRIM, gate.isAdminPrimary());
+        if (gate.isAdminPrimary()) {
+            jgenerator.writeStringField(Gate.TOKEN_GT_ADMPEP, (gate.getNodePrimaryAdminEndpoint() != null) ? gate.getNodePrimaryAdminEndpoint().getEndpointID() : "");
+            jgenerator.writeStringField(Gate.TOKEN_GT_URL, (gate.getNodePrimaryAdminEndpoint() != null) ? gate.getNodePrimaryAdminEndpoint().getEndpointURL() : "");
+        }
         jgenerator.writeEndObject();
     }
 
@@ -88,9 +92,9 @@ public class GateJSON {
 
     public static class JSONDeserializedGate {
         private NodeJSON.JSONDeserializedNode node = null;
-        private String gateURL = null;
         private boolean gateIsPrimaryAdmin = false;
-        private String containerGatePrimaryAdminEndpointID = null;
+        private String gatePrimaryAdminEndpointID = null;
+        private String gatePrimaryAdminEndpointURL = null;
 
         public NodeJSON.JSONDeserializedNode getNode() {
             return node;
@@ -100,12 +104,12 @@ public class GateJSON {
             this.node = node;
         }
 
-        public String getGateURL() {
-            return gateURL;
+        public String getGatePrimaryAdminEndpointURL() {
+            return gatePrimaryAdminEndpointURL;
         }
 
-        public void setGateURL(String gateURL) {
-            this.gateURL = gateURL;
+        public void setGatePrimaryAdminEndpointURL(String gatePrimaryAdminEndpointURL) {
+            this.gatePrimaryAdminEndpointURL = gatePrimaryAdminEndpointURL;
         }
 
         public boolean isGateIsPrimaryAdmin() {
@@ -116,12 +120,12 @@ public class GateJSON {
             this.gateIsPrimaryAdmin = gateIsPrimaryAdmin;
         }
 
-        public String getContainerGatePrimaryAdminEndpointID() {
-            return containerGatePrimaryAdminEndpointID;
+        public String getGatePrimaryAdminEndpointID() {
+            return gatePrimaryAdminEndpointID;
         }
 
-        public void setContainerGatePrimaryAdminEndpointID(String containerGatePrimaryAdminEndpointID) {
-            this.containerGatePrimaryAdminEndpointID = containerGatePrimaryAdminEndpointID;
+        public void setGatePrimaryAdminEndpointID(String gatePrimaryAdminEndpointID) {
+            this.gatePrimaryAdminEndpointID = gatePrimaryAdminEndpointID;
         }
     }
 
