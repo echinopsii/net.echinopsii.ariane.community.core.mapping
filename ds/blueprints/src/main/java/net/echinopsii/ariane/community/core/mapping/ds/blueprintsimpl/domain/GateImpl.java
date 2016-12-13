@@ -68,7 +68,7 @@ public class GateImpl extends NodeImpl implements SProxGate {
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else {
             if (this.gatePrimaryAdminEndpoint == null || !this.gatePrimaryAdminEndpoint.equals(endpoint)) {
-                if (endpoint instanceof EndpointImpl) {
+                if (endpoint instanceof EndpointImpl || endpoint == null) {
                     this.gatePrimaryAdminEndpoint = (EndpointImpl) endpoint;
                     synchronizeNodePrimaryAdminEndpointToDB();
                 }
