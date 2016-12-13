@@ -54,7 +54,7 @@ public class MapSceImpl implements MapSce {
     }
 
     private static void addNodeToResultMap(Node node, MapImpl map) {
-        log.debug("Add node to result map : " + node.getNodeName());
+        log.error("Add node to result map : " + node.getNodeName());
         map.addNode(node);
         if (node.getNodeContainer()!=null)
             addContainerToResultMap(node.getNodeContainer(), map);
@@ -89,6 +89,7 @@ public class MapSceImpl implements MapSce {
                     else log.warn("Container " + id + " not found !");
                     break;
                 case MappingDSGraphPropertyNames.DD_TYPE_NODE_VALUE:
+                case MappingDSGraphPropertyNames.DD_TYPE_GATE_VALUE:
                     Node node = sce.getNodeSce().getNode(id.substring(1,id.length()));
                     if (node != null) addNodeToResultMap(node, map);
                     else log.warn("Node " + id + " not found !");

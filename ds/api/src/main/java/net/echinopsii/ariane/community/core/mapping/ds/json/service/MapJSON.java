@@ -59,8 +59,7 @@ public class MapJSON {
 
         jgenerator.writeArrayFieldStart(MAP_NODES_ARRAY);
         for (Node current : nodes)
-            if (!(current instanceof Gate && !current.getNodeName().contains("cluster")))
-                NodeJSON.node2MapJSON(current, jgenerator);
+            NodeJSON.node2MapJSON(current, jgenerator);
         jgenerator.writeEndArray();
 
         jgenerator.writeArrayFieldStart(MAP_ENDPOINTS_ARRAY);
