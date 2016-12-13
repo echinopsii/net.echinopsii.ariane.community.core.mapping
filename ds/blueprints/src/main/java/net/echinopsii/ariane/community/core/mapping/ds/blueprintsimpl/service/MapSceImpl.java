@@ -54,7 +54,7 @@ public class MapSceImpl implements MapSce {
     }
 
     private static void addNodeToResultMap(Node node, MapImpl map) {
-        log.error("Add node to result map : " + node.getNodeName());
+        log.debug("Add node to result map : " + node.getNodeName());
         map.addNode(node);
         if (node.getNodeContainer()!=null)
             addContainerToResultMap(node.getNodeContainer(), map);
