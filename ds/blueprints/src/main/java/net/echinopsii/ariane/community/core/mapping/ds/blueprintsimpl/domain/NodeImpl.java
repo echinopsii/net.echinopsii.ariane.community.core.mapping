@@ -304,7 +304,8 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode, MappingDSBluepr
             if (!isBeingDeleted && endpoint instanceof EndpointImpl) {
                 ret = super.removeEndpoint(endpoint);
                 if (ret) {
-                    if (endpoint.getEndpointParentNode().equals(this)) endpoint.setEndpointParentNode(null);
+                    if (endpoint.getEndpointParentNode() != null && endpoint.getEndpointParentNode().equals(this))
+                        endpoint.setEndpointParentNode(null);
                     removeEndpointFromDB((EndpointImpl) endpoint);
                 }
             }
