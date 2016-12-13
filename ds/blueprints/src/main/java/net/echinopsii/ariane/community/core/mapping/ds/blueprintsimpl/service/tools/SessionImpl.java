@@ -27,6 +27,7 @@ import net.echinopsii.ariane.community.messaging.api.MomLogger;
 import net.echinopsii.ariane.community.messaging.common.MomLoggerFactory;
 import org.slf4j.Logger;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -170,8 +171,15 @@ public class SessionImpl implements Session {
                             if (msg.getMethod().getReturnType().equals(Void.TYPE))
                                 ret = Void.TYPE;
                             this.returnToQueue(msg, new SessionWorkerReply(false, ret, null));
+                        } catch (InvocationTargetException ie) {
+                            Throwable th = ie.getCause();
+                            if (th!=null) log.warn("Exception raised while executing request : " + th.getMessage() + " ...");
+                            else log.warn("Exception raised while executing request...");
+                            if (th!=null && log.isDebugEnabled()) th.printStackTrace();
+                            this.returnToQueue(msg, new SessionWorkerReply(true, null, (th!=null) ? th.getMessage() : ie.getMessage()));
                         } catch (Exception e) {
-                            log.warn("Interrupted while executing request...");
+                            if (e.getMessage()!=null) log.warn("Exception raised while executing request : " + e.getMessage() + " ...");
+                            else log.warn("Exception raised while executing request ...");
                             if (log.isDebugEnabled()) e.printStackTrace();
                             this.returnToQueue(msg, new SessionWorkerReply(true, null, e.getMessage()));
                         }
