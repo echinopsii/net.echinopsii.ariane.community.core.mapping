@@ -53,17 +53,19 @@ public class MappingDSGraphDBObjectProps {
                 flatObjectProperties(vertex, key + "_ArrayList." + ((ArrayList<Object>) value).indexOf(aValue), aValue, mappingObjPropsKey);
             return;
         }
-        log.debug("Synchronize property {}_{} : {}...", new Object[]{mappingObjPropsKey, key, value.toString()});
+        log.debug("Synchronize property {}_{} : {}...", new Object[]{mappingObjPropsKey, key, ((value!=null) ? value.toString() : "null")});
         vertex.setProperty(mappingObjPropsKey+"_"+key, value);
     }
 
     public static void synchronizeObjectPropertyToDB(Vertex vertex, String key, Object value, String mappingObjPropsKey) {
-        if (MappingDSGraphDB.isBlueprintsNeo4j())
-            flatObjectProperties(vertex, key, value, mappingObjPropsKey);
-        else {
-            log.debug("Synchronize property {}_{} : {}...", new Object[]{mappingObjPropsKey,key,value.toString()});
-            vertex.setProperty(mappingObjPropsKey+"_"+key, value);
-        }
+        if (value!=null) {
+            if (MappingDSGraphDB.isBlueprintsNeo4j())
+                flatObjectProperties(vertex, key, value, mappingObjPropsKey);
+            else {
+                log.debug("Synchronize property {}_{} : {}...", new Object[]{mappingObjPropsKey, key, value.toString()});
+                vertex.setProperty(mappingObjPropsKey + "_" + key, value);
+            }
+        } else log.debug("Value is null for key {} ! ", new Object[]{key});
     }
 
     public static void removeObjectPropertyFromDB(Vertex vertex, String key, String mappingObjPropsKey) {
