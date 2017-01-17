@@ -48,6 +48,10 @@ public interface SProxMappingSce<S extends Session, SR extends SessionRegistry> 
 
     Gate getGateByName(Session session, Container container, String nodeName) throws MappingDSException;
 
+    Set<Endpoint> getEndpointBySelector(Session session, Container container, String selector) throws MappingDSException;
+
+    Set<Endpoint> getEndpointBySelector(Session session, Node node, String selector) throws MappingDSException;
+
     Set<Link> getLinksBySourceEP(Session session, Endpoint endpoint) throws MappingDSException;
 
     Set<Link> getLinksByDestinationEP(Session session, Endpoint endpoint) throws MappingDSException;
