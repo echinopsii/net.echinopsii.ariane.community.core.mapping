@@ -42,6 +42,7 @@ public interface MappingSce {
 
     String OP_GET_NODE_BY_NAME = "getNodeByName";
     String OP_GET_GATE_BY_NAME = "getGateByName";
+    String OP_GET_ENDPOINTS_BY_SELECTOR = "getEndpointsBySelector";
     String OP_GET_LINKS_BY_SOURCE_EP = "getLinksBySourceEP";
     String OP_GET_LINKS_BY_DESTINATION_EP = "getLinksByDestinationEP";
     String OP_GET_LINK_BY_SOURCE_EP_AND_DESTINATION_EP = "getLinkBySourceEPandDestinationEP";
@@ -66,6 +67,10 @@ public interface MappingSce {
     Node getNodeByName(Container container, String nodeName) throws MappingDSException;
 
     Gate getGateByName(Container container, String nodeName) throws MappingDSException;
+
+    Set<Endpoint> getEndpointsBySelector(Container container, String selector) throws MappingDSException;
+
+    Set<Endpoint> getEndpointsBySelector(Node node, String selector) throws MappingDSException;
 
     Set<Link> getLinksBySourceEP(Endpoint endpoint) throws MappingDSException;
 

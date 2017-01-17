@@ -22,7 +22,9 @@ package net.echinopsii.ariane.community.core.mapping.ds.msgcli.service;
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
+import net.echinopsii.ariane.community.core.mapping.ds.json.domain.EndpointJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.LinkJSON;
+import net.echinopsii.ariane.community.core.mapping.ds.msgcli.domain.EndpointImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.domain.GateImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.domain.LinkImpl;
 import net.echinopsii.ariane.community.core.mapping.ds.msgcli.domain.NodeImpl;
@@ -241,6 +243,87 @@ public class MappingSceImpl extends SProxMappingSceAbs<SessionImpl, SessionRegis
             else throw new MappingDSException("Ariane server raised an error... Check your logs !");
         }
         return gate;
+    }
+
+    class getEndpointsWorker implements AppMsgWorker {
+        @Override
+        public Map<String, Object> apply(Map<String, Object> message) {
+            Set<EndpointImpl> endpoints = null;
+            int rc = (int) message.get(MomMsgTranslator.MSG_RC);
+            if (rc == 0) {
+                try {
+                    String body = null;
+                    if (message.get(MomMsgTranslator.MSG_BODY) != null && message.get(MomMsgTranslator.MSG_BODY) instanceof String)
+                        body = (String) message.get(MomMsgTranslator.MSG_BODY);
+                    else if (message.get(MomMsgTranslator.MSG_BODY) != null && message.get(MomMsgTranslator.MSG_BODY) instanceof byte[])
+                        body = new String((byte[]) message.get(MomMsgTranslator.MSG_BODY));
+
+                    endpoints = new HashSet<>();
+                    for (EndpointJSON.JSONDeserializedEndpoint jsonDeserializedEndpoint : EndpointJSON.JSON2Endpoints(body)) {
+                        EndpointImpl endpoint = new EndpointImpl();
+                        endpoint.synchronizeFromJSON(jsonDeserializedEndpoint);
+                        endpoints.add(endpoint);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else log.error("Error returned by Ariane Mapping Service ! " + message.get(MomMsgTranslator.MSG_ERR));
+            message.put("RET", endpoints);
+            return message;
+        }
+    }
+
+    @Override
+    public Set<Endpoint> getEndpointsBySelector(Container container, String selector) throws MappingDSException {
+        Set<Endpoint> ret = new HashSet<>();
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+
+        Map<String, Object> message = new HashMap<>();
+        message.put(MomMsgTranslator.OPERATION_FDN, OP_GET_ENDPOINTS_BY_SELECTOR);
+        message.put(Container.TOKEN_CT_ID, container.getContainerID());
+        message.put(MappingSce.GLOBAL_PARAM_SELECTOR, selector);
+        if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+
+        Map<String, Object> retMsg;
+        try {
+            retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, MappingSce.Q_MAPPING_SCE_SERVICE, new getEndpointsWorker());
+        } catch (TimeoutException e) {
+            throw new MappingDSException(e.getMessage());
+        }
+
+        int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
+        if (rc != 0) throw new MappingDSException("Ariane server raised an error... Check your logs !");
+        ret.addAll((Collection<? extends Endpoint>) retMsg.get("RET"));
+
+        return ret;
+    }
+
+    @Override
+    public Set<Endpoint> getEndpointsBySelector(Node node, String selector) throws MappingDSException {
+        Set<Endpoint> ret = new HashSet<>();
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+
+        Map<String, Object> message = new HashMap<>();
+        message.put(MomMsgTranslator.OPERATION_FDN, OP_GET_ENDPOINTS_BY_SELECTOR);
+        message.put(Node.TOKEN_ND_ID, node.getNodeID());
+        message.put(MappingSce.GLOBAL_PARAM_SELECTOR, selector);
+        if (clientThreadSessionID!=null) message.put(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID, clientThreadSessionID);
+
+        Map<String, Object> retMsg = null;
+        try {
+            retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, MappingSce.Q_MAPPING_SCE_SERVICE, new getEndpointsWorker());
+        } catch (TimeoutException e) {
+            throw new MappingDSException(e.getMessage());
+        }
+
+
+        int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
+        if (rc != 0) throw new MappingDSException("Ariane server raised an error... Check your logs !");
+        ret.addAll((Collection<? extends Endpoint>) retMsg.get("RET"));
+
+        return ret;
     }
 
     class getLinksWorker implements AppMsgWorker {

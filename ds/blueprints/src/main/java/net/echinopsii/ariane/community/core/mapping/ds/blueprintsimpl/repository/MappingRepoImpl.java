@@ -22,6 +22,7 @@ package net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repositor
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.graphdb.MappingDSGraphDB;
 import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.domain.*;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.repository.MappingRepo;
 
@@ -85,6 +86,25 @@ public class MappingRepoImpl implements MappingRepo<ContainerImpl, NodeImpl, Gat
     @Override
     public GateImpl findGateByName(ContainerImpl container, String name) throws MappingDSException {
         return (GateImpl) findNodeByName(container, name);
+    }
+
+    @Override
+    public Set<EndpointImpl> findEndpointBySelector(ContainerImpl container, String selector) throws MappingDSException {
+        Set<EndpointImpl> ret = new HashSet<>();
+        for (EndpointImpl endpoint : MappingDSGraphDB.getEndpoints(selector))
+            if (endpoint.getEndpointParentNode()!=null &&
+                endpoint.getEndpointParentNode().getNodeContainer() != null &&
+                endpoint.getEndpointParentNode().getNodeContainer().equals(container)) ret.add(endpoint);
+        return ret;
+    }
+
+    @Override
+    public Set<EndpointImpl> findEndpointBySelector(NodeImpl node, String selector) throws MappingDSException {
+        Set<EndpointImpl> ret = new HashSet<>();
+        for (EndpointImpl endpoint : MappingDSGraphDB.getEndpoints(selector))
+            if (endpoint.getEndpointParentNode() != null && endpoint.getEndpointParentNode().equals(node))
+                ret.add(endpoint);
+        return ret;
     }
 
     @Override

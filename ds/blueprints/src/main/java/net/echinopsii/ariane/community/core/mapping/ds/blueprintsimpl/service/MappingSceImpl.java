@@ -197,21 +197,47 @@ public class MappingSceImpl extends SProxMappingSceAbs<SessionImpl, SessionRegis
     }
 
     @Override
+    public Set<Endpoint> getEndpointsBySelector(Container container, String selector) throws MappingDSException {
+        Set<Endpoint> ret = new HashSet<>();
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = this.getEndpointBySelector(session, container, selector);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else if (container instanceof ContainerImpl)
+            for (EndpointImpl epLoop : globalRepo.findEndpointBySelector((ContainerImpl) container, selector))
+                ret.add(epLoop);
+        return ret;
+    }
+
+    @Override
+    public Set<Endpoint> getEndpointsBySelector(Node node, String selector) throws MappingDSException {
+        Set<Endpoint> ret = new HashSet<>();
+        String clientThreadName = Thread.currentThread().getName();
+        String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
+        if (clientThreadSessionID!=null) {
+            Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
+            if (session!=null) ret = this.getEndpointBySelector(session, node, selector);
+            else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
+        } else if (node instanceof NodeImpl)
+            for (EndpointImpl epLoop : globalRepo.findEndpointBySelector((NodeImpl) node, selector))
+                ret.add(epLoop);
+        return ret;
+    }
+
+    @Override
     public Set<Link> getLinksBySourceEP(Endpoint endpoint) throws MappingDSException {
-        Set<Link> ret = new HashSet<Link>();
+        Set<Link> ret = new HashSet<>();
         String clientThreadName = Thread.currentThread().getName();
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
         if (clientThreadSessionID!=null) {
             Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
             if (session!=null) ret = this.getLinksBySourceEP(session, endpoint);
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
-        } else {
-            if (endpoint instanceof EndpointImpl) {
-                for (LinkImpl linkLoop : globalRepo.findLinksBySourceEP((EndpointImpl) endpoint)) {
-                    ret.add((Link) linkLoop);
-                }
-            }
-        }
+        } else if (endpoint instanceof EndpointImpl)
+            for (LinkImpl linkLoop : globalRepo.findLinksBySourceEP((EndpointImpl) endpoint))
+                ret.add(linkLoop);
         return ret;
     }
 
