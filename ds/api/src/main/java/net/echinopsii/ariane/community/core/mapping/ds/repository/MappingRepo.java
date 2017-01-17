@@ -26,29 +26,33 @@ import java.util.Set;
 
 public interface MappingRepo<C extends Container, N extends Node, G extends Gate, E extends Endpoint, L extends Link, T extends Transport> {
 
-    public ClusterRepo<? extends Cluster> getClusterRepo();
+    ClusterRepo<? extends Cluster> getClusterRepo();
 
-    public ContainerRepo<? extends Container> getContainerRepo();
+    ContainerRepo<? extends Container> getContainerRepo();
 
-    public NodeRepo<? extends Node> getNodeRepo();
+    NodeRepo<? extends Node> getNodeRepo();
 
-    public GateRepo<? extends Node, ? extends Gate> getGateRepo();
+    GateRepo<? extends Node, ? extends Gate> getGateRepo();
 
-    public EndpointRepo<? extends Endpoint> getEndpointRepo();
+    EndpointRepo<? extends Endpoint> getEndpointRepo();
 
-    public LinkRepo<? extends Link> getLinkRepo();
+    LinkRepo<? extends Link> getLinkRepo();
 
-    public TransportRepo<? extends Transport> getTransportRepo();
+    TransportRepo<? extends Transport> getTransportRepo();
 
-    public N findNodeByName(C container, String name) throws MappingDSException;
+    N findNodeByName(C container, String name) throws MappingDSException;
 
-    public G findGateByName(C container, String name) throws MappingDSException;
+    G findGateByName(C container, String name) throws MappingDSException;
 
-    public Set<L> findLinksBySourceEP(E endpoint) throws MappingDSException;
+    Set<E> findEndpointBySelector(C container, String selector) throws MappingDSException;
 
-    public Set<L> findLinksByDestinationEP(E endpoint) throws MappingDSException;
+    Set<E> findEndpointBySelector(N node, String selector) throws MappingDSException;
 
-    public L findLinkBySourceEPandDestinationEP(E esource, E edest) throws MappingDSException;
+    Set<L> findLinksBySourceEP(E endpoint) throws MappingDSException;
 
-    public L findMulticastLinkBySourceEPandTransport(E esource, T transport) throws MappingDSException;
+    Set<L> findLinksByDestinationEP(E endpoint) throws MappingDSException;
+
+    L findLinkBySourceEPandDestinationEP(E esource, E edest) throws MappingDSException;
+
+    L findMulticastLinkBySourceEPandTransport(E esource, T transport) throws MappingDSException;
 }

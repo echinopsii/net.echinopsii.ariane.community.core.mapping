@@ -54,6 +54,23 @@ public abstract class SProxMappingSceAbs<S extends Session, SR extends SessionRe
     }
 
     @Override
+    public Set<Endpoint> getEndpointBySelector(Session session, Container container, String selector) throws MappingDSException {
+        Set<Endpoint> ret = null;
+        if (session!=null && session.isRunning())
+            ret = (Set<Endpoint>)session.execute(this, OP_GET_ENDPOINTS_BY_SELECTOR, new Object[]{container, selector});
+        return ret;
+    }
+
+
+    @Override
+    public Set<Endpoint> getEndpointBySelector(Session session, Node node, String selector) throws MappingDSException {
+        Set<Endpoint> ret = null;
+        if (session!=null && session.isRunning())
+            ret = (Set<Endpoint>)session.execute(this, OP_GET_ENDPOINTS_BY_SELECTOR, new Object[]{node, selector});
+        return ret;
+    }
+
+    @Override
     public Set<Link> getLinksBySourceEP(Session session, Endpoint endpoint) throws MappingDSException {
         Set<Link> ret = null;
         if (session!=null && session.isRunning())

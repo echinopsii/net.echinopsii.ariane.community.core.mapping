@@ -20,6 +20,7 @@ package net.echinopsii.ariane.community.core.mapping.ds.msgsrv.service;
 
 import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
+import net.echinopsii.ariane.community.core.mapping.ds.json.domain.EndpointJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.GateJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.LinkJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.NodeJSON;
@@ -49,11 +50,14 @@ public class MappingEp {
             String sid;
             String name;
             String c_id;
+            String n_id;
             String sep_id;
             String dep_id;
             String t_id;
+            String selector;
             Session session = null;
             Container container;
+            Node node;
             Endpoint source_ep;
             Endpoint destin_ep;
             Transport transport;
@@ -86,7 +90,6 @@ public class MappingEp {
                             if (session!=null) container = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(session, c_id);
                             else container = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(c_id);
                             if (container!=null) {
-                                Node node ;
                                 if (session!=null) node = MappingMsgsrvBootstrap.getMappingSce().getNodeByName(session, container, name);
                                 else node = MappingMsgsrvBootstrap.getMappingSce().getNodeByName(container, name);
                                 if (node!=null) {
@@ -135,6 +138,71 @@ public class MappingEp {
                         } else {
                             message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
                             message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : container id and/or gate name not provided.");
+                        }
+                        break;
+                    case MappingSce.OP_GET_ENDPOINTS_BY_SELECTOR:
+                        selector = (String) message.get(MappingSce.GLOBAL_PARAM_SELECTOR);
+                        c_id = (String) message.get(Container.TOKEN_CT_ID);
+                        n_id = (String) message.get(Node.TOKEN_ND_ID);
+                        if (selector != null && (c_id != null || n_id != null)) {
+                            HashSet<Endpoint> endpoints = null;
+                            if (n_id != null) {
+                                if (session!=null) node = MappingMsgsrvBootstrap.getMappingSce().getNodeSce().getNode(session, n_id);
+                                else node = MappingMsgsrvBootstrap.getMappingSce().getNodeSce().getNode(n_id);
+
+                                if (node != null) {
+                                    if (session!=null) endpoints = (HashSet<Endpoint>) MappingMsgsrvBootstrap.getMappingSce().getEndpointBySelector(session, node, selector);
+                                    else endpoints = (HashSet<Endpoint>) MappingMsgsrvBootstrap.getMappingSce().getEndpointsBySelector(node, selector);
+                                } else {
+                                    message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
+                                    message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : node not found with provided ID.");
+                                    ((MomLogger)log).traceMessage("MappingWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+                                    if (message.containsKey(MomMsgTranslator.MSG_TRACE)) {
+                                        if (session!=null) session.traceSession(false);
+                                        ((MomLogger)log).setMsgTraceLevel(false);
+                                    }
+                                    return message;
+                                }
+                            } else if (c_id != null) {
+                                if (session!=null) container = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(session, c_id);
+                                else container = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(c_id);
+
+                                if (container != null) {
+                                    if (session!=null) endpoints = (HashSet<Endpoint>) MappingMsgsrvBootstrap.getMappingSce().getEndpointBySelector(session, container, selector);
+                                    else endpoints = (HashSet<Endpoint>) MappingMsgsrvBootstrap.getMappingSce().getEndpointsBySelector(container, selector);
+                                } else {
+                                    message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
+                                    message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + operation + ") : container not found with provided ID.");
+                                    ((MomLogger)log).traceMessage("MappingWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+                                    if (message.containsKey(MomMsgTranslator.MSG_TRACE)) {
+                                        if (session!=null) session.traceSession(false);
+                                        ((MomLogger)log).setMsgTraceLevel(false);
+                                    }
+                                    return message;
+                                }
+                            }
+                            if (endpoints!=null && endpoints.size()>0) {
+                                ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                                EndpointJSON.manyEndpoints2JSON(endpoints, outStream);
+                                String result = ToolBox.getOuputStreamContent(outStream, "UTF-8");
+                                message.put(MomMsgTranslator.MSG_BODY, result);
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SUCCESS);
+                            } else {
+                                message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_NOT_FOUND);
+                                message.put(MomMsgTranslator.MSG_ERR, "Not found (" + operation + ") : endpoints not found.");
+                            }
+                        } else {
+                            message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
+                            String errorMsg = "Bad request (" + operation + ") : ";
+                            if (selector == null) errorMsg += "selector is not defined; ";
+                            if (c_id != null || n_id != null) errorMsg += "container id or node id is not defined;";
+                            message.put(MomMsgTranslator.MSG_ERR, errorMsg);
+                            ((MomLogger)log).traceMessage("MappingWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
+                            if (message.containsKey(MomMsgTranslator.MSG_TRACE)) {
+                                if (session!=null) session.traceSession(false);
+                                ((MomLogger)log).setMsgTraceLevel(false);
+                            }
+                            return message;
                         }
                         break;
                     case MappingSce.OP_GET_LINK_BY_SOURCE_EP_AND_DESTINATION_EP:
