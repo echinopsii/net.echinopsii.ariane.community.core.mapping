@@ -2443,6 +2443,9 @@ public class MappingMsgNATSTest {
             Node aprocess = messagingMappingSce.getNodeSce().createNode("a process-testCreateEndpointAndJoinNode", acontainer.getContainerID(), null);
             Endpoint endpoint = messagingMappingSce.getEndpointSce().createEndpoint("tcp://process-endpoint-testCreateEndpointAndJoinNode:1234", aprocess.getNodeID());
             assertTrue(endpoint.getEndpointID()!=null);
+            assertTrue(messagingMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID()).equals(endpoint));
+            assertTrue(messagingMappingSce.getEndpointsBySelector(acontainer, "endpointURL =~ \".*:1234.*\"").contains(endpoint));
+            assertTrue(messagingMappingSce.getEndpointsBySelector(aprocess, "endpointURL =~ \".*:1234.*\"").contains(endpoint));
             assertTrue(endpoint.getEndpointParentNode().equals(aprocess));
             assertTrue(aprocess.getNodeEndpoints().contains(endpoint));
             assertTrue(endpoint.getEndpointURL().equals("tcp://process-endpoint-testCreateEndpointAndJoinNode:1234"));
@@ -2475,6 +2478,9 @@ public class MappingMsgNATSTest {
             final Endpoint endpoint = messagingMappingSce.getEndpointSce().createEndpoint("tcp://process-endpoint-testTransacCreateEndpointAndJoinNode:1234", aprocess.getNodeID());
             session.commit();
             assertTrue(endpoint.getEndpointID() != null);
+            assertTrue(messagingMappingSce.getEndpointSce().getEndpoint(endpoint.getEndpointID()).equals(endpoint));
+            assertTrue(messagingMappingSce.getEndpointsBySelector(acontainer, "endpointURL =~ \".*:1234.*\"").contains(endpoint));
+            assertTrue(messagingMappingSce.getEndpointsBySelector(aprocess, "endpointURL =~ \".*:1234.*\"").contains(endpoint));
             assertTrue(endpoint.getEndpointParentNode().equals(aprocess));
             assertTrue(aprocess.getNodeEndpoints().contains(endpoint));
             assertTrue(endpoint.getEndpointURL().equals("tcp://process-endpoint-testTransacCreateEndpointAndJoinNode:1234"));
