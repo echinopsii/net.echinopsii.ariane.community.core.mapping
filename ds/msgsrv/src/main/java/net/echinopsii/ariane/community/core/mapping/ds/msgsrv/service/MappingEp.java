@@ -151,7 +151,7 @@ public class MappingEp {
                                 else node = MappingMsgsrvBootstrap.getMappingSce().getNodeSce().getNode(n_id);
 
                                 if (node != null) {
-                                    if (session!=null) endpoints = (HashSet<Endpoint>) MappingMsgsrvBootstrap.getMappingSce().getEndpointBySelector(session, node, selector);
+                                    if (session!=null) endpoints = (HashSet<Endpoint>) MappingMsgsrvBootstrap.getMappingSce().getEndpointsBySelector(session, node, selector);
                                     else endpoints = (HashSet<Endpoint>) MappingMsgsrvBootstrap.getMappingSce().getEndpointsBySelector(node, selector);
                                 } else {
                                     message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);
@@ -168,7 +168,7 @@ public class MappingEp {
                                 else container = MappingMsgsrvBootstrap.getMappingSce().getContainerSce().getContainer(c_id);
 
                                 if (container != null) {
-                                    if (session!=null) endpoints = (HashSet<Endpoint>) MappingMsgsrvBootstrap.getMappingSce().getEndpointBySelector(session, container, selector);
+                                    if (session!=null) endpoints = (HashSet<Endpoint>) MappingMsgsrvBootstrap.getMappingSce().getEndpointsBySelector(session, container, selector);
                                     else endpoints = (HashSet<Endpoint>) MappingMsgsrvBootstrap.getMappingSce().getEndpointsBySelector(container, selector);
                                 } else {
                                     message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_BAD_REQ);

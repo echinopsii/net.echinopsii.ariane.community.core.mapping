@@ -20,6 +20,7 @@
 package net.echinopsii.ariane.community.core.mapping.wat.rest.ds.domain;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
+import net.echinopsii.ariane.community.core.mapping.ds.domain.Container;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxEndpoint;
@@ -127,6 +128,8 @@ public class EndpointEp {
     @Path("/get")
     public Response getEndpoint(@QueryParam(EndpointSce.PARAM_ENDPOINT_URL)String URL,
                                 @QueryParam(MappingSce.GLOBAL_PARAM_OBJ_ID)String id,
+                                @QueryParam(Container.TOKEN_CT_ID) String c_id,
+                                @QueryParam(Node.TOKEN_ND_ID) String n_id,
                                 @QueryParam(MappingSce.GLOBAL_PARAM_SELECTOR) String selector,
                                 @QueryParam(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) String sessionId) {
         if (id!=null) {
@@ -177,8 +180,31 @@ public class EndpointEp {
                     }
 
                     HashSet<Endpoint> ret;
-                    if (mappingSession!=null) ret = (HashSet<Endpoint>) MappingBootstrap.getMappingSce().getEndpointSce().getEndpoints(mappingSession, selector);
-                    else ret = (HashSet<Endpoint>) MappingBootstrap.getMappingSce().getEndpointSce().getEndpoints(selector);
+                    if (n_id!=null) {
+                        Node node ;
+                        if (mappingSession!=null) node = MappingBootstrap.getMappingSce().getNodeSce().getNode(mappingSession, n_id);
+                        else node = MappingBootstrap.getMappingSce().getNodeSce().getNode(n_id);
+
+                        if (node != null) {
+                            if (mappingSession!=null) ret = (HashSet<Endpoint>) MappingBootstrap.getMappingSce().getEndpointsBySelector(mappingSession, node, selector);
+                            else ret = (HashSet<Endpoint>) MappingBootstrap.getMappingSce().getEndpointsBySelector(node, selector);
+                        } else return Response.status(Status.BAD_REQUEST).entity("No node found for ID " + n_id).build();
+
+                    } else if (c_id!=null) {
+                        Container container;
+                        if (mappingSession!=null) container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(mappingSession, c_id);
+                        else container = MappingBootstrap.getMappingSce().getContainerSce().getContainer(c_id);
+
+                        if (container != null) {
+                            if (mappingSession!=null) ret = (HashSet<Endpoint>) MappingBootstrap.getMappingSce().getEndpointsBySelector(mappingSession, container, selector);
+                            else ret = (HashSet<Endpoint>) MappingBootstrap.getMappingSce().getEndpointsBySelector(container, selector);
+
+                        } else return Response.status(Status.BAD_REQUEST).entity("No container found for ID " + c_id).build();
+
+                    } else {
+                        if (mappingSession!=null) ret = (HashSet<Endpoint>) MappingBootstrap.getMappingSce().getEndpointSce().getEndpoints(mappingSession, selector);
+                        else ret = (HashSet<Endpoint>) MappingBootstrap.getMappingSce().getEndpointSce().getEndpoints(selector);
+                    }
 
                     if (ret != null && ret.size() > 0) {
                         String result;

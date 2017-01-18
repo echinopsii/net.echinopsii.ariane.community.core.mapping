@@ -29,10 +29,8 @@ import net.echinopsii.ariane.community.core.mapping.ds.blueprintsimpl.repository
 import net.echinopsii.ariane.community.core.mapping.ds.cli.ClientThreadSessionRegistry;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.*;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MapSce;
-import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSceAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
-import net.echinopsii.ariane.community.core.mapping.ds.service.tools.SessionRegistry;
 
 import java.util.Dictionary;
 import java.util.HashSet;
@@ -203,7 +201,7 @@ public class MappingSceImpl extends SProxMappingSceAbs<SessionImpl, SessionRegis
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
         if (clientThreadSessionID!=null) {
             Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
-            if (session!=null) ret = this.getEndpointBySelector(session, container, selector);
+            if (session!=null) ret = this.getEndpointsBySelector(session, container, selector);
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else if (container instanceof ContainerImpl)
             for (EndpointImpl epLoop : globalRepo.findEndpointBySelector((ContainerImpl) container, selector))
@@ -218,7 +216,7 @@ public class MappingSceImpl extends SProxMappingSceAbs<SessionImpl, SessionRegis
         String clientThreadSessionID = ClientThreadSessionRegistry.getSessionFromThread(clientThreadName);
         if (clientThreadSessionID!=null) {
             Session session = SessionRegistryImpl.getSessionRegistry().get(clientThreadSessionID);
-            if (session!=null) ret = this.getEndpointBySelector(session, node, selector);
+            if (session!=null) ret = this.getEndpointsBySelector(session, node, selector);
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else if (node instanceof NodeImpl)
             for (EndpointImpl epLoop : globalRepo.findEndpointBySelector((NodeImpl) node, selector))
