@@ -44,9 +44,9 @@ public interface MappingRepo<C extends Container, N extends Node, G extends Gate
 
     G findGateByName(C container, String name) throws MappingDSException;
 
-    Set<E> findEndpointBySelector(C container, String selector) throws MappingDSException;
+    Set<E> findEndpointsBySelector(C container, String selector) throws MappingDSException;
 
-    Set<E> findEndpointBySelector(N node, String selector) throws MappingDSException;
+    Set<E> findEndpointsBySelector(N node, String selector) throws MappingDSException;
 
     Set<L> findLinksBySourceEP(E endpoint) throws MappingDSException;
 
