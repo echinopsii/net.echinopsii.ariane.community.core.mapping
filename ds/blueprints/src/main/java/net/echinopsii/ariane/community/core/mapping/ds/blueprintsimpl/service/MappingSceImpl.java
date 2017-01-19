@@ -204,7 +204,7 @@ public class MappingSceImpl extends SProxMappingSceAbs<SessionImpl, SessionRegis
             if (session!=null) ret = this.getEndpointsBySelector(session, container, selector);
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else if (container instanceof ContainerImpl)
-            for (EndpointImpl epLoop : globalRepo.findEndpointBySelector((ContainerImpl) container, selector))
+            for (EndpointImpl epLoop : globalRepo.findEndpointsBySelector((ContainerImpl) container, selector))
                 ret.add(epLoop);
         return ret;
     }
@@ -219,7 +219,7 @@ public class MappingSceImpl extends SProxMappingSceAbs<SessionImpl, SessionRegis
             if (session!=null) ret = this.getEndpointsBySelector(session, node, selector);
             else throw new MappingDSException("Session " + clientThreadSessionID + " not found !");
         } else if (node instanceof NodeImpl)
-            for (EndpointImpl epLoop : globalRepo.findEndpointBySelector((NodeImpl) node, selector))
+            for (EndpointImpl epLoop : globalRepo.findEndpointsBySelector((NodeImpl) node, selector))
                 ret.add(epLoop);
         return ret;
     }

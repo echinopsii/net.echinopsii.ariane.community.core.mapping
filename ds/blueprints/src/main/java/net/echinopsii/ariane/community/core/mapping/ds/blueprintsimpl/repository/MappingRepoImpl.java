@@ -89,7 +89,7 @@ public class MappingRepoImpl implements MappingRepo<ContainerImpl, NodeImpl, Gat
     }
 
     @Override
-    public Set<EndpointImpl> findEndpointBySelector(ContainerImpl container, String selector) throws MappingDSException {
+    public Set<EndpointImpl> findEndpointsBySelector(ContainerImpl container, String selector) throws MappingDSException {
         Set<EndpointImpl> ret = new HashSet<>();
         for (EndpointImpl endpoint : MappingDSGraphDB.getEndpoints(selector))
             if (endpoint.getEndpointParentNode()!=null &&
@@ -99,7 +99,7 @@ public class MappingRepoImpl implements MappingRepo<ContainerImpl, NodeImpl, Gat
     }
 
     @Override
-    public Set<EndpointImpl> findEndpointBySelector(NodeImpl node, String selector) throws MappingDSException {
+    public Set<EndpointImpl> findEndpointsBySelector(NodeImpl node, String selector) throws MappingDSException {
         Set<EndpointImpl> ret = new HashSet<>();
         for (EndpointImpl endpoint : MappingDSGraphDB.getEndpoints(selector))
             if (endpoint.getEndpointParentNode() != null && endpoint.getEndpointParentNode().equals(node))
