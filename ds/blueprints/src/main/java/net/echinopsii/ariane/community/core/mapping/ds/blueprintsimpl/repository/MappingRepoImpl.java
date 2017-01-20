@@ -98,7 +98,7 @@ public class MappingRepoImpl implements MappingRepo<ContainerImpl, NodeImpl, Gat
                 else if (endpoint.getEndpointParentNode().getNodeContainer().getContainerParentContainer()!=null) {
                     Container loopContainer = endpoint.getEndpointParentNode().getNodeContainer();
                     while (loopContainer!=null) {
-                        if (loopContainer.getContainerParentContainer().equals(container)) {
+                        if (loopContainer.getContainerParentContainer()!=null && loopContainer.getContainerParentContainer().equals(container)) {
                             ret.add(endpoint);
                             break;
                         } else loopContainer = loopContainer.getContainerParentContainer();
@@ -112,8 +112,17 @@ public class MappingRepoImpl implements MappingRepo<ContainerImpl, NodeImpl, Gat
     public Set<EndpointImpl> findEndpointsBySelector(NodeImpl node, String selector) throws MappingDSException {
         Set<EndpointImpl> ret = new HashSet<>();
         for (EndpointImpl endpoint : MappingDSGraphDB.getEndpoints(selector))
-            if (endpoint.getEndpointParentNode() != null && endpoint.getEndpointParentNode().equals(node))
-                ret.add(endpoint);
+            if (endpoint.getEndpointParentNode() != null)
+                if (endpoint.getEndpointParentNode().equals(node)) ret.add(endpoint);
+                else {
+                    Node loopNode = endpoint.getEndpointParentNode();
+                    while(loopNode!=null) {
+                        if (loopNode.getNodeParentNode()!=null && loopNode.getNodeParentNode().equals(node)) {
+                            ret.add(endpoint);
+                            break;
+                        } else loopNode = loopNode.getNodeParentNode();
+                    }
+                }
         return ret;
     }
 
