@@ -93,8 +93,18 @@ public class MappingRepoImpl implements MappingRepo<ContainerImpl, NodeImpl, Gat
         Set<EndpointImpl> ret = new HashSet<>();
         for (EndpointImpl endpoint : MappingDSGraphDB.getEndpoints(selector))
             if (endpoint.getEndpointParentNode()!=null &&
-                endpoint.getEndpointParentNode().getNodeContainer() != null &&
-                endpoint.getEndpointParentNode().getNodeContainer().equals(container)) ret.add(endpoint);
+                endpoint.getEndpointParentNode().getNodeContainer() != null) {
+                if (endpoint.getEndpointParentNode().getNodeContainer().equals(container)) ret.add(endpoint);
+                else if (endpoint.getEndpointParentNode().getNodeContainer().getContainerParentContainer()!=null) {
+                    Container loopContainer = endpoint.getEndpointParentNode().getNodeContainer();
+                    while (loopContainer!=null) {
+                        if (loopContainer.getContainerParentContainer().equals(container)) {
+                            ret.add(endpoint);
+                            break;
+                        } else loopContainer = loopContainer.getContainerParentContainer();
+                    }
+                }
+            }
         return ret;
     }
 
