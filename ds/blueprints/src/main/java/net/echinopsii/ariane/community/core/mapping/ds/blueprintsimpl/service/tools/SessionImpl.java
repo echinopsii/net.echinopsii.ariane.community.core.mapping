@@ -175,12 +175,12 @@ public class SessionImpl implements Session {
                             Throwable th = ie.getCause();
                             if (th!=null) log.warn("Exception raised while executing request : " + th.getMessage() + " ...");
                             else log.warn("Exception raised while executing request...");
-                            if (th!=null && log.isDebugEnabled()) th.printStackTrace();
+                            if (th!=null && log.isTraceEnabled()) th.printStackTrace();
                             this.returnToQueue(msg, new SessionWorkerReply(true, null, (th!=null) ? th.getMessage() : ie.getMessage()));
                         } catch (Exception e) {
                             if (e.getMessage()!=null) log.warn("Exception raised while executing request : " + e.getMessage() + " ...");
                             else log.warn("Exception raised while executing request ...");
-                            if (log.isDebugEnabled()) e.printStackTrace();
+                            if (log.isTraceEnabled()) e.printStackTrace();
                             this.returnToQueue(msg, new SessionWorkerReply(true, null, e.getMessage()));
                         }
                     } else if (msg.getAction().equals(TRACE)) {
@@ -278,7 +278,7 @@ public class SessionImpl implements Session {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
                 log.warn("Interrupted while waiting session thread to be interrupt... " + e.getMessage());
-                if (log.isDebugEnabled()) e.printStackTrace();
+                if (log.isTraceEnabled()) e.printStackTrace();
             }
             log.debug("["+ sessionId +".getReply] current session thread has been interrupted. New state : " + this.sessionThread.getState().toString());
             int threadStackTraceLength = this.sessionThread.getStackTrace().length;
