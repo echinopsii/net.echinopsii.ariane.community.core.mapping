@@ -49,6 +49,7 @@ public interface Container {
 	String TOKEN_CT_NID = MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_NODE_KEY+"ID";
 	String TOKEN_CT_GID = MappingDSGraphPropertyNames.DD_CONTAINER_EDGE_GATE_KEY+"ID";
 	String TOKEN_CT_PRP = MappingDSGraphPropertyNames.DD_CONTAINER_PROPS_KEY;
+	String TOKEN_CT_PRP_OWNER = "Owner";
 
 	String OP_SET_CONTAINER_NAME = "setContainerName";
 	String OP_SET_CONTAINER_COMPANY = "setContainerCompany";
