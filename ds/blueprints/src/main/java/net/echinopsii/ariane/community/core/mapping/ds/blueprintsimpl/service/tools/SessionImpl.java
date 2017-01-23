@@ -175,11 +175,13 @@ public class SessionImpl implements Session {
                             Throwable th = ie.getCause();
                             if (th!=null) log.warn("Exception raised while executing request : " + th.getMessage() + " ...");
                             else log.warn("Exception raised while executing request...");
+                            log.warn("Request : " + msg.getInstance().toString() + "." + msg.getMethod().toString() + "(" + Arrays.toString(msg.getArgs()) + ")");
                             if (th!=null && log.isTraceEnabled()) th.printStackTrace();
                             this.returnToQueue(msg, new SessionWorkerReply(true, null, (th!=null) ? th.getMessage() : ie.getMessage()));
                         } catch (Exception e) {
                             if (e.getMessage()!=null) log.warn("Exception raised while executing request : " + e.getMessage() + " ...");
                             else log.warn("Exception raised while executing request ...");
+                            log.warn("Request : " + msg.getInstance().toString() + "." + msg.getMethod().toString() + "(" + Arrays.toString(msg.getArgs()) + ")");
                             if (log.isTraceEnabled()) e.printStackTrace();
                             this.returnToQueue(msg, new SessionWorkerReply(true, null, e.getMessage()));
                         }
