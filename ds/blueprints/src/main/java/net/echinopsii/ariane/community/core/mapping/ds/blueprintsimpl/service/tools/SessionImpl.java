@@ -166,22 +166,22 @@ public class SessionImpl implements Session {
                     } else if (msg.getAction().equals(EXECUTE)) {
                         try {
                             log.debug("[" + Thread.currentThread().getId() + ".worker.execute] " +
-                                    msg.getInstance().toString() + "." + msg.getMethod().toString() + "(" + Arrays.toString(msg.getArgs()) + ")");
+                                    msg.getInstance().toString() + "." + msg.getMethod().toString() + " (" + Arrays.toString(msg.getArgs()) + ")");
                             Object ret = msg.getMethod().invoke(msg.getInstance(), msg.getArgs());
                             if (msg.getMethod().getReturnType().equals(Void.TYPE))
                                 ret = Void.TYPE;
                             this.returnToQueue(msg, new SessionWorkerReply(false, ret, null));
                         } catch (InvocationTargetException ie) {
                             Throwable th = ie.getCause();
-                            if (th!=null) log.warn("Exception raised while executing request : " + th.getMessage() + " ...");
-                            else log.warn("Exception raised while executing request...");
-                            log.warn("Request : " + msg.getInstance().toString() + "." + msg.getMethod().toString() + "(" + Arrays.toString(msg.getArgs()) + ")");
+                            if (th!=null) log.warn("[" + Thread.currentThread().getId() + ".worker.execute] Exception raised while executing request : " + th.getMessage() + " ...");
+                            else log.warn("[" + Thread.currentThread().getId() + ".worker.execute] Exception raised while executing request...");
+                            log.warn("[" + Thread.currentThread().getId() + ".worker.execute] Request : " + msg.getInstance().toString() + "." + msg.getMethod().toString() + " (" + Arrays.toString(msg.getArgs()) + ")");
                             if (th!=null && log.isTraceEnabled()) th.printStackTrace();
                             this.returnToQueue(msg, new SessionWorkerReply(true, null, (th!=null) ? th.getMessage() : ie.getMessage()));
                         } catch (Exception e) {
-                            if (e.getMessage()!=null) log.warn("Exception raised while executing request : " + e.getMessage() + " ...");
-                            else log.warn("Exception raised while executing request ...");
-                            log.warn("Request : " + msg.getInstance().toString() + "." + msg.getMethod().toString() + "(" + Arrays.toString(msg.getArgs()) + ")");
+                            if (e.getMessage()!=null) log.warn("[" + Thread.currentThread().getId() + ".worker.execute] Exception raised while executing request : " + e.getMessage() + " ...");
+                            else log.warn("[" + Thread.currentThread().getId() + ".worker.execute] Exception raised while executing request ...");
+                            log.warn("[" + Thread.currentThread().getId() + ".worker.execute] Request : " + msg.getInstance().toString() + "." + msg.getMethod().toString() + " (" + Arrays.toString(msg.getArgs()) + ")");
                             if (log.isTraceEnabled()) e.printStackTrace();
                             this.returnToQueue(msg, new SessionWorkerReply(true, null, e.getMessage()));
                         }
