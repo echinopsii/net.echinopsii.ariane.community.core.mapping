@@ -130,6 +130,51 @@ public class SessionImpl implements Session {
             }
         }
 
+        private int sleepTime = 500; // 500ms sleep between each retry
+        private int maxRetryCount = 15; // 15 retry max => 7.5 seconds before raising an error
+
+        private void execute(SessionWorkerRequest msg, int retry) {
+            try {
+                log.debug("[" + Thread.currentThread().getId() + ".worker.execute] " +
+                        msg.getInstance().toString() + "." + msg.getMethod().toString() + " (" + Arrays.toString(msg.getArgs()) + ")");
+                Object ret = msg.getMethod().invoke(msg.getInstance(), msg.getArgs());
+                if (msg.getMethod().getReturnType().equals(Void.TYPE))
+                    ret = Void.TYPE;
+                this.returnToQueue(msg, new SessionWorkerReply(false, ret, null));
+            } catch (InvocationTargetException ie) {
+                Throwable th = ie.getCause();
+                // it th not null check class name instead importing optional packages
+                if (th!=null && th.getClass().getName().equals("org.neo4j.kernel.DeadlockDetectedException")) {
+                    if (retry < maxRetryCount) {
+                        try {
+                            Thread.sleep(sleepTime);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        log.warn("[" + Thread.currentThread().getId() + ".worker.execute] Retry request after DeadlockDetectedException : " + msg.getInstance().toString() + "." + msg.getMethod().toString() + " (" + Arrays.toString(msg.getArgs()) + ")");
+                        this.execute(msg, ++retry);
+                    } else {
+                        log.warn("[" + Thread.currentThread().getId() + ".worker.execute] InvocationTargetException (" + th.getClass().getName() + ") raised while executing request : " + th.getMessage() + " ...");
+                        log.warn("[" + Thread.currentThread().getId() + ".worker.execute] Request : " + msg.getInstance().toString() + "." + msg.getMethod().toString() + " (" + Arrays.toString(msg.getArgs()) + ")");
+                        if (log.isTraceEnabled()) th.printStackTrace();
+                        this.returnToQueue(msg, new SessionWorkerReply(true, null, th.getMessage()));
+                    }
+                } else {
+                    if (th!=null) log.warn("[" + Thread.currentThread().getId() + ".worker.execute] InvocationTargetException (" + th.getClass().getName() + ") raised while executing request : " + th.getMessage() + " ...");
+                    else log.warn("[" + Thread.currentThread().getId() + ".worker.execute] InvocationTargetException raised while executing request...");
+                    log.warn("[" + Thread.currentThread().getId() + ".worker.execute] Request : " + msg.getInstance().toString() + "." + msg.getMethod().toString() + " (" + Arrays.toString(msg.getArgs()) + ")");
+                    if (th!=null && log.isTraceEnabled()) th.printStackTrace();
+                    this.returnToQueue(msg, new SessionWorkerReply(true, null, (th!=null) ? th.getMessage() : ie.getMessage()));
+                }
+            } catch (Exception e) {
+                if (e.getMessage()!=null) log.warn("[" + Thread.currentThread().getId() + ".worker.execute] Exception ( " + e.getClass().getName() +  " ) raised while executing request : " + e.getMessage() + " ...");
+                else log.warn("[" + Thread.currentThread().getId() + ".worker.execute] Exception ( " + e.getClass().getName() +  " ) raised while executing request ...");
+                log.warn("[" + Thread.currentThread().getId() + ".worker.execute] Request : " + msg.getInstance().toString() + "." + msg.getMethod().toString() + " (" + Arrays.toString(msg.getArgs()) + ")");
+                if (log.isTraceEnabled()) e.printStackTrace();
+                this.returnToQueue(msg, new SessionWorkerReply(true, null, e.getMessage()));
+            }
+        }
+
         @Override
         public void run() {
             MappingDSGraphDB.putThreadedSession(this.attachedSession);
@@ -164,27 +209,7 @@ public class SessionImpl implements Session {
                         ((SessionImpl)this.attachedSession).sessionRemovedObjectCache.clear();
                         this.returnToQueue(msg, new SessionWorkerReply(false, Void.TYPE, null));
                     } else if (msg.getAction().equals(EXECUTE)) {
-                        try {
-                            log.debug("[" + Thread.currentThread().getId() + ".worker.execute] " +
-                                    msg.getInstance().toString() + "." + msg.getMethod().toString() + " (" + Arrays.toString(msg.getArgs()) + ")");
-                            Object ret = msg.getMethod().invoke(msg.getInstance(), msg.getArgs());
-                            if (msg.getMethod().getReturnType().equals(Void.TYPE))
-                                ret = Void.TYPE;
-                            this.returnToQueue(msg, new SessionWorkerReply(false, ret, null));
-                        } catch (InvocationTargetException ie) {
-                            Throwable th = ie.getCause();
-                            if (th!=null) log.warn("[" + Thread.currentThread().getId() + ".worker.execute] InvocationTargetException (" + th.getClass().getName() + ") raised while executing request : " + th.getMessage() + " ...");
-                            else log.warn("[" + Thread.currentThread().getId() + ".worker.execute] InvocationTargetException raised while executing request...");
-                            log.warn("[" + Thread.currentThread().getId() + ".worker.execute] Request : " + msg.getInstance().toString() + "." + msg.getMethod().toString() + " (" + Arrays.toString(msg.getArgs()) + ")");
-                            if (th!=null && log.isTraceEnabled()) th.printStackTrace();
-                            this.returnToQueue(msg, new SessionWorkerReply(true, null, (th!=null) ? th.getMessage() : ie.getMessage()));
-                        } catch (Exception e) {
-                            if (e.getMessage()!=null) log.warn("[" + Thread.currentThread().getId() + ".worker.execute] Exception ( " + e.getClass().getName() +  " ) raised while executing request : " + e.getMessage() + " ...");
-                            else log.warn("[" + Thread.currentThread().getId() + ".worker.execute] Exception ( " + e.getClass().getName() +  " ) raised while executing request ...");
-                            log.warn("[" + Thread.currentThread().getId() + ".worker.execute] Request : " + msg.getInstance().toString() + "." + msg.getMethod().toString() + " (" + Arrays.toString(msg.getArgs()) + ")");
-                            if (log.isTraceEnabled()) e.printStackTrace();
-                            this.returnToQueue(msg, new SessionWorkerReply(true, null, e.getMessage()));
-                        }
+                        this.execute(msg, 0);
                     } else if (msg.getAction().equals(TRACE)) {
                         boolean isTraceEnabled = (boolean) msg.getArgs()[0];
                         log.debug("[" + Thread.currentThread().getId() + ".worker.trace] " + this.attachedSession.getSessionID() + " : " + isTraceEnabled);
