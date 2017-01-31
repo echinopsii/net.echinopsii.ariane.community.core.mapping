@@ -151,7 +151,7 @@ public class SessionImpl implements Session {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        log.warn("[" + Thread.currentThread().getId() + ".worker.execute] Retry request after DeadlockDetectedException : " + msg.getInstance().toString() + "." + msg.getMethod().toString() + " (" + Arrays.toString(msg.getArgs()) + ")");
+                        log.debug("[" + Thread.currentThread().getId() + ".worker.execute] Retry request after DeadlockDetectedException : " + msg.getInstance().toString() + "." + msg.getMethod().toString() + " (" + Arrays.toString(msg.getArgs()) + ")");
                         this.execute(msg, ++retry);
                     } else {
                         log.warn("[" + Thread.currentThread().getId() + ".worker.execute] InvocationTargetException (" + th.getClass().getName() + ") raised while executing request : " + th.getMessage() + " ...");
