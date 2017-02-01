@@ -804,16 +804,16 @@ define(
                         for (j = 0, jj=node.nodeHeapNodes.length; j <jj ; j++) {
                             var linkedNodeHeapNode = node.nodeHeapNodes[j],
                                 thisNodeHeapNode = this.nodeHeapNodes[i];
-                            if (isInHeap.indexOf[linkedNodeHeapNode]==-1)
+                            if (isInHeap.indexOf(linkedNodeHeapNode.ID)===-1)
                                 if (linkedNodeHeapNode.ID!=thisNodeHeapNode.ID)
                                     if (!thisNodeHeapNode.isInHeapNode(linkedNodeHeapNode))
-                                        if (thisNodeHeapNode.linkedNodes.indexOf(linkedNodeHeapNode)==-1)
+                                        if (!thisNodeHeapNode.isLinkedToNode(linkedNodeHeapNode))
                                             thisNodeHeapNode.linkedNodes.push(linkedNodeHeapNode);
                                     else
-                                        isInHeap.push(linkedNodeHeapNode)
+                                        isInHeap.push(linkedNodeHeapNode.ID)
                         }
 
-                    if (this.linkedNodes.indexOf(node)==-1)
+                    if (!this.isLinkedToNode(node))
                         this.linkedNodes.push(node);
                     if (node.nodeContainer.ID!=this.nodeContainer.ID) {
                         this.nodeContainer.pushLinkedNode(node);
