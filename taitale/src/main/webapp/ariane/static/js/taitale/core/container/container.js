@@ -204,7 +204,7 @@ define(
             // the current containers heap from this to the last parent container of the chain as a list
             // [this,this.containerParentC,this.containerParentC.containerParentC ...]
             this.containerHeapC    = [];
-            this.containerChilds   = new containerMatrix();
+            this.containerChilds   = new containerMatrix(this.name);
 
             this.linkedTreeObjects = [];
             this.sortOrdering      = 1;
@@ -617,6 +617,10 @@ define(
             };
 
             this.getBubbleDiameter = function() {
+                // var bubbleDiameter = Math.sqrt(Math.pow(this.maxRectWidth,2) + Math.pow(this.maxRectHeight,2));
+                // helper_.debug("[Container.getBubbleDiameter] " + this.name + " : { maxRectWidth: " + this.maxRectWidth +
+                //     ", maxRectHeight: " + this.maxRectHeight + ", bubbleDiameter: " + bubbleDiameter + "}");
+                // return bubbleDiameter;
                 return Math.sqrt(Math.pow(this.maxRectWidth,2) + Math.pow(this.maxRectHeight,2));
             };
 
@@ -953,7 +957,9 @@ define(
             this.print = function(r_) {
                 this.r = r_;
 
-                if (this.color == 0) this.color = this.containerParentC.color
+                // helper_.debug("[Container.print] " + this.name + " : {rectWidth: " + this.rectWidth + ", rectHeight: " + this.rectHeight + "}");
+
+                if (this.color == 0) this.color = this.containerParentC.color;
 
                 this.containerHat_.print(this.r,this.rectTopLeftX + (this.rectWidth/2),this.rectTopLeftY,this.color);
                 this.containerHat_.mousedown(mouseDown);
@@ -1150,8 +1156,7 @@ define(
             this.menuFieldEpResetClick = function() {
                 var epreset;
 
-                if (containerRef.endpointsResetOnChangeON) epreset = false;
-                else epreset = true;
+                epreset = !containerRef.endpointsResetOnChangeON;
 
                 containerRef.propagateEndpointReset(epreset);
 
