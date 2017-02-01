@@ -25,8 +25,8 @@ define(
     ],
     function(zeMatrix) {
 
-        function nodeMatrix() {
-            var zeMtx = new zeMatrix();
+        function nodeMatrix(name) {
+            var zeMtx = new zeMatrix(name);
             return zeMtx;
         }
 

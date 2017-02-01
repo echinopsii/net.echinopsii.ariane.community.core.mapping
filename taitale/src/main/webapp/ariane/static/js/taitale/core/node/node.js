@@ -60,7 +60,7 @@ define(
             // the current nodes heap from this to the last parent node of the chain as a list
             // [this,this.nodeParentNode,this.nodeParentNode.nodeParentNode ...]
             this.nodeHeapNodes     = [];
-            this.nodeChildNodes    = new nodeMatrix();
+            this.nodeChildNodes    = new nodeMatrix(this.name);
 
             this.nodeEndpoints   = [];
             // ordered list of epAvgLinksTeta (Teta is the angle as : T = Y/sqrt(X*X+Y*Y))
@@ -705,16 +705,18 @@ define(
                 else
                     this.maxRectHeight = mtxMaxInterspan + this.titleHeight + mtxMaxSize.height;
 
+                // helper_.debug("[Node.defineMaxSize] " + this.name + " : {" + this.maxRectWidth + "," +  this.maxRectHeight + "}");
+                // helper_.debug("[Node.defineMaxSize] " + this.name + " : " + this.nodeEndpoints.length*params.endpoint_radSelec*2);
                 if (this.maxRectWidth < this.nodeEndpoints.length*params.endpoint_radSelec*2)
                     this.maxRectWidth = this.nodeEndpoints.length*params.endpoint_radSelec*2;
 
-                if (this.name!==null && (this.rectWidth < this.name.width(this.txtTitleFont)*7/5))
+                if (this.name!==null && (this.maxRectWidth < this.name.width(this.txtTitleFont)*7/5))
                     this.maxRectWidth = this.name.width(this.txtTitleFont)*7/5;
 
                 this.minTetaX = Math.abs(Math.atan(params.endpoint_radSelec/(this.maxRectHeight/2)));
                 this.minTetaY = Math.abs(Math.atan(params.endpoint_radSelec/(this.maxRectWidth/2)));
 
-                //helper_.debug("[Node.defineMaxSize] " + this.name + " : {" + this.maxRectWidth + "," +  this.maxRectHeight + "}")
+                // helper_.debug("[Node.defineMaxSize] " + this.name + " : {" + this.maxRectWidth + "," +  this.maxRectHeight + "}");
             };
 
             this.defineSize = function() {

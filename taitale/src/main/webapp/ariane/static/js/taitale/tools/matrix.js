@@ -24,9 +24,10 @@ define(
     ],
     function (helper_) {
 
-        function Matrix() {
+        function Matrix(name) {
             this.helper = new helper_();
 
+            this.name = name;
             this.nbLines   = 0;
             this.nbColumns = 0;
             this.zemtx     = [];
@@ -786,11 +787,13 @@ define(
                 for (j = 0, jj = this.nbLines; j < jj; j++) {
                     block = this.zemtx[i][j];
                     if (block!=null && block!==this.FREE && block!==this.LOCKED) {
+                        // this.helper.debug("[tools/Matrix] " + this.name + " - adding " + block.obj.name + " to mtx max size.");
                         if (block.obj.getMaxRectSize().width==0)
                             block.obj.defineMaxSize();
+                        // this.helper.debug("[tools/Matrix] " + this.name + " - before : {" + this.contentWidth + ", " + this.contentHeight + "}");
                         this.contentHeight += block.obj.getMaxRectSize().height;
                         this.contentWidth += block.obj.getMaxRectSize().width;
-
+                        // this.helper.debug("[tools/Matrix] " + this.name + " - after : {" + this.contentWidth + ", " + this.contentHeight + "}");
                     }
                 }
             }
