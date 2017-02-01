@@ -201,8 +201,8 @@ define(
             this.containerHat_     = new containerHat(this.company,this.product,this.type);
 
             this.containerParentC  = null;
-            // the current nodes heap from this to the last parent node of the chain as a list
-            // [this,this.nodeParentNode,this.nodeParentNode.nodeParentNode ...]
+            // the current containers heap from this to the last parent container of the chain as a list
+            // [this,this.containerParentC,this.containerParentC.containerParentC ...]
             this.containerHeapC    = [];
             this.containerChilds   = new containerMatrix();
 
@@ -776,18 +776,19 @@ define(
                         for (j = 0, jj=container.containerHeapC.length; j <jj ; j++) {
                             var linkedContainerHC = container.containerHeapC[j],
                                 thisContainerHC = this.containerHeapC[i];
-                            if (isInHeap.indexOf[linkedContainerHC]==-1)
-                                if (linkedContainerHC.ID!=thisContainerHC.ID)
-                                    if (!thisContainerHC.isInHeapContainers(linkedContainerHC))
-                                        if (thisContainerHC.linkedContainers.indexOf(linkedContainerHC)==-1) {
+                            if (isInHeap.indexOf(linkedContainerHC.ID)===-1) {
+                                if (linkedContainerHC.ID != thisContainerHC.ID)
+                                    if (!thisContainerHC.isInHeapContainers(linkedContainerHC)) {
+                                        if (!thisContainerHC.isLinkedToContainer(linkedContainerHC)) {
                                             thisContainerHC.linkedContainers.push(linkedContainerHC);
                                             if (thisContainerHC.cpID == 0 && linkedContainerHC.cpID == 0)
                                                 thisContainerHC.linkedTreeObjects.push(linkedContainerHC);
-                                        } else
-                                            isInHeap.push(linkedContainerHC)
+                                        }
+                                    } else isInHeap.push(linkedContainerHC.ID)
+                            }
                         }
 
-                    if (this.linkedContainers.indexOf(container)==-1) {
+                    if (!this.isLinkedToContainer(container)) {
                         this.linkedContainers.push(container);
                         if (this.cpID == 0 && container.cpID == 0)
                             this.linkedTreeObjects.push(container);
