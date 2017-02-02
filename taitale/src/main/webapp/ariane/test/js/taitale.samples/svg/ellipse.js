@@ -21,38 +21,128 @@ requirejs (
     ],
     function (Raphael) {
 
-        function ellipse(x, y, hrad, vrad) {
-            this.x = x;
-            this.y = y;
-            this.hrad = hrad;
-            this.vrad = vrad;
+        function ellipseBubble(x, y, width, height) {
+            this.x = x + width/2;
+            this.y = y + height/2;
+            this.p = (height < width) ? height/2 : width/2;
+            this.c = (width > height) ? width/2 : height/2;
+            this.hrad = 3*( -p + Math.sqrt( Math.pow(p,2) + ( 4*(Math.pow(c,2) ) ) ) )/4;
+            this.vrad = Math.sqrt(p*hrad);
+            this.rotate = (height > width);
 
             this.sminor = (hrad < vrad) ? hrad : vrad;
             this.smajor = (hrad < vrad) ? vrad : hrad;
             this.excent = Math.sqrt(Math.pow(this.smajor,2)-Math.pow(this.sminor,2))/this.smajor;
 
+            this.bubble = null;
+            this.container = null;
+
             this.print = function(r) {
-                r.ellipse(this.x, this.y, this.hrad, this.vrad);
+                this.container = r.rect(x, y, width, height);
+                this.bubble = r.ellipse(this.x, this.y, this.hrad, this.vrad);
+                if (rotate) this.bubble.transform("r90");
             };
 
             this.placePoint = function(r, rad) {
-                var ro = this.sminor/Math.sqrt(1 - Math.pow(this.excent,2)*Math.pow(Math.cos(rad),2));
-                var x = this.x + ro * Math.cos(rad); y = this.y + ro * Math.sin(rad);
-                r.circle(x, y, 5);
+                var ro = this.sminor/Math.sqrt(1 - Math.pow(this.excent,2)*Math.pow(Math.cos(rad),2)),
+                    x = (!this.rotate) ? this.x + ro * Math.cos(rad) : this.x + ro * Math.sin(rad),
+                    y = (!this.rotate) ? this.y + ro * Math.sin(rad) : this.y + ro * Math.cos(rad);
+
+                r.circle(x, y, 1);
+            };
+
+            this.placeRect = function(r, rad, width, height) {
+                var cos = parseFloat(Math.cos(rad).toFixed(10)), sin = parseFloat(Math.sin(rad).toFixed(10)),
+                    ro = this.sminor/Math.sqrt(1 - Math.pow(this.excent,2)*Math.pow(cos,2)),
+                    x = (!this.rotate) ? this.x + ro * Math.cos(rad) : this.x + ro * Math.sin(rad),
+                    y = (!this.rotate) ? this.y + ro * Math.sin(rad) : this.y + ro * Math.cos(rad);
+
+                if (cos < 0) {
+                    if (sin < 0) {
+                        if (this.rotate) {
+                            x -= width;
+                            y -= height;
+                        } else {
+                            x -= width;
+                            y -= height;
+                        }
+                    } else if (sin > 0) {
+                        if (this.rotate)  y -= height;
+                        else x -= width;
+                    } else {
+                        if (this.rotate) {
+                            x -= width/2;
+                            y -= height;
+                        } else {
+                            x -= width;
+                            y -= height/2;
+                        }
+                    }
+                } else if (cos > 0) {
+                    if (sin < 0) {
+                        if (this.rotate) x -= width;
+                        else y -= height;
+                    } else if (sin == 0) {
+                        if (this.rotate) x -= width/2;
+                        else y -= height/2;
+                    }
+                } else {
+                    if (sin > 0) {
+                        if (this.rotate) y -= height/2;
+                        else x -= width/2;
+                    } else {
+                        if (this.rotate) {
+                            x -= width;
+                            y -= height/2;
+                        } else {
+                            x -= width/2;
+                            y -= height;
+                        }
+                    }
+                }
+
+                r.rect(x, y, width, height);
             };
 
             return this;
         }
 
-        var rsr = Raphael('rsr', '1000', '800');
-        var ell = ellipse(100, 100, 50, 30);
-        ell.print(rsr);
-        ell.placePoint(rsr, 0);
-        ell.placePoint(rsr, Math.PI/4);
-        ell.placePoint(rsr, Math.PI/2);
-        ell.placePoint(rsr, 3*Math.PI/4);
-        ell.placePoint(rsr, Math.PI);
-        ell.placePoint(rsr, 5*Math.PI/4);
-        ell.placePoint(rsr, 3*Math.PI/2);
-        ell.placePoint(rsr, 7*Math.PI/4);
+        var rsr = Raphael('rsr', '5000', '800');
+        var ell1 = ellipseBubble(300, 300, 400, 100);
+        ell1.print(rsr);
+        ell1.placePoint(rsr, 0);
+        ell1.placeRect(rsr, 0, 100, 20);
+        ell1.placePoint(rsr, Math.PI/4);
+        ell1.placeRect(rsr, Math.PI/4, 100, 20);
+        ell1.placePoint(rsr, Math.PI/2);
+        ell1.placeRect(rsr, Math.PI/2, 100, 20);
+        ell1.placePoint(rsr, 3*Math.PI/4);
+        ell1.placeRect(rsr, 3*Math.PI/4, 100, 20);
+        ell1.placePoint(rsr, Math.PI);
+        ell1.placeRect(rsr, Math.PI, 100, 20);
+        ell1.placePoint(rsr, 5*Math.PI/4);
+        ell1.placeRect(rsr, 5*Math.PI/4, 100, 20);
+        ell1.placePoint(rsr, 3*Math.PI/2);
+        ell1.placeRect(rsr, 3*Math.PI/2, 100, 20);
+        ell1.placePoint(rsr, 7*Math.PI/4);
+        ell1.placeRect(rsr, 7*Math.PI/4, 100, 20);
+
+        var ell2 = ellipseBubble(1200, 300, 100, 300);
+        ell2.print(rsr);
+        ell2.placePoint(rsr, 0);
+        ell2.placeRect(rsr, 0, 100, 20);
+        ell2.placePoint(rsr, Math.PI/4);
+        ell2.placeRect(rsr, Math.PI/4, 100, 20);
+        ell2.placePoint(rsr, Math.PI/2);
+        ell2.placeRect(rsr, Math.PI/2, 100, 20);
+        ell2.placePoint(rsr, 3*Math.PI/4);
+        ell2.placeRect(rsr, 3*Math.PI/4, 100, 20);
+        ell2.placePoint(rsr, Math.PI);
+        ell2.placeRect(rsr, Math.PI, 100, 20);
+        ell2.placePoint(rsr, 5*Math.PI/4);
+        ell2.placeRect(rsr, 5*Math.PI/4, 100, 20);
+        ell2.placePoint(rsr, 3*Math.PI/2);
+        ell2.placeRect(rsr, 3*Math.PI/2, 100, 20);
+        ell2.placePoint(rsr, 7*Math.PI/4);
+        ell2.placeRect(rsr, 7*Math.PI/4, 100, 20);
     });
