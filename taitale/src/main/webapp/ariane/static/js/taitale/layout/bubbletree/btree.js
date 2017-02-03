@@ -62,7 +62,7 @@ define(
                     vertexRegistry.push(currentVertex);
                     treeObject.isInserted=true;
 
-                    var parentVertexID = (parentTreeVertex==null) ? "NONE" : parentTreeVertex.getObject().ID;
+                    //var parentVertexID = (parentTreeVertex==null) ? "NONE" : parentTreeVertex.getObject().ID;
                     //helper_.debug(
                     //    "[tree.addVertex] New vertex " + currentVertex.getVertexID() +
                     //    " added (" + treeObject.name + "). Parent Vertex ID = " + parentVertexID +

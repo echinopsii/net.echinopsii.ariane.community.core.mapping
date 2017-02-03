@@ -785,7 +785,7 @@ define(
                                     if (!thisContainerHC.isInHeapContainers(linkedContainerHC)) {
                                         if (!thisContainerHC.isLinkedToContainer(linkedContainerHC)) {
                                             thisContainerHC.linkedContainers.push(linkedContainerHC);
-                                            if (thisContainerHC.cpID == 0 && linkedContainerHC.cpID == 0)
+                                            if (thisContainerHC.containerParentC == null && linkedContainerHC.containerParentC == null)
                                                 thisContainerHC.linkedTreeObjects.push(linkedContainerHC);
                                         }
                                     } else isInHeap.push(linkedContainerHC.ID)
@@ -794,7 +794,7 @@ define(
 
                     if (!this.isLinkedToContainer(container)) {
                         this.linkedContainers.push(container);
-                        if (this.cpID == 0 && container.cpID == 0)
+                        if (this.containerParentC == null && container.containerParentC == null)
                             this.linkedTreeObjects.push(container);
                     }
                 }
