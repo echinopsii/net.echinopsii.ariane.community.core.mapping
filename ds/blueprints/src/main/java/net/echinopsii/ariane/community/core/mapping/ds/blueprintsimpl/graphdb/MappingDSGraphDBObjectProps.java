@@ -54,18 +54,17 @@ public class MappingDSGraphDBObjectProps {
             return;
         }
         log.debug("Synchronize property {}_{} : {}...", new Object[]{mappingObjPropsKey, key, ((value!=null) ? value.toString() : "null")});
-        vertex.setProperty(mappingObjPropsKey+"_"+key, value);
+        if (value != null) vertex.setProperty(mappingObjPropsKey+"_"+key, value);
+        else log.warn("Property {}_{} value is null ! ", new Object[]{mappingObjPropsKey, key});
     }
 
     public static void synchronizeObjectPropertyToDB(Vertex vertex, String key, Object value, String mappingObjPropsKey) {
-        if (value!=null) {
-            if (MappingDSGraphDB.isBlueprintsNeo4j())
-                flatObjectProperties(vertex, key, value, mappingObjPropsKey);
-            else {
-                log.debug("Synchronize property {}_{} : {}...", new Object[]{mappingObjPropsKey, key, value.toString()});
-                vertex.setProperty(mappingObjPropsKey + "_" + key, value);
-            }
-        } else log.debug("Value is null for key {} ! ", new Object[]{key});
+        if (MappingDSGraphDB.isBlueprintsNeo4j())
+            flatObjectProperties(vertex, key, value, mappingObjPropsKey);
+        else {
+            log.debug("Synchronize property {}_{} : {}...", new Object[]{mappingObjPropsKey, key, value.toString()});
+            vertex.setProperty(mappingObjPropsKey + "_" + key, value);
+        }
     }
 
     public static void removeObjectPropertyFromDB(Vertex vertex, String key, String mappingObjPropsKey) {
@@ -83,7 +82,7 @@ public class MappingDSGraphDBObjectProps {
 
     private static void unflatVertexPropertyToObject(Vertex vertex, String key, String prefixObjKey, String splittedKey, String parentObjKey,
                                                     HashMap<String, Object> props,  HashMap<String, Object> objectsMap) {
-        String keyName = null;
+        String keyName;
         String type    = null;
         String subKey  = null;
 
@@ -231,8 +230,7 @@ public class MappingDSGraphDBObjectProps {
     }
 
     public static void unflatVertexPropsToObjects(Vertex vertex, HashMap<String, Object> props, String mappingObjPropsKey) {
-        HashMap<String, Object> vertexObjectProperties = new HashMap<String,Object>();
-        HashMap<String, Object> objectsMap = new HashMap<String, Object>();
+        HashMap<String, Object> objectsMap = new HashMap<>();
 
         for (String key : vertex.getPropertyKeys())
             if (key.contains(mappingObjPropsKey))
@@ -243,9 +241,7 @@ public class MappingDSGraphDBObjectProps {
         if (MappingDSGraphDB.isBlueprintsNeo4j()) {
             unflatVertexPropsToObjects(vertex, props, mappingObjPropsKey);
         } else {
-            Iterator<String> iterK = vertex.getPropertyKeys().iterator();
-            while (iterK.hasNext()) {
-                String key = iterK.next();
+            for (String key : vertex.getPropertyKeys()) {
                 if (key.contains(mappingObjPropsKey)) {
                     String subkey = key.split(mappingObjPropsKey + "_")[1];
                     props.put(subkey, vertex.getProperty(key));
