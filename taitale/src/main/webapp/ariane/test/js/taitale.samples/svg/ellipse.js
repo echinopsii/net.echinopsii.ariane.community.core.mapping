@@ -21,7 +21,7 @@ requirejs (
     ],
     function (Raphael) {
 
-        function ellipseBubble(x, y, width, height) {
+        function ellipseBubbleForRect(x, y, width, height) {
             this.x = x + width/2;
             this.y = y + height/2;
             this.p = (height < width) ? height/2 : width/2;
@@ -41,14 +41,6 @@ requirejs (
                 this.container = r.rect(x, y, width, height);
                 this.bubble = r.ellipse(this.x, this.y, this.hrad, this.vrad);
                 if (rotate) this.bubble.transform("r90");
-            };
-
-            this.placePoint = function(r, rad) {
-                var ro = this.sminor/Math.sqrt(1 - Math.pow(this.excent,2)*Math.pow(Math.cos(rad),2)),
-                    x = (!this.rotate) ? this.x + ro * Math.cos(rad) : this.x + ro * Math.sin(rad),
-                    y = (!this.rotate) ? this.y + ro * Math.sin(rad) : this.y + ro * Math.cos(rad);
-
-                r.circle(x, y, 1);
             };
 
             this.placeRect = function(r, rad, width, height) {
@@ -108,41 +100,25 @@ requirejs (
         }
 
         var rsr = Raphael('rsr', '5000', '800');
-        var ell1 = ellipseBubble(300, 300, 400, 100);
+        var ell1 = ellipseBubbleForRect(300, 300, 400, 100);
         ell1.print(rsr);
-        ell1.placePoint(rsr, 0);
         ell1.placeRect(rsr, 0, 100, 20);
-        ell1.placePoint(rsr, Math.PI/4);
         ell1.placeRect(rsr, Math.PI/4, 100, 20);
-        ell1.placePoint(rsr, Math.PI/2);
         ell1.placeRect(rsr, Math.PI/2, 100, 20);
-        ell1.placePoint(rsr, 3*Math.PI/4);
         ell1.placeRect(rsr, 3*Math.PI/4, 100, 20);
-        ell1.placePoint(rsr, Math.PI);
         ell1.placeRect(rsr, Math.PI, 100, 20);
-        ell1.placePoint(rsr, 5*Math.PI/4);
         ell1.placeRect(rsr, 5*Math.PI/4, 100, 20);
-        ell1.placePoint(rsr, 3*Math.PI/2);
         ell1.placeRect(rsr, 3*Math.PI/2, 100, 20);
-        ell1.placePoint(rsr, 7*Math.PI/4);
         ell1.placeRect(rsr, 7*Math.PI/4, 100, 20);
 
-        var ell2 = ellipseBubble(1200, 300, 100, 300);
+        var ell2 = ellipseBubbleForRect(1200, 300, 100, 300);
         ell2.print(rsr);
-        ell2.placePoint(rsr, 0);
         ell2.placeRect(rsr, 0, 100, 20);
-        ell2.placePoint(rsr, Math.PI/4);
         ell2.placeRect(rsr, Math.PI/4, 100, 20);
-        ell2.placePoint(rsr, Math.PI/2);
         ell2.placeRect(rsr, Math.PI/2, 100, 20);
-        ell2.placePoint(rsr, 3*Math.PI/4);
         ell2.placeRect(rsr, 3*Math.PI/4, 100, 20);
-        ell2.placePoint(rsr, Math.PI);
         ell2.placeRect(rsr, Math.PI, 100, 20);
-        ell2.placePoint(rsr, 5*Math.PI/4);
         ell2.placeRect(rsr, 5*Math.PI/4, 100, 20);
-        ell2.placePoint(rsr, 3*Math.PI/2);
         ell2.placeRect(rsr, 3*Math.PI/2, 100, 20);
-        ell2.placePoint(rsr, 7*Math.PI/4);
         ell2.placeRect(rsr, 7*Math.PI/4, 100, 20);
     });
