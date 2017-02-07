@@ -70,7 +70,7 @@ define(
             //noinspection JSUnusedLocalSymbols
             var helper_       = new helper();
 
-            this.maxLinkedTreeObjectsCount = function(linkedObject1, linkedObject2) {
+            this.minMaxLinkedTreedObjectsComparator = function(linkedObject1, linkedObject2) {
                 return (linkedObject2.getLinkedTreeObjectsCount() - linkedObject1.getLinkedTreeObjectsCount())*this.sortOrdering;
             };
 
@@ -89,12 +89,16 @@ define(
                 return this.linkedTreeObjects.length;
             };
 
+            this.getLinksCount = function() {
+                return this.linkedTreeObjects.length;
+            };
+
             this.setSortOrdering = function(sort) {
-                ;
+                this.sortOrdering = sort;
             };
 
             this.sortLinkedTreeObjects = function() {
-                this.linkedTreeObjects.sort(this.maxLinkedTreeObjectsCount);
+                this.linkedTreeObjects.sort(this.minMaxLinkedTreedObjectsComparator);
             };
 
             this.pushLinkedTreeObject = function(object) {
@@ -131,7 +135,7 @@ define(
             };
 
             this.setCylinder = function(centerX,centerY) {
-                var title = (this.properties != null && this.properties.busDescription     != null) ? this.properties.busDescription + " " + this.multicastAddr : this.multicastAddr,
+                var title = (this.properties != null && this.properties.busDescription != null) ? this.properties.busDescription + " " + this.multicastAddr : this.multicastAddr,
                     titleWidth  = title.width(params.container_txtTitle),
                     titleHeight = title.height(params.container_txtTitle);
 
@@ -161,6 +165,11 @@ define(
             };
 
             this.getBubbleDiameter = function() {
+                var title = (this.properties != null && this.properties.busDescription != null) ? this.properties.busDescription + " " + this.multicastAddr : this.multicastAddr,
+                    titleWidth  = title.width(params.container_txtTitle);
+                if (this.longg < titleWidth + titleWidth*11/5 + params.container_fitTextPadding)
+                    this.longg = titleWidth + titleWidth*11/5 + params.container_fitTextPadding;
+                // helper_.debug("[Multicastbus.getBubbleDiameter] " + this.longg);
                 return Math.sqrt(Math.pow(this.longg,2) + Math.pow(this.diameter,2));
             };
 
