@@ -220,7 +220,7 @@ define(
             this.fitTitleMinFont   = params.container_fitTxtTitleMinFont;
             this.fitTextPadding    = params.container_fitTextPadding;
             this.cornerRad         = params.container_cornerRad;
-            this.sWidth       = params.container_strokeWidth;
+            this.sWidth            = params.container_strokeWidth;
             this.centerMtx         = false;
 
             this.rectWidth         = 0;
@@ -768,10 +768,6 @@ define(
                 this.sortOrdering = sort;
             };
 
-            this.getLinkedTreeObjects = function() {
-                return this.linkedTreeObjects
-            };
-
             this.pushLinkedContainer = function(container) {
                 var isAlreadyPushed = this.isLinkedToContainer(container);
                 var isInHeap = [];
@@ -847,6 +843,13 @@ define(
 
             this.getLinkedBus = function() {
                 return this.linkedBus;
+            };
+
+            this.getLinksCount = function() {
+                var count = 0, i, ii;
+                for (i = 0, ii = this.containerChilds.length; i < ii; i++)
+                    count += this.containerChilds[i].getLinksCount();
+                return count;
             };
 
             this.updateLayoutData = function() {
@@ -957,7 +960,10 @@ define(
             this.print = function(r_) {
                 this.r = r_;
 
-                // helper_.debug("[Container.print] " + this.name + " : {rectWidth: " + this.rectWidth + ", rectHeight: " + this.rectHeight + "}");
+                if (this.name === "altan" || this.name === "demo")
+                    helper_.debug("[Container.print] " + this.name +
+                        " : {rectTopLeftX : " + this.rectTopLeftX + " , rectTopLeftY: " + this.rectTopLeftY +
+                        ", rectWidth: " + this.rectWidth + ", rectHeight: " + this.rectHeight + "}");
 
                 if (this.color == 0) this.color = this.containerParentC.color;
 
