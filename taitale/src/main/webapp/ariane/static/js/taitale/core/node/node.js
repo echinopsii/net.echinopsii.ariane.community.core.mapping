@@ -850,6 +850,15 @@ define(
                 return false;
             };
 
+            this.getLinksCount = function() {
+                var count = 0, i, ii;
+                for (i = 0, ii = this.nodeEndpoints.length; i < ii; i++)
+                    count += this.nodeEndpoints[i].objsLinkedCount;
+                for (i = 0, ii = this.nodeChildNodes.length; i < ii; i++)
+                    count += this.nodeChildNodes[i].getLinksCount();
+                return count;
+            };
+
             this.updateLayoutData = function() {
                 var i, ii, linkedNode, linkedContainer, linkedBus;
                 for (i = 0, ii = this.linkedNodes.length; i < ii; i++) {

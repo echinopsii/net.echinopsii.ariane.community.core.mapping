@@ -28,7 +28,6 @@
                 "RVRD_IPADDR":"192.168.33.8",
                 "RVRD_NAME":"rvrd",
                 "RVRD_INBOX_PORT":"0",
-                "RVRD_LICENSE_TICKET":"217318",
                 "supportTeam":{
                     "color":"444",
                     "name":"FR MDW"
@@ -72,7 +71,6 @@
                 "RVRD_IPADDR":"192.168.33.7",
                 "RVRD_NAME":"rvrd",
                 "RVRD_INBOX_PORT":"0",
-                "RVRD_LICENSE_TICKET":"217318",
                 "supportTeam":{
                     "color":"444",
                     "name":"FR MDW"

@@ -62,7 +62,6 @@
         "RVRD_PID":"666",
         "RVRD_NAME":"rvrd",
         "RVRD_IPADDR":"192.168.43.8",
-        "RVRD_LICENSE_TICKET":"217318",
         "RVRD_INBOX_PORT":"0",
         "supportTeam":{
           "color":"11301f",
@@ -239,7 +238,6 @@
         "RVRD_PID":"696",
         "RVRD_NAME":"rvrd",
         "RVRD_IPADDR":"192.168.44.8",
-        "RVRD_LICENSE_TICKET":"217318",
         "RVRD_INBOX_PORT":"0",
         "supportTeam":{
           "color":"11301f",
@@ -280,7 +278,6 @@
         "RVRD_PID":"479",
         "RVRD_NAME":"rvrd",
         "RVRD_IPADDR":"192.168.33.7",
-        "RVRD_LICENSE_TICKET":"217318",
         "RVRD_INBOX_PORT":"0",
         "supportTeam":{
           "color":"11301f",
@@ -423,7 +420,6 @@
         "RVRD_PID":"666",
         "RVRD_NAME":"rvrd",
         "RVRD_IPADDR":"192.168.45.8",
-        "RVRD_LICENSE_TICKET":"217318",
         "RVRD_INBOX_PORT":"0",
         "supportTeam":{
           "color":"11301f",
@@ -566,7 +562,6 @@
         "RVRD_PID":"499",
         "RVRD_NAME":"rvrd",
         "RVRD_IPADDR":"192.168.33.5",
-        "RVRD_LICENSE_TICKET":"217318",
         "RVRD_INBOX_PORT":"0",
         "supportTeam":{
           "color":"11301f",
@@ -607,7 +602,6 @@
         "RVRD_PID":"666",
         "RVRD_NAME":"rvrd",
         "RVRD_IPADDR":"192.168.46.8",
-        "RVRD_LICENSE_TICKET":"217318",
         "RVRD_INBOX_PORT":"0",
         "supportTeam":{
           "color":"11301f",
@@ -682,7 +676,6 @@
         "RVRD_PID":"474",
         "RVRD_NAME":"rvrd",
         "RVRD_IPADDR":"192.168.33.8",
-        "RVRD_LICENSE_TICKET":"217318",
         "RVRD_INBOX_PORT":"0",
         "supportTeam":{
           "color":"11301f",
@@ -995,7 +988,6 @@
         "RVRD_PID":"479",
         "RVRD_NAME":"rvrd",
         "RVRD_IPADDR":"192.168.33.6",
-        "RVRD_LICENSE_TICKET":"217318",
         "RVRD_INBOX_PORT":"0",
         "supportTeam":{
           "color":"11301f",

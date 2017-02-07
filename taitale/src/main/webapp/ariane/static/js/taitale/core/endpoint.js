@@ -37,6 +37,7 @@ define(
             //noinspection JSUnresolvedVariable
             this.properties = JSONEndpointDesc.endpointProperties;
             this.epLinks    = [];
+            this.objsLinkedCount = 0;
             this.epNode     = Node_;
             this.epIsPushed = false;
             this.linkAvgX   = 0;
@@ -395,6 +396,9 @@ define(
 
             this.pushLink = function(link_) {
                 this.epLinks.push(link_);
+                if (this.epID == link_.epSource.epID && link_.epTarget!=null) this.objsLinkedCount += 1;
+                else if (link_.epTarget != null && this.epID == link_.epTarget.epID && link_.epSource!=null) this.objsLinkedCount += 1;
+                else if (this.epID == link_.epSource.epID && link_.multicastBus!=null) this.objsLinkedCount += 1;
             };
 
             this.chooseMulticastTargetBindingPointAndCalcPoz = function(link_) {
