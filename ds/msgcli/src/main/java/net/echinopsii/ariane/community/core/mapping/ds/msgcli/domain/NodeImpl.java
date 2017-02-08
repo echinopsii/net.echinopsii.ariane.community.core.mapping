@@ -40,6 +40,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.NodeSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxNodeSce;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
+import net.echinopsii.ariane.community.messaging.api.MomException;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -179,7 +180,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                 Map<String, Object> retMsg = null;
                 try {
                     retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
-                } catch (TimeoutException e) {
+                } catch (TimeoutException | MomException | IOException e) {
                     throw new MappingDSException(e.getMessage());
                 }
                 if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.setNodeName(name);
@@ -229,7 +230,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                     Map<String, Object> retMsg = null;
                     try {
                         retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
-                    } catch (TimeoutException e) {
+                    } catch (TimeoutException | MomException | IOException e) {
                         throw new MappingDSException(e.getMessage());
                     }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
@@ -285,7 +286,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
             Map<String, Object> retMsg = null;
             try {
                 retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
-            } catch (TimeoutException e) {
+            } catch (TimeoutException | MomException | IOException e) {
                 throw new MappingDSException(e.getMessage());
             }
             if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.addNodeProperty(propertyKey, value);
@@ -307,7 +308,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
             Map<String, Object> retMsg = null;
             try {
                 retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
-            } catch (TimeoutException e) {
+            } catch (TimeoutException | MomException | IOException e) {
                 throw new MappingDSException(e.getMessage());
             }
             if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.removeNodeProperty(propertyKey);
@@ -356,7 +357,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                     Map<String, Object> retMsg = null;
                     try {
                         retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
-                    } catch (TimeoutException e) {
+                    } catch (TimeoutException | MomException | IOException e) {
                         throw new MappingDSException(e.getMessage());
                     }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
@@ -435,7 +436,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                     Map<String, Object> retMsg = null;
                     try {
                         retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
-                    } catch (TimeoutException e) {
+                    } catch (TimeoutException | MomException | IOException e) {
                         throw new MappingDSException(e.getMessage());
                     }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
@@ -476,7 +477,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                     Map<String, Object> retMsg = null;
                     try {
                         retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
-                    } catch (TimeoutException e) {
+                    } catch (TimeoutException | MomException | IOException e) {
                         throw new MappingDSException(e.getMessage());
                     }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
@@ -542,7 +543,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                     Map<String, Object> retMsg = null;
                     try {
                         retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
-                    } catch (TimeoutException e) {
+                    } catch (TimeoutException | MomException | IOException e) {
                         throw new MappingDSException(e.getMessage());
                     }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
@@ -583,7 +584,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                     Map<String, Object> retMsg = null;
                     try {
                         retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
-                    } catch (TimeoutException e) {
+                    } catch (TimeoutException | MomException | IOException e) {
                         throw new MappingDSException(e.getMessage());
                     }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
@@ -649,7 +650,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                     Map<String, Object> retMsg = null;
                     try {
                         retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
-                    } catch (TimeoutException e) {
+                    } catch (TimeoutException | MomException | IOException e) {
                         throw new MappingDSException(e.getMessage());
                     }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
@@ -690,7 +691,7 @@ public class NodeImpl extends SProxNodeAbs implements SProxNode {
                     Map<String, Object> retMsg = null;
                     try {
                         retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, NodeSce.Q_MAPPING_NODE_SERVICE, nodeReplyWorker);
-                    } catch (TimeoutException e) {
+                    } catch (TimeoutException | MomException | IOException e) {
                         throw new MappingDSException(e.getMessage());
                     }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {

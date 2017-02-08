@@ -30,10 +30,12 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.TransportSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
+import net.echinopsii.ariane.community.messaging.api.MomException;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
@@ -118,7 +120,7 @@ public class TransportImpl extends SProxTransportAbs implements SProxTransport {
                     Map<String, Object> retMsg = null;
                     try {
                         retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, TransportSce.Q_MAPPING_TRANSPORT_SERVICE, transportReplyWorker);
-                    } catch (TimeoutException e) {
+                    } catch (TimeoutException | MomException | IOException e) {
                         throw new MappingDSException(e.getMessage());
                     }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.setTransportName(name);
@@ -147,7 +149,7 @@ public class TransportImpl extends SProxTransportAbs implements SProxTransport {
             Map<String, Object> retMsg = null;
             try {
                 retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, TransportSce.Q_MAPPING_TRANSPORT_SERVICE, transportReplyWorker);
-            } catch (TimeoutException e) {
+            } catch (TimeoutException | MomException | IOException e) {
                 throw new MappingDSException(e.getMessage());
             }
             if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.addTransportProperty(propertyKey, value);
@@ -169,7 +171,7 @@ public class TransportImpl extends SProxTransportAbs implements SProxTransport {
             Map<String, Object> retMsg = null;
             try {
                 retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, TransportSce.Q_MAPPING_TRANSPORT_SERVICE, transportReplyWorker);
-            } catch (TimeoutException e) {
+            } catch (TimeoutException | MomException | IOException e) {
                 throw new MappingDSException(e.getMessage());
             }
             if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.removeTransportProperty(propertyKey);

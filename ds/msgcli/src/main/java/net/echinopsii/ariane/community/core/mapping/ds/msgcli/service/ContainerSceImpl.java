@@ -31,11 +31,13 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxContai
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxContainerSceAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
+import net.echinopsii.ariane.community.messaging.api.MomException;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
 import org.hibernate.engine.spi.Mapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeoutException;
 
@@ -58,7 +60,7 @@ public class ContainerSceImpl extends SProxContainerSceAbs<ContainerImpl> {
         Map<String, Object> retMsg = null;
         try {
             retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, container.getContainerReplyWorker());
-        } catch (TimeoutException e) {
+        } catch (TimeoutException | MomException | IOException e) {
             throw new MappingDSException(e.getMessage());
         }
 
@@ -84,7 +86,7 @@ public class ContainerSceImpl extends SProxContainerSceAbs<ContainerImpl> {
         Map<String, Object> retMsg = null;
         try {
             retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, container.getContainerReplyWorker());
-        } catch (TimeoutException e) {
+        } catch (TimeoutException | MomException | IOException e) {
             throw new MappingDSException(e.getMessage());
         }
 
@@ -110,7 +112,7 @@ public class ContainerSceImpl extends SProxContainerSceAbs<ContainerImpl> {
         Map<String, Object> retMsg = null;
         try {
             retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, container.getContainerReplyWorker());
-        } catch (TimeoutException e) {
+        } catch (TimeoutException | MomException | IOException e) {
             throw new MappingDSException(e.getMessage());
         }
 
@@ -137,7 +139,7 @@ public class ContainerSceImpl extends SProxContainerSceAbs<ContainerImpl> {
         Map<String, Object> retMsg = null;
         try {
             retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, container.getContainerReplyWorker());
-        } catch (TimeoutException e) {
+        } catch (TimeoutException | MomException | IOException e) {
             throw new MappingDSException(e.getMessage());
         }
 
@@ -162,7 +164,7 @@ public class ContainerSceImpl extends SProxContainerSceAbs<ContainerImpl> {
         Map<String, Object> retMsg = null;
         try {
             retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, container.getContainerReplyWorker());
-        } catch (TimeoutException e) {
+        } catch (TimeoutException | MomException | IOException e) {
             throw new MappingDSException(e.getMessage());
         }
 
@@ -184,7 +186,7 @@ public class ContainerSceImpl extends SProxContainerSceAbs<ContainerImpl> {
         Map<String, Object> retMsg = null;
         try {
             retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, container.getContainerReplyWorker());
-        } catch (TimeoutException e) {
+        } catch (TimeoutException | MomException | IOException e) {
             throw new MappingDSException(e.getMessage());
         }
 
@@ -217,7 +219,7 @@ public class ContainerSceImpl extends SProxContainerSceAbs<ContainerImpl> {
         Map<String, Object> retMsg = null;
         try {
             retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, container.getContainerReplyWorker());
-        } catch (TimeoutException e) {
+        } catch (TimeoutException | MomException | IOException e) {
             throw new MappingDSException(e.getMessage());
         }
 
@@ -273,7 +275,7 @@ public class ContainerSceImpl extends SProxContainerSceAbs<ContainerImpl> {
         Map<String, Object> retMsg = null;
         try {
             retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, new getContainerWorker());
-        } catch (TimeoutException e) {
+        } catch (TimeoutException | MomException | IOException e) {
             throw new MappingDSException(e.getMessage());
         }
         int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
