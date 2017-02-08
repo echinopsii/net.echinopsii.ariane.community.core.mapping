@@ -41,6 +41,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxContainerSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
+import net.echinopsii.ariane.community.messaging.api.MomException;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -193,7 +194,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                 Map<String, Object> retMsg = null;
                 try {
                     retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
-                } catch (TimeoutException e) {
+                } catch (TimeoutException | MomException | IOException e) {
                     throw new MappingDSException(e.getMessage());
                 }
                 if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.setContainerName(name);
@@ -218,7 +219,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                 Map<String, Object> retMsg = null;
                 try {
                     retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
-                } catch (TimeoutException e) {
+                } catch (TimeoutException | MomException | IOException e) {
                     throw new MappingDSException(e.getMessage());
                 }
                 if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.setContainerCompany(company);
@@ -243,7 +244,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                 Map<String, Object> retMsg = null;
                 try {
                     retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
-                } catch (TimeoutException e) {
+                } catch (TimeoutException | MomException | IOException e) {
                     throw new MappingDSException(e.getMessage());
                 }
                 if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.setContainerProduct(product);
@@ -268,7 +269,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                 Map<String, Object> retMsg = null;
                 try {
                     retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
-                } catch (TimeoutException e) {
+                } catch (TimeoutException | MomException | IOException e) {
                     throw new MappingDSException(e.getMessage());
                 }
                 if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.setContainerType(type);
@@ -331,7 +332,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                     Map<String, Object> retMsg = null;
                     try {
                         retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
-                    } catch (TimeoutException e) {
+                    } catch (TimeoutException | MomException | IOException e) {
                         throw new MappingDSException(e.getMessage());
                     }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
@@ -386,7 +387,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                     Map<String, Object> retMsg = null;
                     try {
                         retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
-                    } catch (TimeoutException e) {
+                    } catch (TimeoutException | MomException | IOException e) {
                         throw new MappingDSException(e.getMessage());
                     }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
@@ -442,7 +443,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
             Map<String, Object> retMsg = null;
             try {
                 retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
-            } catch (TimeoutException e) {
+            } catch (TimeoutException | MomException | IOException e) {
                 throw new MappingDSException(e.getMessage());
             }
             if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.addContainerProperty(propertyKey, value);
@@ -464,7 +465,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
             Map<String, Object> retMsg = null;
             try {
                 retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
-            } catch (TimeoutException e) {
+            } catch (TimeoutException | MomException | IOException e) {
                 throw new MappingDSException(e.getMessage());
             }
             if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.removeContainerProperty(propertyKey);
@@ -513,7 +514,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                     Map<String, Object> retMsg = null;
                     try {
                         retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
-                    } catch (TimeoutException e) {
+                    } catch (TimeoutException | MomException | IOException e) {
                         throw new MappingDSException(e.getMessage());
                     }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
@@ -592,7 +593,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                     Map<String, Object> retMsg = null;
                     try {
                         retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
-                    } catch (TimeoutException e) {
+                    } catch (TimeoutException | MomException | IOException e) {
                         throw new MappingDSException(e.getMessage());
                     }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
@@ -632,7 +633,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                     Map<String, Object> retMsg = null;
                     try {
                         retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
-                    } catch (TimeoutException e) {
+                    } catch (TimeoutException | MomException | IOException e) {
                         throw new MappingDSException(e.getMessage());
                     }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
@@ -696,7 +697,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                     Map<String, Object> retMsg = null;
                     try {
                         retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
-                    } catch (TimeoutException e) {
+                    } catch (TimeoutException | MomException | IOException e) {
                         throw new MappingDSException(e.getMessage());
                     }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
@@ -726,7 +727,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                     Map<String, Object> retMsg = null;
                     try {
                         retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
-                    } catch (TimeoutException e) {
+                    } catch (TimeoutException | MomException | IOException e) {
                         throw new MappingDSException(e.getMessage());
                     }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
@@ -783,7 +784,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                     Map<String, Object> retMsg = null;
                     try {
                         retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
-                    } catch (TimeoutException e) {
+                    } catch (TimeoutException | MomException | IOException e) {
                         throw new MappingDSException(e.getMessage());
                     }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
@@ -814,7 +815,7 @@ public class ContainerImpl extends SProxContainerAbs implements SProxContainer {
                     Map<String, Object> retMsg = null;
                     try {
                         retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ContainerSce.Q_MAPPING_CONTAINER_SERVICE, containerReplyWorker);
-                    } catch (TimeoutException e) {
+                    } catch (TimeoutException | MomException | IOException e) {
                         throw new MappingDSException(e.getMessage());
                     }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {

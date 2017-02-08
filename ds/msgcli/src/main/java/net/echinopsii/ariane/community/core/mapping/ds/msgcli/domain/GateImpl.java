@@ -34,6 +34,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
+import net.echinopsii.ariane.community.messaging.api.MomException;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -159,7 +160,7 @@ public class GateImpl extends NodeImpl implements SProxGate {
                     Map<String, Object> retMsg = null;
                     try {
                         retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, GateSce.Q_MAPPING_GATE_SERVICE, gateReplyWorker);
-                    } catch (TimeoutException e) {
+                    } catch (TimeoutException | MomException | IOException e) {
                         throw new MappingDSException(e.getMessage());
                     }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {

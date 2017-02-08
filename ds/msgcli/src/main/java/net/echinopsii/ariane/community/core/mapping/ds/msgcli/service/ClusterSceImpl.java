@@ -31,10 +31,12 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxCluste
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxClusterSceAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
+import net.echinopsii.ariane.community.messaging.api.MomException;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeoutException;
 
@@ -56,7 +58,7 @@ public class ClusterSceImpl extends SProxClusterSceAbs<ClusterImpl> {
         Map<String, Object> retMsg = null;
         try {
             retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ClusterSce.Q_MAPPING_CLUSTER_SERVICE, cluster.getClusterReplyWorker());
-        } catch (TimeoutException e) {
+        } catch (TimeoutException | MomException | IOException e) {
             throw new MappingDSException(e.getMessage());
         }
         int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
@@ -80,7 +82,7 @@ public class ClusterSceImpl extends SProxClusterSceAbs<ClusterImpl> {
         Map<String, Object> retMsg = null;
         try {
             retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ClusterSce.Q_MAPPING_CLUSTER_SERVICE, cluster.getClusterReplyWorker());
-        } catch (TimeoutException e) {
+        } catch (TimeoutException | MomException | IOException e) {
             throw new MappingDSException(e.getMessage());
         }
         int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
@@ -100,7 +102,7 @@ public class ClusterSceImpl extends SProxClusterSceAbs<ClusterImpl> {
         Map<String, Object> retMsg = null;
         try {
             retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ClusterSce.Q_MAPPING_CLUSTER_SERVICE, cluster.getClusterReplyWorker());
-        } catch (TimeoutException e) {
+        } catch (TimeoutException | MomException | IOException e) {
             throw new MappingDSException(e.getMessage());
         }
         int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
@@ -131,7 +133,7 @@ public class ClusterSceImpl extends SProxClusterSceAbs<ClusterImpl> {
         Map<String, Object> retMsg = null;
         try {
             retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ClusterSce.Q_MAPPING_CLUSTER_SERVICE, cluster.getClusterReplyWorker());
-        } catch (TimeoutException e) {
+        } catch (TimeoutException | MomException | IOException e) {
             throw new MappingDSException(e.getMessage());
         }
         int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);
@@ -186,7 +188,7 @@ public class ClusterSceImpl extends SProxClusterSceAbs<ClusterImpl> {
         Map<String, Object> retMsg = null;
         try {
             retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, ClusterSce.Q_MAPPING_CLUSTER_SERVICE, new getClustersWorker());
-        } catch (TimeoutException e) {
+        } catch (TimeoutException | MomException | IOException e) {
             throw new MappingDSException(e.getMessage());
         }
         int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);

@@ -30,10 +30,12 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.TransportSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxTransportSceAbs;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
+import net.echinopsii.ariane.community.messaging.api.MomException;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeoutException;
 
@@ -56,7 +58,7 @@ public class TransportSceImpl extends SProxTransportSceAbs<TransportImpl> {
         Map<String, Object> retMsg = null;
         try {
             retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, TransportSce.Q_MAPPING_TRANSPORT_SERVICE, transport.getTransportReplyWorker());
-        } catch (TimeoutException e) {
+        } catch (TimeoutException | MomException | IOException e) {
             throw new MappingDSException(e.getMessage());
         }
 
@@ -80,7 +82,7 @@ public class TransportSceImpl extends SProxTransportSceAbs<TransportImpl> {
         Map<String, Object> retMsg = null;
         try {
             retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, TransportSce.Q_MAPPING_TRANSPORT_SERVICE, transport.getTransportReplyWorker());
-        } catch (TimeoutException e) {
+        } catch (TimeoutException | MomException | IOException e) {
             throw new MappingDSException(e.getMessage());
         }
 
@@ -101,7 +103,7 @@ public class TransportSceImpl extends SProxTransportSceAbs<TransportImpl> {
         Map<String, Object> retMsg = null;
         try {
             retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, TransportSce.Q_MAPPING_TRANSPORT_SERVICE, transport.getTransportReplyWorker());
-        } catch (TimeoutException e) {
+        } catch (TimeoutException | MomException | IOException e) {
             throw new MappingDSException(e.getMessage());
         }
 
@@ -159,7 +161,7 @@ public class TransportSceImpl extends SProxTransportSceAbs<TransportImpl> {
         Map<String, Object> retMsg = null;
         try {
             retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, TransportSce.Q_MAPPING_TRANSPORT_SERVICE, new getTransportsWorker());
-        } catch (TimeoutException e) {
+        } catch (TimeoutException | MomException | IOException e) {
             throw new MappingDSException(e.getMessage());
         }
         int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);

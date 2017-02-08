@@ -27,6 +27,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.domain.Endpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Node;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxEndpoint;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxEndpointAbs;
+import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesException;
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.EndpointJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.json.domain.NodeJSON;
@@ -38,6 +39,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.NodeSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
+import net.echinopsii.ariane.community.messaging.api.MomException;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
 import org.hibernate.engine.spi.Mapping;
 import org.slf4j.Logger;
@@ -145,7 +147,7 @@ public class EndpointImpl extends SProxEndpointAbs implements SProxEndpoint {
                 Map<String, Object> retMsg = null;
                 try {
                     retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, EndpointSce.Q_MAPPING_ENDPOINT_SERVICE, endpointReplyWorker);
-                } catch (TimeoutException e) {
+                } catch (TimeoutException | MomException | IOException e) {
                     throw new MappingDSException(e.getMessage());
                 }
                 if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.setEndpointURL(url);
@@ -195,7 +197,7 @@ public class EndpointImpl extends SProxEndpointAbs implements SProxEndpoint {
                     Map<String, Object> retMsg = null;
                     try {
                         retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, EndpointSce.Q_MAPPING_ENDPOINT_SERVICE, endpointReplyWorker);
-                    } catch (TimeoutException e) {
+                    } catch (TimeoutException | MomException | IOException e) {
                         throw new MappingDSException(e.getMessage());
                     }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
@@ -249,7 +251,7 @@ public class EndpointImpl extends SProxEndpointAbs implements SProxEndpoint {
             Map<String, Object> retMsg = null;
             try {
                 retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, EndpointSce.Q_MAPPING_ENDPOINT_SERVICE, endpointReplyWorker);
-            } catch (TimeoutException e) {
+            } catch (TimeoutException | MomException | IOException e) {
                 throw new MappingDSException(e.getMessage());
             }
             if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
@@ -272,7 +274,7 @@ public class EndpointImpl extends SProxEndpointAbs implements SProxEndpoint {
             Map<String, Object> retMsg = null;
             try {
                 retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, EndpointSce.Q_MAPPING_ENDPOINT_SERVICE, endpointReplyWorker);
-            } catch (TimeoutException e) {
+            } catch (TimeoutException | MomException | IOException e) {
                 throw new MappingDSException(e.getMessage());
             }
             if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) super.removeEndpointProperty(propertyKey);
@@ -321,7 +323,7 @@ public class EndpointImpl extends SProxEndpointAbs implements SProxEndpoint {
                     Map<String, Object> retMsg = null;
                     try {
                         retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, EndpointSce.Q_MAPPING_ENDPOINT_SERVICE, endpointReplyWorker);
-                    } catch (TimeoutException e) {
+                    } catch (TimeoutException | MomException | IOException e) {
                         throw new MappingDSException(e.getMessage());
                     }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
@@ -363,7 +365,7 @@ public class EndpointImpl extends SProxEndpointAbs implements SProxEndpoint {
                     Map<String, Object> retMsg = null;
                     try {
                         retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, EndpointSce.Q_MAPPING_ENDPOINT_SERVICE, endpointReplyWorker);
-                    } catch (TimeoutException e) {
+                    } catch (TimeoutException | MomException | IOException e) {
                         throw new MappingDSException(e.getMessage());
                     }
                     if ((int) retMsg.get(MomMsgTranslator.MSG_RC) == 0) {
