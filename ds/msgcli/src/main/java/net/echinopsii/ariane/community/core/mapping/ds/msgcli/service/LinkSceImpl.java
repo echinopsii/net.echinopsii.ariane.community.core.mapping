@@ -31,10 +31,12 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.MappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxLinkSceAbs;
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
+import net.echinopsii.ariane.community.messaging.api.MomException;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeoutException;
 
@@ -59,7 +61,7 @@ public class LinkSceImpl extends SProxLinkSceAbs<LinkImpl>{
         Map<String, Object> retMsg = null;
         try {
             retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, LinkSce.Q_MAPPING_LINK_SERVICE, link.getLinkReplyWorker());
-        } catch (TimeoutException e) {
+        } catch (TimeoutException | MomException | IOException e) {
             throw new MappingDSException(e.getMessage());
         }
 
@@ -84,7 +86,7 @@ public class LinkSceImpl extends SProxLinkSceAbs<LinkImpl>{
         Map<String, Object> retMsg = null;
         try {
             retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, LinkSce.Q_MAPPING_LINK_SERVICE, link.getLinkReplyWorker());
-        } catch (TimeoutException e) {
+        } catch (TimeoutException | MomException | IOException e) {
             throw new MappingDSException(e.getMessage());
         }
 
@@ -106,7 +108,7 @@ public class LinkSceImpl extends SProxLinkSceAbs<LinkImpl>{
         Map<String, Object> retMsg = null;
         try {
             retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, LinkSce.Q_MAPPING_LINK_SERVICE, link.getLinkReplyWorker());
-        } catch (TimeoutException e) {
+        } catch (TimeoutException | MomException | IOException e) {
             throw new MappingDSException(e.getMessage());
         }
 
@@ -168,7 +170,7 @@ public class LinkSceImpl extends SProxLinkSceAbs<LinkImpl>{
         Map<String, Object> retMsg = null;
         try {
             retMsg = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, LinkSce.Q_MAPPING_LINK_SERVICE, new getLinksWorker());
-        } catch (TimeoutException e) {
+        } catch (TimeoutException | MomException | IOException e) {
             throw new MappingDSException(e.getMessage());
         }
         int rc = (int)retMsg.get(MomMsgTranslator.MSG_RC);

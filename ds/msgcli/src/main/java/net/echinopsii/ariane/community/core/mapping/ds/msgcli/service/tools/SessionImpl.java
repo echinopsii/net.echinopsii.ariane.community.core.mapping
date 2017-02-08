@@ -25,6 +25,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.msgcli.momsp.MappingMsgcl
 import net.echinopsii.ariane.community.core.mapping.ds.service.proxy.SProxMappingSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 import net.echinopsii.ariane.community.messaging.api.AppMsgWorker;
+import net.echinopsii.ariane.community.messaging.api.MomException;
 import net.echinopsii.ariane.community.messaging.api.MomMsgTranslator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,7 +140,7 @@ public class SessionImpl implements Session {
         Map<String, Object> reply = null;
         try {
             reply = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, Session.MAPPING_SESSION_SERVICE_Q, this.getSessionReplyWorker());
-        } catch (TimeoutException e) {
+        } catch (TimeoutException | MomException | IOException e) {
             throw new MappingDSException(e.getMessage());
         }
         int rc = (int)reply.get(MomMsgTranslator.MSG_RC);
@@ -156,7 +157,7 @@ public class SessionImpl implements Session {
         Map<String, Object> reply = null;
         try {
             reply = MappingMsgcliMomSP.getSharedMoMReqExec().RPC(message, Session.MAPPING_SESSION_SERVICE_Q, this.getSessionReplyWorker());
-        } catch (TimeoutException e) {
+        } catch (TimeoutException | MomException | IOException e) {
             throw new MappingDSException(e.getMessage());
         }
         int rc = (int)reply.get(MomMsgTranslator.MSG_RC);
