@@ -621,14 +621,20 @@ define(
                 // helper_.debug("[Container.getBubbleDiameter] " + this.name + " : { maxRectWidth: " + this.maxRectWidth +
                 //     ", maxRectHeight: " + this.maxRectHeight + ", bubbleDiameter: " + bubbleDiameter + "}");
                 // return bubbleDiameter;
+                var myWidth, myHeight;
+                if (this.rectWidth!=0) myWidth = this.rectWidth;
+                else myWidth = this.maxRectWidth;
+                if (this.rectHeight!=0) myHeight = this.rectHeight;
+                else myHeight = this.maxRectHeight;
+
                 var inputs = {
                     'rectWidth' : this.rectWidth,
                     'rectHeight' : this.rectHeight,
                     'maxRecWidth': this.maxRectWidth,
                     'maxRectHeight': this.maxRectHeight,
-                    'diameter': Math.sqrt(Math.pow(this.maxRectWidth,2) + Math.pow(this.maxRectHeight,2))
+                    'diameter': Math.sqrt(Math.pow(myWidth,2) + Math.pow(myHeight,2))
                 };
-                // helper_.debug("[container.getBubbleInputs] " + this.name + " : " + JSON.stringify(result));
+                helper_.debug("[container.getBubbleInputs] " + this.name + " : " + JSON.stringify(inputs));
                 return inputs;
             };
 
