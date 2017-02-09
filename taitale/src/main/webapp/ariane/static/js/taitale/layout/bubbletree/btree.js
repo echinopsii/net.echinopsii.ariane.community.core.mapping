@@ -65,8 +65,8 @@ define(
                         // else
                         //     helper_.debug("[tree.addVertex] ALREADY INSERTED " + linkedObjects[i].name + " !!!");
 
-                    currentVertex.defineRelativeLeafsData();
-                    var parentVertexID = (parentTreeVertex==null) ? "NONE" : parentTreeVertex.object.ID;
+                    // currentVertex.defineRelativeLeafsData();
+                    // var parentVertexID = (parentTreeVertex==null) ? "NONE" : parentTreeVertex.object.ID;
                     // helper_.debug(
                     //     "[tree.addVertex] New vertex " + currentVertex.vertexid + " added (" + treeObject.name + "). " +
                     //     "{ Parent Vertex ID = " + parentVertexID +
@@ -77,8 +77,8 @@ define(
 
             this.definePoz = function() {
                 var i, ii;
-                // for (i = 0, ii = vertexRegistry.length; i < ii ; i++)
-                //    vertexRegistry[i].defineRelativeLeafsData();
+                for (i = 0, ii = vertexRegistry.length; i < ii ; i++)
+                   vertexRegistry[i].defineRelativeLeafsData();
 
                 for (i = 0, ii = vertexRegistry.length; i < ii ; i++)
                     vertexRegistry[i].defineRelativePoz();
