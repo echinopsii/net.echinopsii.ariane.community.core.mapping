@@ -27,7 +27,7 @@ requirejs (
             this.p = (height < width) ? height/2 : width/2;
             this.c = (width > height) ? width/2 : height/2;
             this.hrad = 3*( -p + Math.sqrt( Math.pow(p,2) + ( 4*(Math.pow(c,2) ) ) ) )/4;
-            this.vrad = Math.sqrt(p*hrad);
+            this.vrad = Math.sqrt(this.p*this.hrad);
             this.rotate = (height > width);
 
             this.sminor = (hrad < vrad) ? hrad : vrad;

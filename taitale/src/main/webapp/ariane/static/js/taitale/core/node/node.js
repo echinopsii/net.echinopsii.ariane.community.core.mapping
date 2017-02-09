@@ -852,10 +852,15 @@ define(
 
             this.getLinksCount = function() {
                 var count = 0, i, ii;
-                for (i = 0, ii = this.nodeEndpoints.length; i < ii; i++)
+                for (i = 0, ii = this.nodeEndpoints.length; i < ii; i++) {
+                    helper_.debug("[node]name: " + this.name + ", linksCount: " + count);
                     count += this.nodeEndpoints[i].objsLinkedCount;
-                for (i = 0, ii = this.nodeChildNodes.length; i < ii; i++)
-                    count += this.nodeChildNodes[i].getLinksCount();
+                }
+                for (i = 0, ii = this.nodeChildNodes.objectsList.length; i < ii; i++) {
+                    helper_.debug("[node]name: " + this.name + ", linksCount: " + count);
+                    count += this.nodeChildNodes.objectsList[i].getLinksCount();
+                }
+
                 return count;
             };
 
