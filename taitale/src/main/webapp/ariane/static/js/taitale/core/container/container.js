@@ -634,7 +634,7 @@ define(
                     'maxRectHeight': this.maxRectHeight,
                     'diameter': Math.sqrt(Math.pow(myWidth,2) + Math.pow(myHeight,2))
                 };
-                helper_.debug("[container.getBubbleInputs] " + this.name + " : " + JSON.stringify(inputs));
+                // helper_.debug("[container.getBubbleInputs] " + this.name + " : " + JSON.stringify(inputs));
                 return inputs;
             };
 
