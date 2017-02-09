@@ -621,11 +621,15 @@ define(
                 // helper_.debug("[Container.getBubbleDiameter] " + this.name + " : { maxRectWidth: " + this.maxRectWidth +
                 //     ", maxRectHeight: " + this.maxRectHeight + ", bubbleDiameter: " + bubbleDiameter + "}");
                 // return bubbleDiameter;
-                return {
-                    'rectWidth' : this.maxRectWidth,
-                    'rectHeight' : this.maxRectHeight,
+                var inputs = {
+                    'rectWidth' : this.rectWidth,
+                    'rectHeight' : this.rectHeight,
+                    'maxRecWidth': this.maxRectWidth,
+                    'maxRectHeight': this.maxRectHeight,
                     'diameter': Math.sqrt(Math.pow(this.maxRectWidth,2) + Math.pow(this.maxRectHeight,2))
                 };
+                // helper_.debug("[container.getBubbleInputs] " + this.name + " : " + JSON.stringify(result));
+                return inputs;
             };
 
             this.setBubbleCoord = function(x,y) {
@@ -851,10 +855,8 @@ define(
 
             this.getLinksCount = function() {
                 var count = 0, i, ii;
-                for (i = 0, ii = this.containerChilds.objectsList.length; i < ii; i++) {
-                    helper_.debug("[container]name: " + this.name + ", linksCount: " + count);
+                for (i = 0, ii = this.containerChilds.objectsList.length; i < ii; i++)
                     count += this.containerChilds.objectsList[i].getLinksCount();
-                }
                 return count;
             };
 

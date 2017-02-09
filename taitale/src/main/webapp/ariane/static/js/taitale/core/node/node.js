@@ -852,14 +852,10 @@ define(
 
             this.getLinksCount = function() {
                 var count = 0, i, ii;
-                for (i = 0, ii = this.nodeEndpoints.length; i < ii; i++) {
-                    helper_.debug("[node]name: " + this.name + ", linksCount: " + count);
+                for (i = 0, ii = this.nodeEndpoints.length; i < ii; i++)
                     count += this.nodeEndpoints[i].objsLinkedCount;
-                }
-                for (i = 0, ii = this.nodeChildNodes.objectsList.length; i < ii; i++) {
-                    helper_.debug("[node]name: " + this.name + ", linksCount: " + count);
+                for (i = 0, ii = this.nodeChildNodes.objectsList.length; i < ii; i++)
                     count += this.nodeChildNodes.objectsList[i].getLinksCount();
-                }
 
                 return count;
             };

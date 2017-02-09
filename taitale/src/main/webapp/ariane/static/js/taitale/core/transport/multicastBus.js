@@ -170,11 +170,15 @@ define(
                 if (this.longg < titleWidth + titleWidth*11/5 + params.container_fitTextPadding)
                     this.longg = titleWidth + titleWidth*11/5 + params.container_fitTextPadding;
                 // helper_.debug("[Multicastbus.getBubbleDiameter] " + this.longg);
-                return {
-                    'width' : this.longg,
-                    'height' : this.diameter,
+                var inputs = {
+                    'rectWidth' : this.longg,
+                    'rectHeight' : this.diameter,
+                    'maxRecWidth': this.longg,
+                    'maxRectHeight': this.diameter,
                     'diameter': Math.sqrt(Math.pow(this.longg,2) + Math.pow(this.diameter,2))
                 };
+                // helper_.debug("[multicastBus.getBubbleInputs] " + this.name + " : " + JSON.stringify(result));
+                return inputs;
             };
 
             this.setBubbleCoord = function(x,y) {
