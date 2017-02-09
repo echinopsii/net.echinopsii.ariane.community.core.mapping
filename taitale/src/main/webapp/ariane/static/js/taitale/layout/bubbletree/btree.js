@@ -22,10 +22,9 @@ define(
     [
         'jquery',
         'taitale-helper',
-        'taitale-bvertex',
-        'taitale-container'
+        'taitale-bvertex'
     ],
-    function($,helper,vertex,container) {
+    function($,helper,vertex) {
         function tree() {
             var vertexRegistry    = [] ,
                 //maxTreeFloor      = 0  ,
@@ -33,67 +32,63 @@ define(
                 treeHeight        = 0  ,
                 treeCenterX       = 0  ,
                 treeCenterY       = 0  ;
-             var helper_           = new helper();
+             // var helper_           = new helper();
 
             this.findVertexByID = function(vertexID) {
                 for (var i = 0, ii = vertexRegistry.length; i < ii ; i++) {
-                    if (vertexRegistry[i].getVertexID()==vertexID)
+                    if (vertexRegistry[i].vertexid==vertexID)
                         return vertexRegistry[i];
                 }
                 return null;
             };
 
-            this.addVertex = function(treeObject, parentTreeVertex, idFromRoot) {
-                var i, ii, currentVertex;
-                var linkedObjects  = treeObject.linkedTreeObjects,
-                    idFromRootLoop = 0;
+            this.addVertex = function(treeObject, parentTreeVertex) {
+                var i, ii, currentVertex, linkedObjects  = treeObject.linkedTreeObjects;
 
-                if (parentTreeVertex==null ||
-                    (treeObject.primaryTreeObjID === parentTreeVertex.getObject().ID)) {
+                if (parentTreeVertex==null || (treeObject.primaryTreeObjID === parentTreeVertex.object.ID))
+                {
                     currentVertex = new vertex(treeObject);
-                    if (parentTreeVertex==null) {
-                        currentVertex.setFloor(0);
-                    } else {
-                        currentVertex.setRootV(parentTreeVertex);
-                        currentVertex.setIdFromRoot(idFromRoot);
-                        currentVertex.setFloor(parentTreeVertex.getFloor() + 1);
-                        parentTreeVertex.pushLinkedVertex(currentVertex);
-                    }
+                    if (parentTreeVertex==null) currentVertex.floor = 0;
+                    else parentTreeVertex.pushLinkedVertex(currentVertex);
                     vertexRegistry.push(currentVertex);
                     treeObject.isInserted=true;
 
-                    //var parentVertexID = (parentTreeVertex==null) ? "NONE" : parentTreeVertex.getObject().ID;
-                    //helper_.debug(
-                    //    "[tree.addVertex] New vertex " + currentVertex.getVertexID() +
-                    //    " added (" + treeObject.name + "). Parent Vertex ID = " + parentVertexID +
-                    //    ",Floor =  " + currentVertex.getFloor() + ", ID from root = " + currentVertex.getIdFromRoot());
-
                     for (i = 0, ii = linkedObjects.length; i<ii; i++)
                         if (!linkedObjects[i].isInserted && linkedObjects[i].primaryTreeObjID==null) {
-                            //helper_.debug("[tree.addVertex] Define soon : " + linkedObjects[i].name);
+                            // helper_.debug("[tree.addVertex] Define soon : " + linkedObjects[i].name);
                             linkedObjects[i].primaryTreeObjID = treeObject.ID;
                         }
 
                     for (i = 0, ii = linkedObjects.length; i<ii; i++)
                         if (!linkedObjects[i].isInserted)
-                            this.addVertex(linkedObjects[i], currentVertex, idFromRootLoop++);
-                    //    else
-                    //        helper_.debug("[tree.addVertex] ALREADY INSERTED " + linkedObjects[i].name + " !!!")
+                            this.addVertex(linkedObjects[i], currentVertex);
+                        // else
+                        //     helper_.debug("[tree.addVertex] ALREADY INSERTED " + linkedObjects[i].name + " !!!");
+
+                    currentVertex.defineRelativeLeafsData();
+                    var parentVertexID = (parentTreeVertex==null) ? "NONE" : parentTreeVertex.object.ID;
+                    // helper_.debug(
+                    //     "[tree.addVertex] New vertex " + currentVertex.vertexid + " added (" + treeObject.name + "). " +
+                    //     "{ Parent Vertex ID = " + parentVertexID +
+                    //     ", Floor =  " + currentVertex.floor +
+                    //     ", ID from root = " + currentVertex.idFromRoot + " }");
                 }
             };
 
             this.definePoz = function() {
                 var i, ii;
-                for (i = 0, ii = vertexRegistry.length; i < ii ; i++) {
+                // for (i = 0, ii = vertexRegistry.length; i < ii ; i++)
+                //    vertexRegistry[i].defineRelativeLeafsData();
+
+                for (i = 0, ii = vertexRegistry.length; i < ii ; i++)
                     vertexRegistry[i].defineRelativePoz();
-                }
 
                 var minX=0,	maxX=0,
                     minY=0, maxY=0;
 
                 for (i = 0, ii = vertexRegistry.length; i < ii ; i++) {
-                    var relX = vertexRegistry[i].getRelX(),
-                        relY = vertexRegistry[i].getRelY();
+                    var relX = vertexRegistry[i].relX,
+                        relY = vertexRegistry[i].relY;
                     if (relX > maxX)
                         maxX = relX;
                     if (relX < minX)
@@ -115,18 +110,14 @@ define(
 
             this.loadTree = function(treeRoot) {
                 //helper_.debug("[tree] treeRoot = " + treeRoot.getID());
-                this.addVertex(treeRoot, null, 0);
-
-                for (var i = 0, ii = vertexRegistry.length; i<ii; i++) {
-                    if (vertexRegistry[i].getFloor()!=0) {
-                        vertexRegistry[i].pushLinkedVertex(vertexRegistry[i].getRootV());
-                    }
-                }
+                this.addVertex(treeRoot, null);
+                // for (var i = 0, ii = vertexRegistry.length; i<ii; i++)
+                //     if (vertexRegistry[i].floor!=0) vertexRegistry[i].pushLinkedVertex(vertexRegistry[i].rootV);
             };
 
             this.reloadTree = function(treeRoot) {
                 for (var i = 0, ii = vertexRegistry.length; i < ii ; i++) {
-                    vertexRegistry[i].getObject().isInserted = false;
+                    vertexRegistry[i].object.isInserted = false;
                 }
                 vertexRegistry = [];
                 this.loadTree(treeRoot);

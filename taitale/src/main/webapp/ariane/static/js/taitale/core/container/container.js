@@ -960,10 +960,9 @@ define(
             this.print = function(r_) {
                 this.r = r_;
 
-                if (this.name === "altan" || this.name === "demo")
-                    helper_.debug("[Container.print] " + this.name +
-                        " : {rectTopLeftX : " + this.rectTopLeftX + " , rectTopLeftY: " + this.rectTopLeftY +
-                        ", rectWidth: " + this.rectWidth + ", rectHeight: " + this.rectHeight + "}");
+                // helper_.debug("[Container.print] " + this.name +
+                //     " : {rectTopLeftX : " + this.rectTopLeftX + " , rectTopLeftY: " + this.rectTopLeftY +
+                //     ", rectWidth: " + this.rectWidth + ", rectHeight: " + this.rectHeight + "}");
 
                 if (this.color == 0) this.color = this.containerParentC.color;
 
