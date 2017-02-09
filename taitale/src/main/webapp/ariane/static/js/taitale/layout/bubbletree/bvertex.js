@@ -81,13 +81,13 @@ define(
                 //     ", linkedProxies.length: " + this.linkedProxies.length + "}");
                 if (leafFloor < this.linkedLeafsByFloor.length) {
                     for (i = 0, ii = this.linkedLeafsByFloor[leafFloor].length; i < ii; i++) {
-                        currentRad = this.linkedLeafsByFloor[leafFloor][i].object.getBubbleDiameter()/2;
+                        currentRad = this.linkedLeafsByFloor[leafFloor][i].object.getBubbleInputs().diameter/2;
                         if (currentRad>maxRad)
                             maxRad = currentRad
                     }
                 } else {
                     for (i = 0, ii = this.linkedProxies.length; i < ii; i++) {
-                        currentRad = this.linkedProxies[i].object.getBubbleDiameter()/2;
+                        currentRad = this.linkedProxies[i].object.getBubbleInputs().diameter/2;
                         if (currentRad>maxRad)
                             maxRad = currentRad
                     }
@@ -99,8 +99,8 @@ define(
             this.definedRadStepValueFromList = function(listToExplore, currentRadStep, orientStep) {
                 var currentRad1, currentRad2, teta1, teta2, i, ii, radStepIsOK, lambda = 0;
                 for (i = 0, ii = listToExplore.length; i+1 < ii; i++) {
-                    currentRad1 = listToExplore[i].object.getBubbleDiameter() / 2;
-                    currentRad2 = listToExplore[i + 1].object.getBubbleDiameter() / 2;
+                    currentRad1 = listToExplore[i].object.getBubbleInputs().diameter / 2;
+                    currentRad2 = listToExplore[i + 1].object.getBubbleInputs().diameter / 2;
                     radStepIsOK = false;
                     while (!radStepIsOK) {
                         teta1 = Math.atan(currentRad1 / (currentRadStep * 2)) * 2;
@@ -131,8 +131,8 @@ define(
                 var currentRadStep, listToExplore;
                 // helper_.debug("[vertex.defineLeafRadStepValue] " + this.object.name + " : " +
                 //     "{leafFloor: " + leafFloor + ", leafOrientStep"  + leafOrientStep + "}");
-                currentRadStep = this.getMaxChildRad(leafFloor) + 100 +
-                    ((leafFloor==0) ? this.object.getBubbleDiameter()/2 : this.leafRadFloor[leafFloor-1]);
+                currentRadStep = this.getMaxChildRad(leafFloor) + 10 +
+                    ((leafFloor==0) ? this.object.getBubbleInputs().diameter/2 : this.leafRadFloor[leafFloor-1]);
                 listToExplore = this.linkedLeafsByFloor[leafFloor];
 
                 // helper_.debug("[vertex.defineLeafRadStepValue] " + this.object.name + " : " +
@@ -151,15 +151,11 @@ define(
                         currentRadStep += this.getMaxChildRad(i)*2;
                     // currentRadStep += this.getMaxChildRad(this.leafRadFloorCount-1);
                 }
-                currentRadStep += this.object.getBubbleDiameter()/2 + 100;
+                currentRadStep += this.object.getBubbleInputs().diameter/2 + 10;
 
                 // helper_.debug("[vertex.defineProxyRadStepValue] " + this.object.name + " : " +
                 //     "{currentRadStep: " + currentRadStep + "}");
                 return this.definedRadStepValueFromList(this.linkedProxies, currentRadStep, this.orientStep);
-            };
-
-            var maxLinksComparator = function(linkedObject1, linkedObject2) {
-                return (linkedObject2.object.getLinksCount() - linkedObject1.object.getLinksCount());
             };
 
             this.getLeafOrientStep = function(floor) {
@@ -219,7 +215,9 @@ define(
                 var i, ii, j, jj, leafOrientStep, aVertex, freePlaceOnLastLeafsStep;
 
                 if (this.linkedLeafs.length > 0) {
-                    this.linkedLeafs.sort(maxLinksComparator);
+                    this.linkedLeafs.sort(function(linkedObject1, linkedObject2) {
+                        return (linkedObject2.object.getLinksCount() - linkedObject1.object.getLinksCount());
+                    });
                     this.linkedLeafsByFloor = [];
                     this.leafRadFloorCount = 1;
 
