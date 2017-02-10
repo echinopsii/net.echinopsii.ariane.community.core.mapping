@@ -24,15 +24,15 @@ requirejs (
         function ellipseBubbleForRect(x, y, width, height) {
             this.x = x + width/2;
             this.y = y + height/2;
-            this.p = (height < width) ? height/2 : width/2;
-            this.c = (width > height) ? width/2 : height/2;
-            this.hrad = 3*( -p + Math.sqrt( Math.pow(p,2) + ( 4*(Math.pow(c,2) ) ) ) )/4;
-            this.vrad = Math.sqrt(this.p*this.hrad);
+            this.p = (height < width) ? height/2 : width/2; // semi latus rectum
+            this.c = (width > height) ? width/2 : height/2; // distance from center to focal point
+            this.hrad = 3*( -p + Math.sqrt( Math.pow(p,2) + ( 4*(Math.pow(c,2) ) ) ) )/4; // horizontal radius
+            this.vrad = Math.sqrt(this.p*this.hrad);                                      // vertical radius
             this.rotate = (height > width);
 
-            this.sminor = (hrad < vrad) ? hrad : vrad;
-            this.smajor = (hrad < vrad) ? vrad : hrad;
-            this.excent = Math.sqrt(Math.pow(this.smajor,2)-Math.pow(this.sminor,2))/this.smajor;
+            this.sminor = (hrad < vrad) ? hrad : vrad; // semi minor axis
+            this.smajor = (hrad < vrad) ? vrad : hrad; // semi major axis
+            this.excent = Math.sqrt(Math.pow(this.smajor,2)-Math.pow(this.sminor,2))/this.smajor; // excentricity
 
             this.bubble = null;
             this.container = null;
