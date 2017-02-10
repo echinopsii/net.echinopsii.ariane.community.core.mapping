@@ -175,7 +175,7 @@ define(
             };
 
             this.defineRelativeLeafsFromRootPoz = function() {
-                var i, ii, j, jj, leafOrientStep, leafOrientV, aVertex, nextRelFirstCht = this.relFirstChT;
+                var i, ii, j, jj, leafOrientStep, aVertex, nextRelFirstCht = this.relFirstChT;
                 // if (this.linkedLeafsByFloor.length > 0)
                 //     helper_.debug("[vertex.defineRelativeLeafsFromRootPoz] " + this.object.name + " : " +
                 //         "{ relX: " + this.relX + ", relY: " + this.relY + ", orientV: " + this.orientV +
@@ -198,7 +198,7 @@ define(
                                 if (this.linkedProxies.length <= 2)
                                     aVertex.orientStep = (aVertex.linkedProxies.length>1) ? Math.PI/aVertex.linkedProxies.length : 0;
                                 else
-                                    aVertex.orientStep  = (aVertex.linkedProxies.length>1) ? this.orientStep*2/aVertex.linkedProxies.length : this.orientStep*2 ;
+                                    aVertex.orientStep = (aVertex.linkedProxies.length>1) ? this.orientStep*2/aVertex.linkedProxies.length : this.orientStep*2 ;
                                 aVertex.radStep = this.defineProxyRadStepValue();
                                 aVertex.relFirstChT = aVertex.orientV - ((aVertex.linkedProxies.length>1) ? aVertex.orientStep/aVertex.linkedProxies.length : 0);
                                 aVertex.defineRelativeLeafsFromRootPoz();
