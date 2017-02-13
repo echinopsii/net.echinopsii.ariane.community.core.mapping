@@ -600,8 +600,8 @@ define(
 
             this.getRectSize = function() {
                 return {
-                    width  : this.rectWidth,
-                    height : this.rectHeight
+                    width  : (this.rectWidth!=0) ? this.rectWidth : this.maxRectWidth,
+                    height : (this.rectHeight!=0) ? this.rectHeight : this.maxRectHeight
                 };
             };
 
@@ -621,13 +621,14 @@ define(
                 // helper_.debug("[Container.getBubbleDiameter] " + this.name + " : { maxRectWidth: " + this.maxRectWidth +
                 //     ", maxRectHeight: " + this.maxRectHeight + ", bubbleDiameter: " + bubbleDiameter + "}");
                 // return bubbleDiameter;
-                var myWidth, myHeight;
+                var myWidth, myHeight, inputs;
+
                 if (this.rectWidth!=0) myWidth = this.rectWidth;
                 else myWidth = this.maxRectWidth;
                 if (this.rectHeight!=0) myHeight = this.rectHeight;
                 else myHeight = this.maxRectHeight;
 
-                var inputs = {
+                inputs = {
                     'rectWidth' : this.rectWidth,
                     'rectHeight' : this.rectHeight,
                     'maxRecWidth': this.maxRectWidth,
@@ -640,6 +641,32 @@ define(
 
             this.setBubbleCoord = function(x,y) {
                 this.setTopLeftCoord(x-this.rectWidth/2, y-this.rectHeight/2)
+            };
+
+            this.getOrbitalInputs = function() {
+                var myWidth, myHeight, inputs, p, c, hrad, vrad, isVerticalOrbit, sminor, smajor;
+                // helper_.debug("[Container.getOrbitalInputs] " + this.name + " : { maxRectWidth: " + this.maxRectWidth +
+                //     ", maxRectHeight: " + this.maxRectHeight + ", rectWidth: " + this.rectWidth + ", rectHeight: " + this.rectHeight + "}");
+                if (this.rectWidth!=0) myWidth = this.rectWidth;
+                else myWidth = this.maxRectWidth;
+                if (this.rectHeight!=0) myHeight = this.rectHeight;
+                else myHeight = this.maxRectHeight;
+
+                p = (myHeight < myWidth) ? myHeight/2 : myWidth/2;
+                c = (myWidth > myHeight) ? myWidth/2 : myHeight/2;
+                hrad = 3*( -p + Math.sqrt( Math.pow(p,2) + ( 4*(Math.pow(c,2) ) ) ) )/4;
+                vrad = Math.sqrt(p*hrad);
+                isVerticalOrbit = (myHeight > myWidth);
+                sminor = (hrad < vrad) ? hrad : vrad;
+                smajor = (hrad < vrad) ? vrad : hrad;
+
+                inputs = {
+                    'isVerticalOrbit': isVerticalOrbit,
+                    'sminor': sminor,
+                    'smajor': smajor
+                };
+                // helper_.debug("[container.getOrbitalInputs] " + this.name + " : " + JSON.stringify(inputs));
+                return inputs;
             };
 
             this.getRectCornerPoints = function() {
