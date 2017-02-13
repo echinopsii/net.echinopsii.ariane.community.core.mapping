@@ -64,19 +64,19 @@ require.config({
         /*taitale orbital tree layout*/
         'taitale-otree': 'js/taitale/layout/orbitaltree/otree',
         'taitale-overtex': 'js/taitale/layout/orbitaltree/overtex',
-        /*taitale middleware layout*/
-        'taitale-map-splitter': 'js/taitale/layout/middleware/mapSplitter',
-        'taitale-layoutntw-registries' : 'js/taitale/layout/middleware/registries',
-        'taitale-datacenter': 'js/taitale/layout/middleware/datacenter/datacenter',
-        'taitale-datacenter-splitter': 'js/taitale/layout/middleware/datacenter/dcSplitter',
-        'taitale-datacenter-hat': 'js/taitale/layout/middleware/datacenter/hat',
-        'taitale-datacenter-matrix': 'js/taitale/layout/middleware/datacenter/matrix',
-        'taitale-area': 'js/taitale/layout/middleware/area/area',
-        'taitale-area-hat': 'js/taitale/layout/middleware/area/hat',
-        'taitale-area-matrix': 'js/taitale/layout/middleware/area/matrix',
-        'taitale-lan': 'js/taitale/layout/middleware/lan/lan',
-        'taitale-lan-matrix': 'js/taitale/layout/middleware/lan/matrix',
-        'taitale-lan-hat': 'js/taitale/layout/middleware/lan/hat'
+        /*taitale netL3+ layout*/
+        'taitale-map-splitter': 'js/taitale/layout/netL3+/mapSplitter',
+        'taitale-layoutntw-registries' : 'js/taitale/layout/netL3+/registries',
+        'taitale-datacenter': 'js/taitale/layout/netL3+/datacenter/datacenter',
+        'taitale-datacenter-splitter': 'js/taitale/layout/netL3+/datacenter/dcSplitter',
+        'taitale-datacenter-hat': 'js/taitale/layout/netL3+/datacenter/hat',
+        'taitale-datacenter-matrix': 'js/taitale/layout/netL3+/datacenter/matrix',
+        'taitale-area': 'js/taitale/layout/netL3+/area/area',
+        'taitale-area-hat': 'js/taitale/layout/netL3+/area/hat',
+        'taitale-area-matrix': 'js/taitale/layout/netL3+/area/matrix',
+        'taitale-lan': 'js/taitale/layout/netL3+/lan/lan',
+        'taitale-lan-matrix': 'js/taitale/layout/netL3+/lan/matrix',
+        'taitale-lan-hat': 'js/taitale/layout/netL3+/lan/hat'
     },
     shim: {
         "jquery-ui": {
@@ -170,17 +170,17 @@ requirejs (
                 helper_.hideErrorBox();
                 options.setLayout(layout.val());
                 try {
-                    if (options.getLayout()===dic.mapLayout.MDW) {
-                        document.getElementById('middlewareOptions').style.display = "";
+                    if (options.getLayout()===dic.mapLayout.NETL3P) {
+                        document.getElementById('netl3pOptions').style.display = "";
                         document.getElementById('treeOptions').style.display    = "none";
                     } else if (options.getLayout()===dic.mapLayout.BBTREE) {
-                        document.getElementById('middlewareOptions').style.display = "none";
+                        document.getElementById('netl3pOptions').style.display = "none";
                         document.getElementById('treeOptions').style.display    = "";
                     } else if (options.getLayout()===dic.mapLayout.OBTREE) {
-                        document.getElementById('middlewareOptions').style.display = "none";
+                        document.getElementById('netl3pOptions').style.display = "none";
                         document.getElementById('treeOptions').style.display    = "";
                     } else {
-                        document.getElementById('middlewareOptions').style.display = "none";
+                        document.getElementById('netl3pOptions').style.display = "none";
                         document.getElementById('treeOptions').style.display    = "none";
                     }
                     loader_.rebuildMap(options);
@@ -569,17 +569,17 @@ requirejs (
             options.displayAREA = displayArea[0].checked;
             options.displayLAN = displayLan[0].checked;
             options.setURI(homeURI + "/js/taitale.samples/json/sample.taitale.input."+test.val()+".json");
-            if (options.getLayout()===dic.mapLayout.MDW) {
-                document.getElementById('middlewareOptions').style.display = "";
+            if (options.getLayout()===dic.mapLayout.NETL3P) {
+                document.getElementById('netl3pOptions').style.display = "";
                 document.getElementById('treeOptions').style.display    = "none";
             } else if (options.getLayout()===dic.mapLayout.BBTREE) {
-                document.getElementById('middlewareOptions').style.display = "none";
+                document.getElementById('netl3pOptions').style.display = "none";
                 document.getElementById('treeOptions').style.display    = "";
             } else if (options.getLayout()===dic.mapLayout.OBTREE) {
-                document.getElementById('middlewareOptions').style.display = "none";
+                document.getElementById('netl3pOptions').style.display = "none";
                 document.getElementById('treeOptions').style.display    = "";
             } else {
-                document.getElementById('middlewareOptions').style.display = "none";
+                document.getElementById('netl3pOptions').style.display = "none";
                 document.getElementById('treeOptions').style.display    = "none";
             }
             loader_.loadMap(options);

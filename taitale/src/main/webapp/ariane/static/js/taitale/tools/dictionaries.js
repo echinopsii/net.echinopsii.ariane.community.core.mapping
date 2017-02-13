@@ -29,7 +29,7 @@ define(
                 MANUAL: "Random",
                 BBTREE: "BBTree",
                 OBTREE: "OBTree",
-                MDW : "Middleware"
+                NETL3P : "NetL3p"
             };
             this.mapMode = {
                 NAVIGATION: "Navigation",

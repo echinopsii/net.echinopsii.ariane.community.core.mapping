@@ -70,19 +70,19 @@ require.config({
         'taitale-otree': 'ajs/taitale/layout/orbitaltree/otree',
         'taitale-overtex': 'ajs/taitale/layout/orbitaltree/overtex',
 
-        /*taitale middleware layout*/
-        'taitale-map-splitter': 'ajs/taitale/layout/middleware/mapSplitter',
-        'taitale-layoutntw-registries' : 'ajs/taitale/layout/middleware/registries',
-        'taitale-datacenter': 'ajs/taitale/layout/middleware/datacenter/datacenter',
-        'taitale-datacenter-splitter': 'ajs/taitale/layout/middleware/datacenter/dcSplitter',
-        'taitale-datacenter-hat': 'ajs/taitale/layout/middleware/datacenter/hat',
-        'taitale-datacenter-matrix': 'ajs/taitale/layout/middleware/datacenter/matrix',
-        'taitale-area': 'ajs/taitale/layout/middleware/area/area',
-        'taitale-area-matrix': 'ajs/taitale/layout/middleware/area/matrix',
-        'taitale-area-hat': 'ajs/taitale/layout/middleware/area/hat',
-        'taitale-lan': 'ajs/taitale/layout/middleware/lan/lan',
-        'taitale-lan-matrix': 'ajs/taitale/layout/middleware/lan/matrix',
-        'taitale-lan-hat': 'ajs/taitale/layout/middleware/lan/hat'
+        /*taitale netL3+ layout*/
+        'taitale-map-splitter': 'ajs/taitale/layout/netL3+/mapSplitter',
+        'taitale-layoutntw-registries' : 'ajs/taitale/layout/netL3+/registries',
+        'taitale-datacenter': 'ajs/taitale/layout/netL3+/datacenter/datacenter',
+        'taitale-datacenter-splitter': 'ajs/taitale/layout/netL3+/datacenter/dcSplitter',
+        'taitale-datacenter-hat': 'ajs/taitale/layout/netL3+/datacenter/hat',
+        'taitale-datacenter-matrix': 'ajs/taitale/layout/netL3+/datacenter/matrix',
+        'taitale-area': 'ajs/taitale/layout/netL3+/area/area',
+        'taitale-area-matrix': 'ajs/taitale/layout/netL3+/area/matrix',
+        'taitale-area-hat': 'ajs/taitale/layout/netL3+/area/hat',
+        'taitale-lan': 'ajs/taitale/layout/netL3+/lan/lan',
+        'taitale-lan-matrix': 'ajs/taitale/layout/netL3+/lan/matrix',
+        'taitale-lan-hat': 'ajs/taitale/layout/netL3+/lan/hat'
     },
     map: {
         '*': { 'jquery': 'jquery-private' },
@@ -141,18 +141,18 @@ requirejs (
                     options.setURI(requestURI);
                     try {
                         loader_.reloadMap(options);
-                        if (options.getLayout()===dic.mapLayout.MDW) {
+                        if (options.getLayout()===dic.mapLayout.NETL3P) {
                             document.getElementById('treeOptions').style.display = "none";
-                            document.getElementById('middlewareOptions').style.display = "";
-                            for (i = 0, ii = middlewareLayoutDisplayOptions.inputs.length; i < ii; i++) {
-                                input = middlewareLayoutDisplayOptions.inputs[i];
+                            document.getElementById('netl3pOptions').style.display = "";
+                            for (i = 0, ii = netl3pLayoutDisplayOptions.inputs.length; i < ii; i++) {
+                                input = netl3pLayoutDisplayOptions.inputs[i];
                                 if (input.value==="displayDC") options.displayDC = input.checked;
                                 else if (input.value==="displayArea") options.displayAREA = input.checked;
                                 else if (input.value==="displayLan") options.displayLAN = input.checked;
                             }
                         } else if (options.getLayout()===dic.mapLayout.BBTREE) {
                             document.getElementById('treeOptions').style.display = "";
-                            document.getElementById('middlewareOptions').style.display = "none";
+                            document.getElementById('netl3pOptions').style.display = "none";
                         }
                         $("#mappyCanvas").css({"background-color":"whitesmoke"});
                     } catch (e) {
@@ -185,18 +185,25 @@ requirejs (
                             options.setLayout(num);
                             try {
                                 loader_.rebuildMap(options);
-                                if (options.getLayout()===dic.mapLayout.MDW) {
+                                if (options.getLayout()===dic.mapLayout.NETL3P) {
                                     document.getElementById('treeOptions').style.display = "none";
-                                    document.getElementById('middlewareOptions').style.display = "";
-                                    for (var i = 0, ii = middlewareLayoutDisplayOptions.inputs.length; i < ii; i++) {
-                                        var input = middlewareLayoutDisplayOptions.inputs[i];
-                                        if (input.value==="displayDC") options.displayDC = input.checked;
-                                        else if (input.value==="displayArea") options.displayAREA = input.checked;
-                                        else if (input.value==="displayLan") options.displayLAN = input.checked;
+                                    document.getElementById('netl3pOptions').style.display = "";
+                                    for (var i = 0, ii = netl3pLayoutDisplayOptions.inputs.length; i < ii; i++) {
+                                        var input = netl3pLayoutDisplayOptions.inputs[i];
+                                        if (input.value==="displayDC") {
+                                            options.displayDC = input.checked;
+                                            loader_.displayDC(options.displayDC);
+                                        } else if (input.value==="displayArea") {
+                                            options.displayAREA = input.checked;
+                                            loader_.displayArea(options.displayAREA);
+                                        } else if (input.value==="displayLan") {
+                                            options.displayLAN = input.checked;
+                                            loader_.displayLan(options.displayLAN);
+                                        }
                                     }
-                                } else if (options.getLayout()===dic.mapLayout.BBTREE) {
+                                } else if (options.getLayout()===dic.mapLayout.BBTREE || options.getLayout()===dic.mapLayout.OBTREE) {
                                     document.getElementById('treeOptions').style.display = "";
-                                    document.getElementById('middlewareOptions').style.display = "none";
+                                    document.getElementById('netl3pOptions').style.display = "none";
                                 }
                             } catch (e) {
                                 helper_.addMsgToGrowl(e);
@@ -327,9 +334,9 @@ requirejs (
                         }
                     }
                 });
-                $(middlewareLayoutDisplayOptions.jqId).change([loader_, dic], function() {
-                    for (i = 0, ii = middlewareLayoutDisplayOptions.inputs.length; i < ii; i++) {
-                        input = middlewareLayoutDisplayOptions.inputs[i];
+                $(netl3pLayoutDisplayOptions.jqId).change([loader_, dic], function() {
+                    for (i = 0, ii = netl3pLayoutDisplayOptions.inputs.length; i < ii; i++) {
+                        input = netl3pLayoutDisplayOptions.inputs[i];
                         if (input.value==="displayDC") {
                             options.displayDC = input.checked;
                             loader_.displayDC(options.displayDC);
@@ -401,6 +408,7 @@ requirejs (
                         }
                     }
                 });
+                /*
                 $(JPG.jqId).click([loader_, dic], function() {
                     try {
                         var inProgress = document.getElementById('exportInProgress');
@@ -475,6 +483,7 @@ requirejs (
                         console.log(e.stack);
                     }
                 });
+                */
 
                 for (i = 0, ii = notificationsOptions.inputs.length; i < ii; i++) {
                     input = notificationsOptions.inputs[i];
@@ -518,24 +527,24 @@ requirejs (
                 options.displayLegend = (input.value === dic.mapToolActivation.ON);
         }
 
-        if (options.getLayout()===dic.mapLayout.MDW) {
+        if (options.getLayout()===dic.mapLayout.NETL3P) {
             document.getElementById('treeOptions').style.display = "none";
-            document.getElementById('middlewareOptions').style.display = "";
-            for (i = 0, ii = middlewareLayoutDisplayOptions.inputs.length; i < ii; i++) {
-                input = middlewareLayoutDisplayOptions.inputs[i];
+            document.getElementById('netl3pOptions').style.display = "";
+            for (i = 0, ii = netl3pLayoutDisplayOptions.inputs.length; i < ii; i++) {
+                input = netl3pLayoutDisplayOptions.inputs[i];
                 if (input.value==="displayDC") {
                     options.displayDC = input.checked;
-                    //loader_.displayDC(options.displayDC);
+                    loader_.displayDC(options.displayDC);
                 } else if (input.value==="displayArea") {
                     options.displayAREA = input.checked;
-                    //loader_.displayArea(options.displayAREA);
+                    loader_.displayArea(options.displayAREA);
                 } else if (input.value==="displayLan") {
                     options.displayLAN = input.checked;
-                    //loader_.displayLan(options.displayLAN);
+                    loader_.displayLan(options.displayLAN);
                 }
             }
-        } else if (options.getLayout()===dic.mapLayout.BBTREE) {
+        } else if (options.getLayout()===dic.mapLayout.BBTREE || options.getLayout()===dic.mapLayout.OBTREE) {
             document.getElementById('treeOptions').style.display = "";
-            document.getElementById('middlewareOptions').style.display = "none";
+            document.getElementById('netl3pOptions').style.display = "none";
         }
     });
