@@ -61,6 +61,9 @@ require.config({
         /*taitale bubble tree layout*/
         'taitale-btree': 'js/taitale/layout/bubbletree/btree',
         'taitale-bvertex': 'js/taitale/layout/bubbletree/bvertex',
+        /*taitale orbital tree layout*/
+        'taitale-otree': 'js/taitale/layout/orbitaltree/otree',
+        'taitale-overtex': 'js/taitale/layout/orbitaltree/overtex',
         /*taitale middleware layout*/
         'taitale-map-splitter': 'js/taitale/layout/middleware/mapSplitter',
         'taitale-layoutntw-registries' : 'js/taitale/layout/middleware/registries',
@@ -171,6 +174,9 @@ requirejs (
                         document.getElementById('middlewareOptions').style.display = "";
                         document.getElementById('treeOptions').style.display    = "none";
                     } else if (options.getLayout()===dic.mapLayout.BBTREE) {
+                        document.getElementById('middlewareOptions').style.display = "none";
+                        document.getElementById('treeOptions').style.display    = "";
+                    } else if (options.getLayout()===dic.mapLayout.OBTREE) {
                         document.getElementById('middlewareOptions').style.display = "none";
                         document.getElementById('treeOptions').style.display    = "";
                     } else {
@@ -567,6 +573,9 @@ requirejs (
                 document.getElementById('middlewareOptions').style.display = "";
                 document.getElementById('treeOptions').style.display    = "none";
             } else if (options.getLayout()===dic.mapLayout.BBTREE) {
+                document.getElementById('middlewareOptions').style.display = "none";
+                document.getElementById('treeOptions').style.display    = "";
+            } else if (options.getLayout()===dic.mapLayout.OBTREE) {
                 document.getElementById('middlewareOptions').style.display = "none";
                 document.getElementById('treeOptions').style.display    = "";
             } else {

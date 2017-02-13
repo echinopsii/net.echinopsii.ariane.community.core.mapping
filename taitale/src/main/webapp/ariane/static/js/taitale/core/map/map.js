@@ -31,9 +31,10 @@ define(
         'taitale-transport',
         'taitale-link',
         'taitale-btree',
+        'taitale-otree',
         'taitale-map-options'
     ],
-    function(helper, dictionaries, params, mapMatrix, container, node, endpoint, transport, link, btree) {
+    function(helper, dictionaries, params, mapMatrix, container, node, endpoint, transport, link, btree, otree) {
         function map(options) {
             var mapWidth  = 0,
                 mapHeight = 0,
@@ -352,6 +353,7 @@ define(
                     //        containerRegistry[j].defineChildsPoz();
                         break;
 
+                    case dic.mapLayout.OBTREE:
                     case dic.mapLayout.BBTREE:
 
                         // third 0 : sort all tree lists
@@ -364,7 +366,8 @@ define(
                         treeObjects.sort(minMaxLinkedObjectsComparator);
                         // third 1 : define the tree with objects
                         // TODO: manage multi tree
-                        lTree = new btree();
+                        if (layout===dic.mapLayout.BBTREE) lTree = new btree();
+                        else if (layout===dic.mapLayout.OBTREE) lTree = new otree();
                         lTree.loadTree(treeObjects[0]);
 
                         // third 2 : define map objects position
@@ -411,7 +414,7 @@ define(
                     mapmatrix.defineMtxZoneFinalPoz(mbrdSpan, zoneSpan);
                     mapmatrix.defineMtxZoneSize();
                     mapmatrix.defineMapContentSize();
-                } else if (layout == dic.mapLayout.BBTREE) {
+                } else if (layout == dic.mapLayout.BBTREE || layout == dic.mapLayout.OBTREE) {
                     for (j = 0, jj=containerRegistry.length; j < jj; j++) {
                         containerRegistry[j].clean();
                         containerRegistry[j].defineSize();
@@ -439,6 +442,7 @@ define(
                         break;
 
                     case dic.mapLayout.MANUAL:
+                    case dic.mapLayout.OBTREE:
                     case dic.mapLayout.BBTREE:
                         var i, ii, j, jj;
                         if (containerRegistry.length > 0) {
@@ -678,6 +682,7 @@ define(
                         mapmatrix.translate(dx, dy);
                         break;
                     case dic.mapLayout.MANUAL:
+                    case dic.mapLayout.OBTREE:
                     case dic.mapLayout.BBTREE:
                         moveTreeMap(dx, dy);
                         break;
@@ -693,6 +698,7 @@ define(
                         mapmatrix.translate(dx, dy);
                         break;
                     case dic.mapLayout.MANUAL:
+                    case dic.mapLayout.OBTREE:
                     case dic.mapLayout.BBTREE:
                         moveTreeMap(dx, dy);
                         break;

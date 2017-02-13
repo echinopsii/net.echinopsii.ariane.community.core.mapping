@@ -66,6 +66,10 @@ require.config({
         'taitale-btree': 'ajs/taitale/layout/bubbletree/btree-min',
         'taitale-bvertex': 'ajs/taitale/layout/bubbletree/bvertex-min',
 
+        /*taitale orbital tree layout*/
+        'taitale-otree': 'ajs/taitale/layout/orbitaltree/otree-min',
+        'taitale-overtex': 'ajs/taitale/layout/orbitaltree/overtex-min',
+
         /*taitale middleware layout*/
         'taitale-map-splitter': 'ajs/taitale/layout/middleware/mapSplitter-min',
         'taitale-layoutntw-registries' : 'ajs/taitale/layout/middleware/registries-min',
