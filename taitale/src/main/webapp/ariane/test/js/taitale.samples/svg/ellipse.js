@@ -24,15 +24,15 @@ requirejs (
         function ellipseBubbleForRect(x, y, width, height) {
             this.x = x + width/2;
             this.y = y + height/2;
-            this.p = (height < width) ? height/2 : width/2;
-            this.c = (width > height) ? width/2 : height/2;
-            this.hrad = 3*( -p + Math.sqrt( Math.pow(p,2) + ( 4*(Math.pow(c,2) ) ) ) )/4;
-            this.vrad = Math.sqrt(this.p*this.hrad);
+            this.p = (height < width) ? height/2 : width/2; // semi latus rectum
+            this.c = (width > height) ? width/2 : height/2; // distance from center to focal point
+            this.hrad = 3*( -p + Math.sqrt( Math.pow(p,2) + ( 4*(Math.pow(c,2) ) ) ) )/4; // horizontal radius
+            this.vrad = Math.sqrt(this.p*this.hrad);                                      // vertical radius
             this.rotate = (height > width);
 
-            this.sminor = (hrad < vrad) ? hrad : vrad;
-            this.smajor = (hrad < vrad) ? vrad : hrad;
-            this.excent = Math.sqrt(Math.pow(this.smajor,2)-Math.pow(this.sminor,2))/this.smajor;
+            this.sminor = (hrad < vrad) ? hrad : vrad; // semi minor axis
+            this.smajor = (hrad < vrad) ? vrad : hrad; // semi major axis
+            this.excent = Math.sqrt(Math.pow(this.smajor,2)-Math.pow(this.sminor,2))/this.smajor; // excentricity
 
             this.bubble = null;
             this.container = null;
@@ -46,8 +46,8 @@ requirejs (
             this.placeRect = function(r, rad, width, height) {
                 var cos = parseFloat(Math.cos(rad).toFixed(10)), sin = parseFloat(Math.sin(rad).toFixed(10)),
                     ro = this.sminor/Math.sqrt(1 - Math.pow(this.excent,2)*Math.pow(cos,2)),
-                    x = (!this.rotate) ? this.x + ro * Math.cos(rad) : this.x + ro * Math.sin(rad),
-                    y = (!this.rotate) ? this.y + ro * Math.sin(rad) : this.y + ro * Math.cos(rad);
+                    x = (!this.rotate) ? this.x + width/2 +ro * Math.cos(rad) : this.x + width/2 + ro * Math.sin(rad),
+                    y = (!this.rotate) ? this.y + height/2 + ro * Math.sin(rad) : this.y + height/2 + ro * Math.cos(rad);
 
                 if (cos < 0) {
                     if (sin < 0) {
@@ -93,7 +93,7 @@ requirejs (
                     }
                 }
 
-                r.rect(x, y, width, height);
+                r.rect(x-width/2, y-height/2, width, height);
             };
 
             return this;

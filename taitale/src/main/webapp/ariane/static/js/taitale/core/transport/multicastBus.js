@@ -160,17 +160,21 @@ define(
                 }
             };
 
+            this.getRectSize = function() {
+                return this.getBusSize();
+            };
+
             this.getBusCoords = function() {
                 return this.mbus.getTopLeftCoords();
             };
 
             this.getBubbleInputs = function() {
                 var title = (this.properties != null && this.properties.busDescription != null) ? this.properties.busDescription + " " + this.multicastAddr : this.multicastAddr,
-                    titleWidth  = title.width(params.container_txtTitle);
+                    titleWidth  = title.width(params.container_txtTitle), inputs;
                 if (this.longg < titleWidth + titleWidth*11/5 + params.container_fitTextPadding)
                     this.longg = titleWidth + titleWidth*11/5 + params.container_fitTextPadding;
                 // helper_.debug("[Multicastbus.getBubbleDiameter] " + this.longg);
-                var inputs = {
+                inputs = {
                     'rectWidth' : this.longg,
                     'rectHeight' : this.diameter,
                     'maxRecWidth': this.longg,
@@ -183,6 +187,33 @@ define(
 
             this.setBubbleCoord = function(x,y) {
                 this.setTopLeftCoord(x-this.longg/2, y-this.diameter/2);
+            };
+
+            this.getOrbitalInputs = function() {
+                var myWidth, myHeight, inputs, p, c, hrad, vrad, isVerticalOrbit, sminor, smajor;
+                var title = (this.properties != null && this.properties.busDescription != null) ? this.properties.busDescription + " " + this.multicastAddr : this.multicastAddr,
+                    titleWidth  = title.width(params.container_txtTitle);
+                if (this.longg < titleWidth + titleWidth*11/5 + params.container_fitTextPadding)
+                    this.longg = titleWidth + titleWidth*11/5 + params.container_fitTextPadding;
+
+                myWidth = this.longg;
+                myHeight = this.diameter;
+
+                p = (myHeight < myWidth) ? myHeight/2 : myWidth/2;
+                c = (myWidth > myHeight) ? myWidth/2 : myHeight/2;
+                hrad = 3*( -p + Math.sqrt( Math.pow(p,2) + ( 4*(Math.pow(c,2) ) ) ) )/4;
+                vrad = Math.sqrt(p*hrad);
+                isVerticalOrbit = (myHeight > myWidth);
+                sminor = (hrad < vrad) ? hrad : vrad;
+                smajor = (hrad < vrad) ? vrad : hrad;
+
+                inputs = {
+                    'isVerticalOrbit': isVerticalOrbit,
+                    'sminor': sminor,
+                    'smajor': smajor
+                };
+
+                return inputs;
             };
 
             this.print = function(r) {
