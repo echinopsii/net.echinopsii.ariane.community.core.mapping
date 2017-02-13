@@ -40,8 +40,8 @@ define(
             var GLI_LINE = 0;
             var LDC_LINE = 1;
             
-            var ldatacenterSplitter = null, //for MDW map type
-                glintSplitter       = null, //for MDW map type
+            var ldatacenterSplitter = null, //for NETL3P map type
+                glintSplitter       = null, //for NETL3P map type
                 layoutNtwRegistries = null;
 
             var dic  = new dictionaries();
@@ -320,7 +320,7 @@ define(
                 var layout = options.getLayout();
                 //noinspection FallthroughInSwitchStatementJS
                 switch(layout) {
-                    case dic.mapLayout.MDW:
+                    case dic.mapLayout.NETL3P:
                     default:
                         if (layoutNtwRegistries==null)
                             layoutNtwRegistries = new ntwRegistries();
@@ -475,7 +475,7 @@ define(
                 var layout = options.getLayout();
                 //noinspection FallthroughInSwitchStatementJS
                 switch(layout) {
-                    case dic.mapLayout.MDW:
+                    case dic.mapLayout.NETL3P:
                     default:
                         if (nbLines==0) {
                             rows[nbLines] = []; // FIRST LINE FOR GLOBAL INTERNET - MAYBE EMPTY
@@ -551,7 +551,7 @@ define(
 
             this.displayDC = function(display) {
                 var i, ii;
-                if (options.getLayout() === dic.mapLayout.MDW) {
+                if (options.getLayout() === dic.mapLayout.NETL3P) {
                     for (i= 0, ii=nbColumns; i < ii; i++)
                         if (rows[LDC_LINE].length != 0 && rows[LDC_LINE][i] != null)
                             rows[LDC_LINE][i].displayDC(display);
@@ -564,7 +564,7 @@ define(
 
             this.displayArea = function(display) {
                 var i, ii;
-                if (options.getLayout() === dic.mapLayout.MDW) {
+                if (options.getLayout() === dic.mapLayout.NETL3P) {
                     for (i= 0, ii=nbColumns; i < ii; i++)
                         if (rows[LDC_LINE].length != 0 && rows[LDC_LINE][i] != null)
                             rows[LDC_LINE][i].displayArea(display);
@@ -573,7 +573,7 @@ define(
 
             this.displayLan = function(display) {
                 var i, ii;
-                if (options.getLayout() === dic.mapLayout.MDW) {
+                if (options.getLayout() === dic.mapLayout.NETL3P) {
                     for (i= 0, ii=nbColumns; i < ii; i++)
                         if (rows[LDC_LINE].length != 0 && rows[LDC_LINE][i] != null)
                             rows[LDC_LINE][i].displayLan(display);

@@ -33,7 +33,10 @@ public class MappingToolsDisplayTabController implements Serializable {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(MappingToolsDisplayTabController.class);
 
-    private List<String> defaultNotifications = new ArrayList<String>();
+    private List<String> defaultNotifications = new ArrayList<>();
+    private List<String> defaultNetL3pOptions = new ArrayList<>();
+    private String defaultRootTreeSortOption = null;
+    private String defaultSubTreesSortOption = null;
     private String mappingLayout = null;
     private String mappingView   = null;
     private String mappingMode   = null;
@@ -44,6 +47,13 @@ public class MappingToolsDisplayTabController implements Serializable {
     public void init() {
         defaultNotifications.add("notifyInfos");
         defaultNotifications.add("notifyErrs");
+
+        defaultNetL3pOptions.add("displayDC");
+        defaultNetL3pOptions.add("displayArea");
+        defaultNetL3pOptions.add("displayLan");
+
+        defaultRootTreeSortOption = "1";
+        defaultSubTreesSortOption = "1";
 
         mappingLayout = (String)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get(MappingBootstrap.MAPPING_USER_PREF_LAYOUT);
         mappingMode = (String)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get(MappingBootstrap.MAPPING_USER_PREF_MODE);
@@ -58,6 +68,30 @@ public class MappingToolsDisplayTabController implements Serializable {
 
     public void setDefaultNotifications(List<String> defaultNotifications) {
         this.defaultNotifications = defaultNotifications;
+    }
+
+    public List<String> getDefaultNetL3pOptions() {
+        return defaultNetL3pOptions;
+    }
+
+    public void setDefaultNetL3pOptions(List<String> defaultNetL3pOptions) {
+        this.defaultNetL3pOptions = defaultNetL3pOptions;
+    }
+
+    public String getDefaultRootTreeSortOption() {
+        return defaultRootTreeSortOption;
+    }
+
+    public void setDefaultRootTreeSortOption(String defaultRootTreeSortOption) {
+        this.defaultRootTreeSortOption = defaultRootTreeSortOption;
+    }
+
+    public String getDefaultSubTreesSortOption() {
+        return defaultSubTreesSortOption;
+    }
+
+    public void setDefaultSubTreesSortOption(String defaultSubTreesSortOption) {
+        this.defaultSubTreesSortOption = defaultSubTreesSortOption;
     }
 
     public String getMappingLayout() {

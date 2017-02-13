@@ -7,7 +7,7 @@
     <ui:define name="moduleHeader">
         <link type="text/css" rel="stylesheet" href="#{request.contextPath}/acss/primeui/primeui-0.9.6-min.css" />
         <link type="text/css" rel="stylesheet" href="#{request.contextPath}/acss/mapping-min.css" />
-        <script data-main="#{request.contextPath}/ajs/taitale.js" src="#{request.contextPath}/ajs/require/require-min.js" type="text/javascript" charset="utf-8"/>
+        <script data-main="#{request.contextPath}/ajs/taitale-debug.js" src="#{request.contextPath}/ajs/require/require-min.js" type="text/javascript" charset="utf-8"/>
     </ui:define>
     <ui:define name="moduleContent">
         <div id="mappingBg" class="backgroundMapping">
@@ -22,15 +22,39 @@
                     <p:layout>
                         <p:layoutUnit id="mappingTools" position="north" size="210" header="Mapping tools" resizable="false" collapsible="true"
                                       styleClass="arianeTransparentBg0-div arianeTransparentBg3-uiwc-noi" style="border: 0px">
-                            <p:tabView id="mappingToolsView" activeIndex="2" styleClass="arianeTransparentBg0-div arianeTransparentBg0-uiwc">
-                            <p:tab id="mappingToolsExportTab" title="Export">
-                                <h:form id="mapToolsExport">
-                                    <span class="inputTitle">Export your map to :</span><br/>
-                                    <p:commandButton value="JPG" widgetVar="JPG" icon="icon-file icon-large"/>
-                                    <p:commandButton value="PNG" widgetVar="PNG" icon="icon-file icon-large"/>
-                                    <p:commandButton value="SVG" widgetVar="SVG" icon="icon-file icon-large"/>
-                                </h:form>
-                            </p:tab>
+                            <p:tabView id="mappingToolsView" activeIndex="0" styleClass="arianeTransparentBg0-div arianeTransparentBg0-uiwc">
+                                <!--
+                                <p:tab id="mappingToolsExportTab" title="Export">
+                                    <h:form id="mapToolsExport">
+                                        <span class="inputTitle">Export your map to :</span><br/>
+                                        <p:commandButton value="JPG" widgetVar="JPG" icon="icon-file icon-large"/>
+                                        <p:commandButton value="PNG" widgetVar="PNG" icon="icon-file icon-large"/>
+                                        <p:commandButton value="SVG" widgetVar="SVG" icon="icon-file icon-large"/>
+                                    </h:form>
+                                </p:tab>
+                                -->
+                                <p:tab id="mapToolsQueryTab" title="Query" >
+                                    <h:form id="mapToolsQueryForm">
+                                        <p:growl id="requestMessages" showDetail="true"/>
+                                        <h:panelGrid id="mapToolsQueryGrid" columns="2" cellpadding="5">
+                                            <!--<p:inputTextarea id="mdslQuery" rows="6" cols="180" autoResize="false" widgetVar="mdslQuery"
+                                                                 completeMethod="#{autoCompleteController.completeArea}" queryDelay="200" minQueryLength="4"/>-->
+                                            <p:inputTextarea id="mdslQuery" rows="6" cols="180" autoResize="false" widgetVar="mdslQuery" var="mdslQuery"
+                                                             value="#{mdslrSessionRequestController.sessionRequest}"/>
+                                            <h:panelGroup>
+                                                <p:commandButton id="execQuery" widgetVar="execQuery" type="button" value="Execute request" title="Execute"
+                                                                 icon="icon-play-circle icon-large" style="width:150px"/><br/>
+                                                <p:commandButton type="button" value="Load request" title="Load" icon="icon-upload icon-large" style="width:150px"
+                                                                 onclick="requestLoaderDialog.show()" update=":loadReqDirForm,:loadRequestDetail"
+                                                                 actionListener="#{mdslRegistryController.reloadTree}"/><br/>
+                                                <p:commandButton type="commandButton" value="Save request" title="Save" icon="icon-download icon-large" style="width:150px"
+                                                                 onclick="requestSaveDialog.show()" actionListener="#{mdslrRequestController.clear}"
+                                                                 action="#{mdslRegistryController.reloadTree}"
+                                                                 update=":saveReqDirForm,:saveRequestDetail"/>
+                                            </h:panelGroup>
+                                        </h:panelGrid>
+                                    </h:form>
+                                </p:tab>
 
                                 <p:tab id="mapToolsDisplayTab" title="Options">
                                     <h:panelGrid columns="5" cellpadding="5">
@@ -47,8 +71,9 @@
                                         <h:panelGroup>
                                             <span class="inputTitle">Layout</span><br/>
                                             <p:selectOneButton id="layoutSelector" widgetVar="layoutSelector" value="#{mappingToolsDisplayController.mappingLayout}">
-                                                <f:selectItem itemLabel="Tree" itemValue="BBTree" />
-                                                <f:selectItem itemLabel="Middleware" itemValue="Middleware" />
+                                                <f:selectItem itemLabel="BubbleTree" itemValue="BBTree" />
+                                                <f:selectItem itemLabel="NetL3+" itemValue="NetL3p" />
+                                                <f:selectItem itemLabel="OrbitalTree" itemValue="OBTree" />
                                             </p:selectOneButton>
                                         </h:panelGroup>
                                         <h:panelGroup>
@@ -81,11 +106,11 @@
                                             </p:selectManyButton>
                                         </h:panelGroup>
                                     </h:panelGrid>
-                                    <div id="middlewareOptions">
+                                    <div id="netl3pOptions">
                                         <h:panelGrid columns="2" cellpadding="5">
                                             <h:panelGroup>
                                                 <span class="inputTitle">Display options</span>
-                                                <p:selectManyButton id="middlewareLayoutDisplayOptions" widgetVar="middlewareLayoutDisplayOptions">
+                                                <p:selectManyButton id="netl3pLayoutDisplayOptions" widgetVar="netl3pLayoutDisplayOptions" value="#{mappingToolsDisplayController.defaultNetL3pOptions}">
                                                     <f:selectItem itemLabel="Display datacenters" itemValue="displayDC" />
                                                     <f:selectItem itemLabel="Display areas" itemValue="displayArea" />
                                                     <f:selectItem itemLabel="Display subnets" itemValue="displayLan" />
@@ -97,42 +122,20 @@
                                         <h:panelGrid columns="2" cellpadding="5">
                                             <h:panelGroup>
                                                 <span class="inputTitle">Root tree sorting</span>
-                                                <p:selectOneButton id="rootTreeSorting" widgetVar="rootTreeSorting">
+                                                <p:selectOneButton id="rootTreeSorting" widgetVar="rootTreeSorting" value="#{mappingToolsDisplayController.defaultRootTreeSortOption}">
                                                     <f:selectItem itemLabel="By maximum vertex linked" itemValue="1" />
                                                     <f:selectItem itemLabel="By minimum vertex linked" itemValue="-1" />
                                                 </p:selectOneButton>
                                             </h:panelGroup>
                                             <h:panelGroup>
                                                 <span class="inputTitle">Sub trees sorting</span>
-                                                <p:selectOneButton id="subTreesSorting" widgetVar="subTreesSorting">
+                                                <p:selectOneButton id="subTreesSorting" widgetVar="subTreesSorting" value="#{mappingToolsDisplayController.defaultSubTreesSortOption}">
                                                     <f:selectItem itemLabel="By maximum vertex linked" itemValue="1" />
                                                     <f:selectItem itemLabel="By minimum vertex linked" itemValue="-1" />
                                                 </p:selectOneButton>
                                             </h:panelGroup>
                                         </h:panelGrid>
                                     </div>
-                                </p:tab>
-                                <p:tab id="mapToolsQueryTab" title="Query" >
-                                    <h:form id="mapToolsQueryForm">
-                                        <p:growl id="requestMessages" showDetail="true"/>
-                                        <h:panelGrid id="mapToolsQueryGrid" columns="2" cellpadding="5">
-                                            <!--<p:inputTextarea id="mdslQuery" rows="6" cols="180" autoResize="false" widgetVar="mdslQuery"
-                                                                 completeMethod="#{autoCompleteController.completeArea}" queryDelay="200" minQueryLength="4"/>-->
-                                            <p:inputTextarea id="mdslQuery" rows="6" cols="180" autoResize="false" widgetVar="mdslQuery" var="mdslQuery"
-                                                             value="#{mdslrSessionRequestController.sessionRequest}"/>
-                                            <h:panelGroup>
-                                                <p:commandButton id="execQuery" widgetVar="execQuery" type="button" value="Execute request" title="Execute"
-                                                                 icon="icon-play-circle icon-large" style="width:150px"/><br/>
-                                                <p:commandButton type="button" value="Load request" title="Load" icon="icon-upload icon-large" style="width:150px"
-                                                                 onclick="requestLoaderDialog.show()" update=":loadReqDirForm,:loadRequestDetail"
-                                                                 actionListener="#{mdslRegistryController.reloadTree}"/><br/>
-                                                <p:commandButton type="commandButton" value="Save request" title="Save" icon="icon-download icon-large" style="width:150px"
-                                                                 onclick="requestSaveDialog.show()" actionListener="#{mdslrRequestController.clear}"
-                                                                 action="#{mdslRegistryController.reloadTree}"
-                                                                 update=":saveReqDirForm,:saveRequestDetail"/>
-                                            </h:panelGroup>
-                                        </h:panelGrid>
-                                    </h:form>
                                 </p:tab>
                             </p:tabView>
                         </p:layoutUnit>
