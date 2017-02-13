@@ -335,7 +335,7 @@ define(
                     r.clear();
                 }
                 mappy = null;
-                loader.loadMappy();
+                loader.loadMap(options);
 
                 helper_.growlMsgs(
                     {

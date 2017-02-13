@@ -332,7 +332,7 @@ define(
                 // third : layout policy
                 var layout = options.getLayout();
                 switch (layout) {
-                    case dic.mapLayout.MDW:
+                    case dic.mapLayout.NETL3P:
                         containerRegistry.sort(minMaxLinkedObjectsComparator);
                         // third 0 : populate DC, Area and Lan registries and enrich the objects
                         for (j = 0, jj = rootContainerRegistry.length; j < jj; j++)
@@ -387,7 +387,7 @@ define(
                 var j, jj;
                 var layout = options.getLayout();
 
-                if (layout === dic.mapLayout.MDW)
+                if (layout === dic.mapLayout.NETL3P)
                     mapmatrix.optimizeMtxCoord();
 
                 // Set final container size
@@ -396,7 +396,7 @@ define(
                     containerRegistry[j].defineSize();
                 }
 
-                if (layout === dic.mapLayout.MDW) {
+                if (layout === dic.mapLayout.NETL3P) {
                     // Set final map matrix size and poz
                     mapmatrix.defineMtxZoneSize();
                     mapmatrix.defineMapContentSize();
@@ -427,7 +427,7 @@ define(
                 var layout = options.getLayout();
                 //noinspection FallthroughInSwitchStatementJS
                 switch (layout) {
-                    case dic.mapLayout.MDW:
+                    case dic.mapLayout.NETL3P:
                         mapmatrix.defineMapContentSize();
 
                         mapWidth = mbrdSpan*2 + mapmatrix.getMapContentSize().width;
@@ -543,7 +543,7 @@ define(
 
             this.print = function (r) {
                 var i, ii, j, jj;
-                if (options.getLayout()===dic.mapLayout.MDW)
+                if (options.getLayout()===dic.mapLayout.NETL3P)
                     mapmatrix.printMtx(r);
 
                 for (i = 0, ii = containerRegistry.length; i < ii; i++) {
@@ -678,7 +678,7 @@ define(
                 var dx = (mapTopLeftX - mbrdSpan == 0 ) ? 0 : -mapTopLeftX + mbrdSpan;
                 var dy = (mapTopLeftY - mbrdSpan == 0 ) ? 0 : -mapTopLeftY + mbrdSpan;
                 switch (layout) {
-                    case dic.mapLayout.MDW:
+                    case dic.mapLayout.NETL3P:
                         mapmatrix.translate(dx, dy);
                         break;
                     case dic.mapLayout.MANUAL:
@@ -694,7 +694,7 @@ define(
                 var dx = (mapTopLeftX - mbrdSpan == 0 ) ? 0 : mapTopLeftX - mbrdSpan;
                 var dy = (mapTopLeftY - mbrdSpan == 0 ) ? 0 : mapTopLeftY - mbrdSpan;
                 switch (layout) {
-                    case dic.mapLayout.MDW:
+                    case dic.mapLayout.NETL3P:
                         mapmatrix.translate(dx, dy);
                         break;
                     case dic.mapLayout.MANUAL:
