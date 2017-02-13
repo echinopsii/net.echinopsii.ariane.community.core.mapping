@@ -22,7 +22,7 @@ define(
     [
         'jquery',
         'taitale-helper',
-        'taitale-bvertex'
+        'taitale-overtex'
     ],
     function($,helper,vertex) {
         function tree() {

@@ -33,7 +33,6 @@ define(
             this.floor          = 0;
             this.idFromRoot     = 0;
 
-            this.radStep        = 0;
             this.relX           = 0;     // relative X (center of the rect)
             this.relY           = 0;     // relative Y (center of the rect)
             this.orientV        = 0;     // relative orientation from rootV coords
@@ -43,8 +42,8 @@ define(
             this.isSimpleProxy  = false;
             this.isLeaf         = false;
             this.leafOrbitFloor = [];
-            this.leafRadFloor   = [];
-            this.leafRadFloorCount = 0;
+            this.leafFloorCount = 0;
+            this.orbitToNextFloor  = null;
             this.simplePrxOnLastLeafsFloorCount = 0;
 
             this.linkedLeafs         = [];
@@ -75,136 +74,222 @@ define(
                 }
             };
 
-            this.getMaxChildRad = function(leafFloor) {
-                var maxRad = 0, currentRad, i, ii;
-                // helper_.debug("[vertex.getMaxChildRad] " + this.object.name + " : " +
-                //     "{leafFloor: " + + leafFloor + ", linkedLeafsByFloor.length: " + this.linkedLeafsByFloor.length +
-                //     ", linkedProxies.length: " + this.linkedProxies.length + "}");
-                if (leafFloor < this.linkedLeafsByFloor.length) {
-                    for (i = 0, ii = this.linkedLeafsByFloor[leafFloor].length; i < ii; i++) {
-                        currentRad = this.linkedLeafsByFloor[leafFloor][i].object.getBubbleInputs().diameter/2;
-                        if (currentRad>maxRad)
-                            maxRad = currentRad
+            this.computeBubbleCenterFromOrbitalInputs = function(floor, orbitInputs, orientV, rootVRelX, rootVRelY, objSize) {
+                var cos = parseFloat(Math.cos(orientV).toFixed(10)),
+                    sin = parseFloat(Math.sin(orientV).toFixed(10)),
+                    excentricity = Math.sqrt(Math.pow(orbitInputs.smajor,2)-Math.pow(orbitInputs.sminor,2))/orbitInputs.smajor,
+                    ro = orbitInputs.sminor/Math.sqrt(1 - Math.pow(excentricity,2)*Math.pow(cos,2)),
+                    relX, relY;
+
+                // helper_.debug("[vertex.computeBubbleCenterFromOrbitalInputs] " + this.object.name + " : " +
+                //     "{orbitInputs: " + JSON.stringify(orbitInputs) + ", ro: " + ro + ", objSize: " + JSON.stringify(objSize) + "}");
+                relX = (!orbitInputs.isVerticalOrbit) ? rootVRelX + objSize.width/2 + (ro+objSize.rad)*Math.cos(orientV) : rootVRelX + objSize.width/2 + ro * Math.sin(orientV);
+                relY = (!orbitInputs.isVerticalOrbit) ? rootVRelY + objSize.height/2 + (ro+objSize.rad) * Math.sin(orientV) : rootVRelY + objSize.height/2 + ro * Math.cos(orientV);
+
+                if (cos < 0) {
+                    if (sin < 0) {
+                        if (orbitInputs.isVerticalOrbit) {
+                            relX -= objSize.width;
+                            relY -= objSize.height;
+                        } else {
+                            relX -= objSize.width;
+                            relY -= objSize.height;
+                        }
+                    } else if (sin > 0) {
+                        if (orbitInputs.isVerticalOrbit)  relY -= objSize.height;
+                        else relX -= objSize.width;
+                    } else {
+                        if (orbitInputs.isVerticalOrbit) {
+                            relX -= objSize.width/2;
+                            relY -= objSize.height;
+                        } else {
+                            relX -= objSize.width;
+                            relY -= objSize.height/2;
+                        }
+                    }
+                } else if (cos > 0) {
+                    if (sin < 0) {
+                        if (orbitInputs.isVerticalOrbit) relX -= objSize.width;
+                        else relY -= objSize.height;
+                    } else if (sin == 0) {
+                        if (orbitInputs.isVerticalOrbit) relX -= objSize.width/2;
+                        else relY -= objSize.height/2;
                     }
                 } else {
-                    for (i = 0, ii = this.linkedProxies.length; i < ii; i++) {
-                        currentRad = this.linkedProxies[i].object.getBubbleInputs().diameter/2;
-                        if (currentRad>maxRad)
-                            maxRad = currentRad
-                    }
-                }
-                // helper_.debug("[vertex.getMaxChildRad] " + this.object.name + " : " + + maxRad);
-                return maxRad
-            };
-
-            this.definedRadStepValueFromList = function(listToExplore, currentRadStep, orientStep) {
-                var currentRad1, currentRad2, teta1, teta2, i, ii, radStepIsOK, lambda = 0;
-                for (i = 0, ii = listToExplore.length; i+1 < ii; i++) {
-                    currentRad1 = listToExplore[i].object.getBubbleInputs().diameter / 2;
-                    currentRad2 = listToExplore[i + 1].object.getBubbleInputs().diameter / 2;
-                    radStepIsOK = false;
-                    while (!radStepIsOK) {
-                        teta1 = Math.atan(currentRad1 / (currentRadStep * 2)) * 2;
-                        teta2 = Math.atan(currentRad2 / (currentRadStep * 2)) * 2;
-                        // avoid infinite currentRadStep computing. limit equality with two digit
-                        if (Math.abs(orientStep) < 1) lambda = 0.3;
-                        if (Math.abs(orientStep) > (teta1 + teta2 - lambda)) radStepIsOK = true;
-                        else if (Math.abs(orientStep) == (teta1 + teta2 - lambda)) {
-                            if (lambda>0) currentRadStep += 100;
-                            else currentRadStep += 10;
-                            radStepIsOK = true;
+                    if (sin > 0) {
+                        if (orbitInputs.isVerticalOrbit) relY -= objSize.height/2;
+                        else relX -= objSize.width/2;
+                    } else {
+                        if (orbitInputs.isVerticalOrbit) {
+                            relX -= objSize.width;
+                            relY -= objSize.height/2;
                         } else {
-                            if (lambda > 0) currentRadStep += 100;
-                            else currentRadStep += 10;
+                            relX -= objSize.width/2;
+                            relY -= objSize.height;
                         }
-                        // if (lambda!=0)
-                        //     helper_.debug("[vertex.definedRadStepValueFromList] " + this.object.name + " : " +
-                        //          "\n{currentRadStep: " + currentRadStep + ", lambda: " + lambda +
-                        //          "\n, name1: " + listToExplore[i].object.name + ", currentRad1: " + currentRad1+ ", teta1: " + teta1 +
-                        //          "\n, name2: " + listToExplore[i+1].object.name + ", currentRad2: " + currentRad2+ ", teta2: " + teta2 +
-                        //          "\n, orientStep: " + leafOrientStep + ", radStepIsOK: " + radStepIsOK + "}");
                     }
                 }
-                return currentRadStep;
-            };
 
-            this.defineLeafRadStepValue = function(leafFloor, leafOrientStep) {
-                var currentRadStep, listToExplore;
-                // helper_.debug("[vertex.defineLeafRadStepValue] " + this.object.name + " : " +
-                //     "{leafFloor: " + leafFloor + ", leafOrientStep"  + leafOrientStep + "}");
-                currentRadStep = this.getMaxChildRad(leafFloor) + 10 +
-                    ((leafFloor==0) ? this.object.getBubbleInputs().diameter/2 : this.leafRadFloor[leafFloor-1]);
-                listToExplore = this.linkedLeafsByFloor[leafFloor];
-
-                // helper_.debug("[vertex.defineLeafRadStepValue] " + this.object.name + " : " +
-                //     "{currentRadStep: " + currentRadStep + "}");
-                return this.definedRadStepValueFromList(listToExplore, currentRadStep, leafOrientStep);
-            };
-
-            this.defineProxyRadStepValue = function() {
-                var i, ii, currentRadStep;
-                // helper_.debug("[vertex.defineProxyRadStepValue] " + this.object.name + " : " +
-                //     "{orientStep: " + this.orientStep + "}");
-
-                currentRadStep = this.getMaxChildRad(this.leafRadFloorCount);
-                if (this.leafRadFloorCount > 0) {
-                    for (i = 0, ii = this.leafRadFloorCount; i < ii; i++)
-                        currentRadStep += this.getMaxChildRad(i)*2;
-                    // currentRadStep += this.getMaxChildRad(this.leafRadFloorCount-1);
+                return {
+                    'ro': ro,
+                    'relX': relX,
+                    'relY': relY
                 }
-                currentRadStep += this.object.getBubbleInputs().diameter/2 + 10;
+            };
 
-                // helper_.debug("[vertex.defineProxyRadStepValue] " + this.object.name + " : " +
-                //     "{currentRadStep: " + currentRadStep + "}");
-                return this.definedRadStepValueFromList(this.linkedProxies, currentRadStep, this.orientStep);
+            this.computeOrbitMaxInputsFromArray = function (floor, floorArray) {
+
+                var lastFloorInputs = this.leafOrbitFloor[floor - 1], currentInputs, maxHRad=0, maxVRad=0, i, ii, result;
+                // helper_.debug("[vertex.computeOrbitMaxInputsFromArray] " + this.object.name +
+                //     " : {" + floor + ", " + JSON.stringify(lastFloorInputs) + "}");
+                for (i=0, ii=floorArray.length; i < ii; i++) {
+                    currentInputs = floorArray[i].object.getOrbitalInputs();
+                    if (currentInputs.isVerticalOrbit) {
+                        if (maxVRad < currentInputs.smajor) maxVRad = currentInputs.smajor;
+                        if (maxHRad < currentInputs.sminor) maxHRad = currentInputs.sminor;
+                    } else {
+                        if (maxVRad < currentInputs.sminor) maxVRad = currentInputs.sminor;
+                        if (maxHRad < currentInputs.smajor) maxHRad = currentInputs.smajor;
+                    }
+                }
+                if (lastFloorInputs.isVerticalOrbit) {
+                    maxVRad += lastFloorInputs.smajor;
+                    maxHRad += lastFloorInputs.sminor;
+                } else {
+                    maxVRad += lastFloorInputs.sminor;
+                    maxHRad += lastFloorInputs.smajor;
+                }
+                result =  {
+                    'isVerticalOrbit': (maxVRad>maxHRad),
+                    'smajor': (maxHRad>maxVRad) ? maxHRad : maxVRad,
+                    'sminor': (maxHRad>maxVRad) ? maxVRad : maxHRad
+                };
+                // helper_.debug("[vertex.computeOrbitMaxInputsFromArray] " + this.object.name + " : " + JSON.stringify(result));
+                return result;
+            };
+
+            this.refineOrbitMaxInputs = function(floor, orbitMaxInputs) {
+                var i, ii, objRad1, objRad2, objSize1, objSize2, orientV1, orientV2, rad1, rad2,
+                    listToExplore, orientStep, cos, orbitMaxInputsIsOK, disto1o2;
+
+                if (floor < this.linkedLeafsByFloor.length) {
+                    listToExplore = this.linkedLeafsByFloor[floor];
+                    orientStep = 2*Math.PI / this.linkedLeafsByFloor[floor].length;
+                } else {
+                    listToExplore = this.linkedProxies;
+                    orientStep = this.orientStep;
+                }
+
+                cos = parseFloat(Math.cos(orientStep).toFixed(10));
+                for (i = 0, ii = listToExplore.length; i+1 < ii; i++) {
+                    objRad1 = listToExplore[i].object.getBubbleInputs().diameter / 2;
+                    objRad2 = listToExplore[i+1].object.getBubbleInputs().diameter / 2;
+                    objSize1 = listToExplore[i].object.getRectSize();
+                    if (floor < this.linkedLeafsByFloor.length) objSize1.rad = 0;
+                    else objSize1.rad = objRad1;
+                    objSize2 = listToExplore[i].object.getRectSize();
+                    if (floor < this.linkedLeafsByFloor.length) objSize2.rad = 0;
+                    else objSize2.rad = objRad2;
+                    orientV1 = i*orientStep;
+                    orientV2 = (i+1)*orientStep;
+                    orbitMaxInputsIsOK=false;
+                    while(!orbitMaxInputsIsOK) {
+                        rad1 = this.computeBubbleCenterFromOrbitalInputs(floor, orbitMaxInputs, orientV1, 0, 0, objSize1).ro;
+                        rad2 = this.computeBubbleCenterFromOrbitalInputs(floor, orbitMaxInputs, orientV2, 0, 0, objSize2).ro;
+                        disto1o2 = Math.sqrt(Math.pow(rad1,2) + Math.pow(rad2,2) - 2*rad1*rad2*cos);
+                        if (disto1o2 >= (objRad1+objRad2)/2) orbitMaxInputsIsOK = true;
+                        else {
+                            orbitMaxInputs.sminor += 10;
+                            orbitMaxInputs.smajor += 10;
+                        }
+                    }
+                }
+            };
+
+            this.computeOrbitMaxInputs = function(floor) {
+                var inputs;
+                if (floor == 0) inputs = this.object.getOrbitalInputs();
+                else if (floor < this.linkedLeafsByFloor.length) inputs = this.computeOrbitMaxInputsFromArray(floor, this.linkedLeafsByFloor[floor]);
+                else inputs = this.computeOrbitMaxInputsFromArray(floor, this.linkedProxies);
+
+                this.refineOrbitMaxInputs(floor, inputs);
+                // helper_.debug("[vertex.computeOrbitMaxInputs] " + this.object.name + " : {floor: " + floor + ", array: " +
+                //     ((floor == this.linkedLeafsByFloor.length) ? "linkedProxies array" : ((floor != 0) ? "linkedLeafsByFloor[" + floor + "]" : "root object orbital inputs")) +
+                //     ", inputs: " + JSON.stringify(inputs) + "}");
+                return inputs;
             };
 
             this.getLeafOrientStep = function(floor) {
                 // helper_.debug("[vertex.getLeafOrientStep] " + this.object.name + " : " +
-                //     "\n{rootV: " + ((this.rootV!=null) ? this.rootV.object.name : "None") + ", leafRadFloorCount: " + this.leafRadFloorCount +
-                //     ", floor: " + floor + ", linkedLeafsByFloor[leafRadFloorCount-1].length: " +
-                //     ((this.leafRadFloorCount>0) ? this.linkedLeafsByFloor[this.leafRadFloorCount-1].length : 0) +"}");
+                //     "\n{rootV: " + ((this.rootV!=null) ? this.rootV.object.name : "None") + ", leafFloorCount: " + this.leafFloorCount +
+                //     ", floor: " + floor + ", linkedLeafsByFloor[leafFloorCount-1].length: " +
+                //     ((this.leafFloorCount>0) ? this.linkedLeafsByFloor[this.leafFloorCount-1].length : 0) +"}");
                 var leafOrientStep;
-                if (floor < this.leafRadFloorCount-1) leafOrientStep = 2 * Math.PI/this.linkedLeafsByFloor[floor].length;
+                if (floor < this.leafFloorCount-1) leafOrientStep = 2 * Math.PI/this.linkedLeafsByFloor[floor].length;
                 else {
                     if (this.rootV!=null) {
-                        if (this.linkedLeafsByFloor[floor].length > this.leafRadFloorCount*4) leafOrientStep = 2 * Math.PI/this.linkedLeafsByFloor[floor].length;
+                        if (this.linkedLeafsByFloor[floor].length > (this.leafFloorCount+1)*2) leafOrientStep = 2 * Math.PI/this.linkedLeafsByFloor[floor].length;
                         else leafOrientStep = Math.PI/this.linkedLeafsByFloor[floor].length;
                     } else leafOrientStep = 2 * Math.PI/this.linkedLeafsByFloor[floor].length;
                 }
                 return leafOrientStep;
             };
 
-            this.defineRelativeLeafsFromRootPoz = function() {
+            this.computeVertexRelativePozOnOrbit = function(floor) {
+                var orbitInputs  = (floor < this.rootV.leafOrbitFloor.length) ? this.rootV.leafOrbitFloor[floor] : this.rootV.orbitToNextFloor,
+                    objSize = this.object.getRectSize(),computedCenter;
+
+                if ((this.leafOrbitFloor.length==0 && this.rootV.leafOrbitFloor.length==0) || floor < this.rootV.leafOrbitFloor.length) objSize.rad = 0;
+                else {
+                    if (this.linkedLeafsByFloor.length > 0 && this.linkedLeafsByFloor[this.leafFloorCount-1].length < (this.leafFloorCount+1)*2) objSize.rad = 0;
+                    else {
+                        if (Math.abs(Math.cos(this.orientV)) < Math.abs(Math.sin(this.orientV))) objSize.rad = this.orbitToNextFloor.sminor;
+                        else objSize.rad = this.orbitToNextFloor.smajor;
+                    }
+                    //objSize.rad = this.orbitToNextFloor.smajor;
+                }
+                computedCenter = this.computeBubbleCenterFromOrbitalInputs(floor, orbitInputs, this.orientV, this.rootV.relX, this.rootV.relY, objSize);
+                this.relX = computedCenter.relX;
+                this.relY = computedCenter.relY;
+                this.isPlaced = true;
+
+                // helper_.debug("[vertex.computeVertexRelativePozOnOrbit] " + this.object.name + " : " +
+                //     "{relX: " + this.relX + ", relY: " + this.relY + "}");
+            };
+
+            this.defineLeafsRelativePozFromRoot = function() {
                 var i, ii, j, jj, leafOrientStep, aVertex, nextRelFirstCht = this.relFirstChT;
                 // if (this.linkedLeafsByFloor.length > 0)
-                //     helper_.debug("[vertex.defineRelativeLeafsFromRootPoz] " + this.object.name + " : " +
+                //     helper_.debug("[vertex.defineLeafsRelativePozFromRoot] " + this.object.name + " : " +
                 //         "{ relX: " + this.relX + ", relY: " + this.relY + ", orientV: " + this.orientV +
-                //         ", orientStep: " + this.orientStep + ", radStep: " + this.radStep +
+                //         ", orientStep: " + this.orientStep + ", radiusToNextFloor: " + this.radiusToNextFloor +
                 //         ", relFirstChT: " + this.relFirstChT + " }");
                 for (i = 0, ii = this.linkedLeafsByFloor.length; i < ii; i++) {
                     for (j = 0, jj = this.linkedLeafsByFloor[i].length; j < jj; j++) {
                         aVertex = this.linkedLeafsByFloor[i][j];
-                        // helper_.debug("[vertex.defineRelativeLeafsFromRootPoz] (" + this.object.name + ") " + aVertex.object.name +
-                        //     " : " + this.linkedLeafsByFloor[i].length);
                         if (!aVertex.isPlaced) {
                             leafOrientStep = this.getLeafOrientStep(i);
-                            aVertex.orientV = this.relFirstChT + ((i % 2 == 0) ? 0 : Math.PI / 16) + j * leafOrientStep;
-                            if (i==this.leafRadFloorCount-1 && this.simplePrxOnLastLeafsFloorCount>0 && j<=this.simplePrxOnLastLeafsFloorCount)
+                            // helper_.debug("[vertex.defineLeafsRelativePozFromRoot] (" + this.object.name + ") " + aVertex.object.name +
+                            //      " : " + leafOrientStep + "; " + this.relFirstChT + "; " + j);
+                            if (Math.round(this.relFirstChT*100)/100 != Math.round((leafOrientStep/(this.linkedLeafsByFloor[i].length-1))*100)/100)
+                                aVertex.orientV = this.relFirstChT + ((i % 2 == 0) ? 0 : Math.PI / 16) + j * leafOrientStep;
+                            else
+                                aVertex.orientV = this.relFirstChT + ((i % 2 == 0) ? 0 : Math.PI / 16) + ((j%2 == 0) ? 0 : Math.PI) + j * leafOrientStep;
+                            // helper_.debug("[vertex.defineLeafsRelativePozFromRoot] (" + this.object.name + ") " + aVertex.object.name +
+                            //     " : " + aVertex.orientV);
+
+                            if (i==this.leafFloorCount-1 && this.simplePrxOnLastLeafsFloorCount>0 && j<=this.simplePrxOnLastLeafsFloorCount)
                                 nextRelFirstCht = aVertex.orientV;
-                            aVertex.relX = this.relX + this.leafRadFloor[i] * Math.cos(aVertex.orientV);
-                            aVertex.relY = this.relY + this.leafRadFloor[i] * Math.sin(aVertex.orientV);
-                            aVertex.isPlaced = true;
+
+                            aVertex.computeVertexRelativePozOnOrbit(i);
                             if (!aVertex.isLeaf) {
-                                if (this.linkedProxies.length <= 2)
-                                    aVertex.orientStep = (aVertex.linkedProxies.length>1) ? Math.PI/aVertex.linkedProxies.length : 0;
-                                else
-                                    aVertex.orientStep = (aVertex.linkedProxies.length>1) ? this.orientStep*2/aVertex.linkedProxies.length : this.orientStep*2 ;
-                                aVertex.radStep = this.defineProxyRadStepValue();
+                                if (this.linkedProxies.length <= 2) aVertex.orientStep = (aVertex.linkedProxies.length>1) ? Math.PI/aVertex.linkedProxies.length : 0;
+                                else aVertex.orientStep = (aVertex.linkedProxies.length>1) ? this.orientStep*2/aVertex.linkedProxies.length : this.orientStep*2 ;
+                                aVertex.orbitToNextFloor = aVertex.computeOrbitMaxInputs(aVertex.leafFloorCount);
                                 aVertex.relFirstChT = aVertex.orientV - ((aVertex.linkedProxies.length>1) ? aVertex.orientStep/aVertex.linkedProxies.length : 0);
-                                aVertex.defineRelativeLeafsFromRootPoz();
+                                aVertex.defineLeafsRelativePozFromRoot();
                             }
-                            // helper_.debug("[vertex.defineRelativeLeafsFromRootPoz - " + this.object.name + "] " + aVertex.object.name + " : " +
+                            // helper_.debug("[vertex.defineLeafsRelativePozFromRoot - " + this.object.name + "] " + aVertex.object.name + " : " +
                             //     "{relX: " + aVertex.relX + ", relY: " + aVertex.relY + ", orientV: " + aVertex.orientV + "}");
                         }
                     }
@@ -213,40 +298,40 @@ define(
             };
 
             this.defineRelativeLeafsData = function() {
-                var i, ii, j, jj, leafOrientStep, aVertex, freePlaceOnLastLeafsStep;
+                var i, ii, j, jj, aVertex, freePlaceOnLastLeafsStep;
 
                 if (this.linkedLeafs.length > 0) {
                     this.linkedLeafs.sort(function(linkedObject1, linkedObject2) {
                         return (linkedObject2.object.getLinksCount() - linkedObject1.object.getLinksCount());
                     });
                     this.linkedLeafsByFloor = [];
-                    this.leafRadFloorCount = 1;
+                    this.leafFloorCount = 1;
 
-                    var vStepCounter = 0, currentLeafsFloorLen = this.leafRadFloorCount * 8;
+                    var vStepCounter = 0, currentLeafsFloorLen = (this.leafFloorCount + 1) * 4;
                     for (i = 0, ii = this.linkedLeafs.length; i < ii; i++) {
                         aVertex = this.linkedLeafs[i];
                         // helper_.debug("[vertex.defineRelativeLeafsData] " + this.object.name +
-                        //     " current leafRadFloorCount: " + this.leafRadFloorCount);
+                        //     " current leafFloorCount: " + this.leafFloorCount);
                         // helper_.debug("[vertex.defineRelativeLeafsData] " + this.object.name +
                         //     " current currentLeafsFloorLen: " + currentLeafsFloorLen);
                         if (vStepCounter < currentLeafsFloorLen) {
-                            if (this.linkedLeafsByFloor[this.leafRadFloorCount - 1] == null)
-                                this.linkedLeafsByFloor[this.leafRadFloorCount - 1] = [];
-                            this.linkedLeafsByFloor[this.leafRadFloorCount - 1].push(aVertex);
+                            if (this.linkedLeafsByFloor[this.leafFloorCount - 1] == null)
+                                this.linkedLeafsByFloor[this.leafFloorCount - 1] = [];
+                            this.linkedLeafsByFloor[this.leafFloorCount - 1].push(aVertex);
                             vStepCounter += 1;
                         } else {
-                            this.leafRadFloorCount += 1;
-                            this.linkedLeafsByFloor[this.leafRadFloorCount - 1] = [];
-                            this.linkedLeafsByFloor[this.leafRadFloorCount - 1].push(aVertex);
+                            this.leafFloorCount += 1;
+                            this.linkedLeafsByFloor[this.leafFloorCount - 1] = [];
+                            this.linkedLeafsByFloor[this.leafFloorCount - 1].push(aVertex);
                             vStepCounter = 1;
-                            currentLeafsFloorLen = this.leafRadFloorCount * 8;
+                            currentLeafsFloorLen = (this.leafFloorCount + 1) * 4;
                         }
                     }
 
-                    freePlaceOnLastLeafsStep = this.leafRadFloorCount * 8 - this.linkedLeafsByFloor[this.leafRadFloorCount - 1].length;
+                    freePlaceOnLastLeafsStep = (this.leafFloorCount + 1) * 4 - this.linkedLeafsByFloor[this.leafFloorCount - 1].length;
 
                     for (i = 0, ii = this.linkedLeafsByFloor.length; i < ii; i++) {
-                        if (i == this.leafRadFloorCount - 1) {
+                        if (i == this.leafFloorCount - 1) {
                             var spIdx2RM = [];
                             for (j = 0, jj = this.linkedSimpleProxies.length; j < jj; j++) {
                                 if (j > (freePlaceOnLastLeafsStep - 1)) break;
@@ -256,9 +341,7 @@ define(
                             }
                             for (j = 0, jj = spIdx2RM.length; j < jj; j++) this.linkedSimpleProxies.splice(spIdx2RM[j], 1);
                         }
-
-                        leafOrientStep = 2 * Math.PI / this.linkedLeafsByFloor[i].length;
-                        this.leafRadFloor[i] = this.defineLeafRadStepValue(i, leafOrientStep);
+                        this.leafOrbitFloor[i] = this.computeOrbitMaxInputs(i);
                     }
                 }
                 for (i = 0, ii = this.linkedSimpleProxies.length; i < ii; i++) {
@@ -268,20 +351,12 @@ define(
                 this.linkedSimpleProxies = [];
             };
 
-            this.getRadSetFromRoot = function() {
-                // helper_.debug("[vertex.getRadSetFromRoot] " + this.object.name + " : " +
-                //     "\n{leafRadFloorCount: " + this.leafRadFloorCount +
-                //     ", linkedLeafsByFloor[0].length: " + ((this.leafRadFloorCount>0) ? this.linkedLeafsByFloor[0].length : 0) +"}");
-                if (this.leafRadFloorCount>1) return this.rootV.radStep+this.radStep;
-                else if (this.leafRadFloorCount==1 && this.linkedLeafsByFloor[0].length > 4) return this.rootV.radStep+this.radStep;
-                else return this.rootV.radStep;
-            };
-
             this.defineRelativePoz = function() {
-                // helper_.debug("[vertex.defineRelativePoz] " + this.object.name + " : " +
-                //     "{isPlaced: " + this.isPlaced + ", isLeaf: " + this.isLeaf +
-                //     ", rootV: " + ((this.rootV!=null) ? this.rootV.object.name : "NONE") +
-                //     ", floor: " + this.floor + "}");
+                // if (!this.isPlaced)
+                //     helper_.debug("[vertex.defineRelativePoz] " + this.object.name + " : " +
+                //         "{isPlaced: " + this.isPlaced + ", isLeaf: " + this.isLeaf +
+                //         ", rootV: " + ((this.rootV!=null) ? this.rootV.object.name : "NONE") +
+                //         ", floor: " + this.floor + ", objectOrbitalInputs: " + JSON.stringify(this.object.getOrbitalInputs())+ "}");
                 if (!this.isPlaced && !this.isLeaf) {
                     if (this.rootV!=null && this.floor!=0) {
                         var rootLinkedProxies = this.rootV.linkedProxies;
@@ -289,23 +364,21 @@ define(
                             this.orientStep = (this.linkedProxies.length>1) ? Math.PI/this.linkedProxies.length : 0;
                         else
                             this.orientStep  = (this.linkedProxies.length>1) ? this.rootV.orientStep*2/this.linkedProxies.length : this.rootV.orientStep*2 ;
-                        this.radStep = this.defineProxyRadStepValue();
-
+                        this.orbitToNextFloor = this.computeOrbitMaxInputs(this.leafFloorCount);
                         this.orientV = this.rootV.relFirstChT + this.idFromRoot*this.rootV.orientStep;
-                        this.relX    = this.rootV.relX + this.getRadSetFromRoot()*Math.cos(this.orientV);
-                        this.relY    = this.rootV.relY + this.getRadSetFromRoot()*Math.sin(this.orientV);
                         this.relFirstChT = this.orientV - ((this.linkedProxies.length>1) ? this.orientStep/this.linkedProxies.length : 0);
-                        this.isPlaced    = true;
-                        this.defineRelativeLeafsFromRootPoz();
+
+                        this.computeVertexRelativePozOnOrbit(this.rootV.leafFloorCount);
+                        this.defineLeafsRelativePozFromRoot();
                     } else {
                         this.isPlaced = true;
-                        this.defineRelativeLeafsFromRootPoz();
+                        this.defineLeafsRelativePozFromRoot();
                         this.orientStep  = (this.linkedProxies.length>1) ? 2*Math.PI/this.linkedProxies.length : 0;
-                        this.radStep = this.defineProxyRadStepValue();
+                        this.orbitToNextFloor = this.computeOrbitMaxInputs(this.leafFloorCount);
                     }
                     // helper_.debug("[vertex.defineRelativePoz] " + this.object.name + " : " +
                     //     "{ relX: " + this.relX + ", relY: " + this.relY + ", orientV: " + this.orientV + ", idFromRoot: " + this.idFromRoot +
-                    //     ", orientStep: " + this.orientStep + ", radStep: " + this.radStep +
+                    //     ", orientStep: " + this.orientStep + ", orbitToNextFloor: " + JSON.stringify(this.orbitToNextFloor) +
                     //     ", relFirstChT: " + this.relFirstChT + " }");
                 }
             };
