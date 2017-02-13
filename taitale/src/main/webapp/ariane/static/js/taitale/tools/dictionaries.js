@@ -28,6 +28,7 @@ define(
             this.mapLayout = {
                 MANUAL: "Random",
                 BBTREE: "BBTree",
+                OBTREE: "OBTree",
                 MDW : "Middleware"
             };
             this.mapMode = {
