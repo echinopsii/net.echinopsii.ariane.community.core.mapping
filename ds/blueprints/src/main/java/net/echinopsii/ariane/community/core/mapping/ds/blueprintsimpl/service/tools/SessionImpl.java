@@ -187,33 +187,39 @@ public class SessionImpl implements Session {
                     if (log.isDebugEnabled()) e.printStackTrace();
                 }
                 if (msg != null) {
-                    if (msg.getAction().equals(STOP)) {
-                        log.debug("[" + Thread.currentThread().getId() + ".worker.stop]");
-                        running = false;
-                    } else if (msg.getAction().equals(COMMIT)) {
-                        log.debug("[" + Thread.currentThread().getId() + ".worker.commit]");
-                        MappingDSGraphDB.commit();
-                        for (MappingDSCacheEntity entity: ((SessionImpl)this.attachedSession).sessionExistingObjectCache.values()) {
-                            MappingDSCache.removeEntityFromCache(entity);
-                            MappingDSCache.putEntityToCacheIfNotExists(entity);
-                        }
-                        for (MappingDSCacheEntity entity: ((SessionImpl)this.attachedSession).sessionRemovedObjectCache.values())
-                            MappingDSCache.removeEntityFromCache(entity);
-                        ((SessionImpl)this.attachedSession).sessionExistingObjectCache.clear();
-                        ((SessionImpl)this.attachedSession).sessionRemovedObjectCache.clear();
-                        this.returnToQueue(msg, new SessionWorkerReply(false, Void.TYPE, null));
-                    } else if (msg.getAction().equals(ROLLBACK)) {
-                        log.debug("[" + Thread.currentThread().getId() + ".worker.rollback]");
-                        MappingDSGraphDB.rollback();
-                        ((SessionImpl)this.attachedSession).sessionExistingObjectCache.clear();
-                        ((SessionImpl)this.attachedSession).sessionRemovedObjectCache.clear();
-                        this.returnToQueue(msg, new SessionWorkerReply(false, Void.TYPE, null));
-                    } else if (msg.getAction().equals(EXECUTE)) {
-                        this.execute(msg, 0);
-                    } else if (msg.getAction().equals(TRACE)) {
-                        boolean isTraceEnabled = (boolean) msg.getArgs()[0];
-                        log.debug("[" + Thread.currentThread().getId() + ".worker.trace] " + this.attachedSession.getSessionID() + " : " + isTraceEnabled);
-                        ((MomLogger)log).setMsgTraceLevel(isTraceEnabled);
+                    switch (msg.getAction()) {
+                        case STOP:
+                            log.debug("[" + Thread.currentThread().getId() + ".worker.stop]");
+                            running = false;
+                            break;
+                        case COMMIT:
+                            log.debug("[" + Thread.currentThread().getId() + ".worker.commit]");
+                            MappingDSGraphDB.commit();
+                            for (MappingDSCacheEntity entity : ((SessionImpl) this.attachedSession).sessionExistingObjectCache.values()) {
+                                MappingDSCache.removeEntityFromCache(entity);
+                                MappingDSCache.putEntityToCacheIfNotExists(entity);
+                            }
+                            for (MappingDSCacheEntity entity : ((SessionImpl) this.attachedSession).sessionRemovedObjectCache.values())
+                                MappingDSCache.removeEntityFromCache(entity);
+                            ((SessionImpl) this.attachedSession).sessionExistingObjectCache.clear();
+                            ((SessionImpl) this.attachedSession).sessionRemovedObjectCache.clear();
+                            this.returnToQueue(msg, new SessionWorkerReply(false, Void.TYPE, null));
+                            break;
+                        case ROLLBACK:
+                            log.debug("[" + Thread.currentThread().getId() + ".worker.rollback]");
+                            MappingDSGraphDB.rollback();
+                            ((SessionImpl) this.attachedSession).sessionExistingObjectCache.clear();
+                            ((SessionImpl) this.attachedSession).sessionRemovedObjectCache.clear();
+                            this.returnToQueue(msg, new SessionWorkerReply(false, Void.TYPE, null));
+                            break;
+                        case EXECUTE:
+                            this.execute(msg, 0);
+                            break;
+                        case TRACE:
+                            boolean isTraceEnabled = (boolean) msg.getArgs()[0];
+                            log.debug("[" + Thread.currentThread().getId() + ".worker.trace] " + this.attachedSession.getSessionID() + " : " + isTraceEnabled);
+                            ((MomLogger) log).setMsgTraceLevel(isTraceEnabled);
+                            break;
                     }
                 }
             }
@@ -292,12 +298,14 @@ public class SessionImpl implements Session {
 
     private SessionWorkerReply getReply(LinkedBlockingQueue<SessionWorkerReply> repQ) throws MappingDSException {
         SessionWorkerReply reply = null;
+        this.waitingAnswer = true;
         while (reply==null && !interruptAnswerWait)
             try {
                 reply = repQ.poll(50, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
                 throw new MappingDSException(e.getMessage());
             }
+        this.waitingAnswer = false;
         if (reply == null && interruptAnswerWait) {
             reply = new SessionWorkerReply(true, null, "Mapping Execution Timeout !");
             this.sessionThread.interrupt();
@@ -399,9 +407,7 @@ public class SessionImpl implements Session {
         }
 
         log.debug("["+ sessionId +".execute] wait reply ...");
-        this.waitingAnswer = true;
         SessionWorkerReply reply = getReply(repQ);
-        this.waitingAnswer = false;
         log.debug("[" + sessionId + ".execute] reply error : " + reply.isError());
         if (!reply.isError()) return reply.getRet();
         else throw new MappingDSException(reply.getError_msg());
