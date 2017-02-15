@@ -183,23 +183,23 @@ public class SessionImpl implements Session {
                 try {
                     msg = fifoInputQ.poll(50, TimeUnit.MILLISECONDS);
                 } catch (InterruptedException e) {
-                    log.warn("Interrupted while polling worker request queue...");
+                    log.warn("[" + Thread.currentThread().getName() + ".worker.run]Interrupted while polling worker request queue...");
                     if (log.isDebugEnabled()) e.printStackTrace();
                 }
                 if (msg != null) {
                     switch (msg.getAction()) {
                         case STOP:
-                            log.warn("[" + Thread.currentThread().getName() + ".worker.run] stop");
+                            log.debug("[" + Thread.currentThread().getName() + ".worker.run] stop");
                             running = false;
                         case ROLLBACK:
-                            log.warn("[" + Thread.currentThread().getName() + ".worker.run] rollback");
+                            log.debug("[" + Thread.currentThread().getName() + ".worker.run] rollback");
                             MappingDSGraphDB.rollback();
                             ((SessionImpl) this.attachedSession).sessionExistingObjectCache.clear();
                             ((SessionImpl) this.attachedSession).sessionRemovedObjectCache.clear();
                             this.returnToQueue(msg, new SessionWorkerReply(false, Void.TYPE, null));
                             break;
                         case COMMIT:
-                            log.warn("[" + Thread.currentThread().getName() + ".worker.run] commit");
+                            log.debug("[" + Thread.currentThread().getName() + ".worker.run] commit");
                             MappingDSGraphDB.commit();
                             for (MappingDSCacheEntity entity : ((SessionImpl) this.attachedSession).sessionExistingObjectCache.values()) {
                                 MappingDSCache.removeEntityFromCache(entity);
@@ -216,7 +216,7 @@ public class SessionImpl implements Session {
                             break;
                         case TRACE:
                             boolean isTraceEnabled = (boolean) msg.getArgs()[0];
-                            log.warn("[" + Thread.currentThread().getName() + ".worker.run] trace " + this.attachedSession.getSessionID() + " : " + isTraceEnabled);
+                            log.debug("[" + Thread.currentThread().getName() + ".worker.run] trace " + this.attachedSession.getSessionID() + " : " + isTraceEnabled);
                             ((MomLogger) log).setMsgTraceLevel(isTraceEnabled);
                             break;
                     }
