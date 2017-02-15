@@ -18,6 +18,7 @@
  */
 package net.echinopsii.ariane.community.core.mapping.ds.msgsrv.service;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.Transport;
 import net.echinopsii.ariane.community.core.mapping.ds.domain.proxy.SProxTransport;
 import net.echinopsii.ariane.community.core.mapping.ds.json.PropertiesJSON;
@@ -250,7 +251,8 @@ public class TransportEp {
                         break;
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                if (!e.getMessage().equals(MappingDSException.MAPPING_OVERLOAD) && !e.getMessage().equals(MappingDSException.MAPPING_TIMEOUT))
+                    e.printStackTrace();
                 message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SERVER_ERR);
                 message.put(MomMsgTranslator.MSG_ERR, "Internal server error (" + operation + ") : " + e.getMessage());
             }
