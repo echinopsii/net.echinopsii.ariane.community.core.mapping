@@ -18,6 +18,7 @@
  */
 package net.echinopsii.ariane.community.core.mapping.ds.msgsrv.service;
 
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.json.ToolBox;
 import net.echinopsii.ariane.community.core.mapping.ds.json.service.SessionJSON;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.MappingMsgsrvBootstrap;
@@ -52,10 +53,10 @@ public class SessionEp {
             else
                 operation = oOperation.toString();
 
-            switch (operation) {
-                case SProxMappingSce.SESSION_MGR_OP_OPEN:
-                    try {
-                        if (message.get(SProxMappingSce.SESSION_MGR_PARAM_CLIENT_ID)!=null) {
+            try {
+                switch (operation) {
+                    case SProxMappingSce.SESSION_MGR_OP_OPEN:
+                        if (message.get(SProxMappingSce.SESSION_MGR_PARAM_CLIENT_ID) != null) {
                             clientID = message.get(SProxMappingSce.SESSION_MGR_PARAM_CLIENT_ID).toString();
                             Session session = MappingMsgsrvBootstrap.getMappingSce().openSession(clientID, true);
                             MappingMsgsrvMomSP.getSharedMoMConnection().openMsgGroupServices(session.getSessionID());
@@ -68,15 +69,9 @@ public class SessionEp {
                             message.put(MomMsgTranslator.MSG_RC, 1);
                             message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + SProxMappingSce.SESSION_MGR_OP_OPEN + ") : no client ID provided");
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        message.put(MomMsgTranslator.MSG_RC, 1);
-                        message.put(MomMsgTranslator.MSG_ERR, "Internal server error : " + e.getMessage());
-                    }
-                    break;
-                case SProxMappingSce.SESSION_MGR_OP_CLOSE:
-                    try {
-                        if (message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID)!=null) {
+                        break;
+                    case SProxMappingSce.SESSION_MGR_OP_CLOSE:
+                        if (message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) != null) {
                             sessionID = message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID).toString();
                             Session session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sessionID);
                             if (session != null) {
@@ -93,15 +88,9 @@ public class SessionEp {
                             message.put(MomMsgTranslator.MSG_RC, 1);
                             message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + SProxMappingSce.SESSION_MGR_OP_CLOSE + ") : no session ID provided");
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        message.put(MomMsgTranslator.MSG_RC, 1);
-                        message.put(MomMsgTranslator.MSG_ERR, "Internal server error : " + e.getMessage());
-                    }
-                    break;
-                case Session.SESSION_OP_COMMIT:
-                    try {
-                        if (message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID)!=null) {
+                        break;
+                    case Session.SESSION_OP_COMMIT:
+                        if (message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) != null) {
                             sessionID = message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID).toString();
                             Session session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sessionID);
                             if (session != null) {
@@ -115,15 +104,9 @@ public class SessionEp {
                             message.put(MomMsgTranslator.MSG_RC, 1);
                             message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + SProxMappingSce.SESSION_MGR_OP_CLOSE + ") : no session ID provided");
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        message.put(MomMsgTranslator.MSG_RC, 1);
-                        message.put(MomMsgTranslator.MSG_ERR, "Internal server error : " + e.getMessage());
-                    }
-                    break;
-                case Session.SESSION_OP_ROLLBACK:
-                    try {
-                        if (message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID)!=null) {
+                        break;
+                    case Session.SESSION_OP_ROLLBACK:
+                        if (message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID) != null) {
                             sessionID = message.get(SProxMappingSce.SESSION_MGR_PARAM_SESSION_ID).toString();
                             Session session = MappingMsgsrvBootstrap.getMappingSce().getSessionRegistry().get(sessionID);
                             if (session != null) {
@@ -137,20 +120,21 @@ public class SessionEp {
                             message.put(MomMsgTranslator.MSG_RC, 1);
                             message.put(MomMsgTranslator.MSG_ERR, "Bad request (" + SProxMappingSce.SESSION_MGR_OP_CLOSE + ") : no session ID provided");
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                        break;
+                    case MomMsgTranslator.OPERATION_NOT_DEFINED:
                         message.put(MomMsgTranslator.MSG_RC, 1);
-                        message.put(MomMsgTranslator.MSG_ERR, "Internal server error : " + e.getMessage());
-                    }
-                    break;
-                case MomMsgTranslator.OPERATION_NOT_DEFINED:
-                    message.put(MomMsgTranslator.MSG_RC, 1);
-                    message.put(MomMsgTranslator.MSG_ERR, "Operation not defined ! ");
-                    break;
-                default:
-                    message.put(MomMsgTranslator.MSG_RC, 1);
-                    message.put(MomMsgTranslator.MSG_ERR, "Unknown operation (" + operation + ") ! ");
-                    break;
+                        message.put(MomMsgTranslator.MSG_ERR, "Operation not defined ! ");
+                        break;
+                    default:
+                        message.put(MomMsgTranslator.MSG_RC, 1);
+                        message.put(MomMsgTranslator.MSG_ERR, "Unknown operation (" + operation + ") ! ");
+                        break;
+                }
+            } catch (Exception e) {
+                if (!e.getMessage().equals(MappingDSException.MAPPING_OVERLOAD) && !e.getMessage().equals(MappingDSException.MAPPING_TIMEOUT))
+                    e.printStackTrace();
+                message.put(MomMsgTranslator.MSG_RC, 1);
+                message.put(MomMsgTranslator.MSG_ERR, "Internal server error : " + e.getMessage());
             }
             ((MomLogger)log).traceMessage("SessionWorker.apply - out", message, MappingSce.GLOBAL_PARAM_PAYLOAD);
             if (message.containsKey(MomMsgTranslator.MSG_TRACE)) ((MomLogger)log).setMsgTraceLevel(false);

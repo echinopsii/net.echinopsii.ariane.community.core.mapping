@@ -20,6 +20,7 @@ package net.echinopsii.ariane.community.core.mapping.ds.msgsrv.service;
 
 import net.echinopsii.ariane.community.core.mapping.ds.MapperEmptyResultException;
 import net.echinopsii.ariane.community.core.mapping.ds.MapperParserException;
+import net.echinopsii.ariane.community.core.mapping.ds.MappingDSException;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.MappingMsgsrvBootstrap;
 import net.echinopsii.ariane.community.core.mapping.ds.msgsrv.momsp.MappingMsgsrvMomSP;
 import net.echinopsii.ariane.community.core.mapping.ds.service.MapSce;
@@ -68,7 +69,8 @@ public class MapEp {
                     } catch (Exception e) {
                         log.error("Original query is : " + query);
                         log.error(e.getMessage());
-                        e.printStackTrace();
+                        if (!e.getMessage().equals(MappingDSException.MAPPING_OVERLOAD) && !e.getMessage().equals(MappingDSException.MAPPING_TIMEOUT))
+                            e.printStackTrace();
                         String result = e.getMessage();
                         message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SERVER_ERR);
                         message.put(MomMsgTranslator.MSG_ERR, result);
