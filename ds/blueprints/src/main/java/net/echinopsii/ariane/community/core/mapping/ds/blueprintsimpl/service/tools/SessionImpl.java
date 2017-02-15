@@ -381,10 +381,10 @@ public class SessionImpl implements Session {
 
     @Override
     public Object execute(Object o, String methodName, Object[] args) throws MappingDSException {
-        if (this.toBeGarbaged)
-            throw new MappingDSException("Mapping transaction to be garbaged !");
-
         this.unlockIfWaitingAnswer();
+        if (this.toBeGarbaged)
+            throw new MappingDSException(MappingDSException.MAPPING_OVERLOAD);
+
         log.debug("["+ sessionId +".execute] {"+o.getClass().getName()+","+methodName+"}");
         LinkedBlockingQueue<SessionWorkerReply> repQ = new LinkedBlockingQueue<>();
         try {
@@ -454,10 +454,9 @@ public class SessionImpl implements Session {
 
     @Override
     public Session commit() throws MappingDSException {
-        if (this.toBeGarbaged)
-            throw new MappingDSException("Mapping transaction to be garbaged !");
-
         this.unlockIfWaitingAnswer();
+        if (this.toBeGarbaged)
+            throw new MappingDSException(MappingDSException.MAPPING_OVERLOAD);
         LinkedBlockingQueue<SessionWorkerReply> repQ = new LinkedBlockingQueue<>();
         try {
             this.sessionWorker.getFifoInputQ().put(new SessionWorkerRequest(COMMIT, null, null, null, repQ));
@@ -471,10 +470,9 @@ public class SessionImpl implements Session {
 
     @Override
     public Session rollback() throws MappingDSException {
-        if (this.toBeGarbaged)
-            throw new MappingDSException("Mapping transaction to be garbaged !");
-
         this.unlockIfWaitingAnswer();
+        if (this.toBeGarbaged)
+            throw new MappingDSException(MappingDSException.MAPPING_OVERLOAD);
         LinkedBlockingQueue<SessionWorkerReply> repQ = new LinkedBlockingQueue<>();
         try {
             this.sessionWorker.getFifoInputQ().put(new SessionWorkerRequest(ROLLBACK, null, null, null, repQ));
@@ -506,7 +504,7 @@ public class SessionImpl implements Session {
         if (sessionExistingObjectCache!=null && !sessionExistingObjectCache.containsKey(entity.getEntityCacheID())) {
             sessionExistingObjectCache.put(entity.getEntityCacheID(), entity);
             return entity;
-        } else if (sessionExistingObjectCache!=null) return (MappingDSCacheEntity) sessionExistingObjectCache.get(entity.getEntityCacheID());
+        } else if (sessionExistingObjectCache!=null) return sessionExistingObjectCache.get(entity.getEntityCacheID());
         else return entity;
     }
 
