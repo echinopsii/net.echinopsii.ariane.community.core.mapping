@@ -22,6 +22,9 @@ public class MappingDSException extends Exception {
 
 	private static final long serialVersionUID = -5737356297845448334L;
 
+    public static String MAPPING_TIMEOUT = "Mapping Execution Timeout !";
+    public static String MAPPING_OVERLOAD = "Mapping Service Overload Detected !";
+
 	public MappingDSException() {
 		super();
 	}
