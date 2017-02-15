@@ -124,7 +124,7 @@ public class SessionImpl implements Session {
                 try {
                     req.getReplyQ().put(ret);
                 } catch (InterruptedException e) {
-                    log.warn("Interrupted while putting worker reply...");
+                    log.warn("[" + Thread.currentThread().getName() + ".worker.returnToQueue] Interrupted while putting worker reply...");
                     if (log.isDebugEnabled()) e.printStackTrace();
                 }
             }
@@ -135,7 +135,7 @@ public class SessionImpl implements Session {
 
         private void execute(SessionWorkerRequest msg, int retry) {
             try {
-                log.debug("[" + Thread.currentThread().getId() + ".worker.execute] " +
+                log.debug("[" + Thread.currentThread().getName() + ".worker.execute] " +
                         msg.getInstance().toString() + "." + msg.getMethod().toString() + " (" + Arrays.toString(msg.getArgs()) + ")");
                 Object ret = msg.getMethod().invoke(msg.getInstance(), msg.getArgs());
                 if (msg.getMethod().getReturnType().equals(Void.TYPE))
@@ -151,25 +151,25 @@ public class SessionImpl implements Session {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        log.debug("[" + Thread.currentThread().getId() + ".worker.execute] Retry request after DeadlockDetectedException : " + msg.getInstance().toString() + "." + msg.getMethod().toString() + " (" + Arrays.toString(msg.getArgs()) + ")");
+                        log.debug("[" + Thread.currentThread().getName() + ".worker.execute] Retry request after DeadlockDetectedException : " + msg.getInstance().toString() + "." + msg.getMethod().toString() + " (" + Arrays.toString(msg.getArgs()) + ")");
                         this.execute(msg, ++retry);
                     } else {
-                        log.warn("[" + Thread.currentThread().getId() + ".worker.execute] InvocationTargetException (" + th.getClass().getName() + ") raised while executing request : " + th.getMessage() + " ...");
-                        log.warn("[" + Thread.currentThread().getId() + ".worker.execute] Request : " + msg.getInstance().toString() + "." + msg.getMethod().toString() + " (" + Arrays.toString(msg.getArgs()) + ")");
+                        log.warn("[" + Thread.currentThread().getName() + ".worker.execute] InvocationTargetException (" + th.getClass().getName() + ") raised while executing request : " + th.getMessage() + " ...");
+                        log.warn("[" + Thread.currentThread().getName() + ".worker.execute] Request : " + msg.getInstance().toString() + "." + msg.getMethod().toString() + " (" + Arrays.toString(msg.getArgs()) + ")");
                         if (log.isTraceEnabled()) th.printStackTrace();
                         this.returnToQueue(msg, new SessionWorkerReply(true, null, th.getMessage()));
                     }
                 } else {
-                    if (th!=null) log.warn("[" + Thread.currentThread().getId() + ".worker.execute] InvocationTargetException (" + th.getClass().getName() + ") raised while executing request : " + th.getMessage() + " ...");
-                    else log.warn("[" + Thread.currentThread().getId() + ".worker.execute] InvocationTargetException raised while executing request...");
-                    log.warn("[" + Thread.currentThread().getId() + ".worker.execute] Request : " + msg.getInstance().toString() + "." + msg.getMethod().toString() + " (" + Arrays.toString(msg.getArgs()) + ")");
+                    if (th!=null) log.warn("[" + Thread.currentThread().getName() + ".worker.execute] InvocationTargetException (" + th.getClass().getName() + ") raised while executing request : " + th.getMessage() + " ...");
+                    else log.warn("[" + Thread.currentThread().getName() + ".worker.execute] InvocationTargetException raised while executing request...");
+                    log.warn("[" + Thread.currentThread().getName() + ".worker.execute] Request : " + msg.getInstance().toString() + "." + msg.getMethod().toString() + " (" + Arrays.toString(msg.getArgs()) + ")");
                     if (th!=null && log.isTraceEnabled()) th.printStackTrace();
                     this.returnToQueue(msg, new SessionWorkerReply(true, null, (th!=null) ? th.getMessage() : ie.getMessage()));
                 }
             } catch (Exception e) {
-                if (e.getMessage()!=null) log.warn("[" + Thread.currentThread().getId() + ".worker.execute] Exception ( " + e.getClass().getName() +  " ) raised while executing request : " + e.getMessage() + " ...");
-                else log.warn("[" + Thread.currentThread().getId() + ".worker.execute] Exception ( " + e.getClass().getName() +  " ) raised while executing request ...");
-                log.warn("[" + Thread.currentThread().getId() + ".worker.execute] Request : " + msg.getInstance().toString() + "." + msg.getMethod().toString() + " (" + Arrays.toString(msg.getArgs()) + ")");
+                if (e.getMessage()!=null) log.warn("[" + Thread.currentThread().getName() + ".worker.execute] Exception ( " + e.getClass().getName() +  " ) raised while executing request : " + e.getMessage() + " ...");
+                else log.warn("[" + Thread.currentThread().getName() + ".worker.execute] Exception ( " + e.getClass().getName() +  " ) raised while executing request ...");
+                log.warn("[" + Thread.currentThread().getName() + ".worker.execute] Request : " + msg.getInstance().toString() + "." + msg.getMethod().toString() + " (" + Arrays.toString(msg.getArgs()) + ")");
                 if (log.isTraceEnabled()) e.printStackTrace();
                 this.returnToQueue(msg, new SessionWorkerReply(true, null, e.getMessage()));
             }
@@ -189,11 +189,17 @@ public class SessionImpl implements Session {
                 if (msg != null) {
                     switch (msg.getAction()) {
                         case STOP:
-                            log.debug("[" + Thread.currentThread().getId() + ".worker.stop]");
+                            log.warn("[" + Thread.currentThread().getName() + ".worker.run] stop");
                             running = false;
+                        case ROLLBACK:
+                            log.warn("[" + Thread.currentThread().getName() + ".worker.run] rollback");
+                            MappingDSGraphDB.rollback();
+                            ((SessionImpl) this.attachedSession).sessionExistingObjectCache.clear();
+                            ((SessionImpl) this.attachedSession).sessionRemovedObjectCache.clear();
+                            this.returnToQueue(msg, new SessionWorkerReply(false, Void.TYPE, null));
                             break;
                         case COMMIT:
-                            log.debug("[" + Thread.currentThread().getId() + ".worker.commit]");
+                            log.warn("[" + Thread.currentThread().getName() + ".worker.run] commit");
                             MappingDSGraphDB.commit();
                             for (MappingDSCacheEntity entity : ((SessionImpl) this.attachedSession).sessionExistingObjectCache.values()) {
                                 MappingDSCache.removeEntityFromCache(entity);
@@ -205,19 +211,12 @@ public class SessionImpl implements Session {
                             ((SessionImpl) this.attachedSession).sessionRemovedObjectCache.clear();
                             this.returnToQueue(msg, new SessionWorkerReply(false, Void.TYPE, null));
                             break;
-                        case ROLLBACK:
-                            log.debug("[" + Thread.currentThread().getId() + ".worker.rollback]");
-                            MappingDSGraphDB.rollback();
-                            ((SessionImpl) this.attachedSession).sessionExistingObjectCache.clear();
-                            ((SessionImpl) this.attachedSession).sessionRemovedObjectCache.clear();
-                            this.returnToQueue(msg, new SessionWorkerReply(false, Void.TYPE, null));
-                            break;
                         case EXECUTE:
                             this.execute(msg, 0);
                             break;
                         case TRACE:
                             boolean isTraceEnabled = (boolean) msg.getArgs()[0];
-                            log.debug("[" + Thread.currentThread().getId() + ".worker.trace] " + this.attachedSession.getSessionID() + " : " + isTraceEnabled);
+                            log.warn("[" + Thread.currentThread().getName() + ".worker.run] trace " + this.attachedSession.getSessionID() + " : " + isTraceEnabled);
                             ((MomLogger) log).setMsgTraceLevel(isTraceEnabled);
                             break;
                     }
@@ -245,6 +244,7 @@ public class SessionImpl implements Session {
 
     private boolean waitingAnswer = false;
     private boolean interruptAnswerWait = false;
+    private boolean toBeGarbaged = false;
 
     public SessionImpl(String clientId) {
         clientId = clientId.replace(" ", "_");
@@ -262,26 +262,24 @@ public class SessionImpl implements Session {
     @Override
     public Session stop() {
         this.unlockIfWaitingAnswer();
-        try {
-            //Rollback any operation not commited yet
-            this.rollback();
-        } catch (MappingDSException e) {
-            log.warn("MappingDSException raised while rollbacking session... " + e.getMessage());
-            if (log.isDebugEnabled()) e.printStackTrace();
-        }
+        if (this.toBeGarbaged) log.warn("Closing blocked transaction " + this.sessionId);
         try {
             this.sessionWorker.getFifoInputQ().put(new SessionWorkerRequest(STOP, null, null, null, null));
         } catch (InterruptedException e) {
             log.warn("Interrupted while stopping session... " + e.getMessage());
             if (log.isDebugEnabled()) e.printStackTrace();
         }
-        while(sessionWorker.isRunning())
+        int counter = 0;
+        while(sessionWorker.isRunning() && !this.toBeGarbaged) {
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
                 log.warn("Interrupted while waiting session to be stopped... " + e.getMessage());
                 if (log.isDebugEnabled()) e.printStackTrace();
             }
+            counter++;
+            if (counter==100) break;
+        }
         return this;
     }
 
@@ -296,6 +294,42 @@ public class SessionImpl implements Session {
         return sessionWorker.isRunning();
     }
 
+    private boolean isNeo4JWaitingWriteLock() {
+        boolean neo4jWaitingWriteLock = false;
+        int threadStackTraceLength = this.sessionThread.getStackTrace().length;
+        if (threadStackTraceLength>1) {
+            if (this.sessionThread.getStackTrace()[0].toString().contains("org.neo4j.kernel.impl.locking.community.RWLock.acquireWriteLock"))
+                neo4jWaitingWriteLock = true;
+            log.debug("[" + this.sessionThread.getName() + ".getReply] current session thread has been interrupted. StackTrace[0] : " + this.sessionThread.getStackTrace()[0]);
+        }
+        if (threadStackTraceLength>2) {
+            if (this.sessionThread.getStackTrace()[1].toString().contains("org.neo4j.kernel.impl.locking.community.RWLock.acquireWriteLock"))
+                neo4jWaitingWriteLock = true;
+            log.debug("[" + this.sessionThread.getName() + ".getReply] current session thread has been interrupted. StackTrace[1] : " + this.sessionThread.getStackTrace()[1]);
+        }
+        if (threadStackTraceLength>3) {
+            if (this.sessionThread.getStackTrace()[2].toString().contains("org.neo4j.kernel.impl.locking.community.RWLock.acquireWriteLock"))
+                neo4jWaitingWriteLock = true;
+            log.debug("[" + this.sessionThread.getName() + ".getReply] current session thread has been interrupted. StackTrace[2] : " + this.sessionThread.getStackTrace()[2]);
+        }
+        if (threadStackTraceLength>4) {
+            if (this.sessionThread.getStackTrace()[3].toString().contains("org.neo4j.kernel.impl.locking.community.RWLock.acquireWriteLock"))
+                neo4jWaitingWriteLock = true;
+            log.debug("[" + this.sessionThread.getName() + ".getReply] current session thread has been interrupted. StackTrace[3] : " + this.sessionThread.getStackTrace()[3]);
+        }
+        if (threadStackTraceLength>5) {
+            if (this.sessionThread.getStackTrace()[4].toString().contains("org.neo4j.kernel.impl.locking.community.RWLock.acquireWriteLock"))
+                neo4jWaitingWriteLock = true;
+            log.debug("[" + this.sessionThread.getName() + ".getReply] current session thread has been interrupted. StackTrace[4] : " + this.sessionThread.getStackTrace()[4]);
+        }
+        if (threadStackTraceLength>6) {
+            if (this.sessionThread.getStackTrace()[5].toString().contains("org.neo4j.kernel.impl.locking.community.RWLock.acquireWriteLock"))
+                neo4jWaitingWriteLock = true;
+            log.debug("[" + this.sessionThread.getName() + ".getReply] current session thread has been interrupted. StackTrace[5] : " + this.sessionThread.getStackTrace()[5]);
+        }
+        return neo4jWaitingWriteLock;
+    }
+
     private SessionWorkerReply getReply(LinkedBlockingQueue<SessionWorkerReply> repQ) throws MappingDSException {
         SessionWorkerReply reply = null;
         this.waitingAnswer = true;
@@ -303,34 +337,36 @@ public class SessionImpl implements Session {
             try {
                 reply = repQ.poll(50, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
-                throw new MappingDSException(e.getMessage());
+                log.warn("[" + this.sessionThread.getName() + ".getReply] Interrupted while waiting session thread to be interrupt... " + e.getMessage());
+                if (log.isTraceEnabled()) e.printStackTrace();
             }
         this.waitingAnswer = false;
+
         if (reply == null && interruptAnswerWait) {
-            reply = new SessionWorkerReply(true, null, "Mapping Execution Timeout !");
+            log.debug("[" + sessionId + ".getReply] current session thread will been interrupted. Current state : " + this.sessionThread.getState().toString());
+            boolean neo4jWaitingWriteLock = isNeo4JWaitingWriteLock();
             this.sessionThread.interrupt();
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
-                log.warn("Interrupted while waiting session thread to be interrupt... " + e.getMessage());
+                log.warn("[" + this.sessionThread.getName() + ".getReply] Interrupted while waiting session thread to be interrupt... " + e.getMessage());
                 if (log.isTraceEnabled()) e.printStackTrace();
             }
-            log.debug("["+ sessionId +".getReply] current session thread has been interrupted. New state : " + this.sessionThread.getState().toString());
-            int threadStackTraceLength = this.sessionThread.getStackTrace().length;
-            if (threadStackTraceLength>1) log.debug("["+ sessionId +".getReply] current session thread has been interrupted. StackTrace[0] : " + this.sessionThread.getStackTrace()[0]);
-            if (threadStackTraceLength>2) log.debug("["+ sessionId +".getReply] current session thread has been interrupted. StackTrace[1] : " + this.sessionThread.getStackTrace()[1]);
-            if (threadStackTraceLength>3) log.debug("["+ sessionId +".getReply] current session thread has been interrupted. StackTrace[2] : " + this.sessionThread.getStackTrace()[2]);
-            if (threadStackTraceLength>4) log.debug("["+ sessionId +".getReply] current session thread has been interrupted. StackTrace[3] : " + this.sessionThread.getStackTrace()[3]);
-            if (threadStackTraceLength>5) log.debug("["+ sessionId +".getReply] current session thread has been interrupted. StackTrace[4] : " + this.sessionThread.getStackTrace()[4]);
-            if (threadStackTraceLength>6) log.debug("["+ sessionId +".getReply] current session thread has been interrupted. StackTrace[5] : " + this.sessionThread.getStackTrace()[5]);
+            if (neo4jWaitingWriteLock && isNeo4JWaitingWriteLock())
+                this.toBeGarbaged = true;
             this.interruptAnswerWait = false;
+            if (this.toBeGarbaged)
+                reply = new SessionWorkerReply(true, null, MappingDSException.MAPPING_OVERLOAD);
+            else
+                reply = new SessionWorkerReply(true, null, MappingDSException.MAPPING_TIMEOUT);
         }
+
         return reply;
     }
 
     private void unlockIfWaitingAnswer() {
         if (this.waitingAnswer) {
-            log.debug("["+ sessionId +".execute] current session is waiting answer from last call. Interrupt.");
+            log.debug("[" + sessionId + ".execute] current session is waiting answer from last call. Interrupt.");
             this.interruptAnswerWait = true;
             while (this.interruptAnswerWait)
                 try {
@@ -345,6 +381,9 @@ public class SessionImpl implements Session {
 
     @Override
     public Object execute(Object o, String methodName, Object[] args) throws MappingDSException {
+        if (this.toBeGarbaged)
+            throw new MappingDSException("Mapping transaction to be garbaged !");
+
         this.unlockIfWaitingAnswer();
         log.debug("["+ sessionId +".execute] {"+o.getClass().getName()+","+methodName+"}");
         LinkedBlockingQueue<SessionWorkerReply> repQ = new LinkedBlockingQueue<>();
@@ -415,6 +454,9 @@ public class SessionImpl implements Session {
 
     @Override
     public Session commit() throws MappingDSException {
+        if (this.toBeGarbaged)
+            throw new MappingDSException("Mapping transaction to be garbaged !");
+
         this.unlockIfWaitingAnswer();
         LinkedBlockingQueue<SessionWorkerReply> repQ = new LinkedBlockingQueue<>();
         try {
@@ -429,6 +471,9 @@ public class SessionImpl implements Session {
 
     @Override
     public Session rollback() throws MappingDSException {
+        if (this.toBeGarbaged)
+            throw new MappingDSException("Mapping transaction to be garbaged !");
+
         this.unlockIfWaitingAnswer();
         LinkedBlockingQueue<SessionWorkerReply> repQ = new LinkedBlockingQueue<>();
         try {
