@@ -427,8 +427,7 @@ public class SessionImpl implements Session {
                         //log.error("paramTypes["+i+"] = " + paramTypes[i].getName());
                         //log.error("args["+i+"] = " + args[i].getClass().getName());
                         boolean isAssignable;
-                        if (args[i]!=null) isAssignable = paramTypes[i].isAssignableFrom(args[i].getClass());
-                        else isAssignable = true;
+                        isAssignable = args[i] == null || paramTypes[i].isAssignableFrom(args[i].getClass());
                         //log.error("isAssignable: " + isAssignable);
                         if (!isAssignable) {
                             continue methodLoop;
