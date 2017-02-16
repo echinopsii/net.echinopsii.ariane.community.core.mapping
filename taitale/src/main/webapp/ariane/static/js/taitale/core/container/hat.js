@@ -746,7 +746,7 @@ define(
                 this.color = color_;
                 this.textSet = r.set();
                 this.hatSet = r.set();
-                logo.print(r,x-this.width/3,y,this.color);
+                logo.print(r,x-this.width/3,y + 5,this.color);
                 if (logo.logoSet)
                     this.hatSet.push(logo.logoSet);
 
