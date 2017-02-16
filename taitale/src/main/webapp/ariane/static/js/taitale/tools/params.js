@@ -101,8 +101,8 @@ define({
     container_opacSelec       : 0.4,
     container_opacUnselec     : 0.1,
     container_strokeWidth     : 4,
-    container_txtTitle        : {'font-size': '32px', 'font-family': 'Arial', 'font-weight': 'bold'},
-    containerHat_txtFont      : {'font-size': '16px', 'font-family': 'Arial', 'font-weight': 'bold'},
+    container_txtTitle        : {'font-size': '24px', 'font-family': 'Arial', 'font-weight': 'bold'},
+    containerHat_txtFont      : {'font-size': '32px', 'font-family': 'Arial', 'font-weight': 'bold'},
 
     node_menuFillColor   : "#000",
     node_menuOpacity     : 0.7,

@@ -1007,7 +1007,7 @@ define(
 
                 if (this.color == 0) this.color = this.containerParentC.color;
 
-                this.containerHat_.print(this.r,this.rectTopLeftX + (this.rectWidth/2),this.rectTopLeftY,this.color);
+                this.containerHat_.print(this.r,this.rectTopLeftX + (this.rectWidth/2),this.rectTopLeftY + 5,this.color);
                 this.containerHat_.mousedown(mouseDown);
                 this.containerHat_.drag(containerMove, containerDragger, containerUP);
 
