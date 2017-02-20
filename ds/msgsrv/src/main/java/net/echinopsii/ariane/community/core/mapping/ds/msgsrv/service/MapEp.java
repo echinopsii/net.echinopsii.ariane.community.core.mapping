@@ -69,7 +69,7 @@ public class MapEp {
                     } catch (Exception e) {
                         log.error("Original query is : " + query);
                         log.error(e.getMessage());
-                        if (!e.getMessage().equals(MappingDSException.MAPPING_OVERLOAD) && !e.getMessage().equals(MappingDSException.MAPPING_TIMEOUT))
+                        if (e.getMessage() == null || (!e.getMessage().equals(MappingDSException.MAPPING_OVERLOAD) && !e.getMessage().equals(MappingDSException.MAPPING_TIMEOUT)))
                             e.printStackTrace();
                         String result = e.getMessage();
                         message.put(MomMsgTranslator.MSG_RC, MomMsgTranslator.MSG_RET_SERVER_ERR);

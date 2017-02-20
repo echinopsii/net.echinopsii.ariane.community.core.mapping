@@ -131,7 +131,7 @@ public class SessionEp {
                         break;
                 }
             } catch (Exception e) {
-                if (!e.getMessage().equals(MappingDSException.MAPPING_OVERLOAD) && !e.getMessage().equals(MappingDSException.MAPPING_TIMEOUT))
+                if (e.getMessage() == null || (!e.getMessage().equals(MappingDSException.MAPPING_OVERLOAD) && !e.getMessage().equals(MappingDSException.MAPPING_TIMEOUT)))
                     e.printStackTrace();
                 message.put(MomMsgTranslator.MSG_RC, 1);
                 message.put(MomMsgTranslator.MSG_ERR, "Internal server error : " + e.getMessage());
