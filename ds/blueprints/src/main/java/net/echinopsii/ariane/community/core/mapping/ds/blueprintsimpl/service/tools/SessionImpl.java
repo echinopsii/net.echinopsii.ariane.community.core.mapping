@@ -157,7 +157,7 @@ public class SessionImpl implements Session {
                         log.warn("[" + Thread.currentThread().getName() + ".worker.execute] InvocationTargetException (" + th.getClass().getName() + ") raised while executing request : " + th.getMessage() + " ...");
                         log.warn("[" + Thread.currentThread().getName() + ".worker.execute] Request : " + msg.getInstance().toString() + "." + msg.getMethod().toString() + " (" + Arrays.toString(msg.getArgs()) + ")");
                         if (log.isTraceEnabled()) th.printStackTrace();
-                        this.returnToQueue(msg, new SessionWorkerReply(true, null, th.getMessage()));
+                        this.returnToQueue(msg, new SessionWorkerReply(true, null, MappingDSException.MAPPING_OVERLOAD));
                     }
                 } else {
                     if (th!=null) log.warn("[" + Thread.currentThread().getName() + ".worker.execute] InvocationTargetException (" + th.getClass().getName() + ") raised while executing request : " + th.getMessage() + " ...");
@@ -375,7 +375,6 @@ public class SessionImpl implements Session {
                     log.warn("Interrupted while waiting session thread unlocking... " + e.getMessage());
                     if (log.isDebugEnabled()) e.printStackTrace();
                 }
-            this.waitingAnswer = false;
         }
     }
 

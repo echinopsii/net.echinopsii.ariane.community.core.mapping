@@ -50,7 +50,10 @@ public class MappingDSGraphDBObjectProps {
             return;
         } else if (value instanceof ArrayList) {
             for (Object aValue : (ArrayList<Object>)value)
-                flatObjectProperties(vertex, key + "_ArrayList." + ((ArrayList<Object>) value).indexOf(aValue), aValue, mappingObjPropsKey);
+                if (aValue!=null)
+                    flatObjectProperties(vertex, key + "_ArrayList." + ((ArrayList<Object>) value).indexOf(aValue), aValue, mappingObjPropsKey);
+                else
+                    log.warn("Property {}_{} value is null ! ", new Object[]{mappingObjPropsKey, key + "_ArrayList." + ((ArrayList<Object>) value).indexOf(aValue)});
             return;
         }
         log.debug("Synchronize property {}_{} : {}...", new Object[]{mappingObjPropsKey, key, ((value!=null) ? value.toString() : "null")});
