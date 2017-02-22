@@ -29,8 +29,8 @@ public enum Text implements Predicate {
             return ((String) value).matches((String)regex);
         } else {
             String msg = "The both arguments must be a String; ";
-            msg += "\nvalue is : (" + value.toString() + ", " + value.getClass() + ")";
-            msg += "\nregex is : (" + regex.toString() + ", " + regex.getClass() + ")";
+            msg += "\nvalue is : (" + ((value!=null) ? value.toString() + ", " + value.getClass() : "null") + ")";
+            msg += "\nregex is : (" + ((regex!=null) ? regex.toString() + ", " + regex.getClass() : "null") + ")";
             throw new IllegalArgumentException(msg);
         }
     }
