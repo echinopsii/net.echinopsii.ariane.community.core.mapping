@@ -28,10 +28,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.TransportSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.DeserializedPushResponse;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public abstract class SProxTransportSceAbs<T extends Transport> implements SProxTransportSce {
     public static DeserializedPushResponse pushDeserializedTransport(TransportJSON.JSONDeserializedTransport jsonDeserializedTransport,
@@ -57,10 +54,14 @@ public abstract class SProxTransportSceAbs<T extends Transport> implements SProx
 
         // LOOK IF TRANSPORT MAYBE UPDATED OR CREATED
         Transport deserializedTransport = null;
+        HashSet<String> propsKeySet = null;
         if (ret.getErrorMessage() == null && jsonDeserializedTransport.getTransportID()!=null) {
             if (mappingSession!=null) deserializedTransport = mappingSce.getTransportSce().getTransport(mappingSession, jsonDeserializedTransport.getTransportID());
             else deserializedTransport = mappingSce.getTransportSce().getTransport(jsonDeserializedTransport.getTransportID());
             if (deserializedTransport==null) ret.setErrorMessage("Request Error : transport with provided ID " + jsonDeserializedTransport.getTransportID() + " was not found.");
+            else if (deserializedTransport.getTransportProperties()!=null) {
+                propsKeySet = new HashSet<>(deserializedTransport.getTransportProperties().keySet());
+            }
         }
 
         // APPLY REQ IF NO ERRORS
@@ -75,9 +76,9 @@ public abstract class SProxTransportSceAbs<T extends Transport> implements SProx
             }
 
             if (jsonDeserializedTransport.getTransportProperties()!=null) {
-                if (deserializedTransport.getTransportProperties()!=null) {
+                if (propsKeySet!=null) {
                     List<String> propertiesToDelete = new ArrayList<>();
-                    for (String propertyKey : deserializedTransport.getTransportProperties().keySet())
+                    for (String propertyKey : propsKeySet)
                         if (!reqProperties.containsKey(propertyKey)) propertiesToDelete.add(propertyKey);
                     for (String propertyToDelete : propertiesToDelete)
                         if (mappingSession!=null) ((SProxTransport)deserializedTransport).removeTransportProperty(mappingSession, propertyToDelete);

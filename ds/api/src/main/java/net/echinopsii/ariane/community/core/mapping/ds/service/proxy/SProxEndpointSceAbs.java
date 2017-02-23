@@ -29,10 +29,7 @@ import net.echinopsii.ariane.community.core.mapping.ds.service.EndpointSce;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.DeserializedPushResponse;
 import net.echinopsii.ariane.community.core.mapping.ds.service.tools.Session;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public abstract class SProxEndpointSceAbs<E extends Endpoint> implements SProxEndpointSce {
 
@@ -81,11 +78,17 @@ public abstract class SProxEndpointSceAbs<E extends Endpoint> implements SProxEn
 
         // LOOK IF NODE MAYBE UPDATED OR CREATED
         Endpoint deserializedEndpoint = null;
+        HashSet<Endpoint> twinEndpoints = null;
+        HashSet<String> propsKeySet = null;
         if (ret.getErrorMessage() == null && jsonDeserializedEndpoint.getEndpointID()!=null) {
             if (mappingSession!=null) deserializedEndpoint = mappingSce.getEndpointSce().getEndpoint(mappingSession, jsonDeserializedEndpoint.getEndpointID());
             else deserializedEndpoint = mappingSce.getEndpointSce().getEndpoint(jsonDeserializedEndpoint.getEndpointID());
             if (deserializedEndpoint==null)
                 ret.setErrorMessage("Request Error : endpoint with provided ID " + jsonDeserializedEndpoint.getEndpointID() + " was not found.");
+            else {
+                twinEndpoints = new HashSet<>(deserializedEndpoint.getTwinEndpoints());
+                propsKeySet = new HashSet<>(deserializedEndpoint.getEndpointProperties().keySet());
+            }
         }
 
         if (ret.getErrorMessage() == null && deserializedEndpoint==null && jsonDeserializedEndpoint.getEndpointURL() != null)
@@ -97,7 +100,7 @@ public abstract class SProxEndpointSceAbs<E extends Endpoint> implements SProxEn
             String reqEndpointURL = jsonDeserializedEndpoint.getEndpointURL();
             String reqEndpointParentNodeID = jsonDeserializedEndpoint.getEndpointParentNodeID();
             if (deserializedEndpoint == null)
-                if (mappingSession!=null) deserializedEndpoint = mappingSce.getEndpointSce().createEndpoint(mappingSession, reqEndpointURL, reqEndpointParentNodeID);
+                if (mappingSession != null) deserializedEndpoint = mappingSce.getEndpointSce().createEndpoint(mappingSession, reqEndpointURL, reqEndpointParentNodeID);
                 else deserializedEndpoint = mappingSce.getEndpointSce().createEndpoint(reqEndpointURL, reqEndpointParentNodeID);
             else {
                 if (reqEndpointURL!=null)
@@ -110,9 +113,10 @@ public abstract class SProxEndpointSceAbs<E extends Endpoint> implements SProxEn
 
             if (jsonDeserializedEndpoint.getEndpointTwinEndpointsID()!=null) {
                 List<Endpoint> twinEndpointsToDelete = new ArrayList<>();
-                for (Endpoint existingTwinEndpoint : deserializedEndpoint.getTwinEndpoints())
-                    if (!reqEndpointTwinEndpoints.contains(existingTwinEndpoint))
-                        twinEndpointsToDelete.add(existingTwinEndpoint);
+                if (twinEndpoints!=null)
+                    for (Endpoint existingTwinEndpoint : twinEndpoints)
+                        if (!reqEndpointTwinEndpoints.contains(existingTwinEndpoint))
+                            twinEndpointsToDelete.add(existingTwinEndpoint);
                 for (Endpoint twinEndpointToDelete : twinEndpointsToDelete) {
                     if (mappingSession!=null) {
                         ((SProxEndpoint)deserializedEndpoint).removeTwinEndpoint(mappingSession, twinEndpointToDelete);
@@ -135,9 +139,9 @@ public abstract class SProxEndpointSceAbs<E extends Endpoint> implements SProxEn
             }
 
             if (jsonDeserializedEndpoint.getEndpointProperties()!=null) {
-                if (deserializedEndpoint.getEndpointProperties()!=null) {
+                if (propsKeySet!=null) {
                     List<String> propertiesToDelete = new ArrayList<>();
-                    for (String propertyKey : deserializedEndpoint.getEndpointProperties().keySet())
+                    for (String propertyKey : propsKeySet)
                         if (!reqEndpointProperties.containsKey(propertyKey))
                             propertiesToDelete.add(propertyKey);
                     for (String propertyKeyToDelete : propertiesToDelete)

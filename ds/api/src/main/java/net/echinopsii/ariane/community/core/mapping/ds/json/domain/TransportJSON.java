@@ -40,8 +40,8 @@ public class TransportJSON {
 
     private static void transportProps2JSON(Transport transport, JsonGenerator jgenerator)
             throws IOException {
-        HashMap<String, Object> props = transport.getTransportProperties();
-        if (props != null && props.size()!=0) {
+        if (transport.getTransportProperties() != null && transport.getTransportProperties().size()!=0) {
+            HashMap<String, Object> props = new HashMap<>(transport.getTransportProperties());
             jgenerator.writeObjectFieldStart(Transport.TOKEN_TP_PRP);
             PropertiesJSON.propertiesToJSON(props, jgenerator);
             jgenerator.writeEndObject();
@@ -49,8 +49,8 @@ public class TransportJSON {
     }
 
     private static void transportProps2JSONWithTypedProps(Transport transport, JsonGenerator jgenerator) throws IOException, PropertiesException {
-        HashMap<String, Object> props = transport.getTransportProperties();
-        if (props != null && props.size()!=0) {
+        if (transport.getTransportProperties() != null && transport.getTransportProperties().size()!=0) {
+            HashMap<String, Object> props = new HashMap<>(transport.getTransportProperties());
             jgenerator.writeArrayFieldStart(Transport.TOKEN_TP_PRP);
             for (PropertiesJSON.TypedPropertyField field : PropertiesJSON.propertiesToTypedPropertiesList(props))
                 field.toJSON(jgenerator);
