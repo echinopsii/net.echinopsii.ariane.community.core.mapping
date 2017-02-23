@@ -158,9 +158,10 @@ public abstract class SProxNodeSceAbs<N extends Node> implements SProxNodeSce {
 
             if (jsonDeserializedNode.getNodeChildNodesID()!=null) {
                 List<Node> childNodesToDelete = new ArrayList<>();
-                for (Node existingChildNode : nodeChildNodes)
-                    if (!reqNodeChildNodes.contains(existingChildNode))
-                        childNodesToDelete.add(existingChildNode);
+                if (nodeChildNodes!=null)
+                    for (Node existingChildNode : nodeChildNodes)
+                        if (!reqNodeChildNodes.contains(existingChildNode))
+                            childNodesToDelete.add(existingChildNode);
                 for (Node childNodeToDelete : childNodesToDelete)
                     if (mappingSession!=null) ((SProxNode)deserializedNode).removeNodeChildNode(mappingSession, childNodeToDelete);
                     else deserializedNode.removeNodeChildNode(childNodeToDelete);
@@ -172,9 +173,10 @@ public abstract class SProxNodeSceAbs<N extends Node> implements SProxNodeSce {
 
             if (jsonDeserializedNode.getNodeTwinNodesID()!=null) {
                 List<Node> twinNodesToDelete = new ArrayList<>();
-                for (Node existingTwinNode : nodeTwinNodes)
-                    if (!reqNodeTwinNodes.contains(existingTwinNode))
-                        twinNodesToDelete.add(existingTwinNode);
+                if (nodeTwinNodes!=null)
+                    for (Node existingTwinNode : nodeTwinNodes)
+                        if (!reqNodeTwinNodes.contains(existingTwinNode))
+                            twinNodesToDelete.add(existingTwinNode);
                 for (Node twinNodeToDelete : twinNodesToDelete) {
                     if (mappingSession!=null) {
                         ((SProxNode)deserializedNode).removeTwinNode(mappingSession, twinNodeToDelete);
@@ -198,9 +200,10 @@ public abstract class SProxNodeSceAbs<N extends Node> implements SProxNodeSce {
 
             if (jsonDeserializedNode.getNodeEndpointsID()!=null) {
                 List<Endpoint> endpointsToDelete = new ArrayList<>();
-                for (Endpoint existingEndpoint : nodeEndpoints)
-                    if (!reqNodeEndpoints.contains(existingEndpoint))
-                        endpointsToDelete.add(existingEndpoint);
+                if (nodeEndpoints!=null)
+                    for (Endpoint existingEndpoint : nodeEndpoints)
+                        if (!reqNodeEndpoints.contains(existingEndpoint))
+                            endpointsToDelete.add(existingEndpoint);
                 for (Endpoint endpointToDelete : endpointsToDelete)
                     if (mappingSession!=null) ((SProxNode)deserializedNode).removeEndpoint(mappingSession, endpointToDelete);
                     else deserializedNode.removeEndpoint(endpointToDelete);
