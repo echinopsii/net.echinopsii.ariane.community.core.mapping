@@ -195,8 +195,9 @@ public abstract class SProxContainerSceAbs<C extends Container> implements SProx
 
             if (jsonDeserializedContainer.getContainerChildContainersID() != null) {
                 List<Container> childContainersToDelete = new ArrayList<>();
-                for (Container containerToDel : childContainers)
-                    if (!reqContainerChildContainers.contains(containerToDel)) childContainersToDelete.add(containerToDel);
+                if (childContainers!=null)
+                    for (Container containerToDel : childContainers)
+                        if (!reqContainerChildContainers.contains(containerToDel)) childContainersToDelete.add(containerToDel);
                 for (Container containerToDel : childContainersToDelete)
                     if (mappingSession!=null) ((SProxContainer)deserializedContainer).removeContainerChildContainer(mappingSession, containerToDel);
                     else deserializedContainer.removeContainerChildContainer(containerToDel);
