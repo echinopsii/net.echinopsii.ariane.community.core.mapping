@@ -94,18 +94,18 @@ public class ContainerJSON {
             jgenerator.writeStringField(Container.TOKEN_CT_PCID, cont.getContainerParentContainer().getContainerID());
 
         jgenerator.writeArrayFieldStart(Container.TOKEN_CT_CCID);
-        for (Container container : cont.getContainerChildContainers())
-            jgenerator.writeString(container.getContainerID());
+        HashSet<Container> containerChildContainers = new HashSet<>(cont.getContainerChildContainers());
+        for (Container container : containerChildContainers) jgenerator.writeString(container.getContainerID());
         jgenerator.writeEndArray();
 
         jgenerator.writeArrayFieldStart(Container.TOKEN_CT_GID);
-        for (Gate gate : cont.getContainerGates())
-            jgenerator.writeString(gate.getNodeID());
+        HashSet<Gate> containerGates = new HashSet<>(cont.getContainerGates());
+        for (Gate gate : containerGates) jgenerator.writeString(gate.getNodeID());
         jgenerator.writeEndArray();
 
         jgenerator.writeArrayFieldStart(Container.TOKEN_CT_NID);
-        for (Node node : cont.getContainerNodes())
-            jgenerator.writeString(node.getNodeID());
+        HashSet<Node> containerNodes = new HashSet<>(cont.getContainerNodes());
+        for (Node node : containerNodes) jgenerator.writeString(node.getNodeID());
         jgenerator.writeEndArray();
     }
 
