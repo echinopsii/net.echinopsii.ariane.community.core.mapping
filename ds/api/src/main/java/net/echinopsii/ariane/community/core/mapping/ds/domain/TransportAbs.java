@@ -26,7 +26,7 @@ import java.util.HashMap;
 public abstract class TransportAbs implements Transport {
     private String transportID = null;
     private String transportName = null;
-    private HashMap<String, Object> transportProperties = new HashMap<>();
+    private final HashMap<String, Object> transportProperties = new HashMap<>();
 
     @Override
     public String getTransportID() {
@@ -50,17 +50,25 @@ public abstract class TransportAbs implements Transport {
 
     @Override
     public HashMap<String, Object> getTransportProperties() {
-        return transportProperties;
+        HashMap<String, Object> ret;
+        synchronized (this.transportProperties) {
+            ret = new HashMap<>(this.transportProperties);
+        }
+        return ret;
     }
 
     @Override
     public void addTransportProperty(String propertyKey, Object value) throws MappingDSException {
-        this.transportProperties.put(propertyKey, value);
+        synchronized (this.transportProperties) {
+            this.transportProperties.put(propertyKey, value);
+        }
     }
 
     @Override
     public void removeTransportProperty(String propertyKey) throws MappingDSException {
-        this.transportProperties.remove(propertyKey);
+        synchronized (this.transportProperties) {
+            this.transportProperties.remove(propertyKey);
+        }
     }
 
     @Override

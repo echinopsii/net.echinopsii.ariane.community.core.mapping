@@ -59,15 +59,11 @@ public abstract class SProxClusterSceAbs<CL extends Cluster> implements SProxClu
 
         // LOOK IF CLUSTER MAYBE UPDATED OR CREATED
         Cluster deserializedCluster = null;
-        HashSet<Container> clusterContainers = null ;
         if (ret.getErrorMessage()==null && jsonDeserializedCluster.getClusterID()!=null) {
             if (mappingSession!=null)
                 deserializedCluster = mappingSce.getClusterSce().getCluster(mappingSession, jsonDeserializedCluster.getClusterID());
             else deserializedCluster = mappingSce.getClusterSce().getCluster(jsonDeserializedCluster.getClusterID());
             if (deserializedCluster == null) ret.setErrorMessage("Request Error : cluster with provided ID " + jsonDeserializedCluster.getClusterID() + " was not found.");
-            else {
-                clusterContainers = new HashSet<>(deserializedCluster.getClusterContainers());
-            }
         }
 
         // APPLY REQ IF NO ERRORS
@@ -81,10 +77,9 @@ public abstract class SProxClusterSceAbs<CL extends Cluster> implements SProxClu
 
             if (jsonDeserializedCluster.getClusterContainersID() != null) {
                 List<Container> containersToDelete = new ArrayList<>();
-                if (clusterContainers!=null)
-                    for (Container containerToDel : clusterContainers)
-                        if (!reqContainers.contains(containerToDel))
-                            containersToDelete.add(containerToDel);
+                for (Container containerToDel : deserializedCluster.getClusterContainers())
+                    if (!reqContainers.contains(containerToDel))
+                        containersToDelete.add(containerToDel);
                 for (Container containerToDel : containersToDelete)
                     if (mappingSession!=null) ((SProxCluster)deserializedCluster).removeClusterContainer(mappingSession, containerToDel);
                     else deserializedCluster.removeClusterContainer(containerToDel);

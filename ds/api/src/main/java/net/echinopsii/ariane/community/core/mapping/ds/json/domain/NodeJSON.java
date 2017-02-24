@@ -42,20 +42,18 @@ public class NodeJSON {
 
     private final static Logger log = LoggerFactory.getLogger(NodeJSON.class);
 
-    private static void nodeProps2JSON(Node node, JsonGenerator jgenerator) throws JsonGenerationException, IOException {
+    private static void nodeProps2JSON(Node node, JsonGenerator jgenerator) throws IOException {
         if (node.getNodeProperties()!=null && node.getNodeProperties().size()!=0) {
-            HashMap<String, Object> props = new HashMap<>(node.getNodeProperties());
             jgenerator.writeObjectFieldStart(Node.TOKEN_ND_PRP);
-            PropertiesJSON.propertiesToJSON(props, jgenerator);
+            PropertiesJSON.propertiesToJSON(node.getNodeProperties(), jgenerator);
             jgenerator.writeEndObject();
         }
     }
 
-    private static void nodeProps2JSONWithTypedProps(Node node, JsonGenerator jgenerator) throws JsonGenerationException, IOException, PropertiesException {
+    private static void nodeProps2JSONWithTypedProps(Node node, JsonGenerator jgenerator) throws IOException, PropertiesException {
         if (node.getNodeProperties()!=null && node.getNodeProperties().size()!=0) {
-            HashMap<String, Object> props = new HashMap<>(node.getNodeProperties());
             jgenerator.writeArrayFieldStart(Node.TOKEN_ND_PRP);
-            for (PropertiesJSON.TypedPropertyField field : PropertiesJSON.propertiesToTypedPropertiesList(props))
+            for (PropertiesJSON.TypedPropertyField field : PropertiesJSON.propertiesToTypedPropertiesList(node.getNodeProperties()))
                 field.toJSON(jgenerator);
             jgenerator.writeEndArray();
         }
@@ -82,18 +80,15 @@ public class NodeJSON {
             jgenerator.writeStringField(Node.TOKEN_ND_PNDID, node.getNodeParentNode().getNodeID());
 
         jgenerator.writeArrayFieldStart(Node.TOKEN_ND_CNDID);
-        HashSet<Node> nodeChildNodes = new HashSet<>(node.getNodeChildNodes());
-        for (Node child : nodeChildNodes) jgenerator.writeString(child.getNodeID());
+        for (Node child : node.getNodeChildNodes()) jgenerator.writeString(child.getNodeID());
         jgenerator.writeEndArray();
 
         jgenerator.writeArrayFieldStart(Node.TOKEN_ND_TWNID);
-        HashSet<Node> nodeTwinNodes = new HashSet<>(node.getTwinNodes());
-        for (Node twin : nodeTwinNodes) jgenerator.writeString(twin.getNodeID());
+        for (Node twin : node.getTwinNodes()) jgenerator.writeString(twin.getNodeID());
         jgenerator.writeEndArray();
 
         jgenerator.writeArrayFieldStart(Node.TOKEN_ND_EPSID);
-        HashSet<Endpoint> nodeEndpoints = new HashSet<>(node.getNodeEndpoints());
-        for (Endpoint ep : nodeEndpoints) jgenerator.writeString(ep.getEndpointID());
+        for (Endpoint ep : node.getNodeEndpoints()) jgenerator.writeString(ep.getEndpointID());
         jgenerator.writeEndArray();
     }
 

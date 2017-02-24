@@ -41,18 +41,16 @@ public class TransportJSON {
     private static void transportProps2JSON(Transport transport, JsonGenerator jgenerator)
             throws IOException {
         if (transport.getTransportProperties() != null && transport.getTransportProperties().size()!=0) {
-            HashMap<String, Object> props = new HashMap<>(transport.getTransportProperties());
             jgenerator.writeObjectFieldStart(Transport.TOKEN_TP_PRP);
-            PropertiesJSON.propertiesToJSON(props, jgenerator);
+            PropertiesJSON.propertiesToJSON(transport.getTransportProperties(), jgenerator);
             jgenerator.writeEndObject();
         }
     }
 
     private static void transportProps2JSONWithTypedProps(Transport transport, JsonGenerator jgenerator) throws IOException, PropertiesException {
         if (transport.getTransportProperties() != null && transport.getTransportProperties().size()!=0) {
-            HashMap<String, Object> props = new HashMap<>(transport.getTransportProperties());
             jgenerator.writeArrayFieldStart(Transport.TOKEN_TP_PRP);
-            for (PropertiesJSON.TypedPropertyField field : PropertiesJSON.propertiesToTypedPropertiesList(props))
+            for (PropertiesJSON.TypedPropertyField field : PropertiesJSON.propertiesToTypedPropertiesList(transport.getTransportProperties()))
                 field.toJSON(jgenerator);
             jgenerator.writeEndArray();
         }

@@ -113,21 +113,11 @@ public abstract class SProxContainerSceAbs<C extends Container> implements SProx
         }
         // LOOK IF CONTAINER MAYBE UPDATED OR CREATED
         Container deserializedContainer = null;
-        HashSet<Container> childContainers = null;
-        HashSet<Node> containerNodes = null;
-        HashSet<Gate> containerGates = null;
-        HashSet<String> propsKeySet = null;
         if (ret.getErrorMessage() == null && jsonDeserializedContainer.getContainerID()!=null) {
             if (mappingSession!=null) deserializedContainer = mappingSce.getContainerSce().getContainer(mappingSession, jsonDeserializedContainer.getContainerID());
             else deserializedContainer = mappingSce.getContainerSce().getContainer(jsonDeserializedContainer.getContainerID());
             if (deserializedContainer==null)
                 ret.setErrorMessage("Request Error : container with provided ID " + jsonDeserializedContainer.getContainerID() + " was not found.");
-            else {
-                childContainers = new HashSet<>(deserializedContainer.getContainerChildContainers());
-                containerNodes = new HashSet<>(deserializedContainer.getContainerNodes());
-                containerGates = new HashSet<>(deserializedContainer.getContainerGates());
-                propsKeySet = new HashSet<>(deserializedContainer.getContainerProperties().keySet());
-            }
         }
 
         if (ret.getErrorMessage() == null && deserializedContainer == null && jsonDeserializedContainer.getContainerGateURI() != null)
@@ -195,9 +185,8 @@ public abstract class SProxContainerSceAbs<C extends Container> implements SProx
 
             if (jsonDeserializedContainer.getContainerChildContainersID() != null) {
                 List<Container> childContainersToDelete = new ArrayList<>();
-                if (childContainers!=null)
-                    for (Container containerToDel : childContainers)
-                        if (!reqContainerChildContainers.contains(containerToDel)) childContainersToDelete.add(containerToDel);
+                for (Container containerToDel : deserializedContainer.getContainerChildContainers())
+                    if (!reqContainerChildContainers.contains(containerToDel)) childContainersToDelete.add(containerToDel);
                 for (Container containerToDel : childContainersToDelete)
                     if (mappingSession!=null) ((SProxContainer)deserializedContainer).removeContainerChildContainer(mappingSession, containerToDel);
                     else deserializedContainer.removeContainerChildContainer(containerToDel);
@@ -208,9 +197,8 @@ public abstract class SProxContainerSceAbs<C extends Container> implements SProx
 
             if (jsonDeserializedContainer.getContainerNodesID() != null) {
                 List<Node> nodesToDelete = new ArrayList<>();
-                if (containerNodes!=null)
-                    for (Node nodeToDel : containerNodes)
-                        if (!reqContainerChildNodes.contains(nodeToDel)) nodesToDelete.add(nodeToDel);
+                for (Node nodeToDel : deserializedContainer.getContainerNodes())
+                    if (!reqContainerChildNodes.contains(nodeToDel)) nodesToDelete.add(nodeToDel);
                 for (Node nodeToDel : nodesToDelete)
                     if (mappingSession!=null) ((SProxContainer)deserializedContainer).removeContainerNode(mappingSession, nodeToDel);
                     else deserializedContainer.removeContainerNode(nodeToDel);
@@ -221,9 +209,8 @@ public abstract class SProxContainerSceAbs<C extends Container> implements SProx
 
             if (jsonDeserializedContainer.getContainerGatesID() != null) {
                 List<Gate> gatesToDelete = new ArrayList<>();
-                if (containerGates != null)
-                    for (Gate gateToDel : containerGates)
-                        if (!reqContainerChildGates.contains(gateToDel)) gatesToDelete.add(gateToDel);
+                for (Gate gateToDel : deserializedContainer.getContainerGates())
+                    if (!reqContainerChildGates.contains(gateToDel)) gatesToDelete.add(gateToDel);
                 for (Gate gateToDel : gatesToDelete)
                     if (mappingSession!=null) ((SProxContainer)deserializedContainer).removeContainerGate(mappingSession, gateToDel);
                     else deserializedContainer.removeContainerGate(gateToDel);
@@ -233,6 +220,7 @@ public abstract class SProxContainerSceAbs<C extends Container> implements SProx
             }
 
             if (jsonDeserializedContainer.getContainerProperties()!=null) {
+                Set<String> propsKeySet = deserializedContainer.getContainerProperties().keySet();
                 if (propsKeySet!=null) {
                     List<String> propertiesToDelete = new ArrayList<>();
                     for (String propertyKey : propsKeySet)

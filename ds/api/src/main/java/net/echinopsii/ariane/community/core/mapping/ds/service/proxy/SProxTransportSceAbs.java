@@ -54,14 +54,10 @@ public abstract class SProxTransportSceAbs<T extends Transport> implements SProx
 
         // LOOK IF TRANSPORT MAYBE UPDATED OR CREATED
         Transport deserializedTransport = null;
-        HashSet<String> propsKeySet = null;
         if (ret.getErrorMessage() == null && jsonDeserializedTransport.getTransportID()!=null) {
             if (mappingSession!=null) deserializedTransport = mappingSce.getTransportSce().getTransport(mappingSession, jsonDeserializedTransport.getTransportID());
             else deserializedTransport = mappingSce.getTransportSce().getTransport(jsonDeserializedTransport.getTransportID());
             if (deserializedTransport==null) ret.setErrorMessage("Request Error : transport with provided ID " + jsonDeserializedTransport.getTransportID() + " was not found.");
-            else if (deserializedTransport.getTransportProperties()!=null) {
-                propsKeySet = new HashSet<>(deserializedTransport.getTransportProperties().keySet());
-            }
         }
 
         // APPLY REQ IF NO ERRORS
@@ -76,6 +72,7 @@ public abstract class SProxTransportSceAbs<T extends Transport> implements SProx
             }
 
             if (jsonDeserializedTransport.getTransportProperties()!=null) {
+                Set<String> propsKeySet = deserializedTransport.getTransportProperties().keySet();
                 if (propsKeySet!=null) {
                     List<String> propertiesToDelete = new ArrayList<>();
                     for (String propertyKey : propsKeySet)

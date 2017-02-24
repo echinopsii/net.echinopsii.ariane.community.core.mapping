@@ -42,18 +42,16 @@ public class EndpointJSON {
     private static void endpointProps2JSON(Endpoint endpoint, JsonGenerator jgenerator)
             throws IOException {
         if (endpoint.getEndpointProperties() != null && endpoint.getEndpointProperties().size()!=0) {
-            HashMap<String, Object> props = new HashMap<>(endpoint.getEndpointProperties());
             jgenerator.writeObjectFieldStart(Endpoint.TOKEN_EP_PRP);
-            PropertiesJSON.propertiesToJSON(props,jgenerator);
+            PropertiesJSON.propertiesToJSON(endpoint.getEndpointProperties(),jgenerator);
             jgenerator.writeEndObject();
         }
     }
 
     private static void endpointProps2JSONWithTypedProps(Endpoint endpoint, JsonGenerator jgenerator) throws IOException, PropertiesException {
         if (endpoint.getEndpointProperties() != null && endpoint.getEndpointProperties().size()!=0) {
-            HashMap<String, Object> props = new HashMap<>(endpoint.getEndpointProperties());
             jgenerator.writeArrayFieldStart(Endpoint.TOKEN_EP_PRP);
-            for (PropertiesJSON.TypedPropertyField field : PropertiesJSON.propertiesToTypedPropertiesList(props))
+            for (PropertiesJSON.TypedPropertyField field : PropertiesJSON.propertiesToTypedPropertiesList(endpoint.getEndpointProperties()))
                 field.toJSON(jgenerator);
             jgenerator.writeEndArray();
         }
@@ -65,8 +63,7 @@ public class EndpointJSON {
         if (endpoint.getEndpointParentNode()!=null)
             jgenerator.writeStringField(Endpoint.TOKEN_EP_PNODEID, endpoint.getEndpointParentNode().getNodeID());
         jgenerator.writeArrayFieldStart(Endpoint.TOKEN_EP_TWNEPID);
-        HashSet<Endpoint> twinEndpoints = new HashSet<>(endpoint.getTwinEndpoints());
-        for (Endpoint tep : twinEndpoints) jgenerator.writeString(tep.getEndpointID());
+        for (Endpoint tep : endpoint.getTwinEndpoints()) jgenerator.writeString(tep.getEndpointID());
         jgenerator.writeEndArray();
     }
 

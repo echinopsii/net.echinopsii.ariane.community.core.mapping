@@ -115,21 +115,11 @@ public abstract class SProxNodeSceAbs<N extends Node> implements SProxNodeSce {
 
         // LOOK IF NODE MAYBE UPDATED OR CREATED
         Node deserializedNode = null;
-        HashSet<Node> nodeChildNodes = null;
-        HashSet<Node> nodeTwinNodes = null;
-        HashSet<Endpoint> nodeEndpoints = null;
-        HashSet<String> propsKeySet = null;
         if (ret.getErrorMessage() == null && jsonDeserializedNode.getNodeID() != null) {
             if (mappingSession!=null) deserializedNode = mappingSce.getNodeSce().getNode(mappingSession, jsonDeserializedNode.getNodeID());
             else deserializedNode = mappingSce.getNodeSce().getNode(jsonDeserializedNode.getNodeID());
             if (deserializedNode == null)
                 ret.setErrorMessage("Request Error : node with provided ID " + jsonDeserializedNode.getNodeID() + " was not found.");
-            else {
-                nodeChildNodes = new HashSet<>(deserializedNode.getNodeChildNodes());
-                nodeTwinNodes = new HashSet<>(deserializedNode.getTwinNodes());
-                nodeEndpoints = new HashSet<>(deserializedNode.getNodeEndpoints());
-                if (deserializedNode.getNodeProperties()!=null) propsKeySet = new HashSet<>(deserializedNode.getNodeProperties().keySet());
-            }
         }
 
         if (ret.getErrorMessage() == null && deserializedNode == null && reqNodeContainer != null && jsonDeserializedNode.getNodeName() != null)
@@ -158,10 +148,9 @@ public abstract class SProxNodeSceAbs<N extends Node> implements SProxNodeSce {
 
             if (jsonDeserializedNode.getNodeChildNodesID()!=null) {
                 List<Node> childNodesToDelete = new ArrayList<>();
-                if (nodeChildNodes!=null)
-                    for (Node existingChildNode : nodeChildNodes)
-                        if (!reqNodeChildNodes.contains(existingChildNode))
-                            childNodesToDelete.add(existingChildNode);
+                for (Node existingChildNode : deserializedNode.getNodeChildNodes())
+                    if (!reqNodeChildNodes.contains(existingChildNode))
+                        childNodesToDelete.add(existingChildNode);
                 for (Node childNodeToDelete : childNodesToDelete)
                     if (mappingSession!=null) ((SProxNode)deserializedNode).removeNodeChildNode(mappingSession, childNodeToDelete);
                     else deserializedNode.removeNodeChildNode(childNodeToDelete);
@@ -173,10 +162,9 @@ public abstract class SProxNodeSceAbs<N extends Node> implements SProxNodeSce {
 
             if (jsonDeserializedNode.getNodeTwinNodesID()!=null) {
                 List<Node> twinNodesToDelete = new ArrayList<>();
-                if (nodeTwinNodes!=null)
-                    for (Node existingTwinNode : nodeTwinNodes)
-                        if (!reqNodeTwinNodes.contains(existingTwinNode))
-                            twinNodesToDelete.add(existingTwinNode);
+                for (Node existingTwinNode : deserializedNode.getTwinNodes())
+                    if (!reqNodeTwinNodes.contains(existingTwinNode))
+                        twinNodesToDelete.add(existingTwinNode);
                 for (Node twinNodeToDelete : twinNodesToDelete) {
                     if (mappingSession!=null) {
                         ((SProxNode)deserializedNode).removeTwinNode(mappingSession, twinNodeToDelete);
@@ -200,10 +188,9 @@ public abstract class SProxNodeSceAbs<N extends Node> implements SProxNodeSce {
 
             if (jsonDeserializedNode.getNodeEndpointsID()!=null) {
                 List<Endpoint> endpointsToDelete = new ArrayList<>();
-                if (nodeEndpoints!=null)
-                    for (Endpoint existingEndpoint : nodeEndpoints)
-                        if (!reqNodeEndpoints.contains(existingEndpoint))
-                            endpointsToDelete.add(existingEndpoint);
+                for (Endpoint existingEndpoint : deserializedNode.getNodeEndpoints())
+                    if (!reqNodeEndpoints.contains(existingEndpoint))
+                        endpointsToDelete.add(existingEndpoint);
                 for (Endpoint endpointToDelete : endpointsToDelete)
                     if (mappingSession!=null) ((SProxNode)deserializedNode).removeEndpoint(mappingSession, endpointToDelete);
                     else deserializedNode.removeEndpoint(endpointToDelete);
@@ -214,6 +201,7 @@ public abstract class SProxNodeSceAbs<N extends Node> implements SProxNodeSce {
             }
 
             if (jsonDeserializedNode.getNodeProperties()!=null) {
+                Set<String> propsKeySet = deserializedNode.getNodeProperties().keySet();
                 if (propsKeySet!=null) {
                     List<String> propertiesToDelete = new ArrayList<>();
                     for (String propertyKey : propsKeySet)

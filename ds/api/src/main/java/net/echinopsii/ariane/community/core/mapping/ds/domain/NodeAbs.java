@@ -29,11 +29,11 @@ public abstract class NodeAbs implements Node {
     private String nodeID = null;
     private String nodeName = null;
     private Container nodeContainer = null;
-    private HashMap<String, Object> nodeProperties = new HashMap<>();
+    private final HashMap<String, Object> nodeProperties = new HashMap<>();
     private Node nodeParentNode = null;
-    private Set<Node> nodeChildNodes = new HashSet<>();
-    private Set<Node> nodeTwinNodes = new HashSet<>();
-    private Set<Endpoint> nodeEndpoints = new HashSet<>();
+    private final Set<Node> nodeChildNodes = new HashSet<>();
+    private final Set<Node> nodeTwinNodes = new HashSet<>();
+    private final Set<Endpoint> nodeEndpoints = new HashSet<>();
 
     @Override
     public String getNodeID() {
@@ -67,17 +67,25 @@ public abstract class NodeAbs implements Node {
 
     @Override
     public HashMap<String, Object> getNodeProperties() {
-        return this.nodeProperties;
+        HashMap<String, Object> ret;
+        synchronized (this.nodeProperties) {
+            ret = new HashMap<>(this.nodeProperties);
+        }
+        return ret;
     }
 
     @Override
     public void addNodeProperty(String propertyKey, Object value) throws MappingDSException {
-        this.nodeProperties.put(propertyKey, value);
+        synchronized (this.nodeProperties) {
+            this.nodeProperties.put(propertyKey, value);
+        }
     }
 
     @Override
     public void removeNodeProperty(String propertyKey) throws MappingDSException {
-        if (this.nodeProperties!=null) this.nodeProperties.remove(propertyKey);
+        synchronized (this.nodeProperties) {
+            this.nodeProperties.remove(propertyKey);
+        }
     }
 
     @Override
@@ -92,47 +100,83 @@ public abstract class NodeAbs implements Node {
 
     @Override
     public Set<Node> getNodeChildNodes() {
-        return this.nodeChildNodes;
+        Set<Node> ret;
+        synchronized (this.nodeChildNodes) {
+            ret = new HashSet<>(this.nodeChildNodes);
+        }
+        return ret;
     }
 
     @Override
     public boolean addNodeChildNode(Node node) throws MappingDSException {
-        return this.nodeChildNodes.add(node);
+        boolean ret;
+        synchronized (this.nodeChildNodes) {
+            ret = this.nodeChildNodes.add(node);
+        }
+        return ret;
     }
 
     @Override
     public boolean removeNodeChildNode(Node node) throws MappingDSException {
-        return this.nodeChildNodes.remove(node);
+        boolean ret;
+        synchronized (this.nodeChildNodes) {
+            ret = this.nodeChildNodes.remove(node);
+        }
+        return ret;
     }
 
     @Override
     public Set<Node> getTwinNodes() {
-        return this.nodeTwinNodes;
+        Set<Node> ret;
+        synchronized (this.nodeTwinNodes) {
+            ret = new HashSet<>(nodeTwinNodes);
+        }
+        return ret;
     }
 
     @Override
     public boolean addTwinNode(Node node) throws MappingDSException {
-        return this.nodeTwinNodes.add(node);
+        boolean ret;
+        synchronized (this.nodeTwinNodes) {
+            ret = this.nodeTwinNodes.add(node);
+        }
+        return ret;
     }
 
     @Override
     public boolean removeTwinNode(Node node) throws MappingDSException {
-        return this.nodeTwinNodes.remove(node);
+        boolean ret;
+        synchronized (this.nodeTwinNodes) {
+            ret = this.nodeTwinNodes.remove(node);
+        }
+        return ret;
     }
 
     @Override
     public Set<Endpoint> getNodeEndpoints() {
-        return this.nodeEndpoints;
+        Set<Endpoint> ret;
+        synchronized (this.nodeEndpoints) {
+            ret = new HashSet<>(this.nodeEndpoints);
+        }
+        return ret;
     }
 
     @Override
     public boolean addEndpoint(Endpoint endpoint) throws MappingDSException {
-        return this.nodeEndpoints.add(endpoint);
+        boolean ret;
+        synchronized (this.nodeEndpoints) {
+            ret = this.nodeEndpoints.add(endpoint);
+        }
+        return ret;
     }
 
     @Override
     public boolean removeEndpoint(Endpoint endpoint) throws MappingDSException {
-        return this.nodeEndpoints.remove(endpoint);
+        boolean ret;
+        synchronized (this.nodeEndpoints) {
+            ret = this.nodeEndpoints.remove(endpoint);
+        }
+        return ret;
     }
 
     @Override

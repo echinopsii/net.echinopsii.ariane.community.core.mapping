@@ -42,8 +42,7 @@ public class ClusterJSON {
         jgenerator.writeStringField(Cluster.TOKEN_CL_NAME, cluster.getClusterName());
 
         jgenerator.writeArrayFieldStart(Cluster.TOKEN_CL_CONT);
-        HashSet<Container> clusterContainers = new HashSet<>(cluster.getClusterContainers());
-        for (Container container : clusterContainers) jgenerator.writeString(container.getContainerID());
+        for (Container container : cluster.getClusterContainers()) jgenerator.writeString(container.getContainerID());
         jgenerator.writeEndArray();
 
         jgenerator.writeEndObject();

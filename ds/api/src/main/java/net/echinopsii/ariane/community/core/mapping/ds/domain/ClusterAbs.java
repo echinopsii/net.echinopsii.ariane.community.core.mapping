@@ -27,7 +27,7 @@ import java.util.Set;
 public abstract class ClusterAbs implements Cluster {
     private String clusterID = null;
     private String clusterName = null;
-    private Set<Container> clusterContainers = new HashSet<>();
+    private final Set<Container> clusterContainers = new HashSet<>();
 
     @Override
     public String getClusterID() {
@@ -51,17 +51,29 @@ public abstract class ClusterAbs implements Cluster {
 
     @Override
     public Set<Container> getClusterContainers() {
-        return this.clusterContainers;
+        HashSet<Container> ret ;
+        synchronized (this.clusterContainers) {
+            ret = new HashSet<>(this.clusterContainers);
+        }
+        return ret;
     }
 
     @Override
     public boolean addClusterContainer(Container container) throws MappingDSException {
-        return this.clusterContainers.add(container);
+        boolean ret ;
+        synchronized (this.clusterContainers) {
+            ret = this.clusterContainers.add(container);
+        }
+        return ret;
     }
 
     @Override
     public boolean removeClusterContainer(Container container) throws MappingDSException {
-        return this.clusterContainers.remove(container);
+        boolean ret;
+        synchronized (this.clusterContainers) {
+            ret = this.clusterContainers.remove(container);
+        }
+        return ret;
     }
 
     @Override

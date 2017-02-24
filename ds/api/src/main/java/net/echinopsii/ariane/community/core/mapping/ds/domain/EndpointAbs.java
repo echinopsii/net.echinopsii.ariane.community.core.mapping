@@ -29,8 +29,8 @@ public abstract class EndpointAbs implements Endpoint {
     private String endpointID = null;
     private String endpointURL = null;
     private Node endpointParentNode = null;
-    private HashMap<String, Object> endpointProperties = new HashMap<>();
-    private Set<Endpoint> endpointTwinEndpoints = new HashSet<>();
+    private final HashMap<String, Object> endpointProperties = new HashMap<>();
+    private final Set<Endpoint> endpointTwinEndpoints = new HashSet<>();
 
     @Override
     public String getEndpointID() {
@@ -64,32 +64,52 @@ public abstract class EndpointAbs implements Endpoint {
 
     @Override
     public HashMap<String, Object> getEndpointProperties() {
-        return endpointProperties;
+        HashMap<String, Object> ret ;
+        synchronized (this.endpointProperties) {
+            ret = new HashMap<>(this.endpointProperties);
+        }
+        return ret;
     }
 
     @Override
     public void addEndpointProperty(String propertyKey, Object value) throws MappingDSException {
-        this.endpointProperties.put(propertyKey, value);
+        synchronized (this.endpointProperties) {
+            this.endpointProperties.put(propertyKey, value);
+        }
     }
 
     @Override
     public void removeEndpointProperty(String propertyKey) throws MappingDSException {
-        if (this.endpointProperties!=null) this.endpointProperties.remove(propertyKey);
+        synchronized (this.endpointProperties) {
+            this.endpointProperties.remove(propertyKey);
+        }
     }
 
     @Override
     public Set<Endpoint> getTwinEndpoints() {
-        return this.endpointTwinEndpoints;
+        HashSet<Endpoint> ret ;
+        synchronized (this.endpointTwinEndpoints) {
+            ret = new HashSet<>(this.endpointTwinEndpoints);
+        }
+        return ret;
     }
 
     @Override
     public boolean addTwinEndpoint(Endpoint endpoint) throws MappingDSException {
-        return this.endpointTwinEndpoints.add(endpoint);
+        boolean ret;
+        synchronized (this.endpointTwinEndpoints) {
+            ret = this.endpointTwinEndpoints.add(endpoint);
+        }
+        return ret;
     }
 
     @Override
     public boolean removeTwinEndpoint(Endpoint endpoint) throws MappingDSException {
-        return this.endpointTwinEndpoints.remove(endpoint);
+        boolean ret;
+        synchronized (this.endpointTwinEndpoints) {
+            ret = this.endpointTwinEndpoints.remove(endpoint);
+        }
+        return ret;
     }
 
     @Override

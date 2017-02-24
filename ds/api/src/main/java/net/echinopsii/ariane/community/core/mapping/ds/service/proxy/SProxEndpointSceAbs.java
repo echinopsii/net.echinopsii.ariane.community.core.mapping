@@ -78,17 +78,11 @@ public abstract class SProxEndpointSceAbs<E extends Endpoint> implements SProxEn
 
         // LOOK IF NODE MAYBE UPDATED OR CREATED
         Endpoint deserializedEndpoint = null;
-        HashSet<Endpoint> twinEndpoints = null;
-        HashSet<String> propsKeySet = null;
         if (ret.getErrorMessage() == null && jsonDeserializedEndpoint.getEndpointID()!=null) {
             if (mappingSession!=null) deserializedEndpoint = mappingSce.getEndpointSce().getEndpoint(mappingSession, jsonDeserializedEndpoint.getEndpointID());
             else deserializedEndpoint = mappingSce.getEndpointSce().getEndpoint(jsonDeserializedEndpoint.getEndpointID());
             if (deserializedEndpoint==null)
                 ret.setErrorMessage("Request Error : endpoint with provided ID " + jsonDeserializedEndpoint.getEndpointID() + " was not found.");
-            else {
-                twinEndpoints = new HashSet<>(deserializedEndpoint.getTwinEndpoints());
-                propsKeySet = new HashSet<>(deserializedEndpoint.getEndpointProperties().keySet());
-            }
         }
 
         if (ret.getErrorMessage() == null && deserializedEndpoint==null && jsonDeserializedEndpoint.getEndpointURL() != null)
@@ -113,10 +107,9 @@ public abstract class SProxEndpointSceAbs<E extends Endpoint> implements SProxEn
 
             if (jsonDeserializedEndpoint.getEndpointTwinEndpointsID()!=null) {
                 List<Endpoint> twinEndpointsToDelete = new ArrayList<>();
-                if (twinEndpoints!=null)
-                    for (Endpoint existingTwinEndpoint : twinEndpoints)
-                        if (!reqEndpointTwinEndpoints.contains(existingTwinEndpoint))
-                            twinEndpointsToDelete.add(existingTwinEndpoint);
+                for (Endpoint existingTwinEndpoint : deserializedEndpoint.getTwinEndpoints())
+                    if (!reqEndpointTwinEndpoints.contains(existingTwinEndpoint))
+                        twinEndpointsToDelete.add(existingTwinEndpoint);
                 for (Endpoint twinEndpointToDelete : twinEndpointsToDelete) {
                     if (mappingSession!=null) {
                         ((SProxEndpoint)deserializedEndpoint).removeTwinEndpoint(mappingSession, twinEndpointToDelete);
@@ -139,6 +132,7 @@ public abstract class SProxEndpointSceAbs<E extends Endpoint> implements SProxEn
             }
 
             if (jsonDeserializedEndpoint.getEndpointProperties()!=null) {
+                Set<String> propsKeySet = deserializedEndpoint.getEndpointProperties().keySet();
                 if (propsKeySet!=null) {
                     List<String> propertiesToDelete = new ArrayList<>();
                     for (String propertyKey : propsKeySet)

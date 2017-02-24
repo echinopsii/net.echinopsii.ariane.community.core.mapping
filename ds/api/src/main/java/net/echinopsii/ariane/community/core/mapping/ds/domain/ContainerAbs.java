@@ -37,12 +37,12 @@ public abstract class ContainerAbs implements Container {
     private Cluster containerCluster = null;
 
     private Container containerParentContainer = null;
-    private Set<Container> containerChildContainers = new HashSet<>();
+    private final Set<Container> containerChildContainers = new HashSet<>();
 
-    private HashMap<String, Object> containerProperties = new HashMap<>();
+    private final HashMap<String, Object> containerProperties = new HashMap<>();
 
-    private Set<Node> containerNodes = new HashSet<>();
-    private Set<Gate> containerGates = new HashSet<>();
+    private final Set<Node> containerNodes = new HashSet<>();
+    private final Set<Gate> containerGates = new HashSet<>();
 
     @Override
     public String getContainerID() {
@@ -124,17 +124,25 @@ public abstract class ContainerAbs implements Container {
 
     @Override
     public HashMap<String, Object> getContainerProperties() {
-        return containerProperties;
+        HashMap<String, Object> ret;
+        synchronized (this.containerProperties) {
+            ret = new HashMap<>(this.containerProperties);
+        }
+        return ret;
     }
 
     @Override
     public void addContainerProperty(String propertyKey, Object value) throws MappingDSException {
-        this.containerProperties.put(propertyKey, value);
+        synchronized (this.containerProperties) {
+            this.containerProperties.put(propertyKey, value);
+        }
     }
 
     @Override
     public void removeContainerProperty(String propertyKey) throws MappingDSException {
-        this.containerProperties.remove(propertyKey);
+        synchronized (this.containerProperties) {
+            this.containerProperties.remove(propertyKey);
+        }
     }
 
     @Override
@@ -149,47 +157,83 @@ public abstract class ContainerAbs implements Container {
 
     @Override
     public Set<Container> getContainerChildContainers() {
-        return this.containerChildContainers;
+        HashSet<Container> ret ;
+        synchronized (this.containerChildContainers) {
+            ret = new HashSet<>(this.containerChildContainers);
+        }
+        return ret;
     }
 
     @Override
     public boolean addContainerChildContainer(Container container) throws MappingDSException {
-        return this.containerChildContainers.add(container);
+        boolean ret ;
+        synchronized (this.containerChildContainers) {
+            ret = this.containerChildContainers.add(container);
+        }
+        return ret;
     }
 
     @Override
     public boolean removeContainerChildContainer(Container container) throws MappingDSException {
-        return this.containerChildContainers.remove(container);
+        boolean ret;
+        synchronized (this.containerChildContainers) {
+            ret = this.containerChildContainers.remove(container);
+        }
+        return ret;
     }
 
     @Override
     public Set<Node> getContainerNodes() {
-        return this.containerNodes;
+        HashSet<Node> ret;
+        synchronized (this.containerNodes) {
+            ret = new HashSet<>(this.containerNodes);
+        }
+        return ret;
     }
 
     @Override
     public boolean addContainerNode(Node node) throws MappingDSException {
-        return this.containerNodes.add(node);
+        boolean ret;
+        synchronized (this.containerNodes) {
+            ret = this.containerNodes.add(node);
+        }
+        return ret;
     }
 
     @Override
     public boolean removeContainerNode(Node node) throws MappingDSException {
-        return this.containerNodes.remove(node);
+        boolean ret;
+        synchronized (this.containerNodes) {
+            ret = this.containerNodes.remove(node);
+        }
+        return ret;
     }
 
     @Override
     public Set<Gate> getContainerGates() {
-        return this.containerGates;
+        HashSet<Gate> ret;
+        synchronized (this.containerGates) {
+            ret = new HashSet<>(this.containerGates);
+        }
+        return ret;
     }
 
     @Override
     public boolean addContainerGate(Gate gate) throws MappingDSException {
-        return this.containerGates.add(gate);
+        boolean ret;
+        synchronized (this.containerGates) {
+            ret = this.containerGates.add(gate);
+        }
+        return ret;
     }
 
     @Override
     public boolean removeContainerGate(Gate gate) throws MappingDSException {
-        return this.containerGates.remove(gate);
+        boolean ret;
+        synchronized (this.containerGates) {
+            ret = this.containerGates.remove(gate);
+        }
+        return ret;
     }
 
     @Override
