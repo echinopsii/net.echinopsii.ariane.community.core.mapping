@@ -25,16 +25,14 @@ define(
         'taitale-dictionaries',
         'taitale-params',
         'taitale-map-matrix',
+        'taitale-tree-groups',
         'taitale-container',
         'taitale-node',
         'taitale-endpoint',
         'taitale-transport',
-        'taitale-link',
-        'taitale-btree',
-        'taitale-otree',
-        'taitale-map-options'
+        'taitale-link'
     ],
-    function(helper, dictionaries, params, mapMatrix, container, node, endpoint, transport, link, btree, otree) {
+    function(helper, dictionaries, params, mapMatrix, treeGroups, container, node, endpoint, transport, link) {
         function map(options) {
             var mapWidth  = 0,
                 mapHeight = 0,
@@ -43,6 +41,7 @@ define(
                 mapBottomRightX = 0,
                 mapBottomRightY = 0,
                 mapmatrix = new mapMatrix(options),
+                treegrps  = new treeGroups(options),
                 mbrdSpan  = params.map_mbrdSpan,
                 zoneSpan  = params.map_zoneSpan,
                 linkColor = params.map_linkColor,
@@ -56,13 +55,12 @@ define(
                 endpointRegistry              = [],
                 transportRegistry             = [],
                 linkRegistry                  = [],
-                treeObjects                   = [],
+                mapObjects                    = [],
                 sortOrdering                  = 1,
                 minMaxLinkedObjectsComparator = function(treeObj1, treeObj2) {
                     return (treeObj2.getLinkedTreeObjectsCount() - treeObj1.getLinkedTreeObjectsCount())*sortOrdering;
                 };
 
-            var lTree = null;
             var dic   = new dictionaries();
 
             var applications = [],
@@ -105,11 +103,10 @@ define(
                 containerRegistry.push(cont);
                 if (steam !=null && !isTeamRegistered(steam)) teams.push(steam);
 
-                if (cont.cpID!=0)
-                    childContainersWaitingParent.push(cont);
+                if (cont.cpID!=0) childContainersWaitingParent.push(cont);
                 else {
                     rootContainerRegistry.push(cont);
-                    treeObjects.push(cont);
+                    mapObjects.push(cont);
                 }
 
 
@@ -309,7 +306,7 @@ define(
                 for (i = 0, ii = transportRegistry.length; i < ii; i++) {
                     var mbusRegistry = transportRegistry[i].getMulticastBusRegistry();
                     for (var j = 0, jj = mbusRegistry.length; j < jj; j++) {
-                        treeObjects.push(mbusRegistry[j])
+                        mapObjects.push(mbusRegistry[j])
                     }
                 }
             };
@@ -358,20 +355,20 @@ define(
 
                         // third 0 : sort all tree lists
                         sortOrdering = options.getRootTreeSorting();
-                        for (i = 0, ii = treeObjects.length; i<ii; i++) {
-                            treeObjects[i].setSortOrdering(options.getSubTreesSorting());
-                            treeObjects[i].sortLinkedTreeObjects();
+                        for (i = 0, ii = mapObjects.length; i<ii; i++) {
+                            mapObjects[i].setSortOrdering(options.getSubTreesSorting());
+                            mapObjects[i].sortLinkedTreeObjects();
                         }
                         containerRegistry.sort(minMaxLinkedObjectsComparator);
-                        treeObjects.sort(minMaxLinkedObjectsComparator);
+
+                        treegrps.computeTreeGroups(mapObjects, layout);
+                        treegrps.sort(minMaxLinkedObjectsComparator);
+
                         // third 1 : define the tree with objects
-                        // TODO: manage multi tree
-                        if (layout===dic.mapLayout.BBTREE) lTree = new btree();
-                        else if (layout===dic.mapLayout.OBTREE) lTree = new otree();
-                        lTree.loadTree(treeObjects[0]);
+                        treegrps.loadTrees();
 
                         // third 2 : define map objects position
-                        lTree.definePoz();
+                        treegrps.definePoz();
                         break;
                 }
 
@@ -419,7 +416,7 @@ define(
                         containerRegistry[j].clean();
                         containerRegistry[j].defineSize();
                     }
-                    lTree.definePoz();
+                    treegrps.definePoz();
                 }
             };
 
@@ -617,8 +614,8 @@ define(
 
             this.rebuildMapTreeLayout = function() {
                 var i, ii;
-                lTree.reloadTree(containerRegistry[0]);
-                lTree.definePoz();
+                treegrps.reloadTrees();
+                treegrps.definePoz();
                 for (i = 0, ii = endpointRegistry.length; i < ii; i++) {
                     endpointRegistry[i].resetPoz();
                 }

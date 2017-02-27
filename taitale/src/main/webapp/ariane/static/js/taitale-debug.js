@@ -47,6 +47,7 @@ require.config({
         'taitale-matrix': 'ajs/taitale/tools/matrix',
         'taitale-params': 'ajs/taitale/tools/params',
         'taitale-prototypes': 'ajs/taitale/tools/prototypes',
+        'taitale-tree-groups': 'ajs/taitale/tools/treeGroups',
 
         /*taitale core*/
         'taitale-map-options': 'ajs/taitale/core/map/options',
