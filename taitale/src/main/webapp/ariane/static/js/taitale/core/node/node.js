@@ -56,18 +56,20 @@ define(
             this.rightClick     = false;
 
 
-            this.nodeParentNode    = null;
+            this.parentObject = (this.npID==0) ? this.nodeContainer : null;
             // the current nodes heap from this to the last parent node of the chain as a list
-            // [this,this.nodeParentNode,this.nodeParentNode.nodeParentNode ...]
-            this.nodeHeapNodes     = [];
-            this.nodeChildNodes    = new nodeMatrix(this.name);
+            // [this,this.parentObject,this.parentObject.parentObject ...]
+            this.objectsHeap  = [];
+            this.childs       = new nodeMatrix(this.name);
 
             this.nodeEndpoints   = [];
             // ordered list of epAvgLinksTeta (Teta is the angle as : T = Y/sqrt(X*X+Y*Y))
             this.nodeEpAvgLinksT = [];
 
             this.linkedBus         = [];
+            this.linkedContainers  = [];
             this.linkedNodes       = [];
+            this.linkedTreeObjects = [];
 
             this.layoutData = {
                 isConnectedInsideMtx:  false,
@@ -378,7 +380,7 @@ define(
                         var rx = nodeRef.extrx,
                             ry = nodeRef.extry;
 
-                        if (nodeRef.nodeParentNode==null) {
+                        if (nodeRef.parentObject==null) {
                             if (nodeRef.nodeContainer!=null && !nodeRef.nodeContainer.isMoving) {
                                 var minX = nodeRef.nodeContainer.getRectCornerPoints().topLeftX,
                                     minY = nodeRef.nodeContainer.getRectCornerPoints().topLeftY +
@@ -397,13 +399,13 @@ define(
                                     dy = maxY - ry;
                             }
                         } else {
-                            if (!nodeRef.nodeParentNode.isMoving) {
-                                var minX = nodeRef.nodeParentNode.getRectCornerPoints().topLeftX,
-                                    minY = nodeRef.nodeParentNode.getRectCornerPoints().topLeftY +
-                                           nodeRef.nodeParentNode.name.height(params.node_txtTitle["font-size"]) +
+                            if (!nodeRef.parentObject.isMoving) {
+                                var minX = nodeRef.parentObject.getRectCornerPoints().topLeftX,
+                                    minY = nodeRef.parentObject.getRectCornerPoints().topLeftY +
+                                           nodeRef.parentObject.name.height(params.node_txtTitle["font-size"]) +
                                            params.node_interSpan,
-                                    maxX = nodeRef.nodeParentNode.getRectCornerPoints().bottomRightX - nodeRef.rectWidth,
-                                    maxY = nodeRef.nodeParentNode.getRectCornerPoints().bottomRightY - nodeRef.rectHeight;
+                                    maxX = nodeRef.parentObject.getRectCornerPoints().bottomRightX - nodeRef.rectWidth,
+                                    maxY = nodeRef.parentObject.getRectCornerPoints().bottomRightY - nodeRef.rectHeight;
 
                                 if (minX > rx + dx)
                                     dx = minX - rx;
@@ -453,8 +455,8 @@ define(
                 return "{\n Node " + this.name + " : ("+nodeRef.rectTopLeftX+","+nodeRef.rectTopLeftY+")\n}";
             };
 
-            this.pushChildNode = function (node) {
-                this.nodeChildNodes.addObject(node);
+            this.pushChild = function (node) {
+                this.childs.addObject(node);
             };
 
             this.popEndpoint = function(endpoint) {
@@ -691,9 +693,9 @@ define(
             };
 
             this.defineMaxSize = function () {
-                this.nodeChildNodes.defineMtxContentMaxSize();
-                var mtxMaxSize = this.nodeChildNodes.getMtxContentSize();
-                var mtxMaxInterspan = (this.nodeChildNodes.getMtxObjCount()+1)*this.interSpan;
+                this.childs.defineMtxContentMaxSize();
+                var mtxMaxSize = this.childs.getMtxContentSize();
+                var mtxMaxInterspan = (this.childs.getMtxObjCount()+1)*this.interSpan;
 
                 if (mtxMaxSize.width == 0)
                     this.maxRectWidth = this.rectWidth;
@@ -720,13 +722,13 @@ define(
             };
 
             this.defineSize = function() {
-                this.nodeChildNodes.defineMtxContentSize();
-                var mtxSize = this.nodeChildNodes.getMtxContentSize();
+                this.childs.defineMtxContentSize();
+                var mtxSize = this.childs.getMtxContentSize();
 
                 if (mtxSize.width != 0)
-                    this.rectWidth = (this.nodeChildNodes.getMtxSize().y+1)*this.interSpan + mtxSize.width;
+                    this.rectWidth = (this.childs.getMtxSize().y+1)*this.interSpan + mtxSize.width;
                 if (mtxSize.height != 0)
-                    this.rectHeight = (this.nodeChildNodes.getMtxSize().x+1)*this.interSpan + this.titleHeight + mtxSize.height;
+                    this.rectHeight = (this.childs.getMtxSize().x+2)*this.interSpan + this.titleHeight + mtxSize.height;
 
                 if (this.rectWidth < this.nodeEndpoints.length*params.endpoint_radSelec*2)
                     this.rectWidth = this.nodeEndpoints.length*params.endpoint_radSelec*2;
@@ -747,54 +749,122 @@ define(
                 }
             };
 
+            this.getBubbleInputs = function() {
+                // var bubbleDiameter = Math.sqrt(Math.pow(this.maxRectWidth,2) + Math.pow(this.maxRectHeight,2));
+                // helper_.debug("[Node.getBubbleDiameter] " + this.name + " : { maxRectWidth: " + this.maxRectWidth +
+                //     ", maxRectHeight: " + this.maxRectHeight + ", bubbleDiameter: " + bubbleDiameter + "}");
+                // return bubbleDiameter;
+                var myWidth, myHeight, inputs;
+
+                if (this.rectWidth!=0) myWidth = this.rectWidth;
+                else myWidth = this.maxRectWidth;
+                if (this.rectHeight!=0) myHeight = this.rectHeight;
+                else myHeight = this.maxRectHeight;
+
+                inputs = {
+                    'rectWidth' : this.rectWidth,
+                    'rectHeight' : this.rectHeight,
+                    'maxRecWidth': this.maxRectWidth,
+                    'maxRectHeight': this.maxRectHeight,
+                    'diameter': Math.sqrt(Math.pow(myWidth,2) + Math.pow(myHeight,2))
+                };
+                // helper_.debug("[Node.getBubbleInputs] " + this.name + " : " + JSON.stringify(inputs));
+                return inputs;
+            };
+
+            this.setBubbleCoord = function(x,y) {
+                this.setPoz(x-this.rectWidth/2, y-this.rectHeight/2)
+            };
+
+            this.getOrbitalInputs = function() {
+                var myWidth, myHeight, inputs, p, c, hrad, vrad, isVerticalOrbit, sminor, smajor;
+                // helper_.debug("[Node.getOrbitalInputs] " + this.name + " : { maxRectWidth: " + this.maxRectWidth +
+                //     ", maxRectHeight: " + this.maxRectHeight + ", rectWidth: " + this.rectWidth + ", rectHeight: " + this.rectHeight + "}");
+                if (this.rectWidth!=0) myWidth = this.rectWidth;
+                else myWidth = this.maxRectWidth;
+                if (this.rectHeight!=0) myHeight = this.rectHeight;
+                else myHeight = this.maxRectHeight;
+
+                p = (myHeight < myWidth) ? myHeight/2 : myWidth/2;
+                c = (myWidth > myHeight) ? myWidth/2 : myHeight/2;
+                hrad = 3*( -p + Math.sqrt( Math.pow(p,2) + ( 4*(Math.pow(c,2) ) ) ) )/4;
+                vrad = Math.sqrt(p*hrad);
+                isVerticalOrbit = (myHeight > myWidth);
+                sminor = (hrad < vrad) ? hrad : vrad;
+                smajor = (hrad < vrad) ? vrad : hrad;
+
+                inputs = {
+                    'isVerticalOrbit': isVerticalOrbit,
+                    'sminor': sminor,
+                    'smajor': smajor
+                };
+                // helper_.debug("[Node.getOrbitalInputs] " + this.name + " : " + JSON.stringify(inputs));
+                return inputs;
+            };
+
             this.setPoz = function(x,y) {
                 defineRectPoints(x,y);
             };
 
             this.defineChildsPoz = function() {
-                this.nodeChildNodes.defineMtxObjectLastPoz(this.rectTopLeftX, this.rectTopLeftY + this.titleHeight,
+                this.childs.defineMtxObjectLastPoz(this.rectTopLeftX, this.rectTopLeftY + this.titleHeight,
                     this.interSpan, this.interSpan, function(node, mtxSpan, objSpan, columnIdx, lineIdx, widthPointer, heightPointer) {
-                        node.setPoz(mtxSpan + objSpan * columnIdx + widthPointer, objSpan * (lineIdx+1) + heightPointer);
+                        node.setPoz(mtxSpan + objSpan * columnIdx + widthPointer, objSpan * lineIdx + heightPointer);
                         node.defineChildsPoz();
                     });
                     //defineMtxObjectPoz(this.rectTopLeftX, this.rectTopLeftY + this.titleHeight, this.interSpan);
             };
 
             this.defineIntermediateChildsPoz = function() {
-                this.nodeChildNodes.defineMtxObjectIntermediatePoz(this.rectTopLeftX, this.rectTopLeftY + this.titleHeight,
+                this.childs.defineMtxObjectIntermediatePoz(this.rectTopLeftX, this.rectTopLeftY + this.titleHeight,
                     this.interSpan, this.interSpan, function(node, mtxSpan, objSpan, columnIdx, lineIdx, widthPointer, heightPointer) {
-                        node.setPoz(mtxSpan + objSpan * columnIdx + widthPointer, objSpan * (lineIdx+1) + heightPointer);
+                        node.setPoz(mtxSpan + objSpan * columnIdx + widthPointer, objSpan * lineIdx + heightPointer);
                         node.defineIntermediateChildsPoz();
                     });
                 //defineMtxObjectPoz(this.rectTopLeftX, this.rectTopLeftY + this.titleHeight, this.interSpan);
             };
 
             this.clean = function() {
-                this.nodeChildNodes.cleanMtx();
+                this.childs.cleanMtx();
             };
 
-            this.defineHeapNodes = function() {
-                var parentNode = this.nodeParentNode;
-                this.nodeHeapNodes.push(this);
-                while (parentNode != null) {
-                    this.nodeHeapNodes.push(parentNode);
-                    parentNode = parentNode.nodeParentNode;
+            this.defineHeapObjects = function() {
+                var parentObject = this.parentObject;
+                this.objectsHeap.push(this);
+                while (parentObject != null && parentObject.hasOwnProperty('nodeName')) {
+                    this.objectsHeap.push(parentObject);
+                    parentObject = parentObject.parentObject;
                 }
             };
 
-            this.isInHeapNode = function(node) {
+            this.isInHeapObjects = function(object) {
                 var i, ii;
-                for (i=0, ii=this.nodeHeapNodes.length; i < ii; i++)
-                    if (this.nodeHeapNodes[i].ID==node.ID)
+                for (i=0, ii=this.objectsHeap.length; i < ii; i++)
+                    if (this.objectsHeap[i].ID==object.ID)
                         return true;
                 return false;
             };
 
             this.placeIn = function() {
-                if (this.nodeParentNode!=null)
-                    this.nodeParentNode.pushChildNode(this);
+                if (this.parentObject!=null)
+                    this.parentObject.pushChild(this);
                 else
                     this.nodeContainer.pushChild(this);
+            };
+
+            this.computeChildsGroups = function() {
+                this.childs.computeGroups();
+            };
+
+            this.getLinkedTreeObjectsCount = function() {
+                return this.linkedTreeObjects.length;
+            };
+
+            this.isLinkedToContainer = function(container) {
+                for (var i = 0, ii = this.linkedContainers.length; i < ii; i++)
+                    if (this.linkedContainers[i].ID==container.ID)
+                        return true;
+                return false;
             };
 
             this.pushLinkedNode = function(node) {
@@ -802,22 +872,26 @@ define(
                 var isInHeap = [];
                 if (!isAlreadyPushed) {
                     //Propagate linked node on the heaps
-                    for (i = 0, ii = this.nodeHeapNodes.length; i < ii; i++)
-                        for (j = 0, jj=node.nodeHeapNodes.length; j <jj ; j++) {
-                            var linkedNodeHeapNode = node.nodeHeapNodes[j],
-                                thisNodeHeapNode = this.nodeHeapNodes[i];
+                    for (i = 0, ii = this.objectsHeap.length; i < ii; i++)
+                        for (j = 0, jj=node.objectsHeap.length; j <jj ; j++) {
+                            var linkedNodeHeapNode = node.objectsHeap[j],
+                                thisNodeHeapNode = this.objectsHeap[i];
                             if (isInHeap.indexOf(linkedNodeHeapNode.ID)===-1)
                                 if (linkedNodeHeapNode.ID!=thisNodeHeapNode.ID)
-                                    if (!thisNodeHeapNode.isInHeapNode(linkedNodeHeapNode))
-                                        if (!thisNodeHeapNode.isLinkedToNode(linkedNodeHeapNode))
+                                    if (!thisNodeHeapNode.isInHeapObjects(linkedNodeHeapNode))
+                                        if (!thisNodeHeapNode.isLinkedToNode(linkedNodeHeapNode)) {
                                             thisNodeHeapNode.linkedNodes.push(linkedNodeHeapNode);
+                                            if ((thisNodeHeapNode.parentObject == null && linkedNodeHeapNode.parentObject == null) ||
+                                                (thisNodeHeapNode.parentObject != null && linkedNodeHeapNode.parentObject != null &&
+                                                thisNodeHeapNode.parentObject.ID == linkedNodeHeapNode.parentObject.ID))
+                                                thisNodeHeapNode.linkedTreeObjects.push(linkedNodeHeapNode);
+                                        }
                                     else
                                         isInHeap.push(linkedNodeHeapNode.ID)
                         }
 
-                    if (!this.isLinkedToNode(node))
-                        this.linkedNodes.push(node);
-                    if (node.nodeContainer.ID!=this.nodeContainer.ID) {
+                    if (!this.isLinkedToNode(node)) this.linkedNodes.push(node);
+                    if (!node.nodeContainer.isInHeapObjects(this.nodeContainer)) {
                         this.nodeContainer.pushLinkedNode(node);
                         this.nodeContainer.pushLinkedContainer(node.nodeContainer);
                     }
@@ -834,8 +908,8 @@ define(
             this.pushLinkedBus = function(bus) {
                 var i, ii, isAlreadyPushed = this.isLinkedToBus(bus);
                 if (!isAlreadyPushed) {
-                    for (i = 0, ii = this.nodeHeapNodes.length; i < ii; i++) {
-                        this.nodeHeapNodes[i].linkedBus.push(bus);
+                    for (i = 0, ii = this.objectsHeap.length; i < ii; i++) {
+                        this.objectsHeap[i].linkedBus.push(bus);
                     }
                     this.linkedBus.push(bus);
                     this.nodeContainer.pushLinkedBus(bus);
@@ -854,8 +928,8 @@ define(
                 var count = 0, i, ii;
                 for (i = 0, ii = this.nodeEndpoints.length; i < ii; i++)
                     count += this.nodeEndpoints[i].objsLinkedCount;
-                for (i = 0, ii = this.nodeChildNodes.objectsList.length; i < ii; i++)
-                    count += this.nodeChildNodes.objectsList[i].getLinksCount();
+                for (i = 0, ii = this.childs.objectsList.length; i < ii; i++)
+                    count += this.childs.objectsList[i].getLinksCount();
 
                 return count;
             };
@@ -889,23 +963,23 @@ define(
                             this.layoutData.isConnectedOutsideToUpMtx = false;
                         }
                     } else {
-                        if (this.nodeParentNode!=null) {
-                            if (this.nodeParentNode.ID!=linkedNode.nodeParentNode.ID) {
+                        if (this.parentObject!=null) {
+                            if (this.parentObject.ID!=linkedNode.parentObject.ID) {
                                 this.layoutData.isConnectedOutsideMtx = true;
-                                if (this.nodeParentNode.rectTopLeftX > linkedNode.nodeParentNode.rectTopLeftX) {
+                                if (this.parentObject.rectTopLeftX > linkedNode.parentObject.rectTopLeftX) {
                                     this.layoutData.isConnectedOutsideToLeftMtx = true;
                                     this.layoutData.isConnectedOutsideToRightMtx = false;
-                                } else if (this.nodeParentNode.rectTopLeftX < linkedNode.nodeParentNode.rectTopLeftX) {
+                                } else if (this.parentObject.rectTopLeftX < linkedNode.parentObject.rectTopLeftX) {
                                     this.layoutData.isConnectedOutsideToRightMtx = true;
                                     this.layoutData.isConnectedOutsideToLeftMtx = false;
                                 } else {
                                     this.layoutData.isConnectedOutsideToRightMtx = false;
                                     this.layoutData.isConnectedOutsideToLeftMtx = false;
                                 }
-                                if (this.nodeParentNode.rectTopLeftY > linkedNode.nodeParentNode.rectTopLeftY) {
+                                if (this.parentObject.rectTopLeftY > linkedNode.parentObject.rectTopLeftY) {
                                     this.layoutData.isConnectedOutsideToUpMtx = true;
                                     this.layoutData.isConnectedOutsideToDownMtx = false;
-                                } else if (this.nodeParentNode.rectTopLeftY < linkedNode.nodeParentNode.rectTopLeftY) {
+                                } else if (this.parentObject.rectTopLeftY < linkedNode.parentObject.rectTopLeftY) {
                                     this.layoutData.isConnectedOutsideToDownMtx = true;
                                     this.layoutData.isConnectedOutsideToUpMtx = false;
                                 } else {
@@ -946,10 +1020,8 @@ define(
             };
 
             this.updatePosition = function() {
-                this.nodeChildNodes.updateLayoutData(function(node1, node2){
-                    return ((node2.linkedNodes.length+node2.linkedBus.length)-(node1.linkedNodes.length+node1.linkedBus.length));
-                });
-                this.nodeChildNodes.updatePosition();
+                this.childs.updateLayoutData();
+                this.childs.updatePosition();
             };
 
             this.getPrimaryApplication = function() {
@@ -962,6 +1034,9 @@ define(
             this.print = function(r_) {
                 this.r        = r_;
 
+                // helper_.debug("[Node.print] " + this.name + ".linkedTreeObjects: " + this.linkedTreeObjects);
+                if (this.name == "/")
+                    helper_.debug("[Node.print] " + this.name + ".rectTopLeftX: " + this.rectTopLeftX);
                 if (this.color == 0) this.color = this.nodeContainer.color;
 
                 this.nodeName = this.r.text(0, 0, this.name).attr(this.txtTitleFont);
@@ -1029,7 +1104,7 @@ define(
             this.toFront = function() {
                 this.rect.toFront();
                 this.nodeName.toFront();
-                this.nodeChildNodes.toFront();
+                this.childs.toFront();
                 for (var i = 0, ii = this.nodeEndpoints.length; i < ii; i++)
                     this.nodeEndpoints[i].toFront();
             };
@@ -1066,8 +1141,8 @@ define(
                     this.r.scaleDone(this);
 
                 var i, ii, j, jj;
-                var mtxX        = this.nodeChildNodes.getMtxSize().x,
-                    mtxY        = this.nodeChildNodes.getMtxSize().y;
+                var mtxX        = this.childs.getMtxSize().x,
+                    mtxY        = this.childs.getMtxSize().y;
 
                 this.r.nodesOnMovePush(this);
                 this.r.moveSetPush(this.rect);
@@ -1075,8 +1150,8 @@ define(
 
                 for (i = 0, ii = mtxX; i < ii; i++)
                     for (j = 0, jj = mtxY; j < jj; j++)
-                        if (this.nodeChildNodes.getObjectFromMtx(i, j)!=null)
-                            this.nodeChildNodes.getObjectFromMtx(i, j).moveInit();
+                        if (this.childs.getObjectFromMtx(i, j)!=null)
+                            this.childs.getObjectFromMtx(i, j).moveInit();
 
                 for (i = 0, ii = this.nodeEndpoints.length; i < ii; i++)
                     this.nodeEndpoints[i].moveInit();
@@ -1121,15 +1196,15 @@ define(
 
             this.propagateEditionMode = function(editionMode) {
                 var i, ii, j, jj;
-                var mtxX        = this.nodeChildNodes.getMtxSize().x,
-                    mtxY        = this.nodeChildNodes.getMtxSize().y;
+                var mtxX        = this.childs.getMtxSize().x,
+                    mtxY        = this.childs.getMtxSize().y;
 
                 this.setEditionMode(editionMode);
 
                 for (i = 0, ii = mtxX; i < ii; i++)
                     for (j = 0, jj = mtxY; j < jj; j++)
-                        if (this.nodeChildNodes.getObjectFromMtx(i, j)!=null)
-                            this.nodeChildNodes.getObjectFromMtx(i, j).propagateEditionMode(editionMode);
+                        if (this.childs.getObjectFromMtx(i, j)!=null)
+                            this.childs.getObjectFromMtx(i, j).propagateEditionMode(editionMode);
             };
 
             this.menuFieldEditClick = function() {
@@ -1165,15 +1240,15 @@ define(
 
             this.propagateEndpointReset = function(epreset) {
                 var i, ii, j, jj;
-                var mtxX        = this.nodeChildNodes.getMtxSize().x,
-                    mtxY        = this.nodeChildNodes.getMtxSize().y;
+                var mtxX        = this.childs.getMtxSize().x,
+                    mtxY        = this.childs.getMtxSize().y;
 
                 nodeRef.nodeEndpointsResetOnChangeON = epreset;
 
                 for (i = 0, ii = mtxX; i < ii; i++)
                     for (j = 0, jj = mtxY; j < jj; j++)
-                        if (this.nodeChildNodes.getObjectFromMtx(i, j)!=null)
-                            this.nodeChildNodes.getObjectFromMtx(i, j).propagateEndpointReset(epreset);
+                        if (this.childs.getObjectFromMtx(i, j)!=null)
+                            this.childs.getObjectFromMtx(i, j).propagateEndpointReset(epreset);
             };
 
             this.getBBox = function() {
@@ -1182,15 +1257,23 @@ define(
 
             var nodeSet;
             this.getMinBBox = function() {
-                var i, ii, j, jj;
-                var mtxX        = this.nodeChildNodes.getMtxSize().x,
-                    mtxY        = this.nodeChildNodes.getMtxSize().y;
+                var i, ii, j, jj, k, kk;
+                var mtxX = this.childs.getMtxSize().x,
+                    mtxY = this.childs.getMtxSize().y,
+                    mtxO = null ;
 
                 nodeSet = this.r.set();
                 for (i = 0, ii = mtxX; i < ii; i++)
-                    for (j = 0, jj = mtxY; j < jj; j++)
-                        if (this.nodeChildNodes.getObjectFromMtx(i, j)!=null)
-                            nodeSet.push(this.nodeChildNodes.getObjectFromMtx(i, j).rect);
+                    for (j = 0, jj = mtxY; j < jj; j++) {
+                        mtxO = this.childs.getObjectFromMtx(i, j);
+                        if (mtxO!=null) {
+                            if (mtxO.hasOwnProperty('rect'))
+                                nodeSet.push(this.childs.getObjectFromMtx(i, j).rect);
+                            else if (mtxO.hasOwnProperty('vertexRegistry'))
+                                for (k=0, kk=mtxO.vertexRegistry.length; k<kk; k++)
+                                    nodeSet.push(mtxO.vertexRegistry[k].object.rect)
+                        }
+                    }
 
                 var nodeBBox = nodeSet.getBBox();
 
@@ -1205,7 +1288,7 @@ define(
             };
 
             this.getMaxBBox = function() {
-                if (this.nodeParentNode==null) {
+                if (this.parentObject==null) {
                     if (this.nodeContainer!=null) {
                         this.minTopLeftX = this.nodeContainer.getRectCornerPoints().topLeftX;
                         this.minTopLeftY = this.nodeContainer.getRectCornerPoints().topLeftY +
@@ -1215,12 +1298,12 @@ define(
                         this.maxTopLeftY = this.nodeContainer.getRectCornerPoints().bottomRightY - nodeRef.rectHeight;
                     }
                 } else {
-                    this.minTopLeftX = this.nodeParentNode.getRectCornerPoints().topLeftX;
-                    this.minTopLeftY = this.nodeParentNode.getRectCornerPoints().topLeftY +
-                                       this.nodeParentNode.name.height(params.node_txtTitle["font-size"]) +
+                    this.minTopLeftX = this.parentObject.getRectCornerPoints().topLeftX;
+                    this.minTopLeftY = this.parentObject.getRectCornerPoints().topLeftY +
+                                       this.parentObject.name.height(params.node_txtTitle["font-size"]) +
                                        params.node_interSpan;
-                    this.maxTopLeftX = this.nodeParentNode.getRectCornerPoints().bottomRightX - this.rectWidth;
-                    this.maxTopLeftY = this.nodeParentNode.getRectCornerPoints().bottomRightY - this.rectHeight;
+                    this.maxTopLeftX = this.parentObject.getRectCornerPoints().bottomRightX - this.rectWidth;
+                    this.maxTopLeftY = this.parentObject.getRectCornerPoints().bottomRightY - this.rectHeight;
                 }
 
                 return {

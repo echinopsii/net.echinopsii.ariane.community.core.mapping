@@ -51,6 +51,10 @@ define(
             this.linkedSimpleProxies = [];
             this.linkedProxies       = [];
 
+            this.toString = function() {
+                return "{Vertex " + this.object.name + "}\n";
+            };
+
             // TODO: prototype
             // currently object is a container.
             // any object should have method getRectSize available

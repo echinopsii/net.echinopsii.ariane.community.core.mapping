@@ -20,13 +20,15 @@
 // └──────────────────────────────────────────────────────────────────────────────────────┘ \\
 define(
     [
+        'taitale-tree-groups',
+        'taitale-dictionaries',
         'taitale-helper'
     ],
-    function (helper_) {
+    function (treeGroups, dictionaries, helper_) {
 
         function Matrix(name) {
             this.helper = new helper_();
-
+            this.dic = new dictionaries();
             this.name = name;
             this.nbLines   = 0;
             this.nbColumns = 0;
@@ -80,13 +82,18 @@ define(
             this.pushInternaLudOnLeft = false;
             this.pushInternalOnLeft   = false;
 
-            this.objectsList   = [];
+            this.treegrps = new treeGroups();
+            this.objectsList = [];
             this.objectLinkedToOutsideOnly      = [];
             this.objectLinkedToInsideOnly       = [];
             this.objectLinkedToInsideAndOutside = [];
 
             this.initMatrix();
         }
+
+        var minMaxLinkedObjectsComparator = function(treeObj1, treeObj2) {
+            return (treeObj2.getLinkedTreeObjectsCount() - treeObj1.getLinkedTreeObjectsCount());
+        };
 
         Matrix.prototype.FREE   = "FREE";
         Matrix.prototype.LOCKED = "LOCKED";
@@ -754,11 +761,23 @@ define(
         };
 
         Matrix.prototype.addObject = function(object) {
-            var newInternalCoord = this.getInternalBasicCoord(object);
-            this.zemtx[newInternalCoord.column][newInternalCoord.line] = {obj: object, type: object.type};
-            object.layoutData.mtxCoord = {x:newInternalCoord.line, y:newInternalCoord.column};
-
+            //var newInternalCoord = this.getInternalBasicCoord();
+            //this.zemtx[newInternalCoord.column][newInternalCoord.line] = {obj: object, type: object.type};
+            //object.layoutData.mtxCoord = {x:newInternalCoord.line, y:newInternalCoord.column};
             this.objectsList.push(object);
+        };
+
+        Matrix.prototype.computeGroups = function() {
+            var i, ii, lTree, newInternalCoord;
+            this.treegrps.computeTreeGroups(this.objectsList, this.dic.mapLayout.OBTREE);
+            this.treegrps.sort(minMaxLinkedObjectsComparator);
+            this.treegrps.loadTrees();
+            for (i=0, ii=this.treegrps.groups.length; i<ii; i++) {
+                lTree = this.treegrps.groups[i].lTree;
+                newInternalCoord = this.getInternalBasicCoord();
+                this.zemtx[newInternalCoord.column][newInternalCoord.line] = {obj: lTree, type: 'ltree'};
+                lTree.layoutData.mtxCoord = {x:newInternalCoord.line, y:newInternalCoord.column};
+            }
         };
 
         // To be used on intermediate placements pass
@@ -787,22 +806,22 @@ define(
                 for (j = 0, jj = this.nbLines; j < jj; j++) {
                     block = this.zemtx[i][j];
                     if (block!=null && block!==this.FREE && block!==this.LOCKED) {
-                        // this.helper.debug("[tools/Matrix] " + this.name + " - adding " + block.obj.name + " to mtx max size.");
+                        // this.helper.debug("[tools/matrix.defineMtxContentMaxSize] " + this.name + " - adding " + block.obj + " to mtx max size.");
                         if (block.obj.getMaxRectSize().width==0)
                             block.obj.defineMaxSize();
-                        // this.helper.debug("[tools/Matrix] " + this.name + " - before : {" + this.contentWidth + ", " + this.contentHeight + "}");
+                        // this.helper.debug("[tools/matrix.defineMtxContentMaxSize] " + this.name + " - before : {" + this.contentWidth + ", " + this.contentHeight + "}");
                         this.contentHeight += block.obj.getMaxRectSize().height;
                         this.contentWidth += block.obj.getMaxRectSize().width;
-                        // this.helper.debug("[tools/Matrix] " + this.name + " - after : {" + this.contentWidth + ", " + this.contentHeight + "}");
+                        // this.helper.debug("[tools/matrix.defineMtxContentMaxSize] " + this.name + " - after : {" + this.contentWidth + ", " + this.contentHeight + "}");
                     }
                 }
             }
-            //this.helper.debug("[matrix.defineMtxContentMaxSize] {contentHeight:"+this.contentHeight+", contentWidth:"+this.contentWidth+"}");
+            // this.helper.debug("[tools/matrix.defineMtxContentMaxSize] " + this.name + " {contentHeight:"+this.contentHeight+", contentWidth:"+this.contentWidth+"}");
         };
 
         // Optimisation
 
-        Matrix.prototype.updateLayoutData = function(arraySortCallback) {
+        Matrix.prototype.updateLayoutData = function() {
             var i, ii, j, jj, block;
 
             for (i = 0, ii = this.nbLines; i < ii; i++)
@@ -829,12 +848,6 @@ define(
                                 this.objectLinkedToInsideAndOutside.push(block.obj);
                         }
                     }
-
-                if (arraySortCallback!=null) {
-                    this.objectLinkedToOutsideOnly.sort(arraySortCallback);
-                    this.objectLinkedToInsideAndOutside.sort(arraySortCallback);
-                    this.objectLinkedToInsideOnly.sort(arraySortCallback);
-                }
             }
         };
 
@@ -1163,6 +1176,14 @@ define(
                 for (j = 0, jj = this.nbColumns; j < jj; j++) {
                     block = this.zemtx[j][i];
                     if (block!=null && block!==this.FREE && block!==this.LOCKED) {
+                        // TODO
+                        if (this.name == "/")
+                            this.helper.debug("{mtxSpan: " + mtxSpan + ", " +
+                                "objSpan: " + objSpan + ", " +
+                                "j: " + j + ", " +
+                                "i: " + i + ", " +
+                                "widthPointer: " + widthPointer + " , " +
+                                "heightPointer: " + heightPointer + "}");
                         objDefinePozCallback(block.obj, mtxSpan, objSpan, j, i, widthPointer, heightPointer);
                         if (block.obj.getRectSize().height > maxLineHeight)
                             maxLineHeight = block.obj.getRectSize().height;
@@ -1204,7 +1225,7 @@ define(
                 }
                 this.contentHeight+=maxLineHeight[i];
             }
-            //this.helper.debug("[matrix.defineMtxContentSize] {contentHeight:"+this.contentHeight+", contentWidth:"+this.contentWidth+"}");
+            // this.helper.debug("[matrix.defineMtxContentSize] {contentHeight:"+this.contentHeight+", contentWidth:"+this.contentWidth+"}");
         };
 
         return Matrix;

@@ -200,11 +200,11 @@ define(
             this.isInserted        = false;
             this.containerHat_     = new containerHat(this.company,this.product,this.type);
 
-            this.containerParentC  = null;
+            this.parentObject  = null;
             // the current containers heap from this to the last parent container of the chain as a list
-            // [this,this.containerParentC,this.containerParentC.containerParentC ...]
-            this.containerHeapC    = [];
-            this.containerChilds   = new containerMatrix(this.name);
+            // [this,this.parentObject,this.parentObject.parentObject ...]
+            this.objectsHeap    = [];
+            this.childs   = new containerMatrix(this.name);
 
             this.linkedTreeObjects = [];
             this.sortOrdering      = 1;
@@ -484,13 +484,13 @@ define(
                                 dx = containerRef.maxTopLeftX - rx;
                             if (containerRef.maxTopLeftY < ry + dy)
                                 dy = containerRef.maxTopLeftY - ry;
-                        } else if (containerRef.containerParentC != null) {
-                            var minX = containerRef.containerParentC.getRectCornerPoints().topLeftX,
-                                minY = containerRef.containerParentC.getRectCornerPoints().topLeftY +
-                                    containerRef.containerParentC.name.height(params.container_txtTitle["font-size"]) +
-                                    containerRef.containerParentC.containerHat_.height + params.container_interSpan,
-                                maxX = containerRef.containerParentC.getRectCornerPoints().bottomRightX - containerRef.rectWidth,
-                                maxY = containerRef.containerParentC.getRectCornerPoints().bottomRightY - containerRef.rectHeight;
+                        } else if (containerRef.parentObject != null) {
+                            var minX = containerRef.parentObject.getRectCornerPoints().topLeftX,
+                                minY = containerRef.parentObject.getRectCornerPoints().topLeftY +
+                                    containerRef.parentObject.name.height(params.container_txtTitle["font-size"]) +
+                                    containerRef.parentObject.containerHat_.height + params.container_interSpan,
+                                maxX = containerRef.parentObject.getRectCornerPoints().bottomRightX - containerRef.rectWidth,
+                                maxY = containerRef.parentObject.getRectCornerPoints().bottomRightY - containerRef.rectHeight;
 
                             if (minX > rx + dx)
                                 dx = minX - rx;
@@ -580,11 +580,11 @@ define(
             };
 
             this.toString = function() {
-                return "{\n Container " + this.containerName + " : ("+this.rectMiddleX+","+this.rectMiddleY+")\n}";
+                return "{\n Container " + this.name + " : ("+this.rectMiddleX+","+this.rectMiddleY+")\n}";
             };
 
             this.pushChild = function (child) {
-                this.containerChilds.addObject(child);
+                this.childs.addObject(child);
             };
 
             //this.updateNodesPoz = function(node) {
@@ -692,10 +692,10 @@ define(
             */
 
             this.defineSize = function () {
-                this.containerChilds.defineMtxContentSize();
-                var mtxSize = this.containerChilds.getMtxContentSize();
-                var mtxX        = this.containerChilds.getMtxSize().x,
-                    mtxY        = this.containerChilds.getMtxSize().y,
+                this.childs.defineMtxContentSize();
+                var mtxSize = this.childs.getMtxContentSize();
+                var mtxX        = this.childs.getMtxSize().x,
+                    mtxY        = this.childs.getMtxSize().y,
                     computeMaxWidth = getMaxWidth(this.interSpan*(mtxY+1) + mtxSize.width);
                 this.centerMtx  = computeMaxWidth.centerMatrix;
                 this.rectWidth  = computeMaxWidth.maxWidth;
@@ -707,32 +707,30 @@ define(
             };
 
             this.defineMtxIntermediatePoz = function() {
-                this.containerChilds.updateLayoutData(function(child1, child2){
-                    return ((child2.linkedNodes.length+child2.linkedBus.length)-(child1.linkedNodes.length+child1.linkedBus.length));
-                });
-                this.containerChilds.updatePosition();
+                this.childs.updateLayoutData();
+                this.childs.updatePosition();
             };
 
             this.clean = function() {
-                this.containerChilds.cleanMtx();
+                this.childs.cleanMtx();
             };
 
             this.defineMaxSize = function() {
                 defineRectPoints(this.X,this.Y);
-                this.containerChilds.defineMtxContentMaxSize();
-                var mtxMaxSize = this.containerChilds.getMtxContentSize(),
-                    childsCount = this.containerChilds.getMtxObjCount(),
+                this.childs.defineMtxContentMaxSize();
+                var mtxMaxSize = this.childs.getMtxContentSize(),
+                    childsCount = this.childs.getMtxObjCount(),
                     computeMaxWidth = getMaxWidth(this.interSpan*(childsCount+1) + mtxMaxSize.width);
                 this.centerMtx  = computeMaxWidth.centerMatrix;
                 this.maxRectWidth = computeMaxWidth.maxWidth;
                 this.maxRectHeight = this.containerHat_.height + this.titleHeight + this.interSpan*(childsCount+1) + mtxMaxSize.height;
-                //helper_.debug("[Container.defineMaxSize] " + this.name + " : {mtxMaxSize.width: " + mtxMaxSize.width +
-                //    ", mtxMaxSize.height:" + mtxMaxSize.height + ", childsCount:" + childsCount + ", interSpan: " + this.interSpan+" }");
-                //helper_.debug("[Container.defineMaxSize] " + this.name + " : {" + this.maxRectWidth + "," +  this.maxRectHeight + "}");
+                helper_.debug("[Container.defineMaxSize] " + this.name + " : {mtxMaxSize.width: " + mtxMaxSize.width +
+                    ", mtxMaxSize.height:" + mtxMaxSize.height + ", childsCount:" + childsCount + ", interSpan: " + this.interSpan+" }");
+                helper_.debug("[Container.defineMaxSize] " + this.name + " : {" + this.maxRectWidth + "," +  this.maxRectHeight + "}");
             };
 
             this.setTopLeftCoord = function(x,y) {
-                defineRectPoints(x,y);
+                this.setPoz(x,y);
             };
 
             this.setPoz = function(x,y) {
@@ -748,7 +746,7 @@ define(
             };
 
             this.defineIntermediateChildsPoz = function() {
-                this.containerChilds.defineMtxObjectIntermediatePoz(this.rectTopLeftX,
+                this.childs.defineMtxObjectIntermediatePoz(this.rectTopLeftX,
                         this.rectTopLeftY + this.containerHat_.height + this.titleHeight,
                         this.interSpan, this.interSpan, function(child, mtxSpan, objSpan, columnIdx, lineIdx, widthPointer, heightPointer) {
                             child.setPoz(mtxSpan + objSpan * columnIdx + widthPointer, objSpan * (lineIdx+1) + heightPointer);
@@ -759,12 +757,12 @@ define(
             this.defineChildsPoz = function() {
                 var topLeftMtx = this.rectTopLeftX;
                 if (this.centerMtx) {
-                    var mtxMaxSize = this.containerChilds.getMtxContentSize(),
-                        childsCount = this.containerChilds.getMtxObjCount(),
+                    var mtxMaxSize = this.childs.getMtxContentSize(),
+                        childsCount = this.childs.getMtxObjCount(),
                         mtxWidth = this.interSpan*(childsCount+1) + mtxMaxSize.width;
                     topLeftMtx = this.rectMiddleX - mtxWidth/2;
                 }
-                this.containerChilds.defineMtxObjectLastPoz(topLeftMtx,
+                this.childs.defineMtxObjectLastPoz(topLeftMtx,
                     this.rectTopLeftY + this.containerHat_.height + this.titleHeight,
                     this.interSpan, this.interSpan, function (child, mtxSpan, objSpan, columnIdx, lineIdx, widthPointer, heightPointer) {
                         child.setPoz(mtxSpan + objSpan * columnIdx + widthPointer, objSpan * (lineIdx + 1) + heightPointer);
@@ -773,65 +771,109 @@ define(
 
             };
 
-            this.defineHeapContainers = function() {
-                var parentC = this.containerParentC;
-                this.containerHeapC.push(this);
+            this.defineHeapObjects = function() {
+                var parentC = this.parentObject;
+                this.objectsHeap.push(this);
                 while (parentC != null) {
-                    this.containerHeapC.push(parentC);
-                    parentC = parentC.containerParentC;
+                    this.objectsHeap.push(parentC);
+                    parentC = parentC.parentObject;
                 }
             };
 
-            this.isInHeapContainers = function(node) {
+            this.isInHeapObjects = function(node) {
                 var i, ii;
-                for (i=0, ii=this.containerHeapC.length; i < ii; i++)
-                    if (this.containerHeapC[i].ID==node.ID)
+                for (i=0, ii=this.objectsHeap.length; i < ii; i++)
+                    if (this.objectsHeap[i].ID==node.ID)
                         return true;
                 return false;
             };
 
             this.placeIn = function() {
-                if (this.containerParentC!=null)
-                    this.containerParentC.pushChild(this);
+                if (this.parentObject!=null)
+                    this.parentObject.pushChild(this);
+            };
+
+            this.computeChildsGroups = function() {
+                this.childs.computeGroups();
             };
 
             this.getLinkedTreeObjectsCount = function() {
                 return this.linkedTreeObjects.length;
             };
 
-            this.sortLinkedTreeObjects = function() {
+            this.sortLinkedObjects = function() {
                 this.linkedTreeObjects.sort(minMaxLinkedTreedObjectsComparator);
                 this.linkedContainers.sort(minMaxLinkedTreedObjectsComparator);
                 this.linkedBus.sort(minMaxLinkedTreedObjectsComparator);
+                this.linkedNodes.sort(minMaxLinkedTreedObjectsComparator);
             };
 
             this.setSortOrdering = function(sort) {
                 this.sortOrdering = sort;
             };
 
-            this.pushLinkedContainer = function(container) {
-                var isAlreadyPushed = this.isLinkedToContainer(container);
+            this.updateLinkedObj = function (object) {
                 var isInHeap = [];
-                if (!isAlreadyPushed) {
-                    for (i = 0, ii = this.containerHeapC.length; i < ii; i++)
-                        for (j = 0, jj=container.containerHeapC.length; j <jj ; j++) {
-                            var linkedContainerHC = container.containerHeapC[j],
-                                thisContainerHC = this.containerHeapC[i];
-                            if (isInHeap.indexOf(linkedContainerHC.ID)===-1) {
-                                if (linkedContainerHC.ID != thisContainerHC.ID)
-                                    if (!thisContainerHC.isInHeapContainers(linkedContainerHC)) {
-                                        if (!thisContainerHC.isLinkedToContainer(linkedContainerHC)) {
-                                            thisContainerHC.linkedContainers.push(linkedContainerHC);
-                                            if (thisContainerHC.containerParentC == null && linkedContainerHC.containerParentC == null)
-                                                thisContainerHC.linkedTreeObjects.push(linkedContainerHC);
+                for (var i = 0, ii = this.objectsHeap.length; i < ii; i++)
+                    for (var j = 0, jj=object.objectsHeap.length; j <jj ; j++) {
+                        var linkedHeapObject = object.objectsHeap[j],
+                            thisHeapObject = this.objectsHeap[i];
+                        if (isInHeap.indexOf(linkedHeapObject.ID)===-1) {
+                            if (linkedHeapObject.ID != thisHeapObject.ID)
+                                if (!thisHeapObject.isInHeapObjects(linkedHeapObject)) {
+                                    if (thisHeapObject.hasOwnProperty('containerName')) {
+                                        if (linkedHeapObject.hasOwnProperty('containerName')) {
+                                            if (!thisHeapObject.isLinkedToContainer(linkedHeapObject)) {
+                                                thisHeapObject.linkedContainers.push(linkedHeapObject);
+                                                if ((thisHeapObject.parentObject == null && linkedHeapObject.parentObject == null) ||
+                                                    (thisHeapObject.parentObject != null && linkedHeapObject.parentObject != null &&
+                                                    thisHeapObject.parentObject.ID == linkedHeapObject.parentObject.ID))
+                                                    thisHeapObject.linkedTreeObjects.push(linkedHeapObject);
+                                            }
+                                        } else {
+                                            if (!thisHeapObject.isLinkedToNode(linkedHeapObject)) {
+                                                thisHeapObject.linkedNodes.push(linkedHeapObject);
+                                                if ((thisHeapObject.parentObject == null && linkedHeapObject.parentObject == null) ||
+                                                    (thisHeapObject.parentObject != null && linkedHeapObject.parentObject != null &&
+                                                    thisHeapObject.parentObject.ID == linkedHeapObject.parentObject.ID)) {
+                                                    thisHeapObject.linkedTreeObjects.push(linkedHeapObject);
+                                                    linkedHeapObject.linkedTreeObjects.push(thisHeapObject);
+                                                }
+                                            }
                                         }
-                                    } else isInHeap.push(linkedContainerHC.ID)
-                            }
+                                    } else if (thisHeapObject.hasOwnProperty('nodeName')) {
+                                        if (linkedHeapObject.hasOwnProperty('nodeName')) {
+                                            if (!thisHeapObject.isLinkedToNode(linkedHeapObject)) {
+                                                thisHeapObject.linkedNodes.push(linkedHeapObject);
+                                                if ((thisHeapObject.parentObject == null && linkedHeapObject.parentObject == null) ||
+                                                    (thisHeapObject.parentObject != null && linkedHeapObject.parentObject != null &&
+                                                    thisHeapObject.parentObject.ID == linkedHeapObject.parentObject.ID)) {
+                                                    thisHeapObject.linkedTreeObjects.push(linkedHeapObject);
+                                                    linkedHeapObject.linkedTreeObjects.push(thisHeapObject);
+                                                }
+                                            }
+                                        } else {
+                                            if (!thisHeapObject.isLinkedToContainer(linkedHeapObject)) {
+                                                thisHeapObject.linkedContainers.push(linkedHeapObject);
+                                                if ((thisHeapObject.parentObject == null && linkedHeapObject.parentObject == null) ||
+                                                    (thisHeapObject.parentObject != null && linkedHeapObject.parentObject != null &&
+                                                    thisHeapObject.parentObject.ID == linkedHeapObject.parentObject.ID))
+                                                    thisHeapObject.linkedTreeObjects.push(linkedHeapObject);
+                                            }
+                                        }
+                                    }
+                                } else isInHeap.push(linkedHeapObject.ID)
                         }
+                    }
+            };
 
+            this.pushLinkedContainer = function(container) {
+                if (!this.isLinkedToContainer(container)) {
+                    this.updateLinkedObj(container);
                     if (!this.isLinkedToContainer(container)) {
                         this.linkedContainers.push(container);
-                        if (this.containerParentC == null && container.containerParentC == null)
+                        if ((this.parentObject == null && container.parentObject == null) ||
+                            (this.parentObject !=null && container.parentObject != null && this.parentObject.ID == container.parentObject.ID))
                             this.linkedTreeObjects.push(container);
                     }
                 }
@@ -850,11 +892,19 @@ define(
             };
 
             this.pushLinkedNode = function(node) {
-                var isAlreadyPushed = this.isLinkedNode(node);
-                if (!isAlreadyPushed) this.linkedNodes.push(node);
+                if (!this.isLinkedToNode(node)) {
+                    this.updateLinkedObj(node);
+                    if (!this.isLinkedToNode(node)) {
+                        this.linkedNodes.push(node);
+                        if ((this.parentObject == null && node.parentObject == null) ||
+                            (this.parentObject !=null && node.parentObject != null && this.parentObject.ID == node.parentObject.ID))
+                            this.linkedTreeObjects.push(node);
+
+                    }
+                }
             };
 
-            this.isLinkedNode = function(node) {
+            this.isLinkedToNode = function(node) {
                 for (var i = 0, ii = this.linkedNodes.length; i < ii; i++) {
                     if (this.linkedNodes[i].ID==node.ID)
                         return true;
@@ -888,8 +938,8 @@ define(
 
             this.getLinksCount = function() {
                 var count = 0, i, ii;
-                for (i = 0, ii = this.containerChilds.objectsList.length; i < ii; i++)
-                    count += this.containerChilds.objectsList[i].getLinksCount();
+                for (i = 0, ii = this.childs.objectsList.length; i < ii; i++)
+                    count += this.childs.objectsList[i].getLinksCount();
                 return count;
             };
 
@@ -898,23 +948,23 @@ define(
                 for (i = 0, ii = this.linkedNodes.length; i < ii; i++) {
                     linkedNode = this.linkedNodes[i];
                     linkedContainer = this.linkedNodes[i].nodeContainer;
-                    if (this.containerParentC.ID!=linkedContainer.ID) {
+                    if (this.parentObject.ID!=linkedContainer.ID) {
                         this.layoutData.isConnectedOutsideMtx = true;
-                        if (this.containerParentC.rectTopLeftX > linkedContainer.rectTopLeftX) {
+                        if (this.parentObject.rectTopLeftX > linkedContainer.rectTopLeftX) {
                             this.layoutData.isConnectedOutsideToLeftMtx = true;
                             this.layoutData.isConnectedOutsideToRightMtx = false;
-                        } else if (this.containerParentC.rectTopLeftX < linkedContainer.rectTopLeftX) {
+                        } else if (this.parentObject.rectTopLeftX < linkedContainer.rectTopLeftX) {
                             this.layoutData.isConnectedOutsideToRightMtx = true;
                             this.layoutData.isConnectedOutsideToLeftMtx = false;
                         } else {
                             this.layoutData.isConnectedOutsideToRightMtx = false;
                             this.layoutData.isConnectedOutsideToLeftMtx = false;
                         }
-                        if (this.containerParentC.rectTopLeftY > linkedContainer.rectTopLeftY) {
+                        if (this.parentObject.rectTopLeftY > linkedContainer.rectTopLeftY) {
                             this.layoutData.isConnectedOutsideToUpMtx = true;
                             this.layoutData.isConnectedOutsideToDownMtx = false;
                         }
-                        else if (this.containerParentC.rectTopLeftY < linkedContainer.rectTopLeftY) {
+                        else if (this.parentObject.rectTopLeftY < linkedContainer.rectTopLeftY) {
                             this.layoutData.isConnectedOutsideToDownMtx = true;
                             this.layoutData.isConnectedOutsideToUpMtx = false;
                         } else {
@@ -922,23 +972,23 @@ define(
                             this.layoutData.isConnectedOutsideToUpMtx = false;
                         }
                     }/* else {
-                        if (this.nodeParentNode!=null) {
-                            if (this.nodeParentNode.ID!=linkedNode.nodeParentNode.ID) {
+                        if (this.parentObject!=null) {
+                            if (this.parentObject.ID!=linkedNode.parentObject.ID) {
                                 this.layoutData.isConnectedOutsideMtx = true;
-                                if (this.nodeParentNode.rectTopLeftX > linkedNode.nodeParentNode.rectTopLeftX) {
+                                if (this.parentObject.rectTopLeftX > linkedNode.parentObject.rectTopLeftX) {
                                     this.layoutData.isConnectedOutsideToLeftMtx = true;
                                     this.layoutData.isConnectedOutsideToRightMtx = false;
-                                } else if (this.nodeParentNode.rectTopLeftX < linkedNode.nodeParentNode.rectTopLeftX) {
+                                } else if (this.parentObject.rectTopLeftX < linkedNode.parentObject.rectTopLeftX) {
                                     this.layoutData.isConnectedOutsideToRightMtx = true;
                                     this.layoutData.isConnectedOutsideToLeftMtx = false;
                                 } else {
                                     this.layoutData.isConnectedOutsideToRightMtx = false;
                                     this.layoutData.isConnectedOutsideToLeftMtx = false;
                                 }
-                                if (this.nodeParentNode.rectTopLeftY > linkedNode.nodeParentNode.rectTopLeftY) {
+                                if (this.parentObject.rectTopLeftY > linkedNode.parentObject.rectTopLeftY) {
                                     this.layoutData.isConnectedOutsideToUpMtx = true;
                                     this.layoutData.isConnectedOutsideToDownMtx = false;
-                                } else if (this.nodeParentNode.rectTopLeftY < linkedNode.nodeParentNode.rectTopLeftY) {
+                                } else if (this.parentObject.rectTopLeftY < linkedNode.parentObject.rectTopLeftY) {
                                     this.layoutData.isConnectedOutsideToDownMtx = true;
                                     this.layoutData.isConnectedOutsideToUpMtx = false;
                                 } else {
@@ -955,20 +1005,20 @@ define(
 
                 for (i=0 , ii = this.linkedBus.length; i < ii; i++) {
                     linkedBus = this.linkedBus[i];
-                    if (this.containerParentC.rectTopLeftX > linkedBus.getBusCoords().x) {
+                    if (this.parentObject.rectTopLeftX > linkedBus.getBusCoords().x) {
                         this.layoutData.isConnectedOutsideToLeftMtx = true;
                         this.layoutData.isConnectedOutsideToRightMtx = false;
-                    } else if (this.containerParentC.rectTopLeftX < linkedBus.getBusCoords().x) {
+                    } else if (this.parentObject.rectTopLeftX < linkedBus.getBusCoords().x) {
                         this.layoutData.isConnectedOutsideToRightMtx = true;
                         this.layoutData.isConnectedOutsideToLeftMtx = false;
                     } else {
                         this.layoutData.isConnectedOutsideToRightMtx = false;
                         this.layoutData.isConnectedOutsideToLeftMtx = false;
                     }
-                    if (this.containerParentC.rectTopLeftY > linkedBus.getBusCoords().y) {
+                    if (this.parentObject.rectTopLeftY > linkedBus.getBusCoords().y) {
                         this.layoutData.isConnectedOutsideToUpMtx = true;
                         this.layoutData.isConnectedOutsideToDownMtx = false;
-                    } else if (this.containerParentC.rectTopLeftY < linkedBus.getBusCoords().y) {
+                    } else if (this.parentObject.rectTopLeftY < linkedBus.getBusCoords().y) {
                         this.layoutData.isConnectedOutsideToDownMtx = true;
                         this.layoutData.isConnectedOutsideToUpMtx = false;
                     } else {
@@ -979,10 +1029,8 @@ define(
             };
 
             this.updatePosition = function() {
-                this.containerChilds.updateLayoutData(function(node1, node2){
-                    return ((node2.linkedNodes.length+node2.linkedBus.length)-(node1.linkedNodes.length+node1.linkedBus.length));
-                });
-                this.containerChilds.updatePosition();
+                this.childs.updateLayoutData();
+                this.childs.updatePosition();
             };
 
             this.getSupportTeam = function() {
@@ -1005,7 +1053,9 @@ define(
                 //     " : {rectTopLeftX : " + this.rectTopLeftX + " , rectTopLeftY: " + this.rectTopLeftY +
                 //     ", rectWidth: " + this.rectWidth + ", rectHeight: " + this.rectHeight + "}");
 
-                if (this.color == 0) this.color = this.containerParentC.color;
+                // helper_.debug("[Container.print] " + this.name + ".linkedTreeObjects: " + this.linkedTreeObjects);
+
+                if (this.color == 0) this.color = this.parentObject.color;
 
                 this.containerHat_.print(this.r,this.rectTopLeftX + (this.rectWidth/2),this.rectTopLeftY + 5,this.color);
                 this.containerHat_.mousedown(mouseDown);
@@ -1082,7 +1132,7 @@ define(
                 this.containerHat_.toFront();
                 this.containerName.toFront();
                 this.rect.toFront();
-                this.containerChilds.toFront();
+                this.childs.toFront();
             };
 
             this.changeInit = function() {
@@ -1119,8 +1169,8 @@ define(
                     this.r.scaleDone(this);
 
                 var i, ii, j, jj;
-                var mtxX        = this.containerChilds.getMtxSize().x,
-                    mtxY        = this.containerChilds.getMtxSize().y;
+                var mtxX        = this.childs.getMtxSize().x,
+                    mtxY        = this.childs.getMtxSize().y;
 
                 this.r.containersOnMovePush(this);
                 this.r.moveSetPush(this.containerName);
@@ -1128,8 +1178,8 @@ define(
 
                 for (i = 0, ii = mtxX; i < ii; i++)
                     for (j = 0, jj = mtxY; j < jj; j++)
-                        if (this.containerChilds.getObjectFromMtx(i, j)!=null)
-                            this.containerChilds.getObjectFromMtx(i, j).moveInit();
+                        if (this.childs.getObjectFromMtx(i, j)!=null)
+                            this.childs.getObjectFromMtx(i, j).moveInit();
 
                 this.changeInit();
 
@@ -1172,15 +1222,15 @@ define(
 
             this.propagateEditionMode = function(editionMode) {
                 var i, ii, j, jj;
-                var mtxX        = this.containerChilds.getMtxSize().x,
-                    mtxY        = this.containerChilds.getMtxSize().y;
+                var mtxX        = this.childs.getMtxSize().x,
+                    mtxY        = this.childs.getMtxSize().y;
 
                 this.setEditionMode(editionMode);
 
                 for (i = 0, ii = mtxX; i < ii; i++)
                     for (j = 0, jj = mtxY; j < jj; j++)
-                        if (this.containerChilds.getObjectFromMtx(i, j)!=null)
-                            this.containerChilds.getObjectFromMtx(i, j).propagateEditionMode(editionMode);
+                        if (this.childs.getObjectFromMtx(i, j)!=null)
+                            this.childs.getObjectFromMtx(i, j).propagateEditionMode(editionMode);
             };
 
             this.menuFieldEditClick = function() {
@@ -1215,15 +1265,15 @@ define(
 
             this.propagateEndpointReset = function(epreset) {
                 var i, ii, j, jj;
-                var mtxX        = containerRef.containerChilds.getMtxSize().x,
-                    mtxY        = containerRef.containerChilds.getMtxSize().y;
+                var mtxX        = containerRef.childs.getMtxSize().x,
+                    mtxY        = containerRef.childs.getMtxSize().y;
 
                 containerRef.endpointsResetOnChangeON = epreset;
 
                 for (i = 0, ii = mtxX; i < ii; i++)
                     for (j = 0, jj = mtxY; j < jj; j++)
-                        if (containerRef.containerChilds.getObjectFromMtx(i, j)!=null)
-                            containerRef.containerChilds.getObjectFromMtx(i, j).propagateEndpointReset(containerRef.endpointsResetOnChangeON);
+                        if (containerRef.childs.getObjectFromMtx(i, j)!=null)
+                            containerRef.childs.getObjectFromMtx(i, j).propagateEndpointReset(containerRef.endpointsResetOnChangeON);
             };
 
             this.getBBox = function() {
@@ -1232,15 +1282,24 @@ define(
 
             var childSet;
             this.getMinBBox = function() {
-                var i, ii, j, jj;
-                var mtxX        = this.containerChilds.getMtxSize().x,
-                    mtxY        = this.containerChilds.getMtxSize().y;
+                var i, ii, j, jj, k, kk;
+                var mtxX = this.childs.getMtxSize().x,
+                    mtxY = this.childs.getMtxSize().y,
+                    mtxO = null;
 
                 childSet = this.r.set();
                 for (i = 0, ii = mtxX; i < ii; i++)
                     for (j = 0, jj = mtxY; j < jj; j++)
-                        if (this.containerChilds.getObjectFromMtx(i, j)!=null)
-                            childSet.push(this.containerChilds.getObjectFromMtx(i, j).rect);
+                        if (this.childs.getObjectFromMtx(i, j)!=null) {
+                            mtxO = this.childs.getObjectFromMtx(i, j);
+                            if (mtxO!=null) {
+                                if (mtxO.hasOwnProperty('rect'))
+                                    childSet.push(this.childs.getObjectFromMtx(i, j).rect);
+                                else if (mtxO.hasOwnProperty('vertexRegistry'))
+                                    for (k=0, kk=mtxO.vertexRegistry.length; k<kk; k++)
+                                        childSet.push(mtxO.vertexRegistry[k].object.rect)
+                            }
+                        }
 
                 var childBBox = childSet.getBBox();
 

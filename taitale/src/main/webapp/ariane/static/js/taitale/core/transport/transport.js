@@ -84,10 +84,10 @@ define(
                 return multicastBusRegistry;
             };
 
-            this.sortLinkedTreeObjects = function() {
+            this.sortLinkedObjects = function() {
                 if (isMoulticast) {
                     for (var i = 0, ii = multicastBusRegistry.length; i < ii; i++) {
-                        multicastBusRegistry[i].sortLinkedTreeObjects();
+                        multicastBusRegistry[i].sortLinkedObjects();
                     }
                 }
             };

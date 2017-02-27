@@ -41,7 +41,7 @@ define(
                 mapBottomRightX = 0,
                 mapBottomRightY = 0,
                 mapmatrix = new mapMatrix(options),
-                treegrps  = new treeGroups(options),
+                treegrps  = new treeGroups(),
                 mbrdSpan  = params.map_mbrdSpan,
                 zoneSpan  = params.map_zoneSpan,
                 linkColor = params.map_linkColor,
@@ -116,7 +116,7 @@ define(
                         var possibleParentContainer = containerRegistry[i];
                         var waitingParentContainer = childContainersWaitingParent[j];
                         if (possibleParentContainer.ID==waitingParentContainer.cpID) {
-                            waitingParentContainer.containerParentC = possibleParentContainer;
+                            waitingParentContainer.parentObject = possibleParentContainer;
                             childContainersFoundParent.push(waitingParentContainer);
                         }
                     }
@@ -153,8 +153,7 @@ define(
                     var nodeToPush = new node(JSONNodeDesc, container), papp = nodeToPush.getPrimaryApplication();
                     nodeRegistry.push(nodeToPush);
                     if (papp!=null && !isApplicationRegistered(papp)) applications.push(papp);
-                    if (nodeToPush.npID!=0)
-                        childNodesWaitingParent.push(nodeToPush);
+                    if (nodeToPush.npID!=0) childNodesWaitingParent.push(nodeToPush);
 
                     var childNodesFoundParent = [];
                     for (j = 0, jj = childNodesWaitingParent.length; j < jj; j++) {
@@ -162,7 +161,7 @@ define(
                             var possibleParentNode = nodeRegistry[i];
                             var waitingParentNode = childNodesWaitingParent[j];
                             if (possibleParentNode.ID==waitingParentNode.npID) {
-                                waitingParentNode.nodeParentNode = possibleParentNode;
+                                waitingParentNode.parentObject = possibleParentNode;
                                 childNodesFoundParent.push(waitingParentNode);
                             }
                         }
@@ -283,10 +282,10 @@ define(
                     this.addNode(JSONmapDesc.nodes[i]);
 
                 for (i = 0, ii = containerRegistry.length; i < ii; i++)
-                    containerRegistry[i].defineHeapContainers();
+                    containerRegistry[i].defineHeapObjects();
 
                 for (i = 0, ii = nodeRegistry.length; i < ii; i++)
-                    nodeRegistry[i].defineHeapNodes();
+                    nodeRegistry[i].defineHeapObjects();
 
                 //noinspection JSUnresolvedVariable
                 for (i = 0, ii = JSONmapDesc.endpoints.length; i < ii; i++ )
@@ -314,17 +313,20 @@ define(
             this.buildMap = function() {
                 var i, ii, j, jj;
 
-                // first : place nodes and containers in container (first placement)
+                // first : place nodes and containers in parent (first placement)
                 for (j = 0, jj = nodeRegistry.length; j < jj; j++)
                     nodeRegistry[j].placeIn();
                 for (j = 0, jj = containerRegistry.length; j < jj; j++)
                     containerRegistry[j].placeIn();
 
+                for (j = 0, jj = nodeRegistry.length; j < jj; j++)
+                    nodeRegistry[j].computeChildsGroups();
+                for (j = 0, jj = containerRegistry.length; j < jj; j++)
+                    containerRegistry[j].computeChildsGroups();
+
                 // second : define container max size
                 for (j = 0, jj = containerRegistry.length; j < jj; j++)
                     containerRegistry[j].defineMaxSize();
-
-
 
                 // third : layout policy
                 var layout = options.getLayout();
@@ -357,7 +359,7 @@ define(
                         sortOrdering = options.getRootTreeSorting();
                         for (i = 0, ii = mapObjects.length; i<ii; i++) {
                             mapObjects[i].setSortOrdering(options.getSubTreesSorting());
-                            mapObjects[i].sortLinkedTreeObjects();
+                            mapObjects[i].sortLinkedObjects();
                         }
                         containerRegistry.sort(minMaxLinkedObjectsComparator);
 
@@ -635,7 +637,7 @@ define(
             this.sortSubTrees = function(sort) {
                 for (var i = 0, ii = containerRegistry.length; i<ii; i++) {
                     containerRegistry[i].setSortOrdering(sort);
-                    containerRegistry[i].sortLinkedTreeObjects();
+                    containerRegistry[i].sortLinkedObjects();
                 }
             };
 

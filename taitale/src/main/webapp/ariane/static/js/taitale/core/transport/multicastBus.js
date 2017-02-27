@@ -97,7 +97,7 @@ define(
                 this.sortOrdering = sort;
             };
 
-            this.sortLinkedTreeObjects = function() {
+            this.sortLinkedObjects = function() {
                 this.linkedTreeObjects.sort(this.minMaxLinkedTreedObjectsComparator);
             };
 
@@ -132,6 +132,9 @@ define(
             };
 
             this.defineChildsPoz = function() {
+            };
+
+            this.defineSize = function() {
             };
 
             this.setCylinder = function(centerX,centerY) {
