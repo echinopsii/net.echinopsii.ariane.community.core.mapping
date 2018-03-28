@@ -2,3 +2,4 @@
 */**/target
 wat/src/test/resources/TestMappingREST/__pycache__/
 distrib/*.iml
+.DS_Store
